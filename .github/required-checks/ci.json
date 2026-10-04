@@ -1,0 +1,4 @@
+{
+  "workflow": "ci.yml",
+  "jobs": ["lint", "typecheck", "unit-coverage", "coverage-floor", "lockfile-sync", "actionlint", "required-checks"]
+}
