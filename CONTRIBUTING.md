@@ -74,6 +74,7 @@ CI runs the same steps as separate required checks (`.github/workflows/ci.yml`).
 ```sh
 git fetch origin
 git rebase origin/main
+# if a package.json conflicts too, resolve it by hand first (keep both sides' dependencies)
 # on the package-lock.json conflict: take main's version, then regenerate it from the merged manifests
 git checkout origin/main -- package-lock.json
 npm install
