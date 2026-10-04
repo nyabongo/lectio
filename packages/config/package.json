@@ -1,0 +1,18 @@
+{
+  "name": "@lectio/config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Typed config loader with defaults for every owner decision.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "ajv": "^8.20.0"
+  }
+}

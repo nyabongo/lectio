@@ -1,0 +1,19 @@
+{
+  "name": "@lectio/provider-azure-tts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Azure AI Speech TtsProvider.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/providers": "0.0.0"
+  }
+}

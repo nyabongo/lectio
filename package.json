@@ -1,0 +1,63 @@
+{
+  "name": "lectio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A companion to the daily Mass readings: their history, their original words, and a voice.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -p tsconfig.json && npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:live": "LECTIO_LIVE=1 vitest run --project \"@lectio/provider-*\"",
+    "coverage:floor": "tsx scripts/check-coverage-floor.mjs",
+    "coverage:summary": "tsx scripts/coverage-summary.mjs",
+    "required-checks": "tsx scripts/check-required-checks.mjs",
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run test:coverage && npm run coverage:floor && npm run required-checks",
+    "research": "npm run -w @lectio/research research --",
+    "calendar:build": "npm run -w @lectio/calendar calendar:build --",
+    "calendar:check": "npm run -w @lectio/calendar calendar:check --",
+    "calendar:report": "npm run -w @lectio/calendar calendar:report --",
+    "corpus:find": "npm run -w @lectio/corpus corpus:find --",
+    "corpus:licences": "npm run -w @lectio/corpus corpus:licences --",
+    "corpus:import:greek": "npm run -w @lectio/corpus corpus:import:greek --",
+    "corpus:import:hebrew": "npm run -w @lectio/corpus corpus:import:hebrew --",
+    "corpus:import:latin": "npm run -w @lectio/corpus corpus:import:latin --",
+    "corpus:import:lxx": "npm run -w @lectio/corpus corpus:import:lxx --",
+    "guard:build": "npm run -w @lectio/textguard guard:build --",
+    "content:validate": "npm run -w @lectio/content content:validate --",
+    "lectionary:check": "npm run -w @lectio/lectionary lectionary:check --",
+    "lectionary:crosscheck": "npm run -w @lectio/lectionary lectionary:crosscheck --",
+    "gates:docs": "npm run -w @lectio/gates gates:docs --",
+    "review:approve": "npm run -w @lectio/gates review:approve --",
+    "audio:render": "npm run -w @lectio/audio audio:render --",
+    "schema:emit": "npm run -w @lectio/schema schema:emit --",
+    "runway": "npm run -w @lectio/runway runway --"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "fast-check": "^4.10.2",
+    "globals": "^17.13.0",
+    "msw": "^3.0.2",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

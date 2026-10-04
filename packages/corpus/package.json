@@ -1,0 +1,26 @@
+{
+  "name": "@lectio/corpus",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Original-language corpus format, normalisers, query API and importers.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "corpus:find": "tsx ../../scripts/run-planned.mjs L-009 src/cli/find.ts",
+    "corpus:licences": "tsx ../../scripts/run-planned.mjs L-009 src/cli/licences.ts",
+    "corpus:import:greek": "tsx ../../scripts/run-planned.mjs L-010 ../../scripts/corpus/import-greek.mjs",
+    "corpus:import:hebrew": "tsx ../../scripts/run-planned.mjs L-011 ../../scripts/corpus/import-hebrew.mjs",
+    "corpus:import:latin": "tsx ../../scripts/run-planned.mjs L-012 ../../scripts/corpus/import-latin.mjs",
+    "corpus:import:lxx": "tsx ../../scripts/run-planned.mjs L-071 ../../scripts/corpus/import-lxx.mjs"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/refs": "0.0.0",
+    "tar": "^7.5.22",
+    "fast-xml-parser": "^5.11.2"
+  }
+}

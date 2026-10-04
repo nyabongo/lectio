@@ -1,0 +1,31 @@
+{
+  "name": "@lectio/gates",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The five pull-request gates, their runner CLI, review helper and CI orchestration.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "gates": "tsx ../../scripts/run-planned.mjs L-023 src/cli/index.ts",
+    "review:approve": "tsx ../../scripts/run-planned.mjs L-023 src/review/cli.ts",
+    "gates:docs": "tsx ../../scripts/run-planned.mjs L-043 src/docs/cli.ts"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/schema": "0.0.0",
+    "@lectio/refs": "0.0.0",
+    "@lectio/corpus": "0.0.0",
+    "@lectio/textguard": "0.0.0",
+    "@lectio/content": "0.0.0",
+    "@lectio/providers": "0.0.0",
+    "@lectio/provider-gh": "0.0.0",
+    "@lectio/provider-fetch": "0.0.0",
+    "@lectio/provider-anthropic": "0.0.0",
+    "@lectio/provider-openai": "0.0.0"
+  }
+}

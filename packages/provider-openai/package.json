@@ -1,0 +1,20 @@
+{
+  "name": "@lectio/provider-openai",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Second-family LlmClient for the refuter verifier (OpenAI).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/providers": "0.0.0",
+    "openai": "^7.28.0"
+  }
+}
