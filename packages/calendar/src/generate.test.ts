@@ -103,9 +103,9 @@ describe('generateDays: the whole year', () => {
     expect(day('2026-04-04')).toMatchObject({ celebrations: [{ id: 'holy-saturday', colour: 'violet' }] });
   });
 
-  it('puts the Mass of the Lord’s Supper first on Holy Thursday 2026-04-02', () => {
+  it('keeps only the Mass of the Lord’s Supper on Holy Thursday 2026-04-02', () => {
     const thursday = day('2026-04-02');
-    expect(thursday.celebrations.map((c) => c.id)).toEqual(['thursday-of-the-lords-supper', 'holy-thursday']);
+    expect(thursday.celebrations.map((c) => c.id)).toEqual(['thursday-of-the-lords-supper']);
     expect(thursday.celebrations[0]?.colour).toBe('white');
     expect(thursday).toMatchObject({ season: 'paschal-triduum', seasonWeek: 0 });
   });
