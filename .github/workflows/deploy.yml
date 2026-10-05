@@ -83,6 +83,8 @@ jobs:
       - name: Render narration
         id: audio
         continue-on-error: true
+        # A slow render degrades to "deploy without new audio" instead of timing the whole job out.
+        timeout-minutes: 15
         env:
           AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
           AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
@@ -94,8 +96,9 @@ jobs:
           SITE_MANIFEST: ${{ runner.temp }}/audio-manifest.json
         run: npm run audio:render -- --auto --site-manifest "$SITE_MANIFEST" --summary "$GITHUB_STEP_SUMMARY"
 
-      # The build reads the manifest only when the render step wrote one (live audio). A failed render still deploys,
-      # with whatever audio it managed to record, or none.
+      # The build reads the manifest only when the render step wrote one (live audio). After a budget stop or a failure
+      # the render step still writes it from the audio already recorded, minus files that went missing, so published
+      # narration stays on the site. It is written before rendering too, so a timed-out render leaves it in place.
       - name: Narration manifest
         id: audio-manifest
         env:
