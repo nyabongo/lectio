@@ -92,6 +92,12 @@ jobs:
             exit 1
           fi
           flutter pub get --enforce-lockfile
+          # pub upgrades analysis_options.yaml in place when it lacks the
+          # platform excludes; the committed file must already be that form.
+          if ! git diff --exit-code -- analysis_options.yaml; then
+            echo "::error::flutter pub get rewrote apps/mobile/analysis_options.yaml; commit the version above."
+            exit 1
+          fi
       - name: dart format --set-exit-if-changed
         if: steps.changes.outputs.relevant == 'true'
         run: |
@@ -158,6 +164,12 @@ jobs:
             flutter create --no-pub --org io.github.nyabongo --project-name lectio --platforms ios .
           fi
           grep -q 'PRODUCT_BUNDLE_IDENTIFIER = io.github.nyabongo.lectio;' ios/Runner.xcodeproj/project.pbxproj
+          # L-114: declare English and Kiswahili (commit this with ios/).
+          if ! /usr/libexec/PlistBuddy -c 'Print :CFBundleLocalizations' ios/Runner/Info.plist >/dev/null 2>&1; then
+            /usr/libexec/PlistBuddy -c 'Add :CFBundleLocalizations array' \
+              -c 'Add :CFBundleLocalizations:0 string en' \
+              -c 'Add :CFBundleLocalizations:1 string sw' ios/Runner/Info.plist
+          fi
       - run: flutter build ios --no-codesign --debug
       - name: Upload Runner.app
         uses: actions/upload-artifact@v7
