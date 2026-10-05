@@ -1,0 +1,171 @@
+---
+/**
+ * The Insight permalink page, `/[date]/[slot]/notes/[noteId]/` (e.g. `/2026-09-20/gospel/notes/v15-evil-eye/`): one
+ * approved translation note on its own page, with the original words, the note, and the same verification footer
+ * as the reading page (`Verification`, with its sources expanded), and a link back to the reading. The canonical URL is this page and the note's summary is the page
+ * description. The reading text is never shown.
+ *
+ * Pages exist only for approved notes: `insightStaticPaths()` and `insightPage()` (src/lib/insight.ts) build on
+ * `readingPage()`, which returns no notes for a pending passage.
+ */
+import MarkedText from '../../../../../components/notes/MarkedText.astro';
+import Verification from '../../../../../components/notes/Verification.astro';
+import Seo from '../../../../../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, localePath, t } from '../../../../../i18n/index.ts';
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import { readingPath } from '../../../../../lib/reading.ts';
+import { siteContext, withBase } from '../../../../../lib/site.ts';
+import { insightPage, insightStaticPaths } from '../../../../../lib/insight.ts';
+
+export function getStaticPaths() {
+  return insightStaticPaths(siteContext().repo);
+}
+
+const { date, slot, noteId } = Astro.params;
+const view = insightPage(siteContext().repo, date, slot, noteId);
+if (view === null) throw new Error(`no approved note ${noteId} for ${date}/${slot}`);
+
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const { reading, note, path } = view;
+const { method, lastReviewedAt } = reading.notes;
+const title = t(lang, 'insight.pageTitle', { anchor: note.anchor, ref: reading.ref, verse: note.verse });
+const description = note.summary;
+// Back to the note's card on the reading page: the fragment opens the Original tab there.
+const readingHref = `${withBase(base, localePath(lang, readingPath(reading.date, reading.slot)))}#${note.anchorId}`;
+const headingId = `${note.anchorId}-heading`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  date={reading.date}
+  celebration={reading.celebration ?? undefined}
+  colour={reading.colour ?? undefined}
+  lang={lang}
+>
+  <Seo slot="head" title={title} description={description} path={path} type="article" lang={lang} />
+  <article class="insight" id={note.anchorId} data-note={note.id} aria-labelledby={headingId}>
+    <a class="insight__back" href={readingHref}>
+      <span aria-hidden="true">←</span>
+      {t(lang, 'insight.backToReading', { ref: reading.ref })}
+    </a>
+    <header class="insight__header">
+      <p class="eyebrow">{t(lang, 'insight.eyebrow', { ref: reading.ref })}</p>
+      <h1 class="insight__title" id={headingId}>
+        <span class="insight__verse">{t(lang, 'reading.note.verse', { verse: note.verse })}</span>
+        <span aria-hidden="true"> · </span>
+        <span class="insight__anchor">“{note.anchor}”</span>
+      </h1>
+    </header>
+
+    <dl class="insight__original">
+      <dt class="visually-hidden">{t(lang, 'reading.note.originalLabel')}</dt>
+      <dd class="insight__text" lang={note.original.lang} dir={note.original.dir}>{note.original.text}</dd>
+      <dt class="visually-hidden">{t(lang, 'reading.note.translitLabel')}</dt>
+      <dd class="insight__translit">{note.original.translit}</dd>
+      <dt class="visually-hidden">{t(lang, 'reading.note.glossLabel')}</dt>
+      <dd class="insight__gloss">“{note.original.gloss}”</dd>
+    </dl>
+
+    <p class="insight__summary">{note.summary}</p>
+    <p class="insight__body"><MarkedText segments={note.body} lang={lang} /></p>
+
+    <Verification
+      sources={note.sources}
+      method={method}
+      lastReviewedAt={lastReviewedAt}
+      reportUrl={note.reportUrl}
+      lang={lang}
+      open
+    />
+
+    <p class="insight__disclaimer">{t(lang, 'reading.disclaimer')}</p>
+  </article>
+</BaseLayout>
+
+<style>
+  .insight {
+    max-width: 46rem;
+  }
+
+  .insight__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .insight__back {
+    margin-bottom: var(--space-2xs);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+  }
+
+  .insight__back:hover {
+    color: var(--colour-link);
+  }
+
+  .insight__header .eyebrow {
+    margin-bottom: var(--space-3xs);
+  }
+
+  .insight__verse {
+    color: var(--colour-accent-ink);
+  }
+
+  .insight__anchor {
+    font-style: italic;
+  }
+
+  .insight__original {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-xs);
+    margin: var(--space-s) 0;
+  }
+
+  .insight__original dd {
+    margin: 0;
+  }
+
+  .insight__text {
+    flex-basis: 100%;
+    font-size: var(--step-3);
+    line-height: var(--leading-snug);
+  }
+
+  .insight__text[dir='rtl'] {
+    text-align: start;
+  }
+
+  /* Aramaic is written in the Hebrew script. */
+  .insight__text:lang(arc) {
+    font-family: var(--font-hebrew);
+  }
+
+  .insight__translit {
+    font-style: italic;
+    color: var(--colour-muted);
+  }
+
+  .insight__gloss {
+    color: var(--colour-muted);
+  }
+
+  .insight__summary {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+    line-height: var(--leading-snug);
+  }
+
+  .insight__disclaimer {
+    margin-top: var(--space-m);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+</style>

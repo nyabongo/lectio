@@ -15,7 +15,7 @@
  *
  * Verse letters are dropped first; they never matter for the comparison.
  */
-import { mapRef } from '@lectio/refs';
+import { chapterLength, mapRef } from '@lectio/refs';
 import type { Ref, Segment, VersificationError } from '@lectio/refs';
 
 import { stripLetters } from './canonical.ts';
@@ -57,7 +57,8 @@ function simplePsalm(c: number): number | undefined {
  * counts some titles and verses its own way (its Ps 145:2 is Hebrew 146:1, and its Ps 15 has no
  * verse 11), whereas the Nova Vulgata numbers verses as the Hebrew does. So a psalm that is one
  * Hebrew psalm only changes number, and only the split psalms (Vulgate 9, 113, 114, 115, 146, 147)
- * are mapped verse by verse, where the two numberings agree.
+ * are mapped verse by verse, where the two numberings agree. A verse past the end of a renumbered
+ * psalm (NV `Ps 22:40`) is refused with a {@link ConversionError}.
  */
 function novaVulgataPsalms(ref: Ref): Ref {
   const segments = ref.segments.flatMap((segment): Segment[] => {
@@ -66,6 +67,17 @@ function novaVulgataPsalms(ref: Ref): Ref {
     const last = simplePsalm(end.c);
     const simple = first !== undefined && last !== undefined && last - first === end.c - start.c;
     if (!simple) return [...mapRef({ book: 'PS', segments: [segment] }, 'vulgate', 'original').segments];
+    for (const [point, hebrew] of [
+      [start, first],
+      [end, last],
+    ] as const) {
+      const verses = chapterLength('PS', hebrew) as number;
+      if (point.v !== undefined && point.v > verses) {
+        throw new ConversionError(
+          `Ps ${String(point.c)}:${String(point.v)} does not exist (Nova Vulgata Ps ${String(point.c)} = Ps ${String(hebrew)}, ${String(verses)} verses)`,
+        );
+      }
+    }
     return [{ start: { ...start, c: first }, end: { ...end, c: last } }];
   });
   return { book: 'PS', segments };
@@ -86,6 +98,7 @@ export function toCanonical(ref: Ref, convention: Convention): Ref {
     return convention === 'vulgate' ? novaVulgataPsalms(plain) : mapRef(plain, 'english', 'original');
   } catch (error) {
     // stripLetters keeps a valid ref valid, so mapRef can only fail on versification.
+    if (error instanceof ConversionError) throw error;
     throw new ConversionError((error as VersificationError).message);
   }
 }

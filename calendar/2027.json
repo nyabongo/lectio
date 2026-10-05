@@ -65,8 +65,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 2:22-28",
+              "key": "1JN.2.22-28",
+              "linkout": "https://www.drbo.org/chapter/69002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4",
+              "key": "PS.98.1_98.2-3_98.3-4",
+              "linkout": "https://www.drbo.org/chapter/21097.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:19-28",
+              "key": "JN.1.19-28",
+              "linkout": "https://www.drbo.org/chapter/50001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-01-03",
@@ -3600,7 +3625,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-03-22",
@@ -3740,18 +3765,12 @@
           "name": "Thursday of the Lord’s Supper",
           "rank": "weekday",
           "colour": "white"
-        },
-        {
-          "id": "holy-thursday",
-          "name": "Thursday of Holy Week",
-          "rank": "weekday",
-          "colour": "violet"
         }
       ],
       "masses": [
         {
           "id": "day",
-          "label": "Thursday of the Lord’s Supper",
+          "label": "Evening Mass of the Lord’s Supper",
           "readings": [
             {
               "slot": "first-reading",
@@ -3844,8 +3863,117 @@
           "colour": "violet"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "easter-vigil",
+          "label": "Easter Vigil in the Holy Night",
+          "readings": [
+            {
+              "slot": "reading-1",
+              "ref": "Genesis 1:1-2:2",
+              "key": "GN.1.1-2.2",
+              "linkout": "https://www.drbo.org/chapter/01001.htm"
+            },
+            {
+              "slot": "psalm-1",
+              "ref": "Psalm 104:1-2,5-6,10,12,13-14,24,35",
+              "key": "PS.104.1-2_104.5-6_104.10_104.12_104.13-14_104.24_104.35",
+              "linkout": "https://www.drbo.org/chapter/21103.htm"
+            },
+            {
+              "slot": "reading-2",
+              "ref": "Genesis 22:1-18",
+              "key": "GN.22.1-18",
+              "linkout": "https://www.drbo.org/chapter/01022.htm"
+            },
+            {
+              "slot": "psalm-2",
+              "ref": "Psalm 16:5,8,9-10,11",
+              "key": "PS.16.5_16.8_16.9-10_16.11",
+              "linkout": "https://www.drbo.org/chapter/21015.htm"
+            },
+            {
+              "slot": "reading-3",
+              "ref": "Exodus 14:15-15:1",
+              "key": "EX.14.15-15.1",
+              "linkout": "https://www.drbo.org/chapter/02014.htm"
+            },
+            {
+              "slot": "psalm-3",
+              "ref": "Exodus 15:1-2,3-4,5-6,17-18",
+              "key": "EX.15.1-2_15.3-4_15.5-6_15.17-18",
+              "linkout": "https://www.drbo.org/chapter/02015.htm"
+            },
+            {
+              "slot": "reading-4",
+              "ref": "Isaiah 54:5-14",
+              "key": "IS.54.5-14",
+              "linkout": "https://www.drbo.org/chapter/27054.htm"
+            },
+            {
+              "slot": "psalm-4",
+              "ref": "Psalm 30:2,4,5-6,11-12,13",
+              "key": "PS.30.2_30.4_30.5-6_30.11-12_30.13",
+              "linkout": "https://www.drbo.org/chapter/21029.htm"
+            },
+            {
+              "slot": "reading-5",
+              "ref": "Isaiah 55:1-11",
+              "key": "IS.55.1-11",
+              "linkout": "https://www.drbo.org/chapter/27055.htm"
+            },
+            {
+              "slot": "psalm-5",
+              "ref": "Isaiah 12:2-3,4,5-6",
+              "key": "IS.12.2-3_12.4_12.5-6",
+              "linkout": "https://www.drbo.org/chapter/27012.htm"
+            },
+            {
+              "slot": "reading-6",
+              "ref": "Bar 3:9-15, 32-4:4",
+              "key": "BAR.3.9-15_3.32-4.4",
+              "linkout": "https://www.drbo.org/chapter/30003.htm"
+            },
+            {
+              "slot": "psalm-6",
+              "ref": "Psalm 19:8,9,10,11",
+              "key": "PS.19.8_19.9_19.10_19.11",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "reading-7",
+              "ref": "Ezekiel 36:16-17,18-28",
+              "key": "EZ.36.16-17_36.18-28",
+              "linkout": "https://www.drbo.org/chapter/31036.htm"
+            },
+            {
+              "slot": "psalm-7",
+              "ref": "Psalm 42:3,5;43:3,4",
+              "key": "PS.42.3_42.5_43.3_43.4",
+              "linkout": "https://www.drbo.org/chapter/21041.htm"
+            },
+            {
+              "slot": "epistle",
+              "ref": "Romans 6:3-11",
+              "key": "ROM.6.3-11",
+              "linkout": "https://www.drbo.org/chapter/52006.htm"
+            },
+            {
+              "slot": "psalm-8",
+              "ref": "Psalm 118:1-2,16-17,22-23",
+              "key": "PS.118.1-2_118.16-17_118.22-23",
+              "linkout": "https://www.drbo.org/chapter/21117.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mark 16:1-7",
+              "key": "MK.16.1-7",
+              "linkout": "https://www.drbo.org/chapter/48016.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-03-28",
@@ -3867,52 +3995,10 @@
           "label": "Easter Vigil in the Holy Night",
           "readings": [
             {
-              "slot": "gospel",
-              "ref": "Mark 16:1-7",
-              "key": "MK.16.1-7",
-              "linkout": "https://www.drbo.org/chapter/48016.htm"
-            },
-            {
               "slot": "reading-1",
               "ref": "Genesis 1:1-2:2",
               "key": "GN.1.1-2.2",
               "linkout": "https://www.drbo.org/chapter/01001.htm"
-            },
-            {
-              "slot": "reading-2",
-              "ref": "Genesis 22:1-18",
-              "key": "GN.22.1-18",
-              "linkout": "https://www.drbo.org/chapter/01022.htm"
-            },
-            {
-              "slot": "reading-3",
-              "ref": "Exodus 14:15-15:1",
-              "key": "EX.14.15-15.1",
-              "linkout": "https://www.drbo.org/chapter/02014.htm"
-            },
-            {
-              "slot": "reading-4",
-              "ref": "Isaiah 54:5-14",
-              "key": "IS.54.5-14",
-              "linkout": "https://www.drbo.org/chapter/27054.htm"
-            },
-            {
-              "slot": "reading-5",
-              "ref": "Isaiah 55:1-11",
-              "key": "IS.55.1-11",
-              "linkout": "https://www.drbo.org/chapter/27055.htm"
-            },
-            {
-              "slot": "reading-6",
-              "ref": "Bar 3:9-15, 32-4:4",
-              "key": "BAR.3.9-15_3.32-4.4",
-              "linkout": "https://www.drbo.org/chapter/30003.htm"
-            },
-            {
-              "slot": "reading-7",
-              "ref": "Ezekiel 36:16-17,18-28",
-              "key": "EZ.36.16-17_36.18-28",
-              "linkout": "https://www.drbo.org/chapter/31036.htm"
             },
             {
               "slot": "psalm-1",
@@ -3921,10 +4007,22 @@
               "linkout": "https://www.drbo.org/chapter/21103.htm"
             },
             {
+              "slot": "reading-2",
+              "ref": "Genesis 22:1-18",
+              "key": "GN.22.1-18",
+              "linkout": "https://www.drbo.org/chapter/01022.htm"
+            },
+            {
               "slot": "psalm-2",
               "ref": "Psalm 16:5,8,9-10,11",
               "key": "PS.16.5_16.8_16.9-10_16.11",
               "linkout": "https://www.drbo.org/chapter/21015.htm"
+            },
+            {
+              "slot": "reading-3",
+              "ref": "Exodus 14:15-15:1",
+              "key": "EX.14.15-15.1",
+              "linkout": "https://www.drbo.org/chapter/02014.htm"
             },
             {
               "slot": "psalm-3",
@@ -3933,10 +4031,22 @@
               "linkout": "https://www.drbo.org/chapter/02015.htm"
             },
             {
+              "slot": "reading-4",
+              "ref": "Isaiah 54:5-14",
+              "key": "IS.54.5-14",
+              "linkout": "https://www.drbo.org/chapter/27054.htm"
+            },
+            {
               "slot": "psalm-4",
               "ref": "Psalm 30:2,4,5-6,11-12,13",
               "key": "PS.30.2_30.4_30.5-6_30.11-12_30.13",
               "linkout": "https://www.drbo.org/chapter/21029.htm"
+            },
+            {
+              "slot": "reading-5",
+              "ref": "Isaiah 55:1-11",
+              "key": "IS.55.1-11",
+              "linkout": "https://www.drbo.org/chapter/27055.htm"
             },
             {
               "slot": "psalm-5",
@@ -3945,10 +4055,22 @@
               "linkout": "https://www.drbo.org/chapter/27012.htm"
             },
             {
+              "slot": "reading-6",
+              "ref": "Bar 3:9-15, 32-4:4",
+              "key": "BAR.3.9-15_3.32-4.4",
+              "linkout": "https://www.drbo.org/chapter/30003.htm"
+            },
+            {
               "slot": "psalm-6",
               "ref": "Psalm 19:8,9,10,11",
               "key": "PS.19.8_19.9_19.10_19.11",
               "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "reading-7",
+              "ref": "Ezekiel 36:16-17,18-28",
+              "key": "EZ.36.16-17_36.18-28",
+              "linkout": "https://www.drbo.org/chapter/31036.htm"
             },
             {
               "slot": "psalm-7",
@@ -3957,16 +4079,22 @@
               "linkout": "https://www.drbo.org/chapter/21041.htm"
             },
             {
+              "slot": "epistle",
+              "ref": "Romans 6:3-11",
+              "key": "ROM.6.3-11",
+              "linkout": "https://www.drbo.org/chapter/52006.htm"
+            },
+            {
               "slot": "psalm-8",
               "ref": "Psalm 118:1-2,16-17,22-23",
               "key": "PS.118.1-2_118.16-17_118.22-23",
               "linkout": "https://www.drbo.org/chapter/21117.htm"
             },
             {
-              "slot": "epistle",
-              "ref": "Romans 6:3-11",
-              "key": "ROM.6.3-11",
-              "linkout": "https://www.drbo.org/chapter/52006.htm"
+              "slot": "gospel",
+              "ref": "Mark 16:1-7",
+              "key": "MK.16.1-7",
+              "linkout": "https://www.drbo.org/chapter/48016.htm"
             }
           ]
         },
@@ -4073,7 +4201,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-03-30",
@@ -4115,7 +4243,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-03-31",
@@ -4157,7 +4285,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-04-01",
@@ -4199,7 +4327,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-04-02",
@@ -4241,7 +4369,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-04-03",
@@ -4283,7 +4411,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-04-04",
@@ -6309,7 +6437,7 @@
             },
             {
               "slot": "psalm",
-              "ref": "Ps 87:1-2, 3, 5, 6-7",
+              "ref": "Psalm 87:1-2, 3, 5, 6-7",
               "key": "PS.87.1-2_87.3_87.5_87.6-7",
               "linkout": "https://www.drbo.org/chapter/21086.htm"
             },
@@ -11846,6 +11974,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "1 Tm 2:1-8",
+              "key": "1TM.2.1-8",
+              "linkout": "https://www.drbo.org/chapter/61002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 28:2, 7, 8-9",
+              "key": "PS.28.2_28.7_28.8-9",
+              "linkout": "https://www.drbo.org/chapter/21027.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 7:1-10",
               "key": "LK.7.1-10",
@@ -11854,7 +11994,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-14",
@@ -11966,6 +12106,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "1 Tm 4:12-16",
+              "key": "1TM.4.12-16",
+              "linkout": "https://www.drbo.org/chapter/61004.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 111:7-8, 9, 10",
+              "key": "PS.111.7-8_111.9_111.10",
+              "linkout": "https://www.drbo.org/chapter/21110.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 7:36-50",
               "key": "LK.7.36-50",
@@ -11974,7 +12126,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-17",
@@ -12008,6 +12160,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "1 Tm 6:2-12",
+              "key": "1TM.6.2-12",
+              "linkout": "https://www.drbo.org/chapter/61006.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 49:6-7, 8-10, 17-18, 19-20",
+              "key": "PS.49.6-7_49.8-10_49.17-18_49.19-20",
+              "linkout": "https://www.drbo.org/chapter/21048.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 8:1-3",
               "key": "LK.8.1-3",
@@ -12040,7 +12204,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-18",
@@ -12062,6 +12226,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "1 Tm 6:13-16",
+              "key": "1TM.6.13-16",
+              "linkout": "https://www.drbo.org/chapter/61006.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 100:1-2, 3, 4, 5",
+              "key": "PS.100.1-2_100.3_100.4_100.5",
+              "linkout": "https://www.drbo.org/chapter/21099.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 8:4-15",
               "key": "LK.8.4-15",
@@ -12070,7 +12246,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-19",
@@ -12086,8 +12262,39 @@
           "colour": "green"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Wis 2:12, 17-20",
+              "key": "WIS.2.12_2.17-20",
+              "linkout": "https://www.drbo.org/chapter/25002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 54:3-4, 5, 6, 8",
+              "key": "PS.54.3-4_54.5_54.6_54.8",
+              "linkout": "https://www.drbo.org/chapter/21053.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Jas 3:16-4:3",
+              "key": "JAS.3.16-4.3",
+              "linkout": "https://www.drbo.org/chapter/66003.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 9:30-37",
+              "key": "MK.9.30-37",
+              "linkout": "https://www.drbo.org/chapter/48009.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-20",
@@ -12109,6 +12316,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "Ezr 1:1-6",
+              "key": "EZR.1.1-6",
+              "linkout": "https://www.drbo.org/chapter/15001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 126:1-2, 2-3, 4-5, 6",
+              "key": "PS.126.1-2_126.2-3_126.4-5_126.6",
+              "linkout": "https://www.drbo.org/chapter/21125.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 8:16-18",
               "key": "LK.8.16-18",
@@ -12117,7 +12336,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-21",
@@ -12187,6 +12406,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "Ezr 9:5-9",
+              "key": "EZR.9.5-9",
+              "linkout": "https://www.drbo.org/chapter/15009.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Tb 13:2, 3-4, 4, 7-8",
+              "key": "TB.13.2_13.3-4_13.4_13.7-8",
+              "linkout": "https://www.drbo.org/chapter/17013.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 9:1-6",
               "key": "LK.9.1-6",
@@ -12195,7 +12426,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-23",
@@ -12217,6 +12448,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "Hg 1:1-8",
+              "key": "HG.1.1-8",
+              "linkout": "https://www.drbo.org/chapter/42001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 149:1-2, 3-4, 5-6, 9",
+              "key": "PS.149.1-2_149.3-4_149.5-6_149.9",
+              "linkout": "https://www.drbo.org/chapter/21149.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 9:7-9",
               "key": "LK.9.7-9",
@@ -12225,7 +12468,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-24",
@@ -12247,6 +12490,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "Hg 2:1-9",
+              "key": "HG.2.1-9",
+              "linkout": "https://www.drbo.org/chapter/42002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 43:1, 2, 3, 4",
+              "key": "PS.43.1_43.2_43.3_43.4",
+              "linkout": "https://www.drbo.org/chapter/21042.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 9:18-22",
               "key": "LK.9.18-22",
@@ -12255,7 +12510,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-25",
@@ -12277,6 +12532,18 @@
           "label": "Mass of the day",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "Zec 2:5-9, 14-15",
+              "key": "ZEC.2.5-9_2.14-15",
+              "linkout": "https://www.drbo.org/chapter/43002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Jer 31:10, 11-12, 13",
+              "key": "JER.31.10_31.11-12_31.13",
+              "linkout": "https://www.drbo.org/chapter/28031.htm"
+            },
+            {
               "slot": "gospel",
               "ref": "Lk 9:43-45",
               "key": "LK.9.43-45",
@@ -12285,7 +12552,7 @@
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-26",
@@ -12301,8 +12568,39 @@
           "colour": "green"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 11:25-29",
+              "key": "NM.11.25-29",
+              "linkout": "https://www.drbo.org/chapter/04011.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:8, 10, 12-13, 14",
+              "key": "PS.19.8_19.10_19.12-13_19.14",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Jas 5:1-6",
+              "key": "JAS.5.1-6",
+              "linkout": "https://www.drbo.org/chapter/66005.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 9:38-43, 45, 47-48",
+              "key": "MK.9.38-43_9.45_9.47-48",
+              "linkout": "https://www.drbo.org/chapter/48009.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-27",
@@ -12715,7 +13013,7 @@
             },
             {
               "slot": "psalm",
-              "ref": "Ps 103:1-2, 3-4, 8-9, 13-14, 17-18",
+              "ref": "Psalm 103:1-2, 3-4, 8-9, 13-14, 17-18a",
               "key": "PS.103.1-2_103.3-4_103.8-9_103.13-14_103.17-18",
               "linkout": "https://www.drbo.org/chapter/21102.htm"
             },

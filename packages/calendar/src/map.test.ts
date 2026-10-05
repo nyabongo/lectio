@@ -170,7 +170,7 @@ describe('names', () => {
 });
 
 describe('mapDay', () => {
-  it('ranks main celebrations by precedence (Holy Thursday: the Lord’s Supper first)', () => {
+  it('leaves out the Holy Thursday weekday that the Mass of the Lord’s Supper replaces', () => {
     const holyThursday = romcalDay({
       id: 'holy_thursday',
       precedence: 'PRIVILEGED_WEEKDAY_9',
@@ -186,11 +186,9 @@ describe('mapDay', () => {
       calendar: { weekOfSeason: 1 },
     });
     const day = mapDay('2026-04-02', [holyThursday, lordsSupper]);
-    expect(day.celebrations.map((c) => [c.id, c.colour])).toEqual([
-      ['thursday-of-the-lords-supper', 'white'],
-      ['holy-thursday', 'violet'],
-    ]);
+    expect(day.celebrations.map((c) => [c.id, c.colour])).toEqual([['thursday-of-the-lords-supper', 'white']]);
     expect(day).toMatchObject({ season: 'paschal-triduum', seasonWeek: 0 });
+    expect(mapDay('2026-04-02', [holyThursday]).celebrations.map((c) => c.id)).toEqual(['holy-thursday']);
   });
 
   it('makes two coinciding obligatory memorials optional, with the weekday as the day', () => {

@@ -19,6 +19,7 @@ import {
   calendarPath,
   calendarProblems,
   configLinkout,
+  epiphanyDate,
   generatedBy,
   packageVersion,
   serialiseCalendar,
@@ -184,6 +185,72 @@ describe('assembleYear', () => {
 
   it('gives a day without data no Masses and lectionaryMissing', () => {
     expect(calendar.days[3]).toMatchObject({ date: '2026-09-23', masses: [], lectionaryMissing: true });
+  });
+});
+
+describe('assembleYear in the Christmas season', () => {
+  const christmasDay = (date: string, id: string, rank: CelebrationDetail['rank']): DetailedDay => ({
+    ...day(date, [celebration(id, rank, { colour: 'white', colours: ['white'] })], 0),
+    season: 'christmas',
+  });
+  const gospels = (key: string, gospel: string) => ({
+    key,
+    masses: [
+      {
+        id: 'day',
+        readings: [
+          reading('first-reading', '1 Jn 3:22-4:6'),
+          reading('psalm', 'Ps 2:7-8, 10-12'),
+          reading('gospel', gospel),
+        ],
+      },
+    ],
+  });
+  const seasonal = new Lectionary([
+    {
+      block: 'test',
+      path: 'test/celebrations.json',
+      data: {
+        kind: 'celebrations',
+        entries: [
+          gospels('monday-after-epiphany', 'Mt 4:12-17, 23-25'),
+          gospels('wednesday-after-epiphany', 'Mk 6:45-52'),
+          {
+            key: 'mary-mother-of-god',
+            masses: [{ id: 'day', readings: [reading('psalm', 'Ps 67:2-3, 5, 6, 8', 'Psalm 66 (67): 2-3, 5, 6, 8')] }],
+          },
+        ],
+      },
+    },
+  ]);
+  const gospelOf7January = (epiphany: string) => {
+    const days = [
+      christmasDay(epiphany, 'epiphany-of-the-lord', 'solemnity'),
+      christmasDay('2026-01-07', 'wednesday-after-epiphany', 'weekday'),
+    ];
+    expect(epiphanyDate(days)).toBe(epiphany);
+    const { calendar } = assembleYear({
+      year: 2026,
+      region: 'x',
+      generatedBy: 'test',
+      days,
+      lectionary: seasonal,
+      linkout: drbo,
+    });
+    return calendar.days[1]?.masses[0]?.readings.at(-1)?.ref;
+  };
+
+  it('follows the Epiphany of the days: on 6 January, 7 January reads Monday’s readings; on a Sunday, its own', () => {
+    expect(gospelOf7January('2026-01-06')).toBe('Mt 4:12-17, 23-25');
+    expect(gospelOf7January('2026-01-04')).toBe('Mk 6:45-52');
+    expect(epiphanyDate([monday])).toBeUndefined();
+  });
+
+  it('shows the canonical ref for a printed citation with a dual psalm number, which does not parse', () => {
+    const warnings: string[] = [];
+    const result = assembleDay(christmasDay('2026-01-01', 'mary-mother-of-god', 'solemnity'), seasonal, drbo, warnings);
+    expect(result.masses[0]?.readings[0]?.ref).toBe('Ps 67:2-3, 5, 6, 8');
+    expect(warnings).toHaveLength(1);
   });
 });
 

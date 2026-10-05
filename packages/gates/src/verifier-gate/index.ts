@@ -298,7 +298,12 @@ function readPassage(context: GateContext, file: string): Passage | string {
 export async function runVerifiers(context: GateContext, options: VerifierGateOptions = {}): Promise<GateResult> {
   const files = passageFiles(context);
   const { verifiers, autoMerge, pricing } = context.config;
-  if (files.length === 0) return skippedResult(ID, 'no passage files changed');
+  if (files.length === 0) {
+    // The diff is between commits, so a passage edited but not committed is not in it.
+    const range = `${context.base}...${context.head}`;
+    const reason = `no passage files changed relative to ${context.base} (git diff ${range}; uncommitted changes are not included)`;
+    return skippedResult(ID, reason);
+  }
   if (verifiers.mode === 'skip') return skippedResult(ID, 'config.verifiers.mode is "skip"');
   const fakeRoles = VERIFIER_ROLES.filter((role) => context.providers.fakes.has(role));
   if (verifiers.mode === 'auto' && fakeRoles.length > 0) {

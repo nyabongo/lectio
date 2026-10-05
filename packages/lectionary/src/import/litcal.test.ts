@@ -19,11 +19,39 @@ const FILES: Record<string, unknown> = {
     },
     OrdSunday26: { second_reading: 'Philippians 2:1-11|Philippians 2:1-5', gospel: '' },
     Christmas: { vigil: { gospel: 'Matthew 1:1-25|Matthew 1:18-25' } },
+    PalmSun: {
+      palm_gospel: 'Matthew 21:1-11',
+      first_reading: 'Isaiah 50:4-7',
+      gospel_acclamation: 'Philippians 2:8-9',
+      gospel: 'Matthew 26:14-27:66',
+    },
+    EasterVigil: {
+      first_reading: 'Genesis 1:1-2:2|Genesis 1:1,26-31a',
+      responsorial_psalm: 'Psalm 104:1-2,5-6,10,12,13-14,24,35',
+      second_reading: 'Genesis 22:1-18',
+      responsorial_psalm_2: 'Psalm 16:5,8,9-10,11',
+      third_reading: 'Exodus 14:15-15:1',
+      responsorial_psalm_3: 'Exodus 15:1-2,3-4,5-6,17-18',
+      epistle: 'Romans 6:3-11',
+      responsorial_psalm_epistle: 'Psalm 118:1-2,16-17,22-23',
+      gospel_acclamation: '',
+      gospel: 'Matthew 28:1-10',
+    },
+    OddVigil: { epistle: 'Romans 6:3-11', tenth_reading: 'Genesis 1:1', responsorial_psalm_x: 'Psalm 1:1' },
+    MaryMotherOfGod: { responsorial_psalm: 'Psalm 66 (67)' },
     Empty: { first_reading: '', gospel_acclamation: '' },
     Odd: { first_reading: 'Nowhere 1:1', homily: 'x' },
     Scalar: 'x',
   },
   [`${BASE}decrees/lectionary/en.json`]: { StMaryMagdalene: { gospel: 'John 20:1-2, 11-18' } },
+  [`${BASE}lectionary/feriale_per_annum_I/en.json`]: {
+    OrdWeekday24Monday: { first_reading: '1 Timothy 2:1-8', gospel: 'Luke 7:1-10' },
+    OrdWeekday24Tuesday: { first_reading: '1 Timothy 3:1-13', gospel: 'Luke 7:11-17' },
+  },
+  [`${BASE}lectionary/feriale_per_annum_II/en.json`]: {
+    OrdWeekday24Monday: { first_reading: '1 Corinthians 11:17-26, 33', gospel: 'Luke 7:1-10' },
+    OrdWeekday24Tuesday: { first_reading: '1 Corinthians 12:12-14, 27-31a', gospel: 'Luke 7:11-16' },
+  },
 };
 
 function fakeFetcher(calls: string[] = []): TextFetcher {
@@ -116,6 +144,106 @@ describe('importLitcal', () => {
     ]);
   });
 
+  it('imports the slots listed in `shared` without the cycle, and reports a shared slot given differently', async () => {
+    const weekday = (day: string, cycle: 'I' | 'II', shared?: ['gospel']) => ({
+      key: `ot-weekday-24-${day.slice(0, 3).toLowerCase()}`,
+      cycle,
+      locator: `feriale_per_annum_${cycle}/en.json#OrdWeekday24${day}`,
+      ...(shared === undefined ? {} : { shared }),
+    });
+    const both = await importLitcal(
+      { ...manifest([weekday('Monday', 'I'), weekday('Monday', 'II')]), shared: ['gospel'] },
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect(both.problems).toEqual([]);
+    expect(both.readings.map((r) => `${r.reading.slot} ${String(r.reading.cycle)} ${r.reading.ref}`)).toEqual([
+      'first-reading I 1 Tm 2:1-8',
+      'gospel undefined Lk 7:1-10',
+      'first-reading II 1 Cor 11:17-26, 33',
+      'gospel undefined Lk 7:1-10',
+    ]);
+    // `shared` on an import overrides the manifest's.
+    const conflict = await importLitcal(
+      manifest([weekday('Tuesday', 'I', ['gospel']), weekday('Tuesday', 'II', ['gospel'])]),
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect(conflict.problems).toEqual([
+      'ot-weekday-24-tue ← feriale_per_annum_II/en.json#OrdWeekday24Tuesday: shared gospel "Lk 7:11-16" differs from "Lk 7:11-17" imported for ot-weekday-24-tue day gospel',
+    ]);
+  });
+
+  it('reads the palm gospel into the procession Mass, the Easter Vigil into numbered slots, and dual psalm numbers', async () => {
+    const { readings, problems } = await importLitcal(
+      manifest([
+        { key: 'palm-sunday', cycle: 'A', locator: 'dominicale_et_festivum_A/en.json#PalmSun' },
+        {
+          key: 'easter-sunday',
+          mass: 'easter-vigil',
+          locator: 'dominicale_et_festivum_A/en.json#EasterVigil',
+        },
+        { key: 'mary-mother-of-god', locator: 'dominicale_et_festivum_A/en.json#MaryMotherOfGod' },
+      ]),
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect(problems).toEqual([]);
+    expect(readings.map((r) => `${r.key} ${r.mass} ${r.reading.slot} ${r.reading.ref}`)).toEqual([
+      'palm-sunday procession gospel Mt 21:1-11',
+      'palm-sunday day first-reading Is 50:4-7',
+      'palm-sunday day gospel Mt 26:14-27:66',
+      'easter-sunday easter-vigil reading-1 Gn 1:1-2:2',
+      'easter-sunday easter-vigil psalm-1 Ps 104:1-2, 5-6, 10, 12, 13-14, 24, 35',
+      'easter-sunday easter-vigil reading-2 Gn 22:1-18',
+      'easter-sunday easter-vigil psalm-2 Ps 16:5, 8, 9-10, 11',
+      'easter-sunday easter-vigil reading-3 Ex 14:15-15:1',
+      'easter-sunday easter-vigil psalm-3 Ex 15:1-2, 3-4, 5-6, 17-18',
+      'easter-sunday easter-vigil epistle Rom 6:3-11',
+      'easter-sunday easter-vigil psalm-4 Ps 118:1-2, 16-17, 22-23',
+      'easter-sunday easter-vigil gospel Mt 28:1-10',
+      'mary-mother-of-god day psalm Ps 67',
+    ]);
+    expect(readings[3]?.reading.alternatives).toEqual([{ ref: 'Gn 1:1, 26-31', printed: 'Genesis 1:1,26-31a' }]);
+    expect(readings.at(-1)?.reading.printed).toBe('Psalm 66 (67)');
+    const merged = mergeImported({ kind: 'celebrations', entries: [] }, readings);
+    expect(merged.data.entries[0]?.masses[0]?.readings.map((r) => r.slot)).toEqual([
+      'reading-1',
+      'psalm-1',
+      'reading-2',
+      'psalm-2',
+      'reading-3',
+      'psalm-3',
+      'epistle',
+      'psalm-4',
+      'gospel',
+    ]);
+  });
+
+  it('reports Vigil slots it cannot number', async () => {
+    const { problems } = await importLitcal(
+      manifest([{ key: 'x', locator: 'dominicale_et_festivum_A/en.json#OddVigil' }]),
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect(problems).toEqual([
+      'x ← dominicale_et_festivum_A/en.json#OddVigil: unknown LitCal slot "tenth_reading"',
+      'x ← dominicale_et_festivum_A/en.json#OddVigil: unknown LitCal slot "responsorial_psalm_x"',
+    ]);
+  });
+
+  it('reports a Mass whose leaf LitCal removed, while its parent leaf is still there', async () => {
+    const { readings, removedMasses, problems } = await importLitcal(
+      manifest([{ key: 'christmas', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.night' }]),
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect({ readings, problems }).toEqual({ readings: [], problems: [] });
+    expect(removedMasses).toEqual([
+      { key: 'christmas', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.night' },
+    ]);
+  });
+
   it('treats a non-object file as having no leaves', async () => {
     const fetcher: TextFetcher = { fetchText: () => Promise.resolve('[]') };
     const { problems } = await importLitcal(manifest([{ key: 'a', locator: 'x/en.json#A' }]), REGISTRY, fetcher);
@@ -128,6 +256,7 @@ describe('importLitcal', () => {
     });
     expect(await importLitcal(manifest([]), registry, fakeFetcher())).toEqual({
       readings: [],
+      removedMasses: [],
       problems: ['sources.json: litcal needs "pinned" and "retrieval"'],
     });
     expect((await importLitcal(manifest([]), { sources: {} }, fakeFetcher())).problems).toHaveLength(1);
@@ -150,8 +279,22 @@ describe('parseManifest', () => {
     ).toEqual([
       'm.json: target must be <block>/<file>.json',
       'm.json: kind must be one of proper-of-time, celebrations, commons',
-      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"? }',
-      'm.json imports[1]: expected { "key", "locator", "mass"?, "cycle"? }',
+      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }',
+      'm.json imports[1]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }',
+    ]);
+    expect(
+      parseManifest(
+        {
+          target: 'a/b.json',
+          kind: 'commons',
+          shared: ['homily'],
+          imports: [{ key: 'k', locator: 'l', shared: 'gospel' }],
+        },
+        'm.json',
+      ).problems,
+    ).toEqual([
+      'm.json: shared must be an array of reading slots',
+      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }',
     ]);
   });
 });
@@ -254,10 +397,44 @@ describe('mergeImported', () => {
       ],
     );
     expect(result.replaced).toBe(1);
-    expect(result.removed).toEqual(['ot-sunday-25 day psalm (A)', 'ot-sunday-25 day second-reading (A)']);
+    // The vigil gospel came from the same leaf, so it goes too, and the vigil Mass with it.
+    expect(result.removed).toEqual([
+      'ot-sunday-25 day psalm (A)',
+      'ot-sunday-25 day second-reading (A)',
+      'ot-sunday-25 vigil gospel (A)',
+    ]);
     expect(result.data.entries[0]?.masses.map((m) => m.readings.map((r) => `${r.slot} ${String(r.cycle)}`))).toEqual([
       ['first-reading A', 'psalm B', 'second-reading B', 'gospel A'],
-      ['gospel A'],
+    ]);
+  });
+
+  it('drops the readings of a Mass LitCal removed, and an entry left with nothing', () => {
+    const NIGHT = `litcal@${SHA} dominicale_et_festivum_A/en.json#Christmas.night`;
+    const DAWN = `litcal@${SHA} dominicale_et_festivum_A/en.json#Christmas.dawn`;
+    const result = mergeImported(
+      {
+        kind: 'celebrations',
+        entries: [
+          {
+            key: 'christmas',
+            masses: [
+              { id: 'night', readings: [reading('gospel', 'Lk 2:1-14', { source: NIGHT })] },
+              { id: 'dawn', readings: [reading('gospel', 'Lk 2:15-20', { source: DAWN })] },
+              { id: 'day', readings: [reading('gospel', 'Jn 1:1-18')] },
+            ],
+          },
+          { key: 'gone', masses: [{ id: 'night', readings: [reading('gospel', 'Lk 2:1-14', { source: NIGHT })] }] },
+        ],
+      },
+      [],
+      [
+        { key: 'christmas', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.night' },
+        { key: 'gone', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.night' },
+      ],
+    );
+    expect(result.removed).toEqual(['christmas night gospel', 'gone night gospel']);
+    expect(result.data.entries.map((e) => [e.key, e.masses.map((m) => m.id)])).toEqual([
+      ['christmas', ['dawn', 'day']],
     ]);
   });
 
