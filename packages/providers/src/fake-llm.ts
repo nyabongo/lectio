@@ -35,7 +35,12 @@ export type FakeLlmScriptEntry = FakeLlmScript | readonly FakeLlmScript[];
 export interface FakeLlmOptions {
   /** Scripts keyed by {@link llmPromptKey}. */
   readonly scripts?: Readonly<Record<string, FakeLlmScriptEntry>>;
-  /** Fallback scripts per role, used when no prompt-keyed script matches. */
+  /**
+   * Fallback scripts per role, used when no prompt-keyed script matches. A role script with a
+   * `patch` (for example `{ refuter: { patch: { verdict: 'supported' } } }`) is how a test pins the
+   * values it needs; do not rely on the generator's defaults (first enum value, upper bound,
+   * `false`) or reorder production enums to suit the fake.
+   */
   readonly roles?: Partial<Readonly<Record<LlmRole, FakeLlmScriptEntry>>>;
   /** Usage is charged here (priced by the response model). */
   readonly costMeter?: CostMeter;

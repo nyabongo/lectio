@@ -122,6 +122,7 @@ describe('generateFromSchema', () => {
 
   it('fills required properties that are not declared', () => {
     expect(generateFromSchema({ type: 'object', required: ['x', 7], properties: { y: true } })).toEqual({
+      y: null,
       x: 'fake-x',
     });
   });
