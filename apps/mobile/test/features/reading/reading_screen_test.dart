@@ -421,10 +421,13 @@ void main() {
     }
 
     test('readingLocation builds the path and the tab', () {
-      expect(readingLocation(seedDate, 'gospel'), '/reading/2026-09-20/gospel');
+      expect(
+        readingLocation(seedDate, 'gospel'),
+        '/reading?date=2026-09-20&slot=gospel',
+      );
       expect(
         readingLocation(seedDate, 'gospel', tab: ReadingTab.original),
-        '/reading/2026-09-20/gospel?tab=original',
+        '/reading?date=2026-09-20&slot=gospel&tab=original',
       );
     });
 
@@ -435,7 +438,7 @@ void main() {
       expect(ReadingTab.parse(null), ReadingTab.context);
     });
 
-    testWidgets('/reading/{date}/{slot}?tab=original', (tester) async {
+    testWidgets('/reading?date&slot&tab=original', (tester) async {
       harness.serveSeedDay();
       await pumpRouter(
         tester,
@@ -444,7 +447,7 @@ void main() {
       expect(find.text('VERSE 15 · “envious”'), findsOneWidget);
     });
 
-    testWidgets('/reading/{date}/{slot} for a reading without notes', (
+    testWidgets('/reading?date&slot for a reading without notes', (
       tester,
     ) async {
       harness.serveSeedDay();
@@ -460,7 +463,7 @@ void main() {
     });
 
     testWidgets('/reading with a malformed date fails to load', (tester) async {
-      await pumpRouter(tester, '/reading/someday/gospel');
+      await pumpRouter(tester, '/reading?date=someday&slot=gospel');
       expect(find.textContaining('could not be loaded'), findsOneWidget);
     });
   });

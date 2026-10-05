@@ -35,16 +35,23 @@ enum ReadingTab {
   }
 }
 
-/// The location of the Reading screen for the reading in [slot] on the ISO
-/// [date], for example `/reading/2026-09-20/gospel?tab=original`.
+/// The location of the Reading tab for the reading in [slot] on the ISO
+/// [date], for example `/reading?date=2026-09-20&slot=gospel&tab=original`.
+///
+/// The same shape as the Today screen's links (L-102).
 String readingLocation(
   String date,
   String slot, {
   ReadingTab tab = ReadingTab.context,
 }) {
-  final path = '${AppRoute.reading.path}/$date/$slot';
-  if (tab == ReadingTab.context) return path;
-  return '$path?tab=${tab.name}';
+  return Uri(
+    path: AppRoute.reading.path,
+    queryParameters: {
+      'date': date,
+      'slot': slot,
+      if (tab != ReadingTab.context) 'tab': tab.name,
+    },
+  ).toString();
 }
 
 /// The Reading tab: the approved notes of one reading in Context and
@@ -381,25 +388,20 @@ class ReadingNotesView extends StatelessWidget {
   }
 }
 
-/// The Reading route inside the tab shell: `/reading` shows today's Gospel,
-/// `/reading/{date}/{slot}` one reading, and `?tab=original` opens the
-/// Original tab.
+/// The Reading route inside the tab shell: `/reading` shows today's Gospel;
+/// `?date=2026-09-20&slot=gospel` picks the day and reading, and
+/// `&tab=original` opens the Original tab (see [readingLocation]).
 GoRoute readingRoute() {
   return GoRoute(
     path: AppRoute.reading.path,
     name: AppRoute.reading.name,
-    builder: (context, state) => ReadingScreen(
-      initialTab: ReadingTab.parse(state.uri.queryParameters['tab']),
-    ),
-    routes: [
-      GoRoute(
-        path: ':date/:slot',
-        builder: (context, state) => ReadingScreen(
-          date: state.pathParameters['date'],
-          slot: state.pathParameters['slot'],
-          initialTab: ReadingTab.parse(state.uri.queryParameters['tab']),
-        ),
-      ),
-    ],
+    builder: (context, state) {
+      final query = state.uri.queryParameters;
+      return ReadingScreen(
+        date: query['date'],
+        slot: query['slot'],
+        initialTab: ReadingTab.parse(query['tab']),
+      );
+    },
   );
 }
