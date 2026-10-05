@@ -333,6 +333,21 @@ describe('malformed corpora', () => {
     expect(await openCorpus(root).editions()).toEqual([]);
     expect(await openCorpus(join(root, 'absent')).editions()).toEqual([]);
   });
+
+  it('skips a folder whose SOURCE.json is an object without a language, but keeps malformed ones', async () => {
+    const root = await tempDir();
+    const source = async (name: string, text: string) => {
+      await mkdir(join(root, name));
+      await writeFile(join(root, name, 'SOURCE.json'), text);
+    };
+    await source('guard', '{"description":"hash index"}');
+    await source('broken', '{');
+    await source('nothing', 'null');
+    await source('number', '1');
+    const corpus = openCorpus(root);
+    expect(await corpus.editions()).toEqual(['broken', 'nothing', 'number']);
+    await expect(corpus.source('broken')).rejects.toThrow(/invalid JSON/);
+  });
 });
 
 describe('fs helpers', () => {
@@ -342,6 +357,14 @@ describe('fs helpers', () => {
     await writeFile(join(root, 'file'), 'x');
     expect(await readTextFile(join(root, 'file', 'below'))).toBeUndefined();
     await expect(readTextFile(root)).rejects.toThrow(/EISDIR/);
+  });
+
+  it('listSubdirectories skips files and dot-folders such as a leftover staging directory', async () => {
+    const root = await tempDir();
+    await mkdir(join(root, 'grc-test'));
+    await mkdir(join(root, '.staging-grc-test-abc123'));
+    await writeFile(join(root, 'README.md'), 'x');
+    expect(await listSubdirectories(root)).toEqual(['grc-test']);
   });
 
   it('listSubdirectories rethrows unexpected errors', async () => {

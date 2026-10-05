@@ -91,12 +91,18 @@ describe('phraseWords', () => {
     expect(phraseWords('lat', '. ,')).toEqual([]);
   });
 
-  it("joins a Strong's number and a following lone letter into one lemmaKey word", () => {
+  it("joins a Strong's number and a following lone letter into one lemmaKey word in Hebrew and Aramaic", () => {
     expect(phraseWords('hbo', '7225 1254 a 430')).toEqual(['7225', '1254a', '430']);
     expect(phraseWords('hbo', 'c/6213 A')).toEqual(['c6213a']);
     expect(phraseWords('hbo', '1254 a b')).toEqual(['1254a', 'b']);
     expect(phraseWords('hbo', 'a 1254')).toEqual(['a', '1254']);
+    expect(phraseWords('arc', '3046 a')).toEqual(['3046a']);
     expect(phraseWords('lat', 'et a deo')).toEqual(['et', 'a', 'deo']);
+  });
+
+  it('keeps a number and a following letter apart in other languages', () => {
+    expect(phraseWords('lat', '1 a')).toEqual(['1', 'a']);
+    expect(phraseWords('grc', '2 b')).toEqual(['2', 'b']);
   });
 });
 
