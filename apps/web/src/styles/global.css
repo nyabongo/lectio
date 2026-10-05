@@ -1,0 +1,153 @@
+/*
+ * Base element styles. Everything reads the tokens in tokens.css and the generated colour tokens (theme.ts).
+ */
+@import './fonts.css';
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--colour-bg);
+  color: var(--colour-ink);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-regular);
+  background: var(--colour-bg);
+  color: var(--colour-ink);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  line-height: var(--leading-tight);
+  margin: 0 0 var(--space-xs);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-4);
+}
+
+h2 {
+  font-size: var(--step-3);
+}
+
+h3 {
+  font-size: var(--step-2);
+}
+
+h4 {
+  font-size: var(--step-1);
+}
+
+p {
+  margin: 0 0 var(--space-s);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--colour-link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--colour-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+hr {
+  border: 0;
+  border-top: var(--rule-width) solid var(--colour-rule);
+  margin: var(--space-m) 0;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Original-language phrases: mark them up with lang so the right face and direction apply. */
+:lang(grc),
+:lang(el) {
+  font-family: var(--font-greek);
+}
+
+:lang(he),
+:lang(hbo) {
+  font-family: var(--font-hebrew);
+  font-size: 1.08em;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-s);
+  top: var(--space-s);
+  z-index: 10;
+  padding: var(--space-2xs) var(--space-s);
+  background: var(--colour-accent);
+  color: var(--colour-on-accent);
+  border-radius: var(--radius-m);
+  transform: translateY(-200%);
+  transition: transform var(--duration-quick) var(--ease-out);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Accent helpers for later pages. */
+.accent-ink {
+  color: var(--colour-accent-ink);
+}
+
+.accent-wash {
+  background: var(--colour-accent-wash);
+}
+
+.eyebrow {
+  font-size: var(--step--1);
+  font-weight: var(--weight-strong);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--colour-accent-ink);
+}
