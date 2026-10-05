@@ -1,0 +1,79 @@
+{
+  "id": "msg_01WebTools",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-5-5",
+  "content": [
+    {
+      "type": "server_tool_use",
+      "id": "srvtoolu_01Search",
+      "name": "web_search",
+      "input": { "query": "boiling point of water at sea level" },
+      "caller": { "type": "direct" }
+    },
+    {
+      "type": "web_search_tool_result",
+      "tool_use_id": "srvtoolu_01Search",
+      "caller": { "type": "direct" },
+      "content": [
+        {
+          "type": "web_search_result",
+          "url": "https://en.wikipedia.org/wiki/Boiling_point",
+          "title": "Boiling point - Wikipedia",
+          "encrypted_content": "EqgfCioIARgB",
+          "page_age": null
+        },
+        {
+          "type": "web_search_result",
+          "url": "https://www.usgs.gov/special-topics/water-science-school/science/boiling-point-water",
+          "title": "Boiling Point of Water | USGS",
+          "encrypted_content": "EqgfCioIARgC",
+          "page_age": "2019-06-05"
+        }
+      ]
+    },
+    {
+      "type": "server_tool_use",
+      "id": "srvtoolu_01Fetch",
+      "name": "web_fetch",
+      "input": { "url": "https://en.wikipedia.org/wiki/Boiling_point" },
+      "caller": { "type": "direct" }
+    },
+    {
+      "type": "web_fetch_tool_result",
+      "tool_use_id": "srvtoolu_01Fetch",
+      "caller": { "type": "direct" },
+      "content": {
+        "type": "web_fetch_result",
+        "url": "https://en.wikipedia.org/wiki/Boiling_point",
+        "retrieved_at": "2026-10-05T08:00:00Z",
+        "content": {
+          "type": "document",
+          "title": "Boiling point - Wikipedia",
+          "citations": null,
+          "source": {
+            "type": "text",
+            "media_type": "text/plain",
+            "data": "The boiling point of water at one standard atmosphere is 100 degrees Celsius."
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "text": "{\"verdict\":\"supported\",\"support\":0.95,\"sensitive\":false,\"reasons\":[\"Reference sources give 100 °C at one standard atmosphere.\"]}",
+      "citations": null
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 5821,
+    "output_tokens": 187,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 1024,
+    "server_tool_use": { "web_search_requests": 1, "web_fetch_requests": 1 },
+    "service_tier": "standard"
+  }
+}
