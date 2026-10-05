@@ -13,8 +13,8 @@
  *   and the cached pages still reference (`referencedAssets`, followed through CSS and JS imports).
  * - `lectio-search-<version>`: the Pagefind bundle, cached at run time (stale-while-revalidate). Pagefind writes its
  *   files after the service worker's build hook, so they cannot be precached.
- * - `lectio-data-upcoming`: the next seven days (day page, reading pages and day JSON), refreshed on activate and
- *   whenever a page opens.
+ * - `lectio-data-upcoming`: the next seven days (day page, Listen page when Listen is on, Reading pages and day
+ *   JSON) in the reader's saved language, refreshed whenever a page opens.
  * - `lectio-data-visited`: pages and API documents the reader opened, stale-while-revalidate with an LRU cap.
  *
  * Entries the worker stores in the data caches carry the build version in `VERSION_HEADER`. A page from another build
@@ -230,14 +230,41 @@ export function indexUrl(scope: string): string {
   return scopeUrl(scope, `${API_PREFIX}index.json`);
 }
 
-/** URL of a day's API document. */
-export function dayDataUrl(scope: string, date: string): string {
-  return scopeUrl(scope, `${API_PREFIX}days/${date}.json`);
+/** URL of a day's API document; with a non-default `locale`, that locale's (`api/v1/<locale>/days/…`, L-110). */
+export function dayDataUrl(scope: string, date: string, locale?: string): string {
+  return scopeUrl(scope, `${API_PREFIX}${locale === undefined ? '' : `${locale}/`}days/${date}.json`);
 }
 
-/** The pages kept offline for one upcoming day: the day page and one Reading page per slot. */
-export function dayPageUrls(scope: string, date: string, slots: readonly string[]): string[] {
-  return [scopeUrl(scope, `${date}/`), ...slots.map((slot) => scopeUrl(scope, `${date}/${slot}/`))];
+/** Which variant of a day's pages to keep offline. */
+export interface DayPageOptions {
+  /** The Listen page (`<date>/listen/`) is built (`config.site.features.listen`). */
+  readonly listen?: boolean;
+  /** A non-default site locale whose pages live under `/<locale>/`; omitted for the default locale at the root. */
+  readonly locale?: string;
+}
+
+/**
+ * The pages kept offline for one upcoming day: the day page, the Listen page when Listen is on and one Reading page
+ * per slot, under `/<locale>/` for a non-default locale.
+ */
+export function dayPageUrls(
+  scope: string,
+  date: string,
+  slots: readonly string[],
+  options: DayPageOptions = {},
+): string[] {
+  const prefix = options.locale === undefined ? '' : `${options.locale}/`;
+  const pages = ['', ...(options.listen === true ? ['listen/'] : []), ...slots.map((slot) => `${slot}/`)];
+  return pages.map((page) => scopeUrl(scope, `${prefix}${date}/${page}`));
+}
+
+/**
+ * The path prefix locale for a reader's saved language: the language itself when it is one of the build's
+ * non-default `locales`, else `undefined` (the default locale lives at the root, and an unknown language falls back
+ * to it).
+ */
+export function pageLocale(language: string | undefined, locales: readonly string[] = []): string | undefined {
+  return language !== undefined && locales.includes(language) ? language : undefined;
 }
 
 /** The keys to delete so that at most `limit` remain; `keys` are oldest first (Cache Storage insertion order). */
@@ -245,19 +272,34 @@ export function lruEvictions(keys: readonly string[], limit: number = VISITED_CA
   return keys.length > limit ? keys.slice(0, keys.length - limit) : [];
 }
 
-/** Whether a page open should refresh the upcoming days: the date changed or the last run is old enough. */
+/** One prefetch request: the device date and the page locale (`pageLocale`), if not the default. */
+export interface PrefetchRequest {
+  readonly today: string;
+  readonly locale?: string;
+}
+
+/**
+ * Whether a page open should refresh the upcoming days: the date or the reader's language changed, or the last run
+ * is old enough.
+ */
 export function shouldPrefetch(
-  last: { readonly today: string; readonly at: number } | null,
-  today: string,
+  last: (PrefetchRequest & { readonly at: number }) | null,
+  next: PrefetchRequest,
   now: number,
   interval: number = PREFETCH_INTERVAL_MS,
 ): boolean {
-  return last === null || last.today !== today || now - last.at >= interval;
+  return last === null || last.today !== next.today || last.locale !== next.locale || now - last.at >= interval;
 }
 
-const ENTRY_DATE = /^(?:(\d{4}-\d{2}-\d{2})\/|api\/v1\/days\/(\d{4}-\d{2}-\d{2})\.json$)/;
+const LOCALE_SEGMENT = '(?:[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\\/)?';
+const ENTRY_DATE = new RegExp(
+  `^(?:${LOCALE_SEGMENT}(\\d{4}-\\d{2}-\\d{2})\\/|api\\/v1\\/${LOCALE_SEGMENT}days\\/(\\d{4}-\\d{2}-\\d{2})\\.json$)`,
+);
 
-/** The date an upcoming-cache entry belongs to (a day page, a Reading page or a day document), or `null`. */
+/**
+ * The date an upcoming-cache entry belongs to (a day, Listen or Reading page or a day document, in any locale), or
+ * `null`.
+ */
 export function entryDate(url: string, scope: string): string | null {
   const path = scopedPath(url, scope);
   const match = path === null ? null : ENTRY_DATE.exec(path);
@@ -296,17 +338,26 @@ export function isTrustedSender(origin: string, sourceUrl: string | undefined, s
   return sourceUrl !== undefined && URL.canParse(sourceUrl) && scopedPath(sourceUrl, scope) !== null;
 }
 
-/** Messages a page sends the worker. */
+/**
+ * Messages a page sends the worker. `prefetch` carries the device date and the reader's saved language
+ * (`language` in `lectio.settings`), which the worker cannot read itself.
+ */
 export type ClientMessage =
-  | { readonly type: 'prefetch'; readonly today: string }
+  | { readonly type: 'prefetch'; readonly today: string; readonly language?: string }
   | { readonly type: 'skip-waiting' }
   | { readonly type: 'clear-offline-data' };
 
-/** The message, if `data` is one the worker understands. */
+/** A site locale, as `@lectio/config` allows it (`sw`, `pt-BR`). */
+const LANGUAGE_CODE = /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
+
+/** The message, if `data` is one the worker understands. A `prefetch` with an unusable language drops the language. */
 export function parseClientMessage(data: unknown): ClientMessage | null {
   if (typeof data !== 'object' || data === null) return null;
-  const { type, today } = data as { type?: unknown; today?: unknown };
-  if (type === 'prefetch') return isIsoDate(today) ? { type, today } : null;
+  const { type, today, language } = data as { type?: unknown; today?: unknown; language?: unknown };
+  if (type === 'prefetch') {
+    if (!isIsoDate(today)) return null;
+    return typeof language === 'string' && LANGUAGE_CODE.test(language) ? { type, today, language } : { type, today };
+  }
   if (type === 'skip-waiting' || type === 'clear-offline-data') return { type };
   return null;
 }
@@ -314,17 +365,29 @@ export function parseClientMessage(data: unknown): ClientMessage | null {
 /** Shell pages precached with the assets, relative to the base: the home page, the offline page and Settings. */
 export const SHELL_PAGES: readonly string[] = ['', OFFLINE_PAGE, 'settings/'];
 
+/**
+ * The offline page to serve for a page at `path` (relative to the scope, `null` outside it): the `/<locale>/` copy
+ * when the path is under one of the non-default `locales`, else the default one.
+ */
+export function offlinePageFor(path: string | null, locales: readonly string[] = []): string {
+  const first = (path ?? '').split('/', 1)[0] as string;
+  return locales.includes(first) ? `${first}/${OFFLINE_PAGE}` : OFFLINE_PAGE;
+}
+
 /** Built files precached as assets: hashed bundles, fonts, icons and the manifest. */
 const PRECACHE_FILE = /^(?:_astro\/.+\.(?:css|js|mjs)|fonts\/.+\.woff2|icons\/.+\.(?:png|svg)|manifest\.webmanifest)$/;
 
 /**
  * The precache list for a build: `files` are paths relative to the output directory (`/`-separated). Assets are
- * listed as they are; a shell page `x/` is listed when `x/index.html` was built. Sorted, without repeats.
+ * listed as they are; a shell page `x/` is listed when `x/index.html` was built, and so is its mirror `<locale>/x/`
+ * for each of the non-default `locales`, so a reader who chose another language has its shell (and its offline page)
+ * offline too. Sorted, without repeats.
  */
-export function precachePaths(files: readonly string[]): string[] {
+export function precachePaths(files: readonly string[], locales: readonly string[] = []): string[] {
   const built = new Set(files);
   const assets = files.filter((file) => PRECACHE_FILE.test(file));
-  const pages = SHELL_PAGES.filter((page) => built.has(`${page}index.html`));
+  const mirrors = locales.flatMap((locale) => SHELL_PAGES.map((page) => `${locale}/${page}`));
+  const pages = [...SHELL_PAGES, ...mirrors].filter((page) => built.has(`${page}index.html`));
   return [...new Set([...pages, ...assets])].sort();
 }
 
@@ -334,4 +397,10 @@ export interface ServiceWorkerConfig {
   readonly version: string;
   /** Precached paths relative to the scope (`''` is the home page). */
   readonly precache: readonly string[];
+  /** The site's non-default locales, whose pages live under `/<locale>/` (L-110); none when omitted. */
+  readonly locales?: readonly string[];
+  /** Whether the Listen page is built (`config.site.features.listen`), so the worker keeps it offline too. */
+  readonly listen?: boolean;
+  /** The `locales` whose API mirror (`api/v1/<locale>/days/`) the build has; none when omitted. */
+  readonly apiLocales?: readonly string[];
 }

@@ -6,14 +6,15 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { chapterCount, chapterLength, isRealVerse } from '@lectio/refs';
+import { chapterCount, chapterLength, greekEstherLxx, isRealVerse, letteredChapter } from '@lectio/refs';
+import type { GreekEstherLetter } from '@lectio/refs';
 import type { BookCode } from '@lectio/refs';
 import { describe, expect, it } from 'vitest';
 
 import { parseChapter, parseSource } from '../format.ts';
 import type { ChapterVerses } from '../format.ts';
 import { normaliseGreek } from '../normalise.ts';
-import { LXX_BOOKS, LXX_EDITION } from './lxx.ts';
+import { ESTHER_ADDITIONS, LXX_BOOKS, LXX_EDITION } from './lxx.ts';
 
 const edition = fileURLToPath(new URL(`../../../../corpus/${LXX_EDITION}`, import.meta.url));
 const BOOK_CODES = [...new Set(LXX_BOOKS.map((part) => part.book))];
@@ -119,6 +120,23 @@ describe(`corpus/${LXX_EDITION}`, () => {
       );
     }
   });
+
+  it.each(Object.keys(ESTHER_LETTERS) as GreekEstherLetter[])(
+    "Esther %s (Swete's lettering) agrees with the Rahlfs mapping of greekEstherLxx",
+    async (letter) => {
+      const verses = Object.keys((await chapters('EST')).get(letter) ?? {}).map(Number);
+      const c = letteredChapter(letter);
+      // As many verses as @lectio/refs gives the lettered chapter.
+      expect(verses).toHaveLength(chapterLength('EST', c) as number);
+      // Swete prints each addition inside the Hebrew verse it follows; Rahlfs maps every verse there.
+      const hosts = Object.entries(ESTHER_ADDITIONS).flatMap(([verse, held]) => (held === letter ? [verse] : []));
+      const rahlfs = verses.sort((a, b) => a - b).map((v) => greekEstherLxx({ book: 'EST', c, v }));
+      expect(rahlfs.filter((verse) => !hosts.includes(`${String(verse.c)}:${String(verse.v)}`))).toEqual([]);
+      // In the same order: Rahlfs' sub-verse letters never go back.
+      const order = rahlfs.map((verse) => `${String(verse.v).padStart(3, '0')}${verse.part ?? ''}`);
+      expect(order).toEqual([...order].sort());
+    },
+  );
 
   it.each(Object.entries(ANCHORS))('%s begins "%s"', async (ref, anchor) => {
     const [, book, c, v] = /^(\S+) (\S+):(\S+)$/u.exec(ref) as unknown as [string, string, string, string];

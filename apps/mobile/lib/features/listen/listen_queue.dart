@@ -253,6 +253,7 @@ class ListenQueue extends ChangeNotifier {
       _player.failed.listen((_) => _fileFailed()),
       _speech.completed.listen((_) => _speechEnded()),
       _speech.failed.listen((_) => _speechEnded()),
+      _speech.stalled.listen((_) => _speechStalled()),
     ]);
     try {
       await _beforeFirstPlay?.call(this);
@@ -403,10 +404,20 @@ class ListenQueue extends ChangeNotifier {
   /// Only for the utterance of the current start: an event of an utterance
   /// a newer start replaced is ignored.
   void _speechEnded() {
-    if (_speaking &&
-        _status == ListenStatus.playing &&
-        _speechGeneration == _generation) {
-      unawaited(_advance());
-    }
+    if (_speakingNow) unawaited(_advance());
   }
+
+  /// The device voice stalled before reading the current segment: pause
+  /// there, so play reads it again.
+  void _speechStalled() {
+    if (!_speakingNow) return;
+    _status = ListenStatus.paused;
+    notifyListeners();
+  }
+
+  /// Whether the device voice is reading the current start's utterance.
+  bool get _speakingNow =>
+      _speaking &&
+      _status == ListenStatus.playing &&
+      _speechGeneration == _generation;
 }

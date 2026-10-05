@@ -4,15 +4,20 @@
  * context, a missing file for the first note and none for the second, so one run covers recorded audio, the fallback
  * from a missing file to device speech, and device speech for a segment without a file. `speechSynthesis` is stubbed
  * (`stubSpeech`), so nothing depends on a real voice. The service worker is blocked so `page.route` sees every
- * request. The last test follows the segment audio the fixture build publishes (the L-082 audio manifest) to the player.
+ * request. The last test plays the narration files the fixture build publishes (the L-082 audio manifest) as they are.
  */
-import { AxeBuilder } from '@axe-core/playwright';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import type { Page } from '@playwright/test';
 
+import { blockingAxeFindings } from '../a11y/axe.ts';
 import { BUILD_DATE, EXPECTS_404, expect, test } from '../fixtures.ts';
-import { removeSpeech, routeDay, serveAudio, spoken, stubSpeech, wav } from './fixtures.ts';
+import { removeSpeech, routeDay, serveAudio, spoken, stubSpeech } from './fixtures.ts';
 
 const LISTEN = `${BUILD_DATE}/listen/`;
+const FIXTURE_AUDIO = join(dirname(fileURLToPath(import.meta.url)), '../../test/fixtures/audio');
 const CONTEXT = 'MT.20.1-16/context';
 const EVIL_EYE = 'MT.20.1-16/note/v15-evil-eye';
 const AGATHOS = 'MT.20.1-16/note/v15-agathos';
@@ -155,12 +160,7 @@ test('says so, points to the notes and keeps every control inert when nothing ca
   await expect(page.locator('[data-toggle]')).toHaveAccessibleName('Play');
   await expect(current(page)).toHaveAttribute('data-track', '0');
 
-  const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-    .analyze();
-  expect(results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual(
-    [],
-  );
+  expect(await blockingAxeFindings(page)).toEqual([]);
 });
 
 test('reads Kiswahili notes with a Kiswahili voice on the /sw/ page', async ({ page }) => {
@@ -175,18 +175,17 @@ test('reads Kiswahili notes with a Kiswahili voice on the /sw/ page', async ({ p
 
 test('plays the narration files the fixture build publishes (audio manifest, L-082)', async ({ page }) => {
   await stubSpeech(page);
-  // The fixture manifest's URLs point at https://audio.lectio.test/<key>. Its WAV files are 1 kHz placeholders that
-  // Chromium will not decode, so every URL in the manifest is answered with a decodable WAV of the same kind: this
-  // checks that the API's segment audio reaches the player, not the placeholder files themselves.
+  // The fixture manifest's URLs point at https://audio.lectio.test/audio/<key>; each is answered with the fixture
+  // file itself (test/fixtures/audio/<key>, 16-bit PCM that Chromium decodes), unmodified.
   const requested: string[] = [];
-  const file = wav(0.3);
   await page.route('https://audio.lectio.test/**', async (route) => {
-    requested.push(new URL(route.request().url()).pathname);
+    const path = new URL(route.request().url()).pathname;
+    requested.push(path);
     await route.fulfill({
       status: 200,
       contentType: 'audio/wav',
       headers: { 'access-control-allow-origin': '*' },
-      body: file,
+      body: readFileSync(join(FIXTURE_AUDIO, path.replace(/^\/audio\//, ''))),
     });
   });
   await openListen(page);

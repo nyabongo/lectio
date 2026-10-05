@@ -101,7 +101,14 @@ test.describe('Service worker', () => {
     await page.goto(`${BUILD_DATE}/`);
     await waitForController(page);
     const url = (path: string): string => new URL(path, baseURL).href;
-    for (const path of [`${BUILD_DATE}/`, `${NEXT_DAY}/`, `${NEXT_DAY}/gospel/`, `api/v1/days/${NEXT_DAY}.json`])
+    // The fixture build has Listen on, so each upcoming day's Listen page is kept too.
+    for (const path of [
+      `${BUILD_DATE}/`,
+      `${NEXT_DAY}/`,
+      `${NEXT_DAY}/gospel/`,
+      `${NEXT_DAY}/listen/`,
+      `api/v1/days/${NEXT_DAY}.json`,
+    ])
       await expect.poll(() => isCached(page, url(path)), { message: path }).toBe(true);
     // The 19th is in the calendar but before today: not upcoming, and not opened yet.
     expect(await isCached(page, url('2026-09-19/'))).toBe(false);
@@ -111,6 +118,43 @@ test.describe('Service worker', () => {
     // Opening it puts it in the visited cache.
     await page.goto('2026-09-19/');
     await expect.poll(() => isCached(page, url('2026-09-19/'))).toBe(true);
+  });
+
+  test("keeps the next seven days in the reader's saved language, with its shell", async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    // A reader who chose Kiswahili in Settings (L-110).
+    await page.addInitScript(() => {
+      localStorage.setItem('lectio.settings', JSON.stringify({ version: 1, language: 'sw' }));
+    });
+    await page.goto(`sw/${BUILD_DATE}/`);
+    await waitForController(page);
+    const url = (path: string): string => new URL(path, baseURL).href;
+    for (const path of [
+      'sw/',
+      'sw/settings/',
+      `sw/${NEXT_DAY}/`,
+      `sw/${NEXT_DAY}/gospel/`,
+      `sw/${NEXT_DAY}/listen/`,
+      `api/v1/sw/days/${NEXT_DAY}.json`,
+    ])
+      await expect.poll(() => isCached(page, url(path)), { message: path }).toBe(true);
+    // The English pages of the days ahead are not fetched for a Kiswahili reader.
+    expect(await isCached(page, url(`${NEXT_DAY}/gospel/`))).toBe(false);
+
+    await context.setOffline(true);
+    await page.goto(`sw/${NEXT_DAY}/listen/`);
+    await expect(page.getByRole('heading', { level: 1, name: 'Sikiliza' })).toBeVisible();
+    await page.goto('sw/settings/');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    // A Kiswahili page that was never saved falls back to the Kiswahili offline page.
+    await page.goto('sw/calendar/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Ukurasa huu haujahifadhiwa kwa kusoma bila mtandao',
+    );
+    await context.setOffline(false);
   });
 
   test('loads a pre-cached upcoming day with the network disabled', async ({ page, context, baseURL }) => {

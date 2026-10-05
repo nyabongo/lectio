@@ -286,14 +286,23 @@ describe('static paths', () => {
   it('has one day image per calendar day, reading images only for approved passages, and every insight', () => {
     expect(ogDayPaths(repo).map(({ params }) => params.date)).toEqual([
       '2026-04-04',
+      '2026-09-14',
       '2026-09-19',
       '2026-09-20',
       '2026-09-21',
     ]);
-    expect(ogReadingPaths(repo)).toEqual([{ params: { date: SUNDAY, slot: 'gospel' } }]);
+    expect(ogReadingPaths(repo)).toEqual([
+      { params: { date: '2026-09-14', slot: 'first-reading' } },
+      { params: { date: SUNDAY, slot: 'gospel' } },
+    ]);
     const insights = ogInsightPaths(repo);
     expect(insights).toContainEqual({ params: { date: SUNDAY, slot: 'gospel', noteId: 'v15-evil-eye' } });
-    expect(insights.every(({ params }) => params.slot === 'gospel')).toBe(true);
+    expect(insights).toContainEqual({
+      params: { date: '2026-09-14', slot: 'first-reading', noteId: 'v9-bronze-serpent' },
+    });
+    expect(
+      insights.filter(({ params }) => params.date === SUNDAY).every(({ params }) => params.slot === 'gospel'),
+    ).toBe(true);
   });
 });
 

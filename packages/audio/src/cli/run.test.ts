@@ -262,6 +262,20 @@ describe('translationSegments', () => {
     expect(err.length).toBeGreaterThan(0);
     expect(err.every((line) => line.endsWith(': source-unapproved'))).toBe(true);
   });
+
+  it('names what is wrong with a translation that does not read, and narrates the rest', () => {
+    const repo = openRepo(LOCALE_REPO);
+    const broken = {
+      root: repo.root,
+      passage: (key: string) => {
+        if (key === 'IS.55.6-9') throw new Error('passages/IS.55.6-9.json: broken');
+        return repo.passage(key);
+      },
+    } as unknown as ContentRepo;
+    const { err, io } = capture();
+    expect(translationSegments(broken, ['sw'], io).length).toBeGreaterThan(0);
+    expect(err).toEqual(['  skipped sw IS.55.6-9: invalid (passages/IS.55.6-9.json: broken)']);
+  });
 });
 
 describe('siteManifestOf', () => {

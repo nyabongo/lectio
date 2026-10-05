@@ -134,6 +134,8 @@ void main() {
       await engine.speak('One.', locale: 'en', speed: 1);
     });
 
+    tearDown(() => engine.dispose());
+
     test('reports the completion and errors of a started utterance', () async {
       tts
         ..onStart!()
@@ -168,6 +170,174 @@ void main() {
         ..onComplete!();
       await Future<void>.delayed(Duration.zero);
       expect(completed, 1);
+    });
+
+    test('a late interrupted error after a stop does not end the next '
+        'utterance', () async {
+      tts.onStart!();
+      await engine.stop();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onError!('Error from TextToSpeech (speak) - interrupted');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, isEmpty);
+
+      tts
+        ..onStart!()
+        ..onComplete!();
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, 1);
+    });
+
+    test('a late error of a stopped utterance is not charged to the next '
+        'one', () async {
+      tts.onStart!();
+      await engine.stop();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onError!('synthesis');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, isEmpty);
+
+      tts.onError!('synthesis');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, ['synthesis']);
+    });
+
+    test('an error before the start fails the utterance, once', () async {
+      tts
+        ..onError!('synthesis')
+        ..onError!('again');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, ['synthesis']);
+    });
+
+    test('a stale completion followed by a real pre-start error still '
+        'fails', () async {
+      tts.onStart!();
+      await engine.stop();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts
+        ..onComplete!()
+        ..onError!('synthesis');
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, 0);
+      expect(failures, ['synthesis']);
+    });
+
+    test('a cancel pays for the stopped utterance and ends none', () async {
+      tts
+        ..onStart!()
+        ..onCancel!();
+      await engine.stop();
+      tts.onCancel!();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onError!('synthesis');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, ['synthesis']);
+      expect(completed, 0);
+    });
+
+    test('replacing an utterance drops its late end; a start clears what '
+        'is owed', () async {
+      tts.onStart!();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onComplete!();
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, 0);
+
+      await engine.stop();
+      await engine.speak('Three.', locale: 'en', speed: 1);
+      tts
+        ..onStart!()
+        ..onComplete!();
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, 1);
+    });
+
+    test('an utterance the device refuses expects no error', () async {
+      tts.speakResult = 0;
+      await expectLater(
+        engine.speak('Two.', locale: 'en', speed: 1),
+        throwsException,
+      );
+      tts.onError!('refused');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, isEmpty);
+    });
+  });
+
+  group('start watchdog', () {
+    late FakeTts tts;
+    late FlutterTtsSpeechEngine engine;
+    late List<Object> failures;
+    late int stalls;
+
+    setUp(() {
+      tts = FakeTts();
+      engine = FlutterTtsSpeechEngine(
+        create: () => tts,
+        startTimeout: const Duration(milliseconds: 20),
+      );
+      failures = [];
+      stalls = 0;
+      engine.failed.listen(failures.add);
+      engine.stalled.listen((_) => stalls++);
+    });
+
+    tearDown(() => engine.dispose());
+
+    Future<void> wait() =>
+        Future<void>.delayed(const Duration(milliseconds: 60));
+
+    test('fails an utterance when the device has never spoken', () async {
+      await engine.speak('One.', locale: 'en', speed: 1);
+      await wait();
+      expect(failures, ['The device voice did not start']);
+      expect(stalls, 0);
+      expect(tts.calls.last, 'stop');
+
+      // The stopped utterance's cancel pays for it; the next error is the
+      // next utterance's.
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts
+        ..onCancel!()
+        ..onError!('synthesis');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, ['The device voice did not start', 'synthesis']);
+    });
+
+    test('reports a stall once the device has spoken', () async {
+      await engine.speak('One.', locale: 'en', speed: 1);
+      tts
+        ..onStart!()
+        ..onComplete!();
+      await wait();
+      expect(failures, isEmpty);
+
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      await wait();
+      expect(stalls, 1);
+      expect(failures, isEmpty);
+    });
+
+    test('stands down when the utterance starts, fails or stops', () async {
+      await engine.speak('One.', locale: 'en', speed: 1);
+      tts
+        ..onStart!()
+        ..onComplete!();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onError!('synthesis');
+      await engine.speak('Three.', locale: 'en', speed: 1);
+      await engine.stop();
+      await wait();
+      expect(stalls, 0);
+      expect(failures, ['synthesis']);
+    });
+
+    test('does nothing after dispose', () async {
+      await engine.speak('One.', locale: 'en', speed: 1);
+      await engine.dispose();
+      await wait();
+      expect(failures, isEmpty);
     });
   });
 

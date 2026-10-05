@@ -223,11 +223,16 @@ class FakeToast implements ToastElement {
   }
 }
 
-function browser(container: WorkerContainer | undefined, reload = vi.fn()): PwaBrowser {
+function browser(
+  container: WorkerContainer | undefined,
+  reload = vi.fn(),
+  storage: PwaBrowser['storage'] = null,
+): PwaBrowser {
   return {
     navigator: { serviceWorker: container, onLine: true },
     location: { reload },
     now: () => new Date(2026, 8, 21, 7),
+    storage,
   };
 }
 
@@ -239,12 +244,25 @@ describe('startPwa', () => {
     expect(container.registered).toEqual([]);
   });
 
-  it('registers from the toast data and sends the device date', async () => {
+  it('registers from the toast data and sends the device date and the default language', async () => {
     const container = new FakeContainer();
     await startPwa({ querySelector: () => new FakeToast() }, browser(container));
     expect(container.registered).toEqual([['/lectio/sw.js', { scope: '/lectio/' }]]);
     await flush();
-    expect(container.registration?.active?.messages).toEqual([{ type: 'prefetch', today: '2026-09-21' }]);
+    expect(container.registration?.active?.messages).toEqual([
+      { type: 'prefetch', today: '2026-09-21', language: 'en' },
+    ]);
+  });
+
+  it("sends the reader's saved language with the prefetch request", async () => {
+    const container = new FakeContainer();
+    const saved = JSON.stringify({ version: 1, language: 'sw' });
+    const storage = { getItem: () => saved, setItem: () => undefined };
+    await startPwa({ querySelector: () => new FakeToast() }, browser(container, vi.fn(), storage));
+    await flush();
+    expect(container.registration?.active?.messages).toEqual([
+      { type: 'prefetch', today: '2026-09-21', language: 'sw' },
+    ]);
   });
 
   it('shows the toast for an update; Reload applies it, Not now hides it', async () => {

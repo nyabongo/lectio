@@ -8,9 +8,11 @@ import { localeRepo } from './notes-locale.ts';
 import {
   PAGEFIND_DIR,
   SEARCH_FILTERS,
+  SEARCH_INPUT_ID,
   SEARCH_META,
   bookCode,
   escapeHtml,
+  labelSearchInput,
   pagefindUiAssets,
   parseSearchPageConfig,
   plainText,
@@ -84,11 +86,11 @@ describe('searchDocuments', () => {
   const docs = searchDocuments(repo, 'en', labels);
 
   it('has one document per reading with approved notes, and none for pending passages', () => {
-    expect(docs.map((d) => d.url)).toEqual(['/2026-09-20/gospel/']);
+    expect(docs.map((d) => d.url)).toEqual(['/2026-09-14/first-reading/', '/2026-09-20/gospel/']);
   });
 
   it('carries the filters, meta and the note content of the passage', () => {
-    const [gospel] = docs;
+    const gospel = docs.find((d) => d.url === '/2026-09-20/gospel/');
     expect(gospel).toMatchObject({
       lang: 'en',
       title: 'Mt 20:1-16a · slot:gospel · date:2026-09-20',
@@ -176,8 +178,11 @@ function fakeWriter(): WriteBundleFile & { written: string[] } {
 
 describe('searchDocuments in Kiswahili (L-113)', () => {
   it('indexes the /sw/ Reading page with the reviewed Kiswahili notes, in sw', () => {
-    const [gospel, ...rest] = searchDocuments(localeRepo(repo, 'sw'), 'sw', labels, 'sw/');
+    const [numbers, gospel, ...rest] = searchDocuments(localeRepo(repo, 'sw'), 'sw', labels, 'sw/');
     expect(rest).toEqual([]);
+    // Numbers 21 has no Kiswahili translation: its /sw/ page shows (and indexes) the English notes.
+    expect(numbers).toMatchObject({ url: '/sw/2026-09-14/first-reading/', lang: 'sw', ref: 'Nm 21:4b-9' });
+    expect(numbers?.summary).toContain('bronze serpent');
     expect(gospel).toMatchObject({ url: '/sw/2026-09-20/gospel/', lang: 'sw', ref: 'Mt 20:1-16a' });
     expect(gospel?.summary).toMatch(/^Mwenye shamba/);
     expect(gospel?.sections[0]?.heading).toBe('Wafanyakazi katika shamba la mizabibu');
@@ -185,7 +190,7 @@ describe('searchDocuments in Kiswahili (L-113)', () => {
   });
 
   it('indexes the English notes on a /sw/ page without a reviewed translation', () => {
-    const [gospel] = searchDocuments(localeRepo(repo, 'sw', { translations: () => null }), 'sw', labels, 'sw/');
+    const [, gospel] = searchDocuments(localeRepo(repo, 'sw', { translations: () => null }), 'sw', labels, 'sw/');
     expect(gospel).toMatchObject({ url: '/sw/2026-09-20/gospel/', lang: 'sw' });
     expect(gospel?.summary).toContain('landowner');
   });
@@ -260,6 +265,15 @@ describe('search page helpers', () => {
       script: '/lectio/pagefind/pagefind-ui.js',
       style: '/lectio/pagefind/pagefind-ui.css',
     });
+  });
+
+  it("gives Pagefind's search input the id its label points at", () => {
+    const input = { id: '' };
+    expect(
+      labelSearchInput({ querySelector: (selector) => (selector === '.pagefind-ui__search-input' ? input : null) }),
+    ).toBe(true);
+    expect(input.id).toBe(SEARCH_INPUT_ID);
+    expect(labelSearchInput({ querySelector: () => null })).toBe(false);
   });
 
   it('reads the ?q= search term', () => {
