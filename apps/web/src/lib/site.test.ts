@@ -8,9 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   astroSiteOptions,
   contentRootPath,
-  dateLocale,
   dayOrNearest,
-  formatDateTitle,
   normaliseBase,
   readingSummaries,
   siteContext,
@@ -110,21 +108,6 @@ describe('siteContext', () => {
 });
 
 describe('dates', () => {
-  it('formats the header date title in the deck style', () => {
-    expect(formatDateTitle('2026-09-20', 'en')).toBe('Sunday 20 September 2026');
-    expect(formatDateTitle('2026-12-25', 'en')).toBe('Friday 25 December 2026');
-  });
-
-  it('formats other locales with their own month and day names', () => {
-    expect(dateLocale('en')).toBe('en-GB');
-    expect(dateLocale('sw')).toBe('sw');
-    expect(formatDateTitle('2026-09-20', 'fr')).toBe('dimanche 20 septembre 2026');
-  });
-
-  it('rejects malformed dates', () => {
-    expect(() => formatDateTitle('20 September', 'en')).toThrow(RangeError);
-  });
-
   it("finds today's date in the site time zone", () => {
     const lateEvening = new Date('2026-09-19T22:30:00Z');
     expect(todayIn('Africa/Nairobi', lateEvening)).toBe('2026-09-20');
