@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DATA_ROOT } from '../fixtures/data.ts';
+import { checkLectionary } from '../check.ts';
+import { loadLectionary } from '../load.ts';
 
 describe('CLI entry points', () => {
   const argv = process.argv;
@@ -16,7 +18,14 @@ describe('CLI entry points', () => {
     process.argv = ['node', 'check.ts'];
     const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     await import('./check.ts');
-    expect(log.mock.calls[0]?.[0]).toMatch(/^lectionary:check: \d+ files/);
+    // The committed data, counted independently of the CLI.
+    const { files, registry } = await loadLectionary(DATA_ROOT);
+    const { stats } = checkLectionary(files, registry);
+    expect(stats.files).toBeGreaterThanOrEqual(9);
+    expect(log.mock.calls[0]?.[0]).toBe(
+      `lectionary:check: ${String(stats.files)} files, ${String(stats.entries)} entries, ${String(stats.readings)} readings ` +
+        `(${String(stats.byStatus.provisional)} provisional, 0 verified, 0 disputed)`,
+    );
     expect(process.exitCode).toBe(0);
   });
 
