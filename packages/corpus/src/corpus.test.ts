@@ -115,10 +115,13 @@ describe('openCorpus on the fixture corpus', () => {
   });
 
   describe('Hebrew matching is pointing-insensitive', () => {
-    it.each(['בָּרָ֣א', 'ברא', 'בָּרָא', 'אֱלֹהִים', 'אלהים', 'בראשית', 'הארץ', 'הָאָרֶץ'])('finds %s', async (word) => {
-      const result = await corpus.findWord('hbo-test', 'GN', 1, 1, word, { match: 'surface' });
-      expect(result.matches).toHaveLength(1);
-    });
+    it.each(['בָּרָ֣א', 'ברא', 'בָּרָא', 'אֱלֹהִים', 'אלהים', 'בראשית', 'הארץ', 'הָאָרֶץ'])(
+      'finds %s',
+      async (word) => {
+        const result = await corpus.findWord('hbo-test', 'GN', 1, 1, word, { match: 'surface' });
+        expect(result.matches).toHaveLength(1);
+      },
+    );
 
     describe('OSHB "/" morpheme segmentation', () => {
       const surface = { match: 'surface' } as const;
@@ -134,37 +137,95 @@ describe('openCorpus on the fixture corpus', () => {
         expect(await indexes('DT', 15, 9, 'רָעָה', 'surface')).toEqual([0]);
       });
 
-      it('matches the whole word, with or without the separator',async () => {
+      it('matches the whole word, with or without the separator', async () => {
         expect(await indexes('GN', 1, 1, 'השמים', 'surface')).toEqual([4]);
         expect(await indexes('GN', 1, 1, 'הַ/שָּׁמַיִם', 'surface')).toEqual([4]);
         expect(await indexes('DT', 15, 9, 'ורעה', 'surface')).toEqual([0]);
         expect(await indexes('GN', 1, 1, 'את', 'surface')).toEqual([3, 5]);
       });
 
-      it('never matches a bare prefix (a run must end with the last segment)', async () => {
-        expect(await indexes('GN', 1, 1, 'ה', 'surface')).toEqual([]);
-        expect(await indexes('GN', 1, 1, 'הַ', 'surface')).toEqual([]);
-        expect(await indexes('GN', 1, 1, 'ו', 'surface')).toEqual([]);
-        expect(await indexes('GN', 1, 1, 'ב', 'surface')).toEqual([]);
-        expect(await indexes('DT', 15, 9, 'ו', 'surface')).toEqual([]);
-        expect(await indexes('GN', 1, 1, 'd', 'lemma')).toEqual([]);
-        expect(await indexes('GN', 1, 1, 'c', 'lemma')).toEqual([]);
-        expect(await indexes('GN', 1, 1, 'b', 'lemma')).toEqual([]);
-        expect((await corpus.findWord('hbo-test', 'GN', 1, 1, 'ה')).matches).toEqual([]);
-        expect((await corpus.findWord('hbo-test', 'GN', 1, 1, 'd')).matches).toEqual([]);
-        expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, 'ה שמים')).toBe(false);
+      describe('never matches a bare prefix', () => {
+        const modes = ['surface', 'lemma', 'either'] as const;
+        it.each(['ה', 'הַ', 'ו', 'ב', 'd', 'c', 'b'])('%s finds nothing in Gen 1:1, in any mode', async (word) => {
+          for (const match of modes) {
+            const result = await corpus.findWord('hbo-test', 'GN', 1, 1, word, { match });
+            expect(result.matches, match).toEqual([]);
+            expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, word, { match }), match).toBe(false);
+          }
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, word)).toBe(false);
+        });
+
+        it('falls back to the last segment as stem when the morph does not line up (Deut 15:9)', async () => {
+          expect(await indexes('DT', 15, 9, 'ו', 'surface')).toEqual([]);
+          expect(await indexes('DT', 15, 9, 'ב', 'surface')).toEqual([]);
+          expect(await indexes('DT', 15, 9, 'אחיך', 'surface')).toEqual([2]);
+          expect(await indexes('DT', 15, 9, 'באחיך', 'surface')).toEqual([2]);
+        });
       });
 
-      it("matches a bare Strong's number against a lemma with a homograph letter", async () => {
-        expect(await indexes('GN', 1, 1, '1254', 'lemma')).toEqual([1]);
-        expect(await indexes('GN', 1, 1, '1254 a', 'lemma')).toEqual([1]);
-        expect(await indexes('GN', 1, 7, '6213', 'lemma')).toEqual([0]);
-        expect(await indexes('GN', 1, 7, '6213 a', 'lemma')).toEqual([0]);
-        expect(await indexes('GN', 1, 7, 'c/6213', 'lemma')).toEqual([0]);
-        expect(await indexes('GN', 1, 1, '1254 b', 'lemma')).toEqual([]);
-        expect(await indexes('GN', 1, 1, '125', 'lemma')).toEqual([]);
-        expect(await indexes('GN', 1, 1, '1254', 'surface')).toEqual([]);
-        expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, '7225 1254 430', { match: 'lemma' })).toBe(true);
+      describe('pronominal suffixes (morph segments coded S…)', () => {
+        it('matches every run that contains the stem (Gen 1:11 לְ/מִינ֔/וֹ)', async () => {
+          for (const word of ['מין', 'למין', 'מינו', 'למינו', 'לְמִינוֹ', 'לְ/מִינ֔/וֹ']) {
+            expect(await indexes('GN', 1, 11, word, 'surface'), word).toEqual([12]);
+          }
+          expect(await indexes('GN', 1, 11, 'זרע', 'surface')).toEqual([7, 14]);
+          expect(await indexes('GN', 1, 11, 'זרעו', 'surface')).toEqual([14]);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 11, 'למינו אשר זרעו בו')).toBe(true);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 11, 'מין אשר זרע', surface)).toBe(true);
+        });
+
+        it('never matches a bare suffix or prefix', async () => {
+          for (const word of ['ו', 'וֹ', 'ל', 'לְ']) {
+            expect(await indexes('GN', 1, 11, word, 'surface'), word).toEqual([]);
+            expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 11, word), word).toBe(false);
+          }
+        });
+
+        it('keeps a preposition stem with a suffix (ב֖/וֹ, morph HR/Sp3ms)', async () => {
+          expect(await indexes('GN', 1, 11, 'בו', 'surface')).toEqual([15]);
+          expect(await indexes('GN', 1, 11, 'ב', 'surface')).toEqual([15]);
+        });
+
+        it('treats the Aramaic postfixed article (Td) as a suffix (Dan 2:4)', async () => {
+          expect(await indexes('DN', 2, 4, 'א', 'surface')).toEqual([]);
+          expect(await indexes('DN', 2, 4, 'ך', 'surface')).toEqual([]);
+          expect(await indexes('DN', 2, 4, 'ל', 'surface')).toEqual([]);
+          expect(await indexes('DN', 2, 4, 'מלכא', 'surface')).toEqual([4]);
+          expect(await indexes('DN', 2, 4, 'מלך', 'surface')).toEqual([2, 4]);
+          expect(await indexes('DN', 2, 4, 'פשרא', 'surface')).toEqual([11]);
+          expect(await indexes('DN', 2, 4, 'עבדיך', 'surface')).toEqual([9]);
+          expect(await indexes('DN', 2, 4, 'לעבדי', 'surface')).toEqual([9]);
+        });
+      });
+
+      describe("Strong's homograph letters", () => {
+        it('matches a bare number against a lemma with a homograph letter', async () => {
+          expect(await indexes('GN', 1, 1, '1254', 'lemma')).toEqual([1]);
+          expect(await indexes('GN', 1, 7, '6213', 'lemma')).toEqual([0]);
+          expect(await indexes('GN', 1, 7, 'c/6213', 'lemma')).toEqual([0]);
+          expect(await indexes('GN', 1, 1, '125', 'lemma')).toEqual([]);
+          expect(await indexes('GN', 1, 1, '1254', 'surface')).toEqual([]);
+        });
+
+        it('matches a named letter, spaced or not, only against that homograph', async () => {
+          for (const word of ['1254 a', '1254a', '1254A'])
+            expect(await indexes('GN', 1, 1, word, 'lemma'), word).toEqual([1]);
+          for (const word of ['6213 a', '6213a', 'c/6213 a', 'c6213a']) {
+            expect(await indexes('GN', 1, 7, word, 'lemma'), word).toEqual([0]);
+          }
+          expect(await indexes('GN', 1, 1, '1254 b', 'lemma')).toEqual([]);
+          expect(await indexes('GN', 1, 1, '1254b', 'lemma')).toEqual([]);
+        });
+
+        it('reads "<number> <letter>" as one word in phrases', async () => {
+          const lemma = { match: 'lemma' } as const;
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, '7225 1254 430', lemma)).toBe(true);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, '7225 1254 a 430', lemma)).toBe(true);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, 'b/7225 1254a 430', lemma)).toBe(true);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, '7225 1254 b 430', lemma)).toBe(false);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, 'בראשית 1254 a אלהים')).toBe(true);
+          expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, '1254 a', lemma)).toBe(true);
+        });
       });
 
       it('does not match a partial segment', async () => {

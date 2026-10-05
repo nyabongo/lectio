@@ -15,7 +15,7 @@ import {
   SOURCE_FILE,
 } from './format.ts';
 import type { ChapterVerses, SourceInfo, Token } from './format.ts';
-import { normaliserFor, phraseWords, tokenForms } from './normalise.ts';
+import { lemmaKey, normaliserFor, phraseWords, tokenForms } from './normalise.ts';
 
 export type MatchMode = 'surface' | 'lemma' | 'either';
 
@@ -43,7 +43,12 @@ export interface Corpus {
   /** The edition's SOURCE.json; throws a CorpusError for an unknown edition. */
   source(edition: string): Promise<SourceInfo>;
   /** The verse's tokens, or undefined when the chapter or verse is not in the edition. */
-  getVerse(edition: string, book: string, chapter: number | string, verse: number | string): Promise<Token[] | undefined>;
+  getVerse(
+    edition: string,
+    book: string,
+    chapter: number | string,
+    verse: number | string,
+  ): Promise<Token[] | undefined>;
   /** Tokens of the verse whose surface form and/or lemma equal `word` after normalisation. */
   findWord(
     edition: string,
@@ -134,7 +139,9 @@ export function openCorpus(root: string, options: OpenCorpusOptions = {}): Corpu
     let cached = chapters.get(key);
     if (cached === undefined) {
       const path = join(root, edition, book, `${chapter}.json`);
-      cached = readFile(path).then((text) => (text === undefined ? undefined : parseChapter(parseJson(text, path), path)));
+      cached = readFile(path).then((text) =>
+        text === undefined ? undefined : parseChapter(parseJson(text, path), path),
+      );
       cached.catch(() => chapters.delete(key));
       chapters.set(key, cached);
     }
@@ -169,11 +176,15 @@ export function openCorpus(root: string, options: OpenCorpusOptions = {}): Corpu
     const normalise = normaliserFor(language);
     const mode = options.match ?? 'either';
     const forms = (tokens ?? []).map(
-      ([surface, lemma]) => [new Set(tokenForms(language, surface)), new Set(tokenForms(language, lemma, 'lemma'))] as const,
+      ([surface, lemma, morph]) =>
+        [
+          new Set(tokenForms(language, surface, { morph })),
+          new Set(tokenForms(language, lemma, { field: 'lemma' })),
+        ] as const,
     );
     const matches = (index: number, word: string): boolean => {
       const [surface, lemma] = forms[index] as readonly [Set<string>, Set<string>];
-      return (mode !== 'lemma' && surface.has(word)) || (mode !== 'surface' && lemma.has(word));
+      return (mode !== 'lemma' && surface.has(word)) || (mode !== 'surface' && lemma.has(lemmaKey(word)));
     };
     return { tokens, language, normalise, matches };
   }

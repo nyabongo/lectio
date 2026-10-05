@@ -1,7 +1,15 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { normaliseGreek, normaliseHebrew, normaliseLatin, normaliserFor, phraseWords, tokenForms } from './normalise.ts';
+import {
+  lemmaKey,
+  normaliseGreek,
+  normaliseHebrew,
+  normaliseLatin,
+  normaliserFor,
+  phraseWords,
+  tokenForms,
+} from './normalise.ts';
 
 describe('normaliseGreek', () => {
   it.each([
@@ -82,31 +90,76 @@ describe('phraseWords', () => {
     expect(phraseWords('grc', ' ὁ  ὀφθαλμός , σου ')).toEqual(['ο', 'οφθαλμοσ', 'σου']);
     expect(phraseWords('lat', '. ,')).toEqual([]);
   });
+
+  it("joins a Strong's number and a following lone letter into one lemmaKey word", () => {
+    expect(phraseWords('hbo', '7225 1254 a 430')).toEqual(['7225', '1254a', '430']);
+    expect(phraseWords('hbo', 'c/6213 A')).toEqual(['c6213a']);
+    expect(phraseWords('hbo', '1254 a b')).toEqual(['1254a', 'b']);
+    expect(phraseWords('hbo', 'a 1254')).toEqual(['a', '1254']);
+    expect(phraseWords('lat', 'et a deo')).toEqual(['et', 'a', 'deo']);
+  });
+});
+
+describe('lemmaKey', () => {
+  it('joins and lower-cases a homograph letter and leaves other words alone', () => {
+    expect(lemmaKey('1254 a')).toBe('1254a');
+    expect(lemmaKey('1254A')).toBe('1254a');
+    expect(lemmaKey('c6213 a')).toBe('c6213a');
+    expect(lemmaKey('1254')).toBe('1254');
+    expect(lemmaKey('1254 ab')).toBe('1254 ab');
+    expect(lemmaKey('d')).toBe('d');
+    expect(lemmaKey('שמים')).toBe('שמים');
+  });
 });
 
 describe('tokenForms', () => {
-  it('gives every run of OSHB "/" segments that ends with the last segment, for Hebrew and Aramaic', () => {
+  it('without a morph, gives every run of OSHB "/" segments that ends with the last segment', () => {
     expect(tokenForms('hbo', 'וְ/רָעָ֣ה')).toEqual(['ורעה', 'רעה']);
     expect(tokenForms('arc', 'a/b/c')).toEqual(['abc', 'bc', 'c']);
-    expect(tokenForms('hbo', 'd/8064', 'lemma')).toEqual(['d8064', '8064']);
     expect(tokenForms('hbo', 'ברא')).toEqual(['ברא']);
-  });
-
-  it('never gives a bare prefix or a prefix run on its own', () => {
     expect(tokenForms('hbo', 'הַ/שָּׁמַ֖יִם')).not.toContain('ה');
-    expect(tokenForms('hbo', 'd/8064', 'lemma')).not.toContain('d');
-    expect(tokenForms('arc', 'a/b/c')).not.toContain('ab');
-    expect(tokenForms('arc', 'a/b/c')).not.toContain('b');
   });
 
-  it("adds the bare Strong's number for a lemma with a homograph letter", () => {
-    expect(tokenForms('hbo', '1254 a', 'lemma')).toEqual(['1254 a', '1254']);
-    expect(tokenForms('hbo', 'c/6213 a', 'lemma')).toEqual(['c6213 a', '6213 a', 'c6213', '6213']);
-    expect(tokenForms('arc', '1234b', 'lemma')).toEqual(['1234b', '1234']);
+  it('uses the morph to find the stem and gives every run that contains it', () => {
+    expect(tokenForms('hbo', 'לְ/מִינ֔/וֹ', { morph: 'HR/Ncmsc/Sp3ms' })).toEqual(['למינ', 'למינו', 'מינ', 'מינו']);
+    expect(tokenForms('hbo', 'זַרְע/וֹ', { morph: 'HNcmsc/Sp3ms' })).toEqual(['זרע', 'זרעו']);
+    expect(tokenForms('hbo', 'ב֖/וֹ', { morph: 'HR/Sp3ms' })).toEqual(['ב', 'בו']);
+    expect(tokenForms('hbo', 'הַ/שָּׁמַ֖יִם', { morph: 'HTd/Ncmpa' })).toEqual(['השמימ', 'שמימ']);
+    expect(tokenForms('hbo', 'וְ/הָ/אָ֗רֶץ', { morph: 'HC/Td/Ncbsa' })).toEqual(['והארצ', 'הארצ', 'ארצ']);
+    expect(tokenForms('arc', 'וּ/פִשְׁרָ֥/א', { morph: 'AC/Ncmsd/Td' })).toEqual(['ופשר', 'ופשרא', 'פשר', 'פשרא']);
+    expect(tokenForms('arc', 'a/b/c/d', { morph: 'AC/Ncmpc/Sp2ms/Sh' })).toEqual([
+      'ab',
+      'abc',
+      'abcd',
+      'b',
+      'bc',
+      'bcd',
+    ]);
+  });
+
+  it('falls back to the last segment when the morph segment count differs, and ignores it elsewhere', () => {
+    expect(tokenForms('hbo', 'בְּ/אָחִ֙יךָ֙', { morph: 'HR/Ncmsc/Sp2ms' })).toEqual(['באחיכ', 'אחיכ']);
+    expect(tokenForms('hbo', 'a/b', { morph: '' })).toEqual(['ab', 'b']);
+    expect(tokenForms('lat', 'a/b', { morph: 'S' })).toEqual(['ab']);
+    expect(tokenForms('hbo', 'd/8064', { field: 'lemma', morph: 'HTd/Ncmpa/Sp3ms' })).toEqual(['d8064', '8064']);
+  });
+
+  it('never gives a bare prefix or a bare suffix', () => {
+    const forms = tokenForms('hbo', 'לְ/מִינ֔/וֹ', { morph: 'HR/Ncmsc/Sp3ms' });
+    expect(forms).not.toContain('ל');
+    expect(forms).not.toContain('ו');
+    expect(tokenForms('arc', 'מַלְכָּ/א֙', { morph: 'ANcmsd/Td' })).toEqual(['מלכ', 'מלכא']);
+    expect(tokenForms('hbo', 'd/8064', { field: 'lemma' })).toEqual(['d8064', '8064']);
+  });
+
+  it("gives lemmas in lemmaKey spelling, plus the bare Strong's number for a homograph letter", () => {
+    expect(tokenForms('hbo', '1254 a', { field: 'lemma' })).toEqual(['1254a', '1254']);
+    expect(tokenForms('hbo', 'c/6213 a', { field: 'lemma' })).toEqual(['c6213a', '6213a', 'c6213', '6213']);
+    expect(tokenForms('arc', '1234B', { field: 'lemma' })).toEqual(['1234b', '1234']);
     expect(tokenForms('hbo', '1254 a')).toEqual(['1254 a']);
-    expect(tokenForms('hbo', '1254 ab', 'lemma')).toEqual(['1254 ab']);
-    expect(tokenForms('hbo', 'a/1254', 'lemma')).toEqual(['a1254', '1254']);
-    expect(tokenForms('hbo', '', 'lemma')).toEqual([]);
+    expect(tokenForms('hbo', '1254 ab', { field: 'lemma' })).toEqual(['1254 ab']);
+    expect(tokenForms('hbo', 'a/1254', { field: 'lemma' })).toEqual(['a1254', '1254']);
+    expect(tokenForms('hbo', '', { field: 'lemma' })).toEqual([]);
   });
 
   it('keeps one form for other languages and none for empty tokens', () => {
