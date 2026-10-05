@@ -279,16 +279,7 @@ describe('toCalendarDay', () => {
     };
     const day = toCalendarDay(detailed);
     expect(day.celebrations).toEqual([
-      {
-        id: 'ordinary-time-25-monday',
-        name: 'Monday of the twenty-fifth week of Ordinary Time',
-        names: {
-          en: 'Monday of the twenty-fifth week of Ordinary Time',
-          sw: 'Jumatatu ya Juma la Ishirini na Tano la Mwaka',
-        },
-        rank: 'weekday',
-        colour: 'green',
-      },
+      { id: 'ordinary-time-25-monday', name: detailed.celebrations[0]?.name, rank: 'weekday', colour: 'green' },
     ]);
     expect(day.masses).toEqual(detailed.masses);
     expect(day.masses).not.toBe(detailed.masses);

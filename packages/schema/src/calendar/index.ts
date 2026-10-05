@@ -65,8 +65,15 @@ const massSchema = {
 } as const;
 
 /**
+ * Review status of a translated name (L-111): `provisional` (drafted, not yet reviewed by a native
+ * speaker), `reviewed`, or `fallback` (no translation: the field holds the English name).
+ */
+export const NAME_STATUSES = ['provisional', 'reviewed', 'fallback'] as const;
+
+/**
  * A celebration's name in each calendar language (L-111). `en` repeats `name`; `sw` is the Kiswahili
- * name from `calendar/i18n/sw.json`, or the English name where that file flags a fallback.
+ * name from `calendar/i18n/sw.json`, or the English name when `swStatus` is `fallback`. `swStatus`
+ * is optional so earlier files stay valid; `calendar:build` always writes it.
  */
 const celebrationNamesSchema = {
   type: 'object',
@@ -75,6 +82,7 @@ const celebrationNamesSchema = {
   properties: {
     en: nonEmptyStringSchema,
     sw: nonEmptyStringSchema,
+    swStatus: { type: 'string', enum: NAME_STATUSES },
   },
 } as const;
 

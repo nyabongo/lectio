@@ -282,7 +282,7 @@ A trimmed Swahili example for the passage example above:
 ```text
 { year, region, generatedBy, days[] }
 days[]:   { date, season, seasonWeek, sundayCycle, weekdayCycle, celebrations[], masses[], lectionaryMissing }
-celebrations[]: { id, name, names?: { en, sw }, rank, colour }
+celebrations[]: { id, name, names?: { en, sw, swStatus? }, rank, colour }
 masses[]:       { id, label, readings[] }
 readings[]:     { slot, ref, key, linkout }
 ```
@@ -293,8 +293,9 @@ readings[]:     { slot, ref, key, linkout }
 - `rank`: `solemnity`, `sunday`, `feast`, `memorial`, `optional-memorial`, `commemoration`, `weekday`; `colour` is the
   liturgical colour.
 - `names` (L-111): the celebration's name in English (`en`, same as `name`) and Kiswahili (`sw`, from
-  `calendar/i18n/sw.json`; the English name where that file flags a `fallback`). Optional in the schema so older files
-  stay valid; `calendar:build` always writes it. Season and colour names come from the same file through
+  `calendar/i18n/sw.json`; the English name where that file flags a `fallback`) with `swStatus`, the review status of
+  the Kiswahili name (`provisional`, `reviewed` or `fallback`). Optional in the schema so older files stay valid;
+  `calendar:build` always writes all three. Season and colour names come from the same file through
   `seasonName` / `colourName` in `@lectio/calendar`.
 - At least one celebration per day. When `lectionaryMissing` is `false` the day has at least one Mass; when it is
   `true`, `masses` may be empty and the site shows the day without readings.
