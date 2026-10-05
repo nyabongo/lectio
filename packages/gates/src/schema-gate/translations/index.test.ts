@@ -25,7 +25,7 @@ import {
   validTranslation,
   withTranslation,
 } from './fixtures/negative.ts';
-import { TRANSLATION_RULES, checkTranslations, englishKeyOf, fsListLocales } from './index.ts';
+import { TRANSLATION_RULES, checkTranslations, englishKeyOf, fsListLocales, misplacedContentFile } from './index.ts';
 
 const ROOT = '/repo';
 
@@ -195,7 +195,6 @@ describe('checkTranslations', () => {
       changed: [
         { path: TRANSLATION_PATH, status: 'deleted' },
         { path: 'passages/i18n/pt-BR/MT.20.1-16.json', status: 'added' },
-        { path: 'passages/i18n/en/MT.20.1-16.json', status: 'added' },
         { path: 'docs/x.md', status: 'modified' },
       ],
     };
@@ -314,5 +313,313 @@ describe('englishKeyOf', () => {
 
   it('matches the fixture passage key', () => {
     expect(englishKeyOf(PASSAGE_PATH)).toBe(validPassage()['key']);
+  });
+});
+
+describe('misplacedContentFile', () => {
+  it('accepts canonical translation paths, passage-level files and everything outside passages/', () => {
+    for (const path of [
+      TRANSLATION_PATH,
+      'passages/i18n/pt-BR/MT.20.1-16.json',
+      'passages/i18n/zh-Hant/MT.20.1-16.json',
+      PASSAGE_PATH,
+      'passages/notes.md',
+      'passages/README',
+      'calendar/2026.json',
+      'docs/passages/i18n/x.md',
+      'passage/i18n/sw/MT.20.1-16.json',
+    ]) {
+      expect(misplacedContentFile(path, ''), path).toBeNull();
+    }
+  });
+
+  it.each([
+    ['Passages/i18n/sw/MT.20.1-16.json', 'the directory must be spelled passages/ exactly, in lower case'],
+    ['PASSAGES/MT.20.1-16.json', 'the directory must be spelled passages/ exactly, in lower case'],
+    ['passages/MT.20.1-16.JSON', 'a passage is a .json file (lower-case extension)'],
+    ['passages/MT.20.1-16.Json', 'a passage is a .json file (lower-case extension)'],
+    [
+      'passages/I18N/sw/MT.20.1-16.json',
+      'the translation directory must be spelled passages/i18n/ exactly, in lower case',
+    ],
+    [
+      'passages/I18n/sw/MT.20.1-16.json',
+      'the translation directory must be spelled passages/i18n/ exactly, in lower case',
+    ],
+    [
+      'passages/i18N/sw/MT.20.1-16.json',
+      'the translation directory must be spelled passages/i18n/ exactly, in lower case',
+    ],
+    [
+      'passages/translations/sw/MT.20.1-16.json',
+      'passages/translations/ is not a content directory: only passages/i18n/ may hold files',
+    ],
+    ['passages/sw/MT.20.1-16.json', 'passages/sw/ is not a content directory: only passages/i18n/ may hold files'],
+    [
+      'passages/i18n.bak/sw/MT.20.1-16.json',
+      'passages/i18n.bak/ is not a content directory: only passages/i18n/ may hold files',
+    ],
+    [
+      'passages/ i18n/sw/MT.20.1-16.json',
+      'passages/ i18n/ is not a content directory: only passages/i18n/ may hold files',
+    ],
+    ['passages//i18n/sw/MT.20.1-16.json', 'passages// is not a content directory: only passages/i18n/ may hold files'],
+    ['passages/i18n/MT.20.1-16.json', 'a translation sits exactly one locale directory below passages/i18n/'],
+    ['passages/i18n/README.md', 'a translation sits exactly one locale directory below passages/i18n/'],
+    ['passages/i18n/sw/nested/MT.20.1-16.json', 'a translation sits exactly one locale directory below passages/i18n/'],
+    ['passages/i18n/sw/MT.20.1-16.JSON', 'a translation is a .json file (lower-case extension)'],
+    ['passages/i18n/sw/MT.20.1-16.json.txt', 'a translation is a .json file (lower-case extension)'],
+    ['passages/i18n/sw/notes.md', 'a translation is a .json file (lower-case extension)'],
+    [
+      'passages/i18n/en/MT.20.1-16.json',
+      '"en" is not a translation locale (a BCP 47 tag such as sw or pt-BR, never English)',
+    ],
+    [
+      'passages/i18n/en-KE/MT.20.1-16.json',
+      '"en-KE" is not a translation locale (a BCP 47 tag such as sw or pt-BR, never English)',
+    ],
+    [
+      'passages/i18n/SW/MT.20.1-16.json',
+      '"SW" is not a translation locale (a BCP 47 tag such as sw or pt-BR, never English)',
+    ],
+    [
+      'passages/i18n/pt-br/MT.20.1-16.json',
+      '"pt-br" is not a translation locale (a BCP 47 tag such as sw or pt-BR, never English)',
+    ],
+    [
+      'passages/i18n/../MT.20.1-16.json',
+      '".." is not a translation locale (a BCP 47 tag such as sw or pt-BR, never English)',
+    ],
+    ['passages/i18n/sw/mt.20.1-16.json', '"mt.20.1-16" is not a passage key'],
+    ['passages/i18n/sw/.json', '"" is not a passage key'],
+    ['passages/i18n/sw/MT.20.1-16 copy.json', '"MT.20.1-16 copy" is not a passage key'],
+  ])('rejects %s', (path, reason) => {
+    expect(misplacedContentFile(path, '')).toBe(reason);
+  });
+
+  it('reads paths under a nested content root, in any letter case', () => {
+    expect(misplacedContentFile(`content/${TRANSLATION_PATH}`, 'content/')).toBeNull();
+    expect(misplacedContentFile(TRANSLATION_PATH, 'content/')).toBeNull();
+    expect(misplacedContentFile('content/passages/I18N/sw/MT.20.1-16.json', 'content/')).toBe(
+      'the translation directory must be spelled content/passages/i18n/ exactly, in lower case',
+    );
+    expect(misplacedContentFile('Content/passages/i18n/sw/MT.20.1-16.json', 'content/')).toBe(
+      'the directory must be spelled content/passages/ exactly, in lower case',
+    );
+    expect(misplacedContentFile('content/passages/x/y.json', 'content/')).toBe(
+      'content/passages/x/ is not a content directory: only content/passages/i18n/ may hold files',
+    );
+  });
+});
+
+describe('schema/translation-path', () => {
+  const path = 'passages/I18N/sw/MT.20.1-16.json';
+
+  it('rejects a case-variant translation directory instead of ignoring the file', () => {
+    expect(check(withTranslation(() => undefined, path))).toEqual([
+      {
+        ruleId: 'schema/translation-path',
+        severity: 'error',
+        file: path,
+        pointer: '',
+        message: `${path} is not a passage or translation path: the translation directory must be spelled passages/i18n/ exactly, in lower case. Translations live at passages/i18n/<locale>/<key>.json`,
+      },
+    ]);
+  });
+
+  it('reports every misplaced file the PR adds, modifies, renames or copies, and none it deletes', () => {
+    const pr: PullRequestFixture = {
+      head: {},
+      changed: [
+        { path: 'passages/i18n/en/MT.20.1-16.json', status: 'added' },
+        { path: 'passages/i18n/sw/deep/MT.20.1-16.json', status: 'modified' },
+        { path: 'passages/I18N/sw/MT.20.1-16.json', status: 'renamed', previousPath: TRANSLATION_PATH },
+        { path: 'passages/other/MT.20.1-16.json', status: 'copied', previousPath: PASSAGE_PATH },
+        { path: 'passages/i18n/sw/MT.20.1-16.JSON', status: 'type-changed' },
+        { path: 'passages/I18N/sw/LK.9.1-6.json', status: 'deleted' },
+      ],
+    };
+    const result = checkTranslations(contextFor(pr), '', { listLocales: sw });
+    expect(result.files).toBe(0);
+    expect(result.items.map((item) => [item.ruleId, item.file])).toEqual([
+      ['schema/translation-path', 'passages/i18n/en/MT.20.1-16.json'],
+      ['schema/translation-path', 'passages/i18n/sw/deep/MT.20.1-16.json'],
+      ['schema/translation-path', 'passages/I18N/sw/MT.20.1-16.json'],
+      ['schema/translation-path', 'passages/other/MT.20.1-16.json'],
+      ['schema/translation-path', 'passages/i18n/sw/MT.20.1-16.JSON'],
+    ]);
+  });
+
+  it('checks case variants of a nested content root too', () => {
+    const pr: PullRequestFixture = {
+      head: {},
+      changed: [
+        { path: 'Content/passages/i18n/sw/MT.20.1-16.json', status: 'added' },
+        { path: 'content/passages/I18N/sw/MT.20.1-16.json', status: 'added' },
+        { path: 'passages/I18N/sw/MT.20.1-16.json', status: 'added' },
+      ],
+    };
+    expect(check(pr, DEFAULT_CONFIG, 'content/').map((item) => item.file)).toEqual([
+      'Content/passages/i18n/sw/MT.20.1-16.json',
+      'content/passages/I18N/sw/MT.20.1-16.json',
+    ]);
+  });
+
+  it('fails the schema gate', async () => {
+    const report = await runGates([schemaGate], contextFor(withTranslation(() => undefined, path)));
+    expect(report.results[0]?.status).toBe('fail');
+  });
+});
+
+describe('translations of a renamed English passage', () => {
+  const NEW_KEY = 'MT.20.1-15';
+  const NEW_PATH = `passages/${NEW_KEY}.json`;
+
+  /** A PR that renames the English passage to `to`, leaving its translation at the old key. */
+  function renamed(to = NEW_PATH, head: Record<string, string> = {}): PullRequestFixture {
+    return {
+      head: { [to]: JSON.stringify(validPassage()), [TRANSLATION_PATH]: JSON.stringify(validTranslation()), ...head },
+      changed: [{ path: to, status: 'renamed', previousPath: PASSAGE_PATH }],
+    };
+  }
+
+  it('are reported as orphaned, with where to move them', () => {
+    expect(check(renamed())).toEqual([
+      {
+        ruleId: 'schema/translation-of-exists',
+        severity: 'error',
+        file: TRANSLATION_PATH,
+        pointer: '/translationOf',
+        message: `the English passage ${PASSAGE_PATH} was renamed to ${NEW_PATH}: move this translation to passages/i18n/sw/${NEW_KEY}.json and set translationOf to "${NEW_KEY}"`,
+      },
+    ]);
+  });
+
+  it('are reported in every locale, valid or not', () => {
+    const pt = 'passages/i18n/pt-BR/MT.20.1-16.json';
+    const pr = renamed(NEW_PATH, { [pt]: '{ not json' });
+    const items = checkTranslations(contextFor(pr), '', { listLocales: () => ['pt-BR', 'sw'] }).items;
+    expect(items.map((item) => [item.file, item.message])).toEqual([
+      [pt, expect.stringContaining(`move this translation to passages/i18n/pt-BR/${NEW_KEY}.json`)],
+      [TRANSLATION_PATH, expect.stringContaining(`move this translation to passages/i18n/sw/${NEW_KEY}.json`)],
+    ]);
+  });
+
+  it('pass once the PR moves them along', () => {
+    const moved = `passages/i18n/sw/${NEW_KEY}.json`;
+    const translation = { ...validTranslation(), translationOf: NEW_KEY };
+    const pr: PullRequestFixture = {
+      head: { [NEW_PATH]: JSON.stringify({ ...validPassage(), key: NEW_KEY }), [moved]: JSON.stringify(translation) },
+      changed: [
+        { path: NEW_PATH, status: 'renamed', previousPath: PASSAGE_PATH },
+        { path: moved, status: 'renamed', previousPath: TRANSLATION_PATH },
+      ],
+    };
+    expect(check(pr)).toEqual([]);
+  });
+
+  it('are orphaned when the English passage leaves passages/', () => {
+    for (const to of ['archive/MT.20.1-16.json', 'passages/old/MT.20.1-16.json', 'passages/MT.20.1-16.md']) {
+      const items = check(renamed(to)).filter((item) => item.ruleId === 'schema/translation-of-exists');
+      expect(items).toEqual([
+        expect.objectContaining({
+          file: TRANSLATION_PATH,
+          message: `the English passage ${PASSAGE_PATH} was renamed to ${to}, which is not a passage, so this translation is orphaned: restore the English passage or delete the translation`,
+        }),
+      ]);
+    }
+  });
+
+  it('are orphaned when the English passage leaves a nested content root', () => {
+    const pr: PullRequestFixture = {
+      head: { [`content/${TRANSLATION_PATH}`]: JSON.stringify(validTranslation()) },
+      changed: [{ path: 'elsewhere/MT.20.1-16.json', status: 'renamed', previousPath: `content/${PASSAGE_PATH}` }],
+    };
+    expect(check(pr, DEFAULT_CONFIG, 'content/').map((item) => item.message)).toEqual([
+      expect.stringContaining('was renamed to elsewhere/MT.20.1-16.json, which is not a passage'),
+    ]);
+  });
+
+  it('are checked as usual when a new English passage takes the old key', () => {
+    const pr = renamed(NEW_PATH, { [PASSAGE_PATH]: JSON.stringify(validPassage()) });
+    expect(check(pr)).toEqual([]);
+    const changed = { ...validPassage(), summary: 'A landowner pays every labourer the same wage, whenever hired.' };
+    expect(ruleIds(check(renamed(NEW_PATH, { [PASSAGE_PATH]: JSON.stringify(changed) })))).toEqual([
+      'schema/translation-not-stale',
+    ]);
+    const invalid = check(renamed(NEW_PATH, { [PASSAGE_PATH]: '{}' }));
+    expect(invalid.map((item) => item.message)).toEqual([
+      'the English passage passages/MT.20.1-16.json is not a valid passage, so the translation cannot be checked against it',
+    ]);
+  });
+
+  it('are left alone by a copy, which keeps the English passage', () => {
+    const pr: PullRequestFixture = {
+      head: {
+        [PASSAGE_PATH]: JSON.stringify(validPassage()),
+        [NEW_PATH]: JSON.stringify(validPassage()),
+        [TRANSLATION_PATH]: JSON.stringify(validTranslation()),
+      },
+      changed: [{ path: NEW_PATH, status: 'copied', previousPath: PASSAGE_PATH }],
+    };
+    expect(check(pr)).toEqual([]);
+  });
+
+  it('are not involved when the renamed file was not an English passage', () => {
+    for (const previousPath of ['drafts/MT.20.1-16.json', 'passages/i18n/sw/MT.20.1-16.json', 'calendar/2026.json']) {
+      const pr: PullRequestFixture = {
+        head: {
+          [PASSAGE_PATH]: JSON.stringify(validPassage()),
+          [TRANSLATION_PATH]: JSON.stringify(validTranslation()),
+        },
+        changed: [{ path: NEW_PATH, status: 'renamed', previousPath }],
+      };
+      expect(check({ ...pr, head: { ...pr.head, [NEW_PATH]: JSON.stringify(validPassage()) } })).toEqual([]);
+    }
+  });
+
+  it('ignore a rename onto the same key and a rename from outside the content root', () => {
+    const same: PullRequestFixture = {
+      head: { [PASSAGE_PATH]: JSON.stringify(validPassage()), [TRANSLATION_PATH]: JSON.stringify(validTranslation()) },
+      changed: [{ path: PASSAGE_PATH, status: 'renamed', previousPath: PASSAGE_PATH }],
+    };
+    expect(check(same)).toEqual([]);
+    const outside: PullRequestFixture = {
+      head: { [`content/${TRANSLATION_PATH}`]: JSON.stringify(validTranslation()) },
+      changed: [{ path: `content/${NEW_PATH}`, status: 'renamed', previousPath: PASSAGE_PATH }],
+    };
+    expect(check(outside, DEFAULT_CONFIG, 'content/')).toEqual([]);
+  });
+
+  it('report a translation that is invalid too when the English passage is deleted', () => {
+    const pr: PullRequestFixture = {
+      head: { [TRANSLATION_PATH]: '{ not json' },
+      changed: [{ path: PASSAGE_PATH, status: 'deleted' }],
+    };
+    expect(check(pr).map((item) => item.message)).toEqual([
+      'the English passage passages/MT.20.1-16.json does not exist',
+    ]);
+  });
+});
+
+describe('the schema gate over a renamed English passage', () => {
+  it('fails while its translation is left at the old key', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'lectio-rename-'));
+    mkdirSync(join(root, 'passages/i18n/sw'), { recursive: true });
+    const pr: PullRequestFixture = {
+      head: {
+        'passages/MT.20.1-15.json': JSON.stringify({ ...validPassage(), key: 'MT.20.1-15' }),
+        [TRANSLATION_PATH]: JSON.stringify(validTranslation()),
+      },
+      changed: [{ path: 'passages/MT.20.1-15.json', status: 'renamed', previousPath: PASSAGE_PATH }],
+      base: { [PASSAGE_PATH]: JSON.stringify(validPassage()) },
+    };
+    const report = await runGates([schemaGate], contextFor(pr, DEFAULT_CONFIG, root));
+    rmSync(root, { recursive: true, force: true });
+    const items = report.results[0]?.items ?? [];
+    expect(items.filter((item) => item.file === TRANSLATION_PATH).map((item) => item.ruleId)).toEqual([
+      'schema/translation-of-exists',
+    ]);
+    expect(report.results[0]?.status).toBe('fail');
   });
 });

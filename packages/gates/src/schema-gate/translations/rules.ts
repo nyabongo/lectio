@@ -12,10 +12,15 @@ export const TRANSLATION_RULES = {
     'Every passages/i18n/<locale>/<key>.json file is valid JSON and matches the translated-passage schema (@lectio/schema/translated-passage).',
     'Correct the field named in the message; a translation carries only the localised summary, context, note texts and claim texts, with the English ids.',
   ),
+  translationPath: defineRule(
+    'schema/translation-path',
+    'Every file under passages/ is either a passage (passages/<key>.json) or a translation at passages/i18n/<locale>/<key>.json, spelled exactly so: lower-case `passages` and `i18n`, a non-English locale, a passage key and the `.json` extension. No other subdirectory, case variant or nesting is allowed, so no file escapes the translation checks and the translation hold.',
+    'Move the file to passages/i18n/<locale>/<key>.json (lower-case, one locale directory, a passage key as the file name), or remove it.',
+  ),
   translationOfExists: defineRule(
     'schema/translation-of-exists',
     'A translation sits at passages/i18n/<locale>/<translationOf>.json, with `locale` naming its directory, and the English passage passages/<translationOf>.json exists and is valid.',
-    'Move or rename the file to match `locale` and `translationOf`, or add (or restore) the English passage it translates; delete translations of a removed passage.',
+    'Move or rename the file to match `locale` and `translationOf`, or add (or restore) the English passage it translates; move translations of a renamed passage to the new key, and delete translations of a removed one.',
   ),
   translationMatchesSource: defineRule(
     'schema/translation-matches-source',
