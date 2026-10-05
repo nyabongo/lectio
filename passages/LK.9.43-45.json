@@ -1,0 +1,567 @@
+{
+  "key": "LK.9.43-45",
+  "ref": "Lk 9:43b-45",
+  "locale": "en",
+  "summary": "While the crowd marvels, Jesus tells the disciples he will be handed over; the saying stays veiled and they fear to ask.",
+  "context": {
+    "title": "The second prediction of the Passion",
+    "paragraphs": [
+      "Luke sets this short scene straight after the healing of a boy possessed by a spirit, while the crowd is still marvelling at all Jesus was doing. [c1] It is the second of his predictions of the Passion, after Lk 9:22, with parallels in Mt 17:22-23 and Mk 9:30-32. [c2][c3]",
+      "Matthew and Mark place the saying on a journey through Galilee, but in Luke the crowd’s admiration prompts it. [c4] Some commentators think the miracle had rekindled the disciples’ hopes of an earthly kingdom. [c9] Luke’s wording names only the handing over, while Mark’s parallel also speaks of death and of rising after three days. [c5]",
+      "The saying turns on a sharp contrast: the Son of Man is given into the hands of men. [c6] The disciples do not grasp it, and in the next verse they argue over which of them is the greatest. [c7] The Cambridge Bible contrasts this incomprehension with their boldness after the Resurrection and the coming of the Spirit. [c8]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "into-your-ears",
+      "verse": "9:44",
+      "anchor": "sink into your ears",
+      "original": {
+        "text": "θέσθε ὑμεῖς εἰς τὰ ὦτα ὑμῶν",
+        "lang": "grc",
+        "translit": "thesthe hymeis eis ta ōta hymōn",
+        "gloss": "you, put into your ears"
+      },
+      "summary": "Greek says “put these words into your ears”: take them into memory and keep them there.",
+      "body": "The Greek is concrete: put or set these words into your ears. [c10] Thayer explains the idiom as taking words into memory and holding them there. [c11] Interpreters differ over which words are meant: Meyer thinks of the crowd’s amazement, while Jamieson, Fausset and Brown point to the prediction that follows. [c12] Bengel calls the ears the first degree of understanding, which the disciples’ hearts had not yet reached. [c13]"
+    },
+    {
+      "id": "paradidosthai",
+      "verse": "9:44",
+      "anchor": "to be handed over",
+      "original": {
+        "text": "μέλλει παραδίδοσθαι",
+        "lang": "grc",
+        "translit": "mellei paradidosthai",
+        "gloss": "is about to be handed over"
+      },
+      "summary": "Mellei paradidosthai means “is about to be handed over”: imminent, and into the power of others.",
+      "body": "Mellei with the infinitive marks something about to happen, so several commentators render it is about to be delivered, very soon. [c14] The verb means to give into the hands of another, and with into the hands it means into someone’s power. [c15] The Expositor’s Greek Testament renders it is about to be betrayed. [c16] Bengel sees the word balancing the disciples’ thoughts between the glory they have just seen and the coming Passion. [c17]"
+    },
+    {
+      "id": "parakekalymmenon",
+      "verse": "9:45",
+      "anchor": "concealed",
+      "original": {
+        "text": "παρακεκαλυμμένον",
+        "lang": "grc",
+        "translit": "parakekalymmenon",
+        "gloss": "veiled, covered over"
+      },
+      "summary": "A rare verb, “veiled”, used only here in the New Testament; the passive leaves unsaid who veiled it.",
+      "body": "Parakalyptō means to cover over or conceal, and this is its only New Testament occurrence. [c18] Thayer calls the phrase concealed from them a Hebraism. [c19] The passive does not say who did the veiling, and older commentators divide: Alford and Meyer read the following clause as stating a divine purpose. [c20] Barnes and Gill, by contrast, say the disciples’ own expectation of a worldly Messiah hid the meaning from them. [c21]"
+    },
+    {
+      "id": "afraid-to-ask",
+      "verse": "9:45",
+      "anchor": "afraid to ask",
+      "original": {
+        "text": "ἐφοβοῦντο ἐρωτῆσαι",
+        "lang": "grc",
+        "translit": "ephobounto erōtēsai",
+        "gloss": "they were afraid to ask"
+      },
+      "summary": "Luke, like Mark, records that the disciples were afraid to ask Jesus about the saying.",
+      "body": "Mark’s parallel at Mk 9:32 records the same fear of asking, in almost the same words. [c22] Mark has the compound verb eperōtēsai where Luke has the simple erōtēsai. [c25] Jamieson, Fausset and Brown suggest the disciples were afraid of laying themselves open to rebuke. [c23] The Pulpit Commentary suggests instead that the saying was so unwelcome that they may have pushed it from their minds, as people do with painful forebodings. [c24]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The passage follows the healing of a boy possessed by a spirit (Lk 9:37-43a) and is spoken while all are marvelling at everything Jesus was doing.",
+      "sourceIds": ["lk-9-43", "expositors-lk-9-43-cure"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Lk 9:43b-45 is the second prediction of the Passion, with parallels in Mt 17:22-23 and Mk 9:30-32.",
+      "sourceIds": ["expositors-lk-9-43-second", "mt-17-22", "mk-9-31"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The first prediction of the Passion in Luke is at Lk 9:22.",
+      "sourceIds": ["lk-9-22"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "In Matthew and Mark the second prediction comes while Jesus travels with the Twelve in Galilee, whereas in Luke it is prompted by an external occasion, the admiration of the people.",
+      "sourceIds": ["expositors-lk-9-43-occasion"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Mark’s parallel (Mk 9:31) says that Jesus will be killed and will rise after three days, while Lk 9:44 speaks only of his being handed over into the hands of men.",
+      "sourceIds": ["mk-9-31", "lk-9-44"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "The saying sets the Son of Man against the hands of men, an antithesis also found in Mt 17:22 and Mk 9:31.",
+      "sourceIds": ["lk-9-44-antithesis", "jfb-lk-9-44-antithesis"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "In the next verse, Lk 9:46, the disciples argue about which of them is the greatest.",
+      "sourceIds": ["lk-9-46"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The Cambridge Bible contrasts the disciples’ incomprehension here with their later boldness, as proof of the change wrought in them by the Resurrection and the descent of the Holy Spirit.",
+      "sourceIds": ["cambridge-lk-9-45"],
+      "sensitive": true
+    },
+    {
+      "id": "c9",
+      "text": "Commentators suggest that the miracle had rekindled the disciples’ hopes of an earthly, messianic royalty.",
+      "sourceIds": ["pulpit-lk-9-43", "cambridge-lk-9-43"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Θέσθε … εἰς τὰ ὦτα literally means put or set these sayings into your ears.",
+      "sourceIds": ["vincent-lk-9-44-ears", "ellicott-lk-9-44-set"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Thayer explains the idiom in Lk 9:44 as taking the words into memory and holding them there.",
+      "sourceIds": ["thayer-ous"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Meyer refers “these words” to the crowd’s expressions of amazement, while Jamieson, Fausset and Brown refer them to the prediction of suffering that follows.",
+      "sourceIds": ["meyer-lk-9-44", "jfb-lk-9-44-sayings"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Bengel calls hearing with the ears the first degree of comprehension and says the disciples’ hearts were still less capable of it.",
+      "sourceIds": ["bengel-lk-9-44-ears"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Μέλλει παραδίδοσθαι is better rendered “is about to be delivered”, that is, very soon.",
+      "sourceIds": ["cambridge-lk-9-44", "vincent-lk-9-44-about", "ellicott-lk-9-44-about"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Παραδίδωμι properly means to give into the hands of another, and with εἰς χεῖρας it means into someone’s power, as in Lk 9:44.",
+      "sourceIds": ["thayer-paradidomi", "thayer-paradidomi-power"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "The Expositor’s Greek Testament renders μέλλει παραδίδοσθαι as “is about to be betrayed”.",
+      "sourceIds": ["expositors-lk-9-44"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Bengel says the word παραδίδοσθαι balances the disciples’ thoughts between Jesus’ glory and his Passion.",
+      "sourceIds": ["bengel-lk-9-44-balance"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Παρακαλύπτω means to cover over, hide or conceal, and Lk 9:45 is its only New Testament occurrence.",
+      "sourceIds": ["thayer-parakalypto", "englishmans-parakalypto-occurrence"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Thayer describes “it was concealed from them” in Lk 9:45 as a Hebraism.",
+      "sourceIds": ["thayer-parakalypto-hebraism"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Alford and Meyer read the ἵνα clause of Lk 9:45 as expressing a divine purpose that the disciples should not yet perceive the saying.",
+      "sourceIds": ["alford-lk-9-45", "meyer-lk-9-45"],
+      "sensitive": true
+    },
+    {
+      "id": "c21",
+      "text": "Barnes and Gill hold that the saying was hidden from the disciples by their own prior belief in a worldly, conquering Messiah.",
+      "sourceIds": ["barnes-lk-9-45", "gill-lk-9-45"],
+      "sensitive": true
+    },
+    {
+      "id": "c22",
+      "text": "Mk 9:32 records in almost the same words that the disciples were afraid to ask Jesus.",
+      "sourceIds": ["mk-9-32", "lk-9-45"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Jamieson, Fausset and Brown suggest the disciples were afraid of laying themselves open to rebuke by asking.",
+      "sourceIds": ["jfb-lk-9-45"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "The Pulpit Commentary suggests the saying was so distasteful that the disciples may have dismissed it from their minds, as people often do with painful forebodings.",
+      "sourceIds": ["pulpit-lk-9-45"],
+      "sensitive": false
+    },
+    {
+      "id": "c25",
+      "text": "For asking, Mk 9:32 has the compound verb ἐπερωτῆσαι where Lk 9:45 has the simple ἐρωτῆσαι.",
+      "sourceIds": ["mk-9-32", "lk-9-45"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "lk-9-22",
+      "type": "scripture",
+      "citation": "Luke 9:22",
+      "ref": "Lk 9:22",
+      "excerpt": "δεῖ τὸν υἱὸν τοῦ ἀνθρώπου πολλὰ παθεῖν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-43",
+      "type": "scripture",
+      "citation": "Luke 9:43",
+      "ref": "Lk 9:43",
+      "excerpt": "θαυμαζόντων",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-44",
+      "type": "scripture",
+      "citation": "Luke 9:44",
+      "ref": "Lk 9:44",
+      "excerpt": "μέλλει παραδίδοσθαι εἰς χεῖρας ἀνθρώπων",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-44-antithesis",
+      "type": "scripture",
+      "citation": "Luke 9:44",
+      "ref": "Lk 9:44",
+      "excerpt": "υἱὸς τοῦ ἀνθρώπου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-45",
+      "type": "scripture",
+      "citation": "Luke 9:45",
+      "ref": "Lk 9:45",
+      "excerpt": "ἐφοβοῦντο ἐρωτῆσαι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-46",
+      "type": "scripture",
+      "citation": "Luke 9:46",
+      "ref": "Lk 9:46",
+      "excerpt": "τίς ἂν εἴη μείζων αὐτῶν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-17-22",
+      "type": "scripture",
+      "citation": "Matthew 17:22-23",
+      "ref": "Mt 17:22-23",
+      "excerpt": "παραδίδοσθαι εἰς χεῖρας ἀνθρώπων",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-9-31",
+      "type": "scripture",
+      "citation": "Mark 9:31",
+      "ref": "Mk 9:31",
+      "excerpt": "μετὰ τρεῖς ἡμέρας ἀναστήσεται",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-9-32",
+      "type": "scripture",
+      "citation": "Mark 9:32",
+      "ref": "Mk 9:32",
+      "excerpt": "ἐφοβοῦντο αὐτὸν ἐπερωτῆσαι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "expositors-lk-9-43-cure",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:43-45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-43.htm",
+      "excerpt": "The reference is to the cure of the epileptic",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "expositors-lk-9-43-second",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:43-45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-43.htm",
+      "excerpt": "Second prediction of the Passion",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "expositors-lk-9-43-occasion",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:43-45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-43.htm",
+      "excerpt": "the second announcement is elicited by an external occasion",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-43",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:43 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-43.htm",
+      "excerpt": "Once more were kindled the disciples' hopes of an earthly royalty",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-43",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:43 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-43.htm",
+      "excerpt": "had rekindled some of their Messianic enthusiasm",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "jfb-lk-9-44-antithesis",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "a remarkable antithesis (also in Mt 17:22, and Mr 9:31)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "jfb-lk-9-44-sayings",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "not what was passing between them about His grandeur",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "vincent-lk-9-44-ears",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "Lit., put these sayings into your ears.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "vincent-lk-9-44-about",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "Rather, is about to be delivered.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-44-set",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "Literally, Set these sayings in your ears",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-44-about",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "Literally, is about to be delivered.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-44",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "Rather, is about to be delivered (i.e. very soon).",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "expositors-lk-9-44",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "μέλλει παραδίδοσθαι, is about to be betrayed",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "bengel-lk-9-44-ears",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "The first degree of comprehension",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "bengel-lk-9-44-balance",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-44.htm",
+      "excerpt": "evenly balanced between His glory on the one hand",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "meyer-lk-9-44",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation), on Luke 9:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/meyer/luke/9.htm",
+      "excerpt": "mindful of this expression of amazement",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "meyer-lk-9-45",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation), on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/meyer/luke/9.htm",
+      "excerpt": "expressing the object of the divine decree",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "alford-lk-9-45",
+      "type": "web",
+      "citation": "Henry Alford, The Greek Testament, on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/alford/luke/9.htm",
+      "excerpt": "It was the divine purpose, that they should not at present",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "barnes-lk-9-45",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-45.htm",
+      "excerpt": "not by God, but by their previous false belief",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "gill-lk-9-45",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-45.htm",
+      "excerpt": "veiled with the above notion of the worldly grandeur",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "jfb-lk-9-45",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-45.htm",
+      "excerpt": "afraid of laying themselves open to rebuke",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-45",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-45.htm",
+      "excerpt": "as men often do painful and mournful forebodings",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-45",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:45 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-45.htm",
+      "excerpt": "the change wrought in them by the Resurrection",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:05:00Z"
+    },
+    {
+      "id": "thayer-ous",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. οὖς (Bible Hub, Strong's 3775)",
+      "url": "https://biblehub.com/greek/3775.htm",
+      "excerpt": "take them into your memory and hold them there",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "thayer-paradidomi",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. παραδίδωμι (Bible Hub, Strong's 3860)",
+      "url": "https://biblehub.com/greek/3860.htm",
+      "excerpt": "properly, to give into the hands (of another)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "thayer-paradidomi-power",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. παραδίδωμι (Bible Hub, Strong's 3860)",
+      "url": "https://biblehub.com/greek/3860.htm",
+      "excerpt": "i. e. into one's power",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "thayer-parakalypto",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. παρακαλύπτω (Bible Hub, Strong's 3871)",
+      "url": "https://biblehub.com/greek/3871.htm",
+      "excerpt": "to cover over, cover up, hide, conceal",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "thayer-parakalypto-hebraism",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. παρακαλύπτω (Bible Hub, Strong's 3871)",
+      "url": "https://biblehub.com/greek/3871.htm",
+      "excerpt": "(it was concealed from them), a Hebraism",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "englishmans-parakalypto-occurrence",
+      "type": "web",
+      "citation": "Englishman's Greek Concordance (Wigram), 3871 παρακαλύπτω (Bible Hub)",
+      "url": "https://biblehub.com/greek/strongs_3871.htm",
+      "excerpt": "Strong's Greek: 3871. παρακαλύπτω (parakaluptó) — 1 Occurrence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:40:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021f-lk-9-43-45",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:30:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
