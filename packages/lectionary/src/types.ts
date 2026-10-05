@@ -33,10 +33,21 @@ export interface Alternative {
   readonly printed?: string;
 }
 
-/** One reading: `{ slot, cycle?, ref, printed?, alternatives?, source, status }`. */
+/**
+ * One reading: `{ slot, cycle?, ref, printed?, alternatives?, source, status }`.
+ *
+ * A Mass may hold several readings for one slot, each for other years. The resolver picks the most
+ * specific one for the day: a Sunday-cycle reading (A/B/C) over a weekday-cycle one (I/II) over one
+ * without a cycle. So a weekday's reading for a Sunday cycle is a substitute for that year: the OLM
+ * replaces a weekday passage the Sunday has just read (Monday of Advent week 1: `Is 2:1-5`, and
+ * `Is 4:2-6` with `cycle: "A"`). An `alternatives` entry, by contrast, is an option every year.
+ */
 export interface Reading {
   readonly slot: ReadingSlot;
-  /** The Sunday (A/B/C) or weekday (I/II) cycle the reading belongs to; absent when shared by every cycle. */
+  /**
+   * The Sunday (A/B/C) or weekday (I/II) cycle the reading belongs to; absent when shared by every cycle.
+   * Sundays take only A/B/C; weekdays take I/II and, for a substitute, A/B/C.
+   */
   readonly cycle?: Cycle;
   /** Canonical, letter-free reference in NABRE ≈ original versification (Hebrew psalm numbers). */
   readonly ref: string;

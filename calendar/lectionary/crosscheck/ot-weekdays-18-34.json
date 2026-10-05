@@ -25,7 +25,6 @@
       "key": "ot-weekday-34-mon",
       "mass": "day",
       "slot": "gospel",
-      "cycle": "I",
       "ref": "Lk 21:1-4",
       "source": "olm-1981 p?#503"
     },
@@ -52,7 +51,6 @@
       "key": "ot-weekday-34-tue",
       "mass": "day",
       "slot": "gospel",
-      "cycle": "I",
       "ref": "Lk 21:5-11",
       "source": "olm-1981 p?#504"
     },
@@ -79,7 +77,6 @@
       "key": "ot-weekday-34-wed",
       "mass": "day",
       "slot": "gospel",
-      "cycle": "I",
       "ref": "Lk 21:12-19",
       "source": "olm-1981 p?#505"
     },
@@ -106,7 +103,6 @@
       "key": "ot-weekday-34-thu",
       "mass": "day",
       "slot": "gospel",
-      "cycle": "I",
       "ref": "Lk 21:20-28",
       "source": "olm-1981 p?#506"
     },
@@ -133,7 +129,6 @@
       "key": "ot-weekday-34-fri",
       "mass": "day",
       "slot": "gospel",
-      "cycle": "I",
       "ref": "Lk 21:29-33",
       "source": "olm-1981 p?#507"
     },
@@ -160,7 +155,6 @@
       "key": "ot-weekday-34-sat",
       "mass": "day",
       "slot": "gospel",
-      "cycle": "I",
       "ref": "Lk 21:34-36",
       "source": "olm-1981 p?#508"
     }
@@ -170,13 +164,13 @@
       "kind": "proper-of-time",
       "key": "ot-weekday-18-mon",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Monday",
-      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: gospel alternative Mt 14:22-36 is the Year A substitute"
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: the Year A substitute gospel Mt 14:22-36 (cycle A)"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-18-tue",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Tuesday",
-      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: gospel alternative Mt 15:1-2, 10-14 is the Year A substitute"
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: the Year A substitute gospel Mt 15:1-2, 10-14 (cycle A)"
     },
     {
       "kind": "proper-of-time",

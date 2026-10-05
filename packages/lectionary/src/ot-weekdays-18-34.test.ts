@@ -10,6 +10,7 @@ import type { CrosscheckResult } from './crosscheck.ts';
 import { DATA_ROOT } from './fixtures/data.ts';
 import { loadLectionary } from './load.ts';
 import type { LoadResult } from './load.ts';
+import { Lectionary, resolveDay } from './resolve.ts';
 import { splitSource } from './sources.ts';
 
 const BLOCK = 'ot-weekdays-18-34';
@@ -46,6 +47,7 @@ describe(`${BLOCK} block`, () => {
   });
 
   it('gives every day a first reading and psalm for both years and a gospel for both years', () => {
+    // The weekday gospel is shared by both years (no cycle); week 18 Monday and Tuesday have a Year A substitute.
     for (const file of block.files) {
       for (const entry of file.data.entries) {
         expect(entry.masses.map((m) => m.id)).toEqual(['day']);
@@ -62,11 +64,17 @@ describe(`${BLOCK} block`, () => {
 
   it('marks every reading provisional, citing LitCal for week 34 Year I and OLM 1981 for the rest', () => {
     const rows = blockRows(block.files);
-    expect(rows).toHaveLength(456);
+    expect(rows).toHaveLength(452);
     expect(rows.every((row) => row.reading.status === 'provisional')).toBe(true);
     const litcal = rows.filter((row) => splitSource(row.reading.source)?.id === 'litcal');
     expect(litcal).toHaveLength(18);
-    expect(litcal.every((row) => row.key.startsWith('ot-weekday-34-') && row.reading.cycle === 'I')).toBe(true);
+    expect(litcal.every((row) => row.key.startsWith('ot-weekday-34-'))).toBe(true);
+    expect(litcal.filter((row) => row.reading.cycle === undefined).map((row) => row.reading.slot)).toEqual(
+      Array.from({ length: 6 }, () => 'gospel'),
+    );
+    expect(
+      rows.filter((row) => row.reading.slot === 'gospel' && row.reading.cycle !== undefined).map((row) => row.id),
+    ).toEqual(['proper-of-time:ot-weekday-18-mon day gospel (A)', 'proper-of-time:ot-weekday-18-tue day gospel (A)']);
     const olm = rows.filter((row) => splitSource(row.reading.source)?.id === 'olm-1981');
     expect(olm).toHaveLength(rows.length - litcal.length);
     for (const row of olm) {
@@ -76,11 +84,31 @@ describe(`${BLOCK} block`, () => {
     }
   });
 
+  it('reads the Year A gospel substitutes of week 18 only in Year A', () => {
+    const lectionary = new Lectionary(block.files);
+    const gospel = (date: string, sundayCycle: 'A' | 'B', weekdayCycle: 'I' | 'II') =>
+      resolveDay(
+        {
+          date,
+          season: 'ordinary-time',
+          seasonWeek: 18,
+          sundayCycle,
+          weekdayCycle,
+          celebrations: [{ id: 'weekday', rank: 'weekday' }],
+        },
+        lectionary,
+      ).masses[0]?.readings.at(-1)?.ref;
+    expect(gospel('2026-08-03', 'A', 'II')).toBe('Mt 14:22-36');
+    expect(gospel('2026-08-04', 'A', 'II')).toBe('Mt 15:1-2, 10-14');
+    expect(gospel('2027-08-02', 'B', 'I')).toBe('Mt 14:13-21');
+    expect(gospel('2027-08-03', 'B', 'I')).toBe('Mt 14:22-36');
+  });
+
   it('agrees with OLM 1981 on every LitCal reading; the OLM-filled readings name the LitCal leaf consulted', () => {
     expect(result.disagreements).toEqual([]);
     expect(result.compared).toBe(18);
     expect(result.agreements).toBe(18);
-    expect(result.singleSource).toHaveLength(438);
+    expect(result.singleSource).toHaveLength(434);
     expect(result.singleSource.every((single) => single.consulted.length === 1)).toBe(true);
   });
 });

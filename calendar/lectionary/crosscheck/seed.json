@@ -154,6 +154,18 @@
       "key": "matthew-apostle",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StMatthewEvangelist",
       "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-25",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday25",
+      "note": "empty at the pinned revision, as is dominicale_et_festivum_C"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-26",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday26",
+      "note": "empty at the pinned revision, as is dominicale_et_festivum_C"
     }
   ]
 }

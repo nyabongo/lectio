@@ -4,18 +4,16 @@ Written by `npm run lectionary:crosscheck -- --block sundays`. Do not edit by ha
 `calendar/lectionary/crosscheck/sundays.json` and run it again.
 
 - Readings compared with a second source: 287
-- Agreements: 281
-- Disagreements: 6
+- Agreements: 283
+- Disagreements: 4
 - Single-source readings: 439
 
 ## Disagreements
 
-- `proper-of-time:ot-sunday-3 day first-reading (A)`: ours `Is 8:23; 9:1-3`, second source `Is 8:23-9:3`. passage differs: ours IS.8.23_9.1-3, theirs IS.8.23-9.3.
 - `proper-of-time:ot-sunday-17 day gospel (A)`: ours `Mt 13:44-52`, second source `Mt 13:44-52`. alternatives differ: ours [], theirs [MT.13.44-46].
 - `celebrations:palm-sunday-of-the-passion-of-the-lord day gospel (A)`: ours `Mt 26:14-27:66`, second source `Mt 26:14-27:66`. alternatives differ: ours [], theirs [MT.27.11-54].
 - `celebrations:easter-sunday easter-vigil reading-6`: ours `Bar 3:9-15, 32-4:4`, second source `Baruch 3:9-15,32;4:4`. passage differs: ours BAR.3.9-15_3.32-4.4, theirs BAR.3.9-15_3.32_4.4.
 - `celebrations:second-sunday-after-christmas day first-reading`: ours `Sir 24:1-2, 8-12`, second source `Sirach 24:1-4, 12-16`. passage differs: ours SIR.24.1-2_24.8-12, theirs SIR.24.1-4_24.12-16.
-- `celebrations:our-lord-jesus-christ-king-of-the-universe day psalm (C)`: ours `Ps 122:1-2, 3-4, 4-5`, second source `Psalm 122:1-3, 3-4, 4-5`. passage differs: ours PS.122.1-2_122.3-4_122.4-5, theirs PS.122.1-3_122.3-4_122.4-5.
 
 ## Single-source readings
 

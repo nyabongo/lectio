@@ -60,8 +60,8 @@ describe('runCheck', () => {
     const { out, err, io } = capture();
     expect(await runCheck(['--block', 'seed'], DATA_ROOT, io)).toBe(0);
     expect(out).toEqual([
-      'lectionary:check: 2 files, 15 entries, 47 readings (47 provisional, 0 verified, 0 disputed)',
-      '  39 OLM 1981 citations have no page yet (p?)',
+      'lectionary:check: 2 files, 15 entries, 87 readings (87 provisional, 0 verified, 0 disputed)',
+      '  79 OLM 1981 citations have no page yet (p?)',
     ]);
     expect(err).toEqual([]);
   });
@@ -98,6 +98,9 @@ describe('runCheck', () => {
     expect(await runCheck(['--nope'], root, c.io)).toBe(2);
     expect(c.err[0]).toMatch(/^usage/);
     expect(await runCheck(['--calendar'], root, c.io)).toBe(2);
+    // A flag where a value belongs is a usage error, not a block named "--calendar".
+    expect(await runCheck(['--block', '--calendar', 'x.json'], root, c.io)).toBe(2);
+    expect(await runCheck(['--calendar', '--block', 'seed'], root, c.io)).toBe(2);
   });
 
   it('checks a feast on a Sunday against calendar year files', async () => {
@@ -136,9 +139,13 @@ describe('runCheck', () => {
     ).toBe(1);
     expect(b.err).toEqual([
       '2 problems:',
-      `  ${join(root, 'bad.json')}: not a valid calendar year file`,
+      `  ${join(root, 'bad.json')}: not a valid calendar year file (/ must have required property 'region'; / must have required property 'generatedBy'; / must have required property 'days')`,
       expect.stringMatching(new RegExp(`^  ${missing}: ENOENT`)),
     ]);
+    // A relative path is read from the directory the command was run in, wherever the data lives.
+    const c = capture();
+    expect(await runCheck(['--block', 'seed', '--calendar', '2025.json'], DATA_ROOT, c.io, root)).toBe(1);
+    expect(c.err).toEqual(a.err);
   });
 });
 
@@ -149,7 +156,7 @@ describe('runCrosscheck', () => {
     const { out, io } = capture();
     expect(await runCrosscheck(['--block', 'seed'], root, io)).toBe(0);
     expect(out).toEqual([
-      'lectionary:crosscheck seed: 8 compared, 8 agree, 0 disagree, 39 single-source → disputes/seed.md',
+      'lectionary:crosscheck seed: 8 compared, 8 agree, 0 disagree, 79 single-source → disputes/seed.md',
     ]);
     const written = await readFile(join(root, 'disputes', 'seed.md'), 'utf8');
     expect(written).toBe(await readFile(join(DATA_ROOT, 'disputes', 'seed.md'), 'utf8'));
