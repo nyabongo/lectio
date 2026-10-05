@@ -73,6 +73,15 @@ describe('toCanonical', () => {
     expect(key(ref, 'rsv')).toBe(expected);
   });
 
+  it('refuses a Nova Vulgata verse past the end of a renumbered psalm', () => {
+    expect(() => key('Ps 22:40', 'vulgate')).toThrow(
+      new ConversionError('Ps 22:40 does not exist (Nova Vulgata Ps 22 = Ps 23, 6 verses)'),
+    );
+    expect(() => key('Ps 22:5-40', 'vulgate')).toThrow(ConversionError);
+    expect(() => key('Ps 21:40-22:1', 'vulgate')).toThrow(/Ps 21:40 does not exist/);
+    expect(key('Ps 22:1-6', 'vulgate')).toBe('PS.23.1-6');
+  });
+
   it('refuses an RSV verse that does not exist', () => {
     expect(() => key('Mt 20:40', 'rsv')).toThrow(ConversionError);
   });

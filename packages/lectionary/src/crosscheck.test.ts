@@ -79,6 +79,19 @@ describe('crosscheckBlock', () => {
     });
   });
 
+  it('compares the verses, not how they are grouped into segments', () => {
+    const crosscheck: CrosscheckFile = {
+      block: 'test',
+      entries: [
+        olm('psalm', 'Ps 144:2-3, 8-9, 17-18'),
+        olm('second-reading', 'Phil 1:20-22, 23-24, 27'),
+        olm('gospel', 'Mt 20:1-16', { alternatives: ['Mt 20:1-4, 5-8'] }),
+      ],
+    };
+    const result = crosscheckBlock('test', files.slice(0, 1), crosscheck, REGISTRY);
+    expect([result.agreements, result.disagreements]).toEqual([3, []]);
+  });
+
   it('reports every kind of disagreement', () => {
     const crosscheck: CrosscheckFile = {
       block: 'test',

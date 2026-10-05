@@ -4,9 +4,9 @@ Written by `npm run lectionary:crosscheck -- --block seasonal-weekdays`. Do not 
 `calendar/lectionary/crosscheck/seasonal-weekdays.json` and run it again.
 
 - Readings compared with a second source: 338
-- Agreements: 331
-- Disagreements: 7
-- Single-source readings: 20
+- Agreements: 332
+- Disagreements: 6
+- Single-source readings: 23
 
 ## Disagreements
 
@@ -15,7 +15,6 @@ Written by `npm run lectionary:crosscheck -- --block seasonal-weekdays`. Do not 
 - `celebrations:christmas-time-january-5 day first-reading`: ours `1 Jn 3:11-21`, second source `1 John 3:22-24; 4:1-6`. passage differs: ours 1JN.3.11-21, theirs 1JN.3.22-24_4.1-6.
 - `celebrations:christmas-time-january-5 day psalm`: ours `Ps 100:1-2, 3, 4, 5`, second source `Psalm 2:7bc-8, 10-12a`. passage differs: ours PS.100.1-2_100.3_100.4_100.5, theirs PS.2.7-8_2.10-12.
 - `celebrations:christmas-time-january-5 day gospel`: ours `Jn 1:43-51`, second source `Matthew 4:12-17, 23-25`. passage differs: ours JN.1.43-51, theirs MT.4.12-17_4.23-25.
-- `proper-of-time:lent-weekday-5-mon day gospel`: ours `Jn 8:1-11`, second source `John 8:1-11`. alternatives differ: ours [JN.8.12-20], theirs [].
 - `proper-of-time:easter-weekday-4-mon day gospel`: ours `Jn 10:1-10`, second source `John 10:11-18`. passage differs: ours JN.10.1-10, theirs JN.10.11-18.
 
 ## Single-source readings
@@ -35,3 +34,6 @@ against the Kenyan _Lectionary_ (docs/decisions/011-lectionary-source.md).
 - `celebrations:thursday-after-epiphany`: day psalm `Ps 72:1-2, 14, 15, 17`. Source: `olm-1981 p?#215`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanyThursday (psalm given only as the whole "Psalm 71 (72)", no verses)`.
 - `celebrations:tuesday-after-epiphany`: day psalm `Ps 72:1-2, 3-4, 7-8`. Source: `olm-1981 p?#213`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanyTuesday (psalm given only as the whole "Psalm 71 (72)", no verses)`.
 - `celebrations:wednesday-after-epiphany`: day psalm `Ps 72:1-2, 10, 12-13`. Source: `olm-1981 p?#214`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanyWednesday (psalm given only as the whole "Psalm 71 (72)", no verses)`.
+- `proper-of-time:advent-weekday-1-mon`: day first-reading (A) `Is 4:2-6`. Source: `olm-1981 p?#175`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday (one reading for every year, compared with the OLM reading; no second source for the Year A substitute first reading Is 4:2-6)`.
+- `proper-of-time:lent-weekday-5-mon`: day gospel (C) `Jn 8:12-20`. Source: `olm-1981 p?#251`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday (one reading for every year, compared with the OLM reading; no second source for the Year C substitute gospel Jn 8:12-20)`.
+- `proper-of-time:easter-weekday-4-mon`: day gospel (A) `Jn 10:11-18`. Source: `olm-1981 p?#279`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday (one reading for every year, compared with the OLM reading; no second source for the Year A substitute gospel Jn 10:11-18)`.

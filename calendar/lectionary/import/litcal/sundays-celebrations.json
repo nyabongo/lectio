@@ -1,5 +1,5 @@
 {
-  "$comment": "LitCal leaves imported into the sundays block (L-065), solemnities and feasts of the Lord in the proper of time. Readings the same every year are imported without a cycle. Not listed, because the importer cannot read them (see the $comment of sundays/celebrations.json): PalmSun (palm_gospel slot), EasterVigil (numbered slots), MaryMotherOfGod (psalm \"Psalm 66 (67)\" does not parse). Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts sundays-celebrations",
+  "$comment": "LitCal leaves imported into the sundays block (L-065), solemnities and feasts of the Lord in the proper of time. Readings the same every year are imported without a cycle. PalmSun (the palm_gospel goes to the procession Mass), EasterVigil (numbered slots; only the gospel varies with the year, so the other slots are `shared`) and MaryMotherOfGod (LitCal's psalm \"Psalm 66 (67)\" is read as Ps 67) are imported since L-048; a re-import leaves the data unchanged, keeping the OLM citations that replace a LitCal ref (Easter Vigil reading 6, the Mary, Mother of God psalm). Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts sundays-celebrations",
   "target": "sundays/celebrations.json",
   "kind": "celebrations",
   "imports": [
@@ -7,6 +7,7 @@
     { "key": "nativity-of-the-lord", "mass": "night", "locator": "dominicale_et_festivum_A/en.json#Christmas.night" },
     { "key": "nativity-of-the-lord", "mass": "dawn", "locator": "dominicale_et_festivum_A/en.json#Christmas.dawn" },
     { "key": "nativity-of-the-lord", "mass": "day", "locator": "dominicale_et_festivum_A/en.json#Christmas.day" },
+    { "key": "mary-mother-of-god", "locator": "dominicale_et_festivum_A/en.json#MaryMotherOfGod" },
     {
       "key": "holy-family-of-jesus-mary-and-joseph",
       "cycle": "A",
@@ -15,8 +16,37 @@
     { "key": "second-sunday-after-christmas", "locator": "dominicale_et_festivum_A/en.json#Christmas2" },
     { "key": "epiphany-of-the-lord", "locator": "dominicale_et_festivum_A/en.json#Epiphany" },
     { "key": "baptism-of-the-lord", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#BaptismLord" },
+    {
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "cycle": "A",
+      "locator": "dominicale_et_festivum_A/en.json#PalmSun"
+    },
     { "key": "thursday-of-the-lords-supper", "locator": "dominicale_et_festivum_A/en.json#HolyThurs" },
     { "key": "friday-of-the-passion-of-the-lord", "locator": "dominicale_et_festivum_A/en.json#GoodFri" },
+    {
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "cycle": "A",
+      "shared": [
+        "reading-1",
+        "psalm-1",
+        "reading-2",
+        "psalm-2",
+        "reading-3",
+        "psalm-3",
+        "reading-4",
+        "psalm-4",
+        "reading-5",
+        "psalm-5",
+        "reading-6",
+        "psalm-6",
+        "reading-7",
+        "psalm-7",
+        "epistle",
+        "psalm-8"
+      ],
+      "locator": "dominicale_et_festivum_A/en.json#EasterVigil"
+    },
     { "key": "easter-sunday", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#Easter.day" },
     { "key": "easter-sunday", "mass": "evening", "locator": "dominicale_et_festivum_A/en.json#Easter.evening" },
     { "key": "ascension-of-the-lord", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#Ascension" },
