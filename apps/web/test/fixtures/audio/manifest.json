@@ -3,8 +3,8 @@
   "entries": {
     "audio/en/65dfd66d460fc2a7f570a5f49375704839d21ef600ed3d3586ed09d92ac70ad2.wav": {
       "url": "https://audio.lectio.test/audio/en/65dfd66d460fc2a7f570a5f49375704839d21ef600ed3d3586ed09d92ac70ad2.wav",
-      "bytes": 144,
-      "durationMs": 100,
+      "bytes": 9644,
+      "durationMs": 300,
       "voice": "en-KE-AsiliaNeural",
       "ttsVersion": "fake-1",
       "format": "wav",
@@ -14,8 +14,8 @@
     },
     "audio/en/e9e7eb67c93695e2ade4607bb94f9bf90e57d1cf2cf3bf658c3a59407a5d615d.wav": {
       "url": "https://audio.lectio.test/audio/en/e9e7eb67c93695e2ade4607bb94f9bf90e57d1cf2cf3bf658c3a59407a5d615d.wav",
-      "bytes": 144,
-      "durationMs": 100,
+      "bytes": 9644,
+      "durationMs": 300,
       "voice": "en-KE-AsiliaNeural",
       "ttsVersion": "fake-1",
       "format": "wav",
@@ -25,7 +25,7 @@
     },
     "audio/en/fbc58f1b5361e1c5b63268fbad449014900506837397ea0624236de3f8f947fb.wav": {
       "url": "https://audio.lectio.test/audio/en/fbc58f1b5361e1c5b63268fbad449014900506837397ea0624236de3f8f947fb.wav",
-      "bytes": 144,
+      "bytes": 9644,
       "durationMs": null,
       "voice": "en-KE-AsiliaNeural",
       "ttsVersion": "fake-1",

@@ -187,7 +187,7 @@ describe('massSegments', () => {
       });
     });
     const durations = segments.map((segment) => segment.audio?.durationSeconds);
-    expect(durations.filter((seconds) => seconds === 0.1)).toHaveLength(2);
+    expect(durations.filter((seconds) => seconds === 0.3)).toHaveLength(2);
     expect(durations.filter((seconds) => seconds === null)).toHaveLength(1);
   });
 
@@ -204,8 +204,9 @@ describe('massSegments', () => {
 
 describe('test/fixtures/audio', () => {
   it('has a file for every segment of the fixture content, so the e2e build has audio everywhere', () => {
-    // Regenerate the fixture when the fixture notes change: one tiny WAV per segment under
-    // test/fixtures/audio/<locale>/<hash>.wav, keyed by `manifestKeyFor(segment, voice, 'fake-1', 'wav')`.
+    // Regenerate the fixture when the fixture notes change: one short WAV per segment under
+    // test/fixtures/audio/<locale>/<hash>.wav, keyed by `manifestKeyFor(segment, voice, 'fake-1', 'wav')`. They are
+    // 16-bit PCM mono at 16 kHz, which every browser decodes, so the Listen e2e plays them as they are.
     const audio = fixtureAudio();
     const segments = segmentsOf(approvedPassage());
     expect(segments.map((segment) => apiAudio(audio, segment)).every((found) => found !== null)).toBe(true);
@@ -213,7 +214,17 @@ describe('test/fixtures/audio', () => {
       expect(found.url).toBe(`https://audio.lectio.test/${key}`);
       const file = join(FIXTURE_AUDIO, key.replace(/^audio\//, ''));
       expect(statSync(file).size).toBe(found.bytes);
-      expect(readFileSync(file).subarray(0, 4).toString('ascii')).toBe('RIFF');
+      const wav = readFileSync(file);
+      expect(wav.subarray(0, 4).toString('ascii')).toBe('RIFF');
+      expect(wav.subarray(8, 16).toString('ascii')).toBe('WAVEfmt ');
+      // PCM, mono, at least 8 kHz, 16-bit; the data chunk fills the rest of the file.
+      expect([wav.readUInt16LE(20), wav.readUInt16LE(22), wav.readUInt16LE(34)]).toEqual([1, 1, 16]);
+      const rate = wav.readUInt32LE(24);
+      expect(rate).toBeGreaterThanOrEqual(8000);
+      expect(wav.subarray(36, 40).toString('ascii')).toBe('data');
+      const dataBytes = wav.readUInt32LE(40);
+      expect(44 + dataBytes).toBe(found.bytes);
+      if (found.durationMs !== null) expect(Math.round((dataBytes / 2 / rate) * 1000)).toBe(found.durationMs);
     }
   });
 });
