@@ -149,6 +149,11 @@ test.describe('Service worker', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Sikiliza' })).toBeVisible();
     await page.goto('sw/settings/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    // A Kiswahili page that was never saved falls back to the Kiswahili offline page.
+    await page.goto('sw/calendar/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Ukurasa huu haujahifadhiwa kwa kusoma bila mtandao',
+    );
     await context.setOffline(false);
   });
 

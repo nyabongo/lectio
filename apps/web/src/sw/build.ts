@@ -46,13 +46,15 @@ export function serviceWorkerSite(site: LectioConfig['site']): ServiceWorkerSite
 
 /**
  * The worker configuration for the build in `outDir`: the precache list (with the shell pages of every locale in
- * `site`), a version hashed from its files, the locales and whether Listen is built.
+ * `site`), a version hashed from its files, the locales, those with an API mirror and whether Listen is built.
  */
 export function serviceWorkerConfig(
   outDir: string,
   site: ServiceWorkerSite = { locales: [], listen: false },
 ): ServiceWorkerConfig {
-  const precache = precachePaths(listFiles(outDir), site.locales);
+  const files = listFiles(outDir);
+  const precache = precachePaths(files, site.locales);
+  const apiLocales = site.locales.filter((locale) => files.some((file) => file.startsWith(`api/v1/${locale}/days/`)));
   const hash = createHash('sha256');
   for (const path of precache) {
     hash.update(path);
@@ -62,7 +64,14 @@ export function serviceWorkerConfig(
   }
   // The site settings change what the worker prefetches, so they are part of the version too.
   hash.update(JSON.stringify(site));
-  return { version: hash.digest('hex').slice(0, 12), precache, locales: site.locales, listen: site.listen };
+  hash.update(JSON.stringify(apiLocales));
+  return {
+    version: hash.digest('hex').slice(0, 12),
+    precache,
+    locales: site.locales,
+    listen: site.listen,
+    apiLocales,
+  };
 }
 
 /** The esbuild options for the worker bundle: one self-contained, minified ES module for modern browsers. */

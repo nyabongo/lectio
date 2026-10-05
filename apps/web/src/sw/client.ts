@@ -1,10 +1,10 @@
 /**
  * The page side of the PWA (L-061): registers the service worker, asks it to cache the next seven days from the
  * device date on every page open, in the reader's saved language (the worker cannot read `localStorage`, so the page
- * sends `language` from `lectio.settings` with the request), and shows the update-available toast when a new worker is waiting. Its Reload
- * button tells the waiting worker to take over and reloads once it has. `startPwa` is called by the script in
- * `components/pwa/PwaUpdate.astro`; the toast markup (strings from `src/i18n/<lang>/pwa.json`) is rendered there,
- * in production builds only, so `astro dev` never registers a worker.
+ * sends `language` from `lectio.settings` with the request), and shows the update-available toast when a new worker
+ * is waiting. Its Reload button tells the waiting worker to take over and reloads once it has. `startPwa` is called
+ * by the script in `components/pwa/PwaUpdate.astro`; the toast markup (strings from `src/i18n/<lang>/pwa.json`) is
+ * rendered there, in production builds only, so `astro dev` never registers a worker.
  */
 import { loadSettings } from '../lib/settings.ts';
 import type { SettingsStorage } from '../lib/settings.ts';

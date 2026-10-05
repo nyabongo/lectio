@@ -46,6 +46,7 @@ const pageTypes = [
   { name: 'sw-calendar-month', path: 'sw/calendar/2026/09/' },
   { name: 'sw-passage', path: 'sw/passages/MT.20.1-16/' },
   { name: 'sw-settings', path: 'sw/settings/' },
+  { name: 'sw-offline', path: 'sw/offline/' },
   { name: 'sw-about', path: 'sw/about/' },
 ];
 

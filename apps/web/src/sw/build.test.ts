@@ -77,7 +77,10 @@ describe('serviceWorkerConfig', () => {
       'sw/',
       'sw/settings/',
     ]);
-    expect(config).toMatchObject({ locales: ['sw'], listen: true });
+    expect(config).toMatchObject({ locales: ['sw'], listen: true, apiLocales: [] });
+    // A locale's API mirror is found in the build output.
+    write('api/v1/sw/days/2026-09-20.json', '{}');
+    expect(serviceWorkerConfig(dir, { locales: ['sw'], listen: true }).apiLocales).toEqual(['sw']);
     // Turning Listen on changes what the worker prefetches, so it is a new version.
     expect(serviceWorkerConfig(dir, { locales: [], listen: true }).version).not.toBe(plain.version);
   });

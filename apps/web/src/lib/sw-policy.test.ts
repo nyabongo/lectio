@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import { OFFLINE_DATA_CACHE_PREFIX } from './settings.ts';
 import {
-  LOCALISED_SHELL_PAGES,
   PREFETCH_INTERVAL_MS,
   SHELL_PAGES,
   UPCOMING_DAY_COUNT,
@@ -24,6 +23,7 @@ import {
   isOfflineDataCache,
   isPagePath,
   lruEvictions,
+  offlinePageFor,
   pageLocale,
   parseClientMessage,
   precachePaths,
@@ -335,7 +335,7 @@ describe('precachePaths', () => {
     expect(SHELL_PAGES).toContain('offline/');
   });
 
-  it("adds the built shell pages of each non-default locale, but not a locale's offline page", () => {
+  it('adds the built shell pages of each non-default locale, its offline page included', () => {
     const files = [
       'index.html',
       'offline/index.html',
@@ -343,8 +343,18 @@ describe('precachePaths', () => {
       'sw/settings/index.html',
       'sw/offline/index.html',
     ];
-    expect(precachePaths(files, ['sw', 'fr'])).toEqual(['', 'offline/', 'sw/', 'sw/settings/']);
-    expect(LOCALISED_SHELL_PAGES).toEqual(['', 'settings/']);
+    expect(precachePaths(files, ['sw', 'fr'])).toEqual(['', 'offline/', 'sw/', 'sw/offline/', 'sw/settings/']);
+  });
+});
+
+describe('offlinePageFor', () => {
+  it('picks the offline page in the language of the page', () => {
+    expect(offlinePageFor('sw/calendar/', ['sw'])).toBe('sw/offline/');
+    expect(offlinePageFor('sw', ['sw'])).toBe('sw/offline/');
+    expect(offlinePageFor('calendar/', ['sw'])).toBe('offline/');
+    expect(offlinePageFor('swahili/', ['sw'])).toBe('offline/');
+    expect(offlinePageFor('sw/calendar/')).toBe('offline/');
+    expect(offlinePageFor(null, ['sw'])).toBe('offline/');
   });
 });
 

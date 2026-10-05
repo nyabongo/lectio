@@ -335,7 +335,8 @@ describe('prefetch', () => {
       .route(url('sw/2026-09-20/gospel/'), 'injili 20')
       .route(url('sw/2026-09-21/'), 'siku 21')
       .route(url('sw/2026-09-21/gospel/'), 'injili 21');
-    const { caches, worker } = setup(network, undefined, undefined, { ...CONFIG, locales: ['sw'] });
+    const config = { ...CONFIG, locales: ['sw'], apiLocales: ['sw'] };
+    const { caches, worker } = setup(network, undefined, undefined, config);
     await worker.prefetch('2026-09-20');
     expect(caches.get(UPCOMING)?.urls()).toEqual(UPCOMING_URLS);
 
@@ -362,6 +363,51 @@ describe('prefetch', () => {
       url('api/v1/days/2026-09-21.json'),
       url('2026-09-21/'),
       url('2026-09-21/gospel/'),
+    ]);
+  });
+
+  it("keeps the other language's pages when a run in the new language is incomplete", async () => {
+    const network = site()
+      .route(url('sw/2026-09-20/'), 'siku 20')
+      .route(url('sw/2026-09-20/first-reading/'), 'somo 20/1')
+      .route(url('sw/2026-09-20/gospel/'), { status: 503 })
+      .route(url('sw/2026-09-21/'), 'siku 21')
+      .route(url('sw/2026-09-21/gospel/'), 'injili 21');
+    const { caches, worker } = setup(network, undefined, undefined, { ...CONFIG, locales: ['sw'], apiLocales: [] });
+    await worker.prefetch('2026-09-20');
+    expect(await worker.prefetch('2026-09-20', 'sw')).toEqual(['2026-09-20', '2026-09-21']);
+    const urls = caches.get(UPCOMING)?.urls() ?? [];
+    // The English pages stay until a clean run in Kiswahili; the Kiswahili pages fetched so far are kept too.
+    for (const page of UPCOMING_URLS) expect(urls).toContain(page);
+    expect(urls).toContain(url('sw/2026-09-21/gospel/'));
+    expect(urls).not.toContain(url('sw/2026-09-20/gospel/'));
+
+    network.route(url('sw/2026-09-20/gospel/'), 'injili 20');
+    await worker.prefetch('2026-09-20', 'sw');
+    expect(caches.get(UPCOMING)?.urls()).not.toContain(url('2026-09-20/gospel/'));
+    expect(caches.get(UPCOMING)?.urls()).toContain(url('sw/2026-09-20/gospel/'));
+  });
+
+  it('finishes a clean run in a locale whose API mirror the build does not have', async () => {
+    const network = site()
+      .route(url('fr/2026-09-20/'), 'jour 20')
+      .route(url('fr/2026-09-20/first-reading/'), 'lecture 20/1')
+      .route(url('fr/2026-09-20/gospel/'), 'évangile 20')
+      .route(url('fr/2026-09-21/'), 'jour 21')
+      .route(url('fr/2026-09-21/gospel/'), 'évangile 21');
+    const { caches, network: net, worker } = setup(network, undefined, undefined, { ...CONFIG, locales: ['fr'] });
+    await worker.prefetch('2026-09-20');
+    await worker.prefetch('2026-09-20', 'fr');
+    expect(net.requests).not.toContain(url('api/v1/fr/days/2026-09-20.json'));
+    // A clean run: the English pages are gone.
+    expect(caches.get(UPCOMING)?.urls()).toEqual([
+      url('api/v1/days/2026-09-20.json'),
+      url('fr/2026-09-20/'),
+      url('fr/2026-09-20/first-reading/'),
+      url('fr/2026-09-20/gospel/'),
+      url('api/v1/days/2026-09-21.json'),
+      url('fr/2026-09-21/'),
+      url('fr/2026-09-21/gospel/'),
     ]);
   });
 
@@ -524,6 +570,23 @@ describe('respond', () => {
     expect(await response?.text()).toBe('offline page');
     // A page fetched by script gets a network error, not the offline page.
     expect((await worker.respond(fakeRequest(url('calendar/')), noWait))?.type).toBe('error');
+  });
+
+  it("falls back to the offline page in the page's language, else the default one", async () => {
+    const network = site()
+      .route(url('sw/offline/'), 'ukurasa wa nje ya mtandao')
+      .route(url('sw/calendar/'), new Error('offline'));
+    const config = { ...CONFIG, locales: ['sw'], precache: [...CONFIG.precache, 'sw/offline/'] };
+    const { worker } = setup(network, undefined, undefined, config);
+    await worker.install();
+    const navigate = (path: string) => worker.respond(fakeRequest(url(path), { mode: 'navigate' }), noWait);
+    expect(await (await navigate('sw/calendar/'))?.text()).toBe('ukurasa wa nje ya mtandao');
+
+    // A shell cached before the locale had its own offline page still answers with the default one.
+    const older = setup(network, undefined, undefined, { ...CONFIG, locales: ['sw'] });
+    await older.worker.install();
+    const response = await older.worker.respond(fakeRequest(url('sw/calendar/'), { mode: 'navigate' }), noWait);
+    expect(await response?.text()).toBe('offline page');
   });
 
   it('serves API documents stale-while-revalidate from the data caches, whatever build stored them', async () => {

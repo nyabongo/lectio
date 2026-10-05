@@ -270,6 +270,12 @@ const separator = t(lang, 'day.separator');
     background: var(--colour-wash);
   }
 
+  /* A lone link (the first or last day) keeps half the row, as when both are there; never narrower than 10rem. */
+  .day-nav__link:only-child {
+    flex: 0 1 calc(50% - var(--space-xs) / 2);
+    min-width: min(10rem, 100%);
+  }
+
   .day-nav__link--next {
     margin-inline-start: auto;
     text-align: end;

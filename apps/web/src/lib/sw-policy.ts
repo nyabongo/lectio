@@ -365,8 +365,14 @@ export function parseClientMessage(data: unknown): ClientMessage | null {
 /** Shell pages precached with the assets, relative to the base: the home page, the offline page and Settings. */
 export const SHELL_PAGES: readonly string[] = ['', OFFLINE_PAGE, 'settings/'];
 
-/** The shell pages that have a `/<locale>/` mirror (L-110): every one but the offline page, served once. */
-export const LOCALISED_SHELL_PAGES: readonly string[] = SHELL_PAGES.filter((page) => page !== OFFLINE_PAGE);
+/**
+ * The offline page to serve for a page at `path` (relative to the scope, `null` outside it): the `/<locale>/` copy
+ * when the path is under one of the non-default `locales`, else the default one.
+ */
+export function offlinePageFor(path: string | null, locales: readonly string[] = []): string {
+  const first = (path ?? '').split('/', 1)[0] as string;
+  return locales.includes(first) ? `${first}/${OFFLINE_PAGE}` : OFFLINE_PAGE;
+}
 
 /** Built files precached as assets: hashed bundles, fonts, icons and the manifest. */
 const PRECACHE_FILE = /^(?:_astro\/.+\.(?:css|js|mjs)|fonts\/.+\.woff2|icons\/.+\.(?:png|svg)|manifest\.webmanifest)$/;
@@ -374,13 +380,13 @@ const PRECACHE_FILE = /^(?:_astro\/.+\.(?:css|js|mjs)|fonts\/.+\.woff2|icons\/.+
 /**
  * The precache list for a build: `files` are paths relative to the output directory (`/`-separated). Assets are
  * listed as they are; a shell page `x/` is listed when `x/index.html` was built, and so is its mirror `<locale>/x/`
- * for each of the non-default `locales`, so a reader who chose another language has its shell offline too. Sorted,
- * without repeats.
+ * for each of the non-default `locales`, so a reader who chose another language has its shell (and its offline page)
+ * offline too. Sorted, without repeats.
  */
 export function precachePaths(files: readonly string[], locales: readonly string[] = []): string[] {
   const built = new Set(files);
   const assets = files.filter((file) => PRECACHE_FILE.test(file));
-  const mirrors = locales.flatMap((locale) => LOCALISED_SHELL_PAGES.map((page) => `${locale}/${page}`));
+  const mirrors = locales.flatMap((locale) => SHELL_PAGES.map((page) => `${locale}/${page}`));
   const pages = [...SHELL_PAGES, ...mirrors].filter((page) => built.has(`${page}index.html`));
   return [...new Set([...pages, ...assets])].sort();
 }
@@ -395,4 +401,6 @@ export interface ServiceWorkerConfig {
   readonly locales?: readonly string[];
   /** Whether the Listen page is built (`config.site.features.listen`), so the worker keeps it offline too. */
   readonly listen?: boolean;
+  /** The `locales` whose API mirror (`api/v1/<locale>/days/`) the build has; none when omitted. */
+  readonly apiLocales?: readonly string[];
 }
