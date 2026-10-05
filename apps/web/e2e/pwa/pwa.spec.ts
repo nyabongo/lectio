@@ -1,6 +1,7 @@
 /**
  * PWA checks (L-061) over the fixture build: the web app manifest, the service worker's lifecycle, installability
- * and reading a pre-cached upcoming day offline. The fixture calendar has 2026-09-19 to 2026-09-21 and every page
+ * and reading a pre-cached upcoming day offline. The fixture calendar has 2026-09-19 to 2026-09-21 (and Holy
+ * Saturday, 2026-04-04) and every page
  * runs on 2026-09-20 (fixtures.ts), so the worker keeps the 20th and the 21st as "the next seven days".
  */
 import type { Page } from '@playwright/test';

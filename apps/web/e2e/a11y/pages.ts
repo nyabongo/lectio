@@ -24,6 +24,8 @@ export const pageTypes: readonly PageType[] = [
   { name: 'day', path: `${BUILD_DATE}/` },
   // A red feast, so a second liturgical accent is checked on real pages.
   { name: 'day-red', path: '2026-09-21/' },
+  // Holy Saturday: a day without any Mass (L-048b), with its explanation instead of readings.
+  { name: 'day-no-mass', path: '2026-04-04/' },
   { name: 'reading-context', path: `${BUILD_DATE}/gospel/` },
   { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
   { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
@@ -38,6 +40,7 @@ export const pageTypes: readonly PageType[] = [
   // Kiswahili mirrors (L-110): the same page types under /sw/.
   { name: 'sw-today', path: 'sw/' },
   { name: 'sw-day', path: `sw/${BUILD_DATE}/` },
+  { name: 'sw-day-no-mass', path: 'sw/2026-04-04/' },
   // The Gospel has a reviewed Kiswahili translation in the fixture (L-113): Kiswahili notes on both tabs.
   { name: 'sw-reading-context', path: `sw/${BUILD_DATE}/gospel/` },
   { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },

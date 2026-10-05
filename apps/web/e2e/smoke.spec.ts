@@ -49,6 +49,18 @@ test.describe('Day page', () => {
   });
 });
 
+test.describe('A day without any Mass', () => {
+  test('Holy Saturday explains that the Easter Vigil belongs to Easter Sunday, and lists no readings', async ({
+    page,
+  }) => {
+    await page.goto('2026-04-04/');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Holy Saturday');
+    await expect(page.locator('.day__no-mass')).toHaveText(/There is no Mass on Holy Saturday\./);
+    await expect(page.locator('.day__missing')).toHaveCount(0);
+    await expect(page.locator('.readings')).toHaveCount(0);
+  });
+});
+
 test.describe('Reading page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`${BUILD_DATE}/gospel/`);
