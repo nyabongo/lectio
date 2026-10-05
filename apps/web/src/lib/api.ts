@@ -107,7 +107,7 @@ function calendarReading(reading: ResolvedReading): Reading {
 }
 
 function dayHeader(day: ResolvedDay) {
-  const { date, season, seasonWeek, sundayCycle, weekdayCycle, celebrations, lectionaryMissing } = day.day;
+  const { date, season, seasonWeek, sundayCycle, weekdayCycle, celebrations, lectionaryMissing, noMass } = day.day;
   return {
     date,
     season,
@@ -117,6 +117,7 @@ function dayHeader(day: ResolvedDay) {
     colour: dayColour(day.day),
     celebrations: celebrations.map((celebration: Celebration) => ({ ...celebration })),
     lectionaryMissing,
+    ...(noMass === true ? { noMass } : {}),
   };
 }
 

@@ -2,6 +2,7 @@
   "pageTitle": "{title}, {date}",
   "description": "{date}: {title}. {season}. Readings: {refs}. Notes on their history and original words, with each text a tap away.",
   "descriptionNoReadings": "{date}: {title}. {season}. The readings for this day are not listed yet.",
+  "descriptionNoMass": "{date}: {title}. {season}. No Mass is celebrated on this day; the Easter Vigil belongs to Easter Sunday.",
   "todayHeading": "Today",
   "todayMissing": "There is no calendar day for today yet. The calendar lists every day that is ready.",
   "upcomingHeading": "The days ahead",
@@ -11,6 +12,7 @@
     "other": "This day has {count} Masses to choose from."
   },
   "lectionaryMissing": "The readings for this day are not listed yet.",
+  "noMass": "No Mass is celebrated on this day. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its readings are listed there.",
   "notesInPreparation": "Notes in preparation",
   "linkout": {
     "text": "Text",

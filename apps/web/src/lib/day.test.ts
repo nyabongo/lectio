@@ -120,6 +120,20 @@ describe('labels', () => {
 });
 
 describe('dayPageView with the fixture content root', () => {
+  it('shows Holy Saturday (2026-04-04) as a day without any Mass, not as missing readings', () => {
+    const view = dayPageView(env, context, '2026-04-04');
+    expect(view).toMatchObject({
+      title: 'Holy Saturday/Easter Vigil',
+      colour: 'violet',
+      masses: [],
+      massOptions: null,
+      missing: null,
+      noMass:
+        'No Mass is celebrated on this day. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
+        'readings are listed there.',
+    });
+  });
+
   it('shows 2026-09-20 with its four readings, drbo link-outs, the Gospel page and the pending Isaiah note', () => {
     const view = dayPageView(env, context, '2026-09-20');
     expect(view).not.toBeNull();
@@ -133,6 +147,7 @@ describe('dayPageView with the fixture content root', () => {
       cycles: 'Sunday cycle A · Weekday cycle II',
       massOptions: null,
       missing: null,
+      noMass: null,
       listen: null,
       pageTitle: 'Twenty-fifth Sunday in Ordinary Time, Sunday 20 September 2026',
     });
@@ -307,6 +322,21 @@ describe('dayView edge cases', () => {
     );
   });
 
+  it('explains a day without any Mass instead of calling its readings missing', () => {
+    const view = dayView(env, day({ noMass: true }, []), { config: DEFAULT_CONFIG });
+    expect(view.masses).toEqual([]);
+    expect(view.missing).toBeNull();
+    expect(view.noMass).toBe(
+      'No Mass is celebrated on this day. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
+        'readings are listed there.',
+    );
+    expect(view.description).toBe(
+      'Saturday 3 April 2027: Easter Vigil. Paschal Triduum. No Mass is celebrated on this day; the Easter Vigil ' +
+        'belongs to Easter Sunday.',
+    );
+    expect(dayView(env, day({ noMass: false }, []), { config: DEFAULT_CONFIG }).noMass).toBeNull();
+  });
+
   it('falls back to the date as the title when a day lists no celebration', () => {
     const view = dayView(env, day({ celebrations: [] }, []), { config: DEFAULT_CONFIG });
     expect(view.title).toBe('Saturday 3 April 2027');
@@ -348,6 +378,7 @@ describe('calendar dates and static paths', () => {
 
   it('builds a static path for each fixture day', () => {
     expect(dayPagePaths(context.repo).map((path) => path.params.date)).toEqual([
+      '2026-04-04',
       '2026-09-19',
       '2026-09-20',
       '2026-09-21',

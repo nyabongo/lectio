@@ -4,6 +4,24 @@
   "generatedBy": "@lectio/calendar 0.0.0 (apps/web fixture)",
   "days": [
     {
+      "date": "2026-04-04",
+      "season": "paschal-triduum",
+      "seasonWeek": 0,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "holy-saturday",
+          "name": "Holy Saturday/Easter Vigil",
+          "rank": "weekday",
+          "colour": "violet"
+        }
+      ],
+      "masses": [],
+      "lectionaryMissing": false,
+      "noMass": true
+    },
+    {
       "date": "2026-09-19",
       "season": "ordinary-time",
       "seasonWeek": 24,

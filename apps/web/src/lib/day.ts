@@ -126,6 +126,8 @@ export interface DayView {
   readonly massOptions: string | null;
   /** Shown instead of the readings when the calendar has no lectionary data for the day; otherwise `null`. */
   readonly missing: string | null;
+  /** Shown instead of the readings on a day without any Mass (`noMass`, Holy Saturday); otherwise `null`. */
+  readonly noMass: string | null;
   /** The Listen button, when `config.site.features.listen` is on; otherwise `null`. */
   readonly listen: ListenView | null;
   readonly previous: AdjacentDayView | null;
@@ -351,7 +353,8 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
   const { t, formatDate } = env.messages;
   const { lang } = env;
   const { date } = day;
-  const { season, seasonWeek, sundayCycle, weekdayCycle, celebrations, lectionaryMissing }: CalendarDay = day.day;
+  const { season, seasonWeek, sundayCycle, weekdayCycle, celebrations, lectionaryMissing, noMass }: CalendarDay =
+    day.day;
   const owners = slotOwners(
     day.masses.map((mass) => ({
       id: mass.id,
@@ -375,7 +378,8 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
   const titleLang = celebrationViews[0]?.nameLang;
   const dateLabel = formatDate(lang, date);
   const refs = masses[0]?.readings.map((reading) => reading.refLabel) ?? [];
-  const missing = lectionaryMissing || masses.length === 0 ? t(lang, 'day.lectionaryMissing') : null;
+  const withoutMass = noMass === true;
+  const missing = !withoutMass && (lectionaryMissing || masses.length === 0) ? t(lang, 'day.lectionaryMissing') : null;
   const seasonText = seasonLabel(env, season, seasonWeek);
   // The meta description says what the day's share card says (its alt text, L-088): date, celebration, season and
   // readings; `·` becomes a comma, as some screen readers read it out as "middle dot".
@@ -393,14 +397,16 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     masses,
     massOptions: masses.length > 1 ? t(lang, 'day.massOptions', { count: masses.length }) : null,
     missing,
+    noMass: withoutMass ? t(lang, 'day.noMass') : null,
     listen: options.config.site.features.listen
       ? { href: env.paths(listenPath(date)), label: t(lang, 'day.listen') }
       : null,
     previous: adjacent(env, options.previous ?? null, t(lang, 'day.previousDay')),
     next: adjacent(env, options.next ?? null, t(lang, 'day.nextDay')),
     pageTitle: t(lang, 'day.pageTitle', { title, date: dateLabel }),
-    description:
-      refs.length === 0
+    description: withoutMass
+      ? t(lang, 'day.descriptionNoMass', described)
+      : refs.length === 0
         ? t(lang, 'day.descriptionNoReadings', described)
         : t(lang, 'day.description', { ...described, refs: refs.join('; ') }),
   };
