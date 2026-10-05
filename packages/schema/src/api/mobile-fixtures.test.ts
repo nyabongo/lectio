@@ -63,10 +63,12 @@ describe('apps/mobile/test/fixtures', () => {
     expect(valid, formatErrors(validate?.errors).join('; ')).toBe(true);
   });
 
-  it('keeps durationSeconds optional, as the app reads it', () => {
+  it('covers durationSeconds both known and null (always present since L-082)', () => {
     const audio = fixtures.flatMap(({ data }) => JSON.stringify(data).match(/"audio":\{[^}]*\}/g) ?? []);
-    expect(audio.some((entry) => entry.includes('durationSeconds'))).toBe(true);
-    expect(audio.some((entry) => !entry.includes('durationSeconds'))).toBe(true);
+    expect(audio.length).toBeGreaterThan(0);
+    expect(audio.every((entry) => entry.includes('"durationSeconds":'))).toBe(true);
+    expect(audio.some((entry) => entry.includes('"durationSeconds":null'))).toBe(true);
+    expect(audio.some((entry) => /"durationSeconds":\d/.test(entry))).toBe(true);
   });
 });
 

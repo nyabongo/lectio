@@ -58,8 +58,7 @@
                 "The owner’s closing question uses the Jewish idiom of the evil eye, an image for begrudging another’s good fortune. [c3] Matthew has already set the sound eye against the evil eye in the Sermon on the Mount. [c4]"
               ],
               "audio": {
-                "url": "https://audio.example/audio/v1/0123abcd.mp3",
-                "durationSeconds": 74.5
+                "url": "https://audio.example/audio/v1/0123abcd.mp3"
               }
             },
             "translationNotes": [

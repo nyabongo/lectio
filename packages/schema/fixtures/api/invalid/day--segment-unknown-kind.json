@@ -179,7 +179,7 @@
       "segments": [
         {
           "id": "MT.20.1-16/context",
-          "kind": "context",
+          "kind": "reading",
           "slot": "gospel",
           "passageKey": "MT.20.1-16",
           "locale": "en",
