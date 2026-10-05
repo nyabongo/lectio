@@ -23,6 +23,7 @@
   "previousDay": "Previous day",
   "nextDay": "Next day",
   "colourLabel": "Liturgical colour: {colour}",
+  "separator": "·",
   "cycles": "Sunday cycle {sunday} · Weekday cycle {weekday}",
   "seasonWeek": "{season} · Week {week}",
   "season": {

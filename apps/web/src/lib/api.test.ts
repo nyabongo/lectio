@@ -59,6 +59,8 @@ const fixtureConfig = 'apps/web/test/lectio.config.fixture.json';
 const FIXTURE_DATE = '2026-09-20';
 const PENDING = 'IS.55.6-9';
 const APPROVED = 'MT.20.1-16';
+/** The approved Hebrew passage (2026-09-14), so right-to-left notes are built too. */
+const HEBREW = 'NM.21.4-9';
 const fixtureManifest = 'apps/web/test/fixtures/audio/manifest.json';
 
 function fixtureAudio(): SiteAudio | null {
@@ -117,11 +119,13 @@ describe('API built from the fixture content root', () => {
     expect([...files.keys()].sort()).toEqual([
       'calendar/2026.json',
       'days/2026-04-04.json',
+      'days/2026-09-14.json',
       'days/2026-09-19.json',
       'days/2026-09-20.json',
       'days/2026-09-21.json',
       'index.json',
       `passages/${APPROVED}.json`,
+      `passages/${HEBREW}.json`,
       'passages/index.json',
       'upcoming.json',
     ]);
@@ -145,7 +149,7 @@ describe('API built from the fixture content root', () => {
   it('leaves the pending passage out everywhere', () => {
     expect(files.has(`passages/${PENDING}.json`)).toBe(false);
     const index = files.get('passages/index.json') as ApiPassageIndex;
-    expect(index.passages.map((entry: ApiPassageIndexEntry) => entry.key)).toEqual([APPROVED]);
+    expect(index.passages.map((entry: ApiPassageIndexEntry) => entry.key)).toEqual([APPROVED, HEBREW]);
     const day = files.get('days/2026-09-20.json') as ApiDay;
     expect(readingOf(day, PENDING)?.passage).toBeNull();
     const everything = JSON.stringify([...files.values()]);
@@ -221,7 +225,7 @@ describe('API built from the fixture content root', () => {
       apiRoot: 'https://nyabongo.github.io/lectio/api/v1/',
       years: [2026],
       dates: { first: '2026-04-04', last: '2026-09-21' },
-      passageCount: 1,
+      passageCount: 2,
       endpoints: {
         ...API_ENDPOINTS,
         locales: {
@@ -368,12 +372,13 @@ describe('paths and URLs', () => {
     const { repo } = fixtureContext();
     expect(dayStaticPaths(repo).map((path) => path.params.date)).toEqual([
       '2026-04-04',
+      '2026-09-14',
       '2026-09-19',
       '2026-09-20',
       '2026-09-21',
     ]);
-    expect(dayStaticPaths(repo)[2]?.props.document).toEqual(apiDay(repo.resolveDay('2026-09-20')!));
-    expect(passageStaticPaths(repo).map((path) => path.params.key)).toEqual([APPROVED]);
+    expect(dayStaticPaths(repo)[3]?.props.document).toEqual(apiDay(repo.resolveDay('2026-09-20')!));
+    expect(passageStaticPaths(repo).map((path) => path.params.key)).toEqual([APPROVED, HEBREW]);
     expect(calendarStaticPaths(repo).map((path) => path.params.year)).toEqual(['2026']);
   });
 

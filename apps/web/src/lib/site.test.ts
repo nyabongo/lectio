@@ -69,7 +69,7 @@ describe('siteContext', () => {
     expect(contentRoot).toBe(fixtureContent);
     expect(repo.root).toBe(fixtureContent);
     expect(repo.years()).toEqual([2026]);
-    expect(repo.passageKeys()).toEqual(['IS.55.6-9', 'MT.20.1-16']);
+    expect(repo.passageKeys()).toEqual(['IS.55.6-9', 'MT.20.1-16', 'NM.21.4-9']);
   });
 
   it('defaults to the repository config when no file is named', () => {
@@ -146,7 +146,7 @@ describe('dayOrNearest', () => {
   });
 
   it('falls back to the first day of the year with readings when none is earlier', () => {
-    expect(dayOrNearest(repo, '2026-01-10')?.date).toBe('2026-09-19');
+    expect(dayOrNearest(repo, '2026-01-10')?.date).toBe('2026-09-14');
   });
 
   it('returns null when the year has no calendar', () => {

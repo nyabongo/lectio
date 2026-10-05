@@ -8,13 +8,12 @@
  * A translation carries the prose only: the reference, the note's verse, original-language words
  * and their transliteration come from the English passage, which must exist and be approved too.
  */
-import { fromKey, tryParseRef } from '@lectio/refs';
-import type { Ref } from '@lectio/refs';
 import type { ReadingSlot } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
 import { translatableSha256, translationMismatches } from '@lectio/schema/translated-passage';
 import type { TranslatedPassage } from '@lectio/schema/translated-passage';
 
+import { passageRef, spokenVerse } from '../script/segments.ts';
 import type { NarrationDay, NarrationSegment, NarrationStrings, PassageLookup } from '../script/segments.ts';
 import { asSentence, speakable, stripClaimMarkers, stripUrls } from '../script/text.ts';
 import type { Transliteration } from '../script/text.ts';
@@ -84,11 +83,6 @@ function byKey<T>(items: readonly T[] | ReadonlyMap<string, T | null | undefined
     : (items as ReadonlyMap<string, T | null | undefined>);
 }
 
-function passageRef(passage: Passage): Ref {
-  const parsed = tryParseRef(passage.ref);
-  return parsed.ok ? parsed.value : fromKey(passage.key);
-}
-
 /** One passage in `locale`: its context segment, then one segment per note, in the English order. */
 export function translationSegments(
   english: Passage,
@@ -125,10 +119,8 @@ export function translationSegments(
     const translated = notes.get(note.id) as TranslatedPassage['translationNotes'][number];
     const anchor = say(translated.anchor ?? '');
     const translit = say(note.original.translit);
-    const [c, v] = note.verse.split(':').map(Number);
-    const point = { c: Number(c), v: Number(v) };
     const intro = strings.noteIntro({
-      verse: strings.spokenRef({ book: ref.book, segments: [{ start: point, end: point }] }),
+      verse: spokenVerse(ref.book, note.verse, strings),
       anchor,
       language: strings.languages[note.original.lang],
       translit,

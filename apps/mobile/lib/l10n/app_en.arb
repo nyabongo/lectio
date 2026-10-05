@@ -350,6 +350,7 @@
       "colour": {}
     }
   },
+  "day_separator": "·",
   "day_cycles": "Sunday cycle {sunday} · Weekday cycle {weekday}",
   "@day_cycles": {
     "placeholders": {

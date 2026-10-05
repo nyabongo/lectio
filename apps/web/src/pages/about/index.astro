@@ -259,6 +259,8 @@ const shortVersion = (version: string): string => (/^[0-9a-f]{40}$/.test(version
   .about {
     max-width: var(--measure);
     display: grid;
+    /* One column no wider than the page: its grids and cards never push it wider at large text sizes. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-l);
   }
 
@@ -304,7 +306,8 @@ const shortVersion = (version: string): string => (/^[0-9a-f]{40}$/.test(version
 
   .steps {
     counter-reset: step;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    /* min(…, 100%): one column, never wider than the page, when 15rem does not fit (200% text on a phone). */
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
   }
 
   .card,
@@ -444,7 +447,7 @@ const shortVersion = (version: string): string => (/^[0-9a-f]{40}$/.test(version
   }
 
   .credits--compact {
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
   }
 
   .muted {

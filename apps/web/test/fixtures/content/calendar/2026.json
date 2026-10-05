@@ -22,6 +22,54 @@
       "noMass": true
     },
     {
+      "date": "2026-09-14",
+      "season": "ordinary-time",
+      "seasonWeek": 24,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "exaltation-of-the-holy-cross",
+          "name": "The Exaltation of the Holy Cross",
+          "rank": "feast",
+          "colour": "red"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 21:4b-9",
+              "key": "NM.21.4-9",
+              "linkout": "https://www.drbo.org/chapter/04021.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 78:1-2, 34-38",
+              "key": "PS.78.1-2_78.34-38",
+              "linkout": "https://www.drbo.org/chapter/21077.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Phil 2:6-11",
+              "key": "PHIL.2.6-11",
+              "linkout": "https://www.drbo.org/chapter/57002.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:13-17",
+              "key": "JN.3.13-17",
+              "linkout": "https://www.drbo.org/chapter/50003.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
       "date": "2026-09-19",
       "season": "ordinary-time",
       "seasonWeek": 24,

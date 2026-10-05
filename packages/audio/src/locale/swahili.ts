@@ -72,6 +72,13 @@ function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Written book names that are also people's names: `Yuda` is Jude, but also Judas (Iscariot, or Jude the apostle),
+ * so `Yuda 12` may not be a reference at all. With a chapter alone they are left as prose; `Yuda 1:12` and the
+ * abbreviation `Yud 12` are still references.
+ */
+const PERSONAL_NAMES: ReadonlySet<string> = new Set(['Yuda']);
+
 /** A Kiswahili book name or abbreviation (optional full stop), then chapter and verses, with further parts. */
 const SWAHILI_PROSE_REF = new RegExp(
   String.raw`(?<![\p{L}\p{N}])(` +
@@ -86,14 +93,17 @@ const SWAHILI_PROSE_REF = new RegExp(
  * Rewrites references written with Kiswahili book names to their spoken form through `spokenRef`
  * (Kiswahili by default): `(Kum 15:9; Mit 28:22)` → `(Kumbukumbu la Torati sura ya 15, mstari wa 9;
  * Mithali sura ya 28, mstari wa 22)`. As in English, a chapter alone counts only for a one-chapter
- * book or a psalm, a trailing part that does not parse is left as prose, and anything else that does
+ * book or a psalm (and not after a name that is also a person's, `Yuda 3`), a trailing part that does not parse is left as prose, and anything else that does
  * not parse is left as written.
  */
 export function speakSwahiliReferences(text: string, spokenRef: SpokenRef = swahiliSpokenRef): string {
   return text.replace(SWAHILI_PROSE_REF, (match: string, name: string, passage: string) => {
     // The pattern is built from the book table, so every matched name has a book.
     const code = findSwahiliBook(name) as NonNullable<ReturnType<typeof findSwahiliBook>>;
-    if (!passage.includes(':') && !passage.includes('.') && !getBook(code).singleChapter && code !== 'PS') return match;
+    if (!passage.includes(':') && !passage.includes('.')) {
+      const chapterAlone = (getBook(code).singleChapter && !PERSONAL_NAMES.has(name)) || code === 'PS';
+      if (!chapterAlone) return match;
+    }
     let parts = passage;
     for (;;) {
       const parsed = tryParseRef(`${code} ${parts}`);

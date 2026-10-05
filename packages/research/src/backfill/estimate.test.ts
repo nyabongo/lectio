@@ -56,10 +56,28 @@ describe('estimateBackfill', () => {
       perPassageSource: 'measured',
       estimatedUsd: 3,
       ceilingUsd: 2,
+      spentUsd: 0,
+      leftUsd: 2,
       ceilingCovers: 2,
       batchSize: 2,
       batches: 2,
       weeks: 2,
+    });
+  });
+
+  it('counts the ceiling left after what the ledger says earlier batches spent', () => {
+    const config = withConfig({ backfillTotalUsd: 5 });
+    expect(estimateBackfill({ ...input, config, perPassageUsd: 1, spentUsd: 3.5 })).toMatchObject({
+      spentUsd: 3.5,
+      leftUsd: 1.5,
+      ceilingCovers: 1,
+    });
+    expect(estimateBackfill({ ...input, config, spentUsd: 7 })).toMatchObject({ leftUsd: 0, ceilingCovers: 0 });
+    // A ledger that does not read: spend unknown, the ceiling as a whole.
+    expect(estimateBackfill({ ...input, config, perPassageUsd: 1, spentUsd: null })).toMatchObject({
+      spentUsd: null,
+      leftUsd: null,
+      ceilingCovers: 5,
     });
   });
 

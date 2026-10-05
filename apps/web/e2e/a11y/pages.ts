@@ -6,6 +6,9 @@ import type { Page } from '@playwright/test';
 
 import { BUILD_DATE, EXPECTS_404, expect } from '../fixtures.ts';
 
+/** The fixture day whose first reading (Numbers 21) has an approved Hebrew note. */
+export const HEBREW_DATE = '2026-09-14';
+
 export interface PageType {
   /** A short name for the test title. */
   readonly name: string;
@@ -29,6 +32,9 @@ export const pageTypes: readonly PageType[] = [
   { name: 'reading-context', path: `${BUILD_DATE}/gospel/` },
   { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
   { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
+  // A Hebrew note (Numbers 21 on the Exaltation of the Holy Cross), so right-to-left text is checked too.
+  { name: 'reading-hebrew', path: `${HEBREW_DATE}/first-reading/`, tab: 'Original' },
+  { name: 'insight-hebrew', path: `${HEBREW_DATE}/first-reading/notes/v9-bronze-serpent/` },
   // The Listen player (L-085), once its script has wired the controls.
   { name: 'listen', path: `${BUILD_DATE}/listen/`, ready: '[data-listen][data-ready]' },
   // A day without approved notes: the empty Listen page.
@@ -37,6 +43,7 @@ export const pageTypes: readonly PageType[] = [
   { name: 'calendar-month', path: 'calendar/2026/09/' },
   { name: 'passages', path: 'passages/' },
   { name: 'passage', path: 'passages/MT.20.1-16/' },
+  { name: 'passage-hebrew', path: 'passages/NM.21.4-9/' },
   { name: 'search', path: 'search/', ready: '.pagefind-ui__search-input' },
   { name: 'settings', path: 'settings/', ready: '[data-settings-form][data-ready]' },
   { name: 'about', path: 'about/' },
