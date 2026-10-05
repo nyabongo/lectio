@@ -1,0 +1,3226 @@
+{
+  "$comment": "Second source for the sundays block (L-065, 011 amendment 5): OLM 1981 for every reading imported from LitCal, in OLM numbering (Vulgate psalms; lectionary:crosscheck converts them). `canonical` is given by hand where convert.ts cannot convert (Sirach; Vulgate Ps 115 and 147, which the Nova Vulgata numbers from verse 10 and 12). The OLM citations were entered from the OLM 1981 structure as the agent knows it, before comparison; no print copy was consulted (011 Q4). LitCal has no data for the OLM-filled readings (Years B and C) at the pinned revision; `consulted` records the leaves checked, and those readings are listed as single-source in disputes/sundays.md.",
+  "block": "sundays",
+  "entries": [
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-1",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 2:1-5",
+      "source": "olm-1981 p?#1"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-1",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 121:1-2, 3-4, 4-5, 6-7, 8-9",
+      "source": "olm-1981 p?#1"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-1",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 13:11-14",
+      "source": "olm-1981 p?#1"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-1",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 24:37-44",
+      "source": "olm-1981 p?#1"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-2",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 11:1-10",
+      "source": "olm-1981 p?#4"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-2",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 71:1-2, 7-8, 12-13, 17",
+      "source": "olm-1981 p?#4"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-2",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 15:4-9",
+      "source": "olm-1981 p?#4"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-2",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 3:1-12",
+      "source": "olm-1981 p?#4"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-3",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 35:1-6, 10",
+      "source": "olm-1981 p?#7"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-3",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 145:6-7, 8-9, 9-10",
+      "source": "olm-1981 p?#7"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-3",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Jas 5:7-10",
+      "source": "olm-1981 p?#7"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-3",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 11:2-11",
+      "source": "olm-1981 p?#7"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-4",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 7:10-14",
+      "source": "olm-1981 p?#10"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-4",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 23:1-2, 3-4, 5-6",
+      "source": "olm-1981 p?#10"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-4",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 1:1-7",
+      "source": "olm-1981 p?#10"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-4",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 1:18-24",
+      "source": "olm-1981 p?#10"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-1",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Gn 2:7-9; 3:1-7",
+      "source": "olm-1981 p?#22"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-1",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 50:3-4, 5-6, 12-13, 17",
+      "source": "olm-1981 p?#22"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-1",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 5:12-19",
+      "alternatives": ["Rom 5:12, 17-19"],
+      "source": "olm-1981 p?#22"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-1",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 4:1-11",
+      "source": "olm-1981 p?#22"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-2",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Gn 12:1-4",
+      "source": "olm-1981 p?#25"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-2",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 32:4-5, 18-19, 20, 22",
+      "source": "olm-1981 p?#25"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-2",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "2 Tm 1:8-10",
+      "source": "olm-1981 p?#25"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-2",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 17:1-9",
+      "source": "olm-1981 p?#25"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-3",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ex 17:3-7",
+      "source": "olm-1981 p?#28"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-3",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 94:1-2, 6-7, 8-9",
+      "source": "olm-1981 p?#28"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-3",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 5:1-2, 5-8",
+      "source": "olm-1981 p?#28"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-3",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 4:5-42",
+      "alternatives": ["Jn 4:5-15, 19-26, 39, 40-42"],
+      "source": "olm-1981 p?#28"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-4",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "1 Sm 16:1, 6-7, 10-13",
+      "source": "olm-1981 p?#31"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-4",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 22:1-3, 3-4, 5, 6",
+      "source": "olm-1981 p?#31"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-4",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Eph 5:8-14",
+      "source": "olm-1981 p?#31"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-4",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 9:1-41",
+      "alternatives": ["Jn 9:1, 6-9, 13-17, 34-38"],
+      "source": "olm-1981 p?#31"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-5",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ez 37:12-14",
+      "source": "olm-1981 p?#34"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-5",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 129:1-2, 3-4, 5-6, 7-8",
+      "source": "olm-1981 p?#34"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-5",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 8:8-11",
+      "source": "olm-1981 p?#34"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-5",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 11:1-45",
+      "alternatives": ["Jn 11:3-7, 17, 20-27, 33-45"],
+      "source": "olm-1981 p?#34"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-2",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 2:42-47",
+      "source": "olm-1981 p?#43"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-2",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 117:2-4, 13-15, 22-24",
+      "source": "olm-1981 p?#43"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-2",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Pt 1:3-9",
+      "source": "olm-1981 p?#43"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-2",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 20:19-31",
+      "source": "olm-1981 p?#43"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-3",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 2:14, 22-33",
+      "source": "olm-1981 p?#46"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-3",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 15:1-2, 5, 7-8, 9-10, 10",
+      "canonical": "Ps 16:1-2, 5, 7-8, 9-10, 11",
+      "source": "olm-1981 p?#46"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-3",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Pt 1:17-21",
+      "source": "olm-1981 p?#46"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-3",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Lk 24:13-35",
+      "source": "olm-1981 p?#46"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-4",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 2:14, 36-41",
+      "source": "olm-1981 p?#49"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-4",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 22:1-3, 3-4, 5, 6",
+      "source": "olm-1981 p?#49"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-4",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Pt 2:20-25",
+      "source": "olm-1981 p?#49"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-4",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 10:1-10",
+      "source": "olm-1981 p?#49"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-5",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 6:1-7",
+      "source": "olm-1981 p?#52"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-5",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 32:1-2, 4-5, 18-19",
+      "source": "olm-1981 p?#52"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-5",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Pt 2:4-9",
+      "source": "olm-1981 p?#52"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-5",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 14:1-12",
+      "source": "olm-1981 p?#52"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-6",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 8:5-8, 14-17",
+      "source": "olm-1981 p?#55"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-6",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 65:1-3, 4-5, 6-7, 16, 20",
+      "source": "olm-1981 p?#55"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-6",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Pt 3:15-18",
+      "source": "olm-1981 p?#55"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-6",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 14:15-21",
+      "source": "olm-1981 p?#55"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-7",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 1:12-14",
+      "source": "olm-1981 p?#59"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-7",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 26:1, 4, 7-8",
+      "source": "olm-1981 p?#59"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-7",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Pt 4:13-16",
+      "source": "olm-1981 p?#59"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-7",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 17:1-11",
+      "source": "olm-1981 p?#59"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-2",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 49:3, 5-6",
+      "source": "olm-1981 p?#64"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-2",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 39:2, 4, 7-8, 8-9, 10",
+      "source": "olm-1981 p?#64"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-2",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 1:1-3",
+      "source": "olm-1981 p?#64"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-2",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 1:29-34",
+      "source": "olm-1981 p?#64"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-3",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 8:23-9:3",
+      "source": "olm-1981 p?#67"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-3",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 26:1, 4, 13-14",
+      "source": "olm-1981 p?#67"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-3",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 1:10-13, 17",
+      "source": "olm-1981 p?#67"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-3",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 4:12-23",
+      "alternatives": ["Mt 4:12-17"],
+      "source": "olm-1981 p?#67"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-4",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Zep 2:3; 3:12-13",
+      "source": "olm-1981 p?#70"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-4",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 145:6-7, 8-9, 9-10",
+      "source": "olm-1981 p?#70"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-4",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 1:26-31",
+      "source": "olm-1981 p?#70"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-4",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 5:1-12",
+      "source": "olm-1981 p?#70"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-5",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 58:7-10",
+      "source": "olm-1981 p?#73"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-5",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 111:4-5, 6-7, 8-9",
+      "source": "olm-1981 p?#73"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-5",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 2:1-5",
+      "source": "olm-1981 p?#73"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-5",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 5:13-16",
+      "source": "olm-1981 p?#73"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-6",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Sir 15:15-20",
+      "canonical": "Sir 15:15-20",
+      "source": "olm-1981 p?#76"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-6",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 118:1-2, 4-5, 17-18, 33-34",
+      "source": "olm-1981 p?#76"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-6",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 2:6-10",
+      "source": "olm-1981 p?#76"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-6",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 5:17-37",
+      "alternatives": ["Mt 5:20-22, 27-28, 33-34, 37"],
+      "source": "olm-1981 p?#76"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-7",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Lv 19:1-2, 17-18",
+      "source": "olm-1981 p?#79"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-7",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 102:1-2, 3-4, 8, 10, 12-13",
+      "source": "olm-1981 p?#79"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-7",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 3:16-23",
+      "source": "olm-1981 p?#79"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-7",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 5:38-48",
+      "source": "olm-1981 p?#79"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-8",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 49:14-15",
+      "source": "olm-1981 p?#82"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-8",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 61:2-3, 6-7, 8-9",
+      "source": "olm-1981 p?#82"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-8",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 4:1-5",
+      "source": "olm-1981 p?#82"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-8",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 6:24-34",
+      "source": "olm-1981 p?#82"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-9",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Dt 11:18, 26-28, 32",
+      "source": "olm-1981 p?#85"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-9",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 30:2-3, 3-4, 17, 25",
+      "source": "olm-1981 p?#85"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-9",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 3:21-25, 28",
+      "source": "olm-1981 p?#85"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-9",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 7:21-27",
+      "source": "olm-1981 p?#85"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-10",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Hos 6:3-6",
+      "source": "olm-1981 p?#88"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-10",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 49:1, 8, 12-13, 14-15",
+      "source": "olm-1981 p?#88"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-10",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 4:18-25",
+      "source": "olm-1981 p?#88"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-10",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 9:9-13",
+      "source": "olm-1981 p?#88"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-11",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ex 19:2-6",
+      "source": "olm-1981 p?#91"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-11",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 99:1-2, 3, 5",
+      "source": "olm-1981 p?#91"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-11",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 5:6-11",
+      "source": "olm-1981 p?#91"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-11",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 9:36-10:8",
+      "source": "olm-1981 p?#91"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-12",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Jer 20:10-13",
+      "source": "olm-1981 p?#94"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-12",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 68:8-10, 14, 17, 33-35",
+      "source": "olm-1981 p?#94"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-12",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 5:12-15",
+      "source": "olm-1981 p?#94"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-12",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 10:26-33",
+      "source": "olm-1981 p?#94"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-13",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "2 Kgs 4:8-11, 14-16",
+      "source": "olm-1981 p?#97"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-13",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 88:2-3, 16-17, 18-19",
+      "source": "olm-1981 p?#97"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-13",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 6:3-4, 8-11",
+      "source": "olm-1981 p?#97"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-13",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 10:37-42",
+      "source": "olm-1981 p?#97"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-14",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Zec 9:9-10",
+      "source": "olm-1981 p?#100"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-14",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 144:1-2, 8-9, 10-11, 13-14",
+      "source": "olm-1981 p?#100"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-14",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 8:9, 11-13",
+      "source": "olm-1981 p?#100"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-14",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 11:25-30",
+      "source": "olm-1981 p?#100"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-15",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 55:10-11",
+      "source": "olm-1981 p?#103"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-15",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 64:10, 11, 12-13, 14",
+      "source": "olm-1981 p?#103"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-15",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 8:18-23",
+      "source": "olm-1981 p?#103"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-15",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 13:1-23",
+      "alternatives": ["Mt 13:1-9"],
+      "source": "olm-1981 p?#103"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-16",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Wis 12:13, 16-19",
+      "source": "olm-1981 p?#106"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-16",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 85:5-6, 9-10, 15-16",
+      "source": "olm-1981 p?#106"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-16",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 8:26-27",
+      "source": "olm-1981 p?#106"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-16",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 13:24-43",
+      "alternatives": ["Mt 13:24-30"],
+      "source": "olm-1981 p?#106"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-17",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "1 Kgs 3:5, 7-12",
+      "source": "olm-1981 p?#109"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-17",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 118:57, 72, 76-77, 127-128, 129-130",
+      "source": "olm-1981 p?#109"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-17",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 8:28-30",
+      "source": "olm-1981 p?#109"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-17",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 13:44-52",
+      "alternatives": ["Mt 13:44-46"],
+      "source": "olm-1981 p?#109"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-18",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 55:1-3",
+      "source": "olm-1981 p?#112"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-18",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 144:8-9, 15-16, 17-18",
+      "source": "olm-1981 p?#112"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-18",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 8:35, 37-39",
+      "source": "olm-1981 p?#112"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-18",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 14:13-21",
+      "source": "olm-1981 p?#112"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-19",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "1 Kgs 19:9, 11-13",
+      "source": "olm-1981 p?#115"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-19",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 84:9, 10, 11-12, 13-14",
+      "source": "olm-1981 p?#115"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-19",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 9:1-5",
+      "source": "olm-1981 p?#115"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-19",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 14:22-33",
+      "source": "olm-1981 p?#115"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-20",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 56:1, 6-7",
+      "source": "olm-1981 p?#118"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-20",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 66:2-3, 5, 6, 8",
+      "source": "olm-1981 p?#118"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-20",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 11:13-15, 29-32",
+      "source": "olm-1981 p?#118"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-20",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 15:21-28",
+      "source": "olm-1981 p?#118"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-21",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 22:19-23",
+      "source": "olm-1981 p?#121"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-21",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 137:1-2, 2-3, 6, 8",
+      "source": "olm-1981 p?#121"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-21",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 11:33-36",
+      "source": "olm-1981 p?#121"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-21",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 16:13-20",
+      "source": "olm-1981 p?#121"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-22",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Jer 20:7-9",
+      "source": "olm-1981 p?#124"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-22",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 62:2, 3-4, 5-6, 8-9",
+      "source": "olm-1981 p?#124"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-22",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 12:1-2",
+      "source": "olm-1981 p?#124"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-22",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 16:21-27",
+      "source": "olm-1981 p?#124"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-23",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ez 33:7-9",
+      "source": "olm-1981 p?#127"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-23",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 94:1-2, 6-7, 8-9",
+      "source": "olm-1981 p?#127"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-23",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 13:8-10",
+      "source": "olm-1981 p?#127"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-23",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 18:15-20",
+      "source": "olm-1981 p?#127"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-24",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Sir 27:30-28:7",
+      "canonical": "Sir 27:30-28:7",
+      "source": "olm-1981 p?#130"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-24",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 102:1-2, 3-4, 9-10, 11-12",
+      "source": "olm-1981 p?#130"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-24",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Rom 14:7-9",
+      "source": "olm-1981 p?#130"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-24",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 18:21-35",
+      "source": "olm-1981 p?#130"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-27",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 5:1-7",
+      "source": "olm-1981 p?#139"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-27",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 79:9, 12, 13-14, 15-16, 19-20",
+      "source": "olm-1981 p?#139"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-27",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Phil 4:6-9",
+      "source": "olm-1981 p?#139"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-27",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 21:33-43",
+      "source": "olm-1981 p?#139"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-28",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 25:6-10",
+      "source": "olm-1981 p?#142"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-28",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 22:1-3, 3-4, 5, 6",
+      "source": "olm-1981 p?#142"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-28",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Phil 4:12-14, 19-20",
+      "source": "olm-1981 p?#142"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-28",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 22:1-14",
+      "alternatives": ["Mt 22:1-10"],
+      "source": "olm-1981 p?#142"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-29",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 45:1, 4-6",
+      "source": "olm-1981 p?#145"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-29",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 95:1, 3, 4-5, 7-8, 9-10",
+      "source": "olm-1981 p?#145"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-29",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Thes 1:1-5",
+      "source": "olm-1981 p?#145"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-29",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 22:15-21",
+      "source": "olm-1981 p?#145"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-30",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ex 22:20-26",
+      "source": "olm-1981 p?#148"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-30",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 17:2-3, 3-4, 47, 51",
+      "source": "olm-1981 p?#148"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-30",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Thes 1:5-10",
+      "source": "olm-1981 p?#148"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-30",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 22:34-40",
+      "source": "olm-1981 p?#148"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-31",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Mal 1:14-2:2, 8-10",
+      "source": "olm-1981 p?#151"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-31",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 130:1, 2, 3",
+      "source": "olm-1981 p?#151"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-31",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Thes 2:7-9, 13",
+      "source": "olm-1981 p?#151"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-31",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 23:1-12",
+      "source": "olm-1981 p?#151"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-32",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Wis 6:12-16",
+      "source": "olm-1981 p?#154"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-32",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 62:2, 3-4, 5-6, 7-8",
+      "source": "olm-1981 p?#154"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-32",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Thes 4:13-18",
+      "alternatives": ["1 Thes 4:13-14"],
+      "source": "olm-1981 p?#154"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-32",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 25:1-13",
+      "source": "olm-1981 p?#154"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-33",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Prv 31:10-13, 19-20, 30-31",
+      "source": "olm-1981 p?#157"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-33",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 127:1-2, 3, 4-5",
+      "source": "olm-1981 p?#157"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-33",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Thes 5:1-6",
+      "source": "olm-1981 p?#157"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-33",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 25:14-30",
+      "alternatives": ["Mt 25:14-15, 19-21"],
+      "source": "olm-1981 p?#157"
+    },
+    {
+      "kind": "celebrations",
+      "key": "ascension-of-the-lord",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 1:1-11",
+      "source": "olm-1981 p?#58"
+    },
+    {
+      "kind": "celebrations",
+      "key": "ascension-of-the-lord",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 46:2-3, 6-7, 8-9",
+      "source": "olm-1981 p?#58"
+    },
+    {
+      "kind": "celebrations",
+      "key": "ascension-of-the-lord",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Eph 1:17-23",
+      "source": "olm-1981 p?#58"
+    },
+    {
+      "kind": "celebrations",
+      "key": "ascension-of-the-lord",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 28:16-20",
+      "source": "olm-1981 p?#58"
+    },
+    {
+      "kind": "celebrations",
+      "key": "baptism-of-the-lord",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 42:1-4, 6-7",
+      "source": "olm-1981 p?#21"
+    },
+    {
+      "kind": "celebrations",
+      "key": "baptism-of-the-lord",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 28:1-2, 3-4, 3, 9-10",
+      "source": "olm-1981 p?#21"
+    },
+    {
+      "kind": "celebrations",
+      "key": "baptism-of-the-lord",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Acts 10:34-38",
+      "source": "olm-1981 p?#21"
+    },
+    {
+      "kind": "celebrations",
+      "key": "baptism-of-the-lord",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 3:13-17",
+      "source": "olm-1981 p?#21"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 28:1-10",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "gospel",
+      "cycle": "B",
+      "ref": "Mk 16:1-7",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "gospel",
+      "cycle": "C",
+      "ref": "Lk 24:1-12",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-1",
+      "ref": "Gn 1:1-2:2",
+      "alternatives": ["Gn 1:1, 26-31"],
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-2",
+      "ref": "Gn 22:1-18",
+      "alternatives": ["Gn 22:1-2, 9, 10-13, 15-18"],
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-3",
+      "ref": "Ex 14:15-15:1",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-4",
+      "ref": "Is 54:5-14",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-5",
+      "ref": "Is 55:1-11",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-6",
+      "ref": "Bar 3:9-15, 32-4:4",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "reading-7",
+      "ref": "Ez 36:16-17, 18-28",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-1",
+      "ref": "Ps 103:1-2, 5-6, 10, 12, 13-14, 24, 35",
+      "alternatives": ["Ps 32:4-5, 6-7, 12-13, 20, 22"],
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-2",
+      "ref": "Ps 15:5, 8, 9-10, 10",
+      "canonical": "Ps 16:5, 8, 9-10, 11",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-3",
+      "ref": "Ex 15:1-2, 3-4, 5-6, 17-18",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-4",
+      "ref": "Ps 29:2, 4, 5-6, 11-12, 13",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-5",
+      "ref": "Is 12:2-3, 4, 5-6",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-6",
+      "ref": "Ps 18:8, 9, 10, 11",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-7",
+      "ref": "Ps 41:3, 5; 42:3, 4",
+      "alternatives": ["Is 12:2-3, 4, 5-6", "Ps 50:12-13, 14-15, 18-19"],
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "psalm-8",
+      "ref": "Ps 117:1-2, 16-17, 22-23",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "easter-vigil",
+      "slot": "epistle",
+      "ref": "Rom 6:3-11",
+      "source": "olm-1981 p?#41"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 10:34, 37-43",
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 117:1-2, 16-17, 22-23",
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Col 3:1-4",
+      "alternatives": ["1 Cor 5:6-8"],
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 20:1-9",
+      "alternatives": ["Mt 28:1-10"],
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "evening",
+      "slot": "first-reading",
+      "ref": "Acts 10:34, 37-43",
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "evening",
+      "slot": "psalm",
+      "ref": "Ps 117:1-2, 16-17, 22-23",
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "evening",
+      "slot": "second-reading",
+      "ref": "Col 3:1-4",
+      "alternatives": ["1 Cor 5:6-8"],
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "mass": "evening",
+      "slot": "gospel",
+      "ref": "Lk 24:13-35",
+      "source": "olm-1981 p?#42"
+    },
+    {
+      "kind": "celebrations",
+      "key": "epiphany-of-the-lord",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Is 60:1-6",
+      "source": "olm-1981 p?#20"
+    },
+    {
+      "kind": "celebrations",
+      "key": "epiphany-of-the-lord",
+      "mass": "day",
+      "slot": "psalm",
+      "ref": "Ps 71:1-2, 7-8, 10-11, 12-13",
+      "source": "olm-1981 p?#20"
+    },
+    {
+      "kind": "celebrations",
+      "key": "epiphany-of-the-lord",
+      "mass": "day",
+      "slot": "second-reading",
+      "ref": "Eph 3:2-3, 5-6",
+      "source": "olm-1981 p?#20"
+    },
+    {
+      "kind": "celebrations",
+      "key": "epiphany-of-the-lord",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 2:1-12",
+      "source": "olm-1981 p?#20"
+    },
+    {
+      "kind": "celebrations",
+      "key": "friday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Is 52:13-53:12",
+      "source": "olm-1981 p?#40"
+    },
+    {
+      "kind": "celebrations",
+      "key": "friday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "psalm",
+      "ref": "Ps 30:2, 6, 12-13, 15-16, 17, 25",
+      "source": "olm-1981 p?#40"
+    },
+    {
+      "kind": "celebrations",
+      "key": "friday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "second-reading",
+      "ref": "Heb 4:14-16; 5:7-9",
+      "source": "olm-1981 p?#40"
+    },
+    {
+      "kind": "celebrations",
+      "key": "friday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Jn 18:1-19:42",
+      "source": "olm-1981 p?#40"
+    },
+    {
+      "kind": "celebrations",
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Sir 3:2-6, 12-14",
+      "canonical": "Sir 3:2-6, 12-14",
+      "source": "olm-1981 p?#17"
+    },
+    {
+      "kind": "celebrations",
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 127:1-2, 3, 4-5",
+      "source": "olm-1981 p?#17"
+    },
+    {
+      "kind": "celebrations",
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Col 3:12-21",
+      "alternatives": ["Col 3:12-17"],
+      "source": "olm-1981 p?#17"
+    },
+    {
+      "kind": "celebrations",
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 2:13-15, 19-23",
+      "source": "olm-1981 p?#17"
+    },
+    {
+      "kind": "celebrations",
+      "key": "mary-mother-of-god",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Nm 6:22-27",
+      "source": "olm-1981 p?#18"
+    },
+    {
+      "kind": "celebrations",
+      "key": "mary-mother-of-god",
+      "mass": "day",
+      "slot": "second-reading",
+      "ref": "Gal 4:4-7",
+      "source": "olm-1981 p?#18"
+    },
+    {
+      "kind": "celebrations",
+      "key": "mary-mother-of-god",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Lk 2:16-21",
+      "source": "olm-1981 p?#18"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-body-and-blood-of-christ",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Dt 8:2-3, 14-16",
+      "source": "olm-1981 p?#167"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-body-and-blood-of-christ",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 147:12-13, 14-15, 19-20",
+      "canonical": "Ps 147:12-13, 14-15, 19-20",
+      "source": "olm-1981 p?#167"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-body-and-blood-of-christ",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 10:16-17",
+      "source": "olm-1981 p?#167"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-body-and-blood-of-christ",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 6:51-58",
+      "source": "olm-1981 p?#167"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-trinity",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ex 34:4-6, 8-9",
+      "source": "olm-1981 p?#164"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-trinity",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Dn 3:52, 53, 54, 55, 56",
+      "source": "olm-1981 p?#164"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-trinity",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "2 Cor 13:11-13",
+      "source": "olm-1981 p?#164"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-trinity",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 3:16-18",
+      "source": "olm-1981 p?#164"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-sacred-heart-of-jesus",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Dt 7:6-11",
+      "source": "olm-1981 p?#170"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-sacred-heart-of-jesus",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 102:1-2, 3-4, 6-7, 8, 10",
+      "source": "olm-1981 p?#170"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-sacred-heart-of-jesus",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Jn 4:7-16",
+      "source": "olm-1981 p?#170"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-sacred-heart-of-jesus",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 11:25-30",
+      "source": "olm-1981 p?#170"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "vigil",
+      "slot": "first-reading",
+      "ref": "Is 62:1-5",
+      "source": "olm-1981 p?#13"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "vigil",
+      "slot": "psalm",
+      "ref": "Ps 88:4-5, 16-17, 27, 29",
+      "source": "olm-1981 p?#13"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "vigil",
+      "slot": "second-reading",
+      "ref": "Acts 13:16-17, 22-25",
+      "source": "olm-1981 p?#13"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "vigil",
+      "slot": "gospel",
+      "ref": "Mt 1:1-25",
+      "alternatives": ["Mt 1:18-25"],
+      "source": "olm-1981 p?#13"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "night",
+      "slot": "first-reading",
+      "ref": "Is 9:1-6",
+      "source": "olm-1981 p?#14"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "night",
+      "slot": "psalm",
+      "ref": "Ps 95:1-2, 2-3, 11-12, 13",
+      "source": "olm-1981 p?#14"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "night",
+      "slot": "second-reading",
+      "ref": "Ti 2:11-14",
+      "source": "olm-1981 p?#14"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "night",
+      "slot": "gospel",
+      "ref": "Lk 2:1-14",
+      "source": "olm-1981 p?#14"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "dawn",
+      "slot": "first-reading",
+      "ref": "Is 62:11-12",
+      "source": "olm-1981 p?#15"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "dawn",
+      "slot": "psalm",
+      "ref": "Ps 96:1, 6, 11-12",
+      "source": "olm-1981 p?#15"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "dawn",
+      "slot": "second-reading",
+      "ref": "Ti 3:4-7",
+      "source": "olm-1981 p?#15"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "dawn",
+      "slot": "gospel",
+      "ref": "Lk 2:15-20",
+      "source": "olm-1981 p?#15"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Is 52:7-10",
+      "source": "olm-1981 p?#16"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "day",
+      "slot": "psalm",
+      "ref": "Ps 97:1, 2-3, 3-4, 5-6",
+      "source": "olm-1981 p?#16"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "day",
+      "slot": "second-reading",
+      "ref": "Heb 1:1-6",
+      "source": "olm-1981 p?#16"
+    },
+    {
+      "kind": "celebrations",
+      "key": "nativity-of-the-lord",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Jn 1:1-18",
+      "alternatives": ["Jn 1:1-5, 9-14"],
+      "source": "olm-1981 p?#16"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ez 34:11-12, 15-17",
+      "source": "olm-1981 p?#160"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "C",
+      "ref": "2 Sm 5:1-3",
+      "source": "olm-1981 p?#162"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 22:1-2, 2-3, 5-6",
+      "source": "olm-1981 p?#160"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "C",
+      "ref": "Ps 121:1-2, 3-4, 4-5",
+      "source": "olm-1981 p?#162"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 15:20-26, 28",
+      "source": "olm-1981 p?#160"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "C",
+      "ref": "Col 1:12-20",
+      "source": "olm-1981 p?#162"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 25:31-46",
+      "source": "olm-1981 p?#160"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "C",
+      "ref": "Lk 23:35-43",
+      "source": "olm-1981 p?#162"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "mass": "procession",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 21:1-11",
+      "source": "olm-1981 p?#37"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 50:4-7",
+      "source": "olm-1981 p?#38"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 21:8-9, 17-18, 19-20, 23-24",
+      "source": "olm-1981 p?#38"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Phil 2:6-11",
+      "source": "olm-1981 p?#38"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 26:14-27:66",
+      "alternatives": ["Mt 27:11-54"],
+      "source": "olm-1981 p?#38"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "vigil",
+      "slot": "first-reading",
+      "ref": "Gn 11:1-9",
+      "alternatives": ["Ex 19:3-8, 16-20", "Ez 37:1-14", "Jl 3:1-5"],
+      "source": "olm-1981 p?#62"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "vigil",
+      "slot": "psalm",
+      "ref": "Ps 103:1-2, 24, 35, 27-28, 29, 30",
+      "source": "olm-1981 p?#62"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "vigil",
+      "slot": "second-reading",
+      "ref": "Rom 8:22-27",
+      "source": "olm-1981 p?#62"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "vigil",
+      "slot": "gospel",
+      "ref": "Jn 7:37-39",
+      "source": "olm-1981 p?#62"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Acts 2:1-11",
+      "source": "olm-1981 p?#63"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 103:1, 24, 29-30, 31, 34",
+      "source": "olm-1981 p?#63"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "1 Cor 12:3-7, 12-13",
+      "source": "olm-1981 p?#63"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Jn 20:19-23",
+      "source": "olm-1981 p?#63"
+    },
+    {
+      "kind": "celebrations",
+      "key": "second-sunday-after-christmas",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Sir 24:1-2, 8-12",
+      "canonical": "Sir 24:1-2, 8-12",
+      "source": "olm-1981 p?#19"
+    },
+    {
+      "kind": "celebrations",
+      "key": "second-sunday-after-christmas",
+      "mass": "day",
+      "slot": "psalm",
+      "ref": "Ps 147:12-13, 14-15, 19-20",
+      "canonical": "Ps 147:12-13, 14-15, 19-20",
+      "source": "olm-1981 p?#19"
+    },
+    {
+      "kind": "celebrations",
+      "key": "second-sunday-after-christmas",
+      "mass": "day",
+      "slot": "second-reading",
+      "ref": "Eph 1:3-6, 15-18",
+      "source": "olm-1981 p?#19"
+    },
+    {
+      "kind": "celebrations",
+      "key": "second-sunday-after-christmas",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Jn 1:1-18",
+      "alternatives": ["Jn 1:1-5, 9-14"],
+      "source": "olm-1981 p?#19"
+    },
+    {
+      "kind": "celebrations",
+      "key": "thursday-of-the-lords-supper",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Ex 12:1-8, 11-14",
+      "source": "olm-1981 p?#39"
+    },
+    {
+      "kind": "celebrations",
+      "key": "thursday-of-the-lords-supper",
+      "mass": "day",
+      "slot": "psalm",
+      "ref": "Ps 115:12-13, 15-16, 17-18",
+      "canonical": "Ps 116:12-13, 15-16, 17-18",
+      "source": "olm-1981 p?#39"
+    },
+    {
+      "kind": "celebrations",
+      "key": "thursday-of-the-lords-supper",
+      "mass": "day",
+      "slot": "second-reading",
+      "ref": "1 Cor 11:23-26",
+      "source": "olm-1981 p?#39"
+    },
+    {
+      "kind": "celebrations",
+      "key": "thursday-of-the-lords-supper",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Jn 13:1-15",
+      "source": "olm-1981 p?#39"
+    }
+  ],
+  "consulted": [
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-1",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Advent1",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-1",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Advent1",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Advent2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Advent2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Advent3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Advent3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Advent4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "advent-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Advent4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-1",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Lent1",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-1",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Lent1",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Lent2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Lent2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Lent3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Lent3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Lent4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Lent4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-5",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Lent5",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-sunday-5",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Lent5",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-5",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter5",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-5",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter5",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-6",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter6",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-6",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter6",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-7",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter7",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-sunday-7",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter7",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-2",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday2",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-3",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday3",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-4",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday4",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-5",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday5",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-5",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday5",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-6",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday6",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-6",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday6",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-7",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday7",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-7",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday7",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-8",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday8",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-8",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday8",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-9",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday9",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-9",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday9",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-10",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday10",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-10",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday10",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-11",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday11",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-11",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday11",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-12",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday12",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-12",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday12",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-13",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday13",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-13",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday13",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-14",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday14",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-14",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday14",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-15",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday15",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-15",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday15",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-16",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday16",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-16",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday16",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-17",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday17",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-17",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday17",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-18",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday18",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-18",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday18",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-19",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday19",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-19",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday19",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-20",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday20",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-20",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday20",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-21",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday21",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-21",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday21",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-22",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday22",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-22",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday22",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-23",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday23",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-23",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday23",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-24",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday24",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-24",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday24",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-27",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday27",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-27",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday27",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-28",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday28",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-28",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday28",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-29",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday29",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-29",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday29",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-30",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday30",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-30",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday30",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-31",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday31",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-31",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday31",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-32",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday32",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-32",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday32",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-33",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#OrdSunday33",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-33",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#OrdSunday33",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "ascension-of-the-lord",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Ascension",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "ascension-of-the-lord",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Ascension",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "baptism-of-the-lord",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#BaptismLord",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "baptism-of-the-lord",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#BaptismLord",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Easter",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "easter-sunday",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Easter",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#HolyFamily",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#HolyFamily",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "mary-mother-of-god",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#MaryMotherOfGod",
+      "note": "its psalm, \"Psalm 66 (67)\", does not parse"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-body-and-blood-of-christ",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#CorpusChristi",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-body-and-blood-of-christ",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#CorpusChristi",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-trinity",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Trinity",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-holy-trinity",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Trinity",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-sacred-heart-of-jesus",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#SacredHeart",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "most-sacred-heart-of-jesus",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#SacredHeart",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#ChristKing",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#PalmSun",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#PalmSun",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#Pentecost",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "celebrations",
+      "key": "pentecost-sunday",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#Pentecost",
+      "note": "empty at the pinned revision"
+    }
+  ]
+}
