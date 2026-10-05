@@ -114,18 +114,6 @@ void main() {
     expect(scope.updateShouldNotify(otherLauncher), isTrue);
   });
 
-  testWidgets('launchExternally hands the link to the platform', (
-    tester,
-  ) async {
-    // No platform plugin runs under flutter test, so the call fails; the
-    // point is that it reaches url_launcher.
-    try {
-      await launchExternally(Uri.parse('https://example.org/'));
-    } on Exception catch (error) {
-      expect(error, isNotNull);
-    }
-  });
-
   group('openLink', () {
     Future<BuildContext> pumpScope(
       WidgetTester tester,

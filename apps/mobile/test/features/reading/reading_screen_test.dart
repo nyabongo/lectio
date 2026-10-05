@@ -399,9 +399,15 @@ void main() {
   group('routes', () {
     Future<void> pumpRouter(WidgetTester tester, String location) async {
       useTallScreen(tester);
+      // The app shell gives the tab routes their Scaffold.
       final router = GoRouter(
         initialLocation: location,
-        routes: [readingRoute()],
+        routes: [
+          ShellRoute(
+            builder: (context, state, child) => Scaffold(body: child),
+            routes: [readingRoute()],
+          ),
+        ],
       );
       addTearDown(router.dispose);
       await tester.pumpWidget(
