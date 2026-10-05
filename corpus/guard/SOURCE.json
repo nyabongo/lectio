@@ -1,0 +1,138 @@
+{
+  "description": "Hash-only shingle index of public-domain English Bibles for the licence guard (gate 3). It stores a Golomb-Rice-coded set of 40-bit hashes of every 8-word shingle and no text; see packages/textguard/README.md.",
+  "file": "en-pd-8.bin",
+  "sha256": "fd2e383bfe1fba7df16acc8fceec6161413755cc2cce67de7bfd4ae21b062590",
+  "bytes": 4489136,
+  "format": {
+    "magic": "LSHI",
+    "version": 2,
+    "normaliserVersion": 2,
+    "keyBits": 40,
+    "falsePositiveRate": 0.0000016
+  },
+  "shingleSize": 8,
+  "shingles": 1711360,
+  "builtAt": "2026-10-05T07:14:23.575Z",
+  "builder": "scripts/corpus/build-guard-index.mjs (packages/textguard/src/build.ts)",
+  "editions": [
+    {
+      "id": "eng-web",
+      "title": "World English Bible Classic (2020 stable text, with deuterocanon), eBible.org readaloud edition",
+      "url": "https://ebible.org/Scriptures/eng-web_readaloud.zip",
+      "homepage": "https://ebible.org/web/",
+      "licence": "Public Domain",
+      "sha256": "2e71418a58821b3cc453bebfdc51b21599b3007c2679bf130733c09ddcf6d9f5",
+      "chapters": 1402,
+      "words": 925023
+    },
+    {
+      "id": "engDRA",
+      "title": "Douay-Rheims Bible, American Edition of 1899 (Challoner revision), eBible.org readaloud edition",
+      "url": "https://ebible.org/Scriptures/engDRA_readaloud.zip",
+      "homepage": "https://ebible.org/engDRA/",
+      "licence": "Public Domain",
+      "sha256": "4e5e47b1b425ff400b4d2f61a57ebba7a3b1ada9ad9d314e22ad19f680fc7014",
+      "chapters": 1334,
+      "words": 893100
+    }
+  ],
+  "selfCheck": [
+    {
+      "source": "eng-web",
+      "book": "GEN",
+      "chapter": 1,
+      "shingleKeys": [
+        "bc8ee80bc9",
+        "811f04a8f7",
+        "59cabe7aaa",
+        "737ea11d84",
+        "d95e9c8349",
+        "aeb40d3831",
+        "13a56d8a5d",
+        "bcf0fa841d"
+      ],
+      "longestRun": 15
+    },
+    {
+      "source": "eng-web",
+      "book": "PSA",
+      "chapter": 23,
+      "shingleKeys": [
+        "a36598c2c5",
+        "9643d9f99e",
+        "a231e53f08",
+        "af90979c35",
+        "88b9986079",
+        "d3ae403887",
+        "8d8f4b9ea5",
+        "221d456e7b"
+      ],
+      "longestRun": 15
+    },
+    {
+      "source": "eng-web",
+      "book": "MAT",
+      "chapter": 5,
+      "shingleKeys": [
+        "6d10f616b9",
+        "76514b1f49",
+        "939cd44ef6",
+        "7d354055ac",
+        "f17d89f9ec",
+        "b5fc93bead",
+        "ab59605afe",
+        "2a55b19d10"
+      ],
+      "longestRun": 15
+    },
+    {
+      "source": "eng-web",
+      "book": "JHN",
+      "chapter": 3,
+      "shingleKeys": [
+        "fa79eae254",
+        "f2e580183b",
+        "69648796c8",
+        "7c7b13d3a1",
+        "5190e3b2ec",
+        "56bd5ac7ec",
+        "5154fa613b",
+        "473858981f"
+      ],
+      "longestRun": 15
+    },
+    {
+      "source": "eng-web",
+      "book": "ROM",
+      "chapter": 8,
+      "shingleKeys": [
+        "df1cd2ea47",
+        "6c77da8856",
+        "7350126522",
+        "7dc570bb22",
+        "6048f4c4f3",
+        "91ca5a319f",
+        "40f11045f7",
+        "44f578ac3e"
+      ],
+      "longestRun": 15
+    },
+    {
+      "source": "engDRA",
+      "book": "JHN",
+      "chapter": 3,
+      "shingleKeys": [
+        "49c4c14593",
+        "f2e580183b",
+        "69648796c8",
+        "7c7b13d3a1",
+        "5190e3b2ec",
+        "56bd5ac7ec",
+        "5154fa613b",
+        "473858981f"
+      ],
+      "longestRun": 15
+    }
+  ],
+  "limitation": "The index only detects overlap with World English Bible and Douay-Rheims wording. Copyrighted modern translations (NABRE, RSV-2CE, Jerusalem Bible) are caught only where they share runs with those texts; the quoted-run rule, the research prompt rules and human review are the remaining safeguards."
+}
