@@ -75,6 +75,33 @@ describe('validateRequiredChecks', () => {
   });
 });
 
+describe('check names', () => {
+  const workflow = (jobs: string) => `on: workflow_dispatch\njobs:\n${jobs}`;
+
+  it('matches a job by its display name', () => {
+    expect(checkWorkflow('a.yml', workflow('  lint:\n    name: Lint\n'), ['Lint'])).toEqual([]);
+  });
+
+  it('rejects a listed id whose job reports under another name', () => {
+    expect(checkWorkflow('a.yml', workflow('  lint:\n    name: Lint\n'), ['lint'])).toEqual([
+      "a.yml: job 'lint' reports as 'Lint'; list the check name branch protection sees",
+    ]);
+  });
+
+  it('rejects matrix jobs, which report one check per combination', () => {
+    const source = workflow('  test:\n    strategy:\n      matrix:\n        node: [22, 24]\n');
+    expect(checkWorkflow('a.yml', source, ['test'])).toEqual([
+      "a.yml: job 'test' uses strategy.matrix, so it never reports a check named 'test'",
+    ]);
+    const noMatrix = workflow('  test:\n    strategy:\n      fail-fast: false\n');
+    expect(checkWorkflow('a.yml', noMatrix, ['test'])).toEqual([]);
+  });
+
+  it('tolerates a job defined without a body', () => {
+    expect(checkWorkflow('a.yml', workflow('  lint:\n'), ['lint'])).toEqual([]);
+  });
+});
+
 describe('parseRegistryFile', () => {
   it('parses a valid file', () => {
     expect(parseRegistryFile(registry(['lint']))).toEqual({ workflow: 'ci.yml', jobs: ['lint'] });
@@ -86,13 +113,13 @@ describe('parseRegistryFile', () => {
     ]);
     expect(parseRegistryFile({ file: 'ci.json', source: '{"workflow":"ci","jobs":[]}' })).toEqual([
       'ci.json: "workflow" must be a workflow file name such as "ci.yml"',
-      'ci.json: "jobs" must be a non-empty array of job ids',
+      'ci.json: "jobs" must be a non-empty array of check names (job name or id)',
     ]);
     expect(parseRegistryFile(registry(['lint'], 'web.json', 'ci.yml'))).toEqual([
       'web.json: must be named after its workflow (ci.json)',
     ]);
     expect(parseRegistryFile({ file: 'ci.json', source: '{"workflow":"ci.yml","jobs":["", 3]}' })).toEqual([
-      'ci.json: "jobs" must be a non-empty array of job ids',
+      'ci.json: "jobs" must be a non-empty array of check names (job name or id)',
     ]);
   });
 });
