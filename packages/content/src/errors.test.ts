@@ -66,6 +66,19 @@ describe('issuesFromAjv', () => {
     ]);
   });
 
+  it('reports a forbidden field once, not also as an unknown field', () => {
+    expect(
+      issuesFromAjv([
+        ajvError({ keyword: 'additionalProperties', params: { additionalProperty: 'text' } }),
+        ajvError({ keyword: 'additionalProperties', params: { additionalProperty: 'extra' } }),
+        ajvError({ keyword: 'propertyNames', params: { propertyName: 'text' } }),
+      ]),
+    ).toEqual([
+      { pointer: '/extra', message: 'unknown field' },
+      { pointer: '/text', message: 'field name is not allowed' },
+    ]);
+  });
+
   it('lists enum values and keeps other messages, without duplicates', () => {
     const enumError = ajvError({ keyword: 'enum', instancePath: '/colour', params: { allowedValues: ['white'] } });
     expect(issuesFromAjv([enumError, enumError, ajvError({ instancePath: '/days', message: undefined })])).toEqual([
