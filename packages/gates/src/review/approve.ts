@@ -30,7 +30,7 @@
  */
 import { createHash } from 'node:crypto';
 import { readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
-import { basename } from 'node:path';
+import { basename, resolve } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
 import { checkPassage, checkTranslatedPassage, contentKindOf, parseJson, translationPlaceOf } from '@lectio/content';
@@ -286,7 +286,10 @@ async function applyReview(
   const fs = options.fs ?? nodeReviewFs;
   const formatJson = options.format ?? prettierJson;
   if (files.length === 0) throw new ReviewError('no files to approve');
-  const planned = files.map((file) => {
+  // One plan per file: `X.json ./X.json` names the same file twice, and two writes to it would collide.
+  const seen = new Set<string>();
+  const unique = files.filter((file) => !seen.has(resolve(file)) && seen.add(resolve(file)));
+  const planned = unique.map((file) => {
     const { value, text, translation, withReview } = readContent(fs, file);
     if (translation && auto) {
       throw new ReviewError(`${file}: translations are approved by a person only, never automatically`);

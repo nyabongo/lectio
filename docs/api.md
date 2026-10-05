@@ -10,11 +10,27 @@ fresh as the last build (on merge and daily, L-062).
   `packages/schema/json/api-*.schema.json` for non-TypeScript clients.
 - Every document carries `"apiVersion": 1`.
 
+**Status:** v1 is stable. It is the contract between the site, the service worker and the Flutter apps; changes
+follow the [stability policy](#stability-policy).
+
 ## Base URL
 
 All paths below are relative to the API root, `<site.baseUrl>api/v1/`. For the production config that is
 `https://nyabongo.github.io/lectio/api/v1/`. `index.json` repeats the root as `apiRoot` and lists the endpoint
 templates under `endpoints`, so a client only needs to know where `index.json` is.
+
+The root follows `site.baseUrl` in `config/lectio.config.json`. If the owner moves the site to a custom domain
+(decision L-206, [#103](https://github.com/nyabongo/lectio/issues/103)), the root moves with it: the Flutter apps
+read theirs from `--dart-define=LECTIO_API_BASE_URL=…` (default above, `apps/mobile/lib/data/api_client.dart`), so a
+new domain also means a new app build. See the [operator handbook](operator-handbook.md#domain-and-hosting).
+
+## Clients
+
+| Client                     | Code                                                     | Reads                                                                    |
+| -------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Service worker (L-061)     | `apps/web/src/sw/`                                       | `index.json`, then `days/{date}.json` for the next days, for offline use |
+| Flutter apps (L-100–L-117) | `apps/mobile/lib/data/`                                  | `index.json`, `upcoming.json`, `days/…`, `passages/…` (English for now)  |
+| Anything else              | JSON Schemas in `packages/schema/json/api-*.schema.json` | read-only, no key, no rate limit beyond the static host's                |
 
 ## Endpoints
 
@@ -150,7 +166,8 @@ The files are rendered in the deploy job (L-082, `npm run audio:render -- --auto
 `config.tts.storage.publicBaseUrl`, keyed by a hash of the spoken text, the voice and the TTS engine version, so a
 note keeps its URL until its text changes. `audio` is `null` when the note has not been rendered yet, and **always**
 `null` while no live voice is configured: without the TTS and storage secrets the deploy renders with the fake voice
-for checking only and publishes none of it.
+for checking only and publishes none of it. The secrets and how to turn audio on are in the
+[operator handbook](operator-handbook.md#narration-audio).
 
 ### Segments (the Listen queue)
 
@@ -185,7 +202,7 @@ v1 is **additive only**. Within v1 we may:
 
 - add new optional fields to any document, or new values where a field is documented as open;
 - turn a `null` placeholder (such as `audio`) into a value of its documented shape;
-- add new documents and endpoints (for example localised endpoints under `/api/v1/<locale>/`, L-113);
+- add new documents and endpoints (as the Kiswahili mirror under `sw/` did, L-113; another locale would follow it);
 - add days, years and passages as content grows.
 
 Within v1 we will never remove a field or a document, rename one, change its type or meaning, or make a nullable
@@ -197,6 +214,14 @@ Clients must therefore **ignore fields they do not recognise** and must not fail
 describe the current v1 shape exactly (`additionalProperties: false`) so that the site's tests catch accidental
 leaks; when a field is added, the schema is updated in the same pull request, and clients validating against an
 older copy of the schema should validate loosely.
+
+## Changing the API
+
+1. Change the schema in `packages/schema/src/api/` and its valid and invalid fixtures, then run
+   `npm run schema:emit` so `packages/schema/json/` matches.
+2. Change the builder in `apps/web/src/lib/api.ts` (and `notes-locale.ts` for the `sw/` mirror).
+3. Update this page in the same pull request. A change that is not additive is a v2, not an edit to v1.
+4. Check the readers: the service worker (`apps/web/src/sw/`) and the Flutter models (`apps/mobile/lib/data/`).
 
 ## Tests
 
