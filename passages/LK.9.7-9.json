@@ -54,7 +54,7 @@
     {
       "id": "ezetei-idein",
       "verse": "9:9",
-      "anchor": "trying to see him",
+      "anchor": "sought to see him",
       "original": {
         "text": "ἐζήτει ἰδεῖν αὐτόν",
         "lang": "grc",
@@ -62,7 +62,7 @@
         "gloss": "was seeking to see him"
       },
       "summary": "Herod “was seeking” to see Jesus, a wish Luke picks up again at the Passion.",
-      "body": "The verb means he sought, not merely wished, and literally reads was seeking. [c19] Luke returns to this desire at the Passion, when Pilate sends Jesus to Herod and Herod is glad at last to see him. [c20] Just before, Herod says I beheaded John with an emphatic I, which commentators hear as the voice of a troubled conscience. [c21]"
+      "body": "The verb means he sought, not merely wished, and literally reads was seeking. [c19] Luke returns to this desire at the Passion, when Pilate sends Jesus to Herod and Herod is glad at last to see him. [c20] Just before, Herod says I beheaded John with an emphatic I, which A. B. Bruce hears as the voice of a guilty, troubled conscience. [c21]"
     }
   ],
   "claims": [
@@ -188,8 +188,8 @@
     },
     {
       "id": "c21",
-      "text": "The emphatic ἐγὼ in “I beheaded” (Lk 9:9) is read as the voice of a guilty, troubled conscience.",
-      "sourceIds": ["lk-9-9-ego", "expositors-lk-9-9-ego", "meyer-lk-9-9"],
+      "text": "A. B. Bruce reads the emphatic ἐγὼ in “I beheaded” (Lk 9:9) as the voice of a guilty, troubled conscience.",
+      "sourceIds": ["lk-9-9-ego", "expositors-lk-9-9-ego"],
       "sensitive": false
     }
   ],
@@ -388,15 +388,6 @@
       "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:7 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/luke/9-7.htm",
       "excerpt": "Only Luke has the word in the New Testament.",
-      "excerptLang": "en",
-      "retrievedAt": "2026-10-05T09:35:00Z"
-    },
-    {
-      "id": "meyer-lk-9-9",
-      "type": "web",
-      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:9 (Bible Hub)",
-      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
-      "excerpt": "The twofold ἐγώ has the emphasis of the terrified heart.",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:35:00Z"
     },

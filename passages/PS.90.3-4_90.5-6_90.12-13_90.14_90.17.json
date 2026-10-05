@@ -6,7 +6,7 @@
   "context": {
     "title": "A prayer of Moses",
     "paragraphs": [
-      "Psalm 90 opens the fourth book of the Psalter, and its heading calls it a prayer of Moses, the man of God. [c1] The same title is given to Moses in Deut 33:1. [c2] Many modern commentators doubt that Moses wrote it, noting its closeness to Deuteronomy and an outlook that seems to reach beyond his age. [c3]",
+      "Psalm 90 opens the fourth book of the Psalter, and its heading calls it a prayer of Moses, the man of God. [c1] The same title is given to Moses in Deut 33:1. [c2] Commentators such as Kirkpatrick (Cambridge Bible) and Ellicott doubt that Moses wrote it, noting its closeness to Deuteronomy and an outlook that seems to reach beyond his age. [c3]",
       "The selection leaves out the psalm’s middle verses, which speak of a life spent under God’s anger at sin. [c4] It keeps the contrast between God, for whom a thousand years are like yesterday, and mortals who return to dust and pass like grass. [c5] The second letter of Peter takes up the saying about a thousand years. [c6]",
       "In Palestine some grasses shoot up lushly in spring and are soon scorched and gone, which gives the image its force. [c7] The closing prayer asks God for a morning of mercy after a night of trouble, and to establish the work of our hands, a phrase frequent in Deuteronomy. [c8][c9]"
     ]
@@ -36,7 +36,7 @@
         "gloss": "turn!"
       },
       "summary": "The prayer’s “Return” uses the verb of verse 3, where God bids mortals return to dust.",
-      "body": "Verse 13 opens with the verb shuv, the same verb God uses in verse 3 when he tells mortals to return to the dust. [c13] Keil and Delitzsch hear the prayer of Moses in Exod 32:12 and read it as a plea that God turn from his anger. [c14] The Cambridge Bible adds that Scripture speaks of God relenting in human terms, without implying that he changes his purpose. [c15]"
+      "body": "Verse 13 opens with the verb shuv, which verse 3 uses twice, as God turns mortals back to dust and bids them return. [c13] Keil and Delitzsch hear the prayer of Moses in Exod 32:12 and read it as a plea that God turn from his anger. [c14] The Cambridge Bible adds that Scripture speaks of God relenting in human terms, without implying that he changes his purpose. [c15]"
     },
     {
       "id": "heart-of-wisdom",
@@ -140,8 +140,8 @@
     },
     {
       "id": "c13",
-      "text": "Ps 90:3 and Ps 90:13 both use the verb שׁוּב: God bids mortals return (to dust), and the psalmist bids God turn.",
-      "sourceIds": ["ps-90-3-shuv", "ps-90-13", "barnes-ps-90-3-return"],
+      "text": "Ps 90:3 uses the verb שׁוּב twice, as God turns mortals back to dust (תָּשֵׁב) and bids them return, and Ps 90:13 uses it again as the psalmist bids God turn.",
+      "sourceIds": ["ps-90-3-tashev", "ps-90-3-shuv", "ps-90-13", "barnes-ps-90-3-return"],
       "sensitive": false
     },
     {
@@ -228,6 +228,14 @@
       "citation": "Psalm 90:3",
       "ref": "Ps 90:3",
       "excerpt": "דַּכָּא",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-3-tashev",
+      "type": "scripture",
+      "citation": "Psalm 90:3",
+      "ref": "Ps 90:3",
+      "excerpt": "תָּשֵׁב",
       "excerptLang": "hbo"
     },
     {
