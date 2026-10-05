@@ -42,6 +42,8 @@ export interface SearchLabels {
 
 /** A titled block of note text. */
 export interface SearchSection {
+  /** The element id of this block on the Reading page (`context`, `note-<id>`): Pagefind's sub-result anchor. */
+  readonly id: string;
   readonly heading: string;
   readonly paragraphs: readonly string[];
 }
@@ -85,8 +87,9 @@ export function dayDocuments(day: ResolvedDay, lang: string, labels: SearchLabel
     if (notes === null) return [];
     const date = labels.date(view.date);
     const sections: SearchSection[] = [
-      { heading: notes.context.title, paragraphs: notes.context.paragraphs.map(plainText) },
+      { id: 'context', heading: notes.context.title, paragraphs: notes.context.paragraphs.map(plainText) },
       ...notes.translationNotes.map((note) => ({
+        id: note.anchorId,
         heading: `${note.anchor}: ${note.original.translit} (${note.original.gloss})`,
         paragraphs: [note.summary, plainText(note.body)],
       })),
@@ -139,7 +142,7 @@ export function searchDocumentHtml(doc: SearchDocument): string {
   const sections = doc.sections
     .map(
       (section) =>
-        `<section><h2>${e(section.heading)}</h2>${section.paragraphs.map((p) => `<p>${e(p)}</p>`).join('')}</section>`,
+        `<section><h2 id="${e(section.id)}">${e(section.heading)}</h2>${section.paragraphs.map((p) => `<p>${e(p)}</p>`).join('')}</section>`,
     )
     .join('');
   return [

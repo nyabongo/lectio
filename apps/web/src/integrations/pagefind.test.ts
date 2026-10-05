@@ -24,6 +24,7 @@ interface PagefindResultData {
   excerpt: string;
   meta: Record<string, string>;
   filters: Record<string, string[]>;
+  sub_results: { url: string }[];
 }
 interface PagefindModule {
   options(options: { basePath: string; baseUrl: string }): Promise<void>;
@@ -79,6 +80,10 @@ describe('Pagefind on the fixture build', () => {
     const first = await results[0]?.data();
     expect(first?.url).toBe(`${base}2026-09-20/gospel/`);
     expect(first?.excerpt).toContain('<mark>evil</mark>');
+    // Sub-results deep-link to the Context panel and the note on the Reading page.
+    expect(first?.sub_results.map((sub) => sub.url)).toEqual(
+      expect.arrayContaining([`${base}2026-09-20/gospel/#context`, `${base}2026-09-20/gospel/#note-v15-evil-eye`]),
+    );
     expect(first?.meta).toMatchObject({
       title: 'Mt 20:1-16a · Gospel · Sunday 20 September 2026',
       ref: 'Mt 20:1-16a',

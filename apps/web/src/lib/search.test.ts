@@ -41,7 +41,7 @@ const doc: SearchDocument = {
   book: 'Matthew',
   season: 'Ordinary Time',
   summary: 'A <summary> & "quotes"',
-  sections: [{ heading: 'Heading', paragraphs: ['One.', 'Two.'] }],
+  sections: [{ id: 'note-x', heading: 'Heading', paragraphs: ['One.', 'Two.'] }],
 };
 
 describe('bookCode', () => {
@@ -92,11 +92,13 @@ describe('searchDocuments', () => {
     });
     expect(gospel?.summary).toContain('landowner');
     const [context, ...notes] = gospel?.sections ?? [];
+    expect(context?.id).toBe('context');
     expect(context?.heading).toBe('Labourers in the vineyard');
     expect(context?.paragraphs[1]).toContain('the Jewish idiom of the evil eye');
     // Citation markers never reach the index.
     expect(JSON.stringify(gospel)).not.toMatch(/\[c\d+\]/);
     expect(notes[0]).toEqual({
+      id: 'note-v15-evil-eye',
       heading: 'envious: ophthalmos sou ponēros (your eye evil)',
       paragraphs: [
         'Greek asks “is your eye evil?”, an idiom for begrudging another’s good.',
@@ -113,7 +115,7 @@ describe('searchDocumentHtml', () => {
     const bodies = html.match(/data-pagefind-body/g) ?? [];
     expect(bodies).toHaveLength(1);
     expect(html).toContain(
-      '<main data-pagefind-body><p>A &lt;summary&gt; &amp; &quot;quotes&quot;</p><section><h2>Heading</h2><p>One.</p><p>Two.</p></section></main>',
+      '<main data-pagefind-body><p>A &lt;summary&gt; &amp; &quot;quotes&quot;</p><section><h2 id="note-x">Heading</h2><p>One.</p><p>Two.</p></section></main>',
     );
     expect(html).toContain('<html lang="en">');
   });
