@@ -1,0 +1,520 @@
+---
+/**
+ * The Listen player (L-085): the "Now playing" panel with its controls, and the "Up next" queue grouped by reading.
+ *
+ * Without JavaScript the queue is a readable list and the controls stay disabled. The script below wires them to
+ * `createListenController` (src/lib/player/controller.ts) with the audio-element and device-speech adapters, the
+ * Media Session and the reader's settings. It keeps the DOM stable (nothing is re-rendered, only attributes and text
+ * change), and Previous and Next use `aria-disabled` rather than `disabled`, so keyboard focus never drops to the
+ * page while the queue moves on. A polite live region announces what is playing.
+ */
+import { t } from '../../i18n/index.ts';
+import type { ListenPageView } from '../../lib/player/listen.ts';
+import { SKIP_SECONDS } from '../../lib/player/media-session.ts';
+
+export interface Props {
+  view: ListenPageView;
+  lang: string;
+}
+
+const { view, lang } = Astro.props;
+const { data, groups, speeds } = view;
+const first = data.tracks[0];
+// `<` cannot end the script element early once escaped.
+const json = JSON.stringify({ ...data, speeds: speeds.map((speed) => speed.value) }).replace(/</g, '\\u003c');
+const seconds = String(SKIP_SECONDS);
+const shortcuts = [
+  { keys: ['Space', 'K'], label: t(lang, 'listen.shortcuts.toggle') },
+  { keys: ['←', 'J'], label: t(lang, 'listen.controls.back', { seconds }) },
+  { keys: ['→', 'L'], label: t(lang, 'listen.controls.forward', { seconds }) },
+  { keys: ['Shift + N'], label: t(lang, 'listen.shortcuts.next') },
+  { keys: ['Shift + P'], label: t(lang, 'listen.shortcuts.previous') },
+  { keys: ['<'], label: t(lang, 'listen.shortcuts.slower') },
+  { keys: ['>'], label: t(lang, 'listen.shortcuts.faster') },
+];
+---
+
+<div class="listen-player" data-listen>
+  <section class="player" aria-labelledby="now-playing-heading">
+    <h2 id="now-playing-heading" class="eyebrow player__eyebrow">{t(lang, 'listen.nowPlaying')}</h2>
+    <p class="player__title" data-now-title lang={first?.lang}>{first?.title}</p>
+    <p class="player__reading" data-now-reading>{first?.reading}</p>
+
+    <div class="player__progress">
+      <input
+        class="player__seek"
+        id="listen-seek"
+        type="range"
+        min="0"
+        max="1"
+        step="1"
+        value="0"
+        aria-label={t(lang, 'listen.controls.seek')}
+        aria-valuetext={data.messages.position.replace('{position}', '0:00').replace('{duration}', '0:00')}
+        data-seek
+        disabled
+      />
+      <p class="player__times" aria-hidden="true">
+        <span data-elapsed>0:00</span>
+        <span data-total>0:00</span>
+      </p>
+    </div>
+
+    <div class="player__controls" role="group" aria-label={t(lang, 'listen.controls.label')}>
+      <button type="button" class="player__button" data-previous aria-label={t(lang, 'listen.controls.previous')} disabled>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M6 5h2v14H6zM20 5v14L9 12z" fill="currentColor" /></svg>
+      </button>
+      <button
+        type="button"
+        class="player__button"
+        data-back
+        aria-label={t(lang, 'listen.controls.back', { seconds })}
+        disabled
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M11 6v12l-8.5-6zM21 6v12l-8.5-6z" fill="currentColor" /></svg>
+      </button>
+      <button type="button" class="player__toggle" data-toggle aria-label={t(lang, 'listen.controls.play')} disabled>
+        <svg class="player__icon-play" aria-hidden="true" viewBox="0 0 24 24" width="32" height="32"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+        <svg class="player__icon-pause" aria-hidden="true" viewBox="0 0 24 24" width="32" height="32"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor" /></svg>
+      </button>
+      <button
+        type="button"
+        class="player__button"
+        data-forward
+        aria-label={t(lang, 'listen.controls.forward', { seconds })}
+        disabled
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M13 6v12l8.5-6zM3 6v12l8.5-6z" fill="currentColor" /></svg>
+      </button>
+      <button type="button" class="player__button" data-next aria-label={t(lang, 'listen.controls.next')} disabled>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d="M16 5h2v14h-2zM4 5v14l11-7z" fill="currentColor" /></svg>
+      </button>
+    </div>
+
+    <p class="player__speed">
+      <label for="listen-speed">{t(lang, 'listen.controls.speed')}</label>
+      <select id="listen-speed" data-speed disabled>
+        {speeds.map((speed) => <option value={String(speed.value)} selected={speed.value === 1}>{speed.label}</option>)}
+      </select>
+    </p>
+    <p class="player__source" data-source></p>
+    <p class="visually-hidden" role="status" aria-live="polite" data-announce></p>
+    <noscript><p class="player__noscript">{t(lang, 'listen.noscript')}</p></noscript>
+    <audio data-audio preload="none" hidden></audio>
+  </section>
+
+  <section class="queue" aria-labelledby="up-next-heading">
+    <h2 id="up-next-heading" class="queue__heading">{t(lang, 'listen.upNext')}</h2>
+    {
+      groups.map((group, g) => (
+        <section class="queue__group" aria-labelledby={`queue-group-${g}`}>
+          <h3 id={`queue-group-${g}`} class="queue__reading">
+            {group.heading}
+          </h3>
+          <ol class="queue__list" start={group.start + 1}>
+            {group.tracks.map((track, i) => (
+              <li class="queue__item">
+                <button
+                  type="button"
+                  class="queue__track"
+                  data-track={String(group.start + i)}
+                  aria-current={group.start + i === 0 ? 'true' : undefined}
+                  disabled
+                >
+                  <span class="queue__title" lang={track.lang}>
+                    {track.title}
+                  </span>
+                  {track.fallback && <span class="queue__badge">{t(lang, 'reading.englishOnly.badge')}</span>}
+                  <span class="queue__now" data-now-badge hidden={group.start + i !== 0}>
+                    {t(lang, 'listen.nowPlaying')}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </section>
+
+  <details class="shortcuts">
+    <summary>{t(lang, 'listen.shortcuts.heading')}</summary>
+    <dl class="shortcuts__list">
+      {
+        shortcuts.map((shortcut) => (
+          <div class="shortcuts__row">
+            <dt>
+              {shortcut.keys.map((key, i) => (
+                <>
+                  {i > 0 && ' / '}
+                  <kbd>{key}</kbd>
+                </>
+              ))}
+            </dt>
+            <dd>{shortcut.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </details>
+
+  <script type="application/json" data-listen-data set:html={json} />
+</div>
+
+<script>
+  import { createAudioAdapter } from '../../lib/player/audio-adapter.ts';
+  import type { AudioElementLike } from '../../lib/player/audio-adapter.ts';
+  import { createListenController } from '../../lib/player/controller.ts';
+  import type { ListenUi } from '../../lib/player/controller.ts';
+  import type { ListenData } from '../../lib/player/listen.ts';
+  import { browserMediaSession, SKIP_SECONDS } from '../../lib/player/media-session.ts';
+  import type { MediaSessionLike, MediaMetadataInit } from '../../lib/player/media-session.ts';
+  import { browserOfflineAudio } from '../../lib/player/offline-audio.ts';
+  import { browserSpeech, createSpeechAdapter } from '../../lib/player/speech-adapter.ts';
+  import type { SpeechSynthesisLike, UtteranceLike } from '../../lib/player/speech-adapter.ts';
+  import { browserStorage } from '../../lib/settings.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-listen]');
+  const raw = root?.querySelector('[data-listen-data]')?.textContent;
+  if (root !== null && raw !== undefined && raw !== null) start(root, JSON.parse(raw) as ListenData & { speeds: number[] });
+
+  function start(root: HTMLElement, data: ListenData & { speeds: number[] }): void {
+    const find = <E extends Element>(selector: string): E => root.querySelector<E>(selector) as E;
+    const toggle = find<HTMLButtonElement>('[data-toggle]');
+    const previous = find<HTMLButtonElement>('[data-previous]');
+    const next = find<HTMLButtonElement>('[data-next]');
+    const back = find<HTMLButtonElement>('[data-back]');
+    const forward = find<HTMLButtonElement>('[data-forward]');
+    const seek = find<HTMLInputElement>('[data-seek]');
+    const speed = find<HTMLSelectElement>('[data-speed]');
+    const title = find<HTMLElement>('[data-now-title]');
+    const reading = find<HTMLElement>('[data-now-reading]');
+    const elapsed = find<HTMLElement>('[data-elapsed]');
+    const total = find<HTMLElement>('[data-total]');
+    const source = find<HTMLElement>('[data-source]');
+    const live = find<HTMLElement>('[data-announce]');
+    const audio = find<HTMLAudioElement>('[data-audio]');
+    const items = [...root.querySelectorAll<HTMLButtonElement>('[data-track]')];
+    /** True while the reader drags the slider, so time updates do not fight the thumb. */
+    let seeking = false;
+
+    const setEnabled = (button: HTMLButtonElement, enabled: boolean): void => {
+      if (enabled) button.removeAttribute('aria-disabled');
+      else button.setAttribute('aria-disabled', 'true');
+    };
+
+    const ui: ListenUi = {
+      track(index) {
+        const track = data.tracks[index];
+        title.textContent = track?.title ?? '';
+        if (track?.lang === undefined) title.removeAttribute('lang');
+        else title.setAttribute('lang', track.lang);
+        reading.textContent = track?.reading ?? '';
+        items.forEach((item, i) => {
+          if (i === index) item.setAttribute('aria-current', 'true');
+          else item.removeAttribute('aria-current');
+          const badge = item.querySelector<HTMLElement>('[data-now-badge]');
+          if (badge !== null) badge.hidden = i !== index;
+        });
+      },
+      render(view) {
+        toggle.setAttribute('aria-label', view.toggle);
+        root.toggleAttribute('data-playing', view.playing);
+        elapsed.textContent = view.elapsed;
+        total.textContent = view.total;
+        if (!seeking) {
+          seek.max = String(view.max);
+          seek.value = String(view.value);
+        }
+        seek.setAttribute('aria-valuetext', view.valueText);
+        source.textContent = view.source;
+        setEnabled(previous, view.canPrevious);
+        setEnabled(next, view.canNext);
+      },
+      speed(value) {
+        speed.value = String(value);
+      },
+      announce(message) {
+        live.textContent = message;
+      },
+    };
+
+    const offline = browserOfflineAudio(window);
+    const scope = window as unknown as {
+      speechSynthesis?: SpeechSynthesisLike;
+      SpeechSynthesisUtterance?: new (text: string) => UtteranceLike;
+      navigator: { mediaSession?: MediaSessionLike };
+      MediaMetadata?: new (init: MediaMetadataInit) => unknown;
+    };
+    const controller = createListenController(data, data.speeds, ui, {
+      storage: browserStorage(),
+      audio: createAudioAdapter(audio as unknown as AudioElementLike, (url) => offline.source(url)),
+      speech: createSpeechAdapter(browserSpeech(scope)),
+      mediaSession: browserMediaSession(scope),
+      fetchDay: (url) =>
+        fetch(url, { headers: { accept: 'application/json' } }).then((response) => {
+          if (!response.ok) throw new Error(String(response.status));
+          return response.json() as Promise<unknown>;
+        }),
+    });
+    const { player } = controller;
+
+    toggle.addEventListener('click', () => player.toggle());
+    previous.addEventListener('click', () => {
+      if (previous.getAttribute('aria-disabled') !== 'true') player.previous();
+    });
+    next.addEventListener('click', () => {
+      if (next.getAttribute('aria-disabled') !== 'true') player.next();
+    });
+    back.addEventListener('click', () => player.seekBy(-SKIP_SECONDS));
+    forward.addEventListener('click', () => player.seekBy(SKIP_SECONDS));
+    seek.addEventListener('input', () => {
+      seeking = true;
+    });
+    seek.addEventListener('change', () => {
+      seeking = false;
+      player.seek(Number(seek.value));
+    });
+    speed.addEventListener('change', () => controller.setSpeed(Number(speed.value)));
+    items.forEach((item, index) => item.addEventListener('click', () => controller.select(index)));
+    document.addEventListener('keydown', (event) => {
+      if (event.defaultPrevented || event.repeat) return;
+      const { key, ctrlKey, altKey, metaKey, shiftKey } = event;
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (controller.key({ key, ctrlKey, altKey, metaKey, shiftKey, target })) event.preventDefault();
+    });
+    // Save where listening stopped when the page is hidden or left.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') controller.save();
+    });
+    window.addEventListener('pagehide', () => controller.save());
+
+    for (const control of [toggle, previous, next, back, forward, seek, speed, ...items]) control.disabled = false;
+    root.dataset.ready = '';
+    void controller.audioReady.then(() => {
+      root.dataset.audioReady = '';
+    });
+  }
+</script>
+
+<style>
+  .listen-player {
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .player {
+    padding: var(--space-m);
+    border-radius: var(--radius-l);
+    background: var(--colour-accent-wash);
+    border: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .player__eyebrow {
+    margin: 0 0 var(--space-3xs);
+  }
+
+  .player__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: var(--weight-strong);
+    line-height: var(--leading-tight);
+  }
+
+  .player__reading {
+    margin: var(--space-3xs) 0 var(--space-s);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .player__seek {
+    width: 100%;
+    min-height: var(--tap-target);
+    accent-color: var(--colour-accent);
+  }
+
+  .player__times {
+    display: flex;
+    justify-content: space-between;
+    max-width: none;
+    margin: 0;
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
+    color: var(--colour-muted);
+  }
+
+  .player__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin-block: var(--space-s);
+  }
+
+  .player__button,
+  .player__toggle {
+    display: inline-grid;
+    place-items: center;
+    min-width: var(--tap-target);
+    min-height: var(--tap-target);
+    padding: 0;
+    border-radius: 50%;
+    border: var(--rule-width) solid var(--colour-rule);
+    background: var(--colour-bg);
+    color: var(--colour-ink);
+    cursor: pointer;
+  }
+
+  .player__toggle {
+    width: calc(var(--tap-target) * 1.4);
+    height: calc(var(--tap-target) * 1.4);
+    border: 0;
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+  }
+
+  .player__button[aria-disabled='true'],
+  .player__button:disabled,
+  .player__toggle:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .player__icon-pause,
+  [data-playing] .player__icon-play {
+    display: none;
+  }
+
+  [data-playing] .player__icon-pause {
+    display: block;
+  }
+
+  .player__speed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin: 0;
+  }
+
+  .player__speed select {
+    min-height: var(--tap-target);
+    padding-inline: var(--space-xs);
+    border-radius: var(--radius-m);
+    border: var(--rule-width) solid var(--colour-rule);
+    background: var(--colour-bg);
+    color: var(--colour-ink);
+    font: inherit;
+  }
+
+  .player__source {
+    margin: var(--space-xs) 0 0;
+    text-align: center;
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .player__source:empty {
+    display: none;
+  }
+
+  .queue__heading {
+    font-size: var(--step-2);
+    margin: 0 0 var(--space-xs);
+  }
+
+  .queue__group + .queue__group {
+    margin-top: var(--space-m);
+  }
+
+  .queue__reading {
+    font-size: var(--step-0);
+    margin: 0 0 var(--space-2xs);
+    color: var(--colour-accent-ink);
+  }
+
+  .queue__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .queue__track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    width: 100%;
+    min-height: var(--tap-target);
+    padding: var(--space-2xs) var(--space-s);
+    border: var(--rule-width) solid transparent;
+    border-radius: var(--radius-m);
+    background: none;
+    color: var(--colour-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .queue__track:hover:not(:disabled) {
+    background: var(--colour-wash);
+  }
+
+  .queue__track[aria-current='true'] {
+    border-color: var(--colour-accent);
+    background: var(--colour-accent-wash);
+    font-weight: var(--weight-strong);
+  }
+
+  .queue__badge,
+  .queue__now {
+    font-size: var(--step--2);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+  }
+
+  .queue__now[hidden] {
+    display: none;
+  }
+
+  .shortcuts summary {
+    min-height: var(--tap-target);
+    cursor: pointer;
+    font-weight: var(--weight-strong);
+  }
+
+  .shortcuts__list {
+    display: grid;
+    gap: var(--space-3xs);
+    margin: var(--space-xs) 0 0;
+  }
+
+  .shortcuts__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-s);
+  }
+
+  .shortcuts__row dt {
+    flex: 0 0 8rem;
+  }
+
+  .shortcuts__row dd {
+    flex: 1 1 10rem;
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  kbd {
+    font-family: inherit;
+    font-size: var(--step--1);
+    padding: 0 var(--space-3xs);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-s);
+  }
+</style>

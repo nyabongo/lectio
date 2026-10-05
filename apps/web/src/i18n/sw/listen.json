@@ -1,0 +1,48 @@
+{
+  "pageTitle": "Sikiliza · {date}",
+  "description": "Sikiliza muktadha na madokezo ya lugha asilia ya masomo ya {date}, moja baada ya jingine.",
+  "heading": "Sikiliza",
+  "intro": "Muktadha na madokezo ya tafsiri ya masomo ya siku hii, yakichezwa kama foleni moja.",
+  "backToDay": "Masomo yote ya {date}",
+  "nowPlaying": "Kinachocheza sasa",
+  "upNext": "Vinavyofuata",
+  "noteCount": {
+    "one": "dokezo {count}",
+    "other": "madokezo {count}"
+  },
+  "group": "{slot} · {ref}",
+  "controls": {
+    "label": "Kicheza sauti",
+    "play": "Cheza",
+    "pause": "Sitisha",
+    "previous": "Dokezo lililotangulia",
+    "next": "Dokezo linalofuata",
+    "back": "Rudi nyuma sekunde {seconds}",
+    "forward": "Songa mbele sekunde {seconds}",
+    "seek": "Mahali katika dokezo hili",
+    "position": "{position} kati ya {duration}",
+    "speed": "Kasi",
+    "speedOption": "{speed}×"
+  },
+  "source": {
+    "audio": "Sauti iliyorekodiwa",
+    "speech": "Inasomwa na sauti ya kifaa chako",
+    "fallback": "Rekodi haikuweza kuchezwa, kwa hiyo sauti ya kifaa chako inasoma dokezo hili."
+  },
+  "status": {
+    "playing": "Kinachocheza sasa: {title}",
+    "paused": "Imesitishwa: {title}",
+    "finished": "Umesikiliza madokezo yote ya siku hii. Ukibonyeza Cheza, foleni inaanza tena tangu mwanzo.",
+    "unavailable": "Kivinjari hiki hakiwezi kusoma madokezo kwa sauti. Ukurasa wa kila somo una madokezo hayo ya kusoma."
+  },
+  "empty": "Bado hakuna madokezo ya kusikiliza kwa siku hii. Madokezo huongezwa yakishakaguliwa dhidi ya vyanzo vyake na kuidhinishwa.",
+  "noscript": "Kicheza sauti kinahitaji JavaScript. Madokezo yanapatikana pia kwenye ukurasa wa kila somo.",
+  "shortcuts": {
+    "heading": "Njia za mkato za kibodi",
+    "toggle": "Cheza au sitisha",
+    "next": "Dokezo linalofuata",
+    "previous": "Dokezo lililotangulia (au mwanzo wa hili)",
+    "slower": "Polepole zaidi",
+    "faster": "Haraka zaidi"
+  }
+}
