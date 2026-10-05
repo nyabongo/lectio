@@ -193,6 +193,18 @@ void main() {
       expect(find.text(TodayStrings.linkFailed), findsOneWidget);
     });
 
+    testWidgets('a link-out that fails to launch says so', (tester) async {
+      await pumpToday(
+        tester,
+        openUrl: (url) async => throw const FormatException('no launcher'),
+      );
+
+      await tester.tap(find.text(TodayStrings.text).first);
+      await tester.pumpAndSettle();
+
+      expect(find.text(TodayStrings.linkFailed), findsOneWidget);
+    });
+
     testWidgets('pulling down while offline keeps the saved day', (
       tester,
     ) async {
