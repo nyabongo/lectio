@@ -1,0 +1,700 @@
+{
+  "key": "ECCL.11.9-12.8",
+  "ref": "Eccl 11:9-12:8",
+  "locale": "en",
+  "summary": "Qoheleth bids the young enjoy youth and remember their Creator before age and death come, then repeats: all is breath.",
+  "context": {
+    "title": "Remember your Creator before the evil days",
+    "paragraphs": [
+      "The reading opens with a call to the young man to rejoice in his youth, followed at once by the warning that God will bring him into judgment. [c1] Some commentators hear the call as ironic, while Gill takes it as serious advice within limits. [c2] Many judge the chapter break at 12:1 misplaced, since the thought runs straight on. [c3]",
+      "Then comes one of the book’s three continuous sections, a description of death in 12:1-8. [c4] Commentators commonly read the failing house of 12:3 as the ageing body, the keepers as arms and the grinders as teeth. [c5] Ellicott warns that such anatomy grows forced in detail, and the Cambridge Bible notes a second line of reading: death approaching like a storm. [c6][c7]",
+      "In 12:7 the dust returns to the earth, echoing Gen 2:7 and 3:19. [c8] Ellicott sees the speaker rising here above his earlier doubt in 3:21 about where the human spirit goes. [c9] The Targum and the Talmud identified Qoheleth with Solomon. [c10] The closing refrain of 12:8 repeats the book’s opening words in 1:2, framing the whole. [c11]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "hevel",
+      "verse": "12:8",
+      "anchor": "Vanity of vanities",
+      "original": {
+        "text": "הֲבֵל הֲבָלִים",
+        "lang": "hbo",
+        "translit": "hăbēl hăbālîm",
+        "gloss": "breath of breaths"
+      },
+      "summary": "Hebel is literally a vapour or breath; “vanity” is its figurative sense, and the doubled form is a superlative.",
+      "body": "Hebel literally means a vapour or breath, and only figuratively vanity. [c12] In Ecclesiastes it names the fruitlessness of all human enterprise and endeavour. [c13] The doubled form, breath of breaths, works as a superlative, as Gill notes: vain in the highest degree. [c14] Coming straight after the poem on death, Keil and Delitzsch hear the refrain applied not only to human works but to the human being itself. [c15]"
+    },
+    {
+      "id": "boreykha",
+      "verse": "12:1",
+      "anchor": "your Creator",
+      "original": {
+        "text": "בּוֹרְאֶיךָ",
+        "lang": "hbo",
+        "translit": "bôrʾeykā",
+        "gloss": "your Creator (plural in form)"
+      },
+      "summary": "The participle of bara, the verb of Genesis 1:1, here plural in form like Elohim.",
+      "body": "Bôrʾeykā is the participle of bara, the verb used for creating in Gen 1:1, and it is plural in form, like Elohim, a plural of majesty. [c16][c17] The Midrash plays on its letters and finds in the word your origin, your grave and your Creator. [c18] Some Christian commentators, such as Gill and Jamieson, Fausset and Brown, took the plural as pointing to the persons of the Trinity, while others keep to the plural of majesty. [c19][c17]"
+    },
+    {
+      "id": "caper-berry",
+      "verse": "12:5",
+      "anchor": "desire",
+      "original": {
+        "text": "הָאֲבִיּוֹנָה",
+        "lang": "hbo",
+        "translit": "hāʾăbîyyônâ",
+        "gloss": "the caper-berry"
+      },
+      "summary": "A word found only here; the ancient versions and the rabbis took it as the caper-berry, an appetite stimulant.",
+      "body": "The word occurs nowhere else in the Hebrew Bible. [c20] The Septuagint, the Vulgate and Rabbinic usage all take it as the caper, which Brown-Driver-Briggs explains as a berry stimulating desire. [c21] Barnes pictures the berry, eaten to rouse appetite, no longer taking effect. [c22] The English desire keeps the sense but loses the image, an abstract term that the Cambridge Bible finds out of harmony with the figures around it. [c23]"
+    },
+    {
+      "id": "beit-olamo",
+      "verse": "12:5",
+      "anchor": "eternal home",
+      "original": {
+        "text": "בֵּית עוֹלָמוֹ",
+        "lang": "hbo",
+        "translit": "bêt ʿôlāmô",
+        "gloss": "house of his eternity"
+      },
+      "summary": "Literally “the house of his eternity”: the grave or Sheol, a phrase Jews long used for the grave.",
+      "body": "The phrase is literally the house of his eternity, ʿôlām meaning long duration. [c24][c25] The Targum takes it as the grave, and the Cambridge Bible prefers Sheol, the dwelling-place of the dead. [c26][c27] The same commentary reports, after Ginsburg, that the phrase was in common use among the Jews of his day. [c27] It adds that the thought of immortality, though not prominent here, is not excluded. [c28]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Eccl 11:9 calls the young man to rejoice in his youth and then warns that God will bring him into judgment for all these things.",
+      "sourceIds": ["eccl-11-9-rejoice", "eccl-11-9-judgment"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Some commentators, such as Benson and Jamieson, Fausset and Brown, read the call to rejoice in Eccl 11:9 as an ironical warning, while Gill allows it as serious advice under due limits.",
+      "sourceIds": ["benson-eccl-11-9", "jfb-eccl-11-9", "gill-eccl-11-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Commentators judge the chapter division at Eccl 12:1 unfortunate, since the new chapter would more naturally begin at 11:9.",
+      "sourceIds": ["pulpit-eccl-12-1-division", "ellicott-eccl-11-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "The Jewish Encyclopedia counts Eccl 12:1-8, a description of death, among the book's three continuous sections of considerable length.",
+      "sourceIds": ["je-ecclesiastes-sections"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Commentators commonly read the house of Eccl 12:3 as the ageing body, with the keepers as the hands and arms and the grinders as the teeth.",
+      "sourceIds": ["benson-eccl-12-3", "jfb-eccl-12-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Ellicott warns that when the anatomical explanation is carried into every image, the interpretation becomes forced.",
+      "sourceIds": ["ellicott-eccl-12-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "The Cambridge Bible names two main lines of interpretation: the approach of death as an oncoming storm, and a diagnosis of the bodily signs of old age.",
+      "sourceIds": ["cambridge-eccl-12-1-storm"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The return of the dust to the earth in Eccl 12:7 alludes to Gen 2:7 and Gen 3:19.",
+      "sourceIds": ["eccl-12-7", "gn-2-7", "gn-3-19", "cambridge-eccl-12-7", "benson-eccl-12-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Ellicott holds that in Eccl 12:7 the preacher has risen above the doubt of Eccl 3:21 about whether the human spirit goes upward.",
+      "sourceIds": ["ellicott-eccl-12-7", "eccl-3-21"],
+      "sensitive": true
+    },
+    {
+      "id": "c10",
+      "text": "The ancients, including the Peshitta, the Targum and the Talmud, identified the author of Ecclesiastes with Solomon.",
+      "sourceIds": ["je-ecclesiastes-solomon"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Eccl 12:8 repeats the refrain with which the book begins in Eccl 1:2.",
+      "sourceIds": ["eccl-12-8", "eccl-1-2", "jfb-eccl-12-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Brown-Driver-Briggs gives the literal meaning of הֶבֶל as vapour or breath, and the figurative meaning as vanity.",
+      "sourceIds": ["bdb-hebel"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Brown-Driver-Briggs says that in Ecclesiastes הֶבֶל is used of the fruitlessness of all human enterprise and endeavour.",
+      "sourceIds": ["bdb-hebel-ecclesiastes"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Gill takes the phrase “vanity of vanities” as vain in the superlative degree.",
+      "sourceIds": ["gill-eccl-12-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Keil and Delitzsch read Eccl 12:8 as saying that not only what man has and does, but man himself as such, is vain.",
+      "sourceIds": ["kd-eccl-12-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "The word for Creator in Eccl 12:1 is the participle of the verb בָּרָא used in Gen 1:1.",
+      "sourceIds": ["gn-1-1", "cambridge-eccl-12-1-participle", "pulpit-eccl-12-1-participle"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "The word is plural in form, like Elohim, a plural of majesty or excellence.",
+      "sourceIds": ["eccl-12-1", "cambridge-eccl-12-1-plural", "pulpit-eccl-12-1-majesty"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The Midrash interprets the letters of the word, finding in it thy fountain (origin), thy grave and thy Creator.",
+      "sourceIds": ["kd-eccl-12-1-midrash", "kd-eccl-12-1-note"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Some Christian commentators, such as Jamieson, Fausset and Brown and Gill, took the plural form as implying a plurality of persons in God, Father, Son and Spirit.",
+      "sourceIds": ["jfb-eccl-12-1", "gill-eccl-12-1", "pulpit-eccl-12-1-trinity"],
+      "sensitive": true
+    },
+    {
+      "id": "c20",
+      "text": "The Hebrew word behind “desire” in Eccl 12:5 is found nowhere else in the Old Testament.",
+      "sourceIds": ["cambridge-eccl-12-5-hapax"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "The Septuagint (κάππαρις), the Vulgate (capparis) and Rabbinic usage take the word as the caper-berry, which Brown-Driver-Briggs explains as stimulating desire.",
+      "sourceIds": ["cambridge-eccl-12-5-caper", "cambridge-eccl-12-5-rabbinic", "bdb-aviyonah"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "Barnes explains the caper-berry as eaten to provoke appetite and failing to take effect in an exhausted man.",
+      "sourceIds": ["barnes-eccl-12-5"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "The Cambridge Bible judges the rendering “desire” an abstract, unfigurative term out of harmony with the context.",
+      "sourceIds": ["cambridge-eccl-12-5-abstract"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "The phrase rendered “long home” or “eternal home” in Eccl 12:5 literally means the house of his eternity.",
+      "sourceIds": ["eccl-12-5", "cambridge-eccl-12-5-house"],
+      "sensitive": false
+    },
+    {
+      "id": "c25",
+      "text": "Brown-Driver-Briggs defines עוֹלָם as long duration, antiquity or futurity.",
+      "sourceIds": ["bdb-olam"],
+      "sensitive": false
+    },
+    {
+      "id": "c26",
+      "text": "The Targum interprets the house of his eternity as the grave.",
+      "sourceIds": ["gill-eccl-12-5"],
+      "sensitive": false
+    },
+    {
+      "id": "c27",
+      "text": "The Cambridge Bible takes the eternal home as the grave or, more probably, Sheol, and reports Ginsburg's statement that the phrase was in common use among Jews of his time.",
+      "sourceIds": ["cambridge-eccl-12-5-sheol", "cambridge-eccl-12-5-ginsburg"],
+      "sensitive": false
+    },
+    {
+      "id": "c28",
+      "text": "The Cambridge Bible holds that in Eccl 12:5 the thought of immortality, though not prominent, is not excluded.",
+      "sourceIds": ["cambridge-eccl-12-5-immortality"],
+      "sensitive": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "eccl-11-9-rejoice",
+      "type": "scripture",
+      "citation": "Ecclesiastes 11:9",
+      "ref": "Eccl 11:9",
+      "excerpt": "שְׂמַח בָּחוּר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-11-9-judgment",
+      "type": "scripture",
+      "citation": "Ecclesiastes 11:9",
+      "ref": "Eccl 11:9",
+      "excerpt": "בַמִּשְׁפָּט",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-12-1",
+      "type": "scripture",
+      "citation": "Ecclesiastes 12:1",
+      "ref": "Eccl 12:1",
+      "excerpt": "בּוֹרְאֶיךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-12-5",
+      "type": "scripture",
+      "citation": "Ecclesiastes 12:5",
+      "ref": "Eccl 12:5",
+      "excerpt": "בֵּית עוֹלָמוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-12-7",
+      "type": "scripture",
+      "citation": "Ecclesiastes 12:7",
+      "ref": "Eccl 12:7",
+      "excerpt": "הֶעָפָר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-12-8",
+      "type": "scripture",
+      "citation": "Ecclesiastes 12:8",
+      "ref": "Eccl 12:8",
+      "excerpt": "הֲבֵל הֲבָלִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-2",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:2",
+      "ref": "Eccl 1:2",
+      "excerpt": "הֲבֵל הֲבָלִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-3-21",
+      "type": "scripture",
+      "citation": "Ecclesiastes 3:21",
+      "ref": "Eccl 3:21",
+      "excerpt": "הָעֹלָה הִיא לְמָעְלָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gn-1-1",
+      "type": "scripture",
+      "citation": "Genesis 1:1",
+      "ref": "Gn 1:1",
+      "excerpt": "בָּרָא",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gn-2-7",
+      "type": "scripture",
+      "citation": "Genesis 2:7",
+      "ref": "Gn 2:7",
+      "excerpt": "עָפָר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gn-3-19",
+      "type": "scripture",
+      "citation": "Genesis 3:19",
+      "ref": "Gn 3:19",
+      "excerpt": "עָפָר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "benson-eccl-11-9",
+      "type": "web",
+      "citation": "Joseph Benson, Commentary on the Old and New Testaments, on Ecclesiastes 11:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/11-9.htm",
+      "excerpt": "This is an ironical concession",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "jfb-eccl-11-9",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Ecclesiastes 11:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/11-9.htm",
+      "excerpt": "not advice, but warning",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "gill-eccl-11-9",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Ecclesiastes 11:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/11-9.htm",
+      "excerpt": "This advice may be considered as serious",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "ellicott-eccl-11-9",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 11:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/11-9.htm",
+      "excerpt": "The beginning of the last chapter would more conveniently",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "pulpit-eccl-12-1-division",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "The division into chapters is unfortunate here",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "pulpit-eccl-12-1-participle",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "which is that used in Genesis 1:1",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "pulpit-eccl-12-1-majesty",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "the plural being that of majesty or excellence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "pulpit-eccl-12-1-trinity",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "supposed by some to be divinely intended to adumbrate the doctrine",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-1-participle",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "is strictly the participle of the verb",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-1-plural",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "It is plural in its form, as Elohim",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-1-storm",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "the approach of death as the on-coming of a storm",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "kd-eccl-12-1-midrash",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1877), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "the Midrash ingeniously interprets the combination of its letters",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "kd-eccl-12-1-note",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1877), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "thy fountain (origin)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "jfb-eccl-12-1",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "implying the plurality of persons",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "gill-eccl-12-1",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Ecclesiastes 12:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-1.htm",
+      "excerpt": "neither more nor fewer than three",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "benson-eccl-12-3",
+      "type": "web",
+      "citation": "Joseph Benson, Commentary on the Old and New Testaments, on Ecclesiastes 12:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-3.htm",
+      "excerpt": "whose keepers are the hands and arms",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "jfb-eccl-12-3",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Ecclesiastes 12:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-3.htm",
+      "excerpt": "the molar teeth",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "ellicott-eccl-12-3",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 12:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-3.htm",
+      "excerpt": "the interpretation becomes so forced",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-hapax",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "is not found elsewhere in the Old Testament",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-caper",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "gives κάππαρις, which the Vulgate reproduces in capparis",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-rabbinic",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "with which the Rabbinic use of the word agrees",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-abstract",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "an abstract unfigurative term, out of harmony with the context",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-house",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "Literally, to the house of his eternity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-sheol",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "or more probably, Sheol, or Hades",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-ginsburg",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "in common use among modern Jews",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-5-immortality",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "the thought of immortality, though not prominent, is not excluded",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "barnes-eccl-12-5",
+      "type": "web",
+      "citation": "Barnes' Notes on the Bible, on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "eaten as a provocative to appetite",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "gill-eccl-12-5",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Ecclesiastes 12:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-5.htm",
+      "excerpt": "the grave, as the Targum",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "cambridge-eccl-12-7",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 12:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-7.htm",
+      "excerpt": "The reference to the history of man’s creation in Genesis 2:7",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "benson-eccl-12-7",
+      "type": "web",
+      "citation": "Joseph Benson, Commentary on the Old and New Testaments, on Ecclesiastes 12:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-7.htm",
+      "excerpt": "He alludes to Genesis 3:19.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "ellicott-eccl-12-7",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 12:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-7.htm",
+      "excerpt": "The preacher has risen above the doubts of Ecclesiastes 3:21.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "jfb-eccl-12-8",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Ecclesiastes 12:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-8.htm",
+      "excerpt": "Resumption of the sentiment with which the book began",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "gill-eccl-12-8",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Ecclesiastes 12:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-8.htm",
+      "excerpt": "vain in the superlative degree",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "kd-eccl-12-8",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1877), on Ecclesiastes 12:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/12-8.htm",
+      "excerpt": "but also man himself as such is vain",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:55:00Z"
+    },
+    {
+      "id": "bdb-hebel",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "noun masculine vapour, breath",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "bdb-hebel-ecclesiastes",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "of the fruitlessness of all human enterprise and endeavour",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "bdb-aviyonah",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. אֲבִיּוֹנָה (Bible Hub, Strong's 35)",
+      "url": "https://biblehub.com/hebrew/35.htm",
+      "excerpt": "caper-berry (as stimulating desire)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "bdb-olam",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. עוֹלָם (Bible Hub, Strong's 5769)",
+      "url": "https://biblehub.com/hebrew/5769.htm",
+      "excerpt": "long duration, antiquity, futurity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:08:00Z"
+    },
+    {
+      "id": "je-ecclesiastes-sections",
+      "type": "web",
+      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
+      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
+      "excerpt": "a description of death, xii. 1-8",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-ecclesiastes-solomon",
+      "type": "web",
+      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
+      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
+      "excerpt": "led the ancients to identify him with Solomon",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021f-eccl-11-9-12-8",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:30:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
