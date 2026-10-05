@@ -1,5 +1,5 @@
 {
-  "$comment": "Second source for the seasonal-weekdays block (011, amendment 5). Readings imported from LitCal are checked against OLM 1981, written in OLM numbering (Nova Vulgata psalm numbers; lectionary:crosscheck converts them). Where the Nova Vulgata keeps Hebrew verse numbers inside a split psalm (Ps 115 = Hebrew 116:10-19, Ps 147 = Hebrew 147:12-20) and for Sirach and Esther, the canonical form is given by hand. Readings filled from OLM 1981 are checked against the LitCal leaf where it has usable data; `consulted` records the leaves that do not, so those readings are listed as single-source in disputes/seasonal-weekdays.md. OLM lectionary numbers follow the seed block; pages are recorded by the verifier (p?).",
+  "$comment": "Second source for the seasonal-weekdays block (011, amendment 5). Readings imported from LitCal are checked against OLM 1981, written in OLM numbering (Nova Vulgata psalm numbers; lectionary:crosscheck converts them). For Sirach the canonical form is given by hand. Where OLM gives a second reading for one Sunday cycle (first reading of Monday of Advent week 1; gospels of Monday of Lent week 5 and Monday of Easter week 4), the block takes the OLM reading with its alternative and the LitCal leaf is the second source. The Esther reading of Thursday of Lent week 1 is disputed and not compared (see `consulted`). Readings filled from OLM 1981 are checked against the LitCal leaf where it has usable data; `consulted` records the leaves that do not, so those readings are listed as single-source in disputes/seasonal-weekdays.md. OLM lectionary numbers follow the seed block; pages are recorded by the verifier (p?).",
   "block": "seasonal-weekdays",
   "entries": [
     {
@@ -7,9 +7,8 @@
       "key": "advent-weekday-1-mon",
       "mass": "day",
       "slot": "first-reading",
-      "ref": "Is 2:1-5",
-      "alternatives": ["Is 4:2-6"],
-      "source": "olm-1981 p?#175"
+      "ref": "Isaiah 4:2-6",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday"
     },
     {
       "kind": "proper-of-time",
@@ -450,6 +449,14 @@
       "mass": "day",
       "slot": "psalm",
       "ref": "Ps 71:1-2, 12-13, 18-19",
+      "source": "olm-1981 p?#194"
+    },
+    {
+      "kind": "celebrations",
+      "key": "advent-december-18",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 1:18-24",
       "source": "olm-1981 p?#194"
     },
     {
@@ -978,15 +985,6 @@
       "kind": "proper-of-time",
       "key": "lent-weekday-1-thu",
       "mass": "day",
-      "slot": "first-reading",
-      "ref": "Esther C:12, 14-16, 23-25",
-      "canonical": "Est 4:17",
-      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Thursday"
-    },
-    {
-      "kind": "proper-of-time",
-      "key": "lent-weekday-1-thu",
-      "mass": "day",
       "slot": "psalm",
       "ref": "Psalm 138:1-2ab, 2cde-3, 7c-8",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Thursday"
@@ -1254,7 +1252,6 @@
       "mass": "day",
       "slot": "psalm",
       "ref": "Ps 147:12-13, 15-16, 19-20",
-      "canonical": "Ps 147:12-13, 15-16, 19-20",
       "source": "olm-1981 p?#239"
     },
     {
@@ -1503,9 +1500,8 @@
       "key": "lent-weekday-5-mon",
       "mass": "day",
       "slot": "gospel",
-      "ref": "Jn 8:1-11",
-      "alternatives": ["Jn 8:12-20"],
-      "source": "olm-1981 p?#251"
+      "ref": "John 8:1-11",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday"
     },
     {
       "kind": "proper-of-time",
@@ -2121,7 +2117,6 @@
       "mass": "day",
       "slot": "psalm",
       "ref": "Ps 115:12-13, 14-15, 16-17",
-      "canonical": "Ps 116:12-13, 14-15, 16-17",
       "source": "olm-1981 p?#278"
     },
     {
@@ -2153,9 +2148,8 @@
       "key": "easter-weekday-4-mon",
       "mass": "day",
       "slot": "gospel",
-      "ref": "Jn 10:11-18",
-      "alternatives": ["Jn 10:1-10"],
-      "source": "olm-1981 p?#279"
+      "ref": "John 10:11-18",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday"
     },
     {
       "kind": "proper-of-time",
@@ -2784,10 +2778,10 @@
       "note": "psalm given only as the whole \"Psalm 149\", no verses"
     },
     {
-      "kind": "celebrations",
-      "key": "advent-december-18",
-      "source": "olm-1981 p?#194",
-      "note": "gospel not entered: OLM 1981 may end the gospel at Mt 1:24 where the US edition has Mt 1:18-25; needs a print copy"
+      "kind": "proper-of-time",
+      "key": "lent-weekday-1-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Thursday",
+      "note": "first reading status disputed: \"Est 4:17\" keys Hebrew Esther 4:17, not Esther's prayer (OLM Est 4:17n, p-r, aa-bb, gg-hh; LitCal Esther C:12, 14-16, 23-25); @lectio/refs cannot key Greek Esther yet, and L-049 (#144) will re-key it as Est C:12, 14-16, 23-25"
     }
   ]
 }

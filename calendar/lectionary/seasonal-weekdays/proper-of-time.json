@@ -1,5 +1,5 @@
 {
-  "$comment": "Seasonal weekdays (L-068), proper of time: Advent weeks 1-3, Ash Wednesday to Wednesday of Holy Week (Ash Wednesday and the days after it are week 0; Holy Week is week 6), Easter weeks 2-7. Imported from LitCal (import/litcal/seasonal-weekdays.json); Thursday of Lent week 1 and Monday of Lent week 3 are filled from the OLM 1981 structure because their LitCal strings do not parse (Greek Esther lettered chapter; two psalms in one string). Greek Esther cannot be keyed yet, so that first reading's ref is Est 4:17 and the OLM verses are kept in \"printed\". Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "$comment": "Seasonal weekdays (L-068), proper of time: Advent weeks 1-3, Ash Wednesday to Wednesday of Holy Week (Ash Wednesday and the days after it are week 0; Holy Week is week 6), Easter weeks 2-7. Imported from LitCal (import/litcal/seasonal-weekdays.json); Thursday of Lent week 1 and Monday of Lent week 3 are filled from the OLM 1981 structure because their LitCal strings do not parse (Greek Esther lettered chapter; two psalms in one string). Greek Esther cannot be keyed yet, so that first reading's ref is Est 4:17 with the OLM verses in \"printed\", and its status is disputed until L-049 (#144) re-keys it as Est C:12, 14-16, 23-25. Where OLM gives a second reading for one Sunday cycle, the OLM reading and its alternative replace LitCal's: Monday of Advent week 1 (Is 2:1-5; Is 4:2-6 in Year A), Monday of Lent week 5 (Jn 8:1-11; Jn 8:12-20 in Year C) and Monday of Easter week 4 (Jn 10:1-10; Jn 10:11-18 in Year A). Every other entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
   "kind": "proper-of-time",
   "entries": [
     {
@@ -10,9 +10,13 @@
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "Is 4:2-6",
-              "printed": "Isaiah 4:2-6",
-              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday",
+              "ref": "Is 2:1-5",
+              "alternatives": [
+                {
+                  "ref": "Is 4:2-6"
+                }
+              ],
+              "source": "olm-1981 p?#175",
               "status": "provisional"
             },
             {
@@ -764,7 +768,7 @@
               "ref": "Est 4:17",
               "printed": "Est 4:17n, p-r, aa-bb, gg-hh",
               "source": "olm-1981 p?#227",
-              "status": "provisional"
+              "status": "disputed"
             },
             {
               "slot": "psalm",
@@ -1428,8 +1432,12 @@
             {
               "slot": "gospel",
               "ref": "Jn 8:1-11",
-              "printed": "John 8:1-11",
-              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday",
+              "alternatives": [
+                {
+                  "ref": "Jn 8:12-20"
+                }
+              ],
+              "source": "olm-1981 p?#251",
               "status": "provisional"
             }
           ]
@@ -2078,9 +2086,13 @@
             },
             {
               "slot": "gospel",
-              "ref": "Jn 10:11-18",
-              "printed": "John 10:11-18",
-              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday",
+              "ref": "Jn 10:1-10",
+              "alternatives": [
+                {
+                  "ref": "Jn 10:11-18"
+                }
+              ],
+              "source": "olm-1981 p?#279",
               "status": "provisional"
             }
           ]

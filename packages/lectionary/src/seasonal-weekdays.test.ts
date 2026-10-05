@@ -60,11 +60,13 @@ describe('seasonal-weekdays block', () => {
     result = crosscheckBlock(BLOCK, loaded.files, data as never, loaded.registry);
   });
 
-  it('passes lectionary:check, and every reading is provisional with a LitCal or OLM 1981 source', () => {
+  it('passes lectionary:check, and every reading is provisional (but the Greek Esther one) with a LitCal or OLM 1981 source', () => {
     expect(loaded.problems).toEqual([]);
     expect(checkLectionary(loaded.files, loaded.registry).problems).toEqual([]);
     const rows = blockRows(loaded.files);
-    expect(rows.every((row) => row.reading.status === 'provisional')).toBe(true);
+    expect(
+      rows.filter((row) => row.reading.status !== 'provisional').map((row) => [row.id, row.reading.status]),
+    ).toEqual([['proper-of-time:lent-weekday-1-thu day first-reading', 'disputed']]);
     expect(new Set(rows.map((row) => splitSource(row.reading.source)?.id))).toEqual(new Set(['litcal', 'olm-1981']));
   });
 
@@ -106,6 +108,7 @@ describe('seasonal-weekdays block', () => {
     expect(result.singleSource.every((single) => single.consulted.length > 0)).toBe(true);
     expect(result.disagreements.map((d) => d.id)).toEqual([
       'proper-of-time:advent-weekday-1-mon day first-reading',
+      'celebrations:advent-december-18 day gospel',
       'celebrations:christmas-time-january-5 day first-reading',
       'celebrations:christmas-time-january-5 day psalm',
       'celebrations:christmas-time-january-5 day gospel',
@@ -114,6 +117,29 @@ describe('seasonal-weekdays block', () => {
     ]);
     const committed = await readFile(join(DATA_ROOT, 'disputes', `${BLOCK}.md`), 'utf8');
     expect(committed).toBe(renderDisputes(result));
+  });
+
+  it('gives the OLM reading and its Sunday-cycle alternative where LitCal lacks or inverts it', () => {
+    const find = (id: string) => blockRows(loaded.files).find((row) => row.id === id)?.reading;
+    const summary = (id: string) => {
+      const reading = find(id);
+      return [reading?.ref, reading?.alternatives?.map((alt) => alt.ref), reading?.source];
+    };
+    expect(summary('proper-of-time:advent-weekday-1-mon day first-reading')).toEqual([
+      'Is 2:1-5',
+      ['Is 4:2-6'],
+      'olm-1981 p?#175',
+    ]);
+    expect(summary('proper-of-time:lent-weekday-5-mon day gospel')).toEqual([
+      'Jn 8:1-11',
+      ['Jn 8:12-20'],
+      'olm-1981 p?#251',
+    ]);
+    expect(summary('proper-of-time:easter-weekday-4-mon day gospel')).toEqual([
+      'Jn 10:1-10',
+      ['Jn 10:11-18'],
+      'olm-1981 p?#279',
+    ]);
   });
 
   it('resolves real days of each season', () => {
