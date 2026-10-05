@@ -261,9 +261,7 @@ void main() {
       });
     }
 
-    testWidgets('pulling down reschedules the daily reminders', (
-      tester,
-    ) async {
+    testWidgets('pulling down reschedules the daily reminders', (tester) async {
       final platform = FakeReminderPlatform();
       final reminders = DailyReminderScheduler(
         settings: SettingsController(
