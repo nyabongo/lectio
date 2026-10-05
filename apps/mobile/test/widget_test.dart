@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:lectio/main.dart' as app;
+import 'package:lectio/src/app.dart';
+import 'package:lectio/src/screens/placeholder_screen.dart';
+import 'package:lectio/src/theme/liturgical_colour.dart';
+
+/// The header title [title], if shown.
+Finder headerTitle(String title) =>
+    find.descendant(of: find.byType(AppBar), matching: find.text(title));
+
+/// The index of the selected bottom-bar tab.
+int selectedTab(WidgetTester tester) =>
+    tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex;
+
+void main() {
+  testWidgets('main() starts on Today', (tester) async {
+    app.main();
+    await tester.pumpAndSettle();
+
+    expect(headerTitle('Today'), findsOneWidget);
+    expect(find.text('Coming soon'), findsOneWidget);
+    expect(selectedTab(tester), 0);
+  });
+
+  testWidgets('/ redirects to Today', (tester) async {
+    await tester.pumpWidget(const LectioApp(initialLocation: '/'));
+    await tester.pumpAndSettle();
+
+    expect(headerTitle('Today'), findsOneWidget);
+  });
+
+  testWidgets('the bottom bar switches between the tabs', (tester) async {
+    await tester.pumpWidget(const LectioApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.menu_book_outlined));
+    await tester.pumpAndSettle();
+    expect(headerTitle('Reading'), findsOneWidget);
+    expect(selectedTab(tester), 1);
+
+    await tester.tap(find.byIcon(Icons.headphones_outlined));
+    await tester.pumpAndSettle();
+    expect(headerTitle('Listen'), findsOneWidget);
+    expect(selectedTab(tester), 2);
+
+    await tester.tap(find.byIcon(Icons.today_outlined));
+    await tester.pumpAndSettle();
+    expect(headerTitle('Today'), findsOneWidget);
+    expect(selectedTab(tester), 0);
+  });
+
+  testWidgets('a deep link opens its tab', (tester) async {
+    await tester.pumpWidget(const LectioApp(initialLocation: '/listen'));
+    await tester.pumpAndSettle();
+
+    expect(headerTitle('Listen'), findsOneWidget);
+    expect(selectedTab(tester), 2);
+  });
+
+  for (final title in ['Calendar', 'Settings']) {
+    testWidgets('$title opens from the header and goes back', (tester) async {
+      await tester.pumpWidget(const LectioApp());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip(title));
+      await tester.pumpAndSettle();
+      expect(headerTitle(title), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(headerTitle('Today'), findsOneWidget);
+    });
+  }
+
+  testWidgets('an unknown location shows not found', (tester) async {
+    await tester.pumpWidget(const LectioApp(initialLocation: '/nowhere'));
+    await tester.pumpAndSettle();
+    expect(headerTitle('Not found'), findsOneWidget);
+
+    await tester.tap(find.text('Go to Today'));
+    await tester.pumpAndSettle();
+    expect(headerTitle('Today'), findsOneWidget);
+  });
+
+  testWidgets('the liturgical colour tints the accent', (tester) async {
+    await tester.pumpWidget(const LectioApp(colour: LiturgicalColour.violet));
+    await tester.pumpAndSettle();
+
+    final context = tester.element(find.byType(PlaceholderScreen));
+    final scheme = Theme.of(context).colorScheme;
+    expect(scheme.primary, LiturgicalColour.violet.light);
+    expect(scheme.onPrimary, const Color(0xFFFFFFFF));
+  });
+}
