@@ -371,3 +371,49 @@ describe('helpers', () => {
     expect(hash).toMatch(/^[0-9a-f]{64}$/);
   });
 });
+
+describe('translations (L-112)', () => {
+  const SW = FIXTURE.replace('/passages/', '/passages/i18n/sw/');
+  const SW_TEXT = readFileSync(
+    new URL('../../../schema/src/translated-passage/fixtures/valid/pending.json', import.meta.url),
+    'utf8',
+  );
+
+  it('records a human approval on a translation file, under the human-only rules', async () => {
+    const fs = memoryFs({ [SW]: SW_TEXT });
+    const [outcome] = await approveHuman([SW], { reviewer: '@fr-reviewer', via: 'comment', now: NOW, config, fs });
+    expect(outcome?.changed).toBe(true);
+    const written = JSON.parse(fs.files[SW] ?? '') as { review: unknown };
+    expect(written.review).toEqual({
+      status: 'approved',
+      method: 'human',
+      reviewers: ['Fr-Reviewer'],
+      approvedVia: 'comment',
+      lastReviewedAt: '2026-10-05T09:30:00Z',
+    });
+    const again = await approveHuman([SW], { reviewer: 'fr-reviewer', via: 'comment', now: NOW, config, fs });
+    expect(again[0]?.changed).toBe(false);
+    await expect(approveHuman([SW], { reviewer: 'someone', via: 'cli', now: NOW, config, fs })).rejects.toThrow(
+      ReviewError,
+    );
+  });
+
+  it('never approves a translation automatically, and writes nothing', async () => {
+    const fs = memoryFs({ [SW]: SW_TEXT, [FIXTURE]: ORIGINAL });
+    await expect(approveAuto([FIXTURE, SW], summary, NOW, { fs })).rejects.toThrow(
+      /translations are approved by a person only/,
+    );
+    expect(fs.files[SW]).toBe(SW_TEXT);
+    expect(fs.files[FIXTURE]).toBe(ORIGINAL);
+  });
+
+  it('refuses an invalid or misplaced translation', async () => {
+    const options = { reviewer: 'nyabongo', via: 'cli' as const, now: NOW, config };
+    await expect(approveHuman([SW], { ...options, fs: memoryFs({ [SW]: '{}' }) })).rejects.toThrow(ReviewError);
+    const PT = SW.replace('/sw/', '/pt-BR/');
+    await expect(approveHuman([PT], { ...options, fs: memoryFs({ [PT]: SW_TEXT }) })).rejects.toThrow(
+      /must equal the directory locale "pt-BR"/,
+    );
+    await expect(approveHuman([SW], { ...options, fs: memoryFs({}) })).rejects.toThrow(/cannot read file/);
+  });
+});

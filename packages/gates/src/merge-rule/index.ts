@@ -12,7 +12,8 @@
  * 3. `blocked` when the PR sets a review block to approved without a verified approval.
  * 4. `human-approved` when a configured reviewer (the PR author included) approved by label or
  *    comment after the last content commit.
- * 5. `needs-review` when any review condition holds (protected path, auto-merge disabled,
+ * 5. `needs-review` when any review condition holds (protected path, a translation under
+ *    passages/i18n/ (not configurable), auto-merge disabled,
  *    verifiers skipped or unreadable, low support, refutations, sensitive claims, gate flags,
  *    files outside passages/, fork PR, a deterministic gate that did not run).
  * 6. `auto-merge` otherwise. It never returns `close`.
@@ -136,6 +137,11 @@ export const MERGE_RULES = {
     'merge-rule/protected-path',
     'A PR that changes packages/gates/**, .github/** or config/** always needs a person (not configurable).',
     'Ask a reviewer to approve, or split the content change from the code or config change.',
+  ),
+  translationNeedsPerson: defineRule(
+    'merge-rule/translation-needs-person',
+    'A PR that changes a translation (passages/i18n/**) always needs a person (not configurable): translations never auto-merge.',
+    'Ask a configured reviewer who reads the language to approve with the label or /approve.',
   ),
   autoMergeEnabled: defineRule(
     'merge-rule/auto-merge-enabled',
@@ -279,6 +285,15 @@ function reviewConditions(input: DecideInput, results: readonly GateResult[]): D
         rule: MERGE_RULES.protectedPath,
         file,
         message: `${file} is under ${prefix}** (never auto-merged)`,
+      });
+  }
+  const translations = `${passagesPrefix(config)}i18n/`;
+  for (const file of files) {
+    if (file.startsWith(translations))
+      reasons.push({
+        rule: MERGE_RULES.translationNeedsPerson,
+        file,
+        message: `${file} is a translation (never auto-merged)`,
       });
   }
   if (!auto.enabled) reasons.push({ rule: MERGE_RULES.autoMergeEnabled, message: 'autoMerge.enabled is false' });

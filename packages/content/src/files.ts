@@ -9,6 +9,13 @@ import { validateCalendarYear } from '@lectio/schema/calendar';
 import type { CalendarYear } from '@lectio/schema/calendar';
 import { validatePassage } from '@lectio/schema/passage';
 import type { Passage } from '@lectio/schema/passage';
+import {
+  TRANSLATIONS_DIR,
+  parseTranslatedPassagePath,
+  translationMismatches,
+  validateTranslatedPassage,
+} from '@lectio/schema/translated-passage';
+import type { TranslatedPassage } from '@lectio/schema/translated-passage';
 
 import { ContentError, issuesFromAjv } from './errors.ts';
 import type { ContentIssue } from './errors.ts';
@@ -77,6 +84,43 @@ export function checkCalendarYear(value: unknown, file: string, expectedYear?: n
   if (first !== undefined) fail(file, [first, ...rest]);
   return value;
 }
+
+/**
+ * The locale and key of a translation file anywhere under a content root
+ * (`…/passages/i18n/<locale>/<key>.json`, L-112), or `null`. `contentKindOf` returns `null` for
+ * these files: a translation is not a passage.
+ */
+export function translationPlaceOf(path: string): { readonly locale: string; readonly key: string } | null {
+  const parts = path.replace(/\\/g, '/').split('/');
+  return parseTranslatedPassagePath(parts.slice(-4).join('/'));
+}
+
+/**
+ * Validates a translation against its schema, the locale and key its path promises and, when
+ * given, the English passage it translates (same note and claim ids, paragraphs and claim markers).
+ * Staleness is not an error here; gate 1 flags it.
+ */
+export function checkTranslatedPassage(
+  value: unknown,
+  file: string,
+  expected?: { readonly locale: string; readonly key: string },
+  english?: Passage,
+): TranslatedPassage {
+  if (!validateTranslatedPassage(value)) return fail(file, issuesFromAjv(validateTranslatedPassage.errors));
+  const issues: ContentIssue[] = [];
+  if (expected !== undefined && value.locale !== expected.locale) {
+    issues.push({ pointer: '/locale', message: `must equal the directory locale ${JSON.stringify(expected.locale)}` });
+  }
+  if (expected !== undefined && value.translationOf !== expected.key) {
+    issues.push({ pointer: '/translationOf', message: `must equal the file name key ${JSON.stringify(expected.key)}` });
+  }
+  if (english !== undefined) issues.push(...translationMismatches(english, value));
+  const [first, ...rest] = issues;
+  if (first !== undefined) fail(file, [first, ...rest]);
+  return value;
+}
+
+export { TRANSLATIONS_DIR };
 
 /** `passage` for `…/passages/*.json`, `calendar` for `…/calendar/*.json`, otherwise `null`. */
 export function contentKindOf(path: string): ContentKind | null {

@@ -1,5 +1,6 @@
 /**
- * The review helper: writes the review block of passage files when a PR is approved.
+ * The review helper: writes the review block of passage files, and of translation files
+ * (`passages/i18n/<locale>/<key>.json`, L-112), when a PR is approved.
  *
  * - `approveHuman` records a person's approval (`method: human`, `approvedVia: cli | label |
  *   comment`). The reviewer must be listed in `config.reviewer.githubHandles`; they may be the PR
@@ -21,6 +22,9 @@
  * place; if any step fails, the files already replaced are restored and the temporary files
  * removed. Files are written with the repository's Prettier config, so `format:check` stays green.
  *
+ * Translations are approved by a person only: `approveHuman` writes their review block under the
+ * same rules, and `approveAuto` refuses them (the translated-passage schema has no auto path).
+ *
  * `npm run review:approve -- <files…> --reviewer <handle>` calls `approveHuman` locally; the CI
  * merge-rule job (L-031) calls both functions directly.
  */
@@ -29,8 +33,9 @@ import { readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
-import { checkPassage, contentKindOf, parseJson } from '@lectio/content';
+import { checkPassage, checkTranslatedPassage, contentKindOf, parseJson, translationPlaceOf } from '@lectio/content';
 import type { Passage, PassageReview } from '@lectio/schema/passage';
+import type { TranslatedPassage } from '@lectio/schema/translated-passage';
 import { format, resolveConfig } from 'prettier';
 
 export type VerifierSummary = NonNullable<PassageReview['verifierSummary']>;
@@ -157,8 +162,8 @@ function canonicalJson(value: unknown): string {
   return JSON.stringify(canon(value));
 }
 
-/** SHA-256 (hex) of `passage` without its review block, independent of key order and formatting. */
-export function passageContentHash(passage: Passage): string {
+/** SHA-256 (hex) of a passage or translation without its review block, independent of key order and formatting. */
+export function passageContentHash(passage: Passage | TranslatedPassage): string {
   const { review: _review, ...content } = passage;
   return createHash('sha256').update(canonicalJson(content)).digest('hex');
 }
@@ -188,15 +193,42 @@ function checked<T>(fn: () => T): T {
   }
 }
 
-function readPassage(fs: ReviewFs, file: string): { passage: Passage; text: string } {
-  if (contentKindOf(file) !== 'passage') throw new ReviewError(`${file}: not a passage file (passages/<key>.json)`);
+/** A passage or translation file read for approval, with its validator for the updated value. */
+interface ReviewedFile {
+  readonly value: Passage | TranslatedPassage;
+  readonly text: string;
+  readonly translation: boolean;
+  /** Validates the file with `review` in place of its review block. */
+  readonly withReview: (review: PassageReview) => Passage | TranslatedPassage;
+}
+
+function readContent(fs: ReviewFs, file: string): ReviewedFile {
+  const place = translationPlaceOf(file);
+  if (place === null && contentKindOf(file) !== 'passage') {
+    throw new ReviewError(`${file}: not a passage file (passages/<key>.json or passages/i18n/<locale>/<key>.json)`);
+  }
   let text: string;
   try {
     text = fs.readFile(file);
   } catch (error) {
     throw new ReviewError(`${file}: cannot read file (${(error as Error).message})`);
   }
-  return { passage: checked(() => checkPassage(parseJson(text, file), file, basename(file, '.json'))), text };
+  if (place !== null) {
+    const value = checked(() => checkTranslatedPassage(parseJson(text, file), file, place));
+    return {
+      value,
+      text,
+      translation: true,
+      withReview: (review) => checked(() => checkTranslatedPassage({ ...value, review }, file, place)),
+    };
+  }
+  const value = checked(() => checkPassage(parseJson(text, file), file, basename(file, '.json')));
+  return {
+    value,
+    text,
+    translation: false,
+    withReview: (review) => checked(() => checkPassage({ ...value, review }, file)),
+  };
 }
 
 interface PlannedWrite {
@@ -249,15 +281,19 @@ async function applyReview(
   files: readonly string[],
   update: (review: PassageReview) => PassageReview | null,
   options: WriteOptions,
+  auto = false,
 ): Promise<ApprovalOutcome[]> {
   const fs = options.fs ?? nodeReviewFs;
   const formatJson = options.format ?? prettierJson;
   if (files.length === 0) throw new ReviewError('no files to approve');
   const planned = files.map((file) => {
-    const { passage, text } = readPassage(fs, file);
-    const review = update(passage.review);
-    const next = review === null ? null : checked(() => checkPassage({ ...passage, review }, file));
-    return { file, original: text, next, contentHash: passageContentHash(passage) };
+    const { value, text, translation, withReview } = readContent(fs, file);
+    if (translation && auto) {
+      throw new ReviewError(`${file}: translations are approved by a person only, never automatically`);
+    }
+    const review = update(value.review as PassageReview);
+    const next = review === null ? null : withReview(review);
+    return { file, original: text, next, contentHash: passageContentHash(value) };
   });
   const outcomes: ApprovalOutcome[] = [];
   const writes: PlannedWrite[] = [];
@@ -270,7 +306,7 @@ async function applyReview(
 }
 
 /**
- * Records a human approval on each passage file: `status: approved`, `method: human`, the
+ * Records a human approval on each passage or translation file: `status: approved`, `method: human`, the
  * reviewer added to `reviewers`, `approvedVia` and `lastReviewedAt`. Throws `ReviewError` (and
  * writes nothing) for an unknown handle, a non-passage file or an invalid result.
  */
@@ -282,7 +318,8 @@ export async function approveHuman(files: readonly string[], options: ApproveHum
 
 /**
  * Records an auto-merge approval on each passage file: `status: approved`, `method: auto`,
- * `approvedVia: auto`, no reviewers, `lastReviewedAt` and the verifier summary.
+ * `approvedVia: auto`, no reviewers, `lastReviewedAt` and the verifier summary. Refuses translation
+ * files: they are approved by a person only.
  */
 export async function approveAuto(
   files: readonly string[],
@@ -292,5 +329,5 @@ export async function approveAuto(
 ): Promise<ApprovalOutcome[]> {
   checkVerifierSummary(verifierSummary);
   const at = reviewTimestamp(now);
-  return applyReview(files, (review) => autoReview(review, verifierSummary, at), options);
+  return applyReview(files, (review) => autoReview(review, verifierSummary, at), options, true);
 }
