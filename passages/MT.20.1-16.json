@@ -7,9 +7,9 @@
     "title": "Labourers in the vineyard",
     "paragraphs": [
       "Only Matthew tells this parable. [c1] He places it straight after Peter asks what the disciples will receive for leaving everything, so its first hearers are the disciples. [c2] The saying about the last and the first closes chapter 19 and closes the parable too, framing it on both sides. [c3]",
-      "A vineyard was a familiar picture of Israel, most clearly in Isaiah’s song of the vineyard. [c4] One long line of interpreters has read the first hired as Israel and the latecomers as the Gentiles. [c5]",
-      "The workers are day-labourers waiting in the market-place for hire: free men, but lower in security than the household slaves. [c6] The day was counted in twelve hours from sunrise, so the third hour is mid-morning and the eleventh is late afternoon. [c7] Those hired at the eleventh hour had about one hour of work left. [c8]",
-      "The agreed pay, a denarius, was a Roman silver coin and the usual wage for a day’s work. [c9] It was a fair and adequate wage rather than a lavish one. [c10] Paying everyone at evening keeps the Mosaic rule that a day-labourer’s wage is not held back overnight. [c11]"
+      "A vineyard was a familiar picture of Israel, most clearly in Isaiah’s song of the vineyard. [c4] Some interpreters, for example Matthew Henry, have read the first hired as Israel and the latecomers as the Gentiles. [c5] Within Matthew, though, the parable first answers the disciples. [c2]",
+      "The workers are day-labourers waiting in the market-place for hire: free men, engaged for a time only and paid by the day, in a form of labour in some respects lower than that of the household slaves. [c6] The day was counted in twelve hours from sunrise, so the third hour is mid-morning and the eleventh is late afternoon. [c7] Those hired at the eleventh hour had about one hour of work left. [c8]",
+      "The agreed pay, a denarius, was a Roman silver coin and the usual wage for a day’s work. [c9] It was an adequate and just payment for the work. [c10] Paying everyone at evening keeps the Mosaic rule that a day-labourer’s wage is not held back overnight. [c11]"
     ]
   },
   "translationNotes": [
@@ -36,8 +36,8 @@
         "translit": "agathos",
         "gloss": "good"
       },
-      "summary": "The landowner calls himself agathos, the ordinary Greek word for “good”, not a word for generosity as such.",
-      "body": "Agathos is the everyday word for good. [c15] Lexicons do allow the narrower sense kind or generous in this verse. [c16] But a few verses earlier, in Mt 19:17, Jesus uses the same word when he says that only one is good. [c17] Here goodness means giving more than justice requires, so the parable is about who the owner is, not only what he pays. [c18]"
+      "summary": "The landowner calls himself agathos, the ordinary Greek word for “good”, not specifically a word for generosity.",
+      "body": "Agathos is the everyday word for good. [c15] Thayer’s lexicon allows the narrower sense kind or generous in this verse. [c16] In the previous chapter, Mt 19:17, Jesus uses the same word when he says that only one is good. [c17] Here goodness means giving more than justice requires. [c18] Read as a picture of the kingdom, the householder stands for God, so the parable is about who God is, not only what he pays. [c22]"
     },
     {
       "id": "denarius",
@@ -62,8 +62,8 @@
         "translit": "hetaire",
         "gloss": "comrade"
       },
-      "summary": "Hetaire means “comrade”: a cool, even reproving form of address, not a term of affection.",
-      "body": "Hetairos means comrade or companion and does not imply affectionate friendship. [c20] Matthew puts the same address on Jesus’ lips for the guest without a wedding garment and for Judas, each time with a note of reproof. [c21]"
+      "summary": "Hetaire means “comrade”: a neutral address that elsewhere in Matthew carries reproof.",
+      "body": "Hetairos means comrade or companion and does not imply affectionate friendship. [c20] Readings of its tone here differ: Thayer files this verse as a kindly address, while Ellicott hears reproof whenever Jesus uses the word. [c23][c24] Matthew uses the same address for the guest without a wedding garment and for Judas, where the rebuke is clear. [c21]"
     }
   ],
   "claims": [
@@ -93,14 +93,14 @@
     },
     {
       "id": "c5",
-      "text": "A traditional reading, found for example in Matthew Henry, takes the parable as the admission of the Gentiles to equal privileges with the Jews.",
+      "text": "Some interpreters, for example Matthew Henry, take the parable as the admission of the Gentiles to equal privileges with the Jews.",
       "sourceIds": ["henry-mt-20-1"],
       "sensitive": true
     },
     {
       "id": "c6",
-      "text": "The labourers hired in the market-place were free day-labourers, a form of labour lower than that of household slaves.",
-      "sourceIds": ["meyer-mt-20-3", "ellicott-mt-20-1-labour"],
+      "text": "The labourers hired in the market-place were free day-labourers, engaged for a time only and paid by the day, a form of labour in some respects lower than that of household slaves.",
+      "sourceIds": ["meyer-mt-20-3", "ellicott-mt-20-1-labour", "ellicott-mt-20-1-hired"],
       "sensitive": false
     },
     {
@@ -174,13 +174,13 @@
       "id": "c17",
       "text": "In Mt 19:17 Jesus says that only one is good, using ἀγαθός.",
       "sourceIds": ["mt-19-17"],
-      "sensitive": true
+      "sensitive": false
     },
     {
       "id": "c18",
       "text": "In Mt 20:15 the one who is good is the one who gives more than justice requires.",
       "sourceIds": ["bengel-mt-20-15", "expositors-mt-20-15"],
-      "sensitive": false
+      "sensitive": true
     },
     {
       "id": "c19",
@@ -196,8 +196,26 @@
     },
     {
       "id": "c21",
-      "text": "Matthew uses the address ἑταῖρε also in Mt 22:12 (the guest without a wedding garment) and Mt 26:50 (Judas), in a tone of reproof.",
-      "sourceIds": ["mt-22-12", "mt-26-50", "ellicott-mt-20-13"],
+      "text": "Matthew uses the address ἑταῖρε also in Mt 22:12 (the king to the guest without a wedding garment) and Mt 26:50 (Jesus to Judas), where it is a term of reproachful rebuke.",
+      "sourceIds": ["mt-22-12", "mt-26-50", "cambridge-mt-20-13-rebuke"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "In the interpretation of the parable the householder stands for God.",
+      "sourceIds": ["ellicott-mt-20-15-householder"],
+      "sensitive": true
+    },
+    {
+      "id": "c23",
+      "text": "Thayer’s lexicon lists ἑταῖρε in Mt 20:13 under the vocative in kindly address, “my good friend”.",
+      "sourceIds": ["thayer-hetairos-kindly"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "Ellicott holds that the word always carries a tone of reproof when Jesus uses it.",
+      "sourceIds": ["ellicott-mt-20-13"],
       "sensitive": false
     }
   ],
@@ -311,7 +329,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
       "excerpt": "This parable, recorded only by Matthew",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "jfb-mt-20-1-peter",
@@ -320,7 +338,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
       "excerpt": "being spoken with reference to Peter's question",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "ellicott-mt-20-1",
@@ -329,7 +347,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
       "excerpt": "the house of Israel, which the Anointed of the Lord",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "ellicott-mt-20-1-labour",
@@ -338,7 +356,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
       "excerpt": "a form of labour in some respects lower than",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "henry-mt-20-1",
@@ -347,7 +365,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
       "excerpt": "though the Jews were first called into the vineyard",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "meyer-mt-20-2",
@@ -419,7 +437,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-13.htm",
       "excerpt": "used of any temporary connection, without the idea of affectionate friendship",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "ellicott-mt-20-13",
@@ -428,7 +446,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-13.htm",
       "excerpt": "always carries, with it in our Lord’s lips a tone of reproof",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "barnes-mt-20-15",
@@ -437,7 +455,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "when applied to the eye, to denote one envious and malicious",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "ellicott-mt-20-15",
@@ -446,7 +464,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "looked with envy and ill will at the prosperity of others",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "geneva-mt-20-15",
@@ -455,7 +473,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "For by an evil eye the Hebrews mean envy",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "geneva-mt-20-15-same-word",
@@ -464,7 +482,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "the word being the same in that place as it is here",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "gill-mt-20-15",
@@ -473,7 +491,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "is opposed to a good eye, frequently in Jewish writings",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "bengel-mt-20-15",
@@ -482,7 +500,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "who grants more than justice",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "expositors-mt-20-15",
@@ -491,7 +509,7 @@
       "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
       "excerpt": "doing more than justice demands",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:41:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
     },
     {
       "id": "thayer-denarion",
@@ -536,7 +554,43 @@
       "url": "https://biblehub.com/greek/2083.htm",
       "excerpt": "a comrade, mate, partner",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T07:42:00Z"
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-1-hired",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "engaged for a time only, and paid by the day",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-15-householder",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "In the interpretation of the parable, God was Himself the Householder",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "cambridge-mt-20-13-rebuke",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 20:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-13.htm",
+      "excerpt": "where it is a term of reproachful rebuke",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "thayer-hetairos-kindly",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἑταῖρος (Bible Hub, Strong's 2083)",
+      "url": "https://biblehub.com/greek/2083.htm",
+      "excerpt": "vocative in kindly address, friend (my good friend)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
     }
   ],
   "provenance": {
