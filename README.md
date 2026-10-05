@@ -99,3 +99,13 @@ measures `packages/*/src/**` at the 96% floor.
   [0004 Passage keys and book codes](docs/adr/0004-passage-keys-and-book-codes.md) ·
   [0005 Providers behind interfaces](docs/adr/0005-providers-behind-interfaces.md) ·
   [0006 96% coverage floor](docs/adr/0006-coverage-floor.md)
+
+## Licence
+
+The code in this repository is released under the [MIT Licence](LICENSE).
+
+Content and data keep their own licences, recorded next to them: the original-language and ancient-version corpora
+under `corpus/*/LICENSE.md` and `SOURCE.json`, the fonts under their OFL licence files, and the versification data
+under `packages/refs/data/SOURCE.json`. Some of that data is copyleft (for example MorphGNT under CC BY-SA 3.0), so
+redistributing it carries its licence's terms. Lectio never stores the text of a copyrighted modern Bible translation;
+readings link out to a licensed source instead.
