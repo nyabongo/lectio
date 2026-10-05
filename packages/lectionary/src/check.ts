@@ -45,9 +45,13 @@ export function checkRefString(ref: string, what: string): string[] {
   return canonical === ref ? [] : [`${what} "${ref}" is not spelled canonically; write "${canonical}"`];
 }
 
+/**
+ * A Sunday takes only Sunday cycles. A weekday takes its own cycles (I/II) and Sunday cycles: a weekday
+ * reading for a Sunday cycle is the substitute the OLM gives for that year (resolve.ts, types.ts).
+ */
 function cycleProblem(key: string, kind: EntryKind, cycle: Cycle | undefined): string | undefined {
   if (cycle === undefined || kind !== 'proper-of-time') return undefined;
-  const allowed: readonly Cycle[] = isSundayKey(key) ? SUNDAY_CYCLES : WEEKDAY_CYCLES;
+  const allowed: readonly Cycle[] = isSundayKey(key) ? SUNDAY_CYCLES : [...WEEKDAY_CYCLES, ...SUNDAY_CYCLES];
   return allowed.includes(cycle) ? undefined : `cycle ${cycle} does not apply to ${key}; use ${allowed.join('/')}`;
 }
 
