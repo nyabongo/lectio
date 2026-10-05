@@ -62,7 +62,7 @@
         "gloss": "to be rejected after testing"
       },
       "summary": "Apodokimazo means to reject after scrutiny, the verb used for the builders’ rejected stone in Psalm 118.",
-      "body": "Apodokimazo means to disapprove or reject, and Vincent stresses rejection on scrutiny or trial, a deliberate verdict. [c19] Luke uses the same verb in 20:17, where Jesus cites Psalm 118:22 about the stone the builders rejected. [c20] The prediction therefore recalls a psalm in which the rejected stone becomes the head of the corner. [c21]"
+      "body": "Apodokimazo means to disapprove or reject, and Vincent stresses rejection on scrutiny or trial, a deliberate verdict. [c19] Luke uses the same verb in 20:17, where Jesus cites Psalm 118:22 about the stone the builders rejected. [c20] John Gill reads the prediction as fulfilling Psalm 118:22, where the stone the builders rejected becomes the head of the corner. [c21]"
     }
   ],
   "claims": [
@@ -188,8 +188,8 @@
     },
     {
       "id": "c21",
-      "text": "In Psalm 118:22 the stone the builders rejected becomes the head of the corner.",
-      "sourceIds": ["ps-118-22-corner"],
+      "text": "John Gill reads the rejection foretold in Luke 9:22 as fulfilling Psalm 118:22, where the stone the builders rejected becomes the head of the corner.",
+      "sourceIds": ["gill-lk-9-22", "ps-118-22-corner"],
       "sensitive": false
     }
   ],
@@ -494,6 +494,15 @@
       "excerpt": "to reject on scrutiny or trial, and therefore implies deliberate rejection",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "gill-lk-9-22",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Luke 9:22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-22.htm",
+      "excerpt": "they should reject the head stone of the corner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
     },
     {
       "id": "thayer-christos",

@@ -35,7 +35,7 @@
         "gloss": "my steadfast love"
       },
       "summary": "God is called hasdi, “my steadfast love”: a bold title that the Pulpit Commentary says occurs nowhere else.",
-      "body": "Hesed means goodness or kindness, and here God is called simply my hesed. [c12] Keil and Delitzsch and Ellicott take it as a bold shortening of the God of my hesed in Psalm 59:18. [c13] The Pulpit Commentary notes that the expression occurs nowhere else. [c14] Kirkpatrick, in the Cambridge Bible, wonders whether the text first read my strength or my cliff, as in Psalm 18. [c15]"
+      "body": "Hesed means goodness or kindness, and here God is called simply my hesed. [c12] Keil and Delitzsch and Ellicott take it as a bold shortening of the God of my hesed in Psalm 59:18. [c13] The Pulpit Commentary notes that the expression occurs nowhere else, though Kirkpatrick finds a partial parallel in Jonah 2:8. [c14][c23] Kirkpatrick, in the Cambridge Bible, wonders whether the text first read my strength or my cliff, as in Psalm 18. [c15]"
     },
     {
       "id": "yada",
@@ -61,20 +61,20 @@
         "gloss": "breath, vapour"
       },
       "summary": "A human being is likened to hebel, a breath: the same word Ecclesiastes uses for “vanity”.",
-      "body": "Hebel means vapour or breath, and figuratively whatever is evanescent and unsubstantial. [c19] Kirkpatrick prefers a breath to the older rendering vanity here. [c20] It is the word Qoheleth makes his refrain in Ecclesiastes 1:2, which links the psalm to the first reading of the day. [c21] The passing shadow in the same verse draws on the same figure in Psalm 102. [c22]"
+      "body": "Hebel means vapour or breath, and figuratively whatever is evanescent and unsubstantial. [c19] Kirkpatrick prefers a breath to the older rendering vanity here. [c20] It is the word Qoheleth makes his refrain in Ecclesiastes 1:2, the book from which today’s first reading is taken. [c21] The passing shadow in the same verse uses the same figure as Psalm 102:12. [c22]"
     }
   ],
   "claims": [
     {
       "id": "c1",
       "text": "Psalm 144 in the Hebrew numbering is Psalm 143 in the Douay-Rheims and Vulgate numbering.",
-      "sourceIds": ["drbo-ps-143"],
+      "sourceIds": ["drbo-ps-143", "drbo-ps-143-1"],
       "sensitive": false
     },
     {
       "id": "c2",
       "text": "The Hebrew heading of Psalm 144 assigns it to David, and the Vulgate heading adds “against Goliath”.",
-      "sourceIds": ["ps-144-1-david", "vulgate-ps-144-1-goliath"],
+      "sourceIds": ["ps-144-1-david", "vulgate-ps-144-1-goliath", "drbo-ps-143"],
       "sensitive": false
     },
     {
@@ -187,7 +187,7 @@
     },
     {
       "id": "c21",
-      "text": "הֶבֶל is the refrain word of Ecclesiastes, beginning in Ecclesiastes 1:2, and Ecclesiastes 3:1-11 is the first reading on the same day as this psalm.",
+      "text": "הֶבֶל is the refrain word of Ecclesiastes, beginning in Ecclesiastes 1:2, the book from which the first reading on the same day as this psalm (Ecclesiastes 3:1-11) is taken.",
       "sourceIds": ["eccl-1-2", "bdb-hebel-ecclesiastes"],
       "sensitive": false
     },
@@ -195,6 +195,12 @@
       "id": "c22",
       "text": "The image of days like a passing shadow in Psalm 144:4 is the same figure as in Psalm 102:12.",
       "sourceIds": ["ps-144-4-shadow", "ps-102-12", "kd-ps-144-3-shadow"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Kirkpatrick in the Cambridge Bible finds a partial parallel to “my hesed” in Jonah 2:8 (Hebrew 2:9), where idolaters forsake חַסְדָּם, “their hesed”.",
+      "sourceIds": ["cambridge-ps-144-2-jonah", "jon-2-9"],
       "sensitive": false
     }
   ],
@@ -280,6 +286,14 @@
       "excerptLang": "hbo"
     },
     {
+      "id": "jon-2-9",
+      "type": "scripture",
+      "citation": "Jonah 2:9 (English 2:8)",
+      "ref": "Jon 2:9",
+      "excerpt": "חַסְדָּם",
+      "excerptLang": "hbo"
+    },
+    {
       "id": "ps-8-5",
       "type": "scripture",
       "citation": "Psalm 8:5",
@@ -316,9 +330,18 @@
       "type": "web",
       "citation": "Douay-Rheims Bible, Psalm 143 (drbo.org)",
       "url": "https://www.drbo.org/chapter/21143.htm",
-      "excerpt": "Douay-Rheims Bible, Psalms Chapter 143",
+      "excerpt": "A psalm of David against Goliath.",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T09:20:00Z"
+      "retrievedAt": "2026-10-05T09:40:00Z"
+    },
+    {
+      "id": "drbo-ps-143-1",
+      "type": "web",
+      "citation": "Douay-Rheims Bible, Psalm 143:1 (drbo.org)",
+      "url": "https://www.drbo.org/chapter/21143.htm",
+      "excerpt": "who teacheth my hands to fight",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
     },
     {
       "id": "kd-ps-144-1",
@@ -400,6 +423,15 @@
       "excerpt": "it seems not improbable that we should read as in Psalm",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-ps-144-2-jonah",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 144:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-2.htm",
+      "excerpt": "A partial parallel may be found in Jonah 2:8",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
     },
     {
       "id": "cambridge-ps-144-3",

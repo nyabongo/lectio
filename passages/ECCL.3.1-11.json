@@ -6,7 +6,7 @@
   "context": {
     "title": "A time for everything",
     "paragraphs": [
-      "The speaker calls himself Qoheleth, a rare Hebrew title formed from a verb meaning to call, perhaps better rendered convener or debater than preacher. [c1] The book presents him as son of David and king in Jerusalem, yet never names Solomon. [c2] The Targum, as quoted by John Gill, already identifies him with Solomon. [c3]",
+      "The speaker calls himself Qoheleth, a rare Hebrew title formed from a verb meaning to call together or assemble, perhaps better rendered convener or debater than preacher. [c1] The book presents him as son of David and king in Jerusalem, yet never names Solomon. [c2] The Targum, as quoted by John Gill, already identifies him with Solomon. [c3]",
       "Verses 2-8 set out fourteen pairs of contrasts, beginning with birth and death and ending with war and peace. [c4] Hebrew manuscripts and most printed texts lay these verses out in two parallel columns, one time standing under another. [c5] Verse 9 then repeats the book’s opening question from 1:3 about what gain a worker has. [c6]",
       "Readers differ on what the poem teaches. [c7] E. H. Plumptre, in the Cambridge Bible, draws the lesson that wisdom means doing the right thing at the right time. [c8] The Pulpit Commentary objects that birth and death lie entirely beyond human choice, so the poem shows God’s providence ordering every detail of life. [c9]"
     ]
@@ -62,14 +62,14 @@
         "gloss": "the long duration"
       },
       "summary": "God set ha-ʿolam in human hearts: in biblical Hebrew “eternity”, though later Hebrew used the word for “world”.",
-      "body": "In biblical Hebrew ʿolam means long duration, reaching into the far past or future. [c19] The sense world belongs to later, post-biblical Hebrew, which explains older English renderings with world here. [c20] Barnes takes the verse to mean a God-given capability of conceiving of eternity. [c21] Ellicott reads ha-ʿolam as a deliberate contrast with ʿet, the word for time that comes just before. [c22]"
+      "body": "In biblical Hebrew ʿolam means long duration, reaching into the far past or future. [c19] The sense world belongs to later, post-biblical Hebrew. [c20] Barnes takes the verse to mean a God-given capability of conceiving of eternity. [c21] Ellicott reads ha-ʿolam as a deliberate contrast with ʿet, the word for time that comes just before. [c22]"
     }
   ],
   "claims": [
     {
       "id": "c1",
-      "text": "Qoheleth is a feminine noun formed from a verb meaning to call, perhaps better rendered Convener or Debater than Preacher.",
-      "sourceIds": ["eccl-1-1", "pulpit-eccl-1-1", "barnes-eccl-1-1"],
+      "text": "Qoheleth is a feminine noun formed from a verb meaning to call, describing one calling together an assembly, perhaps better rendered Convener or Debater than Preacher.",
+      "sourceIds": ["eccl-1-1", "pulpit-eccl-1-1", "barnes-eccl-1-1", "barnes-eccl-1-1-assembly"],
       "sensitive": false
     },
     {
@@ -297,6 +297,15 @@
       "excerpt": "Preacher - literally, Convener",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-1-assembly",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "in the act of calling together an assembly of people",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:00:00Z"
     },
     {
       "id": "cambridge-eccl-1-1",
