@@ -10,12 +10,15 @@
  * adds everything else, with strings from `src/i18n/<lang>/seo.json`. The tags are built by `seoTags()` in
  * src/lib/seo.ts.
  *
- * `image` defaults to the static brand card beside this file until L-088 renders one per page; `alternates` is the
+ * `image` defaults to the page's own share card when it has one (day, reading and insight pages: `ogImageForPage()`
+ * in src/lib/og.ts, rendered by src/pages/og/), else to the static brand card beside this file; `alternates` is the
  * hreflang hook L-110 fills once there is more than one locale.
  */
-import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../i18n/index.ts';
+import { ogImageForPage, pageOgTarget } from '../../lib/og.ts';
 import { seoTags, stripBase } from '../../lib/seo.ts';
 import type { HreflangAlternate, SeoImage } from '../../lib/seo.ts';
+import { siteContext, withBase } from '../../lib/site.ts';
 import brandCard from './brand-card.png';
 
 export interface Props {
@@ -29,7 +32,7 @@ export interface Props {
   type?: 'website' | 'article';
   /** Page language; defaults to `en`. */
   lang?: string;
-  /** Share image; defaults to the brand card. */
+  /** Share image; defaults to the page's share card, else the brand card. */
   image?: SeoImage;
   /** The same page in other locales (hreflang). */
   alternates?: readonly HreflangAlternate[];
@@ -44,17 +47,33 @@ const siteName = t(lang, 'common.site.name');
 const fullTitle = title === undefined || title === siteName ? siteName : t(lang, 'common.site.pageTitle', { title });
 const base = import.meta.env.BASE_URL;
 const path = Astro.props.path ?? stripBase(base, Astro.url.pathname);
-const image: SeoImage = Astro.props.image ?? {
+const site = Astro.site ?? Astro.url;
+// Only a day, reading or insight path opens the content repository.
+const pageImage =
+  Astro.props.image === undefined && pageOgTarget(path) !== null
+    ? ogImageForPage(
+        {
+          env: { lang, messages: { t, formatDate }, paths: (page: string) => withBase(base, localePath(lang, page)) },
+          site,
+          base,
+          config: siteContext().config,
+          repo: siteContext().repo,
+        },
+        path,
+      )
+    : null;
+const brandImage: SeoImage = {
   src: brandCard.src,
   width: brandCard.width,
   height: brandCard.height,
   alt: t(lang, 'seo.imageAlt'),
 };
+const image: SeoImage = Astro.props.image ?? pageImage ?? brandImage;
 const tags = seoTags({
   title: fullTitle,
   description,
   path,
-  site: Astro.site ?? Astro.url,
+  site,
   base,
   locale: lang,
   siteName,
