@@ -22,7 +22,7 @@ const Heading = level === 4 ? 'h4' : 'h3';
   <Heading class="reading__ref">
     {reading.href === null ? reading.refLabel : <a href={reading.href}>{reading.refLabel}</a>}
   </Heading>
-  {reading.summary !== null && <p class="reading__summary">{reading.summary}</p>}
+  {reading.summary !== null && <p class="reading__summary" lang={reading.summaryLang}>{reading.summary}</p>}
   {reading.pending !== null && <p class="reading__pending">{reading.pending}</p>}
   <a class="reading__text" href={reading.linkout.href} target="_blank" rel="noopener noreferrer">
     {reading.linkout.text}<span aria-hidden="true">↗</span><span class="visually-hidden">, {reading.linkout.detail}</span>
@@ -33,7 +33,8 @@ const Heading = level === 4 ? 'h4' : 'h3';
   .reading {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr auto;
+    /* minmax(0, …): a long word (longer in Kiswahili) wraps instead of pushing the card past a 320 px screen. */
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
     gap: 0 var(--space-s);
     padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
@@ -67,6 +68,7 @@ const Heading = level === 4 ? 'h4' : 'h3';
   .reading__pending {
     grid-column: 1;
     margin: 0;
+    overflow-wrap: break-word;
   }
 
   .reading__slot {

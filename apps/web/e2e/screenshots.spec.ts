@@ -25,6 +25,14 @@ const pageTypes = [
   { name: 'about', path: 'about/' },
   { name: 'offline', path: 'offline/' },
   { name: 'not-found', path: 'no-such-page/', tag: EXPECTS_404 },
+  // Kiswahili mirrors (L-110).
+  { name: 'sw-today', path: 'sw/' },
+  { name: 'sw-day', path: `sw/${BUILD_DATE}/` },
+  { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },
+  { name: 'sw-calendar-month', path: 'sw/calendar/2026/09/' },
+  { name: 'sw-passage', path: 'sw/passages/MT.20.1-16/' },
+  { name: 'sw-settings', path: 'sw/settings/' },
+  { name: 'sw-about', path: 'sw/about/' },
 ];
 
 for (const { name, path, tag, tab } of pageTypes as { name: string; path: string; tag?: string; tab?: string }[]) {

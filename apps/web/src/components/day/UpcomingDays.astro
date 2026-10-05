@@ -24,7 +24,7 @@ const { heading, days } = Astro.props;
             <a href={day.href}>
               <time datetime={day.date}>{day.dateLabel}</time>
             </a>
-            <span class="upcoming__title">{day.title}</span>
+            <span class="upcoming__title" lang={day.titleLang}>{day.title}</span>
           </li>
         ))}
       </ul>

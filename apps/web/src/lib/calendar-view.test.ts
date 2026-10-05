@@ -349,6 +349,7 @@ describe('passageLibrary', () => {
               ref: 'Matthew 20:1–16a',
               path: 'passages/MT.20.1-16/',
               contextTitle: 'Labourers in the vineyard',
+              lang: 'en',
               noteCount: 3,
               dateCount: 1,
             },
@@ -411,6 +412,7 @@ describe('passageView', () => {
     expect(view?.ref).toBe('Matthew 20:1–16a');
     expect(view?.summary).toBe(approvedPassage.summary);
     expect(view?.contextTitle).toBe('Labourers in the vineyard');
+    expect(view?.lang).toBe('en');
     expect(view?.noteCount).toBe(3);
     expect(view?.lastReviewedAt).toBe('2026-09-03T17:05:00Z');
     expect(view?.notes).toEqual(

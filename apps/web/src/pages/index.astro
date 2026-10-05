@@ -2,20 +2,21 @@
 /**
  * The Today page, `/`: the day page for the build date in the site time zone (`siteDate`: Nairobi, or
  * `LECTIO_DATE`). A tiny inline script moves to the day page for the device's own date when it differs and the
- * site has it; without JavaScript, a list of the days ahead links to them. Built by src/lib/day.ts.
+ * site has it, in the reader's saved language (L-110); without JavaScript, a list of the days ahead links to them. Built by src/lib/day.ts.
  */
 import DayView from '../components/day/DayView.astro';
 import UpcomingDays from '../components/day/UpcomingDays.astro';
 import Seo from '../components/seo/Seo.astro';
-import { DEFAULT_LOCALE, formatDate, localePath, t } from '../i18n/index.ts';
+import { DEFAULT_LOCALE, LOCALES, formatDate, localeOf, localePath, t } from '../i18n/index.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { dayPageView, todaySwitch, todaySwitchScript, upcomingDays } from '../lib/day.ts';
 import type { DayEnv } from '../lib/day.ts';
+import { STORAGE_KEY } from '../lib/settings.ts';
 import { siteContext, siteDate, withBase } from '../lib/site.ts';
 
 const context = siteContext();
 const date = siteDate(context.config);
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const base = import.meta.env.BASE_URL;
 const env: DayEnv = {
   lang,
@@ -24,7 +25,16 @@ const env: DayEnv = {
 };
 const view = dayPageView(env, context, date);
 const upcoming = upcomingDays(env, context.repo, date);
-const script = todaySwitchScript(todaySwitch(env, context.repo, date));
+// On `/`, a reader who saved another language goes to that language's Today (L-110), in the same script as the date
+// switch; `/sw/` never redirects, so a shared Kiswahili link is always respected.
+const script = todaySwitchScript(
+  todaySwitch(env, context.repo, date, {
+    key: STORAGE_KEY,
+    locales: LOCALES,
+    defaultLocale: DEFAULT_LOCALE,
+    paths: (locale, path) => withBase(base, localePath(locale, path)),
+  }),
+);
 const siteName = t(lang, 'common.site.name');
 ---
 
@@ -33,6 +43,7 @@ const siteName = t(lang, 'common.site.name');
   description={view?.description}
   date={view?.date}
   celebration={view?.title}
+  celebrationLang={view?.titleLang}
   colour={view?.colour}
   lang={lang}
 >
