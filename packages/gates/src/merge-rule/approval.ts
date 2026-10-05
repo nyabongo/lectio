@@ -24,8 +24,13 @@ export const APPROVAL_TRAILER_KEY = 'Lectio-Approval';
 /** The workflow whose merge-rule job writes approval commits (L-031). */
 export const APPROVAL_WORKFLOW = 'content-gates.yml';
 
-/** Events that start a content-gates.yml run (L-031). */
-export const APPROVAL_RUN_EVENTS = ['pull_request', 'issue_comment', 'workflow_dispatch'] as const;
+/**
+ * Events of a content-gates.yml run that may write an approval commit. The trusted workflow (L-031)
+ * runs on `workflow_run`, `issue_comment` and `workflow_dispatch`; `pull_request` stays for runs
+ * whose PR GitHub lists. The CI job additionally ties each run to its PR and head before `decide`
+ * sees it (`packages/gates/src/ci/facts.ts`).
+ */
+export const APPROVAL_RUN_EVENTS = ['pull_request', 'workflow_run', 'issue_comment', 'workflow_dispatch'] as const;
 
 export type ApprovalKind = ApprovalCommit['kind'];
 

@@ -69,6 +69,8 @@ export interface FakeRun {
   readonly status: string;
   readonly conclusion: string | null;
   readonly actor: { readonly login: string } | null;
+  readonly display_title?: string | null;
+  readonly created_at: string;
 }
 
 export interface FakeGhOptions {
@@ -212,6 +214,7 @@ export class FakeGh {
   readonly #comments: CommentRecord[] = [];
   readonly #labels = new Set<string>();
   readonly #runs = new Map<number, FakeRun>();
+  readonly #artifacts = new Map<number, string[]>();
   #seq = 0;
   #nextNumber = 1;
   #nextRunId = 5000;
@@ -257,10 +260,15 @@ export class FakeGh {
     this.#modes.set(path, mode);
   }
 
-  addRun(run: Omit<FakeRun, 'id'> & { readonly id?: number }): FakeRun {
-    const stored = { ...run, id: run.id ?? this.#nextRunId++ };
+  addRun(run: Omit<FakeRun, 'id' | 'created_at'> & { readonly id?: number; readonly created_at?: string }): FakeRun {
+    const stored = { ...run, id: run.id ?? this.#nextRunId++, created_at: run.created_at ?? this.#stamp().at };
     this.#runs.set(stored.id, stored);
     return stored;
+  }
+
+  /** An artifact uploaded by run `id`. */
+  addArtifact(id: number, name: string): void {
+    this.#artifacts.set(id, [...(this.#artifacts.get(id) ?? []), name]);
   }
 
   /** An issue opened by someone else. */
@@ -729,8 +737,22 @@ export class FakeGh {
       this.#trees.set(sha, tree);
       return { sha, truncated: false };
     }
+    if (route === 'POST /check-runs') {
+      const run = {
+        id: this.#checkRuns.length + 1,
+        name: body['name'],
+        head_sha: body['head_sha'],
+        status: body['status'],
+        conclusion: body['conclusion'],
+        output: body['output'],
+      };
+      this.#checkRuns.push(run);
+      return run;
+    }
     if (route === 'POST /git/commits') {
-      const tree = this.#trees.get(body['tree'] as string);
+      const treeSha = body['tree'] as string;
+      const tree =
+        this.#trees.get(treeSha) ?? [...this.#commits.values()].find((c) => shaOf([...c.tree]) === treeSha)?.tree;
       if (!tree) throw httpError(422, 'Tree SHA does not exist');
       const commit = this.#commit(body['parents'] as string[], tree, body['message'] as string, this.viewer, true);
       return { sha: commit.sha, verification: { verified: true } };
@@ -800,6 +822,18 @@ export class FakeGh {
     }
     if ((match = /^GET \/issues\/(\d+)\/timeline$/.exec(route))) {
       return paged(this.#timelineOf(this.#thread(Number(match[1]))));
+    }
+    if ((match = /^GET \/actions\/runs\?head_sha=(\w+)&per_page=100$/.exec(route))) {
+      const runs = [...this.#runs.values()].filter((run) => run.head_sha === match?.[1]).reverse();
+      // Two pages, newest first, like the API.
+      const page = (items: unknown[]) => ({ total_count: runs.length, workflow_runs: items });
+      return [page(runs.slice(0, 1)), page(runs.slice(1))];
+    }
+    if ((match = /^GET \/actions\/runs\/(\d+)\/artifacts\?per_page=100$/.exec(route))) {
+      if (!this.#runs.has(Number(match[1]))) throw httpError(404, 'Not Found');
+      const names = this.#artifacts.get(Number(match[1])) ?? [];
+      const page = (items: string[]) => ({ total_count: names.length, artifacts: items.map((name) => ({ name })) });
+      return [page(names.slice(0, 1)), page(names.slice(1))];
     }
     if ((match = /^GET \/actions\/runs\/(\d+)$/.exec(route))) {
       const run = this.#runs.get(Number(match[1]));

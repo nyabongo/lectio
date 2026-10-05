@@ -509,6 +509,86 @@ describe('GhGitHubClient', () => {
     });
   });
 
+  it('publishes a completed check run and commits an empty approval commit when allowed', async () => {
+    const { fake, client } = setup();
+    const sha = (await client.getCommit('main')).sha;
+    const run = await client.createCheckRun({
+      name: 'merge-rule',
+      headSha: sha,
+      conclusion: 'success',
+      title: 'auto-merge',
+      summary: 'x'.repeat(70_000),
+    });
+    expect(run).toEqual({ name: 'merge-rule', headSha: sha, status: 'completed', conclusion: 'success' });
+    const created = fake.calls.find((call) => call.args.includes(`repos/${REPO}/check-runs`));
+    expect((JSON.parse(created?.input ?? '{}') as { output: { summary: string } }).output.summary).toHaveLength(65_000);
+
+    await expect(client.commitFiles({ branch: 'main', message: 'x', files: [] })).rejects.toThrow(/at least one file/);
+    const empty = await client.commitFiles({ branch: 'main', message: 'approve', files: [], allowEmpty: true });
+    expect(empty.parents).toEqual([sha]);
+    expect(fake.calls.some((call) => call.args.includes(`repos/${REPO}/git/trees`))).toBe(false);
+  });
+
+  it('lists the artifacts a run uploaded across pages, sorted', async () => {
+    const { fake, client } = setup();
+    const run = fake.addRun({
+      path: 'content-gates.yml',
+      event: 'workflow_run',
+      head_sha: 'a'.repeat(40),
+      head_branch: 'main',
+      pull_requests: [],
+      status: 'completed',
+      conclusion: 'success',
+      actor: null,
+    });
+    fake.addArtifact(run.id, 'b');
+    fake.addArtifact(run.id, 'a');
+    expect(await client.listRunArtifacts(run.id)).toEqual(['a', 'b']);
+    await expect(client.listRunArtifacts(1)).rejects.toBeInstanceOf(ProviderError);
+  });
+
+  it('lists the runs of a head sha across pages, oldest first, with titles and server timestamps', async () => {
+    const { fake, client } = setup();
+    const sha = 'c'.repeat(40);
+    const base = { head_branch: 'research/x', status: 'completed', conclusion: 'success', actor: { login: 'x' } };
+    fake.addRun({
+      ...base,
+      path: '.github/workflows/content-gates.yml',
+      event: 'pull_request',
+      head_sha: sha,
+      pull_requests: [{ number: 7 }],
+      display_title: 'Content gates · PR #7',
+      created_at: '2026-10-05T10:00:00Z',
+    });
+    fake.addRun({
+      ...base,
+      path: '.github/workflows/content-gates.yml',
+      event: 'issue_comment',
+      head_sha: sha,
+      pull_requests: [],
+      display_title: null,
+      created_at: '2026-10-05T09:00:00Z',
+    });
+    fake.addRun({ ...base, path: 'ci.yml', event: 'push', head_sha: 'd'.repeat(40), pull_requests: [] });
+    fake.addRun({
+      ...base,
+      id: 1,
+      path: 'ci.yml',
+      event: 'workflow_dispatch',
+      head_sha: sha,
+      pull_requests: [],
+      created_at: '2026-10-05T09:00:00Z',
+    });
+    const runs = await client.listRunsForSha(sha);
+    expect(runs.map((run) => [run.event, run.displayTitle, run.createdAt, run.prNumbers])).toEqual([
+      ['workflow_dispatch', '', '2026-10-05T09:00:00Z', []],
+      ['issue_comment', '', '2026-10-05T09:00:00Z', []],
+      ['pull_request', 'Content gates · PR #7', '2026-10-05T10:00:00Z', [7]],
+    ]);
+    expect(await client.listRunsForSha('e'.repeat(40))).toEqual([]);
+    expect((await rejection(client.listRunsForSha('main&x=1'))).code).toBe('invalid-request');
+  });
+
   it('dispatches with inputs and maps unknown workflows and refs to not-found', async () => {
     const { fake, client } = setup();
     await client.dispatchWorkflow('ci.yml', 'main', { reason: 'a=b' });

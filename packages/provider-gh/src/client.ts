@@ -4,6 +4,7 @@ import type {
   CheckRun,
   CommitFilesInput,
   CreateBranchInput,
+  CreateCheckRunInput,
   GitCommit,
   GitHubClient,
   Issue,
@@ -220,6 +221,8 @@ function toWorkflowRun(value: Json): WorkflowRun {
     status: statusOf(str(run, 'status')),
     conclusion: conclusionOf(optStr(run, 'conclusion')),
     actor: login(run, 'actor'),
+    displayTitle: optStr(run, 'display_title') ?? '',
+    createdAt: str(run, 'created_at'),
   };
 }
 
@@ -354,7 +357,8 @@ export class GhGitHubClient implements GitHubClient {
   }
 
   async commitFiles(input: CommitFilesInput): Promise<GitCommit> {
-    if (input.files.length === 0) throw new ProviderError('invalid-request', 'a commit needs at least one file');
+    if (input.files.length === 0 && input.allowEmpty !== true)
+      throw new ProviderError('invalid-request', 'a commit needs at least one file');
     const ref = asObject(await this.#api('GET', `/git/ref/heads/${refPath(input.branch)}`), 'ref');
     const head = str(obj(ref, 'object'), 'sha');
     if (input.expectedHeadSha !== undefined && input.expectedHeadSha !== head) {
@@ -362,22 +366,9 @@ export class GhGitHubClient implements GitHubClient {
     }
     const headCommit = asObject(await this.#api('GET', `/commits/${head}`), 'commit');
     const baseTree = str(obj(obj(headCommit, 'commit'), 'tree'), 'sha');
-    const modes = await this.#blobModes(baseTree);
-    const tree = asObject(
-      await this.#api('POST', '/git/trees', {
-        base_tree: baseTree,
-        tree: input.files.map((file) => {
-          // Keep an existing file's mode (an executable stays executable).
-          const mode = modes.get(file.path) ?? '100644';
-          return file.content === null
-            ? { path: file.path, mode, type: 'blob', sha: null }
-            : { path: file.path, mode, type: 'blob', content: file.content };
-        }),
-      }),
-      'tree',
-    );
+    const treeSha = input.files.length === 0 ? baseTree : await this.#writeTree(baseTree, input.files);
     const commit = asObject(
-      await this.#api('POST', '/git/commits', { message: input.message, tree: str(tree, 'sha'), parents: [head] }),
+      await this.#api('POST', '/git/commits', { message: input.message, tree: treeSha, parents: [head] }),
       'commit',
     );
     const sha = str(commit, 'sha');
@@ -391,6 +382,25 @@ export class GhGitHubClient implements GitHubClient {
       throw ghError(args, result, moved ? 'conflict' : undefined);
     }
     return this.getCommit(sha);
+  }
+
+  /** A tree with `files` written on top of `baseTree`; returns its sha. */
+  async #writeTree(baseTree: string, files: CommitFilesInput['files']): Promise<string> {
+    const modes = await this.#blobModes(baseTree);
+    const tree = asObject(
+      await this.#api('POST', '/git/trees', {
+        base_tree: baseTree,
+        tree: files.map((file) => {
+          // Keep an existing file's mode (an executable stays executable).
+          const mode = modes.get(file.path) ?? '100644';
+          return file.content === null
+            ? { path: file.path, mode, type: 'blob', sha: null }
+            : { path: file.path, mode, type: 'blob', content: file.content };
+        }),
+      }),
+      'tree',
+    );
+    return str(tree, 'sha');
   }
 
   /** Path to mode of every blob in a tree (a truncated listing of a huge tree falls back to `100644`). */
@@ -710,5 +720,45 @@ export class GhGitHubClient implements GitHubClient {
 
   async getWorkflowRun(id: number): Promise<WorkflowRun> {
     return toWorkflowRun(await this.#api('GET', `/actions/runs/${id}`));
+  }
+
+  async createCheckRun(input: CreateCheckRunInput): Promise<CheckRun> {
+    const run = asObject(
+      await this.#api('POST', '/check-runs', {
+        name: input.name,
+        head_sha: input.headSha,
+        status: 'completed',
+        conclusion: input.conclusion,
+        output: { title: input.title, summary: input.summary.slice(0, 65_000) },
+      }),
+      'check run',
+    );
+    return {
+      name: str(run, 'name'),
+      headSha: str(run, 'head_sha'),
+      status: statusOf(str(run, 'status')),
+      conclusion: conclusionOf(optStr(run, 'conclusion')),
+    };
+  }
+
+  async listRunArtifacts(id: number): Promise<readonly string[]> {
+    const pages = asArray(
+      await this.#api('GET', `/actions/runs/${id}/artifacts?per_page=100`, undefined, ['--paginate', '--slurp']),
+      'pages',
+    );
+    return pages
+      .flatMap((page) => arr(asObject(page, 'artifacts page'), 'artifacts'))
+      .map((artifact) => str(asObject(artifact, 'artifact'), 'name'))
+      .sort();
+  }
+
+  async listRunsForSha(sha: string): Promise<readonly WorkflowRun[]> {
+    if (!/^[0-9a-f]{7,64}$/i.test(sha)) throw new ProviderError('invalid-request', `invalid commit sha: "${sha}"`);
+    const path = `/actions/runs?head_sha=${sha}&per_page=100`;
+    const pages = asArray(await this.#api('GET', path, undefined, ['--paginate', '--slurp']), 'pages');
+    return pages
+      .flatMap((page) => arr(asObject(page, 'workflow runs page'), 'workflow_runs'))
+      .map(toWorkflowRun)
+      .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) || a.id - b.id);
   }
 }

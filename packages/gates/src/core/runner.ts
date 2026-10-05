@@ -9,7 +9,7 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 import type { Gate, GateContext } from './gate.ts';
 import { finding, resultFromFindings } from './result.ts';
 import type { GateResult, GateStatus } from './result.ts';
-import { RUNNER_RULES } from './rules.ts';
+import { RUNNER_GATE_ID, RUNNER_RULES } from './rules.ts';
 
 /** Version of the JSON report written by `lectio-gates run --json`. */
 export const REPORT_VERSION = 1;
@@ -39,6 +39,17 @@ function crashed(gate: Gate, error: unknown): GateResult {
   const text = (error instanceof Error ? error.message : String(error)).replace(/\s+/g, ' ').trim();
   const message = `${gate.id} threw: ${text === '' ? '(no message)' : text}`;
   return resultFromFindings(gate.id, [finding(RUNNER_RULES.crashed, { message })], { crashed: true });
+}
+
+/**
+ * The failed runner result for changed paths that are not regular files (symbolic links,
+ * submodules). The gates do not run on such a PR: a link could point anywhere on the runner.
+ */
+export function nonRegularResult(paths: readonly string[]): GateResult {
+  return resultFromFindings(
+    RUNNER_GATE_ID,
+    paths.map((file) => finding(RUNNER_RULES.regularFiles, { file, message: `${file} is not a regular file` })),
+  );
 }
 
 /** Checks a gate's result; problems become runner findings and the result fails. */
