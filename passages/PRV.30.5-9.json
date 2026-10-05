@@ -6,7 +6,7 @@
   "context": {
     "title": "Agur’s prayer for enough",
     "paragraphs": [
-      "These verses belong to the words of Agur son of Jakeh, an appendix to the proverbs of Solomon. [c1] Some Jewish and Christian interpreters took Agur for Solomon himself, but Ellicott and Poole judge him a separate, otherwise unknown sage. [c2] His sayings open with a confession of how little he knows of God. [c3]",
+      "These verses belong to the words of Agur son of Jakeh, an appendix to the proverbs of Solomon. [c1] Some Jewish and Christian interpreters took Agur for Solomon himself, but Ellicott and Poole judge him a separate sage, and Ellicott calls him otherwise unknown. [c2] His sayings open with a confession of how little he knows of God. [c3]",
       "Verse 5 depends closely on Psalm 18:31, and verse 6 on the warning of Deut 4:2 against adding to God’s words. [c4] The name for God here, Eloah, occurs nowhere else in Proverbs, though it is the usual name in Job. [c5] The prayer that follows is the first of Agur’s numerical sayings, built on the number two. [c6]",
       "Agur asks two things before he dies: to be kept from falsehood, and to be spared both poverty and riches. [c7] He gives the reason himself: plenty can breed a proud denial of God, and want can push a person to steal. [c8] The two requests belong together, the first against the sins themselves and the second against their occasions. [c9]"
     ]
@@ -49,7 +49,7 @@
         "gloss": "bread of my portion"
       },
       "summary": "Literally “the bread of my portion”: food allotted, like a fixed ration, neither more nor less.",
-      "body": "Ḥōq means something prescribed, and the lexicon lists this verse under a prescribed portion or allowance of food. [c17] The same noun names the fixed allowance of the Egyptian priests in Gen 47:22. [c18] Agur asks for neither surplus nor scarcity, only what is apportioned to him. [c19] Christian readers hear the daily bread of the Lord’s Prayer, though the Pulpit Commentary notes that the idea is not quite the same. [c20]"
+      "body": "Ḥōq means something prescribed, and the lexicon lists this verse under a prescribed portion or allowance of food. [c17] The same noun names the fixed allowance of the Egyptian priests in Gen 47:22. [c18] Agur asks for neither surplus nor scarcity, only what is apportioned to him. [c19] Christian readers hear the daily bread of the Lord’s Prayer, though the Pulpit Commentary notes that the idea is not the same. [c20]"
     },
     {
       "id": "taphas-name",
@@ -62,7 +62,7 @@
         "gloss": "and I lay hold of the name of my God"
       },
       "summary": "The verb tāpaś means to seize or handle roughly: want might drive Agur to lay violent hands on God’s name.",
-      "body": "Tāpaś means to lay hold of or seize, and the lexicon glosses this verse as doing violence to the name of God. [c21] It is not the verb of the commandment about the name, but one of rough seizing. [c22] Older commentators read it either of a false oath sworn to cover a theft, or of bitter complaint against God’s providence in hardship. [c23]"
+      "body": "Tāpaś means to lay hold of or seize, and the lexicon glosses this verse as doing violence to the name of God. [c21] It is not the verb of the commandment about the name, but one of rough seizing. [c22] The Pulpit Commentary reads it either of a false oath sworn to cover a theft, or of bitter complaint against God’s providence in hardship. [c23]"
     }
   ],
   "claims": [
@@ -74,7 +74,7 @@
     },
     {
       "id": "c2",
-      "text": "Some Jewish writers (Rashi, Gersonides) and some Christian writers identified Agur with Solomon, while Ellicott and Poole judge him to be a different, otherwise unknown sage.",
+      "text": "Some Jewish writers (Rashi, Gersonides) and some Christian writers identified Agur with Solomon, while Ellicott and Poole judge him to be a different sage, whom Ellicott calls otherwise unknown.",
       "sourceIds": ["gill-prv-30-1", "ellicott-prv-30-1-sage", "poole-prv-30-1"],
       "sensitive": false
     },

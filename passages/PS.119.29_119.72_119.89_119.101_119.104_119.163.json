@@ -7,7 +7,7 @@
     "title": "Six verses from the Torah psalm",
     "paragraphs": [
       "Psalm 119 is an alphabetic acrostic of twenty-two stanzas, one for each Hebrew letter, and every verse of a stanza begins with that letter. [c1] The six verses here come from five of them: Daleth, Teth, Lamed, Mem (two verses) and Shin. [c2] Jamieson, Fausset and Brown suggest that the artful form served teaching and memory. [c3]",
-      "Only two verses in the whole psalm lack some term for God’s word. [c4] Torah, usually rendered law, is one of those terms and appears three times in these six verses. [c5] The psalm is tied to no particular event; it is the prayer of someone who has set God’s declared will before him as the rule of his life. [c6]",
+      "By one older count, only two verses in the whole psalm lack some term for God’s word. [c4] Torah, usually rendered law, is one of those terms and appears three times in these six verses. [c5] The psalm is tied to no particular event; it is the prayer of someone who has set God’s declared will before him as the rule of his life. [c6]",
       "Three of the six verses name šeqer, falsehood, as the way the psalmist rejects. [c7] Older commentators took this less as the habit of telling lies than as any conduct not governed by God’s truth. [c8] Against it stands a word fixed for ever in the heavens, which the psalmist values above any amount of earthly riches. [c9]"
     ]
   },
@@ -23,7 +23,7 @@
         "gloss": "instruction of"
       },
       "summary": "Tôrâ means direction or instruction before it means law in a legal sense.",
-      "body": "The lexicon gives direction and instruction as the senses of tôrâ, alongside law. [c10] Proverbs uses the same noun for a mother’s teaching and a sage’s. [c11] Jamieson, Fausset and Brown call it a term of general purport denoting instruction. [c12] Delitzsch notes that in this psalm it means living instruction rather than a rigid fixed teaching, so the torah of God’s mouth is guidance spoken by God. [c13]"
+      "body": "The lexicon gives direction and instruction as the senses of tôrâ, alongside law. [c10] Proverbs uses the same noun for a mother’s teaching and a sage’s. [c11] Jamieson, Fausset and Brown call it a term of general purport denoting instruction. [c12] Delitzsch notes that in v. 29 it means living instruction rather than a rigid fixed teaching. [c13]"
     },
     {
       "id": "chonneni",
@@ -98,7 +98,7 @@
     },
     {
       "id": "c4",
-      "text": "Only two verses of Psalm 119 (vv. 122 and 132) contain no term for God’s word.",
+      "text": "By the count of Jamieson, Fausset and Brown, only two verses of Psalm 119 (vv. 122 and 132) contain no term for God’s word.",
       "sourceIds": ["jfb-ps-119-1-two-verses"],
       "sensitive": false
     },

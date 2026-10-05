@@ -6,7 +6,7 @@
   "context": {
     "title": "The mission of the Twelve",
     "paragraphs": [
-      "Luke follows Mark’s account here, while Matthew gives a much fuller version of the instructions. [c1] The Twelve were chosen in Luke 6:13-16; now Jesus sends them out to do his own work. [c2] Luke later tells of a second, larger mission of seventy in chapter 10, with several of the same instructions. [c3]",
+      "Luke follows Mark’s account here, while Matthew gives a much fuller version of the instructions. [c1] The Twelve were chosen in Luke 6:13-16; now Jesus sends them out to preach and heal. [c2] Luke later tells of a second, larger mission of seventy (seventy-two in some manuscripts) in chapter 10, with several of the same instructions. [c3]",
       "Jesus gives them both power and authority, the same pair the crowd used of his own word in Luke 4:36. [c4] The mission has two sides, proclaiming God’s kingdom and healing, and verse 6 shows them doing both. [c5] Mark adds that they were sent out two by two, which the Cambridge Bible takes as being for mutual support. [c6]",
       "They travel without bag, bread or silver, and Luke, unlike Mark, forbids even a staff. [c7] The Cambridge Bible reads this as a call to go in the simplest manner and in perfect faith, relying on the open hospitality of the East. [c8] In each place they are to stay in one house rather than move from house to house. [c9]"
     ]
@@ -62,7 +62,7 @@
         "gloss": "the dust from your feet shake off"
       },
       "summary": "A gesture of separation: the messengers leave even a town’s dust behind as a witness.",
-      "body": "Koniortos is properly dust raised in the air, the dust of the road that clings to a traveller. [c21] Jewish purity teaching held that the very dust of a Gentile land carried defilement, which gave the gesture its weight. [c22] By it the messengers freed themselves of responsibility for a town’s refusal of their message. [c23] Paul and Barnabas make the same gesture at Pisidian Antioch in Acts 13:51. [c24]"
+      "body": "Koniortos is properly dust raised or flying in the air, and then dust in general. [c21] Jewish purity teaching held that the very dust of a Gentile land carried defilement, which gave the gesture its weight. [c22] By it the messengers freed themselves of responsibility for a town’s refusal of their message. [c23] Paul and Barnabas make the same gesture at Pisidian Antioch in Acts 13:51. [c24]"
     }
   ],
   "claims": [
@@ -80,8 +80,8 @@
     },
     {
       "id": "c3",
-      "text": "Some of the instructions to the Twelve are given again to the Seventy in Luke 10:1-16.",
-      "sourceIds": ["lk-10-1", "cambridge-lk-9-3-seventy"],
+      "text": "Some of the instructions to the Twelve are given again to the Seventy in Luke 10:1-16; the manuscripts vary between seventy and seventy-two.",
+      "sourceIds": ["lk-10-1", "cambridge-lk-9-3-seventy", "lk-10-1-number", "pulpit-lk-10-1"],
       "sensitive": false
     },
     {
@@ -235,6 +235,23 @@
       "ref": "Lk 10:1",
       "excerpt": "ἀπέστειλεν αὐτοὺς",
       "excerptLang": "grc"
+    },
+    {
+      "id": "lk-10-1-number",
+      "type": "scripture",
+      "citation": "Luke 10:1",
+      "ref": "Lk 10:1",
+      "excerpt": "ἑβδομήκοντα δύο",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "pulpit-lk-10-1",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 10:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/10-1.htm",
+      "excerpt": "The manuscripts vary between seventy and seventy two.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
     },
     {
       "id": "lk-4-36",
