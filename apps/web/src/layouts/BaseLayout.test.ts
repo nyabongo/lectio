@@ -66,4 +66,14 @@ describe('BaseLayout', () => {
     expect(html).toContain('<meta name="x-test" content="head-slot">');
     expect(html).toMatch(/<nav[^>]*>[\s\S]*<button>Share<\/button>[\s\S]*<\/nav>/);
   });
+
+  it('prefixes links for a non-default locale and falls back to English strings', async () => {
+    const html = await render({ title: 'Kalenda', lang: 'sw' });
+    const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+    expect(html).toContain(`href="${base}sw/calendar/"`);
+    expect(html).toContain(`href="${base}sw/"`);
+    expect(html).toContain('<title>Kalenda · Lectio</title>');
+    expect(html).toContain('Skip to content');
+    expect(html).toMatch(/<nav class="site-nav" aria-label="Site"/);
+  });
 });
