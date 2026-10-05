@@ -1,0 +1,10 @@
+{
+  "name": "SBL Greek New Testament (MorphGNT SBLGNT edition)",
+  "language": "grc",
+  "upstreamUrl": "https://github.com/morphgnt/sblgnt/archive/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d.tar.gz",
+  "version": "aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d",
+  "sha256": "e760c941eebae0eb25665a4937cf3b29b04a842f952f4b46d4181601d0e91872",
+  "licence": "CC-BY-4.0 AND CC-BY-SA-3.0",
+  "attribution": "Text: Scripture quotations marked SBLGNT are from the SBL Greek New Testament. Copyright © 2010 Society of Biblical Literature and Logos Bible Software. Licensed under CC BY 4.0.\nLemmas and morphology: MorphGNT, licensed under CC BY-SA 3.0. Tauber, J. K., ed. (2017) _MorphGNT: SBLGNT Edition_. Version 6.12 [Data set]. https://github.com/morphgnt/sblgnt DOI: 10.5281/zenodo.376200",
+  "versification": "original"
+}
