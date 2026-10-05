@@ -41,7 +41,7 @@
     {
       "id": "pera",
       "verse": "9:3",
-      "anchor": "sack",
+      "anchor": "bag",
       "original": {
         "text": "πήραν",
         "lang": "grc",
@@ -54,7 +54,7 @@
     {
       "id": "shake-dust",
       "verse": "9:5",
-      "anchor": "shake the dust",
+      "anchor": "shake off the dust",
       "original": {
         "text": "τὸν κονιορτὸν ἀπὸ τῶν ποδῶν ὑμῶν ἀποτινάσσετε",
         "lang": "grc",
