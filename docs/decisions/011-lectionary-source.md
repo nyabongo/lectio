@@ -110,7 +110,7 @@ The rules for each part:
 | id             | locator regex                                                      | example                                                                                        |
 | -------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 | `litcal`       | `[A-Za-z_]+(/[A-Za-z_]+)*/[a-z]{2}\.json#[A-Za-z0-9_]+(\.[a-z]+)?` | `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25` |
-| `olm-1981`     | `p[0-9]+#[0-9]+`                                                   | `olm-1981 p97#133`                                                                             |
+| `olm-1981`     | `p([0-9]+\|\?)#[0-9]+`                                             | `olm-1981 p97#133`, `olm-1981 p?#133`                                                          |
 | `ddw-decree`   | `[0-9]{4}-[0-9]{2}-[0-9]{2}#.+` (date and Prot. N.)                | `ddw-decree 2016-06-03#Prot.NNN/16`                                                            |
 | `ke-lect-2020` | `v[1-3]:p[0-9]+#[0-9]+`                                            | `ke-lect-2020 v3:p412#133`                                                                     |
 | `ke-dm-2018`   | `p[0-9]+`                                                          | `ke-dm-2018 p1534`                                                                             |
@@ -127,13 +127,13 @@ Full line regex: `^(?<id>[a-z0-9-]+)(?:@(?<rev>[0-9a-f]{40}))? (?<locator>\S+)$`
 
 These must **not** match: `en.json#OrdSunday25` (no directory) and `../en.json#OrdSunday25`.
 
-Page numbers and the Prot. N. in the examples are illustrative. The `#<n>` after a page is the OLM 1981 lectionary number. Whether the Kenyan print uses OLM numbering or US renumbering must be confirmed (Q1).
+An `olm-1981` locator may be `p?#<n>` while the page is not recorded yet; `lectionary:check` counts these, and the verifier fills in the page from a print copy. Page numbers and the Prot. N. in the examples are illustrative. The `#<n>` after a page is the OLM 1981 lectionary number. Whether the Kenyan print uses OLM numbering or US renumbering must be confirmed (Q1).
 
 ## Versification and conversion
 
 Canonical versification is **NABRE ≈ original**, per ADR 0004. The import from LitCal mostly needs letters stripped, because LitCal is already NABRE. Gap-fill from OLM, and later verification against the RSV-2CE Kenyan book, must convert to canonical. `lectionary:crosscheck` compares **canonical, letter-free refs only**, so differences in letters are never disputes.
 
-Conversions to handle (the tables live in L-006):
+Conversions to handle (the tables live in L-006, `@lectio/refs` versification; `lectionary:crosscheck` reads OLM / Nova Vulgata psalm numbers through its `vulgate` scheme but keeps their verse numbers, which follow the Hebrew, and reads RSV references through its `english` scheme):
 
 - **Psalms.** Vulgate and LXX numbers differ from Hebrew for Ps 9–147. Ps 9/10, 114/115, 116 and 147 split or merge depending on the verses cited. Verse numbers: Hebrew and NABRE count superscriptions as verses; the RSV does not (RSV Ps 51:1-2 = NABRE Ps 51:3-4). The Kenyan psalter's numbering is still to be confirmed (Q1).
 - **Joel:** Joel 3:1-5 (NABRE/NV) = RSV 2:28-32.

@@ -26,7 +26,7 @@ export interface CrosscheckEntry {
   readonly cycle?: string;
   readonly ref: string;
   readonly alternatives?: readonly string[];
-  /** A hand conversion to canonical, for the cases convert.ts leaves to a person (Esther, Sirach, Tobit, RSV psalms). */
+  /** A hand conversion to canonical, for the cases convert.ts leaves to a person (Esther, Sirach, Tobit). */
   readonly canonical?: string;
   readonly alternativesCanonical?: readonly string[];
   readonly source: string;
@@ -176,7 +176,9 @@ function sameSet(a: readonly string[], b: readonly string[]): boolean {
  * Compares the block's readings with the cross-check entries. The block must pass
  * `lectionary:check` first (its refs are parsed without further checks). Every reading is either compared
  * (agreeing or not) or listed as single-source; every cross-check entry that matches no reading,
- * cites an invalid or non-independent source, or cannot be converted is a disagreement.
+ * repeats an earlier entry's reading, cites an invalid or non-independent source, or cannot be
+ * converted is a disagreement. Only the first entry for a reading is compared, so agreements never
+ * exceed the readings compared.
  */
 export function crosscheckBlock(
   block: string,
@@ -198,6 +200,10 @@ export function crosscheckBlock(
     };
     if (row === undefined) {
       fail('the block has no such reading');
+      continue;
+    }
+    if (compared.has(id)) {
+      fail('duplicate cross-check entry for this reading; keep one');
       continue;
     }
     compared.add(id);

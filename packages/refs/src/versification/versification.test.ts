@@ -11,6 +11,7 @@ import {
   SCHEMES,
   chapterCount,
   chapterLength,
+  firstVerse,
   fromSourceVerse,
   isRealVerse,
   mapRef,
@@ -248,7 +249,9 @@ describe('mapRef', () => {
     expect(mapText('Ps 9-10', 'original', 'vulgate')).toBe('Ps 9');
     expect(mapText('Ps 9', 'vulgate', 'original')).toBe('Ps 9–10');
     expect(mapText('Ps 114-115', 'original', 'vulgate')).toBe('Ps 113');
-    expect(mapText('Ps 116', 'original', 'vulgate')).toBe('Ps 114; 115:10–19');
+    expect(mapText('Ps 116', 'original', 'vulgate')).toBe('Ps 114–115');
+    expect(mapText('Ps 147', 'original', 'vulgate')).toBe('Ps 146–147');
+    expect(mapText('Ps 116:10-19', 'original', 'vulgate')).toBe('Ps 115:10–19');
     expect(mapText('Ps 3', 'original', 'english')).toBe('Ps 3');
   });
 
@@ -364,7 +367,13 @@ describe('known losses', () => {
       expect(isRealVerse(verse, 'vulgate')).toBe(false);
       expect(code(() => mapVerse(verse, 'vulgate', 'original'))).toBe('UNKNOWN_VERSE');
     }
+    // Vulgate Ps 115 is verses 10-19: the last verse number is 19, the first is 10.
     expect(chapterLength('PS', 115, 'vulgate')).toBe(19);
+    expect(firstVerse('PS', 115, 'vulgate')).toBe(10);
+    expect(firstVerse('PS', 147, 'vulgate')).toBe(12);
+    expect(firstVerse('PS', 116, 'original')).toBe(1);
+    expect(firstVerse('PS', 151, 'original')).toBeUndefined();
+    expect(mapText('Ps 115', 'vulgate', 'original')).toBe('Ps 116:10–19');
     expect(map('PS', 115, 10, 'vulgate', 'original')).toBe('PS 116:10');
     expect(map('PS', 147, 12, 'vulgate', 'original')).toBe('PS 147:12');
     expect(map('PS', 147, 1, 'original', 'vulgate')).toBe('PS 146:1');

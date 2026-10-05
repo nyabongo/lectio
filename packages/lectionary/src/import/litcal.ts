@@ -170,12 +170,25 @@ export interface MergeResult {
   readonly replaced: number;
   /** Readings left alone because a person verified or disputed them, or another source supplies them. */
   readonly kept: readonly string[];
+  /** Provisional LitCal readings dropped because the leaf they came from no longer has them. */
+  readonly removed: readonly string[];
 }
+
+const readingId = (key: string, mass: string, reading: Reading): string =>
+  `${key} ${mass} ${reading.slot}${reading.cycle === undefined ? '' : ` (${reading.cycle})`}`;
+
+/** The locator of a `litcal@<rev> <locator>` source. */
+const locatorOf = (source: string): string => source.slice(source.indexOf(' ') + 1);
+
+const isLitcalImport = (reading: Reading): boolean =>
+  reading.status === 'provisional' && reading.source.startsWith('litcal@');
 
 /**
  * Merges imported readings into a data file. A reading (same key, Mass, slot and cycle) is replaced
  * only when it is a provisional LitCal import; anything verified, disputed or from another source
- * is kept and reported. Entries are sorted by key, readings by slot and cycle.
+ * is kept and reported. A provisional LitCal reading of a key and Mass that was imported again from
+ * the same leaf, but that the leaf no longer supplies, is removed and reported. Entries are sorted by
+ * key, readings by slot and cycle.
  */
 export function mergeImported(file: BlockFile, imported: readonly ImportedReading[]): MergeResult {
   interface DraftMass {
@@ -195,6 +208,21 @@ export function mergeImported(file: BlockFile, imported: readonly ImportedReadin
   let added = 0;
   let replaced = 0;
   const kept: string[] = [];
+  const removed: string[] = [];
+  const supplied = new Set(imported.map(({ key, mass, reading }) => readingId(key, mass, reading)));
+  const leaves = new Set(imported.map(({ key, mass, reading }) => `${key} ${mass} ${locatorOf(reading.source)}`));
+  for (const entry of entries.values()) {
+    for (const [id, mass] of entry.masses) {
+      mass.readings = mass.readings.filter((reading) => {
+        const stale =
+          isLitcalImport(reading) &&
+          leaves.has(`${entry.key} ${id} ${locatorOf(reading.source)}`) &&
+          !supplied.has(readingId(entry.key, id, reading));
+        if (stale) removed.push(readingId(entry.key, id, reading));
+        return !stale;
+      });
+    }
+  }
   for (const { key, mass, reading } of imported) {
     const entry = entries.get(key) ?? { key, masses: new Map<string, DraftMass>() };
     entries.set(key, entry);
@@ -205,11 +233,11 @@ export function mergeImported(file: BlockFile, imported: readonly ImportedReadin
     if (existing === undefined) {
       target.readings.push(reading);
       added += 1;
-    } else if (existing.status === 'provisional' && existing.source.startsWith('litcal@')) {
+    } else if (isLitcalImport(existing)) {
       target.readings[index] = reading;
       replaced += 1;
     } else {
-      kept.push(`${key} ${mass} ${reading.slot}${reading.cycle === undefined ? '' : ` (${reading.cycle})`}`);
+      kept.push(readingId(key, mass, reading));
     }
   }
   const sorted: Entry[] = [...entries.values()]
@@ -223,7 +251,7 @@ export function mergeImported(file: BlockFile, imported: readonly ImportedReadin
         readings: [...readings].sort(readingOrder),
       })),
     }));
-  return { data: { kind: file.kind, entries: sorted }, added, replaced, kept };
+  return { data: { kind: file.kind, entries: sorted }, added, replaced, kept, removed };
 }
 
 /** Serialises a data file the way it is committed (two-space JSON, LF, trailing newline). */

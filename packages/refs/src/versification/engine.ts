@@ -23,8 +23,17 @@ export type VerseInput = string | Ref | VerseId;
 export interface Versification {
   /** Number of chapters of `book` in the scheme (0 if the scheme lacks the book). */
   chapterCount(book: BookCode, scheme?: Scheme): number;
-  /** Last verse number of a chapter, or `undefined` if the chapter does not exist. */
+  /**
+   * Last verse number of a chapter, or `undefined` if the chapter does not exist. It is a verse
+   * number, not a count: a chapter may start after verse 1 (see {@link firstVerse}).
+   */
   chapterLength(book: BookCode, chapter: number, scheme?: Scheme): number | undefined;
+  /**
+   * First verse number of a chapter, or `undefined` if the chapter does not exist. Usually 1; the
+   * Stuttgart numbering of the `vulgate` scheme starts Ps 115 at verse 10 and Ps 147 at verse 12,
+   * so Vulgate Ps 115 is verses 10-19: `chapterLength` 19, `firstVerse` 10, ten verses.
+   */
+  firstVerse(book: BookCode, chapter: number, scheme?: Scheme): number | undefined;
   /** {@link chapterLength} as the lookup `enumerateVerses` takes. */
   verseCounts(scheme?: Scheme): VerseCountLookup;
   /**
@@ -157,6 +166,15 @@ export function createVersification(data: VersificationData): Versification {
     Number.isSafeInteger(verse.c) &&
     Number.isSafeInteger(verse.v) &&
     sourceOf(verse, scheme) !== undefined;
+
+  const firstVerse = (book: BookCode, chapter: number, scheme: Scheme = 'original'): number | undefined => {
+    const last = chapterLength(book, chapter, scheme);
+    if (last === undefined) return undefined;
+    const spans = bookTable(book, scheme).chapters[chapter - 1] as readonly ResolvedSpan[];
+    let v = Math.min(...spans.map((span) => span.from));
+    while (v < last && !verseExists({ book, c: chapter, v }, scheme)) v += 1;
+    return v;
+  };
 
   const fromSourceVerse = (source: SourceVerse, scheme: Scheme = 'original'): VerseId | undefined => {
     const table = schemeTable(scheme);
@@ -295,7 +313,13 @@ export function createVersification(data: VersificationData): Versification {
         .map((verse) => tryMapVerse(verse, from, to))
         .filter((verse): verse is VerseId => verse !== undefined);
       segments.push(
-        ...coalesce(ref.book, mapped, segment.start.v === undefined, (book, c) => chapterLength(book, c, to)),
+        ...coalesce(
+          ref.book,
+          mapped,
+          segment.start.v === undefined,
+          (book, c) => chapterLength(book, c, to),
+          (book, c) => firstVerse(book, c, to),
+        ),
       );
     }
     if (segments.length === 0) {
@@ -321,6 +345,7 @@ export function createVersification(data: VersificationData): Versification {
   return {
     chapterCount,
     chapterLength,
+    firstVerse,
     verseCounts: (scheme = 'original') => {
       definition(scheme);
       return (book, c) => chapterLength(book, c, scheme);
@@ -337,14 +362,18 @@ export function createVersification(data: VersificationData): Versification {
 /**
  * Joins verses that follow each other in the target scheme into segments
  * (across a chapter break too). With `wholeChapters`, a run covering whole
- * chapters is written as a chapter segment. Throws if a verse leaves `book`.
+ * chapters is written as a chapter segment. `length` gives a chapter's last
+ * verse and `first` its first (1 when omitted or unknown). Throws if a verse
+ * leaves `book`.
  */
 export function coalesce(
   book: BookCode,
   verses: readonly VerseId[],
   wholeChapters: boolean,
   length: VerseCountLookup,
+  first: VerseCountLookup = () => 1,
 ): Segment[] {
+  const start = (c: number): number => first(book, c) ?? 1;
   const runs: { start: VerseId; end: VerseId }[] = [];
   for (const verse of verses) {
     if (verse.book !== book) {
@@ -359,13 +388,13 @@ export function coalesce(
     if (end.c === verse.c && end.v === verse.v) continue;
     const next =
       (end.c === verse.c && end.v + 1 === verse.v) ||
-      (end.c + 1 === verse.c && verse.v === 1 && end.v === length(book, end.c));
+      (end.c + 1 === verse.c && verse.v === start(verse.c) && end.v === length(book, end.c));
     if (next) run.end = verse;
     else runs.push({ start: verse, end: verse });
   }
-  return runs.map(({ start, end }) =>
-    wholeChapters && start.v === 1 && end.v === length(book, end.c)
-      ? { start: { c: start.c }, end: { c: end.c } }
-      : { start: { c: start.c, v: start.v }, end: { c: end.c, v: end.v } },
+  return runs.map((run) =>
+    wholeChapters && run.start.v === start(run.start.c) && run.end.v === length(book, run.end.c)
+      ? { start: { c: run.start.c }, end: { c: run.end.c } }
+      : { start: { c: run.start.c, v: run.start.v }, end: { c: run.end.c, v: run.end.v } },
   );
 }

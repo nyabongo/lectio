@@ -1,19 +1,22 @@
 /**
  * Conversion of a reference from a source's numbering convention to canonical (NABRE ≈ original,
- * ADR 0004), for `lectionary:crosscheck`. 011 lists the cases:
+ * ADR 0004), for `lectionary:crosscheck`. The tables are `@lectio/refs` versification (L-006);
+ * this module only decides how a convention uses them (011, "Versification and conversion"):
  *
- * - `vulgate` (OLM 1981, Nova Vulgata, LXX): psalm numbers. Joel and Malachi already follow the
- *   Hebrew chapters there.
- * - `rsv` (RSV-2CE): Joel 2:28–3:21 = 3:1–4:21, Malachi 4:1-6 = 3:19-24.
+ * - `nabre`: already canonical.
+ * - `vulgate` (OLM 1981, Nova Vulgata): Vulgate psalm numbers; see {@link novaVulgataPsalms}.
+ *   Every other book follows the Hebrew chapters (Joel 3:1-5, Malachi 3:19-24), so it is read as
+ *   canonical. The refs `vulgate` scheme's Joel and Malachi are the Clementine ones and are not used.
+ * - `rsv` (RSV-2CE): the refs `english` scheme, for every book: psalm titles not counted
+ *   (RSV Ps 51:1-2 = Ps 51:3-4), Joel 2:28–3:21 = 3:1–4:21, Malachi 4:1-6 = 3:19-24.
  * - Esther, Sirach and Tobit differ entry by entry between traditions; a reference to them from a
  *   non-NABRE source is not converted automatically ({@link ConversionError}), and the cross-check
  *   entry must carry a hand-made `canonical` ref instead.
- * - RSV psalm verse numbers (superscriptions not counted) need L-006's tables; until then an RSV
- *   psalm is reported the same way.
  *
  * Verse letters are dropped first; they never matter for the comparison.
  */
-import type { Point, Ref, Segment } from '@lectio/refs';
+import { mapRef } from '@lectio/refs';
+import type { Ref, Segment, VersificationError } from '@lectio/refs';
 
 import { stripLetters } from './canonical.ts';
 import type { Convention } from './types.ts';
@@ -22,72 +25,55 @@ export class ConversionError extends Error {
   override readonly name = 'ConversionError';
 }
 
-/** Hebrew psalm and verse offset for a Vulgate psalm and verse. */
-function vulgatePsalm(c: number, v: number | undefined): { c: number; offset: number } {
-  if (c <= 8 || c >= 148) return { c, offset: 0 };
-  if (c === 9) return v !== undefined && v >= 22 ? { c: 10, offset: -21 } : { c: 9, offset: 0 };
-  if (c <= 112) return { c: c + 1, offset: 0 };
-  if (c === 113) return v !== undefined && v >= 9 ? { c: 115, offset: -8 } : { c: 114, offset: 0 };
-  if (c === 114) return { c: 116, offset: 0 };
-  if (c === 115) return { c: 116, offset: 9 };
-  if (c <= 145) return { c: c + 1, offset: 0 };
-  if (c === 146) return { c: 147, offset: 0 };
-  return { c: 147, offset: 11 };
-}
-
-/** Whole Vulgate psalms that are part of, or span, Hebrew psalms. */
-const WHOLE_VULGATE: Readonly<Record<number, Segment>> = {
-  9: { start: { c: 9 }, end: { c: 10 } },
-  113: { start: { c: 114 }, end: { c: 115 } },
-  114: { start: { c: 116, v: 1 }, end: { c: 116, v: 9 } },
-  115: { start: { c: 116, v: 10 }, end: { c: 116, v: 19 } },
-  146: { start: { c: 147, v: 1 }, end: { c: 147, v: 11 } },
-  147: { start: { c: 147, v: 12 }, end: { c: 147, v: 20 } },
-};
-
-function vulgatePoint({ c, v }: Point): Point {
-  const mapped = vulgatePsalm(c, v);
-  return v === undefined ? { c: mapped.c } : { c: mapped.c, v: v + mapped.offset };
-}
-
-function vulgateSegment(segment: Segment): Segment {
-  const { start, end } = segment;
-  if (start.v === undefined) {
-    if (start.c === end.c && WHOLE_VULGATE[start.c] !== undefined) return WHOLE_VULGATE[start.c] as Segment;
-    return { start: vulgatePoint(start), end: vulgatePoint(end) };
-  }
-  const from = vulgatePoint(start);
-  const to = vulgatePoint(end);
-  if (from.c !== to.c && start.c === end.c) {
-    throw new ConversionError(`Vulgate Ps ${start.c}:${start.v}-${end.v} spans two Hebrew psalms; split it`);
-  }
-  return { start: from, end: to };
-}
-
-/** RSV → NABRE chapter shifts: [book, RSV chapter, first RSV verse, last RSV verse, NABRE chapter, verse offset]. */
-const RSV_SHIFTS: readonly (readonly [string, number, number, number, number, number])[] = [
-  ['JL', 2, 28, 32, 3, -27],
-  ['JL', 3, 1, 21, 4, 0],
-  ['MAL', 4, 1, 6, 3, 18],
-];
-
-function rsvPoint(book: string, { c, v }: Point): Point {
-  for (const [code, chapter, first, last, target, offset] of RSV_SHIFTS) {
-    if (code !== book || c !== chapter) continue;
-    if (v === undefined) {
-      if (offset === 0) return { c: target };
-      throw new ConversionError(`RSV ${book} ${c} as a whole chapter has no single NABRE chapter`);
-    }
-    if (v >= first && v <= last) return { c: target, v: v + offset };
-  }
-  return v === undefined ? { c } : { c, v };
-}
-
 const ENTRY_BY_ENTRY = new Set(['EST', 'SIR', 'TB']);
+
+const wholePsalm = (c: number): Ref => ({ book: 'PS', segments: [{ start: { c }, end: { c } }] });
+
+/** The one chapter a reference covers, or `undefined` if it covers several. */
+function onlyChapter(ref: Ref): number | undefined {
+  const chapters = new Set(ref.segments.flatMap(({ start, end }) => [start.c, end.c]));
+  return chapters.size === 1 ? (chapters.values().next().value as number) : undefined;
+}
+
+const simplePsalms = new Map<number, number | undefined>();
+
+/**
+ * The Hebrew psalm that Vulgate psalm `c` is, verse for verse, or `undefined` when one of the two is
+ * split between psalms (Vulgate 9 and 113 hold two Hebrew psalms; Hebrew 116 and 147 are two
+ * Vulgate psalms each).
+ */
+function simplePsalm(c: number): number | undefined {
+  if (!simplePsalms.has(c)) {
+    const hebrew = onlyChapter(mapRef(wholePsalm(c), 'vulgate', 'original'));
+    const back = hebrew === undefined ? undefined : onlyChapter(mapRef(wholePsalm(hebrew), 'original', 'vulgate'));
+    simplePsalms.set(c, back === c ? hebrew : undefined);
+  }
+  return simplePsalms.get(c);
+}
+
+/**
+ * Nova Vulgata psalm numbers → Hebrew. The psalm numbers come from the refs `vulgate` scheme (the
+ * Stuttgart Vulgate). Its verse numbers are not the Nova Vulgata's everywhere: the Stuttgart text
+ * counts some titles and verses its own way (its Ps 145:2 is Hebrew 146:1, and its Ps 15 has no
+ * verse 11), whereas the Nova Vulgata numbers verses as the Hebrew does. So a psalm that is one
+ * Hebrew psalm only changes number, and only the split psalms (Vulgate 9, 113, 114, 115, 146, 147)
+ * are mapped verse by verse, where the two numberings agree.
+ */
+function novaVulgataPsalms(ref: Ref): Ref {
+  const segments = ref.segments.flatMap((segment): Segment[] => {
+    const { start, end } = segment;
+    const first = simplePsalm(start.c);
+    const last = simplePsalm(end.c);
+    const simple = first !== undefined && last !== undefined && last - first === end.c - start.c;
+    if (!simple) return [...mapRef({ book: 'PS', segments: [segment] }, 'vulgate', 'original').segments];
+    return [{ start: { ...start, c: first }, end: { ...end, c: last } }];
+  });
+  return { book: 'PS', segments };
+}
 
 /**
  * Converts `ref` from `convention` to canonical, letters dropped. Throws a {@link ConversionError}
- * when the reference cannot be converted automatically.
+ * when the reference cannot be converted automatically, or names a verse the convention does not have.
  */
 export function toCanonical(ref: Ref, convention: Convention): Ref {
   const plain = stripLetters(ref);
@@ -95,16 +81,11 @@ export function toCanonical(ref: Ref, convention: Convention): Ref {
   if (ENTRY_BY_ENTRY.has(plain.book)) {
     throw new ConversionError(`${plain.book} numbering differs entry by entry; give the canonical ref by hand`);
   }
-  if (convention === 'vulgate') {
-    return plain.book === 'PS' ? { book: 'PS', segments: plain.segments.map(vulgateSegment) } : plain;
+  if (convention === 'vulgate' && plain.book !== 'PS') return plain;
+  try {
+    return convention === 'vulgate' ? novaVulgataPsalms(plain) : mapRef(plain, 'english', 'original');
+  } catch (error) {
+    // stripLetters keeps a valid ref valid, so mapRef can only fail on versification.
+    throw new ConversionError((error as VersificationError).message);
   }
-  if (plain.book === 'PS')
-    throw new ConversionError('RSV psalm verse numbers need the L-006 tables; give the canonical ref by hand');
-  return {
-    book: plain.book,
-    segments: plain.segments.map(({ start, end }) => ({
-      start: rsvPoint(plain.book, start),
-      end: rsvPoint(plain.book, end),
-    })),
-  };
 }

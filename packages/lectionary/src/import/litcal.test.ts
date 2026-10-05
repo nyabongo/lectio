@@ -220,6 +220,47 @@ describe('mergeImported', () => {
     expect(result.data.entries[3]).toEqual({ key: 'all-saints', common: 'saints', masses: [] });
   });
 
+  it('removes provisional LitCal readings that a leaf imported again no longer supplies', () => {
+    const OTHER_LEAF = `litcal@${SHA} dominicale_et_festivum_B/en.json#OrdSunday25`;
+    const result = mergeImported(
+      {
+        kind: 'proper-of-time',
+        entries: [
+          {
+            key: 'ot-sunday-25',
+            masses: [
+              {
+                id: 'day',
+                readings: [
+                  reading('first-reading', 'Is 55:6-9', { cycle: 'A', source: LITCAL }),
+                  reading('psalm', 'Ps 145:2-3', { cycle: 'A', source: LITCAL }),
+                  reading('second-reading', 'Phil 1:20-24', { cycle: 'A', source: LITCAL }),
+                  reading('gospel', 'Mt 20:1-16', { cycle: 'A', source: LITCAL, status: 'verified' }),
+                  reading('second-reading', 'Phil 1:1', { cycle: 'B', source: OTHER_LEAF }),
+                  reading('psalm', 'Ps 1:1', { cycle: 'B', source: 'olm-1981 p?#134' }),
+                ],
+              },
+              { id: 'vigil', readings: [reading('gospel', 'Lk 1:1', { cycle: 'A', source: LITCAL })] },
+            ],
+          },
+        ],
+      },
+      [
+        {
+          key: 'ot-sunday-25',
+          mass: 'day',
+          reading: reading('first-reading', 'Is 55:6-9', { cycle: 'A', source: LITCAL }),
+        },
+      ],
+    );
+    expect(result.replaced).toBe(1);
+    expect(result.removed).toEqual(['ot-sunday-25 day psalm (A)', 'ot-sunday-25 day second-reading (A)']);
+    expect(result.data.entries[0]?.masses.map((m) => m.readings.map((r) => `${r.slot} ${String(r.cycle)}`))).toEqual([
+      ['first-reading A', 'psalm B', 'second-reading B', 'gospel A'],
+      ['gospel A'],
+    ]);
+  });
+
   it('serialises with an optional comment', () => {
     const data = { kind: 'commons' as const, entries: [] };
     expect(serialiseBlockFile(data)).toBe('{\n  "kind": "commons",\n  "entries": []\n}\n');

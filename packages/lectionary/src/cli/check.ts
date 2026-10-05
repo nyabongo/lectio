@@ -1,4 +1,4 @@
-// `npm run lectionary:check [-- --block <name>]` (logic and tests: ./run.ts).
+// `npm run lectionary:check [-- --block <name> --calendar <calendar/YYYY.json>]` (logic and tests: ./run.ts).
 import { resolveLectionaryRoot, runCheck } from './run.ts';
 
 process.exitCode = await runCheck(process.argv.slice(2), resolveLectionaryRoot(process.env, process.cwd()), {

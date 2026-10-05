@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { checkLectionary, checkRefString } from './check.ts';
 import { LITCAL, REGISTRY, entry, file, reading } from './fixtures/data.ts';
+import type { LectionaryDay } from './resolve.ts';
 
 describe('checkRefString', () => {
   it('accepts canonical letter-free refs', () => {
@@ -99,5 +100,51 @@ describe('checkLectionary', () => {
       'other/b.json ot-sunday-25: already defined in test/proper-of-time.json',
       'test/celebrations.json barnabas-apostle: common "missing" is not defined',
     ]);
+  });
+
+  describe('a feast or solemnity on a Sunday', () => {
+    const files = [
+      file('celebrations', [
+        entry('transfiguration', [
+          reading('first-reading', 'Dn 7:9-10, 13-14'),
+          reading('psalm', 'Ps 97:1-2, 5-6, 9'),
+          reading('gospel', 'Mt 17:1-9', { cycle: 'A' }),
+        ]),
+        entry('assumption', [
+          reading('first-reading', 'Rv 11:19; 12:1-6, 10'),
+          reading('psalm', 'Ps 45:10-12, 16'),
+          reading('second-reading', '1 Cor 15:20-27'),
+          reading('gospel', 'Lk 1:39-56'),
+        ]),
+      ]),
+    ];
+    const day = (date: string, celebrations: LectionaryDay['celebrations']): LectionaryDay => ({
+      date,
+      season: 'ordinary-time',
+      seasonWeek: 18,
+      sundayCycle: 'A',
+      weekdayCycle: 'II',
+      celebrations,
+    });
+
+    it('must have a second reading', () => {
+      const days = [
+        day('2026-08-09', [
+          { id: 'someone', rank: 'optional-memorial' },
+          { id: 'transfiguration', rank: 'feast' },
+        ]),
+        day('2026-08-06', [{ id: 'transfiguration', rank: 'feast' }]),
+        day('2026-08-16', [{ id: 'assumption', rank: 'solemnity' }]),
+        day('2026-08-23', [{ id: 'unknown-feast', rank: 'feast' }]),
+        day('2026-08-30', [{ id: 'transfiguration', rank: 'sunday' }]),
+        day('2026-09-06', [{ id: 'transfiguration', rank: 'solemnity' }]),
+        day('2026-09-13', []),
+      ];
+      expect(checkLectionary(files, REGISTRY, { days }).problems).toEqual([
+        '2026-08-09 transfiguration day: a feast on a Sunday needs a second reading (from celebrations:transfiguration)',
+        '2026-09-06 transfiguration day: a solemnity on a Sunday needs a second reading (from celebrations:transfiguration)',
+      ]);
+      expect(checkLectionary(files, REGISTRY).problems).toEqual([]);
+    });
   });
 });

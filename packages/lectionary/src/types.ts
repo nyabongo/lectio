@@ -10,6 +10,7 @@
  *
  * Only citations are stored, never reading text (ADR 0003).
  */
+import { SUNDAY_CYCLES, WEEKDAY_CYCLES } from '@lectio/schema/calendar';
 import type { ReadingSlot } from '@lectio/schema/common';
 
 export const ENTRY_KINDS = ['proper-of-time', 'celebrations', 'commons'] as const;
@@ -19,8 +20,8 @@ export const STATUSES = ['provisional', 'verified', 'disputed'] as const;
 /** `provisional` until a person checks the entry against the Kenyan book (011, decision 4). */
 export type EntryStatus = (typeof STATUSES)[number];
 
-export const SUNDAY_CYCLES = ['A', 'B', 'C'] as const;
-export const WEEKDAY_CYCLES = ['I', 'II'] as const;
+/** The calendar schema's cycles (`@lectio/schema/calendar`). */
+export { SUNDAY_CYCLES, WEEKDAY_CYCLES };
 export type Cycle = (typeof SUNDAY_CYCLES)[number] | (typeof WEEKDAY_CYCLES)[number];
 export const CYCLES: readonly Cycle[] = [...SUNDAY_CYCLES, ...WEEKDAY_CYCLES];
 

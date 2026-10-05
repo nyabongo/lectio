@@ -5,11 +5,14 @@ import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 
+import { validateCalendarYear } from '@lectio/schema/calendar';
+
 import { checkLectionary } from '../check.ts';
 import { crosscheckBlock, parseCrosscheckFile, renderDisputes } from '../crosscheck.ts';
 import { importLitcal, mergeImported, parseManifest, serialiseBlockFile } from '../import/litcal.ts';
 import type { TextFetcher } from '../import/litcal.ts';
 import { loadLectionary, loadRegistry } from '../load.ts';
+import type { LectionaryDay } from '../resolve.ts';
 import type { BlockFile } from '../types.ts';
 import { validateBlockFile } from '../validate.ts';
 
@@ -50,22 +53,47 @@ function report(problems: readonly string[], io: CliIo): void {
   for (const problem of problems) io.err(`  ${problem}`);
 }
 
+/** The days of calendar year files (`calendar/<year>.json`, L-017), or the problems reading them. */
+async function readCalendars(paths: readonly string[]): Promise<{ days: LectionaryDay[]; problems: string[] }> {
+  const days: LectionaryDay[] = [];
+  const problems: string[] = [];
+  for (const path of paths) {
+    let json: unknown;
+    try {
+      json = JSON.parse(await readFile(path, 'utf8'));
+    } catch (error) {
+      problems.push(`${path}: ${(error as Error).message}`);
+      continue;
+    }
+    if (validateCalendarYear(json)) days.push(...json.days);
+    else problems.push(`${path}: not a valid calendar year file`);
+  }
+  return { days, problems };
+}
+
 /**
- * `lectionary:check [--block <name>]`: shape, refs, sources and status of every data file.
- * Exit code 0 when clean, 1 when there are problems, 2 on usage errors.
+ * `lectionary:check [--block <name>]… [--calendar <file>]…`: shape, refs, sources and status of every data file.
+ * With calendar year files (paths relative to the repository root), also checks that every feast or solemnity
+ * on a Sunday gets a second reading. Exit code 0 when clean, 1 when there are problems, 2 on usage errors.
  */
 export async function runCheck(args: readonly string[], root: string, io: CliIo): Promise<number> {
   const blocks: string[] = [];
+  const calendars: string[] = [];
   for (let i = 0; i < args.length; i += 1) {
-    if (args[i] === '--block' && args[i + 1] !== undefined) blocks.push(args[(i += 1)] as string);
+    const value = args[i + 1];
+    if (args[i] === '--block' && value !== undefined) blocks.push(value);
+    else if (args[i] === '--calendar' && value !== undefined) calendars.push(resolve(root, '..', '..', value));
     else {
-      io.err('usage: lectionary:check [-- --block <name>]…');
+      io.err('usage: lectionary:check [-- [--block <name>]… [--calendar <calendar/YYYY.json>]…]');
       return 2;
     }
+    i += 1;
   }
   const loaded = await loadLectionary(root, blocks.length === 0 ? undefined : blocks);
-  const { problems, stats } = checkLectionary(loaded.files, loaded.registry);
-  const all = [...loaded.problems, ...problems];
+  const calendar = await readCalendars(calendars);
+  const options = calendars.length === 0 ? {} : { days: calendar.days };
+  const { problems, stats } = checkLectionary(loaded.files, loaded.registry, options);
+  const all = [...loaded.problems, ...calendar.problems, ...problems];
   const { provisional, verified, disputed } = stats.byStatus;
   io.out(
     `lectionary:check: ${stats.files} files, ${stats.entries} entries, ${stats.readings} readings ` +
@@ -187,6 +215,9 @@ export async function runImportLitcal(
   io.out(`import-litcal ${name}: ${merged.added} added, ${merged.replaced} replaced → ${manifest.data.target}`);
   if (merged.kept.length > 0) {
     io.out(`  kept (verified, disputed or from another source): ${merged.kept.join('; ')}`);
+  }
+  if (merged.removed.length > 0) {
+    io.out(`  removed (no longer in the LitCal leaf): ${merged.removed.join('; ')}`);
   }
   return 0;
 }

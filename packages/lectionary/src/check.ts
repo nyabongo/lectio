@@ -4,12 +4,15 @@
  * - every `ref` (and alternative) parses (L-005), has no verse letters and is spelled canonically;
  * - every `source` matches the line grammar and its id's locator grammar from sources.json;
  * - every reading has a `status`;
- * - keys fit their kind, cycles fit their key, and nothing is defined twice.
+ * - keys fit their kind, cycles fit their key, and nothing is defined twice;
+ * - given calendar days: a feast or solemnity on a Sunday has a second reading.
  */
 import { tryParseRef } from '@lectio/refs';
 
 import { formatCanonical, hasLetters } from './canonical.ts';
-import { PROPER_OF_TIME_KEY, SLUG, isSundayKey } from './keys.ts';
+import { PROPER_OF_TIME_KEY, SLUG, isSundayKey, weekdayOf } from './keys.ts';
+import { Lectionary, resolveDay } from './resolve.ts';
+import type { LectionaryDay } from './resolve.ts';
 import { checkSource } from './sources.ts';
 import { SUNDAY_CYCLES, WEEKDAY_CYCLES } from './types.ts';
 import type { Cycle, EntryKind, EntryStatus, LoadedFile, Reading, SourceRegistry } from './types.ts';
@@ -21,6 +24,11 @@ export interface CheckStats {
   readonly byStatus: Readonly<Record<EntryStatus, number>>;
   /** OLM 1981 citations whose page is not recorded yet (`p?`). */
   readonly unknownPages: number;
+}
+
+export interface CheckOptions {
+  /** Calendar days (`calendar/<year>.json`) to check the Sunday rule against. */
+  readonly days?: readonly LectionaryDay[];
 }
 
 export interface CheckResult {
@@ -52,8 +60,34 @@ function checkReading(reading: Reading, key: string, kind: EntryKind, registry: 
   return problems;
 }
 
+/**
+ * A solemnity, or a feast that falls on a Sunday (a feast of the Lord in Ordinary Time), takes the
+ * Sunday's place and has a second reading, as a Sunday does. Reports every such day whose resolved Mass lacks one.
+ * Days without data for the celebration are left to the calendar build.
+ */
+export function checkSundaySecondReadings(days: readonly LectionaryDay[], lectionary: Lectionary): string[] {
+  const problems: string[] = [];
+  for (const day of days) {
+    if (weekdayOf(day.date) !== 'sun') continue;
+    const principal = day.celebrations.find((c) => c.rank !== 'optional-memorial' && c.rank !== 'commemoration');
+    if (principal?.rank !== 'solemnity' && principal?.rank !== 'feast') continue;
+    for (const mass of resolveDay(day, lectionary).masses) {
+      if (!mass.missingSlots.includes('second-reading')) continue;
+      problems.push(
+        `${day.date} ${principal.id} ${mass.id}: a ${principal.rank} on a Sunday needs a second reading ` +
+          `(from ${mass.from.join(', ')})`,
+      );
+    }
+  }
+  return problems;
+}
+
 /** Runs every rule over shape-valid files. */
-export function checkLectionary(files: readonly LoadedFile[], registry: SourceRegistry): CheckResult {
+export function checkLectionary(
+  files: readonly LoadedFile[],
+  registry: SourceRegistry,
+  options: CheckOptions = {},
+): CheckResult {
   const problems: string[] = [];
   const byStatus: Record<EntryStatus, number> = { provisional: 0, verified: 0, disputed: 0 };
   const seen = new Map<string, string>();
@@ -99,5 +133,6 @@ export function checkLectionary(files: readonly LoadedFile[], registry: SourceRe
       }
     });
   }
+  if (options.days !== undefined) problems.push(...checkSundaySecondReadings(options.days, new Lectionary(files)));
   return { problems, stats: { files: files.length, entries, readings, byStatus, unknownPages } };
 }
