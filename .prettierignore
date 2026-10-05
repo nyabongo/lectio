@@ -7,3 +7,5 @@ package-lock.json
 calendar/*.json
 apps/mobile
 **/__generated__
+# Not yet Prettier-clean; owned by the importer issues (L-010/011/012). Remove this entry once they are formatted.
+packages/corpus/src/importers
