@@ -16,11 +16,14 @@ export interface Props {
   method: 'human' | 'auto';
   lastReviewedAt: string | null;
   lang?: string;
+  /** The note text's language when it differs from the page's (`partLang`): its anchor, gloss, summary and body
+   * are marked with it, the card's own UI strings are not. */
+  contentLang?: string | undefined;
   /** Href of the note's permalink page; omitted, the card has no permalink. */
   permalink?: string;
 }
 
-const { note, method, lastReviewedAt, lang = DEFAULT_LOCALE, permalink } = Astro.props;
+const { note, method, lastReviewedAt, lang = DEFAULT_LOCALE, contentLang, permalink } = Astro.props;
 const headingId = `${note.anchorId}-heading`;
 ---
 
@@ -28,7 +31,7 @@ const headingId = `${note.anchorId}-heading`;
   <h3 class="note__title" id={headingId}>
     <span class="note__verse">{t(lang, 'reading.note.verse', { verse: note.verse })}</span>
     <span class="note__sep" aria-hidden="true"> · </span>
-    <span class="note__anchor">“{note.anchor}”</span>
+    <span class="note__anchor" lang={contentLang}>“{note.anchor}”</span>
   </h3>
   <dl class="note__original">
     <dt class="visually-hidden">{t(lang, 'reading.note.originalLabel')}</dt>
@@ -36,10 +39,10 @@ const headingId = `${note.anchorId}-heading`;
     <dt class="visually-hidden">{t(lang, 'reading.note.translitLabel')}</dt>
     <dd class="note__translit">{note.original.translit}</dd>
     <dt class="visually-hidden">{t(lang, 'reading.note.glossLabel')}</dt>
-    <dd class="note__gloss">“{note.original.gloss}”</dd>
+    <dd class="note__gloss" lang={contentLang}>“{note.original.gloss}”</dd>
   </dl>
-  <p class="note__summary">{note.summary}</p>
-  <p class="note__body"><MarkedText segments={note.body} lang={lang} /></p>
+  <p class="note__summary" lang={contentLang}>{note.summary}</p>
+  <p class="note__body" lang={contentLang}><MarkedText segments={note.body} lang={lang} contentLang={contentLang} /></p>
   <Verification
     sources={note.sources}
     method={method}

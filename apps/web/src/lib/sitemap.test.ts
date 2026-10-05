@@ -12,6 +12,7 @@ import {
   SITEMAP_INDEX,
   sitemapIndexUrl,
   sitemapOptions,
+  withXDefault,
   updateRobotsFile,
   withSitemapLine,
 } from './sitemap.ts';
@@ -48,6 +49,34 @@ describe('sitemapOptions', () => {
   it('maps every locale for hreflang once there are several', () => {
     const options = sitemapOptions(withSite({ locales: ['en', 'sw'], defaultLocale: 'en' }));
     expect(options.i18n).toEqual({ defaultLocale: 'en', locales: { en: 'en', sw: 'sw' } });
+    const item = {
+      url: 'https://x/sw/calendar/',
+      links: [
+        { lang: 'en', url: 'https://x/calendar/' },
+        { lang: 'sw', url: 'https://x/sw/calendar/' },
+      ],
+    };
+    expect(options.serialize?.(item)).toEqual({
+      ...item,
+      links: [...item.links, { lang: 'x-default', url: 'https://x/calendar/' }],
+    });
+  });
+});
+
+describe('withXDefault', () => {
+  it('leaves entries without alternates, without the default locale or with x-default alone', () => {
+    const bare = { url: 'https://x/search/' };
+    expect(withXDefault(bare, 'en')).toBe(bare);
+    const noDefault = { url: 'https://x/sw/', links: [{ lang: 'sw', url: 'https://x/sw/' }] };
+    expect(withXDefault(noDefault, 'en')).toBe(noDefault);
+    const done = {
+      url: 'https://x/',
+      links: [
+        { lang: 'en', url: 'https://x/' },
+        { lang: 'x-default', url: 'https://x/' },
+      ],
+    };
+    expect(withXDefault(done, 'en')).toBe(done);
   });
 });
 

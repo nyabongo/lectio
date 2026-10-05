@@ -1,4 +1,7 @@
 {
+  "site": {
+    "locales": ["en", "sw"]
+  },
   "content": {
     "root": "apps/web/test/fixtures/content"
   }

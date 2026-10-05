@@ -15,6 +15,9 @@ import type { ContentRepo, ResolvedDay, ResolvedMass, ResolvedReading } from '@l
 import type { Reading } from '@lectio/schema/calendar';
 import type { Passage, PassageClaim, PassageSource, TranslationNote } from '@lectio/schema/passage';
 
+import { celebrationName } from './calendar-names.ts';
+import type { NamedCelebration } from './calendar-names.ts';
+
 /** The repository that takes content reports (`.github/ISSUE_TEMPLATE/content-issue.yml` lives there). */
 export const CONTENT_ISSUE_REPO = 'https://github.com/nyabongo/lectio';
 
@@ -162,6 +165,8 @@ export interface ContextView {
 /** Everything the page shows about an approved passage. */
 export interface NotesView {
   readonly key: string;
+  /** The language the notes are written in (the passage's `locale`). */
+  readonly lang: string;
   readonly summary: string;
   readonly context: ContextView;
   readonly translationNotes: readonly NoteView[];
@@ -204,6 +209,7 @@ export function notesView(passage: Passage, page: string): NotesView {
   const claimIds = passage.context.paragraphs.flatMap(citedClaims);
   return {
     key: passage.key,
+    lang: passage.locale,
     summary: passage.summary,
     context: {
       title: passage.context.title,
@@ -231,13 +237,25 @@ export interface ReadingView {
   readonly linkout: string;
   readonly path: string;
   readonly celebration: string | null;
+  /** The language of `celebration` when it differs from the page locale (untranslated English), for `lang`. */
+  readonly celebrationLang?: string | undefined;
   readonly colour: string | null;
   /** `null` unless the passage exists and is approved: unapproved notes are never rendered. */
   readonly notes: NotesView | null;
 }
 
+/** The principal celebration's name in `locale` as view fields (`celebration`, `celebrationLang`). */
+function celebrationFields(
+  celebration: NamedCelebration | undefined,
+  locale: string | undefined,
+): { celebration: string | null; celebrationLang?: string | undefined } {
+  if (celebration === undefined) return { celebration: null };
+  const { name, lang } = celebrationName(celebration, locale);
+  return lang === undefined ? { celebration: name } : { celebration: name, celebrationLang: lang };
+}
+
 /** The view of `reading` on `day`. Notes come only from an approved passage. */
-export function readingView(day: ResolvedDay, reading: ResolvedReading): ReadingView {
+export function readingView(day: ResolvedDay, reading: ResolvedReading, locale?: string): ReadingView {
   // Read the calendar fields through `Reading`: `astro check` sees the schema types as `any`.
   const { slot, ref, key, linkout }: Reading = reading;
   const path = readingPath(day.date, slot);
@@ -249,7 +267,7 @@ export function readingView(day: ResolvedDay, reading: ResolvedReading): Reading
     key,
     linkout,
     path,
-    celebration: celebration?.name ?? null,
+    ...celebrationFields(celebration, locale),
     colour: celebration?.colour ?? null,
     notes: reading.approved && reading.passage !== null ? notesView(reading.passage, path) : null,
   };
@@ -285,11 +303,11 @@ export function readingsBySlot(day: ResolvedDay): Map<string, ResolvedReading> {
 }
 
 /** The Reading page for `date` and `slot`, or `null` when the calendar has no such day or slot. */
-export function readingPage(repo: ContentRepo, date: string, slot: string): ReadingView | null {
+export function readingPage(repo: ContentRepo, date: string, slot: string, locale?: string): ReadingView | null {
   const day = repo.resolveDay(date);
   if (day === null) return null;
   const reading = readingsBySlot(day).get(slot);
-  return reading === undefined ? null : readingView(day, reading);
+  return reading === undefined ? null : readingView(day, reading, locale);
 }
 
 /** Static paths for `pages/[date]/[slot]/index.astro`: one per reading slot of every day in every calendar. */
