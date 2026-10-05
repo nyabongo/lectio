@@ -1,0 +1,109 @@
+{
+  "title": "Kuhusu Lectio",
+  "description": "Jinsi madokezo ya Lectio yanavyofanyiwa utafiti na kukaguliwa, maana ya “Imethibitishwa”, na maandiko, data na fonti zenye leseni huria ambazo Lectio imejengwa juu yake.",
+  "eyebrow": "Kuhusu na mbinu",
+  "heading": "Jinsi Lectio inavyofanya kazi",
+  "intro": "Lectio ni mwenzi wa masomo ya Misa ya kila siku. Kwa kila somo inatoa muktadha wa kihistoria na madokezo kuhusu yale ambayo Kiebrania, Kigiriki au Kilatini kinasema na tafsiri haiwezi kuyaeleza. Inabeba ufafanuzi tu: masomo yenyewe hufunguka kwenye chanzo chenye leseni.",
+  "studyAid": {
+    "title": "Msaada wa kujifunzia, si mafundisho ya Kanisa",
+    "body": "Madokezo ya Lectio ni msaada wa kusoma Maandiko, si mafundisho ya Kanisa na hayachukui nafasi ya kitabu cha masomo cha Kanisa, katekesi wala mahubiri. Yanafanyiwa utafiti kwa msaada wa AI na kukaguliwa kabla ya kuonekana, lakini bado yanaweza kuwa na makosa. Dokezo linapogusa mafundisho ya imani, lisome pamoja na mafundisho ya Kanisa, na umwulize padre unapokuwa na shaka."
+  },
+  "steps": {
+    "heading": "Hatua nne kabla dokezo halijaonekana",
+    "intro": "Hakuna kinachochapishwa kwa neno la AI moja tu. Kila dokezo hupitia hatua hizi, mapema, kama ombi la kuunganisha (pull request) kwenye hazina ya wazi ya mradi; wasomaji hawaanzishi AI kamwe.",
+    "research": {
+      "title": "Utafiti",
+      "body": "AI yenye uwezo wa kutafuta mtandaoni huchunguza kifungu katika lugha yake asilia, historia yake na maoni ya wafafanuzi. Kila sentensi lazima itaje chanzo."
+    },
+    "tests": {
+      "title": "Majaribio ya kiotomatiki",
+      "body": "Programu huthibitisha kwamba kila nukuu iliyotajwa kweli imo kwenye chanzo chake, na kwamba kila neno la Kigiriki, Kiebrania au Kilatini kweli limo katika mstari huo."
+    },
+    "crossExamine": {
+      "title": "Kuhojiana",
+      "body": "Mifumo miwili huru ya AI kutoka familia tofauti husoma vyanzo upya: mmoja huthibitisha kila dai, mwingine hujaribu kulikanusha."
+    },
+    "human": {
+      "title": "Mlango wa binadamu",
+      "body": "Chochote kilichotiliwa shaka au kinachogusa mafundisho ya imani husubiri mhakiki binadamu. Madokezo yaliyoidhinishwa pekee ndiyo hufika kwenye tovuti."
+    }
+  },
+  "gates": {
+    "heading": "Ukaguzi mitano kwa kila badiliko",
+    "intro": "Kiufundi, hatua zilizo juu ni ukaguzi mitano ambao kila ombi la kuunganisha lazima lipite. Majaribio rahisi na kamili huendeshwa kwanza; wathibitishaji wa AI huendeshwa tu hayo yakipita. Ukaguzi ulioshindwa hauchapishi chochote kamwe.",
+    "schema": {
+      "title": "Majaribio ya muundo",
+      "body": "Kila faili lina muundo sahihi, kila dai lina chanzo, na kila rejeo linaelekeza kwenye mstari uliopo."
+    },
+    "evidence": {
+      "title": "Majaribio ya ushahidi",
+      "body": "Kila nukuu iliyotajwa imo kwenye chanzo kilichopakuliwa, na kila neno la Kigiriki, Kiebrania au Kilatini lililonukuliwa limo katika mstari huo wa maandiko ya lugha asilia yaliyoorodheshwa hapa chini."
+    },
+    "licence": {
+      "title": "Mlinzi wa leseni",
+      "body": "Hakuna sehemu ndefu iliyonakiliwa neno kwa neno kutoka tafsiri ya Biblia au kutoka kwa mfafanuzi aliyetajwa. Lectio haihifadhi kamwe maandishi ya tafsiri ya kisasa ya Biblia yenye hakimiliki.",
+      "index": "Mlinzi hulinganisha madokezo na faharasa iliyojengwa kutoka {editions}. Faharasa hiyo ina alama za heshi za mfuatano mfupi wa maneno tu, kamwe si maandishi yenyewe.",
+      "limitation": "Kikomo kinachojulikana:"
+    },
+    "verifiers": {
+      "title": "Wathibitishaji wa AI",
+      "body": "Mifumo miwili kutoka familia tofauti huona madai na vyanzo vyake tu: mmoja huthibitisha kwamba kila dai linaungwa mkono, mwingine hujaribu kulikanusha."
+    },
+    "merge": {
+      "title": "Kanuni ya kuunganisha",
+      "body": "Kila ukaguzi ukipita kwa uhakika wa juu, badiliko huchapishwa. Chochote kilichotiliwa shaka, kilichokanushwa au kinachogusa mafundisho ya imani husubiri mhakiki binadamu."
+    }
+  },
+  "verified": {
+    "heading": "Maana ya “Imethibitishwa”",
+    "body": "Dokezo lenye alama ya “Imethibitishwa” limepita majaribio ya muundo, ushahidi na leseni, kisha likathibitishwa na wathibitishaji wote wawili wa AI kwa uhakika wa juu, au, pale mthibitishaji alipotilia shaka dai au mada inapogusa mafundisho ya imani, likaidhinishwa na mhakiki binadamu. Linaorodhesha vyanzo vyake na tarehe lilipopitiwa mara ya mwisho, ili uweze kulikagua mwenyewe.",
+    "limits": "“Imethibitishwa” maana yake limekaguliwa dhidi ya vyanzo linavyovitaja. Haimaanishi kwamba haliwezi kukosea, wala si idhini ya Kanisa."
+  },
+  "readings": {
+    "heading": "Masomo yenyewe",
+    "body": "Lectio haihifadhi kamwe maandishi ya tafsiri ya kisasa ya Biblia yenye hakimiliki; maandiko ya lugha asilia na ya matoleo ya kale inayoyahifadhi yameorodheshwa hapa chini. Kila somo hufunguka kwenye {provider}, ambayo Lectio inaiunganisha na kuishukuru kwa kufanya maandiko yapatikane bure."
+  },
+  "report": {
+    "heading": "Umeona kosa?",
+    "body": "Dokezo likiwa na kosa, halieleweki au haliko mahali pake, tafadhali tuambie. Ripoti ni masuala ya wazi ya GitHub na hupitiwa na mtu.",
+    "link": "Ripoti tatizo"
+  },
+  "sources": {
+    "heading": "Vyanzo na leseni",
+    "intro": "Lectio imejengwa juu ya kazi zenye leseni huria. Orodha hii hutengenezwa kutoka faili za data za mradi kila mara tovuti inapojengwa.",
+    "own": "Msimbo wa Lectio yenyewe umetolewa chini ya {licence}; maandiko, data na fonti zilizo hapa chini zinabaki na leseni zao.",
+    "ownLicence": "Leseni ya MIT"
+  },
+  "corpora": {
+    "heading": "Maandiko ya lugha asilia",
+    "intro": "Majaribio ya ushahidi hukagua kila neno la lugha asilia lililonukuliwa dhidi ya matoleo haya, ambayo hazina inayahifadhi kama orodha za maneno pamoja na mizizi yake.",
+    "empty": "Bado hakuna toleo la lugha asilia lililosakinishwa.",
+    "project": "Mradi",
+    "licenceText": "Maandishi ya leseni",
+    "version": "Toleo {version}"
+  },
+  "versification": {
+    "heading": "Majedwali ya mgawanyo wa mistari",
+    "intro": "Idadi za sura na mistari na ulinganisho kati ya mifumo ya kuhesabu (kwa mfano namba za zaburi za Kiebrania na za Kilatini) zinatoka:"
+  },
+  "lectionary": {
+    "heading": "Data ya kitabu cha masomo",
+    "intro": "Orodha ya masomo ya kila siku imeletwa kutoka:"
+  },
+  "fonts": {
+    "heading": "Fonti",
+    "intro": "Kila fonti inahifadhiwa na tovuti yenyewe na ina leseni ya SIL Open Font License 1.1.",
+    "licence": "Leseni (OFL 1.1)",
+    "reserved": "Jina la Fonti Lililohifadhiwa “{name}”."
+  },
+  "licences": {
+    "label": "Leseni:",
+    "publicDomain": "Mali ya umma"
+  },
+  "languages": {
+    "grc": "Kigiriki",
+    "hbo": "Kiebrania",
+    "arc": "Kiaramu",
+    "lat": "Kilatini"
+  }
+}

@@ -23,15 +23,28 @@ describe('settings page', () => {
     expect(html).toContain('Clear offline data');
   });
 
-  it('lists Swahili as coming soon and not selectable', () => {
-    expect(html).toMatch(/<input type="radio" name="language" value="sw" disabled/);
+  it('lists Kiswahili as selectable, linking each language to its own settings page', () => {
+    expect(html).toMatch(/<input type="radio" name="language" value="sw" data-href="[^"]*\/sw\/settings\/"/);
+    expect(html).toMatch(/<input type="radio" name="language" value="en" checked data-href="[^"]*\/settings\/"/);
     expect(html).toContain('Kiswahili');
-    expect(html).toContain('coming soon');
+    expect(html).not.toContain('coming soon');
   });
 
   it('gets the head script from the base layout, once, and its SEO tags', () => {
     const head = html.slice(0, html.indexOf('</head>'));
     expect(head.split(headScript())).toHaveLength(2);
     expect(head).toContain('<link rel="canonical"');
+  });
+});
+
+describe('settings page in Kiswahili', () => {
+  it('renders in the locale of its URL, with Kiswahili checked', async () => {
+    const container = await AstroContainer.create();
+    const sw = await container.renderToString(SettingsPage, {
+      request: new Request('https://example.org/sw/settings/'),
+    });
+    expect(sw).toContain('<html lang="sw"');
+    expect(sw).toMatch(/<h1[^>]*>Mipangilio<\/h1>/);
+    expect(sw).toMatch(/<input type="radio" name="language" value="sw" checked/);
   });
 });

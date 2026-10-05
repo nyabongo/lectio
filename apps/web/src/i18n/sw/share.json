@@ -1,0 +1,12 @@
+{
+  "button": "Shiriki",
+  "buttonLabel": "Shiriki {what}",
+  "options": "Njia za kushiriki",
+  "copy": "Nakili kiungo",
+  "copied": "Kiungo kimenakiliwa pamoja na rejeo lake.",
+  "copyFailed": "Imeshindwa kunakili. Chagua kiungo kilicho hapa chini na ukinakili.",
+  "whatsapp": "WhatsApp",
+  "whatsappLabel": "Shiriki kwenye WhatsApp (hufunguka kwenye kichupo kipya)",
+  "email": "Barua pepe",
+  "link": "Kiungo cha kushiriki"
+}

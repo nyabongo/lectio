@@ -10,9 +10,13 @@ import type { Segment } from '../../lib/reading.ts';
 export interface Props {
   segments: readonly Segment[];
   lang?: string;
+  /** The prose's language when it differs from the page's: the source links, labelled in the page language, then
+   * carry `lang` themselves. */
+  contentLang?: string | undefined;
 }
 
-const { segments, lang = DEFAULT_LOCALE } = Astro.props;
+const { segments, lang = DEFAULT_LOCALE, contentLang } = Astro.props;
+const citeLang = contentLang === undefined ? undefined : lang;
 ---
 
 {
@@ -20,7 +24,7 @@ const { segments, lang = DEFAULT_LOCALE } = Astro.props;
     segment.kind === 'text' ? (
       <Fragment>{segment.text}</Fragment>
     ) : (
-      <sup class="cite">
+      <sup class="cite" lang={citeLang}>
         {segment.sources.map((source, index) => (
           <Fragment>
             {index > 0 && ','}

@@ -88,7 +88,7 @@ describe('settings store', () => {
     const { settings } = updateSettings(storage, {
       theme: 'neon',
       playbackSpeed: 3,
-      language: 'sw',
+      language: 'fr',
       textSize: 'small',
     });
     expect(settings).toEqual({ ...custom, textSize: 'small' });
@@ -143,9 +143,10 @@ describe('settings store', () => {
     expect(PLAYBACK_SPEEDS.every(isPlaybackSpeed)).toBe(true);
     expect(isPlaybackSpeed(1.1)).toBe(false);
     expect(isLanguage('en')).toBe(true);
-    // Swahili is listed as coming soon, so it cannot be chosen yet.
-    expect(LANGUAGES.find((language) => language.code === 'sw')?.available).toBe(false);
-    expect(isLanguage('sw')).toBe(false);
+    // Kiswahili can be chosen since L-110; an unknown language cannot.
+    expect(LANGUAGES.find((language) => language.code === 'sw')?.available).toBe(true);
+    expect(isLanguage('sw')).toBe(true);
+    expect(isLanguage('fr')).toBe(false);
   });
 
   it('turns form fields into patches', () => {

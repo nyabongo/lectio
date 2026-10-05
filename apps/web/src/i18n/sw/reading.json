@@ -1,0 +1,35 @@
+{
+  "pageTitle": "{ref} · {slot}",
+  "description": "Muktadha na madokezo ya lugha asilia ya {ref}, somo la {date}.",
+  "backToDay": "Masomo yote ya {date}",
+  "tabs": {
+    "label": "Madokezo ya somo",
+    "context": "Muktadha",
+    "original": "Asilia",
+    "text": "Andiko",
+    "textLabel": "Soma andiko la {ref} kwenye {source} (hufunguka kwenye kichupo kipya)"
+  },
+  "pending": "Madokezo ya somo hili yanaandaliwa. Yataonekana hapa yakishakaguliwa dhidi ya vyanzo vyake na kuidhinishwa.",
+  "noNotes": "Bado hakuna madokezo ya lugha asilia kwa somo hili.",
+  "sources": "Vyanzo",
+  "cite": "Chanzo {n}",
+  "archived": "Nakala iliyohifadhiwa",
+  "note": {
+    "verse": "Mstari {verse}",
+    "originalLabel": "Maandishi asilia",
+    "translitLabel": "Unukuzi",
+    "glossLabel": "Neno kwa neno"
+  },
+  "verified": {
+    "one": "Imethibitishwa · chanzo {count}",
+    "other": "Imethibitishwa · vyanzo {count}"
+  },
+  "method": {
+    "human": "Imeidhinishwa na mhakiki binadamu baada ya ukaguzi wa kiotomatiki.",
+    "auto": "Imeidhinishwa baada ya ukaguzi wa kiotomatiki na wathibitishaji wawili huru wa AI."
+  },
+  "unverified": "Bado haijathibitishwa",
+  "lastReviewed": "Ilipitiwa mara ya mwisho {date}",
+  "report": "Ripoti tatizo",
+  "disclaimer": "Msaada wa kujifunzia, si mafundisho ya Kanisa. Kila dai linataja vyanzo vyake: vikague mwenyewe."
+}

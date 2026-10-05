@@ -19,7 +19,10 @@ import type { CalendarDay, Celebration, Reading } from '@lectio/schema/calendar'
 import { addDays } from '@lectio/shared';
 import type { IsoDate } from '@lectio/shared';
 
+import { celebrationName } from './calendar-names.ts';
+import type { LocalisedName } from './calendar-names.ts';
 import type { MessageParams } from './i18n.ts';
+import { partLang } from './locales.ts';
 import { linkoutSource, principalFirst, readingPath } from './reading.ts';
 import { dayColour } from './theme.ts';
 
@@ -67,6 +70,8 @@ export interface ReadingView {
   readonly href: string | null;
   /** The approved notes' one-line summary, or `null`. */
   readonly summary: string | null;
+  /** The summary's language when it differs from the page locale (English notes on a Kiswahili page). */
+  readonly summaryLang?: string | undefined;
   /** `Notes in preparation` when there are no approved notes; otherwise `null`. */
   readonly pending: string | null;
   readonly linkout: LinkoutView;
@@ -80,6 +85,8 @@ export interface MassView {
 
 export interface CelebrationView {
   readonly name: string;
+  /** The language of `name` when it differs from the page locale (untranslated English), for `lang`. */
+  readonly nameLang?: string | undefined;
   readonly rank: string;
   readonly colour: string;
   readonly colourLabel: string;
@@ -107,6 +114,8 @@ export interface DayView {
   readonly colour: string;
   /** The principal celebration's name: the page heading. */
   readonly title: string;
+  /** The language of `title` when it differs from the page locale (untranslated English), for `lang`. */
+  readonly titleLang?: string | undefined;
   readonly celebrations: readonly CelebrationView[];
   /** `Ordinary Time · Week 25`. */
   readonly season: string;
@@ -132,6 +141,8 @@ export interface UpcomingDayView {
   readonly href: string;
   readonly dateLabel: string;
   readonly title: string;
+  /** The language of `title` when it differs from the page locale (untranslated English), for `lang`. */
+  readonly titleLang?: string | undefined;
 }
 
 /** The site path of a day page, relative to the locale root. */
@@ -287,6 +298,7 @@ function readingView(
     refLabel: label,
     href: approved && ownsPage ? env.paths(readingPath(date, slot)) : null,
     summary: approved ? reading.passage.summary : null,
+    summaryLang: approved ? partLang(reading.passage.locale, env.lang) : undefined,
     pending: approved ? null : t(lang, 'day.notesInPreparation'),
     linkout: {
       href: linkout,
@@ -320,6 +332,16 @@ export interface DayViewOptions {
   readonly next?: IsoDate | null;
 }
 
+/** A localised celebration name as view fields: `name` and, for an untranslated name, `nameLang`. */
+function named({ name, lang }: LocalisedName): { name: string; nameLang?: string | undefined } {
+  return lang === undefined ? { name } : { name, nameLang: lang };
+}
+
+/** The same as `title` and `titleLang`. */
+function titled({ name, lang }: LocalisedName): { title: string; titleLang?: string | undefined } {
+  return lang === undefined ? { title: name } : { title: name, titleLang: lang };
+}
+
 /**
  * The view model of a day page. The day goes through `approvedOnly` first, so an unapproved passage can never reach
  * the page even if a caller passes the raw repository day.
@@ -343,24 +365,30 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
       readingView(env, date, options.config, reading, owners.get((reading as Reading).slot) === mass.id),
     ),
   }));
-  const celebrationViews = celebrations.map(({ name, rank, colour }: Celebration) => ({
-    name,
-    rank: rankLabel(env, rank),
-    colour,
-    colourLabel: colourLabel(env, colour),
+  const celebrationViews = celebrations.map((celebration: Celebration) => ({
+    ...named(celebrationName(celebration, lang)),
+    rank: rankLabel(env, celebration.rank),
+    colour: celebration.colour,
+    colourLabel: colourLabel(env, celebration.colour),
   }));
   const title = celebrationViews[0]?.name ?? formatDate(lang, date);
+  const titleLang = celebrationViews[0]?.nameLang;
   const dateLabel = formatDate(lang, date);
   const refs = masses[0]?.readings.map((reading) => reading.refLabel) ?? [];
   const missing = lectionaryMissing || masses.length === 0 ? t(lang, 'day.lectionaryMissing') : null;
+  const seasonText = seasonLabel(env, season, seasonWeek);
+  // The meta description says what the day's share card says (its alt text, L-088): date, celebration, season and
+  // readings; `·` becomes a comma, as some screen readers read it out as "middle dot".
+  const described = { date: dateLabel, title, season: seasonText.replaceAll(' · ', ', ') };
   return {
     date,
     lang,
     dateLabel,
     colour: dayColour(day.day),
     title,
+    titleLang,
     celebrations: celebrationViews,
-    season: seasonLabel(env, season, seasonWeek),
+    season: seasonText,
     cycles: t(lang, 'day.cycles', { sunday: sundayCycle, weekday: weekdayCycle }),
     masses,
     massOptions: masses.length > 1 ? t(lang, 'day.massOptions', { count: masses.length }) : null,
@@ -373,8 +401,8 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     pageTitle: t(lang, 'day.pageTitle', { title, date: dateLabel }),
     description:
       refs.length === 0
-        ? t(lang, 'day.descriptionNoReadings', { title, date: dateLabel })
-        : t(lang, 'day.description', { title, date: dateLabel, refs: refs.join('; ') }),
+        ? t(lang, 'day.descriptionNoReadings', described)
+        : t(lang, 'day.description', { ...described, refs: refs.join('; ') }),
   };
 }
 
@@ -418,7 +446,7 @@ export function upcomingDays(env: DayEnv, repo: Pick<ContentRepo, 'listDays'>, d
       date: day.date,
       href: env.paths(dayPath(day.date)),
       dateLabel,
-      title: celebrations[0]?.name ?? dateLabel,
+      ...(celebrations[0] === undefined ? { title: dateLabel } : titled(celebrationName(celebrations[0], env.lang))),
     };
   });
 }
@@ -428,25 +456,69 @@ export interface TodaySwitch {
   readonly buildDate: IsoDate;
   /** Day page hrefs by date, for the dates around the build date (`todayWindowDates`). */
   readonly pages: Readonly<Record<string, string>>;
-}
-
-/** The data for the inline script on `/`. */
-export function todaySwitch(env: DayEnv, repo: Pick<ContentRepo, 'listDays'>, buildDate: IsoDate): TodaySwitch {
-  const pages: Record<string, string> = {};
-  for (const date of todayWindowDates(repo, buildDate)) pages[date] = env.paths(dayPath(date));
-  return { buildDate, pages };
+  /**
+   * The saved-language switch (L-110), on the default locale's Today page only: the settings storage key and, for
+   * every other site locale, its Today page and day pages. A reader who saved one of those languages (which only the
+   * switcher or the settings page can store) goes there first, to the day page for the device date.
+   */
+  readonly language?: {
+    readonly key: string;
+    readonly others: Readonly<
+      Record<string, { readonly home: string; readonly pages: Readonly<Record<string, string>> }>
+    >;
+  };
 }
 
 /**
- * The inline script on `/`. The page is rendered for the build date in the site time zone (Nairobi); if the device's
- * own date is different and the site has a page for it, the script replaces `/` with that day page. With no page
- * for the device date it stays on the build date. `<` is escaped so the data cannot close the script element.
+ * The site locales for `todaySwitch`: the storage key, the locales, the default locale and a base-aware path in each.
+ */
+export interface TodaySwitchLanguages {
+  readonly key: string;
+  readonly locales: readonly string[];
+  readonly defaultLocale: string;
+  readonly paths: (locale: string, path: string) => string;
+}
+
+/** The data for the inline script on `/`. */
+export function todaySwitch(
+  env: DayEnv,
+  repo: Pick<ContentRepo, 'listDays'>,
+  buildDate: IsoDate,
+  languages?: TodaySwitchLanguages,
+): TodaySwitch {
+  const dates = todayWindowDates(repo, buildDate);
+  const pagesFor = (href: (path: string) => string) =>
+    Object.fromEntries(dates.map((date) => [date, href(dayPath(date))]));
+  const pages = pagesFor(env.paths);
+  // Only the default locale's Today page switches language. A saved default language is not a choice (settings save
+  // every field, so it is stored as soon as any setting changes), and an explicit /sw/ link is always respected.
+  if (languages === undefined || env.lang !== languages.defaultLocale) return { buildDate, pages };
+  const others = Object.fromEntries(
+    languages.locales
+      .filter((locale) => locale !== env.lang)
+      .map((locale) => [
+        locale,
+        { home: languages.paths(locale, ''), pages: pagesFor((path) => languages.paths(locale, path)) },
+      ]),
+  );
+  return { buildDate, pages, language: { key: languages.key, others } };
+}
+
+/**
+ * The inline script on `/`. The page is rendered for the build date in the site time zone (Nairobi). A reader who
+ * saved another site language (L-110) goes to that language's day page for the device date, or its Today page; else,
+ * if the device's own date is different and the site has a page for it, the script replaces `/` with that day page.
+ * With no page for the device date it stays on the build date. `<` is escaped so the data cannot close the script
+ * element; a storage error is ignored.
  */
 export function todaySwitchScript(data: TodaySwitch): string {
   const json = JSON.stringify(data).replaceAll('<', '\\u003c');
   return (
     `(function(d){var n=new Date(),p=function(x){return(x<10?'0':'')+x},` +
-    `t=n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate()),h=d.pages[t];` +
+    `t=n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate()),h=d.pages[t],l=d.language;` +
+    `if(l){try{var s=JSON.parse(localStorage.getItem(l.key)||'null'),c=s&&s.language;` +
+    `if(typeof c==='string'&&Object.prototype.hasOwnProperty.call(l.others,c)){var o=l.others[c];` +
+    `location.replace(t!==d.buildDate&&o.pages[t]||o.home);return}}catch(e){}}` +
     `if(t!==d.buildDate&&h)location.replace(h)})(${json});`
   );
 }
