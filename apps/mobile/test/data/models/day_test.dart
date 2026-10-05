@@ -91,6 +91,59 @@ void main() {
     });
   });
 
+  group('Mass.segments', () {
+    test('reads the Listen queue with its scripts and audio', () {
+      final mass = parseApiDay(fixtureJson('day-with-segments')).masses.single;
+      expect(mass.segments.map((s) => s.id), [
+        'MT.20.1-16/context',
+        'MT.20.1-16/note/v15-evil-eye',
+        'MT.20.1-16/note/v15-agathos',
+      ]);
+      final [context, evilEye, agathos] = mass.segments;
+      expect(context.kind, 'context');
+      expect(context.slot, 'gospel');
+      expect(context.passageKey, 'MT.20.1-16');
+      expect(context.locale, 'en');
+      expect(context.title, 'Labourers in the vineyard');
+      expect(
+        context.script,
+        startsWith('Context for Matthew chapter 20, verses 1 to 16. '),
+      );
+      expect(
+        context.audio?.url,
+        Uri.parse('https://audio.example/audio/v1/0123abcd.mp3'),
+      );
+      expect(context.audio?.durationSeconds, 74.5);
+      expect(evilEye.kind, 'translation-note');
+      expect(evilEye.title, 'envious · ophthalmos sou ponēros');
+      expect(evilEye.audio?.durationSeconds, isNull);
+      expect(agathos.audio, isNull);
+    });
+
+    test('reads an absent or null field as no segments', () {
+      expect(parseApiDay(fixtureJson('day')).masses.single.segments, isEmpty);
+      final json = fixtureObject('day-with-segments');
+      final mass = (json['masses']! as List<Object?>).single!;
+      (mass as Map<String, Object?>)['segments'] = null;
+      expect(parseApiDay(json).masses.single.segments, isEmpty);
+      final summary = parseDaySummary(
+        (fixtureObject('upcoming')['days']! as List<Object?>).first,
+      );
+      expect(summary.masses.first.segments, isEmpty);
+    });
+
+    test('rejects a broken segment', () {
+      final json = fixtureObject('day-with-segments');
+      final mass = (json['masses']! as List<Object?>).single!;
+      final segments = (mass as Map<String, Object?>)['segments']!;
+      ((segments as List<Object?>).first! as Map<String, Object?>)['script'] =
+          null;
+      expect(() => parseApiDay(json), throwsFormatException);
+      mass['segments'] = ['context'];
+      expect(() => parseApiDay(json), throwsFormatException);
+    });
+  });
+
   group('parseDaySummary', () {
     test('reads a calendar day, with hasNotes and the summary', () {
       final calendar = fixtureObject('calendar');
