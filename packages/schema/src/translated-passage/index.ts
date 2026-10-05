@@ -235,7 +235,9 @@ export function translatableFields(passage: Passage): TranslatableFields {
  * provenance and the review block do not count.
  */
 export function translatableSha256(passage: Passage): string {
-  return createHash('sha256').update(JSON.stringify(translatableFields(passage)), 'utf8').digest('hex');
+  return createHash('sha256')
+    .update(JSON.stringify(translatableFields(passage)), 'utf8')
+    .digest('hex');
 }
 
 /** One way a translation does not line up with its English passage. */

@@ -75,7 +75,7 @@ describe('translated-passage schema', () => {
     ],
     [
       'note body without marker',
-      (d) => ((d['translationNotes'] as Json[])[0] as Json)['body'] = 'Hakuna alama.',
+      (d) => (((d['translationNotes'] as Json[])[0] as Json)['body'] = 'Hakuna alama.'),
       ['/translationNotes/0/body', 'pattern'],
     ],
     [
