@@ -67,6 +67,7 @@
             }
           },
           "lectionaryMissing": { "type": "boolean" },
+          "noMass": { "type": "boolean" },
           "masses": {
             "type": "array",
             "items": {

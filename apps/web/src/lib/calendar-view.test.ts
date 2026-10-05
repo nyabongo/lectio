@@ -47,7 +47,12 @@ function readJson<T>(relative: string): T {
 const fixtureCalendar = readJson<CalendarYear>('calendar/2026.json');
 const approvedPassage = readJson<Passage>(`passages/${APPROVED}.json`);
 const pendingPassage = readJson<Passage>(`passages/${PENDING}.json`);
-const [saturday, sunday, feast] = fixtureCalendar.days as [CalendarDay, CalendarDay, CalendarDay];
+// The fixture's September days (it also has Holy Saturday, 2026-04-04, a day without any Mass).
+const [saturday, sunday, feast] = fixtureCalendar.days.filter((day: CalendarDay) => day.date.startsWith('2026-09')) as [
+  CalendarDay,
+  CalendarDay,
+  CalendarDay,
+];
 
 function fixtureRepo(): ContentRepo {
   return siteContext({ cwd: webRoot, env: { LECTIO_CONFIG: 'apps/web/test/lectio.config.fixture.json' } }).repo;

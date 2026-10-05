@@ -44,16 +44,11 @@ function zero(): Record<EntryStatus, number> {
   return { provisional: 0, verified: 0, disputed: 0 };
 }
 
-/** The resolver's options for a year whose Epiphany falls on `epiphany` (undefined when not known). */
-export function resolveOptions(epiphany: ResolveOptions['epiphany']): ResolveOptions {
-  return epiphany === undefined ? {} : { epiphany };
-}
-
 /** The statuses of the readings the resolver gives `days` (the calendar build's input). */
 export function countStatuses(
   days: readonly LectionaryDay[],
   lectionary: Lectionary,
-  options: ResolveOptions = {},
+  options: ResolveOptions,
 ): ReadingStats {
   const readings = zero();
   const keys: Record<EntryStatus, Set<string>> = { provisional: new Set(), verified: new Set(), disputed: new Set() };

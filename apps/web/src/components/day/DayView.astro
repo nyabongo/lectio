@@ -76,6 +76,7 @@ const showMassLabels = view.masses.length > 1;
   <section class="day__readings" aria-labelledby="readings-heading">
     <h2 id="readings-heading" class="visually-hidden">{t(lang, 'day.readingsHeading')}</h2>
     {view.missing !== null && <p class="day__missing">{view.missing}</p>}
+    {view.noMass !== null && <p class="day__no-mass">{view.noMass}</p>}
     {view.massOptions !== null && <p class="day__mass-options">{view.massOptions}</p>}
     {
       view.masses.map((mass) => (
@@ -214,6 +215,7 @@ const showMassLabels = view.masses.length > 1;
   }
 
   .day__missing,
+  .day__no-mass,
   .day__mass-options {
     color: var(--colour-muted);
   }

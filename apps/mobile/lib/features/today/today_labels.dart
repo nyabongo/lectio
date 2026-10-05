@@ -53,6 +53,10 @@ class TodayStrings {
   /// A day the lectionary has no readings for.
   String get lectionaryMissing => _t('day_lectionaryMissing');
 
+  /// Holy Saturday, the only day without any Mass (`noMass`). A second such
+  /// day needs its own copy.
+  String get holySaturdayNoMass => _t('day_holySaturdayNoMass');
+
   /// A date the API publishes no day document for.
   String get emptyDay => _t('app_today_emptyDay');
 
