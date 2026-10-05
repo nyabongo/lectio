@@ -1,0 +1,157 @@
+# Deploy (L-062). Builds the Astro site from the repository content (pages, the static JSON API, share cards and
+# the Pagefind index) and publishes it to GitHub Pages.
+#
+# Triggers:
+# - `push` to main: human merges.
+# - `workflow_dispatch`: merges made by the merge-rule job (L-031) use GITHUB_TOKEN, which does not fire `push`,
+#   so that job dispatches this workflow on main; also manual runs.
+# - daily at 21:05 UTC (00:05 in Africa/Nairobi): `/` is the day page for the build date and the upcoming lists
+#   start from it, so the site is rebuilt just after midnight in the site time zone.
+#
+# Owner step: Pages must be enabled with source "GitHub Actions" (Settings → Pages, or the L-032 script).
+# `site.baseUrl` / `site.basePath` in config/lectio.config.json must match the Pages URL; the smoke step fails if not.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '5 21 * * *'
+
+permissions:
+  contents: read
+
+# One deploy at a time; a queued run waits for the one in progress instead of cancelling it mid-deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 22
+  ASTRO_TELEMETRY_DISABLED: 1
+  CONFIG_FILE: config/lectio.config.json
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      date: ${{ steps.site.outputs.date }}
+      base-url: ${{ steps.site.outputs.base-url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      # The build date is today in config.site.timezone, pinned through LECTIO_DATE so the build and the smoke
+      # check below agree on it even when a run straddles midnight.
+      - name: Site settings from config
+        id: site
+        run: |
+          timezone="$(jq -er '.site.timezone' "$CONFIG_FILE")"
+          base_url="$(jq -er '.site.baseUrl' "$CONFIG_FILE")"
+          domain="$(jq -r '.site.customDomain // ""' "$CONFIG_FILE")"
+          date="$(TZ="$timezone" date +%F)"
+          {
+            echo "date=$date"
+            echo "base-url=$base_url"
+            echo "domain=$domain"
+          } >> "$GITHUB_OUTPUT"
+          echo "Build date ${date} (${timezone}); site ${base_url}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Content validates
+        run: npm run content:validate
+
+      # Same share-card cache as web.yml (L-088): PNGs cached by content hash in apps/web/.cache/og. The key carries
+      # TEMPLATE_VERSION (packages/sharecards/src/cache.ts) and a hash of what the cards are made from; entries are
+      # keyed by cardCacheKey(), so a restored older cache is only reused card by card.
+      - name: OG cache key
+        id: og
+        run: |
+          template="$(grep -oP 'export const TEMPLATE_VERSION = \K\d+' packages/sharecards/src/cache.ts || true)"
+          if [ -z "$template" ]; then
+            echo "::error file=packages/sharecards/src/cache.ts::TEMPLATE_VERSION not found"
+            exit 1
+          fi
+          echo "template=$template" >> "$GITHUB_OUTPUT"
+
+      - name: Cache OG images
+        uses: actions/cache@v5
+        with:
+          path: apps/web/.cache/og
+          key: og-${{ runner.os }}-t${{ steps.og.outputs.template }}-${{ hashFiles('packages/sharecards/**', 'calendar/**', 'passages/**', 'package-lock.json') }}
+          restore-keys: og-${{ runner.os }}-t${{ steps.og.outputs.template }}-
+
+      # `site` and `base` come from config.site (apps/web/src/lib/site.ts); Pagefind runs inside the build.
+      - name: Build the site
+        run: npm run build -w apps/web
+        env:
+          LECTIO_DATE: ${{ steps.site.outputs.date }}
+
+      # Only when a custom domain is configured (L-206). With the "GitHub Actions" Pages source the domain itself
+      # is set in the repository's Pages settings; the file keeps the artifact self-describing.
+      - name: CNAME
+        if: steps.site.outputs.domain != ''
+        env:
+          DOMAIN: ${{ steps.site.outputs.domain }}
+        run: printf '%s\n' "$DOMAIN" > apps/web/dist/CNAME
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Fails early, with a clear message, when Pages is not enabled for the repository.
+      - uses: actions/configure-pages@v6
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+      # `/`, the day page for the build date and the API index must answer 200 at the configured URL. Retries
+      # cover the CDN catching up with the new deployment.
+      - name: Smoke test
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          BASE_URL: ${{ needs.build.outputs.base-url }}
+          DATE: ${{ needs.build.outputs.date }}
+        run: |
+          base="${BASE_URL%/}/"
+          if [ "${PAGE_URL%/}/" != "$base" ]; then
+            echo "::error::Pages URL ${PAGE_URL} differs from site.baseUrl ${BASE_URL} in ${CONFIG_FILE}"
+            exit 1
+          fi
+          failed=0
+          for path in "" "${DATE}/" "api/v1/index.json"; do
+            url="${base}${path}"
+            status=000
+            for attempt in 1 2 3 4 5 6; do
+              status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$url" || true)"
+              [ "$status" = "200" ] && break
+              sleep $((attempt * 5))
+            done
+            echo "${status} ${url}" | tee -a "$GITHUB_STEP_SUMMARY"
+            if [ "$status" != "200" ]; then
+              echo "::error::${url} answered ${status}"
+              failed=1
+            fi
+          done
+          exit "$failed"
