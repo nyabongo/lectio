@@ -1,0 +1,64 @@
+---
+/**
+ * Search and social metadata for a page: canonical link, Open Graph, Twitter card, share image and hreflang
+ * alternates. Put it in the base layout's `head` slot:
+ *
+ *   <BaseLayout title={title} description={description}>
+ *     <Seo slot="head" title={title} description={description} path="calendar/" />
+ *
+ * The base layout renders `<title>` and `<meta name="description">` with the same title template (seo.json); this
+ * component adds everything else. The tags are built by `seoTags()` in src/lib/seo.ts.
+ *
+ * `image` defaults to the static brand card beside this file until L-088 renders one per page; `alternates` is the
+ * hreflang hook L-110 fills once there is more than one locale.
+ */
+import { seoTags, stripBase } from '../../lib/seo.ts';
+import type { HreflangAlternate, SeoImage } from '../../lib/seo.ts';
+import strings from '../../i18n/en/seo.json' with { type: 'json' };
+import brandCard from './brand-card.png';
+
+export interface Props {
+  /** The page title, before the template (`{title} · Lectio`) is applied. Omit it, or pass `Lectio`, for the site name. */
+  title?: string;
+  /** The page summary; defaults to the site description. */
+  description?: string;
+  /** The page path relative to the base path (`calendar/`); defaults to the current URL. */
+  path?: string;
+  /** `article` for a reading or a note; `website` otherwise. */
+  type?: 'website' | 'article';
+  /** Page language; defaults to `en`. */
+  lang?: string;
+  /** Share image; defaults to the brand card. */
+  image?: SeoImage;
+  /** The same page in other locales (hreflang). */
+  alternates?: readonly HreflangAlternate[];
+  /** Keep the page out of search results (the 404 page). */
+  noindex?: boolean;
+}
+
+const { title, description = strings.defaultDescription, type, lang = 'en', alternates, noindex } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const path = Astro.props.path ?? stripBase(base, Astro.url.pathname);
+const image: SeoImage = Astro.props.image ?? {
+  src: brandCard.src,
+  width: brandCard.width,
+  height: brandCard.height,
+  alt: strings.imageAlt,
+};
+const tags = seoTags({
+  title,
+  description,
+  path,
+  site: Astro.site ?? Astro.url,
+  base,
+  locale: lang,
+  siteName: strings.siteName,
+  titleTemplate: strings.titleTemplate,
+  image,
+  type,
+  alternates,
+  noindex,
+});
+---
+
+{tags.map(({ tag, attrs }) => (tag === 'link' ? <link {...attrs} /> : <meta {...attrs} />))}

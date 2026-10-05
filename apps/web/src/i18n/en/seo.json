@@ -1,0 +1,13 @@
+{
+  "siteName": "Lectio",
+  "titleTemplate": "{title} · Lectio",
+  "defaultDescription": "A companion to the daily Mass readings: their history, their original words, and a voice.",
+  "imageAlt": "Lectio: the daily Mass readings, their history, their original words, and a voice.",
+  "notFoundTitle": "Page not found",
+  "notFoundDescription": "There is no page at this address.",
+  "notFoundEyebrow": "404",
+  "notFoundHeading": "This page is not here",
+  "notFoundBody": "The address may be mistyped, or the page may have moved. Every day’s readings can be reached from today’s page or the calendar.",
+  "notFoundHome": "Go to today’s readings",
+  "notFoundCalendar": "Open the calendar"
+}
