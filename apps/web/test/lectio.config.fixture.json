@@ -1,6 +1,9 @@
 {
   "site": {
-    "locales": ["en", "sw"]
+    "locales": ["en", "sw"],
+    "features": {
+      "listen": true
+    }
   },
   "content": {
     "root": "apps/web/test/fixtures/content"
