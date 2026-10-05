@@ -139,7 +139,7 @@ class BookmarksController extends ChangeNotifier {
       if (!await writeSafely(_store, unreadableKey, unreadable)) return false;
       _backedUp = true;
     }
-    return writeSafely(_store, storageKey, jsonEncode(_toJson()));
+    return await writeSafely(_store, storageKey, jsonEncode(_toJson()));
   }
 
   /// Every bookmark and note as indented JSON, stamped with the export time,
