@@ -27,6 +27,10 @@ export const pageTypes: readonly PageType[] = [
   { name: 'reading-context', path: `${BUILD_DATE}/gospel/` },
   { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
   { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
+  // The Listen player (L-085), once its script has wired the controls.
+  { name: 'listen', path: `${BUILD_DATE}/listen/`, ready: '[data-listen][data-ready]' },
+  // A day without approved notes: the empty Listen page.
+  { name: 'listen-empty', path: '2026-09-21/listen/' },
   { name: 'calendar', path: 'calendar/' },
   { name: 'calendar-month', path: 'calendar/2026/09/' },
   { name: 'passages', path: 'passages/' },
@@ -42,6 +46,7 @@ export const pageTypes: readonly PageType[] = [
   { name: 'sw-reading-context', path: `sw/${BUILD_DATE}/gospel/` },
   { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },
   { name: 'sw-insight', path: `sw/${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
+  { name: 'sw-listen', path: `sw/${BUILD_DATE}/listen/`, ready: '[data-listen][data-ready]' },
   { name: 'sw-calendar', path: 'sw/calendar/' },
   { name: 'sw-calendar-month', path: 'sw/calendar/2026/09/' },
   { name: 'sw-passages', path: 'sw/passages/' },
