@@ -29,6 +29,7 @@ import type { Rule } from '../core/rules.ts';
 import { checkCalendarRules } from './calendar.ts';
 import { checkPassageRules } from './passage.ts';
 import { SCHEMA_RULES } from './rules.ts';
+import { MARKER_FORMAT, malformedMarkers } from './sentences.ts';
 import { checkStableIds } from './stable-ids.ts';
 
 export { SCHEMA_RULES } from './rules.ts';
@@ -53,22 +54,48 @@ export function contentKindAt(path: string, prefix: string): ContentKind | null 
   return null;
 }
 
+const CITED_TEXT = /^\/(?:context\/paragraphs\/\d+|translationNotes\/\d+\/body)$/;
+
+/** The value at an RFC 6901 pointer made only of property names and indices, or `undefined`. */
+function valueAt(root: unknown, pointer: string): unknown {
+  return pointer
+    .split('/')
+    .slice(1)
+    .reduce<unknown>((value, key) => (value as Record<string, unknown> | undefined)?.[key], root);
+}
+
+/**
+ * What to do about a cited text that fails its pattern: name brackets that are not claim markers
+ * (`[C1]`, `[c01]`, `[c1, c2]`), or say that the text must end in a marker.
+ */
+export function markerHint(text: unknown): string {
+  if (typeof text !== 'string') return '';
+  const bad = malformedMarkers(text);
+  if (bad.length > 0) {
+    const verb = bad.length > 1 ? 'are not claim markers' : 'is not a claim marker';
+    return `: ${bad.join(', ')} ${verb} (${MARKER_FORMAT})`;
+  }
+  return `: every sentence ends with a claim marker (${MARKER_FORMAT})`;
+}
+
 /** Schema problems as findings of the file's validity rule. */
-function schemaFindings(rule: Rule, error: ContentError): GateResultItem[] {
-  return error.issues.map((issue) =>
-    finding(rule, { file: error.file, pointer: issue.pointer, message: issue.message }),
-  );
+function schemaFindings(rule: Rule, error: ContentError, parsed: unknown): GateResultItem[] {
+  return error.issues.map((issue) => {
+    const hint = CITED_TEXT.test(issue.pointer) ? markerHint(valueAt(parsed, issue.pointer)) : '';
+    return finding(rule, { file: error.file, pointer: issue.pointer, message: `${issue.message}${hint}` });
+  });
 }
 
 function checkText(kind: ContentKind, path: string, text: string, context: GateContext): GateResultItem[] {
   const rule = kind === 'passage' ? SCHEMA_RULES.validPassage : SCHEMA_RULES.validCalendar;
+  let parsed: unknown;
   let value: Passage | CalendarYear;
   try {
-    const parsed = parseJson(text, path);
+    parsed = parseJson(text, path);
     value = kind === 'passage' ? checkPassage(parsed, path) : checkCalendarYear(parsed, path);
   } catch (error) {
     // checkPassage, checkCalendarYear and parseJson only throw ContentError.
-    return schemaFindings(rule, error as ContentError);
+    return schemaFindings(rule, error as ContentError, parsed);
   }
   return kind === 'passage'
     ? checkPassageRules(path, value as Passage, context.config)
@@ -76,9 +103,12 @@ function checkText(kind: ContentKind, path: string, text: string, context: GateC
 }
 
 /** The base-branch text a changed passage is compared with; `null` for a file new in the PR. */
-function baseText(change: ChangedFile, context: GateContext): string | null {
+function baseText(change: ChangedFile, context: GateContext, prefix: string): string | null {
   if (change.status === 'added' || change.status === 'copied') return null;
-  return context.readBase(change.previousPath ?? change.path);
+  const previous = change.previousPath ?? change.path;
+  // A file renamed into passages/ from elsewhere is new as a passage.
+  if (contentKindAt(previous, prefix) !== 'passage') return null;
+  return context.readBase(previous);
 }
 
 /** Every finding for the pull request's content files, and how many files were checked. */
@@ -88,13 +118,21 @@ export function checkSchema(context: GateContext): { items: GateResultItem[]; fi
   let files = 0;
   for (const change of context.changedFiles) {
     const kind = contentKindAt(change.path, prefix);
-    if (kind === null) continue;
+    if (kind === null) {
+      // A passage moved out of passages/ is gone as a passage: treat it as deleted.
+      const previous = change.previousPath;
+      if (change.status === 'renamed' && previous !== undefined && contentKindAt(previous, prefix) === 'passage') {
+        const removed: ChangedFile = { path: previous, status: 'deleted' };
+        items.push(...checkStableIds(removed, context.readBase(previous), null));
+      }
+      continue;
+    }
     const text = change.status === 'deleted' ? null : context.readFile(change.path);
     if (text !== null) {
       files += 1;
       items.push(...checkText(kind, change.path, text, context));
     }
-    if (kind === 'passage') items.push(...checkStableIds(change, baseText(change, context), text));
+    if (kind === 'passage') items.push(...checkStableIds(change, baseText(change, context, prefix), text));
   }
   return { items, files };
 }

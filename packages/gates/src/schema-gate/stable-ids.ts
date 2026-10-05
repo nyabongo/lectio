@@ -56,7 +56,7 @@ export function checkStableIds(
       finding(SCHEMA_RULES.noteIdsStable, {
         file,
         severity: 'warning',
-        message: `deleting this passage removes ${String(count)} published note and claim ids; a person must confirm their permalinks may break`,
+        message: `deleting this passage (or moving it out of passages/) removes ${String(count)} published note and claim ids; a person must confirm their permalinks may break`,
       }),
     ];
   }

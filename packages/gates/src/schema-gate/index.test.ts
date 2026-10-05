@@ -189,9 +189,54 @@ describe('schemaGate', () => {
           'schema/sentence-cites-claim',
           '/translationNotes/0/body',
           undefined,
-          'sentence “An image for stinginess.” carries no valid [cN] marker',
+          'sentence “An image for stinginess.” carries no valid claim marker (markers look like [c1] or [c2][c3] and follow the closing punctuation)',
         ],
       ]);
+    });
+
+    it('accepts abbreviations, initials and a marker placed before the full stop', async () => {
+      const result = await run(
+        passage((p) => {
+          p.translationNotes[0].body =
+            'St. Paul writes of the evil eye in the same way (cf. Mt 6:22-23). [c2] W. D. Davies dates it to c. 30 A.D. in Galilee. [c1] A day’s wage [c2]. Next one. [c1]';
+        }),
+      );
+      expect(result.items).toEqual([]);
+    });
+
+    it('names brackets that are not claim markers and the format to use', async () => {
+      const result = await run(
+        passage((p) => {
+          p.context.paragraphs[0] = 'Matthew alone records this parable. [C1] Again [c01][c1, c2]. [c2]';
+          p.translationNotes[0].body = 'No marker at the end.';
+        }),
+      );
+      expect(result.items.map((item) => [item.ruleId, item.pointer, item.message])).toEqual([
+        [
+          'schema/valid-passage',
+          '/context/paragraphs/0',
+          expect.stringContaining(
+            ': [C1], [c01], [c1, c2] are not claim markers (markers look like [c1] or [c2][c3] and follow the closing punctuation)',
+          ) as string,
+        ],
+        [
+          'schema/valid-passage',
+          '/translationNotes/0/body',
+          expect.stringContaining(': every sentence ends with a claim marker (markers look like [c1]') as string,
+        ],
+      ]);
+      const single = await run(passage((p) => (p.context.paragraphs[0] = 'Matthew alone records it. [C1]')));
+      expect(single.items[0]?.message).toContain(': [C1] is not a claim marker (');
+      const typed = await run(passage((p) => (p.context.paragraphs[0] = 5)));
+      expect(typed.items.map((item) => [item.pointer, item.message])).toEqual([
+        ['/context/paragraphs/0', 'must be string'],
+      ]);
+    });
+
+    it('passes the passage example in docs/content-model.md', async () => {
+      const doc = readFileSync(new URL('../../../../docs/content-model.md', import.meta.url), 'utf8');
+      const example = /```json passage\n([\s\S]*?)\n```/.exec(doc)?.[1] ?? '';
+      expect((await run(added(PASSAGE_PATH, example))).items).toEqual([]);
     });
 
     it('reports a claim no marker cites', async () => {
@@ -389,9 +434,38 @@ describe('schemaGate', () => {
           severity: 'warning',
           pointer: '',
           message:
-            'deleting this passage removes 3 published note and claim ids; a person must confirm their permalinks may break',
+            'deleting this passage (or moving it out of passages/) removes 3 published note and claim ids; a person must confirm their permalinks may break',
         }),
       ]);
+    });
+
+    it('flags moving a published passage out of passages/ like a deletion', async () => {
+      const result = await run({
+        head: { 'archive/MT.20.1-16.json': base },
+        changed: [{ path: 'archive/MT.20.1-16.json', status: 'renamed', previousPath: PASSAGE_PATH }],
+        base: { [PASSAGE_PATH]: base },
+      });
+      expect(result.status).toBe('flag');
+      expect(result.items).toEqual([
+        expect.objectContaining({ ruleId: 'schema/note-ids-stable', severity: 'warning', file: PASSAGE_PATH }),
+      ]);
+      const elsewhere = await run({
+        head: { 'archive/b.json': '{}' },
+        changed: [
+          { path: 'archive/b.json', status: 'renamed', previousPath: 'archive/a.json' },
+          { path: 'archive/c.json', status: 'modified' },
+        ],
+      });
+      expect(elsewhere.items).toEqual([]);
+    });
+
+    it('treats a passage renamed into passages/ from elsewhere as new', async () => {
+      const result = await run({
+        head: { [PASSAGE_PATH]: JSON.stringify(validPassage()) },
+        changed: [{ path: PASSAGE_PATH, status: 'renamed', previousPath: 'drafts/MT.20.1-16.json' }],
+        base: { 'drafts/MT.20.1-16.json': JSON.stringify({ claims: [{ id: 'c99' }] }) },
+      });
+      expect(result.items).toEqual([]);
     });
 
     it('ignores base files without ids or that do not parse, and head files that do not parse', async () => {

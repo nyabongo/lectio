@@ -11,7 +11,7 @@ import type { Passage } from '@lectio/schema/passage';
 import { finding } from '../core/result.ts';
 import type { GateResultItem } from '../core/result.ts';
 import { SCHEMA_RULES } from './rules.ts';
-import { citedSentences, excerpt, markerIds } from './sentences.ts';
+import { MARKER_FORMAT, citedSentences, excerpt, markerIds } from './sentences.ts';
 
 type Push = (item: GateResultItem) => void;
 
@@ -201,7 +201,7 @@ function checkCitations(push: Push, file: string, passage: Passage): void {
         finding(SCHEMA_RULES.sentenceCitesClaim, {
           file,
           pointer,
-          message: `sentence “${excerpt(sentence.text)}” carries no valid [cN] marker`,
+          message: `sentence “${excerpt(sentence.text)}” carries no valid claim marker (${MARKER_FORMAT})`,
         }),
       );
     }
