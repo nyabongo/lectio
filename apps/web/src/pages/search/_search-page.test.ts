@@ -23,9 +23,9 @@ beforeAll(async () => {
 });
 
 describe('Search page', () => {
-  it('has its own title, canonical path, heading and intro', () => {
+  it('has its own title, heading and intro, and is kept out of search engines', () => {
     expect(html).toContain(`<title>${strings.title} · Lectio</title>`);
-    expect(html).toMatch(/<link rel="canonical" href="[^"]*\/search\/"/);
+    expect(html).toMatch(/<meta name="robots" content="noindex[^"]*"/);
     expect(html).toMatch(/<h1[^>]*>Search<\/h1>/);
     expect(html).toContain(strings.intro);
   });

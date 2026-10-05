@@ -5,6 +5,8 @@
  * Pagefind's UI script and stylesheet from there once it has rendered, so no other page pays for search. Results
  * can be narrowed by the `book` and `season` filters; a `?q=` link opens with that search run.
  *
+ * The page itself has no content of its own, so it is `noindex` and left out of the sitemap (src/lib/sitemap.ts).
+ *
  * Paths come from `searchPageConfig()` (src/lib/search.ts) and are base-path aware: result URLs are indexed
  * relative to the base and Pagefind prefixes `baseUrl`. The UI strings are in src/i18n/en/search.json, and the
  * Pagefind UI's own variables are mapped to the site tokens below.
@@ -37,7 +39,7 @@ const config = searchPageConfig(withBase(base), {
 ---
 
 <BaseLayout title={title} description={description} lang={lang}>
-  <Seo slot="head" title={title} description={description} lang={lang} path="search/" />
+  <Seo slot="head" title={title} description={description} lang={lang} path="search/" noindex />
 
   <section class="search" aria-labelledby="search-heading">
     <h1 id="search-heading">{title}</h1>
