@@ -262,16 +262,13 @@ class ReadingDayView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (offline) Text(strings.offline, style: muted),
-                if (celebration == null)
-                  Text(date, style: theme.textTheme.labelLarge)
-                else
-                  InLanguage(
-                    language: celebration.language,
-                    child: Text(
-                      '${celebration.text} · $date',
-                      style: theme.textTheme.labelLarge,
-                    ),
+                InLanguage(
+                  language: celebration?.language ?? strings.languageCode,
+                  child: Text(
+                    [?celebration?.text, date].join(' · '),
+                    style: theme.textTheme.labelLarge,
                   ),
+                ),
                 if (bySlot.length > 1)
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
