@@ -10,21 +10,27 @@ export {
   GATE_SLUGS,
   RESEARCH_TRAILER,
   bodyMarker,
+  code,
   commitMessage,
   hashInBody,
   inline,
+  keepGates,
   prBody,
   prTitle,
 } from './body.ts';
 export type { PrTextInput } from './body.ts';
 export { PRINT_WIDTH, formatJson, textWidth } from './format-json.ts';
 export {
+  APPROVAL_AUTHOR,
+  APPROVAL_TRAILER,
+  PublishRefusedError,
   RESEARCH_LABEL,
   filesHash,
   groupItems,
+  isReplaceableHead,
   passageFiles,
   passagePath,
   publishAll,
   publishPassage,
 } from './publish.ts';
-export type { PublishItem, PublishOptions, PublishOutcome, PublishResult } from './publish.ts';
+export type { PublishItem, PublishOptions, PublishOutcome, PublishResult, RefusalReason } from './publish.ts';

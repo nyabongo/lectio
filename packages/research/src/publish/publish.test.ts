@@ -5,13 +5,17 @@ import type { GitHubClient } from '@lectio/providers';
 import type { Passage } from '@lectio/schema/passage';
 import { describe, expect, it } from 'vitest';
 
-import { RESEARCH_TRAILER, bodyMarker } from './body.ts';
+import { GATES_END, GATES_START, RESEARCH_TRAILER, bodyMarker } from './body.ts';
 import { researchPassage } from './fixtures/passage.ts';
 import { formatJson } from './format-json.ts';
 import {
+  APPROVAL_AUTHOR,
+  APPROVAL_TRAILER,
+  PublishRefusedError,
   RESEARCH_LABEL,
   filesHash,
   groupItems,
+  isReplaceableHead,
   passageFiles,
   passagePath,
   publishAll,
@@ -38,6 +42,18 @@ describe('passage files', () => {
     expect(passagePath(KEY)).toBe(PATH);
     expect(passageFiles(passage)).toEqual([{ path: PATH, content: formatJson(passage) }]);
     expect(filesHash(passageFiles(passage))).toMatch(/^[0-9a-f]{64}$/u);
+  });
+});
+
+describe('isReplaceableHead', () => {
+  it('accepts research commits for the key and the bot approval commit only', () => {
+    const research = `Research\n\n${RESEARCH_TRAILER}: key=${KEY} run=r prompt=p models=m`;
+    const approval = `Approve\n\n${APPROVAL_TRAILER}: auto run=1 head=abc`;
+    expect(isReplaceableHead({ message: research, author: 'nyabongo' }, KEY)).toBe(true);
+    expect(isReplaceableHead({ message: research, author: 'nyabongo' }, 'MT.20.1')).toBe(false);
+    expect(isReplaceableHead({ message: approval, author: APPROVAL_AUTHOR }, KEY)).toBe(true);
+    expect(isReplaceableHead({ message: approval, author: 'nyabongo' }, KEY)).toBe(false);
+    expect(isReplaceableHead({ message: 'Approve', author: APPROVAL_AUTHOR }, KEY)).toBe(false);
   });
 });
 
@@ -131,31 +147,121 @@ describe('publishPassage', () => {
     expect(again.pr.number).toBe(first.pr.number);
   });
 
-  it('opens a new PR on the existing branch when the earlier PR was closed, without reopening it', async () => {
+  it('never re-opens or replaces a PR a person closed', async () => {
     const { github, options } = setup();
     const first = await publishPassage({ passage: researchPassage() }, options);
+    // The closed PR's branch also holds a human commit outside passages/.
+    await github.as('nyabongo').pushCommit({
+      branch: BRANCH,
+      message: 'tweak config',
+      files: [{ path: 'config/lectio.config.json', content: '{}' }],
+    });
     await github.as('nyabongo').closePr(first.pr.number);
-    const oldHead = github.headOf(BRANCH);
+    const head = github.headOf(BRANCH);
 
-    const second = await publishPassage({ passage: researchPassage() }, options);
-    expect(second.created).toBe(true);
-    expect(second.pr.number).not.toBe(first.pr.number);
-    expect(second.commit?.parents).toEqual([oldHead]);
+    const refusal = publishPassage({ passage: researchPassage() }, options);
+    await expect(refusal).rejects.toBeInstanceOf(PublishRefusedError);
+    await expect(refusal).rejects.toMatchObject({ reason: 'closed-pr', branch: BRANCH, pr: first.pr.number });
+    await expect(refusal).rejects.toThrow(`PR #${String(first.pr.number)} on ${BRANCH} was closed without merging`);
+    expect(github.headOf(BRANCH)).toBe(head);
+    expect(await github.listPrs({ state: 'all' })).toHaveLength(1);
     expect((await github.getPr(first.pr.number)).state).toBe('closed');
   });
 
-  it('ignores a fork PR that uses the same branch name', async () => {
+  it('refuses a leftover research branch that has no PR', async () => {
+    const { github, options } = setup();
+    await github.createBranch({ name: BRANCH });
+    await github
+      .as('nyabongo')
+      .pushCommit({ branch: BRANCH, message: 'wip', files: [{ path: 'x.txt', content: 'x' }] });
+    const head = github.headOf(BRANCH);
+
+    const refusal = publishPassage({ passage: researchPassage() }, options);
+    await expect(refusal).rejects.toMatchObject({ reason: 'leftover-branch', branch: BRANCH, pr: undefined });
+    await expect(refusal).rejects.toThrow(`branch ${BRANCH} exists without an open PR; delete it to re-research`);
+    expect(github.headOf(BRANCH)).toBe(head);
+    expect(await github.listPrs({ state: 'all' })).toHaveLength(0);
+  });
+
+  it('ignores a fork PR on the same branch name and refuses rather than carrying its files', async () => {
     const { github, options } = setup();
     await github.createBranch({ name: BRANCH });
     await github.commitFiles({ branch: BRANCH, message: 'fork work', files: [{ path: 'x.txt', content: 'x' }] });
     const fork = await github.openForkPr({ head: BRANCH, headRepo: 'someone/lectio', title: 'fork', body: 'mine' });
+    const head = github.headOf(BRANCH);
 
-    const result = await publishPassage({ passage: researchPassage() }, options);
-    expect(result.created).toBe(true);
-    expect(result.pr.number).not.toBe(fork.number);
-    expect(result.pr.fork).toBe(false);
+    await expect(publishPassage({ passage: researchPassage() }, options)).rejects.toMatchObject({
+      reason: 'leftover-branch',
+      branch: BRANCH,
+    });
+    expect(github.headOf(BRANCH)).toBe(head);
+    expect(await github.listPrs({ state: 'all' })).toHaveLength(1);
     const untouched = await github.getPr(fork.number);
-    expect(untouched).toMatchObject({ title: 'fork', body: 'mine', state: 'open', labels: [] });
+    expect(untouched).toMatchObject({ title: 'fork', body: 'mine', state: 'open', labels: [], fork: true });
+  });
+
+  it('refuses to commit over a human commit at the head of the open PR', async () => {
+    const { github, options } = setup();
+    const first = await publishPassage({ passage: researchPassage() }, options);
+    const human = await github.as('nyabongo').pushCommit({
+      branch: BRANCH,
+      message: 'Fix a claim',
+      files: [{ path: PATH, content: 'HUMAN EDIT' }],
+    });
+
+    const refusal = publishPassage({ passage: researchPassage({ summary: 'A different summary.' }) }, options);
+    await expect(refusal).rejects.toMatchObject({ reason: 'foreign-head', branch: BRANCH, pr: first.pr.number });
+    await expect(refusal).rejects.toThrow(`PR #${String(first.pr.number)} head ${human.sha.slice(0, 12)}`);
+    expect(github.headOf(BRANCH)).toBe(human.sha);
+    expect(github.fileAt(BRANCH, PATH)).toBe('HUMAN EDIT');
+    expect((await github.getPr(first.pr.number)).body).toBe(first.pr.body);
+  });
+
+  it('refuses a research commit for another passage at the head', async () => {
+    const { github, options } = setup();
+    const first = await publishPassage({ passage: researchPassage() }, options);
+    await github.commitFiles({
+      branch: BRANCH,
+      message: `Other\n\n${RESEARCH_TRAILER}: key=${KEY}X run=r prompt=p models=m`,
+      files: [{ path: 'passages/other.json', content: '{}' }],
+    });
+    await expect(publishPassage({ passage: researchPassage({ summary: 'Changed.' }) }, options)).rejects.toMatchObject({
+      reason: 'foreign-head',
+      pr: first.pr.number,
+    });
+  });
+
+  it('commits over the approval commit, resetting the passage to pending', async () => {
+    const { github, options } = setup();
+    const first = await publishPassage({ passage: researchPassage() }, options);
+    const approved = researchPassage({
+      review: { status: 'approved', method: 'human', reviewers: ['nyabongo'], approvedVia: 'label' },
+    });
+    const approval = await github.as(APPROVAL_AUTHOR).commitFiles({
+      branch: BRANCH,
+      message: `Approve ${KEY}\n\n${APPROVAL_TRAILER}: human run=7 head=${github.headOf(BRANCH)}`,
+      files: passageFiles(approved),
+    });
+
+    const changed = researchPassage({ summary: 'A fix-up after review.' });
+    const result = await publishPassage({ passage: changed }, options);
+    expect(result.pr.number).toBe(first.pr.number);
+    expect(result.commit?.parents).toEqual([approval.sha]);
+    expect(github.fileAt(BRANCH, PATH)).toBe(formatJson(changed));
+    expect(JSON.parse(github.fileAt(BRANCH, PATH) ?? '{}').review).toEqual({ status: 'pending', reviewers: [] });
+  });
+
+  it('keeps the gate section the content-gates workflow wrote', async () => {
+    const { github, options } = setup();
+    const first = await publishPassage({ passage: researchPassage() }, options);
+    const gates = `${GATES_START}\n- [x] Schema: pass\n${GATES_END}`;
+    const edited = first.pr.body.replace(/<!-- lectio-gates:start -->[\s\S]*<!-- lectio-gates:end -->/u, gates);
+    await github.openOrUpdatePr({ head: BRANCH, title: first.pr.title, body: edited });
+
+    const again = await publishPassage({ passage: researchPassage({ summary: 'Changed again.' }) }, options);
+    expect(again.pr.body).toContain(gates);
+    expect(again.pr.body).not.toContain('Placeholder');
+    expect(again.pr.body).toContain('> Changed again.');
   });
 
   it('branches from and targets the given base', async () => {
@@ -175,7 +281,7 @@ describe('publishPassage', () => {
       review: { status: 'approved', method: 'human', reviewers: ['nyabongo'], approvedVia: 'label' },
     });
     await expect(publishPassage({ passage: approved }, options)).rejects.toThrow(
-      'research publishes pending passages only',
+      'research publishes pending passages only, got review.status "approved"',
     );
     expect(await github.listPrs({ state: 'all' })).toHaveLength(0);
     expect(() => github.headOf(BRANCH)).toThrow(ProviderError);
@@ -188,6 +294,9 @@ describe('publishPassage', () => {
         throw new ProviderError('unavailable', 'GitHub is down');
       },
       commitFiles: async () => {
+        throw new Error('not reached');
+      },
+      getCommit: async () => {
         throw new Error('not reached');
       },
       openOrUpdatePr: async () => {
@@ -226,6 +335,20 @@ describe('publishAll', () => {
     expect(prs.every((pr) => pr.labels.includes(RESEARCH_LABEL))).toBe(true);
     const failed = outcomes[1];
     expect(failed?.ok === false && failed.error).toBeInstanceOf(ContentError);
+  });
+
+  it('reports a passage whose PR a person closed as skipped, and other refusals as failures', async () => {
+    const { github, options } = setup();
+    const first = await publishPassage({ passage: researchPassage() }, options);
+    await github.as('nyabongo').closePr(first.pr.number);
+    await github.createBranch({ name: 'research/IS.55.6-9' });
+    const other = researchPassage({ key: 'IS.55.6-9', ref: 'Is 55:6-9' });
+
+    const outcomes = await publishAll([{ passage: researchPassage() }, { passage: other }], options);
+    expect(outcomes).toMatchObject([
+      { ok: false, key: KEY, skipped: true, error: { reason: 'closed-pr' } },
+      { ok: false, key: 'IS.55.6-9', skipped: false, error: { reason: 'leftover-branch' } },
+    ]);
   });
 
   it('wraps a non-Error failure', async () => {

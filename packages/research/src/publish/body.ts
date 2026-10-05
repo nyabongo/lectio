@@ -56,13 +56,36 @@ export function inline(text: string): string {
     .replace(/([@#])/gu, '$1​');
 }
 
-/** A value for a code span: backticks dropped, whitespace collapsed. */
-function code(text: string): string {
-  return `\`${text.replace(/`/gu, '').replace(/\s+/gu, ' ').trim()}\``;
+/**
+ * A value for a code span: backticks dropped, whitespace collapsed. In a table cell (`cell`), `|`
+ * is escaped as `\|`, which GFM requires even inside code spans and renders as a plain pipe.
+ */
+export function code(text: string, cell = false): string {
+  const value = text.replace(/`/gu, '').replace(/\s+/gu, ' ').trim();
+  return `\`${cell ? value.replace(/\|/gu, '\\|') : value}\``;
 }
 
-const list = (values: readonly string[], empty: string): string =>
-  values.length === 0 ? empty : values.map(code).join(', ');
+const cellCode = (text: string): string => code(text, true);
+
+const list = (values: readonly string[], empty: string, format: (text: string) => string = code): string =>
+  values.length === 0 ? empty : values.map(format).join(', ');
+
+/**
+ * `body` with its gate section (between `GATES_START` and `GATES_END`) replaced by the one in
+ * `previous`, so a re-run keeps what the content-gates workflow wrote there. Bodies without a
+ * complete section are left as they are.
+ */
+export function keepGates(body: string, previous: string): string {
+  const section = (text: string): [number, number] | null => {
+    const start = text.indexOf(GATES_START);
+    const end = start < 0 ? -1 : text.indexOf(GATES_END, start);
+    return end < 0 ? null : [start, end + GATES_END.length];
+  };
+  const old = section(previous);
+  const fresh = section(body);
+  if (old === null || fresh === null) return body;
+  return `${body.slice(0, fresh[0])}${previous.slice(old[0], old[1])}${body.slice(fresh[1])}`;
+}
 
 export function prTitle(passage: Pick<Passage, 'key' | 'ref'>): string {
   return `Research: ${passage.ref.replace(/\s+/gu, ' ').trim()} (${passage.key})`;
@@ -119,16 +142,16 @@ export function prBody(input: PrTextInput): string {
   const cost = input.costUsd ?? provenance.costUsd;
   const rows: [string, string][] = [
     ['Reference', inline(passage.ref)],
-    ['Passage key', code(passage.key)],
-    ['Dates', input.dates.length === 0 ? 'none in this run' : input.dates.join(', ')],
+    ['Passage key', cellCode(passage.key)],
+    ['Dates', input.dates.length === 0 ? 'none in this run' : input.dates.join(', ').replace(/\|/gu, '\\|')],
     ['Claims', `${String(passage.claims.length)} (${String(sensitive)} sensitive)`],
     ['Sources', `${String(passage.sources.length)}${sourceBreakdown(passage.sources)}`],
     ['Translation notes', String(passage.translationNotes.length)],
     ['Cost', cost === undefined ? 'not recorded' : `$${cost.toFixed(2)}`],
-    ['Models', list(provenance.models, 'none')],
-    ['Prompt version', code(provenance.promptVersion)],
-    ['Run', code(provenance.runId)],
-    ['File', code(input.path)],
+    ['Models', list(provenance.models, 'none', cellCode)],
+    ['Prompt version', cellCode(provenance.promptVersion)],
+    ['Run', cellCode(provenance.runId)],
+    ['File', cellCode(input.path)],
   ];
   const handles = list(reviewer.githubHandles, 'none configured yet');
   return [

@@ -6,9 +6,11 @@ import {
   GATES_START,
   RESEARCH_TRAILER,
   bodyMarker,
+  code,
   commitMessage,
   hashInBody,
   inline,
+  keepGates,
   prBody,
   prTitle,
 } from './body.ts';
@@ -137,5 +139,40 @@ describe('prBody', () => {
   it('says when the cost was not recorded', () => {
     const { costUsd: _cost, ...provenance } = researchPassage().provenance;
     expect(prBody(input({ passage: researchPassage({ provenance }) }))).toContain('| Cost | not recorded |');
+  });
+});
+
+describe('table cells', () => {
+  it('escapes pipes in code spans inside the table only', () => {
+    expect(code('a|b`c')).toBe('`a|bc`');
+    expect(code('a|b', true)).toBe('`a\\|b`');
+    const passage = researchPassage({
+      provenance: {
+        generator: 'research-cli',
+        runId: 'run|1',
+        models: ['model|x'],
+        promptVersion: 'v|1',
+        createdAt: '2026-09-01T00:00:00Z',
+      },
+    });
+    const body = prBody(input({ passage, dates: ['2026|09'] }));
+    expect(body).toContain('| Run | `run\\|1` |');
+    expect(body).toContain('| Models | `model\\|x` |');
+    expect(body).toContain('| Prompt version | `v\\|1` |');
+    expect(body).toContain('| Dates | 2026\\|09 |');
+  });
+});
+
+describe('keepGates', () => {
+  const body = (gates: string): string => `top\n${GATES_START}\n${gates}\n${GATES_END}\nbottom`;
+
+  it('carries the previous gate section into the new body', () => {
+    expect(keepGates(body('new'), body('- [x] reported'))).toBe(body('- [x] reported'));
+  });
+
+  it('keeps the new body when either side lacks a complete section', () => {
+    expect(keepGates(body('new'), 'edited by hand')).toBe(body('new'));
+    expect(keepGates(body('new'), `${GATES_START} without an end`)).toBe(body('new'));
+    expect(keepGates('no section', body('old'))).toBe('no section');
   });
 });
