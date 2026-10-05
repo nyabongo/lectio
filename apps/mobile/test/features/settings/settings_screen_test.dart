@@ -140,15 +140,28 @@ void main() {
     expect(chip.selected, isTrue);
   });
 
-  testWidgets('Kiswahili is listed as coming soon', (tester) async {
+  testWidgets('choosing Kiswahili switches the app to Kiswahili', (
+    tester,
+  ) async {
     final controller = await pumpApp(tester, store);
 
-    expect(find.text('Coming soon'), findsOneWidget);
     await tester.tap(find.text('Kiswahili'));
     await tester.pumpAndSettle();
 
-    expect(controller.settings.language, AppLanguage.en);
-    expect(store.values, isEmpty);
+    expect(controller.settings.language, AppLanguage.sw);
+    expect(saved(store).language, AppLanguage.sw);
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.locale, const Locale('sw'));
+    // The screen itself is now in Kiswahili (provisional strings, #221).
+    expect(find.text('Mipangilio'), findsOneWidget);
+    expect(find.text('Lugha'), findsOneWidget);
+    expect(find.text('Ukubwa wa maandishi'), findsOneWidget);
+    expect(find.text('Kikumbusho cha kila siku'), findsOneWidget);
+    expect(find.text('Text size'), findsNothing);
+
+    await tester.tap(find.text('English'));
+    await tester.pumpAndSettle();
+    expect(find.text('Text size'), findsOneWidget);
   });
 
   testWidgets('choosing English keeps the other settings', (tester) async {

@@ -67,6 +67,7 @@ class ReadingScope extends InheritedWidget {
 Future<void> openLink(BuildContext context, Uri url) async {
   final launch = ReadingScope.launcherOf(context);
   final messenger = ScaffoldMessenger.maybeOf(context);
+  final failed = ReadingStrings.of(context).linkFailed;
   var opened = false;
   if (url.scheme == 'https') {
     try {
@@ -76,8 +77,6 @@ Future<void> openLink(BuildContext context, Uri url) async {
     }
   }
   if (!opened) {
-    messenger?.showSnackBar(
-      SnackBar(content: Text(ReadingStrings.en.linkFailed)),
-    );
+    messenger?.showSnackBar(SnackBar(content: Text(failed)));
   }
 }

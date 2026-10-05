@@ -13,7 +13,7 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StandaloneScaffold(
-      title: AppRoute.calendar.title,
+      title: AppRoute.calendar.titleOf(context),
       body: const PlaceholderScreen(route: AppRoute.calendar),
     );
   }

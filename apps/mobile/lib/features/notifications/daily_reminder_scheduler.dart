@@ -8,6 +8,7 @@ import 'package:lectio/features/notifications/local_notifications_platform.dart'
 import 'package:lectio/features/notifications/reminder_platform.dart';
 import 'package:lectio/features/settings/app_settings.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 
 /// The id of the first reminder; the next ones follow it.
 const int reminderIdBase = 1060;
@@ -24,18 +25,30 @@ const Duration reminderMinimumLead = Duration(minutes: 1);
 /// fallback title.
 const Duration defaultCelebrationTimeout = Duration(seconds: 5);
 
-/// The reminder's text (L-114 translates it).
-abstract final class ReminderStrings {
+/// The reminder's text in the reader's language (L-114). The scheduler runs
+/// outside the widget tree, so it takes the language from the settings.
+class ReminderStrings {
+  /// The strings of [_l10n].
+  const new(this._l10n);
+
+  /// The strings of [language].
+  factory forLanguage(AppLanguage language) {
+    return ReminderStrings(LectioLocalizations.forLanguage(language.name));
+  }
+
+  /// The English strings.
+  static ReminderStrings get en => ReminderStrings.forLanguage(AppLanguage.en);
+
+  final LectioLocalizations _l10n;
+
   /// The title when the day's celebration is unknown.
-  static const String fallbackTitle = 'Lectio';
+  String get fallbackTitle => _l10n.text('common_site_name');
 
   /// The text under the title.
-  static const String body = "Today's readings and notes are ready.";
+  String get body => _l10n.text('app_reminder_body');
 
   /// Why the reminder switched itself off.
-  static const String permissionRefused =
-      'Notifications are not allowed for Lectio, so the daily reminder is '
-      'off. Allow them in your device settings, then turn it on again.';
+  String get permissionRefused => _l10n.text('app_reminder_permissionRefused');
 }
 
 /// The next [count] local date-times at [time] that are more than
@@ -169,7 +182,8 @@ class DailyReminderScheduler {
     final current = _settings.settings;
     _seen = current;
     if (previous.dailyReminder == current.dailyReminder &&
-        previous.reminderTime == current.reminderTime) {
+        previous.reminderTime == current.reminderTime &&
+        previous.language == current.language) {
       return;
     }
     final turnedOn = current.dailyReminder && !previous.dailyReminder;
@@ -205,10 +219,12 @@ class DailyReminderScheduler {
     // there is no gap without one while the celebrations are read.
     final times = upcomingReminderTimes(_clock(), settings.reminderTime);
     final dates = [for (final at in times) isoDate(at)];
+    final language = settings.language;
+    final strings = ReminderStrings.forLanguage(language);
     final names = await Future.wait([
       for (final date in dates)
         _celebrations
-            .celebrationOn(date)
+            .celebrationOn(date, language: language.name)
             .timeout(celebrationTimeout, onTimeout: () => null),
     ]);
     for (final (index, at) in times.indexed) {
@@ -216,8 +232,8 @@ class DailyReminderScheduler {
         ReminderNotification(
           id: reminderIdBase + index,
           at: at,
-          title: names[index] ?? ReminderStrings.fallbackTitle,
-          body: ReminderStrings.body,
+          title: names[index] ?? strings.fallbackTitle,
+          body: strings.body,
           date: dates[index],
         ),
       );

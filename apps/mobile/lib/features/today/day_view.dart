@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lectio/data/data.dart';
 import 'package:lectio/features/today/today_labels.dart';
+import 'package:lectio/l10n/in_language.dart';
 
 /// The top of the Today screen: the Today eyebrow (or a way back to today),
 /// the date, which opens the date picker, and, when the day is known, the
@@ -35,16 +36,18 @@ class DayHeader extends StatelessWidget {
     final muted = theme.textTheme.bodyMedium?.copyWith(
       color: scheme.onSurfaceVariant,
     );
+    final strings = TodayStrings.of(context);
+    final language = strings.languageCode;
     final day = this.day;
     final onToday = this.onToday;
     final celebrations = day?.celebrations ?? const <Celebration>[];
-    final principal = celebrations.firstOrNull;
+    final principal = celebrations.firstOrNull?.nameIn(language);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (onToday == null)
           Text(
-            TodayStrings.todayHeading.toUpperCase(),
+            strings.todayHeading.toUpperCase(),
             style: theme.textTheme.labelLarge?.copyWith(
               color: scheme.primary,
               letterSpacing: 1.2,
@@ -54,18 +57,21 @@ class DayHeader extends StatelessWidget {
           TextButton.icon(
             onPressed: onToday,
             icon: const Icon(Icons.today_outlined),
-            label: const Text(TodayStrings.backToToday),
+            label: Text(strings.backToToday),
           ),
         Tooltip(
-          message: TodayStrings.chooseDate,
+          message: strings.chooseDate,
           child: TextButton.icon(
             onPressed: onPickDate,
             icon: const Icon(Icons.calendar_month_outlined),
-            label: Text(formatDayDate(date)),
+            label: Text(strings.formatDayDate(date)),
           ),
         ),
         if (principal != null)
-          Text(principal.name, style: theme.textTheme.headlineMedium),
+          InLanguage(
+            language: principal.language,
+            child: Text(principal.text, style: theme.textTheme.headlineMedium),
+          ),
         if (day != null) ...[
           const SizedBox(height: 8),
           Wrap(
@@ -73,10 +79,14 @@ class DayHeader extends StatelessWidget {
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              if (principal != null) _Rank(celebration: principal),
-              Text(seasonLabel(day.season, day.seasonWeek), style: muted),
+              if (celebrations.firstOrNull case final first?)
+                _Rank(celebration: first),
               Text(
-                cyclesLabel(day.sundayCycle, day.weekdayCycle),
+                strings.seasonLabel(day.season, day.seasonWeek),
+                style: muted,
+              ),
+              Text(
+                strings.cyclesLabel(day.sundayCycle, day.weekdayCycle),
                 style: muted,
               ),
             ],
@@ -85,8 +95,8 @@ class DayHeader extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
-                '${other.name} · ${rankLabel(other.rank)} · '
-                '${colourLabel(other.colour)}',
+                '${other.nameIn(language).text} · '
+                '${strings.rankAndColourLabel(other.rank, other.colour)}',
                 style: muted,
               ),
             ),
@@ -124,7 +134,9 @@ class _Rank extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          rankAndColourLabel(celebration.rank, celebration.colour),
+          TodayStrings.of(
+            context,
+          ).rankAndColourLabel(celebration.rank, celebration.colour),
           style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
         ),
       ],
@@ -163,6 +175,7 @@ class DayDetails extends StatelessWidget {
     final muted = theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
+    final strings = TodayStrings.of(context);
     final day = snapshot.value;
     final refreshError = snapshot.refreshError;
     final masses = day.masses;
@@ -170,9 +183,9 @@ class DayDetails extends StatelessWidget {
     final showMassLabels = masses.length > 1;
     final String? message;
     if (day.lectionaryMissing || masses.isEmpty) {
-      message = TodayStrings.lectionaryMissing;
+      message = strings.lectionaryMissing;
     } else if (!hasNotes) {
-      message = TodayStrings.notesMissing;
+      message = strings.notesMissing;
     } else {
       message = null;
     }
@@ -180,14 +193,14 @@ class DayDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (refreshError is ApiNetworkException)
-          const TodayNotice(
+          TodayNotice(
             icon: Icons.cloud_off_outlined,
-            text: TodayStrings.offline,
+            text: strings.offline,
           )
         else if (refreshError != null)
-          const TodayNotice(
+          TodayNotice(
             icon: Icons.sync_problem_outlined,
-            text: TodayStrings.refreshFailed,
+            text: strings.refreshFailed,
           ),
         if (hasNotes)
           Padding(
@@ -197,7 +210,7 @@ class DayDetails extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onListen,
                 icon: const Icon(Icons.play_arrow),
-                label: const Text(TodayStrings.listen),
+                label: Text(strings.listen),
               ),
             ),
           ),
@@ -209,7 +222,7 @@ class DayDetails extends StatelessWidget {
         if (showMassLabels)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: Text(massOptionsLabel(masses.length), style: muted),
+            child: Text(strings.massOptionsLabel(masses.length), style: muted),
           ),
         for (final mass in masses) ...[
           if (showMassLabels)
@@ -252,6 +265,7 @@ class ReadingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = TodayStrings.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final passage = reading.passage;
@@ -272,7 +286,7 @@ class ReadingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              slotLabel(reading.slot).toUpperCase(),
+              strings.slotLabel(reading.slot).toUpperCase(),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant,
                 letterSpacing: 1.2,
@@ -283,11 +297,14 @@ class ReadingCard extends StatelessWidget {
             const SizedBox(height: 4),
             if (passage == null)
               Text(
-                TodayStrings.notesInPreparation,
+                strings.notesInPreparation,
                 style: muted?.copyWith(fontStyle: FontStyle.italic),
               )
             else
-              Text(passage.summary, style: theme.textTheme.bodyMedium),
+              InLanguage(
+                language: passage.locale,
+                child: Text(passage.summary, style: theme.textTheme.bodyMedium),
+              ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -297,15 +314,15 @@ class ReadingCard extends StatelessWidget {
                   FilledButton.tonalIcon(
                     onPressed: onNotes,
                     icon: const Icon(Icons.menu_book_outlined),
-                    label: const Text(TodayStrings.notes),
+                    label: Text(strings.notes),
                   ),
                 Semantics(
-                  label: linkoutSemantics(reading.ref, reading.linkout),
+                  label: strings.linkoutSemantics(reading.ref, reading.linkout),
                   button: true,
                   excludeSemantics: true,
                   child: TextButton(
                     onPressed: onText,
-                    child: const Text(TodayStrings.text),
+                    child: Text(strings.text),
                   ),
                 ),
               ],

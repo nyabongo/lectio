@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 
 void main() {
-  const strings = ReadingStrings.en;
+  final strings = ReadingStrings.en;
 
   test('slot labels match the site', () {
     expect(strings.slotLabel('first-reading'), 'First reading');
@@ -59,7 +60,20 @@ void main() {
       strings.report,
       strings.linkFailed,
       strings.disclaimer,
+      strings.englishOnly,
+      strings.englishOnlyText,
     ];
     expect(messages.where((message) => message.isEmpty), isEmpty);
+  });
+
+  test('Kiswahili strings come from the sw catalogs', () {
+    final sw = ReadingStrings(LectioLocalizations.forLanguage('sw'));
+    expect(sw.languageCode, 'sw');
+    expect(sw.contextTab, 'Muktadha');
+    expect(sw.slotLabel('gospel'), 'Injili');
+    expect(sw.noSuchReading('gospel'), 'Siku hii haina Injili.');
+    expect(sw.verified(1), 'Imethibitishwa · chanzo 1');
+    expect(sw.verified(3), 'Imethibitishwa · vyanzo 3');
+    expect(sw.englishOnly, 'Kiingereza pekee');
   });
 }

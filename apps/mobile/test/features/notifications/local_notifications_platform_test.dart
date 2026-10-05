@@ -90,7 +90,7 @@ void main() {
           id: 1060,
           at: at.toLocal(),
           title: 'Twenty-fifth Sunday in Ordinary Time',
-          body: ReminderStrings.body,
+          body: ReminderStrings.en.body,
           date: '2100-09-20',
         ),
       );
@@ -99,7 +99,7 @@ void main() {
       final arguments = argumentsOf(call);
       expect(arguments['id'], 1060);
       expect(arguments['title'], 'Twenty-fifth Sunday in Ordinary Time');
-      expect(arguments['body'], ReminderStrings.body);
+      expect(arguments['body'], ReminderStrings.en.body);
       expect(arguments['payload'], '2100-09-20');
       expect(arguments['timeZoneName'], 'Etc/UTC');
       expect(arguments['scheduledDateTime'], '2100-09-20T04:00:00');

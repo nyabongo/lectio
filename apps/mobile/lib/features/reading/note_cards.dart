@@ -7,14 +7,13 @@ import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
 
-const ReadingStrings _strings = ReadingStrings.en;
-
 /// U+200E LEFT-TO-RIGHT MARK.
 const String leftToRightMark = '\u200E';
 
 /// [time] as the review date readers see, for example `3 September 2026`.
-String formatReviewDate(DateTime time) {
-  return DateFormat('d MMMM y', 'en_US').format(time.toUtc());
+String formatReviewDate(DateTime time, [String language = 'en']) {
+  final locale = language == 'sw' ? 'sw' : 'en_US';
+  return DateFormat('d MMMM y', locale).format(time.toUtc());
 }
 
 /// Words in an original language, laid out in their own direction: right to
@@ -99,8 +98,9 @@ class SourceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     return Semantics(
-      label: _strings.sources,
+      label: strings.sources,
       container: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -117,6 +117,7 @@ class _SourceEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final theme = Theme.of(context);
     final source = item.source;
     final url = source.url;
@@ -167,7 +168,7 @@ class _SourceEntry extends StatelessWidget {
                 if (archived != null)
                   TextButton(
                     onPressed: () => unawaited(openLink(context, archived)),
-                    child: Text(_strings.archived),
+                    child: Text(strings.archived),
                   ),
               ],
             ),
@@ -203,6 +204,7 @@ class VerificationFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final theme = Theme.of(context);
     final muted = theme.textTheme.bodySmall?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
@@ -218,7 +220,7 @@ class VerificationFooter extends StatelessWidget {
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         leading: Icon(Icons.verified, color: theme.colorScheme.primary),
         title: Text(
-          _strings.verified(sources.length),
+          strings.verified(sources.length),
           style: TextStyle(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.w600,
@@ -229,9 +231,11 @@ class VerificationFooter extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             [
-              _strings.method(review.method),
+              strings.method(review.method),
               if (reviewedAt != null)
-                _strings.lastReviewed(formatReviewDate(reviewedAt)),
+                strings.lastReviewed(
+                  formatReviewDate(reviewedAt, strings.languageCode),
+                ),
             ].join(' '),
             style: muted,
           ),
@@ -240,7 +244,7 @@ class VerificationFooter extends StatelessWidget {
     } else {
       badge = Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Text(_strings.unverified, style: muted),
+        child: Text(strings.unverified, style: muted),
       );
     }
     return Column(
@@ -253,7 +257,7 @@ class VerificationFooter extends StatelessWidget {
           child: TextButton.icon(
             onPressed: () => unawaited(openLink(context, reportUrl)),
             icon: const Icon(Icons.flag_outlined),
-            label: Text(_strings.report),
+            label: Text(strings.report),
           ),
         ),
       ],
@@ -283,11 +287,12 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final theme = Theme.of(context);
     final text = theme.textTheme;
     final muted = theme.colorScheme.onSurfaceVariant;
     final original = note.original;
-    final verse = _strings.verse(verseLabel(passage, note)).toUpperCase();
+    final verse = strings.verse(verseLabel(passage, note)).toUpperCase();
     return Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
@@ -316,7 +321,7 @@ class NoteCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Semantics(
-              label: _strings.originalLabel,
+              label: strings.originalLabel,
               child: OriginalWords(
                 text: original.text,
                 lang: original.lang,
@@ -330,12 +335,12 @@ class NoteCard extends StatelessWidget {
                 Text(
                   original.translit,
                   semanticsLabel:
-                      '${_strings.translitLabel}: ${original.translit}',
+                      '${strings.translitLabel}: ${original.translit}',
                   style: TextStyle(fontStyle: FontStyle.italic, color: muted),
                 ),
                 Text(
                   '“${original.gloss}”',
-                  semanticsLabel: '${_strings.glossLabel}: ${original.gloss}',
+                  semanticsLabel: '${strings.glossLabel}: ${original.gloss}',
                   style: TextStyle(color: muted),
                 ),
               ],
@@ -373,11 +378,12 @@ class ReadingDisclaimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Text(
-        _strings.disclaimer,
+        strings.disclaimer,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
@@ -446,12 +452,13 @@ class OriginalPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final notes = passage.translationNotes;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         if (notes.isEmpty)
-          Text(_strings.noNotes)
+          Text(strings.noNotes)
         else
           for (final note in notes)
             Padding(
