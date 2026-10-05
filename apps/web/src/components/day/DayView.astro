@@ -29,12 +29,11 @@ const showMassLabels = view.masses.length > 1;
       {
         principal !== undefined && (
           <span class="day__rank">
-            <span
-              class="swatch"
-              role="img"
-              aria-label={t(lang, 'day.colourLabel', { colour: principal.colourLabel })}
-            />
-            {principal.rank}
+            <span class="swatch" aria-hidden="true" />
+            <span>
+              {principal.rank} <span aria-hidden="true">· {principal.colourLabel}</span>
+              <span class="visually-hidden">{t(lang, 'day.colourLabel', { colour: principal.colourLabel })}</span>
+            </span>
           </span>
         )
       }
