@@ -2,9 +2,9 @@
 /**
  * The language switcher (L-110), in the header of every page: a link to the same page in each other site locale
  * (`config.site.locales`), named in its own language. Following one saves the choice in the reader's settings
- * (`language`, src/lib/settings.ts); the Today pages' inline script (`todaySwitchScript` in src/lib/day.ts) then
- * sends the reader to the chosen language's Today. Deep links are never redirected, so a shared link opens in the
- * language it was shared in.
+ * (`language`, src/lib/settings.ts); the inline script of the default locale's Today page (`todaySwitchScript` in
+ * src/lib/day.ts) then sends the reader to the chosen language's Today. Other pages, `/sw/` included, are never
+ * redirected, so a shared link opens in the language it was shared in.
  *
  * Renders nothing when the site has a single locale, and on the not-found and offline pages. Paths come from
  * `localeLinks()` in src/lib/locales.ts.

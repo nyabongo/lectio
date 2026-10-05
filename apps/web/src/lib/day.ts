@@ -457,8 +457,9 @@ export interface TodaySwitch {
   /** Day page hrefs by date, for the dates around the build date (`todayWindowDates`). */
   readonly pages: Readonly<Record<string, string>>;
   /**
-   * The saved-language switch (L-110): the settings storage key and, for every other site locale, its Today page and
-   * day pages. A reader who saved one of those languages goes there first, to the day page for the device date.
+   * The saved-language switch (L-110), on the default locale's Today page only: the settings storage key and, for
+   * every other site locale, its Today page and day pages. A reader who saved one of those languages (which only the
+   * switcher or the settings page can store) goes there first, to the day page for the device date.
    */
   readonly language?: {
     readonly key: string;
@@ -468,10 +469,13 @@ export interface TodaySwitch {
   };
 }
 
-/** The other site locales for `todaySwitch`: the storage key, the locales and a base-aware path in each. */
+/**
+ * The site locales for `todaySwitch`: the storage key, the locales, the default locale and a base-aware path in each.
+ */
 export interface TodaySwitchLanguages {
   readonly key: string;
   readonly locales: readonly string[];
+  readonly defaultLocale: string;
   readonly paths: (locale: string, path: string) => string;
 }
 
@@ -486,7 +490,9 @@ export function todaySwitch(
   const pagesFor = (href: (path: string) => string) =>
     Object.fromEntries(dates.map((date) => [date, href(dayPath(date))]));
   const pages = pagesFor(env.paths);
-  if (languages === undefined) return { buildDate, pages };
+  // Only the default locale's Today page switches language. A saved default language is not a choice (settings save
+  // every field, so it is stored as soon as any setting changes), and an explicit /sw/ link is always respected.
+  if (languages === undefined || env.lang !== languages.defaultLocale) return { buildDate, pages };
   const others = Object.fromEntries(
     languages.locales
       .filter((locale) => locale !== env.lang)

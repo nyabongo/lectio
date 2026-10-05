@@ -82,6 +82,19 @@ test.describe('Language switcher', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'sw');
   });
 
+  test('changing another setting never sends a Kiswahili Today link back to English', async ({ page }) => {
+    await page.goto('settings/');
+    await expect(page.locator('[data-settings-form]')).toHaveAttribute('data-ready', '');
+    await page.getByRole('radio', { name: 'Dark' }).check();
+    await expect(page.getByRole('status')).not.toBeEmpty();
+    await page.goto('sw/');
+    await expect(page).toHaveURL(/\/lectio\/sw\/$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'sw');
+    // `/` stays English too: a stored default language is not a choice of another one.
+    await page.goto('');
+    await expect(page).toHaveURL(/\/lectio\/$/);
+  });
+
   test('the settings page changes the language', async ({ page }) => {
     await page.goto('settings/');
     await expect(page.locator('[data-settings-form]')).toHaveAttribute('data-ready', '');

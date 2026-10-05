@@ -408,6 +408,7 @@ describe('the Today page', () => {
     const data = todaySwitch(env, context.repo, '2026-09-20', {
       key: 'lectio.settings',
       locales: ['en', 'sw'],
+      defaultLocale: 'en',
       paths: (locale, path) => `/base/${locale === 'en' ? '' : `${locale}/`}${path}`,
     });
     expect(data.language).toEqual({
@@ -423,6 +424,18 @@ describe('the Today page', () => {
         },
       },
     });
+  });
+
+  it("never switches language from another locale's Today page", () => {
+    const data = todaySwitch({ ...env, lang: 'sw' }, context.repo, '2026-09-20', {
+      key: 'lectio.settings',
+      locales: ['en', 'sw'],
+      defaultLocale: 'en',
+      paths: (locale, path) => `/base/${locale === 'en' ? '' : `${locale}/`}${path}`,
+    });
+    // A stored default language (settings save every field) must not send /sw/ readers back to English.
+    expect(data.language).toBeUndefined();
+    expect(Object.keys(data.pages)).toContain('2026-09-20');
   });
 
   describe('the inline script', () => {
