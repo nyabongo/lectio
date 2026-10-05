@@ -9,8 +9,12 @@ exports[`DayView > renders 2026-09-20 from the fixture content root 1`] = `
 <h1 id="day-title" class="day__title">Twenty-fifth Sunday in Ordinary Time</h1>
 <p class="day__meta">
 <span class="day__rank">
-<span class="swatch" role="img" aria-label="Liturgical colour: Green">
-</span>Sunday</span>
+<span class="swatch" aria-hidden="true">
+</span>
+<span>Sunday <span aria-hidden="true">· Green</span>
+<span class="visually-hidden">Liturgical colour: Green</span>
+</span>
+</span>
 <span>Ordinary Time · Week 25</span>
 <span>Sunday cycle A · Weekday cycle II</span>
 </p>
