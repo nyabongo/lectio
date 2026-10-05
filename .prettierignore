@@ -3,7 +3,7 @@ coverage
 dist
 .astro
 package-lock.json
-corpus
+/corpus
 calendar/*.json
 apps/mobile
 **/__generated__
