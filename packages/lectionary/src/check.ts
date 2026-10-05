@@ -8,10 +8,11 @@
  * - given calendar days: a feast or solemnity on a Sunday has a second reading.
  */
 import { tryParseRef } from '@lectio/refs';
+import type { IsoDate } from '@lectio/shared';
 
 import { formatCanonical, hasLetters } from './canonical.ts';
 import { PROPER_OF_TIME_KEY, SLUG, isSundayKey, weekdayOf } from './keys.ts';
-import { Lectionary, resolveDay } from './resolve.ts';
+import { Lectionary, epiphanyOf, resolveDay } from './resolve.ts';
 import type { LectionaryDay } from './resolve.ts';
 import { checkSource } from './sources.ts';
 import { SUNDAY_CYCLES, WEEKDAY_CYCLES } from './types.ts';
@@ -65,6 +66,16 @@ function checkReading(reading: Reading, key: string, kind: EntryKind, registry: 
 }
 
 /**
+ * The Epiphany of `date`'s year as the days keep it (a calendar file always has it); 6 January when
+ * they do not include it. A Sunday's readings do not depend on it, but the resolver requires it.
+ */
+function epiphanyAmong(days: readonly LectionaryDay[], date: string): IsoDate {
+  const year = date.slice(0, 4);
+  const kept = days.find((d) => d.date.startsWith(year) && d.celebrations.some((c) => c.id === 'epiphany-of-the-lord'));
+  return kept?.date ?? epiphanyOf(Number(year), false);
+}
+
+/**
  * A solemnity, or a feast that falls on a Sunday (a feast of the Lord in Ordinary Time), takes the
  * Sunday's place and has a second reading, as a Sunday does. Reports every such day whose resolved Mass lacks one.
  * Days without data for the celebration are left to the calendar build.
@@ -75,7 +86,7 @@ export function checkSundaySecondReadings(days: readonly LectionaryDay[], lectio
     if (weekdayOf(day.date) !== 'sun') continue;
     const principal = day.celebrations.find((c) => c.rank !== 'optional-memorial' && c.rank !== 'commemoration');
     if (principal?.rank !== 'solemnity' && principal?.rank !== 'feast') continue;
-    for (const mass of resolveDay(day, lectionary).masses) {
+    for (const mass of resolveDay(day, lectionary, { epiphany: epiphanyAmong(days, day.date) }).masses) {
       if (!mass.missingSlots.includes('second-reading')) continue;
       problems.push(
         `${day.date} ${principal.id} ${mass.id}: a ${principal.rank} on a Sunday needs a second reading ` +

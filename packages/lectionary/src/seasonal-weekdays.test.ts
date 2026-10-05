@@ -20,6 +20,7 @@ import {
   splitSource,
 } from './index.ts';
 import type { CrosscheckResult, LectionaryDay, LoadResult } from './index.ts';
+import { GENERAL_ROMAN } from './fixtures/data.ts';
 
 const DATA_ROOT = fileURLToPath(new URL('../../../calendar/lectionary', import.meta.url));
 const ROMCAL_IDS = fileURLToPath(new URL('../../calendar/src/fixtures/romcal-ids.json', import.meta.url));
@@ -167,6 +168,7 @@ describe('seasonal-weekdays block', () => {
           celebrations: [{ id: 'weekday', rank: 'weekday' }],
         },
         lectionary,
+        GENERAL_ROMAN,
       ).masses[0]?.readings.find((r) => r.slot === slot)?.ref;
     // Monday of Advent week 1: 2025-12-01 (Year A), 2026-11-30 (Year B), 2027-11-29 (Year C).
     expect(reading('2025-12-01', 'advent', 1, 'A', 'first-reading')).toBe('Is 4:2-6');
@@ -196,7 +198,8 @@ describe('seasonal-weekdays block', () => {
       weekdayCycle: 'II',
       celebrations: [{ id, rank }],
     });
-    const refs = (d: LectionaryDay) => resolveDay(d, lectionary).masses.map((m) => m.readings.map((r) => r.ref));
+    const refs = (d: LectionaryDay) =>
+      resolveDay(d, lectionary, GENERAL_ROMAN).masses.map((m) => m.readings.map((r) => r.ref));
     expect(refs(day('2026-12-01', 'advent', 1, 'advent-1-tuesday'))).toEqual([
       ['Is 11:1-10', 'Ps 72:1-2, 7-8, 12-13, 17', 'Lk 10:21-24'],
     ]);

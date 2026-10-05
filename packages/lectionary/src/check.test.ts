@@ -138,6 +138,9 @@ describe('checkLectionary', () => {
         day('2026-08-30', [{ id: 'transfiguration', rank: 'sunday' }]),
         day('2026-09-06', [{ id: 'transfiguration', rank: 'solemnity' }]),
         day('2026-09-13', []),
+        // The Epiphany kept on a Sunday; 2027 has none among these days (the resolver then gets 6 January).
+        day('2026-01-04', [{ id: 'epiphany-of-the-lord', rank: 'solemnity' }]),
+        day('2027-08-08', [{ id: 'unknown-feast', rank: 'feast' }]),
       ];
       expect(checkLectionary(files, REGISTRY, { days }).problems).toEqual([
         '2026-08-09 transfiguration day: a feast on a Sunday needs a second reading (from celebrations:transfiguration)',

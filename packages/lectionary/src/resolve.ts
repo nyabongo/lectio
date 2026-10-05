@@ -22,17 +22,19 @@
  *
  * Christmas season (OLM, nos. 205–217): where the Epiphany is kept on 6 January, 7–12 January read
  * the readings printed for Monday…Saturday after the Epiphany in date order (7 January = Monday's),
- * whatever the weekday the calendar names; pass the Epiphany's date in {@link ResolveOptions}.
- * Where it is kept on the Sunday between 2 and 8 January, the days before it read the dated
- * readings (`christmas-time-january-<n>`) and the days after it the weekday ones, as named.
+ * whatever the weekday the calendar names. Where it is kept on the Sunday between 2 and 8 January,
+ * the days before it read the dated readings (`christmas-time-january-<n>`) and the days after it
+ * the weekday ones, as named. The Epiphany's date is a required option ({@link ResolveOptions},
+ * {@link epiphanyOf}), so a caller cannot get the wrong rule by leaving it out.
  *
  * Cycles (types.ts, `Reading.cycle`): a reading without a cycle serves every year; one with the day's
  * weekday cycle (I/II) replaces it; one with the day's Sunday cycle (A/B/C) replaces both. On a
  * weekday, a Sunday-cycle reading is the OLM's substitute for the year whose Sunday has just read
  * the weekday's own passage (e.g. Monday of Advent week 1 reads Is 4:2-6 in Year A).
  *
- * Days without a Mass of their own: Holy Saturday lists the Easter Vigil (which belongs to Easter
- * Sunday and is celebrated after nightfall), and Palm Sunday's procession Mass needs only its gospel.
+ * Days without a Mass: Holy Saturday has no Mass of the day ({@link Resolution.noMass}); the Easter
+ * Vigil, celebrated after nightfall, belongs to Easter Sunday. Palm Sunday's procession Mass needs
+ * only its gospel.
  */
 import type { CalendarDay, Celebration } from '@lectio/schema/calendar';
 import type { ReadingSlot } from '@lectio/schema/common';
@@ -62,11 +64,23 @@ export type LectionaryDay = Readonly<Pick<CalendarDay, 'season' | 'seasonWeek' |
 
 export interface ResolveOptions {
   /**
-   * The date of the Epiphany in the day's year (the calendar has it). With 6 January, 7–12 January
-   * take the readings of Monday…Saturday after the Epiphany in date order. Without it, the
-   * calendar's weekday names are used as they are (right where the Epiphany is on a Sunday).
+   * The date of the Epiphany in the day's year ({@link epiphanyOf} from the region's
+   * `epiphanyOnSunday` setting). With 6 January, 7–12 January take the readings of Monday…Saturday
+   * after the Epiphany in date order; with a Sunday, the days before it read the dated readings and
+   * the days after it the calendar's weekday names. Required: there is no safe default.
    */
-  readonly epiphany?: IsoDate;
+  readonly epiphany: IsoDate;
+}
+
+/**
+ * The date of the Epiphany in `year`: 6 January, or, where it is kept on a Sunday
+ * (`epiphanyOnSunday`, the region's transfer setting), the Sunday between 2 and 8 January.
+ */
+export function epiphanyOf(year: number, onSunday: boolean): IsoDate {
+  if (!onSunday) return `${String(year)}-01-06` as IsoDate;
+  const weekday = new Date(Date.UTC(year, 0, 2)).getUTCDay();
+  const day = 2 + ((7 - weekday) % 7);
+  return `${String(year)}-01-0${String(day)}` as IsoDate;
 }
 
 export interface ResolvedAlternative {
@@ -100,8 +114,10 @@ export interface Resolution {
   readonly date: IsoDate;
   /** The proper-of-time key of the date, whether or not it was used. */
   readonly properOfTimeKey: string;
-  /** Empty when the lectionary has no data for the day. */
+  /** Empty when the lectionary has no data for the day, or when the day has no Mass. */
   readonly masses: readonly ResolvedMass[];
+  /** The day has no Mass at all (Holy Saturday), so its empty `masses` is not missing data. */
+  readonly noMass: boolean;
 }
 
 const MASS_LABELS: Readonly<Record<string, string>> = {
@@ -115,10 +131,11 @@ const MASS_LABELS: Readonly<Record<string, string>> = {
 /** Masses that need fewer slots than a Mass of their day: Palm Sunday's procession reads only a gospel. */
 const MASS_SLOTS: Readonly<Record<string, readonly ReadingSlot[]>> = { procession: ['gospel'] };
 
-/** Days without a Mass of their own that list another celebration's Mass held on them. */
-const BORROWED: Readonly<Record<string, { readonly key: string; readonly mass: string }>> = {
-  'holy-saturday': { key: 'easter-sunday', mass: 'easter-vigil' },
-};
+/**
+ * Days without any Mass. Holy Saturday has no Mass of the day; the Easter Vigil held that night
+ * belongs to Easter Sunday and is listed there only.
+ */
+export const NO_MASS_DAYS: ReadonlySet<string> = new Set(['holy-saturday']);
 
 const OPTIONAL: readonly CelebrationRank[] = ['optional-memorial', 'commemoration'];
 
@@ -208,22 +225,21 @@ function dateParts(date: IsoDate): [number, number, number] {
  * The entry id of a celebration on `date`: with the Epiphany on 6 January, `<weekday>-after-epiphany`
  * on 7–12 January becomes the one for its date (7 January → Monday's readings).
  */
-function entryId(id: string, date: IsoDate, epiphany: IsoDate | undefined): string {
-  if (epiphany === undefined || !AFTER_EPIPHANY.test(id)) return id;
+function entryId(id: string, date: IsoDate, epiphany: IsoDate): string {
+  if (!AFTER_EPIPHANY.test(id)) return id;
   const [year, month, day] = dateParts(date);
   if (epiphany !== `${String(year)}-01-06` || month !== 1 || day < 7 || day > 12) return id;
   return `${AFTER_EPIPHANY_DAYS[day - 7] as string}-after-epiphany`;
 }
 
 /** The dated weekday of a date that is not a Sunday (17–24 December, 29–31 December, 2–7 January before the Epiphany). */
-function datedWeekdayId(day: LectionaryDay, epiphany: IsoDate | undefined): string | undefined {
+function datedWeekdayId(day: LectionaryDay, epiphany: IsoDate): string | undefined {
   if (weekdayOf(day.date) === 'sun') return undefined;
   const [, month, date] = dateParts(day.date);
   if (day.season === 'advent' && month === 12 && date >= 17 && date <= 24) return `advent-december-${String(date)}`;
   if (day.season !== 'christmas') return undefined;
   if (month === 12 && date >= 29) return `christmas-octave-day-${String(date - 24)}`;
-  const beforeEpiphany = epiphany === undefined || day.date < epiphany;
-  if (month === 1 && date >= 2 && date <= 7 && beforeEpiphany) return `christmas-time-january-${String(date)}`;
+  if (month === 1 && date >= 2 && date <= 7 && day.date < epiphany) return `christmas-time-january-${String(date)}`;
   return undefined;
 }
 
@@ -231,11 +247,14 @@ function datedWeekdayId(day: LectionaryDay, epiphany: IsoDate | undefined): stri
  * Resolves the Masses of a day. Throws a `RefError` only when the data holds a ref that does not
  * parse, which `lectionary:check` rejects.
  */
-export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: ResolveOptions = {}): Resolution {
+export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: ResolveOptions): Resolution {
   const { epiphany } = options;
   const ptKey = properOfTimeKey(day.date, day.season, day.seasonWeek);
   const cycles: Cycle[] = [day.sundayCycle, day.weekdayCycle];
   const principal = day.celebrations.find((c) => !OPTIONAL.includes(c.rank));
+  if (principal !== undefined && NO_MASS_DAYS.has(principal.id)) {
+    return { date: day.date, properOfTimeKey: ptKey, masses: [], noMass: true };
+  }
   const idOf = (c: LectionaryCelebration): string => entryId(c.id, day.date, epiphany);
   const proper = principal === undefined ? undefined : lectionary.get('celebrations', idOf(principal));
   const sunday = isSundayKey(ptKey);
@@ -284,7 +303,6 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
 
   let masses: ResolvedMass[];
   const rank = principal?.rank;
-  const borrowed = principal === undefined ? undefined : BORROWED[principal.id];
   if (principal !== undefined && rank === 'memorial') {
     const memorial = proper === undefined ? undefined : overlaid(proper, 'day', principal.name ?? principal.id);
     masses = memorial === undefined ? weekdayMasses() : [memorial];
@@ -296,11 +314,6 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
       common === undefined
         ? fromEntry(proper, `celebrations:${proper.key}`, full, principal.name)
         : fromEntry(common, `commons:${common.key}`, full, principal.name);
-  } else if (borrowed !== undefined) {
-    const entry = lectionary.get('celebrations', borrowed.key);
-    masses = (entry === undefined ? [] : fromEntry(entry, `celebrations:${entry.key}`, true)).filter(
-      (mass) => mass.id === borrowed.mass,
-    );
   } else if (rank === 'solemnity' || rank === 'feast') {
     masses = [];
   } else {
@@ -314,5 +327,5 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
       if (mass !== undefined) masses.push(mass);
     }
   }
-  return { date: day.date, properOfTimeKey: ptKey, masses };
+  return { date: day.date, properOfTimeKey: ptKey, masses, noMass: false };
 }
