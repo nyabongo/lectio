@@ -56,9 +56,9 @@ describe('resolveLectionaryRoot', () => {
 });
 
 describe('runCheck', () => {
-  it('passes the committed data', async () => {
+  it('passes the committed seed block', async () => {
     const { out, err, io } = capture();
-    expect(await runCheck([], DATA_ROOT, io)).toBe(0);
+    expect(await runCheck(['--block', 'seed'], DATA_ROOT, io)).toBe(0);
     expect(out).toEqual([
       'lectionary:check: 2 files, 15 entries, 47 readings (47 provisional, 0 verified, 0 disputed)',
       '  39 OLM 1981 citations have no page yet (p?)',

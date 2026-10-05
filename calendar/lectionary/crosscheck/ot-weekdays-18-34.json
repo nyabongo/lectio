@@ -1,0 +1,710 @@
+{
+  "$comment": "Second source for block ot-weekdays-18-34 (L-067; 011, L-016 amendment 5). OLM 1981 for the readings imported from LitCal (week 34, Year I), in OLM numbering. LitCal is the only other open source registered, and it has no data for the OLM-filled readings at the pinned revision: `consulted` records the leaf checked for each entry, plus any reading the gap-filler marked for the verifier, and those readings are listed as single-source in disputes/ot-weekdays-18-34.md.",
+  "block": "ot-weekdays-18-34",
+  "entries": [
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "I",
+      "ref": "Dn 1:1-6, 8-20",
+      "source": "olm-1981 p?#503"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "I",
+      "ref": "Dn 3:52, 53, 54, 55, 56",
+      "source": "olm-1981 p?#503"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "I",
+      "ref": "Lk 21:1-4",
+      "source": "olm-1981 p?#503"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "I",
+      "ref": "Dn 2:31-45",
+      "source": "olm-1981 p?#504"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "I",
+      "ref": "Dn 3:57, 58, 59, 60, 61",
+      "source": "olm-1981 p?#504"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "I",
+      "ref": "Lk 21:5-11",
+      "source": "olm-1981 p?#504"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "I",
+      "ref": "Dn 5:1-6, 13-14, 16-17, 23-28",
+      "source": "olm-1981 p?#505"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "I",
+      "ref": "Dn 3:62, 63, 64, 65, 66, 67",
+      "source": "olm-1981 p?#505"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "I",
+      "ref": "Lk 21:12-19",
+      "source": "olm-1981 p?#505"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "I",
+      "ref": "Dn 6:12-28",
+      "source": "olm-1981 p?#506"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "I",
+      "ref": "Dn 3:68, 69, 70, 71, 72, 73, 74",
+      "source": "olm-1981 p?#506"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "I",
+      "ref": "Lk 21:20-28",
+      "source": "olm-1981 p?#506"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "I",
+      "ref": "Dn 7:2-14",
+      "source": "olm-1981 p?#507"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "I",
+      "ref": "Dn 3:75, 76, 77, 78, 79, 80, 81",
+      "source": "olm-1981 p?#507"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "I",
+      "ref": "Lk 21:29-33",
+      "source": "olm-1981 p?#507"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "I",
+      "ref": "Dn 7:15-27",
+      "source": "olm-1981 p?#508"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "I",
+      "ref": "Dn 3:82, 83, 84, 85, 86, 87",
+      "source": "olm-1981 p?#508"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "I",
+      "ref": "Lk 21:34-36",
+      "source": "olm-1981 p?#508"
+    }
+  ],
+  "consulted": [
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-18-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: gospel alternative Mt 14:22-36 is the Year A substitute"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-18-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: gospel alternative Mt 15:1-2, 10-14 is the Year A substitute"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-18-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-18-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-18-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-18-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday18Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-19-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday19Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-19-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday19Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-19-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday19Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-19-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday19Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-19-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday19Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-19-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday19Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-20-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday20Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: Year II first reading recalled as Ez 24:15-24; check the last verse"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-20-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday20Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-20-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday20Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-20-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday20Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-20-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday20Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-20-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday20Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-21-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday21Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-21-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday21Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-21-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday21Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-21-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday21Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-21-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday21Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-21-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday21Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-22-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday22Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-22-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday22Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-22-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday22Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-22-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday22Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-22-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday22Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-22-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday22Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-23-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday23Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-23-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday23Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-23-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday23Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-23-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday23Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-23-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday23Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-23-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday23Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-26-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday26Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-26-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday26Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-26-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday26Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-26-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday26Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-26-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday26Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-26-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday26Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-27-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday27Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: Year I first reading ends at Jon 2:2 (US) or 2:1 (OLM may print 1,1-2,1.11)"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-27-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday27Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-27-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday27Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-27-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday27Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-27-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday27Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-27-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday27Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-28-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday28Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-28-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday28Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-28-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday28Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-28-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday28Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-28-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday28Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-28-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday28Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-29-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday29Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: Year II psalm verse groups of Ps 100 (100:1-2, 3, 4, 4-5)"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-29-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday29Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-29-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday29Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-29-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday29Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-29-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday29Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-29-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday29Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-30-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday30Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-30-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday30Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-30-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday30Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-30-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday30Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-30-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday30Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-30-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday30Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-31-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday31Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-31-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday31Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II; to verify: Year II psalm verse groups of Ps 22 (22:26-27, 28-30, 30, 31-32)"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-31-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday31Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-31-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday31Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-31-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday31Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-31-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday31Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-32-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday32Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-32-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday32Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-32-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday32Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-32-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday32Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-32-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday32Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-32-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday32Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-33-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday33Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-33-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday33Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-33-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday33Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-33-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday33Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-33-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday33Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-33-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday33Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_II"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday34Monday",
+      "note": "empty at the pinned revision; Year I is imported from feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday34Tuesday",
+      "note": "empty at the pinned revision; Year I is imported from feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday34Wednesday",
+      "note": "empty at the pinned revision; Year I is imported from feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday34Thursday",
+      "note": "empty at the pinned revision; Year I is imported from feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday34Friday",
+      "note": "empty at the pinned revision; Year I is imported from feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-34-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday34Saturday",
+      "note": "empty at the pinned revision; Year I is imported from feriale_per_annum_I"
+    }
+  ]
+}
