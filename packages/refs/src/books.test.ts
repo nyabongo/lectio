@@ -101,6 +101,9 @@ describe('book lookup', () => {
     ['Apocalypse', 'RV'],
     ['ECCL', 'ECCL'],
     ['1Thess', '1THES'],
+    ['1st Cor', '1COR'],
+    ['2nd Peter', '2PT'],
+    ['3rd Jn', '3JN'],
   ])('finds %s as %s', (name, code) => {
     expect(findBook(name)?.code).toBe(code);
   });

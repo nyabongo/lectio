@@ -60,6 +60,14 @@ const VALID: readonly (readonly [string, string])[] = [
   ['Wis 1:13-15; 2:23-24', 'WIS.1.13-15_2.23-24'],
   ['1 Thes 4:13-18', '1THES.4.13-18'],
   ['  Lk 1:39-56  ', 'LK.1.39-56'],
+  ['Ps 144:1b and 2abc, 3-4', 'PS.144.1_144.2_144.3-4'],
+  ['Is 12:2-3, 4bcd, 5-6', 'IS.12.2-3_12.4_12.5-6'],
+  ['1 Sm 2:1, 4-5, 6-7, 8abcd', '1SM.2.1_2.4-5_2.6-7_2.8'],
+  ['Mt 5:3a-3b', 'MT.5.3'],
+  ['Mt 20 : 1 - 16 , 18', 'MT.20.1-16_20.18'],
+  ['1st Cor 1:1', '1COR.1.1'],
+  ['2nd Kings 5:14', '2KGS.5.14'],
+  ['3rd John 5', '3JN.1.5'],
 ];
 
 const INVALID: readonly (readonly [string, RefErrorCode])[] = [
@@ -75,7 +83,15 @@ const INVALID: readonly (readonly [string, RefErrorCode])[] = [
   ['Mt 20:1,', 'MALFORMED'],
   ['Mt 20:1 (NABRE)', 'MALFORMED'],
   ['Mt 1000:1', 'MALFORMED'],
-  ['Mt 5:1abc', 'MALFORMED'],
+  ['Mt 5:1h', 'MALFORMED'],
+  ['Mt 5:1abcdefga', 'MALFORMED'],
+  ['Ps 2 3', 'MALFORMED'],
+  ['Is 40 41', 'MALFORMED'],
+  ['Mt 20:1 16', 'MALFORMED'],
+  ['Mt 5:3b-3a', 'DESCENDING'],
+  ['Est C:12, 14-16, 23-25', 'UNSUPPORTED_GREEK_ESTHER_CHAPTER'],
+  ['Esther F:1', 'UNSUPPORTED_GREEK_ESTHER_CHAPTER'],
+  ['Mt C:12', 'UNKNOWN_BOOK'],
   ['Mt 0:1', 'ZERO'],
   ['Mt 20:0', 'ZERO'],
   ['Mt 20:16-1', 'DESCENDING'],
@@ -108,6 +124,14 @@ describe('parseRef', () => {
     expect(result.error.message.length).toBeGreaterThan(10);
   });
 
+  it('keeps runs of sub-verse letters', () => {
+    expect(parseRef('Ps 144:1b and 2abc, 3-4').segments).toEqual([
+      { start: { c: 144, v: 1, part: 'b' }, end: { c: 144, v: 1, part: 'b' } },
+      { start: { c: 144, v: 2, part: 'abc' }, end: { c: 144, v: 2, part: 'abc' } },
+      { start: { c: 144, v: 3 }, end: { c: 144, v: 4 } },
+    ]);
+  });
+
   it('keeps sub-verse letters and the chapter of every segment', () => {
     expect(parseRef('Phil 1:20c-24, 27a')).toEqual({
       book: 'PHIL',
@@ -130,6 +154,9 @@ describe('parseRef', () => {
     expect(() => parseRef('Hezekiah 1:1')).toThrow('Unknown book "Hezekiah" (in "Hezekiah 1:1")');
     expect(() => parseRef('Mt 20:16-1')).toThrow('The range ends at 20:1, before its start at 20:16');
     expect(() => parseRef('')).toThrow('The reference is empty');
+    expect(() => parseRef('Mt 5:3b-3a')).toThrow('The range ends at 5:3a, before its start at 5:3b');
+    expect(() => parseRef('Ps 2 3')).toThrow('Unexpected space in "2 3"');
+    expect(() => parseRef('Est C:12')).toThrow("Greek Esther's lettered chapter C is not supported");
   });
 
   it('returns ok from tryParseRef on success', () => {

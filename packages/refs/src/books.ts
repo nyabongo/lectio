@@ -173,12 +173,22 @@ export const BOOKS: readonly Book[] = Object.freeze([
 
 const BY_CODE: ReadonlyMap<string, Book> = new Map(BOOKS.map((book) => [book.code, book]));
 
-const ORDINAL_PREFIX = /^(i{1,3}|first|second|third)\s+/;
-const ORDINALS: Readonly<Record<string, string>> = { i: '1', ii: '2', iii: '3', first: '1', second: '2', third: '3' };
+const ORDINAL_PREFIX = /^(i{1,3}|first|second|third|1st|2nd|3rd)\s+/;
+const ORDINALS: Readonly<Record<string, string>> = {
+  i: '1',
+  ii: '2',
+  iii: '3',
+  first: '1',
+  second: '2',
+  third: '3',
+  '1st': '1',
+  '2nd': '2',
+  '3rd': '3',
+};
 
 /**
  * Normalises a book name for lookup: case, spaces, dots and apostrophes are
- * ignored, and a leading `I`/`II`/`III`/`First`/`Second`/`Third` becomes 1/2/3.
+ * ignored, and a leading `I`/`II`/`III`, `1st`/`2nd`/`3rd` or `First`/`Second`/`Third` becomes 1/2/3.
  */
 export function normalizeBookName(name: string): string {
   const lower = name.trim().toLowerCase();

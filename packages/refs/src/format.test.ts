@@ -31,6 +31,8 @@ const cases: readonly (readonly [string, RefStyle, string])[] = [
   ['Jude 17, 20b-25', 'spoken', 'Jude, verses 17 and 20 to 25'],
   ['Dn 3:52, 53, 54', 'spoken', 'Daniel chapter 3, verses 52, 53 and 54'],
   ['1 Cor 15:35-37', 'long', '1 Corinthians 15:35–37'],
+  ['Ps 144:1b and 2abc, 3-4', 'short', 'Ps 144:1b, 2abc, 3–4'],
+  ['Is 12:2-3, 4bcd, 5-6', 'spoken', 'Isaiah chapter 12, verses 2 to 3, 4 and 5 to 6'],
 ];
 
 describe('formatRef', () => {

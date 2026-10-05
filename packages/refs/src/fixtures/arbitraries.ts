@@ -5,7 +5,7 @@ import { BOOKS } from '../books.ts';
 import type { Point, Ref, Segment } from '../types.ts';
 
 const number = fc.integer({ min: 1, max: 150 });
-const part = fc.option(fc.constantFrom('a', 'b', 'c', 'ab'), { nil: undefined });
+const part = fc.option(fc.constantFrom('a', 'b', 'c', 'ab', 'abc', 'bcd', 'abcd', 'g'), { nil: undefined });
 const ordered = fc.tuple(number, number).map(([a, b]): [number, number] => (a <= b ? [a, b] : [b, a]));
 const strictlyOrdered = ordered.filter(([a, b]) => a !== b);
 
@@ -21,7 +21,12 @@ function segment(singleChapter: boolean): fc.Arbitrary<Segment> {
   });
   const verses = fc
     .tuple(chapter, ordered, part, part)
-    .map(([c, [from, to], p, q]) => ({ start: point(c, from, p), end: point(c, to, q) }));
+    // Within one verse the letters must not run backwards (`3b-3a`).
+    .map(([c, [from, to], p, q]) =>
+      from === to && p !== undefined && q !== undefined && q < p
+        ? { start: point(c, from, q), end: point(c, to, p) }
+        : { start: point(c, from, p), end: point(c, to, q) },
+    );
   if (singleChapter) return fc.oneof(verse, verses);
   const chapters = ordered.map(([from, to]) => ({ start: point(from), end: point(to) }));
   const cross = fc

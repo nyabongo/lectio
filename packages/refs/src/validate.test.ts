@@ -16,6 +16,8 @@ describe('checkRef', () => {
     ['a negative verse', at({ c: 1, v: -2 }), 'INVALID_REF'],
     ['a zero chapter', at({ c: 0 }), 'ZERO'],
     ['an upper-case part', at({ c: 1, v: 1, part: 'A' }), 'INVALID_REF'],
+    ['a letter past g', at({ c: 1, v: 1, part: 'h' }), 'INVALID_REF'],
+    ['reversed letters in one verse', at({ c: 1, v: 3, part: 'b' }, { c: 1, v: 3, part: 'a' }), 'DESCENDING'],
     ['a part on a chapter', at({ c: 1, part: 'a' }), 'PART_ON_CHAPTER'],
     ['a mixed range', at({ c: 1, v: 1 }, { c: 2 }), 'MIXED_RANGE'],
     ['a descending chapter range', at({ c: 2 }, { c: 1 }), 'DESCENDING'],
@@ -38,5 +40,6 @@ describe('checkRef', () => {
 
   it('returns the book of a well-formed ref', () => {
     expect(checkRef(at({ c: 5, v: 3, part: 'ab' }, { c: 5, v: 9 })).code).toBe('MT');
+    expect(checkRef(at({ c: 5, v: 8, part: 'abcd' }, { c: 5, v: 8, part: 'e' })).code).toBe('MT');
   });
 });

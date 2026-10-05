@@ -19,6 +19,8 @@ export type RefErrorCode =
   | 'PART_ON_CHAPTER'
   /** A range mixing a whole chapter and a verse (`Is 40-41:5`). */
   | 'MIXED_RANGE'
+  /** Greek Esther's lettered chapters (`Est C:12`), which have no chapter number to key on. */
+  | 'UNSUPPORTED_GREEK_ESTHER_CHAPTER'
   /** A string that is not a canonical passage key. */
   | 'INVALID_KEY'
   /** A `Ref` object that breaks the shape rules (bad numbers, unknown book, no segments). */

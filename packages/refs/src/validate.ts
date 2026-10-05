@@ -3,10 +3,10 @@ import type { Book } from './books.ts';
 import { RefError } from './errors.ts';
 import type { Point, Ref, Segment } from './types.ts';
 
-const PART = /^[a-z]{1,2}$/;
+const PART = /^[a-g]{1,7}$/;
 
 function pointLabel(point: Point): string {
-  return point.v === undefined ? String(point.c) : `${point.c}:${point.v}`;
+  return point.v === undefined ? String(point.c) : `${point.c}:${point.v}${point.part ?? ''}`;
 }
 
 function checkNumber(n: number, what: string, input: string | undefined): void {
@@ -22,11 +22,7 @@ function checkPoint(point: Point, input: string | undefined): void {
     throw new RefError('PART_ON_CHAPTER', `A whole chapter (${point.c}) cannot carry a sub-verse letter`, input);
   }
   if (!PART.test(point.part)) {
-    throw new RefError(
-      'INVALID_REF',
-      `Sub-verse letters must be one or two lower-case letters, got "${point.part}"`,
-      input,
-    );
+    throw new RefError('INVALID_REF', `Sub-verse letters must be a run of the letters a–g, got "${point.part}"`, input);
   }
 }
 
@@ -45,7 +41,11 @@ export function checkSegment(book: Book, segment: Segment, input?: string): void
   if (book.singleChapter && (start.c !== 1 || end.c !== 1 || start.v === undefined)) {
     throw new RefError('SINGLE_CHAPTER', `${book.name} has a single chapter; cite it by verse`, input);
   }
-  const descending = end.c < start.c || (end.c === start.c && (end.v ?? 0) < (start.v ?? 0));
+  const sameVerse = end.c === start.c && end.v === start.v;
+  const descending =
+    end.c < start.c ||
+    (end.c === start.c && (end.v ?? 0) < (start.v ?? 0)) ||
+    (sameVerse && start.part !== undefined && end.part !== undefined && end.part < start.part);
   if (descending) {
     throw new RefError(
       'DESCENDING',

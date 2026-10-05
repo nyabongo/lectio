@@ -10,11 +10,17 @@ import { checkSegment } from './validate.ts';
 /** Hyphen, non-breaking hyphen, figure/en/em dashes, horizontal bar, minus and their full-width forms. */
 const DASHES = /[‐-―−﹘﹣－]/g;
 
-/** Book name (optionally numbered: `1 Cor`, `1Cor`, `I Cor`, `First Corinthians`), then the passage. */
+/** Book name (optionally numbered: `1 Cor`, `1Cor`, `I Cor`, `1st Cor`, `First Corinthians`), then the passage. */
 const HEAD = /^((?:[1-3]\s*|(?:i{1,3}|first|second|third)\s+)?[a-z][a-z.'’ ]*?)\s*(\d.*)?$/is;
 
-/** One comma- or semicolon-separated part: `20c`, `1-16a`, `20:1-16`, `9-12:8`, `11:9-12:8`. */
-const PART = /^(\d{1,3})(?:[:.](\d{1,3}))?([a-z]{0,2})(?:-(\d{1,3})(?:[:.](\d{1,3}))?([a-z]{0,2}))?$/;
+/**
+ * One comma- or semicolon-separated part: `20c`, `1-16a`, `20:1-16`, `9-12:8`, `11:9-12:8`, `8abcd`.
+ * Sub-verse letters run a–g (responsorial psalms and canticles use up to four: `2abc`, `4bcd`).
+ */
+const PART = /^(\d{1,3})(?:[:.](\d{1,3}))?([a-g]{0,7})(?:-(\d{1,3})(?:[:.](\d{1,3}))?([a-g]{0,7}))?$/;
+
+/** Greek Esther's lettered chapters as the lectionary cites them: `Est C:12, 14-16`. */
+const LETTER_CHAPTER = /^(.*?)\s*\b([a-f])\s*:\s*\d/is;
 
 function num(text: string | undefined): number | undefined {
   return text === undefined ? undefined : Number(text);
@@ -58,7 +64,15 @@ function parsePassage(book: Book, passage: string, input: string): Segment[] {
     .toLowerCase()
     .replace(DASHES, '-')
     .replace(/\s+and\s+/g, ',')
-    .replace(/\s+/g, '');
+    .replace(/\s*([:.,;-])\s*/g, '$1')
+    .trim();
+  if (/\s/.test(text)) {
+    throw new RefError(
+      'MALFORMED',
+      `Unexpected space in "${passage.trim()}": separate numbers with ":", "-", "," or ";"`,
+      input,
+    );
+  }
   const tokens = text.split(/([,;])/);
   const segments: Segment[] = [];
   let chapter: number | undefined;
@@ -87,6 +101,14 @@ function parsePassage(book: Book, passage: string, input: string): Segment[] {
  */
 export function parseRef(input: string): Ref {
   if (input.trim() === '') throw new RefError('EMPTY', 'The reference is empty');
+  const lettered = LETTER_CHAPTER.exec(input.trim());
+  if (lettered && findBook(String(lettered[1]))?.code === 'EST') {
+    throw new RefError(
+      'UNSUPPORTED_GREEK_ESTHER_CHAPTER',
+      `Greek Esther's lettered chapter ${String(lettered[2]).toUpperCase()} is not supported; cite the chapter and verse numbers instead`,
+      input,
+    );
+  }
   const head = HEAD.exec(input.trim());
   const name = head?.[1];
   if (head === null || name === undefined) {
