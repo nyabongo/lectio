@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/data/data.dart';
-import 'package:lectio/features/today/today_repository.dart';
 import 'package:lectio/features/today/today_screen.dart';
 import 'package:lectio/main.dart' as app;
 import 'package:lectio/src/app.dart';
@@ -21,12 +20,12 @@ int selectedTab(WidgetTester tester) =>
 void main() {
   // Today reads a fake API that publishes no days, so tests stay offline.
   setUp(() {
-    todayRepository = LectioRepository(
+    appRepository = LectioRepository(
       client: ApiClient(httpClient: FakeApi().client, baseUrl: FakeApi.baseUrl),
       cache: MemoryApiCache(),
     );
   });
-  tearDown(() => todayRepository = null);
+  tearDown(() => appRepository = null);
 
   testWidgets('main() starts on Today', (tester) async {
     SharedPreferences.setMockInitialValues({});

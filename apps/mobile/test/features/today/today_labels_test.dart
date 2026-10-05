@@ -36,7 +36,7 @@ void main() {
     expect(colourLabel('gold'), 'Gold');
     expect(colourLabel('green'), 'Green');
     expect(colourLabel('teal'), 'Green');
-    expect(colourSemantics('violet'), 'Liturgical colour: Violet');
+    expect(rankAndColourLabel('sunday', 'green'), 'Sunday · Green');
   });
 
   test('slotLabel names the slots, numbered ones included', () {

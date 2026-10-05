@@ -96,7 +96,9 @@ class DayHeader extends StatelessWidget {
   }
 }
 
-/// The colour swatch and rank of the principal celebration.
+/// The rank and colour name of the principal celebration, after a swatch of
+/// the colour. The name is visible text, so the colour is never told by the
+/// swatch alone; the swatch is hidden from screen readers.
 class _Rank extends StatelessWidget {
   const new({required this.celebration});
 
@@ -109,9 +111,7 @@ class _Rank extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Semantics(
-          label: colourSemantics(celebration.colour),
-          image: true,
+        ExcludeSemantics(
           child: Container(
             width: 12,
             height: 12,
@@ -124,7 +124,7 @@ class _Rank extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          rankLabel(celebration.rank),
+          rankAndColourLabel(celebration.rank, celebration.colour),
           style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
         ),
       ],
@@ -151,8 +151,8 @@ class DayDetails extends StatelessWidget {
   /// Opens the Listen tab for the day.
   final VoidCallback onListen;
 
-  /// Opens the notes of a reading.
-  final ValueChanged<DayReading> onNotes;
+  /// Opens the notes of a reading of a Mass.
+  final void Function(Mass<DayReading> mass, DayReading reading) onNotes;
 
   /// Opens the licensed text of a reading.
   final ValueChanged<DayReading> onText;
@@ -164,6 +164,7 @@ class DayDetails extends StatelessWidget {
       color: theme.colorScheme.onSurfaceVariant,
     );
     final day = snapshot.value;
+    final refreshError = snapshot.refreshError;
     final masses = day.masses;
     final hasNotes = day.readings.any((reading) => reading.passage != null);
     final showMassLabels = masses.length > 1;
@@ -178,10 +179,15 @@ class DayDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (snapshot.refreshError != null)
+        if (refreshError is ApiNetworkException)
           const TodayNotice(
             icon: Icons.cloud_off_outlined,
             text: TodayStrings.offline,
+          )
+        else if (refreshError != null)
+          const TodayNotice(
+            icon: Icons.sync_problem_outlined,
+            text: TodayStrings.refreshFailed,
           ),
         if (hasNotes)
           Padding(
@@ -214,7 +220,7 @@ class DayDetails extends StatelessWidget {
           for (final reading in mass.readings)
             ReadingCard(
               reading: reading,
-              onNotes: () => onNotes(reading),
+              onNotes: () => onNotes(mass, reading),
               onText: () => onText(reading),
             ),
         ],

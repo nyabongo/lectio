@@ -44,9 +44,14 @@ abstract final class TodayStrings {
   /// Retries loading the day.
   static const String retry = 'Try again';
 
-  /// A saved day is shown because refreshing it failed.
+  /// A saved day is shown because the network could not be reached.
   static const String offline =
       'Offline: showing the copy saved on this device.';
+
+  /// A saved day is shown because the server answered with an error.
+  static const String refreshFailed =
+      'The day could not be refreshed: showing the copy saved on this '
+      'device.';
 
   /// The link-out could not be opened.
   static const String linkFailed = 'The text could not be opened.';
@@ -97,9 +102,10 @@ String colourLabel(String colour) {
   };
 }
 
-/// What a screen reader says for the colour swatch.
-String colourSemantics(String colour) {
-  return 'Liturgical colour: ${colourLabel(colour)}';
+/// The rank with the colour named in words, `Sunday · Green`, so the colour
+/// is never told by a swatch alone.
+String rankAndColourLabel(String rank, String colour) {
+  return '${rankLabel(rank)} · ${colourLabel(colour)}';
 }
 
 final RegExp _numberedSlot = RegExp(r'^(reading|psalm)-(\d)$');

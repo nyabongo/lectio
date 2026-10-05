@@ -9,6 +9,7 @@ import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
 import 'package:lectio/features/today/today_screen.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/fake_api.dart';
 import '../../data/fixtures.dart';
@@ -42,6 +43,11 @@ Finder semanticsLabelled(String label) => find.byWidgetPredicate(
 Future<void> reveal(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
+}
+
+/// The location [router] shows.
+String location(GoRouter router) {
+  return router.routerDelegate.currentConfiguration.uri.toString();
 }
 
 /// The accent of the Today screen's theme.
@@ -117,8 +123,8 @@ void main() {
       expect(find.text('TODAY'), findsOneWidget);
       expect(find.text('Sunday 20 September 2026'), findsOneWidget);
       expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
-      expect(find.text('Sunday'), findsOneWidget);
-      expect(semanticsLabelled('Liturgical colour: Green'), findsOneWidget);
+      // The colour is named in words, not told by the swatch alone.
+      expect(find.text('Sunday · Green'), findsOneWidget);
       expect(find.text('Ordinary Time · Week 25'), findsOneWidget);
       expect(find.text('Sunday cycle A · Weekday cycle II'), findsOneWidget);
       expect(find.text(TodayStrings.backToToday), findsNothing);
@@ -160,7 +166,10 @@ void main() {
       await tester.tap(find.text(TodayStrings.notes));
       await tester.pumpAndSettle();
 
-      expect(find.text('reading date=$seedDate&slot=gospel'), findsOneWidget);
+      expect(
+        find.text('reading date=$seedDate&mass=day&slot=gospel'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Listen opens the Listen tab for the day', (tester) async {
@@ -205,6 +214,29 @@ void main() {
       expect(find.text(TodayStrings.linkFailed), findsOneWidget);
     });
 
+    for (final linkout in [
+      'intent://scan/#Intent;scheme=zxing;end',
+      'tel:+254700000000',
+      'file:///data/data/io.github.nyabongo.lectio/secrets',
+      'http://www.drbo.org/chapter/27055.htm',
+    ]) {
+      testWidgets('a link-out to ${linkout.split(':').first}: never opens', (
+        tester,
+      ) async {
+        api.serve(
+          'days/$seedDate.json',
+          editedDay((day) => readingsOf(day).first['linkout'] = linkout),
+        );
+        await pumpToday(tester);
+
+        await tester.tap(find.text(TodayStrings.text).first);
+        await tester.pumpAndSettle();
+
+        expect(opened, isEmpty);
+        expect(find.text(TodayStrings.linkFailed), findsOneWidget);
+      });
+    }
+
     testWidgets('pulling down while offline keeps the saved day', (
       tester,
     ) async {
@@ -218,13 +250,31 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(TodayStrings.offline), findsOneWidget);
+      expect(find.text(TodayStrings.refreshFailed), findsNothing);
+      expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
+    });
+
+    testWidgets('a server error on refresh is not called offline', (
+      tester,
+    ) async {
+      await pumpToday(tester);
+      api.status = 500;
+
+      final refresh = tester.state<RefreshIndicatorState>(
+        find.byType(RefreshIndicator),
+      );
+      unawaited(refresh.show());
+      await tester.pumpAndSettle();
+
+      expect(find.text(TodayStrings.refreshFailed), findsOneWidget);
+      expect(find.text(TodayStrings.offline), findsNothing);
       expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
     });
 
     testWidgets('the date picker opens another day and comes back', (
       tester,
     ) async {
-      await pumpToday(tester);
+      final router = await pumpToday(tester);
 
       await tester.tap(find.byTooltip(TodayStrings.chooseDate));
       await tester.pumpAndSettle();
@@ -232,6 +282,7 @@ void main() {
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
 
+      expect(location(router), '/today?date=2026-09-21');
       expect(api.paths.last, 'days/2026-09-21.json');
       expect(find.text('Monday 21 September 2026'), findsOneWidget);
       expect(find.text(TodayStrings.emptyDay), findsOneWidget);
@@ -240,6 +291,7 @@ void main() {
       await tester.tap(find.text(TodayStrings.backToToday));
       await tester.pumpAndSettle();
 
+      expect(location(router), '/today');
       expect(find.text('TODAY'), findsOneWidget);
       expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
     });
@@ -369,8 +421,7 @@ void main() {
     await pumpToday(tester);
 
     expect(find.text('Saint Example, Martyr'), findsOneWidget);
-    expect(find.text('Memorial'), findsOneWidget);
-    expect(semanticsLabelled('Liturgical colour: Red'), findsOneWidget);
+    expect(find.text('Memorial · Red'), findsOneWidget);
     expect(
       find.text('Saint Other · Optional memorial · White'),
       findsOneWidget,
@@ -381,6 +432,14 @@ void main() {
     expect(find.text('Mass of the day'), findsOneWidget);
     await reveal(tester, find.text('Vigil Mass'));
     expect(find.text('Vigil Mass'), findsOneWidget);
+
+    await reveal(tester, find.text(TodayStrings.notes).last);
+    await tester.tap(find.text(TodayStrings.notes).last);
+    await tester.pumpAndSettle();
+    expect(
+      find.text('reading date=$seedDate&mass=vigil&slot=gospel'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('a failed load offers to try again', (tester) async {
@@ -400,19 +459,35 @@ void main() {
     expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
   });
 
-  testWidgets('openExternally hands the link to the platform', (tester) async {
-    // No url_launcher implementation is registered in widget tests, so the
-    // platform call fails or never answers: nothing opens.
-    final result = await tester.runAsync(() async {
-      try {
-        return await openExternally(Uri.parse('https://www.drbo.org/'))
-            .timeout(const Duration(seconds: 1), onTimeout: () => false);
-      } on Object {
-        return false;
-      }
+  group('openExternally', () {
+    late List<(Uri, LaunchMode)> launched;
+
+    Future<bool> launch(Uri url, {LaunchMode mode = LaunchMode.inAppWebView}) {
+      launched.add((url, mode));
+      return Future.value(true);
+    }
+
+    setUp(() => launched = []);
+
+    test('launches https links in an external application', () async {
+      final url = Uri.parse('https://www.drbo.org/chapter/47020.htm');
+
+      expect(await openExternally(url, launch: launch), isTrue);
+      expect(launched, [(url, LaunchMode.externalApplication)]);
     });
 
-    expect(result, isFalse);
+    test('refuses every other scheme without launching', () async {
+      for (final url in [
+        'intent://scan/#Intent;end',
+        'tel:+254700000000',
+        'file:///etc/hosts',
+        'http://www.drbo.org/',
+        'sms:+254700000000',
+      ]) {
+        expect(await openExternally(Uri.parse(url), launch: launch), isFalse);
+      }
+      expect(launched, isEmpty);
+    });
   });
 
   test('parseIsoDate normalises yyyy-mm-dd and rejects anything else', () {
@@ -422,10 +497,15 @@ void main() {
     expect(parseIsoDate(null), isNull);
   });
 
-  test('the Reading and Listen locations carry the date', () {
+  test('the Today, Reading and Listen locations carry the date', () {
+    expect(todayLocation(seedDate, today: seedDate), '/today');
     expect(
-      readingLocation(seedDate, 'gospel'),
-      '/reading?date=2026-09-20&slot=gospel',
+      todayLocation('2026-09-21', today: seedDate),
+      '/today?date=2026-09-21',
+    );
+    expect(
+      readingLocation(seedDate, 'vigil', 'gospel'),
+      '/reading?date=2026-09-20&mass=vigil&slot=gospel',
     );
     expect(listenLocation(seedDate), '/listen?date=2026-09-20');
   });

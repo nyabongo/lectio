@@ -1,8 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/data/data.dart';
-import 'package:lectio/features/today/today_repository.dart';
 
-import '../../data/fake_api.dart';
+import 'fake_api.dart';
 
 void main() {
   group('LazyApiCache', () {
@@ -62,21 +61,21 @@ void main() {
     });
   });
 
-  group('todayRepository', () {
-    tearDown(() => todayRepository = null);
+  group('appRepository', () {
+    tearDown(() => appRepository = null);
 
     test('is built once and can be replaced', () {
-      final first = todayRepository;
-      expect(todayRepository, same(first));
+      final first = appRepository;
+      expect(appRepository, same(first));
 
       final replacement = createLectioRepository(
         openCache: () async => MemoryApiCache(),
       );
-      todayRepository = replacement;
-      expect(todayRepository, same(replacement));
+      appRepository = replacement;
+      expect(appRepository, same(replacement));
 
-      todayRepository = null;
-      expect(todayRepository, isNot(same(replacement)));
+      appRepository = null;
+      expect(appRepository, isNot(same(replacement)));
     });
   });
 }

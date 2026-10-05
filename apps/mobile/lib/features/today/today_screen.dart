@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
-import 'package:lectio/features/today/today_repository.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,9 +12,20 @@ import 'package:url_launcher/url_launcher.dart';
 /// Opens [url] outside the app; `false` when nothing could open it.
 typedef UrlOpener = Future<bool> Function(Uri url);
 
-/// Opens [url] in the browser or the app that handles it.
-Future<bool> openExternally(Uri url) {
-  return launchUrl(url, mode: LaunchMode.externalApplication);
+/// Launches a URL in [mode], as `url_launcher`'s `launchUrl` does.
+typedef UrlLauncher = Future<bool> Function(Uri url, {LaunchMode mode});
+
+/// Whether [url] may be opened as a link-out: `https` only, so a bad or
+/// tampered document can never launch `intent:`, `tel:`, `file:` or plain
+/// `http:` links (decision 001).
+bool isSafeLinkout(Uri url) => url.scheme == 'https';
+
+/// Opens [url] in the browser or the app that handles it, through [launch]
+/// (default: `launchUrl`); `false` without launching when it is not
+/// [isSafeLinkout].
+Future<bool> openExternally(Uri url, {UrlLauncher launch = launchUrl}) async {
+  if (!isSafeLinkout(url)) return false;
+  return launch(url, mode: LaunchMode.externalApplication);
 }
 
 final RegExp _isoDate = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$');
@@ -35,11 +45,22 @@ String? parseIsoDate(String? date) {
   );
 }
 
-/// The location of the Reading tab for the reading in [slot] on [date].
-String readingLocation(String date, String slot) {
+/// The location of the Today tab for [date]: plain `/today` for [today].
+String todayLocation(String date, {required String today}) {
+  if (date == today) return AppRoute.today.path;
+  return Uri(
+    path: AppRoute.today.path,
+    queryParameters: {'date': date},
+  ).toString();
+}
+
+/// The location of the Reading tab for the reading in [slot] of the Mass
+/// [mass] (its `masses[].id`, as `day` or `vigil`) on [date]. The Mass
+/// tells apart a slot that two Masses of one day share.
+String readingLocation(String date, String mass, String slot) {
   return Uri(
     path: AppRoute.reading.path,
-    queryParameters: {'date': date, 'slot': slot},
+    queryParameters: {'date': date, 'mass': mass, 'slot': slot},
   ).toString();
 }
 
@@ -55,7 +76,8 @@ String listenLocation(String date) {
 /// with their notes and link-outs, as on the site's Today page.
 ///
 /// It shows the device's date, or [date] when given (`/today?date=…`). The
-/// date button opens a date picker to read another day. The day is read
+/// date button opens a date picker; the picked day goes into the location,
+/// so it can be restored and shared. The day is read
 /// offline-first from [repository] and tints the screen with its liturgical
 /// colour; pulling down refreshes it.
 class TodayScreen extends StatefulWidget {
@@ -158,10 +180,11 @@ class _TodayScreenState extends State<TodayScreen> {
       helpText: TodayStrings.chooseDate,
     );
     if (picked == null || !mounted) return;
-    _show(isoDate(picked));
+    context.go(todayLocation(isoDate(picked), today: _today));
   }
 
   Future<bool> _tryOpen(Uri url) async {
+    if (!isSafeLinkout(url)) return false;
     try {
       return await (widget.openUrl ?? openExternally)(url);
     } on Exception {
@@ -190,14 +213,17 @@ class _TodayScreenState extends State<TodayScreen> {
       date: _date,
       day: snapshot?.value,
       onPickDate: () => unawaited(_pickDate()),
-      onToday: _date == today ? null : () => _show(today),
+      onToday: _date == today
+          ? null
+          : () => context.go(todayLocation(today, today: today)),
     );
     final Widget body;
     if (snapshot != null) {
       body = DayDetails(
         snapshot: snapshot,
         onListen: () => context.go(listenLocation(_date)),
-        onNotes: (reading) => context.go(readingLocation(_date, reading.slot)),
+        onNotes: (mass, reading) =>
+            context.go(readingLocation(_date, mass.id, reading.slot)),
         onText: (reading) => unawaited(_openText(reading)),
       );
     } else if (error is ApiNotFoundException) {
@@ -237,7 +263,7 @@ class _TodayScreenState extends State<TodayScreen> {
 /// The Today route inside the tab shell. `/today?date=yyyy-mm-dd` opens
 /// another day.
 ///
-/// [repository] defaults to the shared [todayRepository]; [clock] and
+/// [repository] defaults to the shared [appRepository]; [clock] and
 /// [openUrl] are for tests.
 GoRoute todayRoute({
   LectioRepository? repository,
@@ -248,7 +274,7 @@ GoRoute todayRoute({
     path: AppRoute.today.path,
     name: AppRoute.today.name,
     builder: (context, state) => TodayScreen(
-      repository: repository ?? todayRepository,
+      repository: repository ?? appRepository,
       date: state.uri.queryParameters['date'],
       clock: clock,
       openUrl: openUrl,

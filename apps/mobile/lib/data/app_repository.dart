@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:lectio/data/data.dart';
+import 'package:lectio/data/api_cache.dart';
+import 'package:lectio/data/api_client.dart';
+import 'package:lectio/data/file_api_cache.dart';
+import 'package:lectio/data/repository.dart';
 
 /// An [ApiCache] that opens the cache it delegates to on first use, so the
 /// repository can be built synchronously while the on-disk cache needs the
@@ -41,17 +44,17 @@ LectioRepository createLectioRepository({
   );
 }
 
-LectioRepository? _todayRepository;
+LectioRepository? _appRepository;
 
-/// The repository the Today route reads when it is given none, built on
-/// first use with [createLectioRepository].
-LectioRepository get todayRepository {
-  return _todayRepository ??= createLectioRepository();
+/// The repository every screen reads when it is given none, built on first
+/// use with [createLectioRepository].
+LectioRepository get appRepository {
+  return _appRepository ??= createLectioRepository();
 }
 
 /// Replaces the shared repository, for example with one over a fake API in
 /// tests; `null` builds a new default one on next use.
 @visibleForTesting
-set todayRepository(LectioRepository? repository) {
-  _todayRepository = repository;
+set appRepository(LectioRepository? repository) {
+  _appRepository = repository;
 }
