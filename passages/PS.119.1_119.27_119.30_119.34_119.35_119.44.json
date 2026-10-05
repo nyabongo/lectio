@@ -141,7 +141,7 @@
     {
       "id": "c13",
       "text": "פִּקּוּד occurs twenty-four times, all in the Psalms, twenty-one of them in Psalm 119.",
-      "sourceIds": ["bdb-6490-count", "bdb-6490-psalms", "biblehub-6490-ps-119"],
+      "sourceIds": ["englishmans-6490-count", "bdb-6490-psalms", "biblehub-6490-ps-119"],
       "sensitive": false
     },
     {
@@ -503,7 +503,7 @@
       "retrievedAt": "2026-10-05T09:14:00Z"
     },
     {
-      "id": "bdb-6490-count",
+      "id": "englishmans-6490-count",
       "type": "web",
       "citation": "Englishman's Hebrew Concordance (Wigram), 6490 פִּקּוּד (Bible Hub)",
       "url": "https://biblehub.com/hebrew/6490.htm",
