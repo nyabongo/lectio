@@ -106,7 +106,7 @@ describe('approval commit validity', () => {
   });
 
   it('rejects every approval commit when the PR number is unknown', () => {
-    for (const unknown of [undefined, 0]) {
+    for (const unknown of [0, -1, 1.5]) {
       expect(approvalCommitProblems(approvalCommit(), unknown)).toEqual([
         `the PR number is unknown, so run ${RUN_ID} cannot be tied to it`,
       ]);

@@ -29,7 +29,7 @@ import {
   verifierResult,
 } from './fixtures/facts.ts';
 import { DECISIONS, GREEN_DECISIONS, MERGE_RULES, assess, decide, factsFromContext, mergeRuleGate } from './index.ts';
-import type { PullRequestFacts } from './index.ts';
+import type { PullRequestFacts } from '../core/pull-request.ts';
 
 function config(autoMerge: Partial<LectioConfig['autoMerge']> = {}, contentRoot = '.'): LectioConfig {
   return {
@@ -197,7 +197,17 @@ describe('needs-review', () => {
         'packages/gates/src/x.ts is outside passages/',
         'the PR comes from a fork',
       ],
+      manualMerge: true,
     });
+  });
+
+  it('marks a .github/** PR for a manual merge whatever the decision', () => {
+    const files = [PASSAGE, './.github/workflows/content-gates.yml'];
+    expect(run(greenResults(), { files }).manualMerge).toBe(true);
+    expect(run([], { files, approval: human })).toMatchObject({ decision: 'human-approved', manualMerge: true });
+    expect(run([], { files: [PASSAGE, 'config/lectio.config.json'], approval: human })).not.toHaveProperty(
+      'manualMerge',
+    );
   });
 
   it('a protected path needs review even with perfect scores and every option off', () => {
@@ -220,6 +230,11 @@ describe('needs-review', () => {
     ['missing', [...DETERMINISTIC_PASS], 'the verifiers were skipped'],
     ['failed', [...DETERMINISTIC_PASS, failResult('verifiers')], 'the verifiers gate failed'],
     ['unreadable', [...DETERMINISTIC_PASS, passResult('verifiers')], 'the verifiers result has no meta.claims list'],
+    [
+      'fakes',
+      [...DETERMINISTIC_PASS, passResult('verifiers', { fake: true, claims: [claim('c1')] })],
+      'the verdicts came from fake verifier clients',
+    ],
     ['empty', [...DETERMINISTIC_PASS, verifierResult([])], 'the verifiers checked no claims'],
   ])('needs review when the verifiers are %s', (_name, results, reason) => {
     expect(run(results)).toEqual({ decision: 'needs-review', reasons: [reason] });
@@ -327,7 +342,7 @@ describe('mergeRuleGate', () => {
           message: 'every gate passed and both verifiers support all 2 claims at 0.9 or higher, with no refutation',
         },
       ],
-      meta: { decision: 'auto-merge' },
+      meta: { decision: 'auto-merge', manualMerge: false },
     });
   });
 
@@ -390,6 +405,7 @@ describe('mergeRuleGate', () => {
       approvalCommit: null,
       lastContentCommitAt: null,
       fork: false,
+      number: 0,
     });
   });
 });

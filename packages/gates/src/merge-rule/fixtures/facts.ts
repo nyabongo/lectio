@@ -3,8 +3,7 @@
  * commits. The decision table (tests/gates/05-merge-rule.gate.test.ts) and the unit tests share them.
  */
 import type { GateResult } from '../../core/result.ts';
-import type { ApprovalCommit } from '../approval.ts';
-import type { PullRequestFacts } from '../index.ts';
+import type { ApprovalCommit, PullRequestFacts } from '../../core/pull-request.ts';
 import type { VerifierClaimRecord, VerifierVerdict } from '../verifiers.ts';
 
 export const PASSAGE = 'passages/MT.20.1-16.json';

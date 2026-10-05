@@ -10,8 +10,8 @@
  * 2. `approved-commit` when the head is a valid approval commit (verifier results not needed);
  *    `blocked` when it carries a `Lectio-Approval` trailer that fails the validity rule (forged).
  * 3. `blocked` when the PR sets a review block to approved without a verified approval.
- * 4. `human-approved` when a configured reviewer (the PR author included) approved by label,
- *    comment or CLI after the last content commit.
+ * 4. `human-approved` when a configured reviewer (the PR author included) approved by label or
+ *    comment after the last content commit.
  * 5. `needs-review` when any review condition holds (protected path, auto-merge disabled,
  *    verifiers skipped or unreadable, low support, refutations, sensitive claims, gate flags,
  *    files outside passages/, fork PR, a deterministic gate that did not run).
@@ -22,12 +22,12 @@ import { posix } from 'node:path';
 import type { LectioConfig } from '@lectio/config';
 
 import type { Gate, GateContext } from '../core/gate.ts';
+import type { PullRequestApproval, PullRequestFacts } from '../core/pull-request.ts';
 import { finding, resultFromFindings } from '../core/result.ts';
 import type { GateResult, Severity } from '../core/result.ts';
 import { defineRule } from '../core/rules.ts';
 import type { Rule } from '../core/rules.ts';
 import { approvalCommitProblems } from './approval.ts';
-import type { ApprovalCommit } from './approval.ts';
 import { approvedReviewEdits } from './review-edits.ts';
 import { VERIFIER_ROLES, readVerifierClaims } from './verifiers.ts';
 
@@ -41,7 +41,7 @@ export {
   lastContentCommitAt,
   parseApprovalTrailer,
 } from './approval.ts';
-export type { ApprovalCommit, ApprovalKind, ApprovalTrailer, PullRequestCommit } from './approval.ts';
+export type { ApprovalKind, ApprovalTrailer, PullRequestCommit } from './approval.ts';
 export { approvedReviewEdits } from './review-edits.ts';
 export { VERDICTS, VERIFIER_ROLES, readVerifierClaims } from './verifiers.ts';
 export type {
@@ -68,30 +68,6 @@ export type Decision = (typeof DECISIONS)[number];
 /** Decisions after which the merge-rule job ends green. */
 export const GREEN_DECISIONS: ReadonlySet<Decision> = new Set(['approved-commit', 'human-approved', 'auto-merge']);
 
-/** A reviewer's approval: an `approved` label or `/approve` comment (or the local CLI). */
-export interface PullRequestApproval {
-  readonly handle: string;
-  readonly via: 'cli' | 'label' | 'comment';
-  /** ISO timestamp. */
-  readonly at: string;
-}
-
-/** What the merge rule knows about the pull request (assembled by the CI job, L-031). */
-export interface PullRequestFacts {
-  /** Every changed path, repository-relative (include the old path of a rename). */
-  readonly files: readonly string[];
-  /** Files whose review block the PR sets to approved (see `approvedReviewEdits`). */
-  readonly reviewEdits: readonly string[];
-  readonly approval: PullRequestApproval | null;
-  /** The head commit when it carries a `Lectio-Approval` trailer. */
-  readonly approvalCommit: ApprovalCommit | null;
-  /** ISO timestamp of the last commit that changed content (approval commits excluded; `lastContentCommitAt`). */
-  readonly lastContentCommitAt: string | null;
-  readonly fork: boolean;
-  /** The PR number; an approval commit is valid only for a run of this PR, so without it none is. */
-  readonly number?: number;
-}
-
 export interface DecideInput {
   readonly results: readonly GateResult[];
   readonly config: LectioConfig;
@@ -101,6 +77,11 @@ export interface DecideInput {
 export interface DecideOutput {
   readonly decision: Decision;
   readonly reasons: readonly string[];
+  /**
+   * The PR changes `.github/**`: whatever the decision, the merge job (L-031) must not merge it or
+   * dispatch workflows; a maintainer merges it by hand after approval. Omitted when false.
+   */
+  readonly manualMerge?: true;
 }
 
 export const MERGE_RULES = {
@@ -126,7 +107,7 @@ export const MERGE_RULES = {
   ),
   humanApproval: defineRule(
     'merge-rule/human-approval',
-    'A configured reviewer’s label, /approve comment or CLI approval after the last content commit approves the PR.',
+    'A configured reviewer’s label or /approve comment after the last content commit approves the PR.',
     'Ask a reviewer in config.reviewer.githubHandles to approve again after the last content commit.',
   ),
   autoMerge: defineRule(
@@ -153,6 +134,11 @@ export const MERGE_RULES = {
     'merge-rule/verifiers-ran',
     'The verifiers must run and report readable per-claim scores before a PR can auto-merge.',
     'Re-run the gates with both verifier keys configured, or ask a reviewer to approve.',
+  ),
+  liveVerifiers: defineRule(
+    'merge-rule/live-verifiers',
+    'Verdicts from fake verifier clients (meta.fake) never auto-merge a PR.',
+    'Re-run the gates with live verifier clients (both keys configured), or ask a reviewer to approve.',
   ),
   bothVerifiers: defineRule(
     'merge-rule/both-verifiers',
@@ -312,6 +298,8 @@ function verifierConditions(input: DecideInput, results: readonly GateResult[]):
   if (result === undefined || result.status === 'skipped')
     return [{ rule: MERGE_RULES.verifiersRan, message: 'the verifiers were skipped' }];
   if (result.status === 'fail') return [{ rule: MERGE_RULES.verifiersRan, message: 'the verifiers gate failed' }];
+  if (result.meta['fake'] === true)
+    return [{ rule: MERGE_RULES.liveVerifiers, message: 'the verdicts came from fake verifier clients' }];
   const read = readVerifierClaims(result.meta);
   if (!read.ok) return [{ rule: MERGE_RULES.verifiersRan, message: read.error }];
   if (read.claims.length === 0) return [{ rule: MERGE_RULES.verifiersRan, message: 'the verifiers checked no claims' }];
@@ -422,10 +410,22 @@ export function assess(input: DecideInput): Assessment {
   return { decision: 'auto-merge', reasons: [autoMergeReason(results, config)] };
 }
 
+/** Paths the merge job never merges by itself, even after approval: a maintainer merges by hand. */
+export const MANUAL_MERGE_PATH_PREFIXES = ['.github/'] as const;
+
+/** Whether a PR changing `files` must be merged by hand (it touches `.github/**`). */
+export function needsManualMerge(files: readonly string[]): boolean {
+  return files.some((file) => MANUAL_MERGE_PATH_PREFIXES.some((prefix) => normalizePath(file).startsWith(prefix)));
+}
+
 /** The merge rule: one decision and its reasons for a PR. Pure; never returns `close`. */
 export function decide(input: DecideInput): DecideOutput {
   const { decision, reasons } = assess(input);
-  return { decision, reasons: reasons.map((reason) => reason.message) };
+  return {
+    decision,
+    reasons: reasons.map((reason) => reason.message),
+    ...(needsManualMerge(input.pr.files) ? { manualMerge: true as const } : {}),
+  };
 }
 
 const SEVERITY: Readonly<Record<Decision, Severity>> = {
@@ -438,7 +438,7 @@ const SEVERITY: Readonly<Record<Decision, Severity>> = {
 
 /**
  * The PR facts a gate run can see: the changed files (old paths of renames included) and the
- * review blocks set to approved. Approvals, approval commits, commit times and fork status come
+ * review blocks set to approved, with PR number 0 (no PR, so no approval commit is valid). Approvals, approval commits, commit times and fork status come
  * from GitHub, so only the CI job (L-031) knows them and calls `decide` itself.
  */
 export function factsFromContext(context: GateContext): PullRequestFacts {
@@ -452,16 +452,14 @@ export function factsFromContext(context: GateContext): PullRequestFacts {
     approvalCommit: null,
     lastContentCommitAt: null,
     fork: false,
+    number: 0,
   };
 }
 
 /** Runs the merge rule over the gates that ran before it and reports the decision and its reasons. */
 export function runMergeRule(context: GateContext): GateResult {
-  const { decision, reasons } = assess({
-    results: context.results,
-    config: context.config,
-    pr: factsFromContext(context),
-  });
+  const facts = factsFromContext(context);
+  const { decision, reasons } = assess({ results: context.results, config: context.config, pr: facts });
   const items = reasons.map((reason) =>
     finding(reason.rule, {
       ...(reason.file === undefined ? {} : { file: reason.file }),
@@ -470,7 +468,7 @@ export function runMergeRule(context: GateContext): GateResult {
       severity: reason.severity ?? SEVERITY[decision],
     }),
   );
-  return resultFromFindings(MERGE_RULE_GATE_ID, items, { decision });
+  return resultFromFindings(MERGE_RULE_GATE_ID, items, { decision, manualMerge: needsManualMerge(facts.files) });
 }
 
 export const mergeRuleGate: Gate = {

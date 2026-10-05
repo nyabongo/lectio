@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_CONFIG, loadConfig } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
-import type { GateResult } from '@lectio/gates';
+import type { GateResult, PullRequestFacts } from '@lectio/gates';
 
 import {
   APPROVAL_COMMIT_AT,
@@ -32,7 +32,7 @@ import {
   verifierResult,
 } from '../../packages/gates/src/merge-rule/fixtures/facts.ts';
 import { decide, lastContentCommitAt, mergeRuleGate } from '../../packages/gates/src/merge-rule/index.ts';
-import type { Decision, PullRequestFacts, VerifierClaimRecord } from '../../packages/gates/src/merge-rule/index.ts';
+import type { Decision, VerifierClaimRecord } from '../../packages/gates/src/merge-rule/index.ts';
 import { REPO_ROOT, gateTest } from './helpers/gate-test.ts';
 
 interface SeedPassage {
@@ -72,6 +72,8 @@ interface Row {
   readonly decision: Decision;
   /** A reason the decision must give (substring). */
   readonly because?: string;
+  /** The PR touches .github/**: the merge job must leave the merge to a maintainer. */
+  readonly manualMerge?: true;
 }
 
 const TABLE: Record<string, Row> = {
@@ -209,11 +211,12 @@ const TABLE: Record<string, Row> = {
     decision: 'needs-review',
     because: 'under packages/gates/**',
   },
-  'protected path (.github/**) with perfect scores → needs-review': {
+  'protected path (.github/**) with perfect scores → needs-review, merged by hand (manualMerge)': {
     results: perfect(),
     pr: { files: ['.github/workflows/content-gates.yml'] },
     decision: 'needs-review',
     because: 'under .github/**',
+    manualMerge: true,
   },
   'generator-sensitive seed claims (c5, c18, c22) → needs-review': {
     results: perfect(seedClaims()),
@@ -274,6 +277,27 @@ const TABLE: Record<string, Row> = {
     decision: 'needs-review',
     because: 'autoMerge.enabled is false',
   },
+  'perfect scores from fake verifier clients (meta.fake) → needs-review': {
+    results: [...DETERMINISTIC_PASS, { ...verifierResult(plainClaims()), meta: { fake: true, claims: plainClaims() } }],
+    decision: 'needs-review',
+    because: 'the verdicts came from fake verifier clients',
+  },
+  '.github/** change approved by a reviewer → human-approved, merged by hand (manualMerge)': {
+    results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
+    pr: { files: [PASSAGE, '.github/workflows/content-gates.yml'], approval: label },
+    decision: 'human-approved',
+    manualMerge: true,
+  },
+  'config/** change approved by a reviewer → human-approved, the merge job may merge': {
+    results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
+    pr: { files: [PASSAGE, 'config/lectio.config.json'], approval: label },
+    decision: 'human-approved',
+  },
+  'fork PR approved by a reviewer → human-approved': {
+    results: perfect(),
+    pr: { fork: true, approval: comment },
+    decision: 'human-approved',
+  },
   'fork PR with perfect scores → needs-review': {
     results: perfect(),
     pr: { fork: true },
@@ -298,6 +322,7 @@ describe('merge rule decision table (decision 003)', () => {
   it.each(Object.entries(TABLE))('%s', (_name, row) => {
     const outcome = decide({ results: row.results, config: row.config ?? config, pr: prFacts(row.pr) });
     expect(outcome.decision).toBe(row.decision);
+    expect(outcome.manualMerge).toBe(row.manualMerge);
     if (row.because !== undefined) expect(outcome.reasons.join('\n')).toContain(row.because);
   });
 

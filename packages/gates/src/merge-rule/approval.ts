@@ -12,6 +12,8 @@
  * An approval commit is not a content commit: it never resets the time of the last content
  * commit, so the approval it records still counts after it lands.
  */
+import type { ApprovalCommit } from '../core/pull-request.ts';
+
 export const APPROVAL_TRAILER_KEY = 'Lectio-Approval';
 
 /** The workflow whose merge-rule job writes approval commits (L-031). */
@@ -20,33 +22,7 @@ export const APPROVAL_WORKFLOW = 'content-gates.yml';
 /** Events that start a content-gates.yml run (L-031). */
 export const APPROVAL_RUN_EVENTS = ['pull_request', 'issue_comment', 'workflow_dispatch'] as const;
 
-export type ApprovalKind = 'human' | 'auto';
-
-/** The head commit when it carries a `Lectio-Approval` trailer, with the facts needed to validate it. */
-export interface ApprovalCommit {
-  readonly kind: ApprovalKind;
-  /** The trailer's `run=`. */
-  readonly runId: string;
-  /** The trailer's `head=`. */
-  readonly trailerHead: string;
-  /** The commit's (only) parent. */
-  readonly parentSha: string;
-  /** Authored by github-actions[bot]. */
-  readonly authorIsBot: boolean;
-  /** GitHub reports the signature as verified. */
-  readonly signatureVerified: boolean;
-  /** The workflow run `runId` names, as the Actions API reports it. */
-  readonly run: {
-    /** Workflow file, e.g. `content-gates.yml` or `.github/workflows/content-gates.yml`. */
-    readonly workflow: string;
-    /** The pull request the run belongs to. */
-    readonly prNumber: number;
-    /** The event that triggered the run. */
-    readonly event: string;
-    /** The run's head SHA (main's tip for `issue_comment` runs). */
-    readonly headSha: string;
-  };
-}
+export type ApprovalKind = ApprovalCommit['kind'];
 
 export interface ApprovalTrailer {
   readonly kind: ApprovalKind;
@@ -86,7 +62,7 @@ const sameWorkflow = (workflow: string): boolean =>
  * Why an approval commit is not valid for PR `prNumber` (empty when it is valid). An unknown PR
  * number makes every approval commit invalid: the run cannot be tied to this PR.
  */
-export function approvalCommitProblems(commit: ApprovalCommit, prNumber: number | undefined): string[] {
+export function approvalCommitProblems(commit: ApprovalCommit, prNumber: number): string[] {
   const problems: string[] = [];
   const { run } = commit;
   if (!commit.authorIsBot) problems.push('it is not authored by github-actions[bot]');
@@ -94,7 +70,7 @@ export function approvalCommitProblems(commit: ApprovalCommit, prNumber: number 
   if (!RUN_ID.test(commit.runId)) problems.push(`its run id "${commit.runId}" is not a workflow run id`);
   if (!sameWorkflow(run.workflow))
     problems.push(`run ${commit.runId} is a ${run.workflow} run, not ${APPROVAL_WORKFLOW}`);
-  if (prNumber === undefined || prNumber === 0)
+  if (!Number.isInteger(prNumber) || prNumber <= 0)
     problems.push('the PR number is unknown, so run ' + commit.runId + ' cannot be tied to it');
   else if (run.prNumber !== prNumber)
     problems.push(`run ${commit.runId} belongs to PR #${String(run.prNumber)}, not #${String(prNumber)}`);
