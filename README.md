@@ -104,6 +104,8 @@ measures `packages/*/src/**` at the 96% floor.
 
 The code in this repository is released under the [MIT Licence](LICENSE).
 
-Content and data keep their own licences, recorded next to them: the original-language corpora under `corpus/*/LICENSE.md`
-and `SOURCE.json`, the fonts under their OFL licence files, and the versification data under `packages/refs/data/SOURCE.json`.
-Lectio never stores the text of any Bible translation.
+Content and data keep their own licences, recorded next to them: the original-language and ancient-version corpora
+under `corpus/*/LICENSE.md` and `SOURCE.json`, the fonts under their OFL licence files, and the versification data
+under `packages/refs/data/SOURCE.json`. Some of that data is copyleft (for example MorphGNT under CC BY-SA 3.0), so
+redistributing it carries its licence's terms. Lectio never stores the text of a copyrighted modern Bible translation;
+readings link out to a licensed source instead.
