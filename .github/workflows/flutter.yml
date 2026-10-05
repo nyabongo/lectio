@@ -93,10 +93,14 @@ jobs:
           fi
       - run: flutter analyze
         if: steps.changes.outputs.relevant == 'true'
+      # Import every lib/ file from a generated test, so files no test loads
+      # still count (as uncovered) in lcov.
+      - run: dart run tool/check_coverage.dart --prepare
+        if: steps.changes.outputs.relevant == 'true'
       - run: flutter test --coverage
         if: steps.changes.outputs.relevant == 'true'
-      # Dart line coverage >= minCoverage (96) in tool/check_coverage.dart, every
-      # lib/ file loaded by a test, generated *.g.dart/*.freezed.dart excluded.
+      # Dart line coverage >= minCoverage (96) in tool/check_coverage.dart,
+      # generated *.g.dart/*.freezed.dart excluded.
       - run: dart run tool/check_coverage.dart
         if: steps.changes.outputs.relevant == 'true'
       - name: Upload lcov

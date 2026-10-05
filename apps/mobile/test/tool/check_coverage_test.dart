@@ -112,7 +112,7 @@ void main() {
       expect(report.passed, isTrue);
     });
 
-    test('fails when a lib/ file is loaded by no test', () {
+    test('lists lib/ files absent from lcov as having no lines', () {
       final report = checkCoverage(
         lcov: {
           'lib/a.dart': {1: 1},
@@ -120,10 +120,8 @@ void main() {
         libFiles: ['lib/a.dart', 'lib/b.dart', 'lib/b.g.dart'],
       );
       expect(report.percent, 100);
-      expect(report.unloaded, ['lib/b.dart']);
-      expect(report.problems, [
-        'lib/b.dart is not loaded by any test (counts as uncovered)',
-      ]);
+      expect(report.withoutLines, ['lib/b.dart']);
+      expect(report.passed, isTrue);
     });
 
     test('ignores generated files and files outside lib/', () {
@@ -175,7 +173,41 @@ void main() {
       expect(dartFilesUnder(root.path, 'missing'), isEmpty);
     });
 
+    test('importAllSource imports every non-generated lib/ file', () {
+      final source = importAllSource([
+        'lib/main.dart',
+        'lib/src/a.dart',
+        'lib/src/a.g.dart',
+      ]);
+      expect(source, contains("import 'package:lectio/main.dart';"));
+      expect(source, contains("import 'package:lectio/src/a.dart';"));
+      expect(source, isNot(contains('a.g.dart')));
+      expect(source, endsWith('void main() {}\n'));
+    });
+
+    test('prepare writes the import-all test', () {
+      writeFile('lib/a.dart', '');
+      final out = StringBuffer();
+      expect(prepare(root.path, out: out), 0);
+      final written = File('${root.path}/$importAllTest').readAsStringSync();
+      expect(written, importAllSource(['lib/a.dart']));
+      expect(out.toString(), contains('wrote $importAllTest'));
+    });
+
+    test('run fails when the import-all test is missing or stale', () {
+      writeFile('lib/a.dart', '');
+      final out = StringBuffer();
+      final err = StringBuffer();
+      expect(run(root.path, out: out, err: err), 1);
+      expect(err.toString(), contains('is missing or stale'));
+
+      prepare(root.path, out: out);
+      writeFile('lib/b.dart', '');
+      expect(run(root.path, out: out, err: err), 1);
+    });
+
     test('run fails without coverage/lcov.info', () {
+      prepare(root.path, out: StringBuffer());
       final out = StringBuffer();
       final err = StringBuffer();
       expect(run(root.path, out: out, err: err), 1);
@@ -185,24 +217,26 @@ void main() {
     test('run passes and reports the total', () {
       final lcov = record('${root.path}/lib/a.dart', {1: 1, 2: 1});
       writeFile('lib/a.dart', '');
+      writeFile('lib/constants.dart', '');
       writeFile('coverage/lcov.info', lcov);
+      prepare(root.path, out: StringBuffer());
       final out = StringBuffer();
       final err = StringBuffer();
       expect(run(root.path, out: out, err: err), 0);
       expect(out.toString(), contains('100.00% (2/2 lines), minimum 96.0%'));
+      expect(out.toString(), contains('lib/constants.dart: no executable'));
       expect(err.toString(), isEmpty);
     });
 
     test('run fails below the threshold and lists uncovered lines', () {
       writeFile('lib/a.dart', '');
-      writeFile('lib/b.dart', '');
       writeFile('coverage/lcov.info', record('lib/a.dart', {1: 1, 2: 0}));
+      prepare(root.path, out: StringBuffer());
       final out = StringBuffer();
       final err = StringBuffer();
       expect(run(root.path, out: out, err: err), 1);
       expect(out.toString(), contains('lib/a.dart: uncovered lines 2'));
       expect(err.toString(), contains('is below 96.0%'));
-      expect(err.toString(), contains('lib/b.dart is not loaded by any test'));
     });
   });
 }
