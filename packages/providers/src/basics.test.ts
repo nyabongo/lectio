@@ -101,6 +101,8 @@ describe('source fetchers', () => {
       text: 'error page',
       contentType: 'text/plain',
       retrievedAt: '2026-10-05T00:00:00.000Z',
+      finalUrl: 'https://example.org/a',
+      fromArchive: false,
     });
     expect(await fetcher.fetch('https://example.org/b')).toMatchObject({
       status: 200,
@@ -108,6 +110,53 @@ describe('source fetchers', () => {
       contentType: 'text/html; charset=utf-8',
     });
     expect(fetcher.fetched).toEqual(['https://example.org/a', 'https://example.org/b']);
+  });
+
+  it('reports redirects and falls back to the archive only when the page fails', async () => {
+    const fetcher = new MemorySourceFetcher({
+      'https://example.org/old': { text: 'moved', finalUrl: 'https://example.org/new' },
+      'https://example.org/down': { status: 503 },
+      'https://archive.test/down': { text: 'archived copy' },
+      'https://archive.test/gone': { status: 404 },
+    });
+    expect(await fetcher.fetch('https://example.org/old', { archivedUrl: 'https://archive.test/down' })).toMatchObject({
+      text: 'moved',
+      finalUrl: 'https://example.org/new',
+      fromArchive: false,
+    });
+    expect(await fetcher.fetch('https://example.org/down', { archivedUrl: 'https://archive.test/down' })).toMatchObject(
+      {
+        status: 200,
+        text: 'archived copy',
+        finalUrl: 'https://archive.test/down',
+        fromArchive: true,
+      },
+    );
+    expect(await fetcher.fetch('https://example.org/down', { archivedUrl: 'https://archive.test/gone' })).toMatchObject(
+      {
+        status: 503,
+        finalUrl: 'https://example.org/down',
+        fromArchive: false,
+      },
+    );
+    expect(await fetcher.fetch('https://example.org/none', { archivedUrl: 'https://archive.test/none' })).toMatchObject(
+      {
+        status: 404,
+        fromArchive: false,
+      },
+    );
+  });
+
+  it('retries reading a fixture index that failed once', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'lectio-fixtures-'));
+    try {
+      const fetcher = new FixtureSourceFetcher(dir);
+      await expect(fetcher.fetch('https://x.test/')).rejects.toMatchObject({ code: 'ENOENT' });
+      writeFileSync(join(dir, 'index.json'), JSON.stringify({ 'https://x.test/': { text: 'now present' } }));
+      expect(await fetcher.fetch('https://x.test/')).toMatchObject({ status: 200, text: 'now present' });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('reads a fixture directory through its index', async () => {
@@ -121,8 +170,9 @@ describe('source fetchers', () => {
       contentType: 'text/html; charset=utf-8',
     });
     expect((await fetcher.fetch('https://example.org/missing')).status).toBe(404);
+    expect(await fetcher.fetch('https://example.org/empty')).toMatchObject({ status: 200, text: '' });
     await expect(fetcher.fetch('https://example.org/escape')).rejects.toThrow(/escapes the fixture directory/);
-    expect(fetcher.fetched).toHaveLength(4);
+    expect(fetcher.fetched).toHaveLength(5);
   });
 
   it('rejects absolute fixture paths', async () => {

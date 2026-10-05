@@ -3,8 +3,8 @@
  * fake, `createProviders` to assemble a run's provider set, and the contract suites
  * live implementations must pass (ADR 0005).
  *
- * The contract suites import vitest; importing this package outside a test runner
- * is fine (vitest only registers tests when they are called).
+ * The contract suites import vitest, so they live in the test-only subpath
+ * `@lectio/providers/contracts`; this entry point has no test dependencies.
  */
 export const packageName = '@lectio/providers';
 
@@ -23,7 +23,8 @@ export type { FakeLlmOptions, FakeLlmScript, FakeLlmScriptEntry } from './fake-l
 export { markerComment, withMarker } from './github.ts';
 export type * from './github.ts';
 export { seededRandom, sha256Hex, stableStringify } from './hash.ts';
-export { generateFromSchema, validateAgainstSchema } from './json-schema.ts';
+export { SchemaGenerationError, generateFromSchema, intersectSchemas, validateAgainstSchema } from './json-schema.ts';
+export { PatternError, generateFromPattern } from './pattern.ts';
 export type * from './llm.ts';
 export { FsObjectStorage, MemoryObjectStorage, assertValidKey } from './storage.ts';
 export type { ObjectInfo, ObjectStorage, PutOptions, StoredObject } from './storage.ts';
@@ -33,10 +34,10 @@ export { FakeWebSearch, FixtureSourceFetcher, MemorySourceFetcher } from './web.
 export type {
   FakeSourcePage,
   FakeWebSearchOptions,
+  FetchOptions,
   FetchedSource,
   SourceFetcher,
   WebSearch,
   WebSearchQuery,
   WebSearchResult,
 } from './web.ts';
-export * from './contracts/index.ts';

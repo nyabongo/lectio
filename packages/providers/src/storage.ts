@@ -90,8 +90,8 @@ export class MemoryObjectStorage implements ObjectStorage {
 }
 
 /**
- * Object storage on the local filesystem: bodies under `<root>/objects/<key>`,
- * metadata under `<root>/meta/<key>.json`. Used for `tts.storage.provider: fs` and
+ * Object storage on the local filesystem: bodies under `<root>/objects/<key>.body`,
+ * metadata under `<root>/meta/<key>.json`. The suffixes let `a` and `a/b` coexist, as in S3. Used for `tts.storage.provider: fs` and
  * for inspecting rendered audio locally.
  */
 export class FsObjectStorage implements ObjectStorage {
@@ -115,7 +115,7 @@ export class FsObjectStorage implements ObjectStorage {
     assertValidKey(key);
     const bytes = toBytes(body);
     const info = infoFor(key, bytes, options);
-    const objectPath = join(this.#root, 'objects', key);
+    const objectPath = join(this.#root, 'objects', `${key}.body`);
     await mkdir(dirname(objectPath), { recursive: true });
     await mkdir(dirname(this.#metaPath(key)), { recursive: true });
     await writeFile(objectPath, bytes);
@@ -126,7 +126,7 @@ export class FsObjectStorage implements ObjectStorage {
   async get(key: string): Promise<StoredObject | null> {
     const info = await this.head(key);
     if (!info) return null;
-    const body = new Uint8Array(await readFile(join(this.#root, 'objects', key)));
+    const body = new Uint8Array(await readFile(join(this.#root, 'objects', `${key}.body`)));
     return { body, info };
   }
 

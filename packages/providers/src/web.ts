@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { isAbsolute, join, normalize, sep } from 'node:path';
+import { isAbsolute, join, relative } from 'node:path';
 
 import type { Clock } from './clock.ts';
 import { FakeClock } from './clock.ts';
@@ -33,11 +33,20 @@ export interface FetchedSource {
   readonly contentType: string;
   /** ISO instant the page was retrieved. */
   readonly retrievedAt: string;
+  /** The URL the text came from, after redirects or the archive fallback. Absent means the requested URL. */
+  readonly finalUrl?: string;
+  /** True when the page itself failed and the text came from `archivedUrl`. */
+  readonly fromArchive?: boolean;
+}
+
+export interface FetchOptions {
+  /** Fallback (for example a Wayback Machine URL) tried when the page is missing or failing (status >= 400). */
+  readonly archivedUrl?: string;
 }
 
 /** Fetches a source page. Network failures reject with `ProviderError`; HTTP errors resolve with their status. */
 export interface SourceFetcher {
-  fetch(url: string): Promise<FetchedSource>;
+  fetch(url: string, options?: FetchOptions): Promise<FetchedSource>;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,13 +84,50 @@ export class FakeWebSearch implements WebSearch {
 export interface FakeSourcePage {
   readonly status?: number;
   readonly contentType?: string;
-  /** Inline text (in-memory fetcher). */
+  /** Inline text. */
   readonly text?: string;
-  /** File holding the text, relative to the fixture directory (fixture directory fetcher). */
+  /** File holding the text, relative to the fixture directory (fixture directory fetcher only). */
   readonly file?: string;
+  /** Simulates a redirect: the URL reported as `finalUrl`. */
+  readonly finalUrl?: string;
 }
 
-const NOT_FOUND = { status: 404, text: '', contentType: 'text/plain' } as const;
+interface LoadedPage {
+  readonly page: FakeSourcePage;
+  readonly text: string;
+}
+
+const ok = (loaded: LoadedPage | undefined): loaded is LoadedPage =>
+  loaded !== undefined && (loaded.page.status ?? 200) < 400;
+
+/**
+ * Shared fake behaviour: unknown URLs are 404s, and a missing or failing page falls back
+ * to `archivedUrl` when that page is available.
+ */
+async function fetchFake(
+  url: string,
+  options: FetchOptions,
+  clock: Clock,
+  load: (url: string) => Promise<LoadedPage | undefined>,
+): Promise<FetchedSource> {
+  const retrievedAt = clock.now().toISOString();
+  const result = (requested: string, { page, text }: LoadedPage, fromArchive: boolean): FetchedSource => ({
+    status: page.status ?? 200,
+    text,
+    contentType: page.contentType ?? 'text/html; charset=utf-8',
+    retrievedAt,
+    finalUrl: page.finalUrl ?? requested,
+    fromArchive,
+  });
+  const found = await load(url);
+  if (ok(found)) return result(url, found, false);
+  if (options.archivedUrl !== undefined) {
+    const archived = await load(options.archivedUrl);
+    if (ok(archived)) return result(options.archivedUrl, archived, true);
+  }
+  if (found) return result(url, found, false);
+  return { status: 404, text: '', contentType: 'text/plain', retrievedAt, finalUrl: url, fromArchive: false };
+}
 
 /** Pages from memory. Unknown URLs are 404s. */
 export class MemorySourceFetcher implements SourceFetcher {
@@ -100,17 +146,12 @@ export class MemorySourceFetcher implements SourceFetcher {
     return this;
   }
 
-  async fetch(url: string): Promise<FetchedSource> {
+  async fetch(url: string, options: FetchOptions = {}): Promise<FetchedSource> {
     this.fetched.push(url);
-    const page = this.#pages.get(url);
-    const retrievedAt = this.#clock.now().toISOString();
-    if (!page) return { ...NOT_FOUND, retrievedAt };
-    return {
-      status: page.status ?? 200,
-      text: page.text ?? '',
-      contentType: page.contentType ?? 'text/html; charset=utf-8',
-      retrievedAt,
-    };
+    return fetchFake(url, options, this.#clock, async (u) => {
+      const page = this.#pages.get(u);
+      return page && { page, text: page.text ?? '' };
+    });
   }
 }
 
@@ -131,27 +172,30 @@ export class FixtureSourceFetcher implements SourceFetcher {
     this.#clock = clock;
   }
 
-  async fetch(url: string): Promise<FetchedSource> {
+  async fetch(url: string, options: FetchOptions = {}): Promise<FetchedSource> {
     this.fetched.push(url);
+    const index = await this.#loadIndex();
+    return fetchFake(url, options, this.#clock, async (u) => {
+      const page = index[u];
+      if (!page) return undefined;
+      if (page.file === undefined) return { page, text: page.text ?? '' };
+      if (isAbsolute(page.file) || relative(this.#dir, join(this.#dir, page.file)).startsWith('..')) {
+        throw new RangeError(`fixture file escapes the fixture directory: ${page.file}`);
+      }
+      return { page, text: await readFile(join(this.#dir, page.file), 'utf8') };
+    });
+  }
+
+  /** Reads `index.json` once; a failed read is retried on the next fetch instead of being cached. */
+  async #loadIndex(): Promise<Readonly<Record<string, FakeSourcePage>>> {
     this.#index ??= readFile(join(this.#dir, 'index.json'), 'utf8').then(
       (raw) => JSON.parse(raw) as Record<string, FakeSourcePage>,
     );
-    const page = (await this.#index)[url];
-    const retrievedAt = this.#clock.now().toISOString();
-    if (!page) return { ...NOT_FOUND, retrievedAt };
-    let text = page.text ?? '';
-    if (page.file !== undefined) {
-      const file = normalize(page.file);
-      if (isAbsolute(file) || file.startsWith(`..${sep}`) || file === '..') {
-        throw new RangeError(`fixture file escapes the fixture directory: ${page.file}`);
-      }
-      text = await readFile(join(this.#dir, file), 'utf8');
+    try {
+      return await this.#index;
+    } catch (error) {
+      this.#index = undefined;
+      throw error;
     }
-    return {
-      status: page.status ?? 200,
-      text,
-      contentType: page.contentType ?? 'text/html; charset=utf-8',
-      retrievedAt,
-    };
   }
 }

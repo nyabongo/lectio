@@ -29,7 +29,11 @@ export interface Providers {
   readonly storage: ObjectStorage;
   readonly github: GitHubClient;
   readonly clock: Clock;
-  /** Run-level meter with `config.research.budget.perRunUsd` as its ceiling. */
+  /**
+   * Research run meter (label `research-run`, ceiling `config.research.budget.perRunUsd`).
+   * Other runs that call LLMs, such as the content-gates verifiers, should inject their own
+   * meter (`live.costMeter`) so they are not capped by the research budget.
+   */
   readonly costMeter: CostMeter;
 }
 
@@ -105,7 +109,7 @@ export function createProviders(
   const costMeter =
     live.costMeter ??
     fallback('costMeter', () =>
-      createCostMeter({ pricing: config.pricing, ceilingUsd: config.research.budget.perRunUsd, label: 'run' }),
+      createCostMeter({ pricing: config.pricing, ceilingUsd: config.research.budget.perRunUsd, label: 'research-run' }),
     );
   const context: ProviderContext = { config, env, clock, costMeter };
   const pick = <K extends ServiceSlot>(slot: K, fake: () => Providers[K]): Providers[K] =>

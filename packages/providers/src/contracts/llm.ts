@@ -1,5 +1,9 @@
+import { DEFAULT_CONFIG } from '@lectio/config';
+import type { ModelPrice } from '@lectio/config';
 import { describe, expect, it } from 'vitest';
 
+import { createCostMeter } from '../cost-meter.ts';
+import type { CostMeter } from '../cost-meter.ts';
 import { ProviderError } from '../errors.ts';
 import { validateAgainstSchema } from '../json-schema.ts';
 import type { JsonSchema, LlmClient, LlmRequest } from '../llm.ts';
@@ -7,8 +11,10 @@ import type { JsonSchema, LlmClient, LlmRequest } from '../llm.ts';
 export interface LlmContractOptions {
   /** Suite name suffix, for example `fake` or `anthropic (recorded)`. */
   readonly name?: string;
-  /** Model id to request (must be priced if the client charges a cost meter). */
+  /** Model id to request; it must be priced in `pricing`. */
   readonly model: string;
+  /** Prices for the meter handed to the factory. Default `DEFAULT_CONFIG.pricing`. */
+  readonly pricing?: Readonly<Record<string, ModelPrice>>;
   /** Assert that two fresh clients answer the same request identically (fakes and recorded HTTP). */
   readonly deterministic?: boolean;
   /** Per-test timeout in ms (live runs). */
@@ -55,8 +61,21 @@ function expectUsage(usage: Record<string, unknown>): void {
  * The behaviour every `LlmClient` must have. Live implementations run it offline
  * against recorded HTTP in unit CI and against the real API in `npm run test:live` (L-212).
  */
-export function describeLlmContract(factory: () => LlmClient | Promise<LlmClient>, options: LlmContractOptions): void {
+/**
+ * The factory receives a fresh `CostMeter` and must build a client that charges it:
+ * every call records its usage there (ADR 0005, L-039/L-040).
+ */
+export function describeLlmContract(
+  build: (costMeter: CostMeter) => LlmClient | Promise<LlmClient>,
+  options: LlmContractOptions,
+): void {
   const { model, timeoutMs } = options;
+  const pricing = options.pricing ?? DEFAULT_CONFIG.pricing;
+  let meter = createCostMeter({ pricing });
+  const factory = (): LlmClient | Promise<LlmClient> => {
+    meter = createCostMeter({ pricing });
+    return build(meter);
+  };
   describe(`LlmClient contract${options.name ? ` (${options.name})` : ''}`, () => {
     it('names a known model family', async () => {
       const client = await factory();
@@ -72,6 +91,11 @@ export function describeLlmContract(factory: () => LlmClient | Promise<LlmClient
       expect(response.model.length).toBeGreaterThan(0);
       expectUsage({ ...response.usage });
       expect(response.usage.outputTokens).toBeGreaterThan(0);
+      expect(meter.entries()).toHaveLength(1);
+      expect(meter.entries()[0]).toMatchObject({
+        model: response.model,
+        usd: meter.price(response.model, response.usage),
+      });
     });
 
     it('returns parsed JSON that matches the response schema', { timeout: timeoutMs }, async () => {

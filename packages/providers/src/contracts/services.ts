@@ -80,6 +80,17 @@ export function describeSourceFetcherContract(factory: Factory<SourceFetcherSubj
       expect(page.text.length).toBeGreaterThan(0);
       expect(page.contentType.length).toBeGreaterThan(0);
       expect(new Date(page.retrievedAt).toISOString()).toBe(page.retrievedAt);
+      expect(page.finalUrl === undefined || URL.canParse(page.finalUrl)).toBe(true);
+      expect(page.fromArchive).not.toBe(true);
+    });
+
+    it('falls back to the archived URL when the page is missing', { timeout: options.timeoutMs }, async () => {
+      const { fetcher, knownUrl, missingUrl } = await factory();
+      const page = await fetcher.fetch(missingUrl, { archivedUrl: knownUrl });
+      expect(page.status).toBe(200);
+      expect(page.text.length).toBeGreaterThan(0);
+      expect(page.fromArchive).toBe(true);
+      expect(page.finalUrl).toBe(knownUrl);
     });
 
     it('resolves a missing page with its status instead of throwing', { timeout: options.timeoutMs }, async () => {
@@ -180,6 +191,14 @@ export function describeObjectStorageContract(
       expect(second.size).toBe(new TextEncoder().encode('{"v":"ü"}').length);
       const stored = await storage.get(key);
       expect(new TextDecoder().decode(stored?.body)).toBe('{"v":"ü"}');
+    });
+
+    it('stores a key and a key below it side by side', { timeout: options.timeoutMs }, async () => {
+      const storage = await factory();
+      await storage.put(`${prefix}nested`, 'parent', { contentType: 'text/plain' });
+      await storage.put(`${prefix}nested/child`, 'child', { contentType: 'text/plain' });
+      expect(new TextDecoder().decode((await storage.get(`${prefix}nested`))?.body)).toBe('parent');
+      expect(new TextDecoder().decode((await storage.get(`${prefix}nested/child`))?.body)).toBe('child');
     });
 
     it('returns null for missing keys', { timeout: options.timeoutMs }, async () => {
