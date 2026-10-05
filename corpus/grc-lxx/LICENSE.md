@@ -18,10 +18,13 @@ Lectio kept only Tobit (the Sinaiticus text), Judith, Greek Esther, 1-2 Maccabee
 Letter of Jeremiah and Theodotion's Daniel, Susanna and Bel; stored the Letter of Jeremiah as Baruch 6 and
 Susanna and Bel as Daniel 13 and 14; split each verse into words; removed the text-critical signs (⸂ ⸃ ⸆) and the
 bracketed verse numbers; and stored Greek Esther's additions as chapters A-F, numbered by those brackets. Sirach
-30:25-36:16, in the Greek manuscripts' order upstream, is stored in the Latin chapter order Swete prints, with his
-verse numbers; Theodotion's Daniel 3:98-6:28 is renumbered to Rahlfs' chapters (3:98 is 4:1, 4:1 is 4:4, 5:31 is
-6:1, 6:1 is 6:2). Verses the upstream leaves empty are not stored. Every other word is unchanged (normalised to
-Unicode NFC).
+30:25-36:16, in the Greek manuscripts' order upstream, is stored in the Latin chapter order of the lxx scheme;
+Theodotion's Daniel 3:98-6:28 is renumbered to Rahlfs' chapters (3:98 is 4:1, 4:1 is 4:4, 5:31 is 6:1, 6:1 is 6:2)
+and 3:54-55 swapped. Where Swete divides verses differently enough to shift them (Sirach 17, 20, 22, 23, 29,
+33-38, 41, 42, 51; Tobit 5-8, 10, 11, 13; Wisdom 17; Esther 9; Baruch 6; Bel), the text is re-divided into the verses of the
+lxx scheme, joining or cutting Swete verses. Verses the upstream leaves empty are not stored: in this edition that
+includes Tobit 4:7-18 and 13:7-10 (lacunae of Sinaiticus), Daniel 3:67-68 and the Sirach prologue. Every other
+word is unchanged (normalised to Unicode NFC).
 
 ## Upstream README.md (commit 1d3efc3c63bd384a4f3f07ed37eef54b0d45ac33)
 
