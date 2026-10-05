@@ -1,0 +1,66 @@
+{
+  "year": 2027,
+  "region": "kenya",
+  "generatedBy": "@lectio/calendar 0.0.0 (fixture)",
+  "days": [
+    {
+      "date": "2027-09-19",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "B",
+      "weekdayCycle": "I",
+      "celebrations": [
+        {
+          "id": "fixture-day",
+          "name": "Fixture day",
+          "rank": "sunday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "vigil",
+          "label": "Vigil Mass",
+          "readings": [
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:1-16a",
+              "key": "MT.20.1-16",
+              "linkout": "https://www.drbo.org/chapter/47020.htm"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:1-16a",
+              "key": "MT.20.1-16",
+              "linkout": "https://www.drbo.org/chapter/47020.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2027-01-01",
+      "season": "christmas",
+      "seasonWeek": 1,
+      "sundayCycle": "A",
+      "weekdayCycle": "I",
+      "celebrations": [
+        {
+          "id": "mary-mother-of-god",
+          "name": "Mary, Mother of God",
+          "rank": "solemnity",
+          "colour": "white"
+        }
+      ],
+      "masses": [],
+      "lectionaryMissing": true
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "year": 2025,
+  "region": "kenya",
+  "generatedBy": "@lectio/calendar 0.0.0 (fixture)",
+  "days": [
+    {
+      "date": "2025-09-21",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "matthew-apostle",
+          "name": "Saint Matthew, Apostle and Evangelist",
+          "rank": "feast",
+          "colour": "blue"
+        }
+      ],
+      "masses": [],
+      "lectionaryMissing": true
+    }
+  ]
+}
