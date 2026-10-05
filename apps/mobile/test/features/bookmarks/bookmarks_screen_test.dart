@@ -127,6 +127,52 @@ void main() {
 
       expect(find.text('No notes yet.'), findsOneWidget);
       expect(BookmarksController(store).notes, isEmpty);
+      expect(find.text('Note deleted.'), findsOneWidget);
+    });
+
+    testWidgets('undoes deleting a note', (tester) async {
+      await controller.saveNote(day, title: 'Sunday', text: 'mine');
+      await pumpBookmarks(tester, controller);
+
+      await tester.tap(find.byTooltip('Delete note'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('mine'), findsOneWidget);
+      expect(BookmarksController(store).noteFor(day)!.text, 'mine');
+    });
+
+    testWidgets('says when deleting a note is not saved', (tester) async {
+      await controller.saveNote(day, title: 'Sunday', text: 'a');
+      store.failWrites = true;
+      await pumpBookmarks(tester, controller);
+
+      await tester.tap(find.byTooltip('Delete note'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('not letting Lectio save'), findsOneWidget);
+      expect(find.text('Undo'), findsNothing);
+    });
+
+    testWidgets('says when saved data could not be read', (tester) async {
+      store = MemoryKeyValueStore({
+        BookmarksController.storageKey: 'not json',
+      });
+      final shared = <ShareParams>[];
+      await pumpBookmarks(
+        tester,
+        BookmarksController(store),
+        share: (params) async {
+          shared.add(params);
+          return const ShareResult('done', ShareResultStatus.success);
+        },
+      );
+
+      expect(find.textContaining('could not be read'), findsOneWidget);
+      await tester.tap(find.text('Export as JSON'));
+      await tester.pumpAndSettle();
+      expect(shared, hasLength(1));
     });
 
     testWidgets('edits a note', (tester) async {
@@ -281,6 +327,21 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.noteFor(insight), isNull);
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(controller.noteFor(insight)!.text, 'gone');
+    });
+
+    testWidgets('saving a blank new note changes nothing', (tester) async {
+      await pumpInPage(tester, controller, opener());
+
+      await tester.tap(find.text('Note'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      expect(controller.noteFor(insight), isNull);
+      expect(find.text('Undo'), findsNothing);
     });
   });
 }

@@ -128,7 +128,8 @@ void main() {
   testWidgets('Kiswahili is listed as coming soon', (tester) async {
     final controller = await pumpApp(tester, store);
 
-    await tester.tap(find.text('Kiswahili (coming soon)'));
+    expect(find.text('Coming soon'), findsOneWidget);
+    await tester.tap(find.text('Kiswahili'));
     await tester.pumpAndSettle();
 
     expect(controller.settings.language, AppLanguage.en);
@@ -140,10 +141,7 @@ void main() {
     await controller.update(const AppSettings(theme: ThemePreference.light));
     await tester.pumpAndSettle();
 
-    final button = tester.widget<SegmentedButton<AppLanguage>>(
-      find.byType(SegmentedButton<AppLanguage>),
-    );
-    button.onSelectionChanged!({AppLanguage.en});
+    await tester.tap(find.text('English'));
     await tester.pumpAndSettle();
 
     expect(controller.settings.language, AppLanguage.en);
@@ -227,6 +225,34 @@ void main() {
 
     expect(controller.settings.textSize, TextSize.large);
     expect(find.textContaining('not letting Lectio save'), findsOneWidget);
+  });
+
+  testWidgets('fits a 360dp phone at the largest text', (tester) async {
+    tester.view
+      ..physicalSize = const Size(360, 800)
+      ..devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    final device = MemoryKeyValueStore({
+      SettingsController.storageKey: jsonEncode(
+        const AppSettings(textSize: TextSize.larger).toJson(),
+      ),
+    });
+    await tester.pumpWidget(
+      LectioApp(
+        initialLocation: '/settings',
+        settings: SettingsController(device),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final context = tester.element(find.text('Text size'));
+    expect(MediaQuery.textScalerOf(context).scale(10), closeTo(25, 1e-9));
+    // A RenderFlex overflow anywhere on the way down fails the test.
+    await tester.scrollUntilVisible(find.text(bookmarksTitle), 200);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('opens bookmarks and notes', (tester) async {

@@ -23,6 +23,31 @@ void reportUnsaved(BuildContext context, {required bool saved}) {
   );
 }
 
+/// Deletes the note on [target] and offers to undo it, since the note is the
+/// reader's own writing.
+Future<void> deleteNoteWithUndo(
+  BuildContext context,
+  BookmarksController controller,
+  BookmarkTarget target,
+) async {
+  final note = controller.noteFor(target);
+  final saved = await controller.deleteNote(target);
+  if (!context.mounted) return;
+  if (!saved || note == null) {
+    reportUnsaved(context, saved: saved);
+    return;
+  }
+  ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+    SnackBar(
+      content: const Text('Note deleted.'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () => unawaited(controller.restoreNote(note)),
+      ),
+    ),
+  );
+}
+
 /// Bookmarks and personal notes, with export as JSON through the share sheet.
 class BookmarksScreen extends StatelessWidget {
   /// Creates the screen; [share] opens the share sheet (default:
@@ -68,6 +93,15 @@ class BookmarksScreen extends StatelessWidget {
               'and notes do not sync. Export them to keep a copy.',
             ),
           ),
+          if (controller.hasUnreadableData)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'Some bookmarks or notes saved earlier could not be read. A '
+                'copy is kept on this device and included in the export.',
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+            ),
           _Heading('Bookmarks', style: theme.textTheme.titleMedium),
           if (bookmarks.isEmpty)
             const ListTile(title: Text('No bookmarks yet.'))
@@ -107,10 +141,9 @@ class BookmarksScreen extends StatelessWidget {
                 trailing: IconButton(
                   icon: const Icon(Icons.delete_outline),
                   tooltip: 'Delete note',
-                  onPressed: () async {
-                    final saved = await controller.deleteNote(note.target);
-                    if (context.mounted) reportUnsaved(context, saved: saved);
-                  },
+                  onPressed: () => unawaited(
+                    deleteNoteWithUndo(context, controller, note.target),
+                  ),
                 ),
               ),
           Padding(
@@ -119,7 +152,7 @@ class BookmarksScreen extends StatelessWidget {
               builder: (context) => FilledButton.tonalIcon(
                 icon: const Icon(Icons.ios_share),
                 label: const Text('Export as JSON'),
-                onPressed: controller.isEmpty
+                onPressed: controller.isEmpty && !controller.hasUnreadableData
                     ? null
                     : () => unawaited(_export(context, controller)),
               ),
@@ -195,7 +228,11 @@ Future<void> showNoteEditor(
     builder: (context) =>
         NoteEditorDialog(initialText: controller.noteFor(target)?.text ?? ''),
   );
-  if (text == null) return;
+  if (text == null || !context.mounted) return;
+  if (text.trim().isEmpty && controller.noteFor(target) != null) {
+    await deleteNoteWithUndo(context, controller, target);
+    return;
+  }
   final saved = await controller.saveNote(target, title: title, text: text);
   if (context.mounted) reportUnsaved(context, saved: saved);
 }

@@ -52,6 +52,22 @@ class SettingsScreen extends StatelessWidget {
       child: Text(text, style: theme.textTheme.bodySmall),
     );
 
+    // One option of a choice, as a list tile: the text wraps instead of
+    // overflowing at large text sizes on a narrow phone.
+    Widget choice({
+      required String label,
+      required bool selected,
+      required VoidCallback? onTap,
+      String? subtitle,
+    }) => ListTile(
+      title: Text(label),
+      subtitle: subtitle == null ? null : Text(subtitle),
+      selected: selected,
+      trailing: selected ? const Icon(Icons.check) : null,
+      enabled: onTap != null,
+      onTap: onTap,
+    );
+
     Widget padded(Widget child) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: child,
@@ -70,39 +86,24 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           heading('Text size'),
-          padded(
-            SegmentedButton<TextSize>(
-              showSelectedIcon: false,
-              segments: [
-                for (final size in TextSize.values)
-                  ButtonSegment(value: size, label: Text(size.label)),
-              ],
-              selected: {settings.textSize},
-              onSelectionChanged: (selection) => unawaited(
-                update(settings.copyWith(textSize: selection.single)),
-              ),
+          for (final size in TextSize.values)
+            choice(
+              label: size.label,
+              selected: settings.textSize == size,
+              onTap: () => unawaited(update(settings.copyWith(textSize: size))),
             ),
-          ),
           hint(
             'Notes on history and the original languages will read at this '
             'size.',
           ),
           heading('Theme'),
-          padded(
-            SegmentedButton<ThemePreference>(
-              showSelectedIcon: false,
-              segments: [
-                for (final preference in ThemePreference.values)
-                  ButtonSegment(
-                    value: preference,
-                    label: Text(preference.label),
-                  ),
-              ],
-              selected: {settings.theme},
-              onSelectionChanged: (selection) =>
-                  unawaited(update(settings.copyWith(theme: selection.single))),
+          for (final preference in ThemePreference.values)
+            choice(
+              label: preference.label,
+              selected: settings.theme == preference,
+              onTap: () =>
+                  unawaited(update(settings.copyWith(theme: preference))),
             ),
-          ),
           hint("System follows your device's light or dark setting."),
           heading('Default playback speed'),
           padded(
@@ -125,27 +126,17 @@ class SettingsScreen extends StatelessWidget {
             'listening.',
           ),
           heading('Language'),
-          padded(
-            SegmentedButton<AppLanguage>(
-              showSelectedIcon: false,
-              segments: [
-                for (final language in AppLanguage.values)
-                  ButtonSegment(
-                    value: language,
-                    enabled: language.available,
-                    label: Text(
-                      language.available
-                          ? language.label
-                          : '${language.label} (coming soon)',
-                    ),
-                  ),
-              ],
-              selected: {settings.language},
-              onSelectionChanged: (selection) => unawaited(
-                update(settings.copyWith(language: selection.single)),
-              ),
+          for (final language in AppLanguage.values)
+            choice(
+              label: language.label,
+              subtitle: language.available ? null : 'Coming soon',
+              selected: settings.language == language,
+              onTap: language.available
+                  ? () => unawaited(
+                      update(settings.copyWith(language: language)),
+                    )
+                  : null,
             ),
-          ),
           heading('Daily reminder'),
           SwitchListTile(
             title: const Text('Remind me each day'),

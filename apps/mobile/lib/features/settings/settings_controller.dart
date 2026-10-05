@@ -32,7 +32,7 @@ class SettingsController extends ChangeNotifier {
     if (settings == _settings) return Future.value(true);
     _settings = settings;
     notifyListeners();
-    return _store.write(storageKey, jsonEncode(settings.toJson()));
+    return writeSafely(_store, storageKey, jsonEncode(settings.toJson()));
   }
 }
 

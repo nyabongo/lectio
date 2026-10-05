@@ -7,7 +7,7 @@ import 'package:lectio/src/app.dart';
 /// Starts the app with settings, bookmarks and notes saved on the device.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final store = await SharedPreferencesStore.open();
+  final store = await openDeviceStore();
   runApp(
     LectioApp(
       settings: SettingsController(store),

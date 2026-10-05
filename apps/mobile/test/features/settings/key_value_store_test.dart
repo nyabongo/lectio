@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,4 +52,52 @@ void main() {
       expect(reopened.read('lectio.test'), '{"a":1}');
     });
   });
+
+  group('writeSafely', () {
+    test('passes on the result of the write', () async {
+      final store = MemoryKeyValueStore();
+      expect(await writeSafely(store, 'a', '1'), isTrue);
+      expect(store.read('a'), '1');
+      store.failWrites = true;
+      expect(await writeSafely(store, 'a', '2'), isFalse);
+    });
+
+    test('turns a throwing write into false', () async {
+      expect(await writeSafely(ThrowingStore(), 'a', '1'), isFalse);
+    });
+  });
+
+  group('openDeviceStore', () {
+    test('opens the device preferences by default', () async {
+      SharedPreferences.setMockInitialValues({'k': 'v'});
+      final store = await openDeviceStore();
+      expect(store, isA<SharedPreferencesStore>());
+      expect(store.read('k'), 'v');
+    });
+
+    test('uses the store it is given', () async {
+      final given = MemoryKeyValueStore();
+      expect(await openDeviceStore(open: () async => given), same(given));
+    });
+
+    test('falls back to memory that reports unsaved writes', () async {
+      final store = await openDeviceStore(
+        open: () async => throw PlatformException(code: 'channel-error'),
+      );
+      expect(store, isA<MemoryKeyValueStore>());
+      expect(store.read('k'), isNull);
+      expect(await store.write('k', 'v'), isFalse);
+    });
+  });
+}
+
+/// A store whose writes throw, like a failing platform channel.
+class ThrowingStore implements KeyValueStore {
+  @override
+  String? read(String key) => null;
+
+  @override
+  Future<bool> write(String key, String value) async {
+    throw PlatformException(code: 'channel-error');
+  }
 }

@@ -14,7 +14,9 @@ import 'package:lectio/features/settings/key_value_store.dart';
 ///
 /// Stored as versioned JSON under [storageKey]. Reading is tolerant: invalid
 /// JSON reads as empty and a malformed entry is skipped, so one bad record
-/// never loses the rest.
+/// never hides the rest. These are the reader's own words, so nothing that
+/// could not be read is ever overwritten without a copy: see
+/// [hasUnreadableData].
 class BookmarksController extends ChangeNotifier {
   /// Creates a controller over [_store]; [clock] gives the time saved with
   /// each change (default: now).
@@ -24,47 +26,31 @@ class BookmarksController extends ChangeNotifier {
   /// The key bookmarks and notes are saved under.
   static const String storageKey = 'lectio.bookmarks';
 
-  /// The shape version written with every save and export.
+  /// Where saved text that could not be read is kept before an overwrite.
+  static const String unreadableKey = 'lectio.bookmarks.unreadable';
+
+  /// The shape version written with every save and export. A blob with
+  /// another version is not parsed (it may come from a newer app); it is
+  /// kept as unreadable instead.
   static const int version = 1;
 
   final KeyValueStore _store;
   final DateTime Function() _clock;
 
-  late final Map<BookmarkTarget, Bookmark> _bookmarks = {
-    for (final bookmark in _stored('bookmarks', Bookmark.fromJson))
-      bookmark.target: bookmark,
-  };
+  late final _Saved _saved = _Saved.read(_store.read(storageKey));
 
-  late final Map<BookmarkTarget, PersonalNote> _notes = {
-    for (final note in _stored('notes', PersonalNote.fromJson))
-      note.target: note,
-  };
+  late final Map<BookmarkTarget, Bookmark> _bookmarks = _saved.bookmarks;
 
-  late final JsonObject _saved = _decode(_store.read(storageKey));
+  late final Map<BookmarkTarget, PersonalNote> _notes = _saved.notes;
 
-  static JsonObject _decode(String? raw) {
-    if (raw == null) return const {};
-    try {
-      final json = jsonDecode(raw);
-      return json is JsonObject ? json : const {};
-    } on FormatException {
-      return const {};
-    }
-  }
+  bool _backedUp = false;
 
-  List<T> _stored<T>(String field, T Function(Object? json) parse) {
-    final items = _saved[field];
-    if (items is! List<Object?>) return const [];
-    final parsed = <T>[];
-    for (final item in items) {
-      try {
-        parsed.add(parse(item));
-      } on FormatException {
-        // A malformed entry is dropped; the others survive.
-      }
-    }
-    return parsed;
-  }
+  /// Whether some of the saved data could not be read: malformed JSON or
+  /// entries, or a shape from a newer version of the app.
+  ///
+  /// The unreadable text is never lost: it is copied under [unreadableKey]
+  /// before the first change overwrites it, and [exportJson] includes it.
+  bool get hasUnreadableData => _saved.unreadable != null;
 
   /// Bookmarks, most recently saved first.
   List<Bookmark> get bookmarks {
@@ -126,6 +112,13 @@ class BookmarksController extends ChangeNotifier {
     return _changed();
   }
 
+  /// Puts back [note] as it was, for example to undo a delete; completes
+  /// with whether it was saved.
+  Future<bool> restoreNote(PersonalNote note) {
+    _notes[note.target] = note;
+    return _changed();
+  }
+
   /// Deletes the note on [target]; completes with whether it was saved.
   Future<bool> deleteNote(BookmarkTarget target) {
     _notes.remove(target);
@@ -138,9 +131,15 @@ class BookmarksController extends ChangeNotifier {
     'notes': [for (final note in notes) note.toJson()],
   };
 
-  Future<bool> _changed() {
+  Future<bool> _changed() async {
     notifyListeners();
-    return _store.write(storageKey, jsonEncode(_toJson()));
+    final unreadable = _saved.unreadable;
+    if (unreadable != null && !_backedUp) {
+      // Refuse to overwrite what could not be read until a copy is kept.
+      if (!await writeSafely(_store, unreadableKey, unreadable)) return false;
+      _backedUp = true;
+    }
+    return writeSafely(_store, storageKey, jsonEncode(_toJson()));
   }
 
   /// Every bookmark and note as indented JSON, stamped with the export time,
@@ -150,8 +149,73 @@ class BookmarksController extends ChangeNotifier {
       'format': 'lectio-bookmarks',
       'exportedAt': _clock().toUtc().toIso8601String(),
       ..._toJson(),
+      'unreadable': ?_saved.unreadable,
     };
     return const JsonEncoder.withIndent('  ').convert(export);
+  }
+}
+
+/// What was saved: the entries that could be read, and the raw text when
+/// some of it could not.
+class _Saved {
+  new({required this.bookmarks, required this.notes, this.unreadable});
+
+  factory read(String? raw) {
+    final bookmarks = <BookmarkTarget, Bookmark>{};
+    final notes = <BookmarkTarget, PersonalNote>{};
+    if (raw == null) return _Saved(bookmarks: bookmarks, notes: notes);
+    final json = _decode(raw);
+    if (json == null || json['version'] != BookmarksController.version) {
+      return _Saved(bookmarks: bookmarks, notes: notes, unreadable: raw);
+    }
+    final bookmarksRead = _parse(json['bookmarks'], Bookmark.fromJson, (
+      bookmark,
+    ) {
+      bookmarks[bookmark.target] = bookmark;
+    });
+    final notesRead = _parse(json['notes'], PersonalNote.fromJson, (note) {
+      notes[note.target] = note;
+    });
+    final complete = bookmarksRead && notesRead;
+    return _Saved(
+      bookmarks: bookmarks,
+      notes: notes,
+      unreadable: complete ? null : raw,
+    );
+  }
+
+  final Map<BookmarkTarget, Bookmark> bookmarks;
+  final Map<BookmarkTarget, PersonalNote> notes;
+
+  /// The saved text, when some of it could not be read.
+  final String? unreadable;
+
+  static JsonObject? _decode(String raw) {
+    try {
+      final json = jsonDecode(raw);
+      return json is JsonObject ? json : null;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  /// Parses each item of [items] and hands it to [add]; whether every item
+  /// could be read.
+  static bool _parse<T>(
+    Object? items,
+    T Function(Object? json) parse,
+    void Function(T item) add,
+  ) {
+    if (items is! List<Object?>) return false;
+    var complete = true;
+    for (final item in items) {
+      try {
+        add(parse(item));
+      } on FormatException {
+        complete = false;
+      }
+    }
+    return complete;
   }
 }
 

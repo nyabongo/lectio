@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/features/bookmarks/bookmark.dart';
@@ -222,6 +223,100 @@ void main() {
     });
   });
 
+  group('unreadable data', () {
+    const key = BookmarksController.storageKey;
+    const backupKey = BookmarksController.unreadableKey;
+
+    test('is not flagged when everything was read', () async {
+      final controller = controllerOn(store);
+      await controller.toggleBookmark(day, title: 'Sunday');
+      expect(controller.hasUnreadableData, isFalse);
+      expect(controllerOn(store).hasUnreadableData, isFalse);
+      expect(store.read(backupKey), isNull);
+    });
+
+    test('is backed up once before the first overwrite', () async {
+      store = MemoryKeyValueStore({key: 'not json'});
+      final controller = controllerOn(store);
+      expect(controller.hasUnreadableData, isTrue);
+
+      expect(await controller.toggleBookmark(day, title: 'Sunday'), isTrue);
+      expect(store.read(backupKey), 'not json');
+      expect(controllerOn(store).isBookmarked(day), isTrue);
+
+      await store.write(backupKey, 'kept');
+      await controller.toggleBookmark(gospel, title: 'Gospel');
+      expect(store.read(backupKey), 'kept');
+    });
+
+    test('a newer version is kept, not parsed or overwritten', () async {
+      final raw = jsonEncode({
+        'version': 2,
+        'bookmarks': [
+          {
+            'target': day.toJson(),
+            'title': 'Sunday',
+            'savedAt': '2026-09-20T07:00:00.000Z',
+          },
+        ],
+        'notes': <Object?>[],
+      });
+      store = MemoryKeyValueStore({key: raw});
+      final controller = controllerOn(store);
+      expect(controller.hasUnreadableData, isTrue);
+      expect(controller.isEmpty, isTrue);
+
+      await controller.saveNote(day, title: 'Sunday', text: 'new');
+      expect(store.read(backupKey), raw);
+    });
+
+    test('a dropped entry flags the data as unreadable', () {
+      final raw = jsonEncode({
+        'version': 1,
+        'bookmarks': ['junk'],
+        'notes': <Object?>[],
+      });
+      final controller = controllerOn(MemoryKeyValueStore({key: raw}));
+      expect(controller.hasUnreadableData, isTrue);
+    });
+
+    test('is never overwritten when the backup fails', () async {
+      store = MemoryKeyValueStore({key: 'not json'});
+      final controller = controllerOn(store);
+      store.failWrites = true;
+
+      expect(await controller.toggleBookmark(day, title: 'Sunday'), isFalse);
+      expect(store.read(key), 'not json');
+      expect(store.read(backupKey), isNull);
+    });
+
+    test('is included in the export', () {
+      store = MemoryKeyValueStore({key: 'not json'});
+      final json = jsonDecode(controllerOn(store).exportJson())
+          as Map<String, Object?>;
+      expect(json['unreadable'], 'not json');
+    });
+  });
+
+  test('restoreNote puts back a deleted note as it was', () async {
+    final controller = controllerOn(store);
+    await controller.saveNote(day, title: 'Sunday', text: 'a');
+    final note = controller.noteFor(day)!;
+    await controller.deleteNote(day);
+    now = now.add(const Duration(hours: 1));
+
+    expect(await controller.restoreNote(note), isTrue);
+    final restored = controllerOn(store).noteFor(day)!;
+    expect(restored.text, 'a');
+    expect(restored.updatedAt, note.updatedAt);
+  });
+
+  test('a throwing store reports the change as unsaved', () async {
+    final throwing = BookmarksController(ThrowingStore());
+    expect(await throwing.toggleBookmark(day, title: 'Sunday'), isFalse);
+    expect(throwing.isBookmarked(day), isTrue);
+  });
+
   test('exports everything as indented JSON', () async {
     final controller = controllerOn(store);
     await controller.toggleBookmark(gospel, title: 'Gospel');
@@ -273,4 +368,15 @@ void main() {
     );
     expect(() => BookmarksScope.of(captured), throwsAssertionError);
   });
+}
+
+/// A store whose writes throw, like a failing platform channel.
+class ThrowingStore implements KeyValueStore {
+  @override
+  String? read(String key) => null;
+
+  @override
+  Future<bool> write(String key, String value) async {
+    throw PlatformException(code: 'channel-error');
+  }
 }

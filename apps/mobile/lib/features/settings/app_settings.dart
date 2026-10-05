@@ -111,9 +111,12 @@ T _byName<T extends Enum>(List<T> values, Object? name, T fallback) {
 
 /// The reader's preferences, kept on the device.
 ///
-/// Stored as versioned JSON. Reading is tolerant: malformed JSON, an unknown
-/// version or a field with the wrong type falls back to the default field by
-/// field, so a bad value never stops the app from starting.
+/// Stored as versioned JSON. Reading is tolerant, as on the site: version 1
+/// is the only shape so far, and a record with another `version` (or none)
+/// is read field by field, so whatever is still valid survives. Malformed
+/// JSON or a field with the wrong type falls back to the default, so a bad
+/// value never stops the app from starting. Settings are cheap to set again,
+/// so unlike bookmarks and notes they are not backed up before an overwrite.
 @immutable
 class AppSettings {
   /// Creates settings; every field has a default.
