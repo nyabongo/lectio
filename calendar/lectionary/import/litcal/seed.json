@@ -1,0 +1,9 @@
+{
+  "$comment": "LitCal leaves imported into the seed block (011, L-016 amendment 4). Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts seed",
+  "target": "seed/proper-of-time.json",
+  "kind": "proper-of-time",
+  "imports": [
+    { "key": "ot-sunday-25", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#OrdSunday25" },
+    { "key": "ot-sunday-26", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#OrdSunday26" }
+  ]
+}

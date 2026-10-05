@@ -1,0 +1,159 @@
+{
+  "$comment": "Second source for the seed block (011, L-016 amendment 5): OLM 1981 for the readings imported from LitCal, in OLM numbering (Vulgate psalms; lectionary:crosscheck converts them). LitCal has no data for the OLM-filled readings at the pinned revision; `consulted` records the leaves checked, and those readings are listed as single-source in disputes/seed.md.",
+  "block": "seed",
+  "entries": [
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-25",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Is 55:6-9",
+      "source": "olm-1981 p?#133"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-25",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 144:2-3, 8-9, 17-18",
+      "source": "olm-1981 p?#133"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-25",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Phil 1:20c-24, 27a",
+      "source": "olm-1981 p?#133"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-25",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 20:1-16a",
+      "source": "olm-1981 p?#133"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-26",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "A",
+      "ref": "Ez 18:25-28",
+      "source": "olm-1981 p?#136"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-26",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "A",
+      "ref": "Ps 24:4-5, 6-7, 8-9",
+      "source": "olm-1981 p?#136"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-26",
+      "mass": "day",
+      "slot": "second-reading",
+      "cycle": "A",
+      "ref": "Phil 2:1-11",
+      "alternatives": ["Phil 2:1-5"],
+      "source": "olm-1981 p?#136"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-sunday-26",
+      "mass": "day",
+      "slot": "gospel",
+      "cycle": "A",
+      "ref": "Mt 21:28-32",
+      "source": "olm-1981 p?#136"
+    }
+  ],
+  "consulted": [
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-24-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday24Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-24-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday24Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-24-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday24Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-24-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday24Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-24-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday24Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-24-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday24Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-25-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday25Monday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-25-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday25Tuesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-25-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday25Wednesday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-25-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday25Thursday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-25-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday25Friday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-25-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday25Saturday",
+      "note": "empty at the pinned revision, as is feriale_per_annum_I"
+    },
+    {
+      "kind": "celebrations",
+      "key": "matthew-apostle",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StMatthewEvangelist",
+      "note": "empty at the pinned revision"
+    }
+  ]
+}

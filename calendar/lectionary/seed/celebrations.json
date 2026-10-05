@@ -1,0 +1,34 @@
+{
+  "$comment": "Seed block (L-016), celebrations keyed by Lectio celebration id. St Matthew (21 Sep, feast) is filled from OLM 1981 (LitCal sanctorum/en.json#StMatthewEvangelist is empty at the pinned revision). Provisional until verified.",
+  "kind": "celebrations",
+  "entries": [
+    {
+      "key": "matthew-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 4:1-7, 11-13",
+              "source": "olm-1981 p?#643",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "source": "olm-1981 p?#643",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 9:9-13",
+              "source": "olm-1981 p?#643",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

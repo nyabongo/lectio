@@ -1,0 +1,456 @@
+{
+  "$comment": "Seed block (L-016), proper of time. Sundays 25 and 26 (Year A) are imported from LitCal (import/litcal/seed.json). OT weeks 24-25 weekdays (Year II first reading and psalm; gospel shared by both years) are filled from the OLM 1981 structure, cited by OLM lectionary number; their pages (p?) and printed forms are recorded by the verifier. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "kind": "proper-of-time",
+  "entries": [
+    {
+      "key": "ot-weekday-24-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "1 Cor 11:17-26, 33",
+              "source": "olm-1981 p?#443",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 40:7-8, 8-9, 10, 17",
+              "source": "olm-1981 p?#443",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 7:1-10",
+              "source": "olm-1981 p?#443",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-24-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "1 Cor 12:12-14, 27-31",
+              "source": "olm-1981 p?#444",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 100:1-2, 3, 4, 5",
+              "source": "olm-1981 p?#444",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 7:11-17",
+              "source": "olm-1981 p?#444",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-24-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "1 Cor 12:31-13:13",
+              "source": "olm-1981 p?#445",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 33:2-3, 4-5, 12, 22",
+              "source": "olm-1981 p?#445",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 7:31-35",
+              "source": "olm-1981 p?#445",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-24-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "1 Cor 15:1-11",
+              "source": "olm-1981 p?#446",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 118:1-2, 16-17, 28",
+              "source": "olm-1981 p?#446",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 7:36-50",
+              "source": "olm-1981 p?#446",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-24-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "1 Cor 15:12-20",
+              "source": "olm-1981 p?#447",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 17:1, 6-7, 8, 15",
+              "source": "olm-1981 p?#447",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 8:1-3",
+              "source": "olm-1981 p?#447",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-24-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "1 Cor 15:35-37, 42-49",
+              "source": "olm-1981 p?#448",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 56:10-12, 13-14",
+              "source": "olm-1981 p?#448",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 8:4-15",
+              "source": "olm-1981 p?#448",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-sunday-25",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Is 55:6-9",
+              "printed": "Isaiah 55:6-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 145:2-3, 8-9, 17-18",
+              "printed": "Psalm 145:2-3, 8-9, 17-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Phil 1:20-24, 27",
+              "printed": "Philippians 1:20c-24, 27a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 20:1-16",
+              "printed": "Matthew 20:1-16a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-25-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "Prv 3:27-34",
+              "source": "olm-1981 p?#449",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 15:2-3, 3-4, 5",
+              "source": "olm-1981 p?#449",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 8:16-18",
+              "source": "olm-1981 p?#449",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-25-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "Prv 21:1-6, 10-13",
+              "source": "olm-1981 p?#450",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 119:1, 27, 30, 34, 35, 44",
+              "source": "olm-1981 p?#450",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 8:19-21",
+              "source": "olm-1981 p?#450",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-25-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "Prv 30:5-9",
+              "source": "olm-1981 p?#451",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 119:29, 72, 89, 101, 104, 163",
+              "source": "olm-1981 p?#451",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 9:1-6",
+              "source": "olm-1981 p?#451",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-25-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "Eccl 1:2-11",
+              "source": "olm-1981 p?#452",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 90:3-4, 5-6, 12-13, 14, 17",
+              "source": "olm-1981 p?#452",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 9:7-9",
+              "source": "olm-1981 p?#452",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-25-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "Eccl 3:1-11",
+              "source": "olm-1981 p?#453",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 144:1, 2, 3-4",
+              "source": "olm-1981 p?#453",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 9:18-22",
+              "source": "olm-1981 p?#453",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-weekday-25-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "II",
+              "ref": "Eccl 11:9-12:8",
+              "source": "olm-1981 p?#454",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "II",
+              "ref": "Ps 90:3-4, 5-6, 12-13, 14, 17",
+              "source": "olm-1981 p?#454",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 9:43-45",
+              "source": "olm-1981 p?#454",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ot-sunday-26",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Ez 18:25-28",
+              "printed": "Ezekiel 18:25-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday26",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 25:4-5, 6-7, 8-9",
+              "printed": "Psalm 25:4-5, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday26",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Phil 2:1-11",
+              "printed": "Philippians 2:1-11",
+              "alternatives": [
+                {
+                  "ref": "Phil 2:1-5",
+                  "printed": "Philippians 2:1-5"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday26",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 21:28-32",
+              "printed": "Matthew 21:28-32",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday26",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
