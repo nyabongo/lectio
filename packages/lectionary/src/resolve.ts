@@ -32,8 +32,9 @@
  * weekday, a Sunday-cycle reading is the OLM's substitute for the year whose Sunday has just read
  * the weekday's own passage (e.g. Monday of Advent week 1 reads Is 4:2-6 in Year A).
  *
- * Days without a Mass of their own: Holy Saturday lists the Easter Vigil (which belongs to Easter
- * Sunday and is celebrated after nightfall), and Palm Sunday's procession Mass needs only its gospel.
+ * Days without a Mass: Holy Saturday has no Mass of the day ({@link Resolution.noMass}); the Easter
+ * Vigil, celebrated after nightfall, belongs to Easter Sunday. Palm Sunday's procession Mass needs
+ * only its gospel.
  */
 import type { CalendarDay, Celebration } from '@lectio/schema/calendar';
 import type { ReadingSlot } from '@lectio/schema/common';
@@ -113,8 +114,10 @@ export interface Resolution {
   readonly date: IsoDate;
   /** The proper-of-time key of the date, whether or not it was used. */
   readonly properOfTimeKey: string;
-  /** Empty when the lectionary has no data for the day. */
+  /** Empty when the lectionary has no data for the day, or when the day has no Mass. */
   readonly masses: readonly ResolvedMass[];
+  /** The day has no Mass at all (Holy Saturday), so its empty `masses` is not missing data. */
+  readonly noMass: boolean;
 }
 
 const MASS_LABELS: Readonly<Record<string, string>> = {
@@ -128,10 +131,12 @@ const MASS_LABELS: Readonly<Record<string, string>> = {
 /** Masses that need fewer slots than a Mass of their day: Palm Sunday's procession reads only a gospel. */
 const MASS_SLOTS: Readonly<Record<string, readonly ReadingSlot[]>> = { procession: ['gospel'] };
 
-/** Days without a Mass of their own that list another celebration's Mass held on them. */
-const BORROWED: Readonly<Record<string, { readonly key: string; readonly mass: string }>> = {
-  'holy-saturday': { key: 'easter-sunday', mass: 'easter-vigil' },
-};
+/**
+ * Days without any Mass. Holy Saturday has no Mass of the day; the Easter Vigil held that night
+ * belongs to Easter Sunday and is listed there only. The web and app copy for a `noMass` day is
+ * written for Holy Saturday (`day.holySaturdayNoMass`): a day added here needs its own copy.
+ */
+export const NO_MASS_DAYS: ReadonlySet<string> = new Set(['holy-saturday']);
 
 const OPTIONAL: readonly CelebrationRank[] = ['optional-memorial', 'commemoration'];
 
@@ -248,6 +253,9 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
   const ptKey = properOfTimeKey(day.date, day.season, day.seasonWeek);
   const cycles: Cycle[] = [day.sundayCycle, day.weekdayCycle];
   const principal = day.celebrations.find((c) => !OPTIONAL.includes(c.rank));
+  if (principal !== undefined && NO_MASS_DAYS.has(principal.id)) {
+    return { date: day.date, properOfTimeKey: ptKey, masses: [], noMass: true };
+  }
   const idOf = (c: LectionaryCelebration): string => entryId(c.id, day.date, epiphany);
   const proper = principal === undefined ? undefined : lectionary.get('celebrations', idOf(principal));
   const sunday = isSundayKey(ptKey);
@@ -296,7 +304,6 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
 
   let masses: ResolvedMass[];
   const rank = principal?.rank;
-  const borrowed = principal === undefined ? undefined : BORROWED[principal.id];
   if (principal !== undefined && rank === 'memorial') {
     const memorial = proper === undefined ? undefined : overlaid(proper, 'day', principal.name ?? principal.id);
     masses = memorial === undefined ? weekdayMasses() : [memorial];
@@ -308,11 +315,6 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
       common === undefined
         ? fromEntry(proper, `celebrations:${proper.key}`, full, principal.name)
         : fromEntry(common, `commons:${common.key}`, full, principal.name);
-  } else if (borrowed !== undefined) {
-    const entry = lectionary.get('celebrations', borrowed.key);
-    masses = (entry === undefined ? [] : fromEntry(entry, `celebrations:${entry.key}`, true)).filter(
-      (mass) => mass.id === borrowed.mass,
-    );
   } else if (rank === 'solemnity' || rank === 'feast') {
     masses = [];
   } else {
@@ -326,5 +328,5 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: 
       if (mass !== undefined) masses.push(mass);
     }
   }
-  return { date: day.date, properOfTimeKey: ptKey, masses };
+  return { date: day.date, properOfTimeKey: ptKey, masses, noMass: false };
 }

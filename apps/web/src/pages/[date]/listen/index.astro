@@ -1,0 +1,122 @@
+---
+/**
+ * The Listen page, `/[date]/listen/` (L-085): the day's context and translation notes as one queue, with playback
+ * speed, lock-screen controls and keyboard shortcuts. Built only when `config.site.features.listen` is on (the Day
+ * page's Listen button links here); `/<locale>/` mirrors come from the i18n integration.
+ *
+ * The view model is `listenPageView` in src/lib/player/listen.ts; the player itself is `ListenPlayer`.
+ */
+import ListenPlayer from '../../../components/player/ListenPlayer.astro';
+import Seo from '../../../components/seo/Seo.astro';
+import { formatDate, localeOf, localePath, t } from '../../../i18n/index.ts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { calendarDates, listenPath } from '../../../lib/day.ts';
+import type { DayEnv } from '../../../lib/day.ts';
+import { listenPagePaths, listenPageView } from '../../../lib/player/listen.ts';
+import { siteContext, withBase } from '../../../lib/site.ts';
+
+export function getStaticPaths() {
+  const { config, repo } = siteContext();
+  return listenPagePaths(calendarDates(repo), config);
+}
+
+const date = String(Astro.params.date);
+const lang = localeOf(Astro.url);
+const base = import.meta.env.BASE_URL;
+const { config, repo } = siteContext();
+const env: DayEnv = {
+  lang,
+  messages: { t, formatDate: (locale, day) => formatDate(locale, day) },
+  paths: (path) => withBase(base, localePath(lang, path)),
+};
+const view = listenPageView(env, { config, repo, base }, date);
+if (view === null) throw new Error(`No calendar day for ${date}`);
+const { day } = view;
+---
+
+<BaseLayout
+  title={view.pageTitle}
+  description={view.description}
+  date={day.date}
+  celebration={day.title}
+  celebrationLang={day.titleLang}
+  colour={day.colour}
+  lang={lang}
+>
+  <Seo slot="head" title={view.pageTitle} description={view.description} lang={lang} path={listenPath(day.date)} />
+  <article class="listen" aria-labelledby="listen-title">
+    <a class="listen__back" href={view.dayHref}>
+      <span aria-hidden="true">←</span>
+      {view.backToDay}
+    </a>
+    <header class="listen__header">
+      <p class="eyebrow"><time datetime={day.date}>{day.dateLabel}</time></p>
+      <h1 id="listen-title" class="listen__title">{t(lang, 'listen.heading')}</h1>
+      <p class="listen__celebration" lang={day.titleLang}>{day.title}</p>
+      <p class="listen__intro">
+        {t(lang, 'listen.intro')}
+        {view.groups.length > 0 && <span class="listen__count">{view.count}</span>}
+      </p>
+    </header>
+    {
+      view.groups.length === 0 ? (
+        <p class="listen__empty">{t(lang, 'listen.empty')}</p>
+      ) : (
+        <ListenPlayer view={view} lang={lang} />
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .listen {
+    max-width: 44rem;
+  }
+
+  .listen__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+  }
+
+  .listen__header {
+    margin-bottom: var(--space-m);
+  }
+
+  .listen__header .eyebrow {
+    margin: var(--space-xs) 0 var(--space-3xs);
+  }
+
+  .listen__title {
+    font-size: var(--step-4);
+    margin: 0;
+  }
+
+  .listen__celebration {
+    margin: var(--space-3xs) 0 var(--space-xs);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+    color: var(--colour-muted);
+  }
+
+  .listen__intro {
+    margin: 0;
+    max-width: var(--measure);
+  }
+
+  .listen__count {
+    display: inline-block;
+    margin-inline-start: var(--space-2xs);
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+  }
+
+  .listen__empty {
+    color: var(--colour-muted);
+  }
+</style>

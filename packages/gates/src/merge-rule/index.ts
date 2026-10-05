@@ -494,7 +494,9 @@ const SEVERITY: Readonly<Record<Decision, Severity>> = {
 };
 
 /** What `factsFromChanges` reads: the diff and the files on both sides of it. */
-export type ChangeView = Pick<GateContext, 'changedFiles' | 'readFile' | 'readBase'>;
+export type ChangeView = Pick<GateContext, 'changedFiles' | 'readFile' | 'readBase'> & {
+  readonly config: Pick<LectioConfig, 'content'>;
+};
 
 /** Every changed path, with the old path of a rename or copy, deduplicated. */
 export function changedPaths(changedFiles: ChangeView['changedFiles']): string[] {

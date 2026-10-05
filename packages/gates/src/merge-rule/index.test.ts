@@ -514,6 +514,15 @@ describe('mergeRuleGate', () => {
     );
   });
 
+  it('does not block approved-looking fixtures outside the content root', async () => {
+    const fixture = 'tests/gates/fixtures/bad-week/head/passages/MT.20.1-16.json';
+    const view = contextFor([{ path: fixture, status: 'added' }], { [fixture]: { review: approvedReview } });
+    expect(factsFromChanges(view).reviewEdits).toEqual([]);
+    const result = await mergeRuleGate.run(view);
+    expect(result.items.map((item) => item.ruleId)).not.toContain('merge-rule/review-block-approved');
+    expect(result.status).not.toBe('fail');
+  });
+
   it('builds the facts it can see from the context', () => {
     const files: ChangedFile[] = [
       { path: PASSAGE, status: 'modified' },

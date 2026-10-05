@@ -131,6 +131,12 @@ describe('cards', () => {
     expect(card).not.toHaveProperty('gospelRef');
   });
 
+  it('names Holy Saturday without the Vigil and leaves the Gospel off its card', () => {
+    const card = dayCard(context, '2026-04-04');
+    expect(card).toMatchObject({ kind: 'day', colour: 'violet', celebration: 'Holy Saturday' });
+    expect(card).not.toHaveProperty('gospelRef');
+  });
+
   it('builds the reading card from the approved summary, and none for a pending reading', () => {
     const card = readingCard(context, SUNDAY, 'gospel');
     expect(card).toMatchObject({

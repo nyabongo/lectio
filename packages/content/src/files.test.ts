@@ -9,9 +9,11 @@ import {
   checkContentText,
   checkPassage,
   contentKindOf,
+  contentPlaceAt,
   isMissing,
   nodeFs,
   parseJson,
+  pathUnderContentRoot,
   yearOfFileName,
 } from './files.ts';
 
@@ -85,6 +87,47 @@ describe('file names', () => {
     expect(contentKindOf('calendar/2026.json')).toBe('calendar');
     expect(contentKindOf('calendar/2026.txt')).toBeNull();
     expect(contentKindOf('other/2026.json')).toBeNull();
+  });
+
+  it('places a path relative to the content root, and nowhere else', () => {
+    expect(pathUnderContentRoot('passages/A.json', '.')).toBe('passages/A.json');
+    expect(pathUnderContentRoot('./passages/A.json', '')).toBe('passages/A.json');
+    expect(pathUnderContentRoot('content/passages/A.json', './content/')).toBe('passages/A.json');
+    expect(pathUnderContentRoot('content\\passages\\A.json', 'content')).toBe('passages/A.json');
+    expect(pathUnderContentRoot('content2/passages/A.json', 'content')).toBeNull();
+    expect(pathUnderContentRoot('passages/A.json', 'content')).toBeNull();
+    expect(pathUnderContentRoot('/repo/passages/A.json', '.')).toBeNull();
+    expect(pathUnderContentRoot('../passages/A.json', '.')).toBeNull();
+    expect(pathUnderContentRoot('passages/A.json', '../elsewhere')).toBeNull();
+    expect(pathUnderContentRoot('content/../passages/A.json', 'content')).toBeNull();
+  });
+
+  it('classifies content files only directly under the content root', () => {
+    expect(contentPlaceAt('passages/MT.20.1-16.json', '.')).toEqual({ kind: 'passage' });
+    expect(contentPlaceAt('calendar/2026.json', '.')).toEqual({ kind: 'calendar' });
+    expect(contentPlaceAt('passages/i18n/sw/MT.20.1-16.json', '.')).toEqual({
+      kind: 'translation',
+      locale: 'sw',
+      key: 'MT.20.1-16',
+    });
+    expect(contentPlaceAt('content/passages/MT.20.1-16.json', 'content')).toEqual({ kind: 'passage' });
+    expect(contentPlaceAt('./passages//MT.20.1-16.json', '.')).toEqual({ kind: 'passage' });
+    for (const path of [
+      'tests/gates/fixtures/bad-week/head/passages/MT.20.1-16.json',
+      'packages/gates/src/merge-rule/fixtures/passages/MT.20.1-16.json',
+      'tests/fixtures/calendar/2026.json',
+      'tests/fixtures/passages/i18n/sw/MT.20.1-16.json',
+      'passages/MT.20.1-16.json.txt',
+      'passages/notes.txt',
+      'passages/drafts/MT.20.1-16.json',
+      'passages/i18n/en/MT.20.1-16.json',
+      'other/2026.json',
+      'passages',
+      '.',
+    ]) {
+      expect(contentPlaceAt(path, '.'), path).toBeNull();
+    }
+    expect(contentPlaceAt('passages/MT.20.1-16.json', 'content')).toBeNull();
   });
 
   it('reads the year from a calendar file name', () => {

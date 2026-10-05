@@ -289,6 +289,8 @@ describe('verifierGate', () => {
     });
     const deleted = testContext({ changed: [{ path: FILE, status: 'deleted' }] });
     expect((await verifierGate.run(deleted.context)).status).toBe('skipped');
+    const fixture = testContext({ changed: [{ path: `tests/fixtures/${FILE}`, status: 'added' }] });
+    expect((await verifierGate.run(fixture.context)).status).toBe('skipped');
   });
 
   it('runs with live clients of the configured families in auto and live mode', async () => {

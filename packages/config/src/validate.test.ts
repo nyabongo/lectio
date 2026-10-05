@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_CONFIG } from './defaults.ts';
 import { deepMerge } from './merge.ts';
-import { ConfigError, familyOfModel, pointerSegment, validateConfig } from './validate.ts';
+import { ConfigError, familyOfModel, pointerSegment, timezoneProblem, validateConfig } from './validate.ts';
 import type { ConfigIssue } from './validate.ts';
 
 function issuesFor(override: unknown): readonly ConfigIssue[] {
@@ -60,6 +60,26 @@ describe('validateConfig', () => {
     expect(
       issuesFor({ linkout: { providers: { 'Bad/Key': { label: 'x', enabled: false, template: 'https://x' } } } }),
     ).toEqual(expect.arrayContaining([{ pointer: '/linkout/providers/Bad~1Key', message: 'invalid key name' }]));
+  });
+
+  it('rejects an unknown, offset or miscased time zone instead of falling back to UTC', () => {
+    expect(issuesFor({ site: { timezone: 'Mars/Olympus_Mons' } })).toEqual([
+      {
+        pointer: '/site/timezone',
+        message: '"Mars/Olympus_Mons" is not a known IANA time zone (for example "Africa/Nairobi")',
+      },
+    ]);
+    expect(issuesFor({ site: { timezone: 'africa/nairobi' } })).toEqual([
+      {
+        pointer: '/site/timezone',
+        message:
+          'write the time zone as "Africa/Nairobi": zone names are case-sensitive outside the JavaScript runtime',
+      },
+    ]);
+    expect(issuesFor({ site: { timezone: '+03:00' } }).map((issue) => issue.pointer)).toEqual(['/site/timezone']);
+    for (const timezone of ['Africa/Nairobi', 'UTC', 'Etc/GMT+3', 'America/Argentina/Buenos_Aires']) {
+      expect(timezoneProblem(timezone), timezone).toBeNull();
+    }
   });
 
   it('rejects a non-object file at the root', () => {

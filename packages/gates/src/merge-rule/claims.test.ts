@@ -20,7 +20,8 @@ describe('changedClaims', () => {
       { path: 'passages/gone.json', status: 'deleted' },
       { path: 'passages/missing.json', status: 'modified' },
     ];
-    expect(changedClaims({ changedFiles, readFile: (path) => files[path] ?? null })).toEqual([
+    const config = { content: { root: '.' } };
+    expect(changedClaims({ changedFiles, readFile: (path) => files[path] ?? null, config })).toEqual([
       { file: 'passages/A.json', claimId: 'c1' },
       { file: 'passages/A.json', claimId: 'c2' },
       { file: 'passages/bad.json', claimId: UNREADABLE_CLAIMS },
@@ -29,5 +30,18 @@ describe('changedClaims', () => {
       { file: 'passages/bad-id.json', claimId: UNREADABLE_CLAIMS },
       { file: 'passages/null-claim.json', claimId: UNREADABLE_CLAIMS },
     ]);
+  });
+
+  it('skips passage-shaped files outside the content root', () => {
+    const files: Record<string, string> = {
+      'tests/fixtures/passages/A.json': JSON.stringify({ claims: [{ id: 'c1' }] }),
+      'content/passages/B.json': JSON.stringify({ claims: [{ id: 'c2' }] }),
+    };
+    const changedFiles = Object.keys(files).map((path): ChangedFile => ({ path, status: 'added' }));
+    const readFile = (path: string): string | null => files[path] ?? null;
+    expect(changedClaims({ changedFiles, readFile, config: { content: { root: 'content' } } })).toEqual([
+      { file: 'content/passages/B.json', claimId: 'c2' },
+    ]);
+    expect(changedClaims({ changedFiles, readFile, config: { content: { root: '.' } } })).toEqual([]);
   });
 });

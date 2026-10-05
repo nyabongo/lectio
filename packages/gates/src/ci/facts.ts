@@ -233,7 +233,7 @@ export async function gatherFacts(input: GatherInput): Promise<GatheredFacts> {
       : null;
   const readBase =
     baseline === null ? (path: string) => checkout.show(base, path) : (path: string) => checkout.show(baseline, path);
-  const view = { changedFiles, readFile: (path: string) => checkout.readFile(path), readBase };
+  const view = { changedFiles, readFile: (path: string) => checkout.readFile(path), readBase, config };
 
   const facts: PullRequestFacts = {
     number: pr.number,

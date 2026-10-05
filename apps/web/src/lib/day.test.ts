@@ -131,6 +131,10 @@ describe('dayPageView with the fixture content root', () => {
       noMass:
         'There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
         'readings are listed there.',
+      pageTitle: 'Holy Saturday, Saturday 4 April 2026',
+      description:
+        'Saturday 4 April 2026: Holy Saturday. Paschal Triduum. There is no Mass on Holy Saturday; the Easter Vigil ' +
+        'belongs to Easter Sunday.',
     });
   });
 
@@ -148,7 +152,8 @@ describe('dayPageView with the fixture content root', () => {
       massOptions: null,
       missing: null,
       noMass: null,
-      listen: null,
+      // The fixture build turns Listen on (L-085).
+      listen: { href: '/base/2026-09-20/listen/', label: 'Listen to the notes' },
       pageTitle: 'Twenty-fifth Sunday in Ordinary Time, Sunday 20 September 2026',
     });
     expect(view.celebrations).toEqual([

@@ -1,0 +1,48 @@
+{
+  "pageTitle": "Listen · {date}",
+  "description": "Listen to the context and original-language notes for the readings of {date}, one after another.",
+  "heading": "Listen",
+  "intro": "The context and translation notes for this day's readings, played as one queue.",
+  "backToDay": "All readings for {date}",
+  "nowPlaying": "Now playing",
+  "upNext": "Up next",
+  "noteCount": {
+    "one": "{count} note",
+    "other": "{count} notes"
+  },
+  "group": "{slot} · {ref}",
+  "controls": {
+    "label": "Player",
+    "play": "Play",
+    "pause": "Pause",
+    "previous": "Previous note",
+    "next": "Next note",
+    "back": "Back {seconds} seconds",
+    "forward": "Forward {seconds} seconds",
+    "seek": "Position in this note",
+    "position": "{position} of {duration}",
+    "speed": "Speed",
+    "speedOption": "{speed}×"
+  },
+  "source": {
+    "audio": "Recorded narration",
+    "speech": "Read by your device's voice",
+    "fallback": "The recording could not be played, so your device's voice reads this note."
+  },
+  "status": {
+    "playing": "Now playing: {title}",
+    "paused": "Paused: {title}",
+    "finished": "You have heard every note for this day. Play starts again from the top.",
+    "unavailable": "This browser cannot play the notes aloud. Each reading's page has them to read."
+  },
+  "empty": "There are no notes to listen to for this day yet. Notes are added once they have been checked against their sources and approved.",
+  "noscript": "The player needs JavaScript. The notes are also on each reading's page.",
+  "shortcuts": {
+    "heading": "Keyboard shortcuts",
+    "toggle": "Play or pause",
+    "next": "Next note",
+    "previous": "Previous note (or the start of this one)",
+    "slower": "Slower",
+    "faster": "Faster"
+  }
+}

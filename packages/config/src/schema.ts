@@ -39,7 +39,8 @@ export const configSchema: Schema = object({
     baseUrl: { type: 'string', pattern: '^https?://[^\\s]+/$' },
     basePath: { type: 'string', pattern: '^(/[A-Za-z0-9._~-]+)*$' },
     customDomain: { type: 'string', pattern: '^([a-z0-9-]+(\\.[a-z0-9-]+)+)?$' },
-    timezone: nonEmpty,
+    // An IANA zone name (`Africa/Nairobi`, `UTC`), not an offset; validate.ts checks the runtime knows it.
+    timezone: { type: 'string', pattern: '^[A-Za-z][A-Za-z0-9_+-]*(/[A-Za-z0-9_+-]+)*$' },
     region: nonEmpty,
     defaultLocale: locale,
     locales: { type: 'array', items: locale, minItems: 1, uniqueItems: true },

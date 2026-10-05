@@ -302,6 +302,33 @@ describe('assembleYear in the Christmas season', () => {
   });
 });
 
+describe('assembleDay on Holy Saturday', () => {
+  it('writes noMass with no Masses and no missing data, though the lectionary has the Easter Vigil', () => {
+    const triduum = new Lectionary([
+      {
+        block: 'test',
+        path: 'test/celebrations.json',
+        data: {
+          kind: 'celebrations',
+          entries: [
+            { key: 'easter-sunday', masses: [{ id: 'easter-vigil', readings: [reading('gospel', 'Mt 28:1-10')] }] },
+          ],
+        },
+      },
+    ]);
+    const holySaturday: DetailedDay = {
+      ...day('2026-04-04', [celebration('holy-saturday', 'weekday', { colour: 'violet', colours: ['violet'] })], 0),
+      season: 'paschal-triduum',
+    };
+    const result = assembleDay(holySaturday, triduum, drbo, names, [], GENERAL_ROMAN);
+    expect(result).toMatchObject({ date: '2026-04-04', masses: [], lectionaryMissing: false, noMass: true });
+    expect(validateCalendarYear(minimal([result]))).toBe(true);
+    expect(Object.keys(result).at(-1)).toBe('noMass');
+    // Any other day has no noMass field.
+    expect(assembleDay(sunday, lectionary, drbo, names, [], GENERAL_ROMAN)).not.toHaveProperty('noMass');
+  });
+});
+
 describe('assembleDay link-out failures', () => {
   it('leaves out a reading without a link-out, warns and marks the day', () => {
     const warnings: string[] = [];
