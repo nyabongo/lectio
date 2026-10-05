@@ -1,0 +1,625 @@
+{
+  "key": "PS.145.2-3_145.8-9_145.17-18",
+  "ref": "Ps 145:2-3, 8-9, 17-18",
+  "locale": "en",
+  "summary": "An alphabetic hymn of daily praise to God the King: unsearchably great, gracious and merciful, near to all who call.",
+  "context": {
+    "title": "An alphabet of praise",
+    "paragraphs": [
+      "Psalm 145 is an acrostic: its verses begin with the letters of the Hebrew alphabet in order. [c1] The line for nun is missing from the Hebrew after verse 13; the Septuagint and other ancient versions supply one, modelled on verse 17. [c2] Gill reports a Talmudic explanation from Rashi: nun opens Amos’s lament over fallen Israel. [c3]",
+      "Its heading names it a tehillah of David, a song of praise, and from its first verse addresses God as King. [c4] In Jewish prayer it is the heart of the Ashre, said twice in the morning service and once in the afternoon. [c5] The Talmud promises a share in the world to come to whoever recites it three times a day. [c6]",
+      "Verse 8 takes up the Lord’s description of himself to Moses in Exodus 34:6, almost word for word. [c7] Verse 9 widens that mercy: the LORD is good to all, and his compassion reaches all his works, not Israel alone. [c8] The verses chosen for today end by bringing this greatness near to everyone who calls on him in truth. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "en-cheqer",
+      "verse": "145:3",
+      "anchor": "unsearchable",
+      "original": {
+        "text": "אֵין חֵקֶר",
+        "lang": "hbo",
+        "translit": "ʾên ḥēqer",
+        "gloss": "there is no searching"
+      },
+      "summary": "Hebrew says there is “no searching” of God’s greatness: no inquiry ever reaches its bottom.",
+      "body": "Ḥeqer is a searching out, and with ʾên it says that something cannot be searched. [c10] Keil and Delitzsch explain that God’s greatness is so deep that no searching can reach its bottom. [c11] Isaiah 40:28 uses the same phrase for God’s understanding, and the Cambridge Bible hears that verse echoed here. [c12] Today’s first reading makes a similar point about God’s plans and paths. [c13]"
+    },
+    {
+      "id": "channun-rachum",
+      "verse": "145:8",
+      "anchor": "gracious and merciful",
+      "original": {
+        "text": "חַנּוּן וְרַחוּם",
+        "lang": "hbo",
+        "translit": "ḥannûn wəraḥûm",
+        "gloss": "gracious and compassionate"
+      },
+      "summary": "Two adjectives used only of God, taken from Exodus 34:6 with their order reversed, as in several later books.",
+      "body": "Both adjectives are used in the Bible only of God. [c14] Exodus 34:6 has the older order, raḥum weḥannun; Psalm 145:8 reverses it, as do Joel, Jonah and Nehemiah. [c15] In Jonah 4:2 the prophet names this very pair to explain why he fled towards Tarshish. [c16] Jewish fast-day services read the Exodus passage aloud, with its thirteen qualities of mercy. [c17]"
+    },
+    {
+      "id": "chasid",
+      "verse": "145:17",
+      "anchor": "holy",
+      "original": {
+        "text": "חָסִיד",
+        "lang": "hbo",
+        "translit": "ḥāsîd",
+        "gloss": "kind, loyal in love"
+      },
+      "summary": "Ḥasid, often “holy” in English, comes from ḥesed, kindness; said of God it means loving, full of kindness.",
+      "body": "Ḥasid belongs with ḥesed, kindness, and BDB favours an active sense: one who shows kindness. [c18] The Septuagint rendered it hosios, holy, a choice many English versions follow. [c19] Applied to God it occurs only here and in Jeremiah 3:12, where the Cambridge Bible takes it as full of lovingkindness. [c20] The line pairs it with the LORD being righteous in all his ways. [c21]"
+    },
+    {
+      "id": "qarov",
+      "verse": "145:18",
+      "anchor": "near",
+      "original": {
+        "text": "קָרוֹב",
+        "lang": "hbo",
+        "translit": "qārôb",
+        "gloss": "near"
+      },
+      "summary": "Qarov, near, is the word Isaiah 55:6 also uses: the God beyond searching is close to those who call.",
+      "body": "Qarov is the ordinary adjective for near, used of cities, roads and neighbours. [c22] Isaiah 55:6, today’s first reading, uses it of God: he is to be called on while he is near. [c23] The psalm adds a condition, calling on him in truth, which the Pulpit Commentary reads as sincerity rather than mere formal prayer. [c24] The same psalm that calls his greatness unsearchable calls him near. [c25]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Psalm 145 is written alphabetically, each verse beginning with the next letter of the Hebrew alphabet.",
+      "sourceIds": ["gill-ps-145-13-alphabet", "ellicott-ps-145-13-nun"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The nun verse is missing from the Hebrew after Psalm 145:13; the Septuagint, Vulgate, Syriac and other versions supply a verse there, a variation of Psalm 145:17.",
+      "sourceIds": ["ellicott-ps-145-13-nun", "ellicott-ps-145-13-variation", "gill-ps-145-13-supply"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Gill reports that Jarchi (Rashi) gives a reason from the Talmud for the missing nun: the prophecy of Israel’s fall in Amos 5:2 begins with that letter.",
+      "sourceIds": ["gill-ps-145-13-talmud", "gill-ps-145-13-amos", "am-5-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Psalm 145:1 is headed תְּהִלָּה לְדָוִד, the noun meaning praise or song of praise, and the psalm addresses God as the King.",
+      "sourceIds": ["ps-145-1", "bdb-tehillah", "cambridge-ps-145-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "In Jewish prayer Psalm 145, prefixed by the Ashre verses, is recited twice in the morning and once in the afternoon prayer.",
+      "sourceIds": ["je-ashre-times", "je-ashre-prefixed"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "The Talmud (Berakhot 4b) says that whoever recites Psalm 145 three times a day may be certain of a portion in the world to come.",
+      "sourceIds": ["je-ashre-berakhot"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Psalm 145:8 is taken almost verbatim from Exodus 34:6.",
+      "sourceIds": ["cambridge-ps-145-8", "ex-34-6", "ps-145-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Psalm 145:9 says the LORD is good to all and his compassion is over all his works, which commentators take to mean all mankind and all creation, not Israel alone.",
+      "sourceIds": ["ps-145-9", "cambridge-ps-145-9", "benson-ps-145-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Psalm 145:18 says the LORD is near to all who call on him in truth.",
+      "sourceIds": ["ps-145-18"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "The Hebrew noun חֵקֶר means searching or a thing to be searched out, and אֵין חֵקֶר means it is unsearchable (Psalm 145:3; Isaiah 40:28).",
+      "sourceIds": ["bdb-cheqer", "bdb-cheqer-unsearchable"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Keil and Delitzsch explain that God’s greatness is so deep that no searching can reach its bottom.",
+      "sourceIds": ["kd-ps-145-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Isaiah 40:28 uses אֵין חֵקֶר of God’s understanding, and the Cambridge Bible lists Isaiah 40:28 among the passages Psalm 145:3 echoes.",
+      "sourceIds": ["is-40-28", "cambridge-ps-145-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Isaiah 55:8-9, the first reading of the same Sunday, says God’s thoughts and ways are higher than human thoughts and ways.",
+      "sourceIds": ["is-55-8-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "The adjectives חַנּוּן (gracious) and רַחוּם (compassionate) are used only of God.",
+      "sourceIds": ["bdb-channun", "bdb-rachum"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Exodus 34:6 has the earlier order רַחוּם וְחַנּוּן; Psalm 145:8, Joel 2:13, Jonah 4:2 and Nehemiah 9:17 have the later order חַנּוּן וְרַחוּם.",
+      "sourceIds": ["bdb-channun-order", "ex-34-6", "ps-145-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "In Jonah 4:2 Jonah names God as gracious and compassionate when explaining why he fled to Tarshish.",
+      "sourceIds": ["jon-4-2-pair", "jon-4-2-tarshish"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "On Jewish fast-days the Torah lesson from Exodus (32:11-14; 34:1-10), which treats the thirteen qualities of mercy, is read publicly.",
+      "sourceIds": ["je-fast-thirteen"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "BDB defines חָסִיד as kind, pious, and favours an active sense: one who practises חֶסֶד, kindness.",
+      "sourceIds": ["bdb-chasid", "bdb-chasid-active"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "The Septuagint renders חָסִיד in Psalm 145:17 as ὅσιος, holy.",
+      "sourceIds": ["cambridge-ps-145-17-lxx"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Applied to God, חָסִיד occurs only in Psalm 145:17 and Jeremiah 3:12, and means full of lovingkindness.",
+      "sourceIds": ["cambridge-ps-145-17-chasid", "cambridge-ps-145-17-loving"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Psalm 145:17 pairs the LORD being righteous in all his ways with being חָסִיד in all his works.",
+      "sourceIds": ["ps-145-17"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "קָרוֹב is the ordinary Hebrew adjective near, used of cities, roads and persons such as neighbours.",
+      "sourceIds": ["bdb-qarov", "bdb-qarov-neighbour"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Isaiah 55:6 uses קָרוֹב of God: he is to be called on while he is near.",
+      "sourceIds": ["is-55-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "Psalm 145:18 limits God’s nearness to those who call on him in truth, which the Pulpit Commentary explains as sincerely, since mere formal prayer is useless.",
+      "sourceIds": ["ps-145-18-truth", "pulpit-ps-145-18", "pulpit-ps-145-18-formal"],
+      "sensitive": false
+    },
+    {
+      "id": "c25",
+      "text": "Psalm 145 calls God’s greatness unsearchable (145:3) and says he is near to all who call on him (145:18).",
+      "sourceIds": ["ps-145-3", "ps-145-18"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "ps-145-1",
+      "type": "scripture",
+      "citation": "Psalm 145:1",
+      "ref": "Ps 145:1",
+      "excerpt": "תְּהִלָּה לְדָוִד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-3",
+      "type": "scripture",
+      "citation": "Psalm 145:3",
+      "ref": "Ps 145:3",
+      "excerpt": "וְלִגְדֻלָּתוֹ אֵין חֵקֶר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-8",
+      "type": "scripture",
+      "citation": "Psalm 145:8",
+      "ref": "Ps 145:8",
+      "excerpt": "חַנּוּן וְרַחוּם יְהוָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-9",
+      "type": "scripture",
+      "citation": "Psalm 145:9",
+      "ref": "Ps 145:9",
+      "excerpt": "טוֹב יְהוָה לַכֹּל",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-17",
+      "type": "scripture",
+      "citation": "Psalm 145:17",
+      "ref": "Ps 145:17",
+      "excerpt": "צַדִּיק יְהוָה בְּכָל דְּרָכָיו וְחָסִיד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-18",
+      "type": "scripture",
+      "citation": "Psalm 145:18",
+      "ref": "Ps 145:18",
+      "excerpt": "קָרוֹב יְהוָה לְכָל קֹרְאָיו",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-18-truth",
+      "type": "scripture",
+      "citation": "Psalm 145:18",
+      "ref": "Ps 145:18",
+      "excerpt": "יִקְרָאֻהוּ בֶאֱמֶת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ex-34-6",
+      "type": "scripture",
+      "citation": "Exodus 34:6",
+      "ref": "Ex 34:6",
+      "excerpt": "אֵל רַחוּם וְחַנּוּן",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jon-4-2-pair",
+      "type": "scripture",
+      "citation": "Jonah 4:2",
+      "ref": "Jon 4:2",
+      "excerpt": "אֵל חַנּוּן וְרַחוּם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jon-4-2-tarshish",
+      "type": "scripture",
+      "citation": "Jonah 4:2",
+      "ref": "Jon 4:2",
+      "excerpt": "לִבְרֹחַ תַּרְשִׁישָׁה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "am-5-2",
+      "type": "scripture",
+      "citation": "Amos 5:2",
+      "ref": "Am 5:2",
+      "excerpt": "נָפְלָה לֹא תוֹסִיף קוּם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-40-28",
+      "type": "scripture",
+      "citation": "Isaiah 40:28",
+      "ref": "Is 40:28",
+      "excerpt": "אֵין חֵקֶר לִתְבוּנָתוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-6",
+      "type": "scripture",
+      "citation": "Isaiah 55:6",
+      "ref": "Is 55:6",
+      "excerpt": "קְרָאֻהוּ בִּהְיוֹתוֹ קָרוֹב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-8-9",
+      "type": "scripture",
+      "citation": "Isaiah 55:8-9",
+      "ref": "Is 55:8-9",
+      "excerpt": "גָּבְהוּ דְרָכַי מִדַּרְכֵיכֶם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gill-ps-145-13-alphabet",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "This psalm is written alphabetically",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "gill-ps-145-13-supply",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "Syriac, Arabic, and Ethiopic versions, supply this defect here",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "gill-ps-145-13-talmud",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "Jarchi gives a reason for it",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "gill-ps-145-13-amos",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "the prophecy of which begins with this letter, Amos 5:2",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-145-13-nun",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "The nun stanza, which should come after Psalm 145:13",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-145-13-variation",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "have here a variation of Psalm 145:17",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-1",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-1.htm",
+      "excerpt": "He Who is Israel’s God is the absolute, universal King",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-3",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-3.htm",
+      "excerpt": "The verse re-echoes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "kd-ps-145-3",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation), on Psalm 145:1-7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-3.htm",
+      "excerpt": "so abysmally deep that no searching can reach its bottom",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-8",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-8.htm",
+      "excerpt": "Taken almost verbatim from Exodus 34:6",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "benson-ps-145-8",
+      "type": "web",
+      "citation": "Joseph Benson, Commentary on the Old and New Testaments (1857), on Psalm 145:8-13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-8.htm",
+      "excerpt": "Not only to Israel, but to all mankind",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-9",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-9.htm",
+      "excerpt": "as the parallelism of the next line shews, to all creation",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-17-lxx",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-17.htm",
+      "excerpt": "So the LXX",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-17-chasid",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-17.htm",
+      "excerpt": "(here and in Jeremiah 3:12 only)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-17-loving",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-17.htm",
+      "excerpt": "means full of lovingkindness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-145-18",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 145:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-18.htm",
+      "excerpt": "sincerely, with earnest desire and strong confidence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-145-18-formal",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 145:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-18.htm",
+      "excerpt": "Mere formal prayer is useless",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-tehillah",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. תְּהִלָּה (Bible Hub, Strong's 8416)",
+      "url": "https://biblehub.com/hebrew/8416.htm",
+      "excerpt": "noun feminine praise, song of praise",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-cheqer",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חֵקֶר (Bible Hub, Strong's 2714)",
+      "url": "https://biblehub.com/hebrew/2714.htm",
+      "excerpt": "searching, thing (to be) searched out",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-cheqer-unsearchable",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חֵקֶר (Bible Hub, Strong's 2714)",
+      "url": "https://biblehub.com/hebrew/2714.htm",
+      "excerpt": "i.e. it is unsearchable",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-channun",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חַנּוּן (Bible Hub, Strong's 2587)",
+      "url": "https://biblehub.com/hebrew/2587.htm",
+      "excerpt": "only used as an attribute of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-channun-order",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חַנּוּן (Bible Hub, Strong's 2587)",
+      "url": "https://biblehub.com/hebrew/2587.htm",
+      "excerpt": "elsewhere in the earlier phrase",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-rachum",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רַחוּם (Bible Hub, Strong's 7349)",
+      "url": "https://biblehub.com/hebrew/7349.htm",
+      "excerpt": "always of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-chasid",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חָסִיד (Bible Hub, Strong's 2623)",
+      "url": "https://biblehub.com/hebrew/2623.htm",
+      "excerpt": "adjective masculine kind, pious",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-chasid-active",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חָסִיד (Bible Hub, Strong's 2623)",
+      "url": "https://biblehub.com/hebrew/2623.htm",
+      "excerpt": "favour active sense",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-qarov",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. קָרוֹב (Bible Hub, Strong's 7138)",
+      "url": "https://biblehub.com/hebrew/7138.htm",
+      "excerpt": "near (often opposed to",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-qarov-neighbour",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. קָרוֹב (Bible Hub, Strong's 7138)",
+      "url": "https://biblehub.com/hebrew/7138.htm",
+      "excerpt": "i.e. his neighbour",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-ashre-times",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Ashre (Yoshebe Beteka)”, The Jewish Encyclopedia (1901-1906), vol. 2 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/2000-ashre-yoshebe-beteka",
+      "excerpt": "twice in the morning and once in the afternoon prayer",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-ashre-berakhot",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Ashre (Yoshebe Beteka)”, The Jewish Encyclopedia (1901-1906), vol. 2 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/2000-ashre-yoshebe-beteka",
+      "excerpt": "Whosoever recites Psalm cxlv. three times a day",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-ashre-prefixed",
+      "type": "web",
+      "citation": "Cyrus Adler and Francis L. Cohen, “Ashre”, The Jewish Encyclopedia (1901-1906), vol. 2 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/2001-ashre",
+      "excerpt": "which verses are always prefixed to Ps. cxlv.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-fast-thirteen",
+      "type": "web",
+      "citation": "“Fasting and Fast-Days”, The Jewish Encyclopedia (1901-1906), vol. 5 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/6033-fasting-and-fast-days",
+      "excerpt": "treats of the thirteen qualities of mercy and of God's forgiveness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-020-ps-145",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:24:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
