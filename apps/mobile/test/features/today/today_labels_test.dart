@@ -75,7 +75,7 @@ void main() {
   });
 
   test('notesSemantics names the reading', () {
-    expect(notesSemantics('Mt 20:1-16a'), 'Notes on Mt 20:1-16a');
+    expect(strings.notesSemantics('Mt 20:1-16a'), 'Notes on Mt 20:1-16a');
   });
 
   test('formatDayDate writes the date out', () {
