@@ -47,7 +47,8 @@ export const GATE_SUMMARIES: Readonly<Record<string, { readonly kind: string; re
     kind: 'deterministic',
     summary:
       'No long verbatim run from an English Bible or a cited commentary: quoted spans, overlap with the public-domain ' +
-      'Bible index, overlap with each fetched web source and excerpt length all have limits.',
+      'Bible index, overlap with each fetched web source and excerpt length all have limits. Translations are scanned ' +
+      'too, against the English passage’s sources; their main safeguard is the mandatory human review.',
   },
   verifiers: {
     kind: 'LLM, trusted side only',

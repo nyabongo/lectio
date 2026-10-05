@@ -23,12 +23,20 @@ import {
   PSEUDO_SCRIPTURE,
   SOURCE_URL,
   commentaryRun,
+  translation,
   passage,
   scripture,
   webSource,
   words,
 } from './fixtures/cases.ts';
-import { LICENCE_RULES, createLicenceGate, fileGuardIndexLoader, guardIndexPath, licenceGate } from './index.ts';
+import {
+  LICENCE_RULES,
+  TRANSLATION_LIMITATION,
+  createLicenceGate,
+  fileGuardIndexLoader,
+  guardIndexPath,
+  licenceGate,
+} from './index.ts';
 import type { GuardIndexLoader } from './index.ts';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
@@ -118,11 +126,12 @@ describe('the licence gate', () => {
     const gate = createLicenceGate({ loadGuardIndex: loader });
     const result = await gate.run(
       context({
-        files: { 'calendar/2026.json': '{}', 'docs/notes.md': '"' + words(30) + '"', 'passages/sub/x.json': '{}' },
+        files: { 'calendar/2026.json': '{}', 'docs/notes.md': '"' + words(30) + '"', 'passages/notes.md': '{}' },
         changed: [
           { path: 'calendar/2026.json', status: 'added' },
           { path: 'docs/notes.md', status: 'modified' },
-          { path: 'passages/sub/x.json', status: 'added' },
+          { path: 'passages/notes.md', status: 'added' },
+          { path: 'passages/i18n/sw/OLD.json', status: 'deleted' },
           { path: 'passages/OLD.json', status: 'deleted' },
         ],
       }),
@@ -558,5 +567,231 @@ describe('the real seed passage (passages/MT.20.1-16.json)', () => {
     const flagged = findings(result, LICENCE_RULES.commentaryUnchecked);
     expect(flagged.length).toBeGreaterThanOrEqual(urls.length);
     expect(result.items.filter((item) => item.severity === 'error')).toEqual([]);
+  });
+});
+
+describe('translations (passages/i18n/**)', () => {
+  const TRANSLATION = 'passages/i18n/sw/MT.20.1-16.json';
+  const ENGLISH = JSON.stringify(passage({ sources: [webSource('s1', SOURCE_URL)] }));
+
+  async function checkTranslation(
+    files: Readonly<Record<string, string>>,
+    options: Omit<ContextOptions, 'files'> = {},
+  ): Promise<GateResult> {
+    const gate = createLicenceGate({ loadGuardIndex: pseudoLoader });
+    const fetcher = options.fetcher ?? pages({ [SOURCE_URL]: PSEUDO_COMMENTARY });
+    return gate.run(context({ ...options, fetcher, files }));
+  }
+
+  /** A PR that adds only `path` (a translation), with the English passage at the head. */
+  const added = (path: string, body: Record<string, unknown> = translation()): ContextOptions => ({
+    files: { [path]: JSON.stringify(body), [FILE]: ENGLISH },
+    changed: [{ path, status: 'added' }],
+  });
+
+  async function run(options: ContextOptions): Promise<GateResult> {
+    const { files = {}, ...rest } = options;
+    return checkTranslation(files, rest);
+  }
+
+  it('passes a clean translation, checks the English sources and states what it cannot see', async () => {
+    const result = await run(added(TRANSLATION));
+    expect(result.status).toBe('pass');
+    expect(result.items.map((item) => item.message)).toEqual([
+      `Limitation: ${LIMITATION}`,
+      `Limitation (translations): ${TRANSLATION_LIMITATION}`,
+    ]);
+    expect(result.meta).toMatchObject({
+      files: 1,
+      translations: 1,
+      translationLimitation: TRANSLATION_LIMITATION,
+      sourcesFetched: 1,
+      sourcesChecked: 1,
+    });
+  });
+
+  it('leaves the translation limitation out when only English passages changed', async () => {
+    const result = await check(passage());
+    expect(result.meta).toMatchObject({ translations: 0 });
+    expect(result.meta).not.toHaveProperty('translationLimitation');
+  });
+
+  it('fails English Bible wording pasted into a translation, the gloss included', async () => {
+    const result = await run(added(TRANSLATION, translation({ paragraphs: [`${scripture(12)} [c1]`] })));
+    expect(findings(result, LICENCE_RULES.pdBibleOverlap)).toEqual([
+      expect.objectContaining({ file: TRANSLATION, pointer: '/context/paragraphs/0', severity: 'error' }),
+    ]);
+    const gloss = await run(added(TRANSLATION, translation({ gloss: scripture(12) })));
+    expect(findings(gloss, LICENCE_RULES.pdBibleOverlap).map((item) => item.pointer)).toEqual([
+      '/translationNotes/0/gloss',
+    ]);
+  });
+
+  it('fails commentary copied from a source the English passage cites, naming that passage', async () => {
+    const result = await run(
+      added(TRANSLATION, translation({ claims: [{ id: 'c1', text: `Inasema ${commentaryRun(13)}.` }] })),
+    );
+    const found = findings(result, LICENCE_RULES.commentaryOverlap);
+    expect(found).toEqual([
+      expect.objectContaining({ file: TRANSLATION, pointer: '/claims/0/text', claimId: 'c1', severity: 'error' }),
+    ]);
+    expect(found[0]?.message).toContain(`(cited as s1 in ${FILE}; limit 12)`);
+    const short = await run(added(TRANSLATION, translation({ paragraphs: [`${commentaryRun(12)}. [c1]`] })));
+    expect(findings(short, LICENCE_RULES.commentaryOverlap)).toEqual([]);
+  });
+
+  it('leaves the quoted-run limit to gate 1 (schema/translation-quoted-run), so it is not reported twice', async () => {
+    const result = await run(added(TRANSLATION, translation({ paragraphs: [`Anasema “${words(30)}”. [c1]`] })));
+    expect(findings(result, LICENCE_RULES.quotedEnglishRun)).toEqual([]);
+  });
+
+  it('flags an English source it cannot fetch on the translation, without pointing into another file', async () => {
+    const result = await run({ ...added(TRANSLATION), fetcher: pages({}) });
+    expect(result.status).toBe('flag');
+    const flagged = findings(result, LICENCE_RULES.commentaryUnchecked);
+    expect(flagged).toEqual([expect.objectContaining({ file: TRANSLATION, pointer: '', severity: 'warning' })]);
+    expect(flagged[0]?.message).toContain(`source s1 of ${FILE} (${SOURCE_URL}) could not be checked`);
+  });
+
+  it('checks the sources of both the English passage its file name names and the one translationOf names', async () => {
+    const other = 'passages/LK.9.1-6.json';
+    const copied = translation({ translationOf: 'LK.9.1-6', paragraphs: [`${commentaryRun(13)}. [c1]`] });
+    const result = await run({
+      files: {
+        [TRANSLATION]: JSON.stringify(copied),
+        [FILE]: JSON.stringify(passage()),
+        [other]: JSON.stringify(passage({ sources: [webSource('s9', SOURCE_URL)] })),
+      },
+      changed: [{ path: TRANSLATION, status: 'added' }],
+    });
+    expect(findings(result, LICENCE_RULES.commentaryOverlap).map((item) => item.message)).toEqual([
+      expect.stringContaining(`cited as s9 in ${other}`),
+    ]);
+    // The other way round: the file name names the passage with the source.
+    const swapped = await run({
+      files: {
+        [TRANSLATION]: JSON.stringify({ ...copied, translationOf: 'MT.20.1-16' }),
+        'passages/i18n/sw/LK.9.1-6.json': JSON.stringify(copied),
+        [FILE]: JSON.stringify(passage()),
+        [other]: JSON.stringify(passage({ sources: [webSource('s9', SOURCE_URL)] })),
+      },
+      changed: [{ path: 'passages/i18n/sw/LK.9.1-6.json', status: 'added' }],
+    });
+    expect(findings(swapped, LICENCE_RULES.commentaryOverlap)).toHaveLength(1);
+  });
+
+  it('reads no English file through a key that is not a passage key', async () => {
+    const path = 'passages/i18n/sw/x.json';
+    const gate = createLicenceGate({ loadGuardIndex: pseudoLoader });
+    for (const translationOf of ['../../config/lectio.config', 'mt.20.1-16', 42, null]) {
+      const ctx = context({
+        files: { [path]: JSON.stringify(translation({ translationOf })), [FILE]: ENGLISH },
+        changed: [{ path, status: 'added' }],
+      });
+      const reads: string[] = [];
+      const result = await gate.run({
+        ...ctx,
+        readFile: (file) => {
+          reads.push(file);
+          return ctx.readFile(file);
+        },
+      });
+      expect(result.status).toBe('pass');
+      expect(reads).toEqual([path]);
+    }
+  });
+
+  it('copes with a translation file that is JSON but not an object', async () => {
+    for (const text of ['null', '[]', '7']) {
+      const result = await checkTranslation(
+        { [TRANSLATION]: text },
+        { changed: [{ path: TRANSLATION, status: 'added' }] },
+      );
+      expect(result.status).toBe('pass');
+      expect(result.meta).toMatchObject({ translations: 1, sourcesFetched: 0 });
+    }
+  });
+
+  it('applies the excerpt limit to a translation that carries sources (a schema error in gate 1)', async () => {
+    const body = translation({ sources: [{ id: 's1', type: 'print', citation: 'A', excerpt: words(26) }] });
+    const result = await run(added(TRANSLATION, body));
+    expect(findings(result, LICENCE_RULES.excerptLength)).toEqual([
+      expect.objectContaining({ file: TRANSLATION, pointer: '/sources/0/excerpt' }),
+    ]);
+  });
+
+  it.each([
+    'passages/I18N/sw/MT.20.1-16.json',
+    'passages/I18n/sw/MT.20.1-16.json',
+    'Passages/i18n/sw/MT.20.1-16.json',
+    'PASSAGES/I18N/SW/MT.20.1-16.JSON',
+    'passages/i18n/sw/MT.20.1-16.JSON',
+    'passages/i18n/sw/nested/deeper/MT.20.1-16.json',
+    'passages/i18n/MT.20.1-16.json',
+    'passages/i18n/en/MT.20.1-16.json',
+    'passages/translations/sw/MT.20.1-16.json',
+  ])('scans the misplaced or case-variant file %s too (gate 1 rejects its path)', async (path) => {
+    const result = await run(added(path, translation({ paragraphs: [`${scripture(12)} [c1]`] })));
+    expect(findings(result, LICENCE_RULES.pdBibleOverlap).map((item) => item.file)).toEqual([path]);
+    expect(result.meta).toMatchObject({ translations: 1 });
+  });
+
+  it('scans a case-variant passage file as a passage, quoted-run limit included', async () => {
+    for (const path of ['PASSAGES/MT.20.1-16.json', 'passages/MT.20.1-16.JSON']) {
+      const result = await run(added(path, passage({ summary: `“${words(11)}”` })));
+      expect(findings(result, LICENCE_RULES.quotedEnglishRun).map((item) => item.file)).toEqual([path]);
+      expect(result.meta).toMatchObject({ files: 1, translations: 0 });
+    }
+  });
+
+  it('scans a translation renamed into place, and skips a deleted one', async () => {
+    const body = JSON.stringify(translation({ paragraphs: [`${scripture(12)} [c1]`] }));
+    const result = await run({
+      files: { [TRANSLATION]: body, [FILE]: ENGLISH },
+      changed: [
+        { path: TRANSLATION, status: 'renamed', previousPath: 'drafts/sw.json' },
+        { path: 'passages/i18n/sw/LK.9.1-6.json', status: 'deleted' },
+      ],
+    });
+    expect(findings(result, LICENCE_RULES.pdBibleOverlap).map((item) => item.file)).toEqual([TRANSLATION]);
+    expect(result.meta).toMatchObject({ files: 1, translations: 1 });
+  });
+
+  it('reads translations and their English passage under a nested content root', async () => {
+    const path = `content/${TRANSLATION}`;
+    const result = await run({
+      contentRoot: './content/',
+      files: {
+        [path]: JSON.stringify(translation({ paragraphs: [`${commentaryRun(13)}. [c1]`] })),
+        [`content/${FILE}`]: ENGLISH,
+        [TRANSLATION]: JSON.stringify(translation({ paragraphs: [`${scripture(12)} [c1]`] })),
+      },
+      changed: [
+        { path, status: 'added' },
+        { path: TRANSLATION, status: 'added' },
+      ],
+    });
+    expect(findings(result, LICENCE_RULES.commentaryOverlap).map((item) => item.message)).toEqual([
+      expect.stringContaining(`in content/${FILE}`),
+    ]);
+    expect(findings(result, LICENCE_RULES.pdBibleOverlap)).toEqual([]);
+    expect(result.meta).toMatchObject({ files: 1, translations: 1 });
+  });
+
+  it('fetches a URL once when the English passage and its translation both cite it', async () => {
+    const fetcher = pages({ [SOURCE_URL]: PSEUDO_COMMENTARY });
+    const fetch = vi.spyOn(fetcher, 'fetch');
+    const result = await checkTranslation(
+      { [TRANSLATION]: JSON.stringify(translation()), [FILE]: ENGLISH },
+      {
+        fetcher,
+        changed: [
+          { path: FILE, status: 'modified' },
+          { path: TRANSLATION, status: 'modified' },
+        ],
+      },
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(result.meta).toMatchObject({ files: 2, translations: 1, sourcesFetched: 1, sourcesChecked: 2 });
   });
 });
