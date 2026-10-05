@@ -20,6 +20,7 @@ import type {
   ApiPassageIndex,
   ApiPassageIndexEntry,
   ApiReadingSummary,
+  ApiSegment,
 } from '@lectio/schema/api';
 import { formatErrors } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
@@ -48,6 +49,8 @@ import {
   upcomingWindow,
 } from './api.ts';
 import type { ApiContext } from './api.ts';
+import { AUDIO_MANIFEST_ENV, loadSiteAudio } from './audio.ts';
+import type { SiteAudio } from './audio.ts';
 import { siteContext } from './site.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -56,6 +59,11 @@ const fixtureConfig = 'apps/web/test/lectio.config.fixture.json';
 const FIXTURE_DATE = '2026-09-20';
 const PENDING = 'IS.55.6-9';
 const APPROVED = 'MT.20.1-16';
+const fixtureManifest = 'apps/web/test/fixtures/audio/manifest.json';
+
+function fixtureAudio(): SiteAudio | null {
+  return loadSiteAudio(DEFAULT_CONFIG, { cwd: webRoot, env: { [AUDIO_MANIFEST_ENV]: fixtureManifest } });
+}
 
 function fixtureContext(date = FIXTURE_DATE): ApiContext {
   const { config, repo } = siteContext({ cwd: webRoot, env: { LECTIO_CONFIG: fixtureConfig } });
@@ -160,6 +168,22 @@ describe('API built from the fixture content root', () => {
     expect((files.get('days/2026-09-21.json') as ApiDay).colour).toBe('red');
   });
 
+  it('lists the narration segments of each Mass, with null audio when nothing is rendered', () => {
+    const day = files.get('days/2026-09-20.json') as ApiDay;
+    const segments = day.masses[0]?.segments ?? [];
+    expect(segments.map((segment: ApiSegment) => segment.id)).toEqual([
+      `${APPROVED}/context`,
+      `${APPROVED}/note/v15-evil-eye`,
+      `${APPROVED}/note/v15-agathos`,
+    ]);
+    expect(segments.every((segment: ApiSegment) => segment.audio === null && segment.script.length > 0)).toBe(true);
+    expect(
+      (files.get('days/2026-09-19.json') as ApiDay).masses.every(
+        (mass: ApiDay['masses'][number]) => mass.segments?.length === 0,
+      ),
+    ).toBe(true);
+  });
+
   it('lists the dates each approved passage is read on', () => {
     const passage = files.get(`passages/${APPROVED}.json`) as ReturnType<typeof apiPassage>;
     expect(passage?.dates).toEqual(['2026-09-20']);
@@ -210,6 +234,30 @@ describe('API built from the fixture content root', () => {
     expect(mirrorEndpoints({ site: { ...site, locales: ['en'] } })).toEqual({});
     expect(mirrorEndpoints({ site: { ...site, locales: ['sw'], defaultLocale: 'sw' } })).toEqual({});
     expect(mirrorEndpoints({ site }).locales?.sw?.day).toBe('sw/days/{date}.json');
+  });
+});
+
+describe('API built with the fixture audio manifest', () => {
+  const files = apiFiles({ ...fixtureContext(), audio: fixtureAudio() });
+
+  it.each([...files.keys()])('%s validates against its API schema', (path) => {
+    const validate = validatorFor(path);
+    const ok = validate(JSON.parse(JSON.stringify(files.get(path))) as unknown);
+    expect(formatErrors(ok ? [] : validate.errors)).toEqual([]);
+  });
+
+  it('gives every note and segment its file, the same in the day and passage documents', () => {
+    const day = files.get('days/2026-09-20.json') as ApiDay;
+    const notes = readingOf(day, APPROVED)?.passage as ApiNotes;
+    const segments = day.masses[0]?.segments ?? [];
+    const noteAudio = [
+      notes.context.audio,
+      ...notes.translationNotes.map((note: ApiNotes['translationNotes'][number]) => note.audio),
+    ];
+    expect(noteAudio.every((audio) => audio?.url.startsWith('https://audio.lectio.test/audio/en/'))).toBe(true);
+    expect(segments.map((segment: ApiSegment) => segment.audio)).toEqual(noteAudio);
+    const passage = files.get(`passages/${APPROVED}.json`) as ReturnType<typeof apiPassage>;
+    expect(passage?.passage).toEqual(notes);
   });
 });
 
@@ -328,20 +376,23 @@ describe('endpoints', () => {
     vi.stubEnv('LECTIO_CONFIG', fixtureConfig);
     vi.stubEnv('LECTIO_DATE', FIXTURE_DATE);
     vi.stubEnv('INIT_CWD', webRoot);
+    vi.stubEnv(AUDIO_MANIFEST_ENV, fixtureManifest);
   });
 
   afterAll(() => {
     vi.unstubAllEnvs();
   });
 
-  it('apiContext reads the build config and date', () => {
+  it('apiContext reads the build config, date and audio manifest once', () => {
     const context = apiContext();
     expect(context.date).toBe(FIXTURE_DATE);
     expect(context.repo.passageKeys()).toContain(APPROVED);
+    expect(Object.keys(context.audio?.manifest.entries ?? {})).toHaveLength(3);
+    expect(apiContext().audio).toBe(context.audio);
   });
 
   it('write the documents from src/lib/api.ts', async () => {
-    const expected = apiFiles(fixtureContext());
+    const expected = apiFiles({ ...fixtureContext(), audio: fixtureAudio() });
     const index = await import('../pages/api/v1/index.json.ts');
     const upcoming = await import('../pages/api/v1/upcoming.json.ts');
     const passages = await import('../pages/api/v1/passages/index.json.ts');

@@ -62,7 +62,17 @@ The build date is "today" in the site time zone (`site.timezone`, `Africa/Nairob
 pins it (the fixture build uses `2026-09-20`). `upcoming.json` covers `from` = build date to `to` = build date + 13
 days; dates the calendar does not have are left out. Because the file is only as fresh as the last build, a client
 that needs "the next seven days from the device date" (the service worker, the app's prefetch) should compute the
-dates itself and fetch `days/{date}.json` for each, using `index.json` → `dates` to know what exists.
+dates itself and fetch `days/{date}.json` for each. `index.json` → `dates` gives the first and last date with a day
+file, but it is **not a guaranteed continuous range**: the years in between may have gaps (a year without a calendar
+file, for example). Use `years` and the calendar files to know which dates exist, and treat a 404 for a day file as
+"no such day".
+
+### Caching
+
+Every file is a static file on the Pages CDN, which sends `ETag` and `Last-Modified`. Clients should make
+**conditional requests** (`If-None-Match` / `If-Modified-Since`) when they refresh a file they already have, and keep
+their copy on `304 Not Modified`. The daily rebuild rewrites most files, so polling more than a few times a day gains
+nothing.
 
 ### Example: `days/2026-09-20.json` (abridged)
 
@@ -100,7 +110,11 @@ dates itself and fetch `days/{date}.json` for each, using `index.json` → `date
             "ref": "Mt 20:1-16a",
             "locale": "en",
             "summary": "…",
-            "context": { "title": "Labourers in the vineyard", "paragraphs": ["… [c1] …"], "audio": null },
+            "context": {
+              "title": "Labourers in the vineyard",
+              "paragraphs": ["… [c1] …"],
+              "audio": { "url": "https://…/audio/en/3f…a1.mp3", "durationSeconds": 74.5 }
+            },
             "translationNotes": [{ "id": "v15-evil-eye", "verse": "20:15", "…": "…", "audio": null }],
             "claims": [{ "id": "c1", "text": "…", "sourceIds": ["davies-allison"], "sensitive": false }],
             "sources": [{ "id": "davies-allison", "type": "print", "citation": "…" }],
@@ -128,10 +142,42 @@ dates itself and fetch `days/{date}.json` for each, using `index.json` → `date
 
 ## Audio
 
-The context note and every translation note carry an `audio` field. It is `null` until the narration pipeline
-(Phase 2, L-082) renders audio; then it becomes `{ "url": "https://…", "durationSeconds": 74.5 }`
-(`durationSeconds` optional). Clients must treat `null` as "use device text-to-speech". Later issues may add
-segment lists (L-082) next to these fields; that is an additive change.
+The context note and every translation note carry an `audio` field: `null`, or
+`{ "url": "https://…", "durationSeconds": 74.5 }`. `durationSeconds` is **always present** and is `null` when the
+length is unknown. Clients must treat `audio: null` as "use device text-to-speech".
+
+The files are rendered in the deploy job (L-082, `npm run audio:render -- --auto`) and stored in object storage under
+`config.tts.storage.publicBaseUrl`, keyed by a hash of the spoken text, the voice and the TTS engine version, so a
+note keeps its URL until its text changes. `audio` is `null` when the note has not been rendered yet, and **always**
+`null` while no live voice is configured: without the TTS and storage secrets the deploy renders with the fake voice
+for checking only and publishes none of it.
+
+### Segments (the Listen queue)
+
+Each Mass in a day document carries `segments`: the Listen queue for that Mass, in play order. For every reading with
+approved notes (in Mass order, a passage read twice narrated once) there is a `context` segment and then one
+`translation-note` segment per note.
+
+```json
+{
+  "id": "MT.20.1-16/note/v15-evil-eye",
+  "kind": "translation-note",
+  "slot": "gospel",
+  "passageKey": "MT.20.1-16",
+  "locale": "en",
+  "title": "envious · ophthalmos sou ponēros",
+  "script": "Translation note on Matthew chapter 20, verse 15, the word “envious”. …",
+  "audio": null
+}
+```
+
+- `id` is `<passage key>/context` or `<passage key>/note/<note id>`: stable across days and years, and the same
+  segment's `audio` equals the matching note's `audio`.
+- `script` is what the voice reads: Lectio's own commentary in spoken form (references spelled out, no claim
+  markers, URLs or non-Latin script). It is never the reading text. Device text-to-speech should read `script` when
+  `audio` is `null`.
+- `segments` is new in L-082 and optional in the schema, so documents from older builds still validate; every
+  document the site builds now has it (possibly empty).
 
 ## Stability policy
 

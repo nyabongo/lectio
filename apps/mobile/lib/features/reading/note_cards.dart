@@ -77,7 +77,14 @@ class MarkedText extends StatelessWidget {
       case TextSegment(:final text):
         return TextSpan(text: text);
       case CiteSegment(:final sources):
-        return TextSpan(text: _citeLabel(sources), style: citeStyle);
+        // Screen readers say "Sources 1, 2", not the brackets.
+        return TextSpan(
+          text: _citeLabel(sources),
+          semanticsLabel: sources.isEmpty
+              ? null
+              : ' ${_strings.cite([for (final s in sources) s.number])}',
+          style: citeStyle,
+        );
     }
   }
 
@@ -125,13 +132,16 @@ class _SourceEntry extends StatelessWidget {
     final excerpt = source.excerpt;
     Widget citation = Text(source.citation);
     if (url != null) {
-      citation = InkWell(
-        onTap: () => unawaited(openLink(context, url)),
-        child: Text(
-          source.citation,
-          style: TextStyle(
-            color: theme.colorScheme.primary,
-            decoration: TextDecoration.underline,
+      citation = Semantics(
+        link: true,
+        child: InkWell(
+          onTap: () => unawaited(openLink(context, url)),
+          child: Text(
+            source.citation,
+            style: TextStyle(
+              color: theme.colorScheme.primary,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
       );
@@ -427,7 +437,10 @@ class ContextPanel extends StatelessWidget {
           style: text.titleMedium?.copyWith(fontStyle: FontStyle.italic),
         ),
         const SizedBox(height: 16),
-        Text(note.title, style: text.headlineSmall),
+        Semantics(
+          header: true,
+          child: Text(note.title, style: text.headlineSmall),
+        ),
         for (final paragraph in note.paragraphs)
           Padding(
             padding: const EdgeInsets.only(top: 12),

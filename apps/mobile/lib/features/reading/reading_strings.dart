@@ -57,6 +57,13 @@ class ReadingStrings {
   /// Heading of a source list.
   String get sources => 'Sources';
 
+  /// What a screen reader says for a citation of the sources [numbers], as
+  /// the site's `reading.cite` label does.
+  String cite(List<int> numbers) {
+    if (numbers.length == 1) return 'Source ${numbers.single}';
+    return 'Sources ${numbers.join(', ')}';
+  }
+
   /// The link to an archived copy of a web source.
   String get archived => 'Archived copy';
 

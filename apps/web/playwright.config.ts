@@ -1,7 +1,7 @@
 /**
  * Playwright e2e smoke suite for the static site (L-063). It runs against `astro preview` of the fixture build
- * (LECTIO_CONFIG=apps/web/test/lectio.config.fixture.json, LECTIO_DATE=2026-09-20), so it never waits for approved
- * real content. Two projects: desktop Chromium and mobile (Pixel 7). Every page runs on a fixed clock of
+ * (LECTIO_CONFIG=apps/web/test/lectio.config.fixture.json, LECTIO_DATE=2026-09-20, and the fixture audio manifest), so
+ * it never waits for approved real content. Two projects: desktop Chromium and mobile (Pixel 7). Every page runs on a fixed clock of
  * 2026-09-20 08:00 in Nairobi (see e2e/fixtures.ts).
  *
  * Run from the repository root:
@@ -56,6 +56,8 @@ export default defineConfig({
     env: {
       LECTIO_CONFIG: 'apps/web/test/lectio.config.fixture.json',
       LECTIO_DATE: '2026-09-20',
+      // Narration (L-082): the API's audio fields and segments point at the tiny WAVs next to this manifest.
+      LECTIO_AUDIO_MANIFEST: 'apps/web/test/fixtures/audio/manifest.json',
       ASTRO_TELEMETRY_DISABLED: '1',
     },
   },

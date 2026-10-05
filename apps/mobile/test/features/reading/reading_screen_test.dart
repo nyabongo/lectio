@@ -31,6 +31,14 @@ Future<void> pumpReading(
   await tester.pumpAndSettle();
 }
 
+/// Text on screen containing [part], as drawn (citations show their numbers,
+/// not their screen-reader labels).
+Finder shownText(String part) => find.byWidgetPredicate(
+  (widget) =>
+      widget is RichText &&
+      widget.text.toPlainText(includeSemanticsLabels: false).contains(part),
+);
+
 /// The direction the nearest [Directionality] gives the text [text].
 TextDirection directionOf(WidgetTester tester, String text) {
   final directionality = find.ancestor(
@@ -79,7 +87,9 @@ void main() {
       expect(find.text('Original'), findsOneWidget);
       expect(find.text('Labourers in the vineyard'), findsOneWidget);
       expect(find.textContaining('placed between two sayings'), findsOneWidget);
-      expect(find.textContaining('first.\u200E [6]'), findsOneWidget);
+      expect(shownText('first.\u200E [6]'), findsOneWidget);
+      // Screen readers hear the citation as words.
+      expect(find.textContaining('first. Source 6'), findsOneWidget);
       expect(find.text('Verified · 5 sources'), findsOneWidget);
       expect(find.text('Report an issue'), findsOneWidget);
       expect(find.textContaining('A study aid'), findsOneWidget);
@@ -248,8 +258,9 @@ void main() {
     await pumpReading(tester, harness);
 
     await tapAndSettle(tester, find.text('Original'));
+    expect(shownText('echoes $hebrewWord\u200E [4, 5]'), findsOneWidget);
     expect(
-      find.textContaining('echoes $hebrewWord\u200E [4, 5]'),
+      find.textContaining('echoes $hebrewWord Sources 4, 5'),
       findsOneWidget,
     );
   });

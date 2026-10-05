@@ -296,9 +296,12 @@ class ReadingDayView extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            reading.ref,
-                            style: theme.textTheme.headlineSmall,
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              reading.ref,
+                              style: theme.textTheme.headlineSmall,
+                            ),
                           ),
                         ),
                         ShareButton(content: readingShare(day.date, reading)),

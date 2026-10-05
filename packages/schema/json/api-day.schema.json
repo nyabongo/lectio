@@ -154,10 +154,12 @@
                                 {
                                   "type": "object",
                                   "additionalProperties": false,
-                                  "required": ["url"],
+                                  "required": ["url", "durationSeconds"],
                                   "properties": {
                                     "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
-                                    "durationSeconds": { "type": "number", "minimum": 0 }
+                                    "durationSeconds": {
+                                      "anyOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+                                    }
                                   }
                                 }
                               ]
@@ -198,10 +200,12 @@
                                   {
                                     "type": "object",
                                     "additionalProperties": false,
-                                    "required": ["url"],
+                                    "required": ["url", "durationSeconds"],
                                     "properties": {
                                       "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
-                                      "durationSeconds": { "type": "number", "minimum": 0 }
+                                      "durationSeconds": {
+                                        "anyOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+                                      }
                                     }
                                   }
                                 ]
@@ -280,6 +284,68 @@
                             }
                           }
                         }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "kind", "slot", "passageKey", "locale", "title", "script", "audio"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                "kind": { "type": "string", "enum": ["context", "translation-note"] },
+                "slot": {
+                  "type": "string",
+                  "enum": [
+                    "first-reading",
+                    "psalm",
+                    "second-reading",
+                    "gospel",
+                    "reading-1",
+                    "reading-2",
+                    "reading-3",
+                    "reading-4",
+                    "reading-5",
+                    "reading-6",
+                    "reading-7",
+                    "reading-8",
+                    "reading-9",
+                    "psalm-1",
+                    "psalm-2",
+                    "psalm-3",
+                    "psalm-4",
+                    "psalm-5",
+                    "psalm-6",
+                    "psalm-7",
+                    "psalm-8",
+                    "psalm-9",
+                    "epistle"
+                  ]
+                },
+                "passageKey": {
+                  "type": "string",
+                  "pattern": "^([1-3]?[A-Z]{2,5}\\.[1-9][0-9]{0,2}(-[1-9][0-9]{0,2}|\\.[1-9][0-9]{0,2}(-([1-9][0-9]{0,2}\\.)?[1-9][0-9]{0,2})?)?(_[1-9][0-9]{0,2}(-[1-9][0-9]{0,2}|\\.[1-9][0-9]{0,2}(-([1-9][0-9]{0,2}\\.)?[1-9][0-9]{0,2})?)?)*|EST\\.([1-9][0-9]{0,2}|[A-F])(-([1-9][0-9]{0,2}|[A-F])|\\.[1-9][0-9]{0,2}(-(([1-9][0-9]{0,2}|[A-F])\\.)?[1-9][0-9]{0,2})?)?(_([1-9][0-9]{0,2}|[A-F])(-([1-9][0-9]{0,2}|[A-F])|\\.[1-9][0-9]{0,2}(-(([1-9][0-9]{0,2}|[A-F])\\.)?[1-9][0-9]{0,2})?)?)*)$",
+                  "maxLength": 120
+                },
+                "locale": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$" },
+                "title": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                "script": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                "audio": {
+                  "anyOf": [
+                    { "type": "null" },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["url", "durationSeconds"],
+                      "properties": {
+                        "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+                        "durationSeconds": { "anyOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }] }
                       }
                     }
                   ]
