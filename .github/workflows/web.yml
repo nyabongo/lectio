@@ -1,0 +1,95 @@
+# Web build. Builds the Astro site against the fixture content root
+# (apps/web/test/lectio.config.fixture.json) and uploads dist, so web changes are
+# proven to build without depending on approved real content. Offline: no secrets.
+#
+# `web-build` is a required check (.github/required-checks/web.json), so there is
+# no trigger-level `paths:` filter; the `changes` step decides whether there is
+# anything to build and otherwise exits green. `workflow_dispatch` lets the
+# merge-rule job (L-031) re-run it on the approval commits it pushes.
+name: Web
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 22
+  ASTRO_TELEMETRY_DISABLED: 1
+
+jobs:
+  web-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Relevant: the web app, the packages it builds from, content and config,
+      # the dependency manifests and this workflow. On a pull request the diff is
+      # against the PR base; on any other event it is against origin/main (on a
+      # push to main, where HEAD is origin/main, against the previous commit).
+      - name: Detect relevant changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+          else
+            git fetch --no-tags origin main
+            base="$(git rev-parse origin/main)"
+            if [ "$base" = "$(git rev-parse HEAD)" ]; then
+              base="$(git rev-parse HEAD~1 2>/dev/null || echo "$base")"
+            fi
+          fi
+          changed="$(git diff --name-only "$base"...HEAD)"
+          echo "Changed files since ${base}:"
+          echo "$changed"
+          if echo "$changed" | grep -Eq '^(apps/web/|packages/|passages/|calendar/|config/|package\.json$|package-lock\.json$|\.github/workflows/web\.yml$)'; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing relevant to the web build changed; skipping." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.changes.outputs.relevant == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - if: steps.changes.outputs.relevant == 'true'
+        run: npm ci
+
+      - name: Fixture content validates
+        if: steps.changes.outputs.relevant == 'true'
+        run: npm run content:validate
+        env:
+          LECTIO_CONFIG: apps/web/test/lectio.config.fixture.json
+
+      - name: Build the site from the repository content
+        if: steps.changes.outputs.relevant == 'true'
+        run: npm run build -w apps/web
+
+      - name: Build the fixture site
+        if: steps.changes.outputs.relevant == 'true'
+        run: npm run build:fixture -w apps/web
+
+      - name: Upload dist
+        if: steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-dist-fixture
+          path: apps/web/dist
+          retention-days: 7
