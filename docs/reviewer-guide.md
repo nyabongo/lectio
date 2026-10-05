@@ -25,11 +25,11 @@ opening PRs once the cap is reached, so the queue stays one you can work through
 
 The merge-rule job keeps exactly one decision label on every content PR, and replaces it on each run:
 
-| Label                  | Meaning                                                                                | What you do                                     |
-| ---------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `auto-merge-candidate` | Green: auto-merge, a counted approval, or a valid approval commit. It merges by itself | Nothing. Close the PR or push to it to stop it  |
-| `needs-review`         | Waiting for a person (also any green PR that changes `.github/**`)                     | Review it (below)                               |
-| `gates-failed`         | Blocked: a deterministic gate failed, or a forged approval or hand-set review block    | Act on it: see [Blocked](#blocked-gates-failed) |
+| Label                  | Meaning                                                                                | What you do                                    |
+| ---------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `auto-merge-candidate` | Green: auto-merge, a counted approval, or a valid approval commit. It merges by itself | Nothing. Close the PR or push to it to stop it |
+| `needs-review`         | Waiting for a person (also any green PR that changes `.github/**`)                     | Review it (below)                              |
+| `gates-failed`         | Blocked: a deterministic gate failed, or a forged approval or hand-set review block    | Act on it: see [Blocked PRs](#blocked-prs)     |
 
 You add one label yourself: **`approved`**, to approve (below). The `merge-rule` check on the PR is green for a green
 decision (`auto-merge`, `human-approved`, `approved-commit`), including a `.github/**` PR that is labelled
@@ -128,7 +128,7 @@ fix. You act on the PR yourself.
 - **Stopping a PR already approved**: removing the label or deleting the comment after the approval commit was written
   does not stop the merge. Close the PR, or push to it.
 
-### Blocked (`gates-failed`)
+### Blocked PRs
 
 Read the merge rule's reasons in the gates comment first. They say which of these two cases you have.
 

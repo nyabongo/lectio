@@ -63,7 +63,7 @@ e.g. `npm run calendar:build -- --year 2026 --region kenya`. A command whose own
 | `audio:render`                                        | `@lectio/audio`      | render narration for approved passages                                                           |
 | `runway`                                              | `@lectio/runway`     | check the next weeks for days without notes (CI runs it daily)                                   |
 | `schema:emit`                                         | `@lectio/schema`     | write the JSON Schemas to `packages/schema/json/`                                                |
-| `gates:docs`                                          | `@lectio/gates`      | not implemented yet (L-043)                                                                      |
+| `gates:docs`                                          | `@lectio/gates`      | regenerate [docs/gates.md](docs/gates.md) from the rule registry (`-- --check` only compares)    |
 
 ## Layout
 
