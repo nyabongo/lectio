@@ -6,34 +6,31 @@
  * - The principal celebration is the first one in the day's list (ranked by the calendar, L-014)
  *   that is not an optional memorial or commemoration.
  * - Solemnities and feasts (and any principal celebration with its own entry) use their proper
- *   readings; a feast without its own readings uses its common.
+ *   readings; a feast without its own readings uses its common. Solemnities, and feasts that fall
+ *   on a Sunday, have a second reading.
  * - Sundays and weekdays use the proper of time for the day's season, week and cycle.
  * - Obligatory memorials keep the weekday readings, except the slots the memorial has proper
  *   readings for.
  * - Optional memorials keep the weekday readings. One with proper readings adds a second Mass
  *   (id = the celebration id) that may be chosen instead.
  */
+import type { CalendarDay, Celebration } from '@lectio/schema/calendar';
 import type { ReadingSlot } from '@lectio/schema/common';
 import { READING_SLOTS } from '@lectio/schema/common';
 import type { IsoDate } from '@lectio/shared';
 
 import { refKey } from './canonical.ts';
 import { isSundayKey, properOfTimeKey } from './keys.ts';
-import type { Season } from './keys.ts';
 import type { Cycle, Entry, EntryKind, EntryStatus, LoadedFile, MassEntry, Reading } from './types.ts';
 
-export type CelebrationRank =
-  'solemnity' | 'sunday' | 'feast' | 'memorial' | 'optional-memorial' | 'commemoration' | 'weekday';
+/** A celebration rank of the calendar schema (`CELEBRATION_RANKS`). */
+export type CelebrationRank = Celebration['rank'];
 
 /** The parts of a calendar day (`@lectio/schema/calendar` `CalendarDay`) the resolver reads. */
-export interface LectionaryDay {
+export type LectionaryDay = Readonly<Pick<CalendarDay, 'season' | 'seasonWeek' | 'sundayCycle' | 'weekdayCycle'>> & {
   readonly date: IsoDate;
-  readonly season: Season;
-  readonly seasonWeek: number;
-  readonly sundayCycle: 'A' | 'B' | 'C';
-  readonly weekdayCycle: 'I' | 'II';
-  readonly celebrations: readonly { readonly id: string; readonly rank: CelebrationRank; readonly name?: string }[];
-}
+  readonly celebrations: readonly (Readonly<Pick<Celebration, 'id' | 'rank'>> & { readonly name?: string })[];
+};
 
 export interface ResolvedAlternative {
   readonly ref: string;
@@ -195,7 +192,7 @@ export function resolveDay(day: LectionaryDay, lectionary: Lectionary): Resoluti
     masses =
       memorial === undefined ? (timeEntry === undefined ? [] : fromEntry(timeEntry, timeFrom, sunday)) : [memorial];
   } else if (principal !== undefined && proper !== undefined) {
-    const full = rank === 'solemnity' || rank === 'sunday';
+    const full = rank === 'solemnity' || rank === 'sunday' || sunday;
     const common =
       proper.masses.length === 0 && proper.common !== undefined ? lectionary.get('commons', proper.common) : undefined;
     masses =

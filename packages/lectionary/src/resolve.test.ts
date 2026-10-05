@@ -234,6 +234,11 @@ describe('resolveDay precedence', () => {
     expect(resolveDay(tuesday([{ id: 'feast-missing-common', rank: 'feast' }]), lectionary).masses).toEqual([]);
   });
 
+  it('asks a feast on a Sunday for a second reading', () => {
+    const sunday = { ...tuesday([{ id: 'feast-with-common', rank: 'feast' }]), date: '2026-02-01' };
+    expect(resolveDay(sunday, lectionary).masses[0]?.missingSlots).toEqual(['psalm', 'second-reading']);
+  });
+
   it('returns no Masses for a feast or solemnity without data, rather than the weekday', () => {
     expect(resolveDay(tuesday([{ id: 'unknown', rank: 'feast' }]), lectionary).masses).toEqual([]);
     expect(resolveDay(tuesday([{ id: 'unknown', rank: 'solemnity' }]), lectionary).masses).toEqual([]);

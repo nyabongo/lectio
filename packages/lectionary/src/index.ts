@@ -6,8 +6,8 @@
 export const packageName = '@lectio/lectionary';
 
 export { canonicalRef, formatCanonical, hasLetters, refKey, stripLetters } from './canonical.ts';
-export { checkLectionary, checkRefString } from './check.ts';
-export type { CheckResult, CheckStats } from './check.ts';
+export { checkLectionary, checkRefString, checkSundaySecondReadings } from './check.ts';
+export type { CheckOptions, CheckResult, CheckStats } from './check.ts';
 export { ConversionError, toCanonical } from './convert.ts';
 export { blockRows, crosscheckBlock, parseCrosscheckFile, renderDisputes } from './crosscheck.ts';
 export type {

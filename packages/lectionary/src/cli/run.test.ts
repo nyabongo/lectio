@@ -97,6 +97,46 @@ describe('runCheck', () => {
     const c = capture();
     expect(await runCheck(['--nope'], root, c.io)).toBe(2);
     expect(c.err[0]).toMatch(/^usage/);
+    expect(await runCheck(['--calendar'], root, c.io)).toBe(2);
+  });
+
+  it('checks a feast on a Sunday against calendar year files', async () => {
+    const root = await copyOfData();
+    const day = (date: string, rank: string) => ({
+      date,
+      season: 'ordinary-time',
+      seasonWeek: 25,
+      sundayCycle: 'C',
+      weekdayCycle: 'I',
+      celebrations: [{ id: 'matthew-apostle', name: 'St Matthew', rank, colour: 'red' }],
+      masses: [],
+      lectionaryMissing: true,
+    });
+    const calendar = join(root, '2025.json');
+    await writeFile(
+      calendar,
+      JSON.stringify({
+        year: 2025,
+        region: 'kenya',
+        generatedBy: 'test',
+        days: [day('2025-09-21', 'feast'), day('2025-09-22', 'feast')],
+      }),
+    );
+    await writeFile(join(root, 'bad.json'), '{"year": 2025}');
+    const a = capture();
+    expect(await runCheck(['--calendar', calendar], root, a.io)).toBe(1);
+    expect(a.err).toEqual([
+      '1 problem:',
+      '  2025-09-21 matthew-apostle day: a feast on a Sunday needs a second reading (from celebrations:matthew-apostle)',
+    ]);
+    const b = capture();
+    const missing = join(root, 'missing.json');
+    expect(await runCheck(['--calendar', join(root, 'bad.json'), '--calendar', missing], root, b.io)).toBe(1);
+    expect(b.err).toEqual([
+      '2 problems:',
+      `  ${join(root, 'bad.json')}: not a valid calendar year file`,
+      expect.stringMatching(new RegExp(`^  ${missing}: ENOENT`)),
+    ]);
   });
 });
 
