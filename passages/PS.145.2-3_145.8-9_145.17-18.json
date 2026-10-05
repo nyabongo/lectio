@@ -6,7 +6,7 @@
   "context": {
     "title": "An alphabet of praise",
     "paragraphs": [
-      "Psalm 145 is an acrostic: its verses begin with the letters of the Hebrew alphabet in order. [c1] The line for nun is missing from the Hebrew after verse 13; the Septuagint and other ancient versions supply one, modelled on verse 17, and one Hebrew manuscript has it, though Ellicott doubts it there. [c2] Gill reports a Talmudic explanation from Rashi: nun opens Amos’s lament over fallen Israel. [c3]",
+      "Psalm 145 is an acrostic: its verses follow the Hebrew alphabet in order. [c1] The nun line is missing after verse 13, and Ellicott thinks it most probably dropped away. [c2] The Septuagint and other versions supply one, modelled on verse 17, and one Hebrew manuscript has it. [c2] Gill cites Rashi’s Talmudic reason: nun opens Amos’s lament over fallen Israel. [c3]",
       "Its heading names it a tehillah of David, a song of praise, and from its first verse addresses God as King. [c4] In Jewish prayer it is the heart of the Ashre, said twice in the morning service and once in the afternoon. [c5] The Talmud promises a share in the world to come to whoever recites it three times a day. [c6]",
       "Verse 8 takes up the Lord’s description of himself to Moses in Exodus 34:6, almost word for word. [c7] Verse 9 widens that mercy: the LORD is good to all, and his compassion reaches all his works, not Israel alone. [c8] The verses chosen for today end by bringing this greatness near to everyone who calls on him in truth. [c9]"
     ]
@@ -74,12 +74,13 @@
     },
     {
       "id": "c2",
-      "text": "The nun verse is missing from the Hebrew after Psalm 145:13; the Septuagint, Vulgate, Syriac and other versions supply a verse there, a variation of Psalm 145:17; Ellicott adds that it is found in one Hebrew manuscript, though he thinks it suspicious there.",
+      "text": "The nun verse is missing from the Hebrew after Psalm 145:13; the Septuagint, Vulgate, Syriac and other versions supply a verse there, a variation of Psalm 145:17; Ellicott adds that it is found in one Hebrew manuscript, and concludes that the nun stanza has most probably dropped away from the Hebrew.",
       "sourceIds": [
         "ellicott-ps-145-13-nun",
         "ellicott-ps-145-13-variation",
         "gill-ps-145-13-supply",
-        "ellicott-ps-145-13-ms"
+        "ellicott-ps-145-13-ms",
+        "ellicott-ps-145-13-dropped"
       ],
       "sensitive": false
     },
@@ -389,6 +390,15 @@
       "retrievedAt": "2026-10-05T09:15:00Z"
     },
     {
+      "id": "ellicott-ps-145-13-dropped",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "should come after Psalm 145:13, has most probably dropped away",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
       "id": "ellicott-ps-145-13-variation",
       "type": "web",
       "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
@@ -402,7 +412,7 @@
       "type": "web",
       "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
-      "excerpt": "though found in one Hebrew MS., is apparently suspicious there",
+      "excerpt": "though found in one Hebrew MS.",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:15:00Z"
     },
