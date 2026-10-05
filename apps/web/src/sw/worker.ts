@@ -7,9 +7,11 @@
  *   (only those not already there: their names are content hashes).
  * - activate: delete older shell and search caches and take control of open pages. Nothing else waits on it: the
  *   pruning of `lectio-assets` starts afterwards and is handed to the next fetch or message event.
- * - message `prefetch` (sent by every page on open, with the page's own date): cache the next seven days (day page,
- *   Reading pages, day JSON) into `lectio-data-upcoming`, refetching pages stored by another build and dropping past
- *   days; `skip-waiting` (the update toast's Reload button); `clear-offline-data` (deletes every `lectio-data-`
+ * - message `prefetch` (sent by every page on open, with the page's own date and the reader's saved language): cache
+ *   the next seven days (day page, Listen page when Listen is built, Reading pages, day JSON) into
+ *   `lectio-data-upcoming`, the pages (and that locale's day JSON) under `/<locale>/` when that language is a
+ *   non-default site locale, refetching
+ *   pages stored by another build and dropping past days and, after a clean run, the other language's pages; `skip-waiting` (the update toast's Reload button); `clear-offline-data` (deletes every `lectio-data-`
  *   cache). Messages from another origin are ignored.
  * - fetch: assets cache first; pages and API JSON stale-while-revalidate (visited ones kept in `lectio-data-visited`,
  *   at most `VISITED_CACHE_LIMIT`, least recently used dropped first); a cached page from another build is served
@@ -37,6 +39,7 @@ import {
   isPagePath,
   isTrustedSender,
   lruEvictions,
+  pageLocale,
   parseClientMessage,
   referencedAssets,
   requestStrategy,
@@ -44,7 +47,7 @@ import {
   shouldPrefetch,
   upcomingDates,
 } from '../lib/sw-policy.ts';
-import type { ServiceWorkerConfig, Strategy } from '../lib/sw-policy.ts';
+import type { PrefetchRequest, ServiceWorkerConfig, Strategy } from '../lib/sw-policy.ts';
 
 /** An event whose work the browser waits for (`ExtendableEvent`). */
 export interface WaitUntilEvent {
@@ -93,11 +96,14 @@ export interface LectioWorker {
   takeBackground(): Promise<void> | null;
   /** Drops hashed assets that neither the shell nor any cached page references. Returns how many it deleted. */
   pruneAssets(): Promise<number>;
-  /** Caches the next seven days from `today`. Returns the dates cached. */
-  prefetch(today: string): Promise<string[]>;
+  /**
+   * Caches the next seven days from `today`, in the reader's saved `language` when it is a non-default site locale.
+   * Returns the dates cached.
+   */
+  prefetch(today: string, language?: string): Promise<string[]>;
   clearOfflineData(): Promise<number>;
-  /** Whether a page's prefetch request for `today` should run now (the date changed or the last run is old). */
-  wantsPrefetch(today: string): boolean;
+  /** Whether a page's prefetch request should run now (the date or the language changed, or the last run is old). */
+  wantsPrefetch(today: string, language?: string): boolean;
   /** The response for a request, or `null` when the worker leaves it to the browser. */
   respond(request: Request, waitUntil: (promise: Promise<unknown>) => void): Promise<Response> | null;
 }
@@ -111,7 +117,12 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
   const names = cacheNames(config.version);
   const root = scope.registration.scope;
   const dataCaches = [names.visited, names.upcoming];
-  let lastPrefetch: { today: string; at: number } | null = null;
+  let lastPrefetch: (PrefetchRequest & { at: number }) | null = null;
+  /** The prefetch request for a page's date and saved language. */
+  const prefetchRequest = (today: string, language: string | undefined): PrefetchRequest => {
+    const locale = pageLocale(language, config.locales);
+    return locale === undefined ? { today } : { today, locale };
+  };
   let background: Promise<void> | null = null;
   // Prefetch runs one at a time, so one run never prunes what another just stored.
   let queue: Promise<unknown> = Promise.resolve();
@@ -138,7 +149,7 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
     }
   }
 
-  async function runPrefetch(today: string): Promise<string[]> {
+  async function runPrefetch({ today, locale }: PrefetchRequest): Promise<string[]> {
     const cache = await env.caches.open(names.upcoming);
     // Past days can never be upcoming again: drop them on every run, even offline.
     for (const request of await cache.keys()) {
@@ -172,7 +183,10 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
       }
       await cache.put(dataUrl, await stamp(dayResponse));
       keep.add(dataUrl);
-      for (const url of dayPageUrls(root, date, daySlots(day))) {
+      // In another language, its day document too (the Listen page reads it), then the pages.
+      const urls = dayPageUrls(root, date, daySlots(day), { listen: config.listen, locale });
+      if (locale !== undefined) urls.unshift(dayDataUrl(root, date, locale));
+      for (const url of urls) {
         keep.add(url);
         // A page stored by this build is kept (visits revalidate it); one from another build is refetched.
         const stored = await cache.match(url);
@@ -188,9 +202,10 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
     return cached;
   }
 
-  function prefetch(today: string): Promise<string[]> {
-    lastPrefetch = { today, at: env.now() };
-    const run = queue.then(() => runPrefetch(today));
+  function prefetch(today: string, language?: string): Promise<string[]> {
+    const request = prefetchRequest(today, language);
+    lastPrefetch = { ...request, at: env.now() };
+    const run = queue.then(() => runPrefetch(request));
     queue = run.catch(() => undefined);
     return run;
   }
@@ -355,7 +370,7 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
     pruneAssets,
     prefetch,
     clearOfflineData,
-    wantsPrefetch: (today) => shouldPrefetch(lastPrefetch, today, env.now()),
+    wantsPrefetch: (today, language) => shouldPrefetch(lastPrefetch, prefetchRequest(today, language), env.now()),
     respond,
   };
 }
@@ -389,7 +404,8 @@ export function installWorker(scope: WorkerScope, config: ServiceWorkerConfig, e
     if (message === null) return;
     if (message.type === 'skip-waiting') event.waitUntil(scope.skipWaiting());
     else if (message.type === 'clear-offline-data') event.waitUntil(worker.clearOfflineData());
-    else if (worker.wantsPrefetch(message.today)) event.waitUntil(worker.prefetch(message.today));
+    else if (worker.wantsPrefetch(message.today, message.language))
+      event.waitUntil(worker.prefetch(message.today, message.language));
   });
   return worker;
 }

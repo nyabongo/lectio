@@ -44,6 +44,7 @@ const base = import.meta.env.BASE_URL;
 </div>
 
 <script>
+  import { browserStorage } from '../../lib/settings.ts';
   import { startPwa } from '../../sw/client.ts';
   import type { PwaPage, WorkerContainer } from '../../sw/client.ts';
 
@@ -54,6 +55,7 @@ const base = import.meta.env.BASE_URL;
     },
     location: window.location,
     now: () => new Date(),
+    storage: browserStorage(),
   });
 </script>
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { OFFLINE_DATA_CACHE_PREFIX } from './settings.ts';
 import {
+  LOCALISED_SHELL_PAGES,
   PREFETCH_INTERVAL_MS,
   SHELL_PAGES,
   UPCOMING_DAY_COUNT,
@@ -23,6 +24,7 @@ import {
   isOfflineDataCache,
   isPagePath,
   lruEvictions,
+  pageLocale,
   parseClientMessage,
   precachePaths,
   referencedAssets,
@@ -127,11 +129,38 @@ describe('paths and URLs', () => {
     expect(scopeUrl(SCOPE, '')).toBe(SCOPE);
     expect(indexUrl(SCOPE)).toBe('https://example.org/lectio/api/v1/index.json');
     expect(dayDataUrl(SCOPE, '2026-09-20')).toBe('https://example.org/lectio/api/v1/days/2026-09-20.json');
+    expect(dayDataUrl(SCOPE, '2026-09-20', 'sw')).toBe('https://example.org/lectio/api/v1/sw/days/2026-09-20.json');
     expect(dayPageUrls(SCOPE, '2026-09-20', ['first-reading', 'gospel'])).toEqual([
       'https://example.org/lectio/2026-09-20/',
       'https://example.org/lectio/2026-09-20/first-reading/',
       'https://example.org/lectio/2026-09-20/gospel/',
     ]);
+  });
+
+  it('adds the Listen page when Listen is on and puts every page under a non-default locale', () => {
+    expect(dayPageUrls(SCOPE, '2026-09-20', ['gospel'], { listen: true })).toEqual([
+      'https://example.org/lectio/2026-09-20/',
+      'https://example.org/lectio/2026-09-20/listen/',
+      'https://example.org/lectio/2026-09-20/gospel/',
+    ]);
+    expect(dayPageUrls(SCOPE, '2026-09-20', ['gospel'], { listen: false, locale: 'sw' })).toEqual([
+      'https://example.org/lectio/sw/2026-09-20/',
+      'https://example.org/lectio/sw/2026-09-20/gospel/',
+    ]);
+    expect(dayPageUrls(SCOPE, '2026-09-20', [], { listen: true, locale: 'sw' })).toEqual([
+      'https://example.org/lectio/sw/2026-09-20/',
+      'https://example.org/lectio/sw/2026-09-20/listen/',
+    ]);
+  });
+});
+
+describe('pageLocale', () => {
+  it('is the language when it is a non-default site locale, else undefined', () => {
+    expect(pageLocale('sw', ['sw'])).toBe('sw');
+    expect(pageLocale('en', ['sw'])).toBeUndefined();
+    expect(pageLocale('fr', ['sw'])).toBeUndefined();
+    expect(pageLocale(undefined, ['sw'])).toBeUndefined();
+    expect(pageLocale('sw')).toBeUndefined();
   });
 });
 
@@ -224,12 +253,20 @@ describe('lruEvictions', () => {
 
 describe('shouldPrefetch', () => {
   it('runs first, on a new date and after the interval', () => {
-    expect(shouldPrefetch(null, '2026-09-20', 0)).toBe(true);
+    const today = { today: '2026-09-20' };
+    expect(shouldPrefetch(null, today, 0)).toBe(true);
     const last = { today: '2026-09-20', at: 1000 };
-    expect(shouldPrefetch(last, '2026-09-20', 1000 + PREFETCH_INTERVAL_MS - 1)).toBe(false);
-    expect(shouldPrefetch(last, '2026-09-20', 1000 + PREFETCH_INTERVAL_MS)).toBe(true);
-    expect(shouldPrefetch(last, '2026-09-21', 1001)).toBe(true);
-    expect(shouldPrefetch(last, '2026-09-20', 1500, 100)).toBe(true);
+    expect(shouldPrefetch(last, today, 1000 + PREFETCH_INTERVAL_MS - 1)).toBe(false);
+    expect(shouldPrefetch(last, today, 1000 + PREFETCH_INTERVAL_MS)).toBe(true);
+    expect(shouldPrefetch(last, { today: '2026-09-21' }, 1001)).toBe(true);
+    expect(shouldPrefetch(last, today, 1500, 100)).toBe(true);
+  });
+
+  it('runs again when the language changes', () => {
+    const last = { today: '2026-09-20', locale: 'sw', at: 1000 };
+    expect(shouldPrefetch(last, { today: '2026-09-20', locale: 'sw' }, 1001)).toBe(false);
+    expect(shouldPrefetch(last, { today: '2026-09-20' }, 1001)).toBe(true);
+    expect(shouldPrefetch({ today: '2026-09-20', at: 1000 }, { today: '2026-09-20', locale: 'sw' }, 1001)).toBe(true);
   });
 });
 
@@ -239,6 +276,20 @@ describe('parseClientMessage', () => {
       type: 'prefetch',
       today: '2026-09-20',
     });
+    expect(parseClientMessage({ type: 'prefetch', today: '2026-09-20', language: 'sw' })).toEqual({
+      type: 'prefetch',
+      today: '2026-09-20',
+      language: 'sw',
+    });
+    expect(parseClientMessage({ type: 'prefetch', today: '2026-09-20', language: 'pt-BR' })).toMatchObject({
+      language: 'pt-BR',
+    });
+    // An unusable language is dropped, not the request.
+    for (const language of ['../x', 'SW', 7])
+      expect(parseClientMessage({ type: 'prefetch', today: '2026-09-20', language })).toEqual({
+        type: 'prefetch',
+        today: '2026-09-20',
+      });
     expect(parseClientMessage({ type: 'skip-waiting' })).toEqual({ type: 'skip-waiting' });
     expect(parseClientMessage({ type: 'clear-offline-data', extra: 1 })).toEqual({ type: 'clear-offline-data' });
     expect(parseClientMessage({ type: 'prefetch', today: 'soon' })).toBeNull();
@@ -283,6 +334,18 @@ describe('precachePaths', () => {
     expect(precachePaths(['settings/index.html'])).toEqual(['settings/']);
     expect(SHELL_PAGES).toContain('offline/');
   });
+
+  it("adds the built shell pages of each non-default locale, but not a locale's offline page", () => {
+    const files = [
+      'index.html',
+      'offline/index.html',
+      'sw/index.html',
+      'sw/settings/index.html',
+      'sw/offline/index.html',
+    ];
+    expect(precachePaths(files, ['sw', 'fr'])).toEqual(['', 'offline/', 'sw/', 'sw/settings/']);
+    expect(LOCALISED_SHELL_PAGES).toEqual(['', 'settings/']);
+  });
 });
 
 describe('isHashedAsset', () => {
@@ -296,6 +359,13 @@ describe('entryDate', () => {
   it.each([
     ['2026-09-20/', '2026-09-20'],
     ['2026-09-20/gospel/', '2026-09-20'],
+    ['2026-09-20/listen/', '2026-09-20'],
+    ['sw/2026-09-20/', '2026-09-20'],
+    ['sw/2026-09-20/gospel/', '2026-09-20'],
+    ['pt-BR/2026-09-20/', '2026-09-20'],
+    ['api/v1/sw/days/2026-09-20.json', '2026-09-20'],
+    ['api/v1/sw/upcoming.json', null],
+    ['sw/calendar/', null],
     ['api/v1/days/2026-09-20.json', '2026-09-20'],
     ['api/v1/index.json', null],
     ['calendar/2026/09/', null],

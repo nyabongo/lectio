@@ -1,10 +1,13 @@
 /**
  * The page side of the PWA (L-061): registers the service worker, asks it to cache the next seven days from the
- * device date on every page open, and shows the update-available toast when a new worker is waiting. Its Reload
+ * device date on every page open, in the reader's saved language (the worker cannot read `localStorage`, so the page
+ * sends `language` from `lectio.settings` with the request), and shows the update-available toast when a new worker is waiting. Its Reload
  * button tells the waiting worker to take over and reloads once it has. `startPwa` is called by the script in
  * `components/pwa/PwaUpdate.astro`; the toast markup (strings from `src/i18n/<lang>/pwa.json`) is rendered there,
  * in production builds only, so `astro dev` never registers a worker.
  */
+import { loadSettings } from '../lib/settings.ts';
+import type { SettingsStorage } from '../lib/settings.ts';
 import { deviceDate } from '../lib/sw-policy.ts';
 import type { ClientMessage } from '../lib/sw-policy.ts';
 
@@ -41,6 +44,8 @@ export interface RegisterOptions {
   readonly scope: string;
   /** The device date, `YYYY-MM-DD`. */
   readonly today: string;
+  /** The reader's saved language (`language` in `lectio.settings`), so the worker keeps the days in it. */
+  readonly language?: string;
   /** Called when a new worker is waiting; `apply` activates it and the page then reloads. */
   readonly onUpdate: (apply: () => void) => void;
   readonly reload: () => void;
@@ -82,7 +87,10 @@ export async function registerServiceWorker(options: RegisterOptions): Promise<R
     });
   });
   void container.ready.then((ready) => {
-    ready.active?.postMessage({ type: 'prefetch', today: options.today });
+    const { today, language } = options;
+    ready.active?.postMessage(
+      language === undefined ? { type: 'prefetch', today } : { type: 'prefetch', today, language },
+    );
   });
   return found;
 }
@@ -103,6 +111,8 @@ export interface PwaBrowser {
   readonly navigator: { readonly serviceWorker?: WorkerContainer; readonly onLine: boolean };
   readonly location: { reload(): void };
   readonly now: () => Date;
+  /** Where the reader's settings are kept (`browserStorage()`), or `null` when the browser blocks it. */
+  readonly storage: SettingsStorage | null;
 }
 
 /**
@@ -127,6 +137,7 @@ export function startPwa(page: PwaPage, browser: PwaBrowser): Promise<Registrati
     url,
     scope,
     today: deviceDate(browser.now()),
+    language: loadSettings(browser.storage).language,
     onUpdate: (next) => {
       apply = next;
       toast.hidden = false;
