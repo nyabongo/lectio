@@ -258,28 +258,37 @@ export function linkoutLabel(config: Pick<LectioConfig, 'linkout'>): string {
   return providers[provider]?.label ?? provider;
 }
 
-/** The id of the principal Mass, which owns a slot's Reading page when several Masses use that slot. */
+// TODO(L-054 #177): once #177 merges, import PRINCIPAL_MASS_ID and principalFirst from ./reading.ts (and its
+// readingPath and slot keys) and delete these local copies; the rule below is identical to #177's.
+
+/** The id of the Mass during the Day, the principal Mass of a day with several (Vigil, Night, Dawn, Day). */
 export const PRINCIPAL_MASS_ID = 'day';
 
 /**
- * Which Mass owns each slot's Reading page. The route is `/[date]/[slot]/`, so each slot gets one page: from the Mass
- * with id `day` (`PRINCIPAL_MASS_ID`) when it uses the slot, otherwise from the first Mass that does. This keeps the
- * Mass during the Day, not the Vigil, on the page for Easter, Christmas, Pentecost and other days with a vigil. Any
- * other Mass reusing the slot has no Reading-page link for it.
+ * `masses` with the principal Mass (`id === 'day'`) first and the others in calendar order. The lectionary lists a
+ * solemnity's Masses Vigil first, so ordering by this decides which Mass "owns" a shared slot.
  */
+export function principalFirst<M extends { readonly id: string }>(masses: readonly M[]): M[] {
+  return [
+    ...masses.filter((mass) => mass.id === PRINCIPAL_MASS_ID),
+    ...masses.filter((mass) => mass.id !== PRINCIPAL_MASS_ID),
+  ];
+}
+
 /** The parts of a Mass `slotOwners` reads (spelled out: `astro check` cannot resolve the schema types). */
 export interface SlotMass {
   readonly id: string;
   readonly readings: readonly { readonly slot: string }[];
 }
 
+/**
+ * Which Mass owns each slot's Reading page. The route is `/[date]/[slot]/`, so each slot gets one page: from the
+ * principal Mass (`principalFirst`) when it uses the slot, otherwise from the first Mass in calendar order that does.
+ * Any other Mass reusing the slot has no Reading-page link for it.
+ */
 export function slotOwners(masses: readonly SlotMass[]): Map<string, string> {
-  const ordered = [
-    ...masses.filter((mass) => mass.id === PRINCIPAL_MASS_ID),
-    ...masses.filter((mass) => mass.id !== PRINCIPAL_MASS_ID),
-  ];
   const owners = new Map<string, string>();
-  for (const mass of ordered) {
+  for (const mass of principalFirst(masses)) {
     for (const { slot } of mass.readings) if (!owners.has(slot)) owners.set(slot, mass.id);
   }
   return owners;

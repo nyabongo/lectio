@@ -9,6 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { formatDate, t } from '../i18n/index.ts';
 import {
   PRINCIPAL_MASS_ID,
+  principalFirst,
   TODAY_DAYS_AHEAD,
   TODAY_DAYS_BEFORE,
   UPCOMING_LIST_DAYS,
@@ -288,6 +289,11 @@ describe('dayView edge cases', () => {
     });
     expect(Object.fromEntries(slotOwners([mass('a', ['gospel']), mass('b', ['gospel'])]))).toEqual({ gospel: 'a' });
     expect(PRINCIPAL_MASS_ID).toBe('day');
+    expect(principalFirst([{ id: 'vigil' }, { id: 'night' }, { id: 'day' }]).map((m) => m.id)).toEqual([
+      'day',
+      'vigil',
+      'night',
+    ]);
   });
 
   it('drops an unapproved passage even when the reading claims to have one', () => {
