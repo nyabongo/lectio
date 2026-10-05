@@ -1,0 +1,140 @@
+# Content checks (L-031): the PR side of the content gates. Read-only, no secrets.
+#
+#   changes → deterministic        (this file, on pull_request; the PR's copy may run)
+#   content-gates.yml              (trusted, main's copy only: verifiers, merge rule, merge)
+#
+# This workflow runs whatever copy of itself the PR carries, so it is given nothing worth taking:
+# `contents: read`, no secrets, no write token. It reports the cheap deterministic gates
+# (schema, evidence, licence; sources fetched live with the SSRF guard on) and, when it completes,
+# starts the trusted content-gates.yml through `workflow_run`. That workflow re-resolves the PR
+# from GitHub and re-runs every gate itself: nothing this run produces is trusted.
+#
+# Required checks (.github/required-checks/content-checks.json): changes, deterministic. No
+# trigger-level `paths:`; `changes` decides whether anything relevant changed (passages/,
+# calendar/, corpus/, config/) and the gates otherwise exit green. A changed symbolic link or
+# submodule fails `changes` (no gate ever reads it). `workflow_dispatch` lets the trusted merge-rule
+# job re-run these checks on the approval commit it writes; dispatched runs are read-only too.
+#
+# Base-checkout rule: every job checks out main for tooling (the commit `changes` saw, so all jobs
+# use one version) and runs `npm ci` there. The PR head is fetched only as data into pr-head/; its
+# package.json, lockfile and npm scripts are never installed or run.
+name: Content checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-checks-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      tool-sha: ${{ steps.tool.outputs.sha }}
+      head-sha: ${{ steps.head.outputs.sha }}
+      base: ${{ steps.head.outputs.base }}
+      relevant: ${{ steps.changes.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Tooling commit
+        id: tool
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # On a pull request: the PR head against the PR base. On a dispatch (the approval commit):
+      # the dispatched ref's tip against origin/<default branch>.
+      - name: Fetch the PR head as data (pr-head/)
+        id: head
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          REF_SHA: ${{ github.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            head="$PR_HEAD_SHA"; base="$PR_BASE_SHA"
+            git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
+          else
+            head="$REF_SHA"; base="origin/${DEFAULT_BRANCH}"
+          fi
+          git cat-file -e "${head}^{commit}" 2>/dev/null || git fetch --no-tags origin "$head"
+          git worktree add --detach pr-head "$head"
+          echo "sha=$head" >> "$GITHUB_OUTPUT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+      - name: Detect relevant changes
+        id: changes
+        env:
+          BASE: ${{ steps.head.outputs.base }}
+          HEAD_SHA: ${{ steps.head.outputs.sha }}
+        run: npm run --silent -w @lectio/gates gates -- ci changes --root pr-head --base "$BASE" --head "$HEAD_SHA"
+
+  deterministic:
+    needs: changes
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: The changes job succeeded
+        if: needs.changes.result != 'success'
+        run: |
+          echo "::error::the changes job did not succeed"
+          exit 1
+      - uses: actions/checkout@v7
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          ref: ${{ needs.changes.outputs.tool-sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - if: needs.changes.outputs.relevant == 'true'
+        run: npm ci
+      - name: Fetch the PR head as data (pr-head/)
+        if: needs.changes.outputs.relevant == 'true'
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ needs.changes.outputs.head-sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
+          fi
+          git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
+          git worktree add --detach pr-head "$HEAD_SHA"
+      # Schema, evidence and licence, with the live fetcher (SSRF guard on).
+      - name: Deterministic gates
+        if: needs.changes.outputs.relevant == 'true'
+        env:
+          BASE: ${{ needs.changes.outputs.base }}
+        run: >-
+          npm run --silent -w @lectio/gates gates -- run --gates schema,evidence,licence --fetch live
+          --root pr-head --base "$BASE" --json out/deterministic/gates.json --markdown out/deterministic/comment.md
+      - name: Gate summary
+        if: ${{ !cancelled() && hashFiles('out/deterministic/comment.md') != '' }}
+        run: cat out/deterministic/comment.md >> "$GITHUB_STEP_SUMMARY"

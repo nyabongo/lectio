@@ -2,18 +2,21 @@
  * `lectio-gates ci <command>`: the steps of content-gates.yml (L-031). Each job checks out main for
  * tooling, runs `npm ci` there and calls one of these; the PR head is only data in `pr-head/`.
  *
- *     lectio-gates ci resolve                         which PR and head; writes run, pr, head-sha, …
- *     lectio-gates ci changes --root pr-head --base <ref>          writes relevant=true|false
+ *     lectio-gates ci resolve                         which PR and head (trusted workflow); writes run, pr, …
+ *     lectio-gates ci changes --root pr-head --base <ref> [--head <sha>]   writes relevant=true|false;
+ *                                                     exits 1 for a changed symlink or submodule
  *     lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root pr-head
- *                                [--results <gates.json>]…        writes decision, manual-merge
+ *                                [--results <gates.json>]… [--phase decide|approve]
+ *                                                     writes decision, manual-merge, write, approval-artifact
+ *     lectio-gates ci skip --head-sha <sha> --reason <text>   a green merge-rule check (nothing relevant)
  *     lectio-gates ci merge --pr <n> --sha <sha>
  *
  * Step outputs go to `$GITHUB_OUTPUT` and the job summary to `$GITHUB_STEP_SUMMARY` (printed when
  * unset). The GitHub client is provider-gh acting as `github-actions[bot]` with the required checks
  * from `.github/required-checks/` of the tooling checkout. Exit codes: 0 green, 1 red, 2 usage.
  */
-import { appendFileSync, existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { ParseArgsOptionsConfig } from 'node:util';
 
@@ -32,7 +35,7 @@ import { gitCheckout } from './checkout.ts';
 import type { PrCheckout } from './checkout.ts';
 import { ACTIONS_BOT } from './facts.ts';
 import { runMergeJob } from './merge-job.ts';
-import { runMergeRuleJob } from './merge-rule-job.ts';
+import { MERGE_RULE_CHECK, runMergeRuleJob } from './merge-rule-job.ts';
 import { readRequiredChecks } from './registry.ts';
 import type { RequiredChecksRegistry } from './registry.ts';
 import { relevantFiles, resolveTarget } from './target.ts';
@@ -41,6 +44,8 @@ export const CI_USAGE = [
   'usage: lectio-gates ci resolve',
   '       lectio-gates ci changes --root <dir> --base <ref> [--head <ref>]',
   '       lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root <dir> [--results <file>]…',
+  '                                  [--phase decide|approve]',
+  '       lectio-gates ci skip --head-sha <sha> --reason <text>',
   '       lectio-gates ci merge --pr <n> --sha <sha>',
 ].join('\n');
 
@@ -83,8 +88,18 @@ function sha(name: string, value: string): string {
   return value;
 }
 
+/** The record the approval artifact carries (`--phase decide`), relative to the working directory. */
+export const APPROVAL_RECORD = 'out/approval/approval.json';
+
+function writeText(path: string, text: string): void {
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, text, 'utf8');
+}
+
 interface Io {
   readonly toolRoot: string;
+  /** `DEFAULT_BRANCH` (the workflow passes `github.event.repository.default_branch`), else `main`. */
+  readonly defaultBranch: () => string;
   readonly config: () => LectioConfig;
   readonly registry: () => RequiredChecksRegistry;
   readonly github: () => GitHubClient;
@@ -102,6 +117,7 @@ function io(options: CiCliOptions): Io {
   let github: GitHubClient | undefined;
   return {
     toolRoot,
+    defaultBranch: () => env['DEFAULT_BRANCH'] || 'main',
     config: () => options.config ?? loadConfig(undefined, { cwd: options.cwd, env }),
     registry: getRegistry,
     github: () =>
@@ -135,14 +151,18 @@ async function resolveCommand(args: readonly string[], options: CiCliOptions, ct
   if (!eventName || !eventPath) throw new CiUsageError('resolve needs GITHUB_EVENT_NAME and GITHUB_EVENT_PATH');
   const read = options.readFile ?? ((file: string) => readFileSync(file, 'utf8'));
   const payload: unknown = JSON.parse(read(eventPath));
-  const target = await resolveTarget(eventName, payload, ctx.github(), ctx.config());
+  const onDefaultBranch = options.env['GITHUB_REF'] === `refs/heads/${ctx.defaultBranch()}`;
+  const target = await resolveTarget(eventName, payload, {
+    github: ctx.github(),
+    config: ctx.config(),
+    onDefaultBranch,
+  });
   options.log(`resolve: ${target.reason}`);
   ctx.output({
     run: target.run,
     reason: target.reason,
     pr: target.prNumber,
     'head-sha': target.headSha,
-    'head-ref': target.headRef,
     base: target.base,
     'base-ref': target.baseRef,
     fork: target.fork,
@@ -155,8 +175,21 @@ async function resolveCommand(args: readonly string[], options: CiCliOptions, ct
 async function changesCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
   const values = parse(args, { root: { type: 'string' }, base: { type: 'string' }, head: { type: 'string' } });
   const root = ctx.path(required(values, 'root'));
-  const checkout = options.checkout ?? gitCheckout(root, options.gitExec);
-  const paths = changedPaths(checkout.changedFiles(required(values, 'base'), values.head ?? 'HEAD'));
+  const base = required(values, 'base');
+  const head = values.head ?? 'HEAD';
+  const checkout = options.checkout ?? gitCheckout(root, head, options.gitExec);
+  const paths = changedPaths(checkout.changedFiles(base, head));
+  const unsafe = checkout.nonRegular(base, head);
+  if (unsafe.length > 0) {
+    // A symbolic link could point anywhere on the runner: refuse it before any gate reads the tree.
+    for (const path of unsafe)
+      options.error(`::error file=${path}::${path} is not a regular file (symbolic link or submodule)`);
+    ctx.summary(
+      `Refused: ${unsafe.join(', ')} ${unsafe.length === 1 ? 'is not a regular file' : 'are not regular files'}.`,
+    );
+    ctx.output({ relevant: true });
+    return 1;
+  }
   const relevant = relevantFiles(paths);
   options.log(`changes: ${String(paths.length)} changed, ${String(relevant.length)} relevant`);
   for (const path of paths) options.log(`  ${relevant.includes(path) ? '*' : ' '} ${path}`);
@@ -200,7 +233,11 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
     base: { type: 'string' },
     root: { type: 'string' },
     results: { type: 'string', multiple: true },
+    phase: { type: 'string', default: 'decide' },
   });
+  const phase = values.phase;
+  if (phase !== 'decide' && phase !== 'approve')
+    throw new CiUsageError(`--phase must be decide or approve (got "${phase}")`);
   const number = prNumber(required(values, 'pr'));
   const headSha = sha('head-sha', required(values, 'head-sha'));
   const base = required(values, 'base');
@@ -209,9 +246,11 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
   if (!/^[1-9][0-9]*$/.test(runId)) throw new CiUsageError('merge-rule needs GITHUB_RUN_ID');
   const { results, offline } = readReports(values.results ?? [], options, ctx);
   const outcome = await runMergeRuleJob({
+    phase,
+    defaultBranch: ctx.defaultBranch(),
     github: ctx.github(),
     config: ctx.config(),
-    checkout: options.checkout ?? gitCheckout(root, options.gitExec),
+    checkout: options.checkout ?? gitCheckout(root, headSha, options.gitExec),
     registry: ctx.registry(),
     prNumber: number,
     headSha,
@@ -224,12 +263,34 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
     log: options.log,
   });
   ctx.summary(outcome.summary);
+  if (outcome.approvalArtifact !== undefined) {
+    // Uploaded by the next workflow step, from inside this run, before `--phase approve` commits.
+    const record = { pr: number, head: headSha, run: runId, decision: outcome.decision };
+    (options.writeFile ?? writeText)(ctx.path(APPROVAL_RECORD), `${JSON.stringify(record, null, 2)}\n`);
+  }
   ctx.output({
     decision: outcome.decision ?? 'none',
     'manual-merge': outcome.manualMerge,
+    write: outcome.write,
+    'approval-artifact': outcome.approvalArtifact ?? '',
     'approval-commit': outcome.approvalCommitSha ?? '',
   });
   return outcome.exitCode;
+}
+
+async function skipCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
+  const values = parse(args, { 'head-sha': { type: 'string' }, reason: { type: 'string' } });
+  const headSha = sha('head-sha', required(values, 'head-sha'));
+  const reason = required(values, 'reason');
+  await ctx.github().createCheckRun({
+    name: MERGE_RULE_CHECK,
+    headSha,
+    conclusion: 'success',
+    title: 'nothing to decide',
+    summary: reason,
+  });
+  options.log(`merge-rule: ${reason}`);
+  return 0;
 }
 
 async function mergeCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
@@ -247,6 +308,7 @@ const COMMANDS = {
   resolve: resolveCommand,
   changes: changesCommand,
   'merge-rule': mergeRuleCommand,
+  skip: skipCommand,
   merge: mergeCommand,
 } as const;
 

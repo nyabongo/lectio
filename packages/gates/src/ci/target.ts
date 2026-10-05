@@ -1,27 +1,25 @@
 /**
- * The `changes` job of content-gates.yml: which PR and head sha a run is about, whether it should
- * run at all, and whether anything relevant changed.
+ * Which PR and head a run of the trusted workflow (content-gates.yml, main's copy) is about, read
+ * from GitHub, never from anything the PR-side run produced:
  *
- * - `pull_request` (opened, synchronize, reopened, labeled): the event's PR, head and base sha.
- * - `issue_comment` (created): only a comment on a PR whose first line is the approval command;
- *   the PR's current head is read from GitHub. These runs execute main's workflow file and report
- *   their checks on main's tip, not on the PR.
- * - `workflow_dispatch` (input `pr`): the PR's current head, read from GitHub (the merge-rule job
- *   dispatches this on the approval commit).
+ * - `workflow_run` (the PR-side content-checks.yml completed): the PRs GitHub lists for that run
+ *   (`workflow_run.pull_requests`), or, when it lists none (a fork PR, a dispatch on the approval
+ *   commit), the open PRs whose head is the run's head sha. The PR's current head must still be
+ *   that sha; otherwise a newer run decides.
+ * - `issue_comment` (created): only a comment on a PR whose first line is the approval command; the
+ *   PR's current head is read from GitHub.
+ * - `workflow_dispatch` (input `pr`): only on the default branch (main's copy); the PR's current
+ *   head is read from GitHub. The merge-rule job dispatches this after an approval commit.
  *
- * The verifiers run only on a new head (`opened`, `synchronize`, `reopened`, a dispatch) that is
- * not an approval commit: a label or an `/approve` comment changes no content, and an approval
- * commit needs no verdicts. Relevance: the diff against the PR base (`pull_request`) or against
- * `origin/<base>` (any other event, normally origin/main) touches passages/, calendar/, corpus/ or
- * config/. Otherwise every gate job exits green without running a gate.
+ * The verifiers run on a new head from a `pull_request` run or a dispatch that is not an approval
+ * commit, and never for a fork PR (no LLM spend on PRs from outside). The changes diff starts from
+ * `origin/<base>`. Relevance: passages/, calendar/, corpus/ or config/ changed.
  */
 import type { LectioConfig } from '@lectio/config';
-import type { GitHubClient } from '@lectio/providers';
+import type { GitHubClient, PullRequest } from '@lectio/providers';
 
 import { parseApprovalTrailer } from '../merge-rule/index.ts';
 import { ACTIONS_BOT, isApprovalCommand } from './facts.ts';
-
-export const CONTENT_GATES_EVENTS = ['pull_request', 'issue_comment', 'workflow_dispatch'] as const;
 
 /** Top-level directories whose changes the content gates check. */
 export const RELEVANT_PREFIXES = ['passages/', 'calendar/', 'corpus/', 'config/'] as const;
@@ -32,11 +30,9 @@ export interface Target {
   readonly reason: string;
   readonly prNumber: number;
   readonly headSha: string;
-  /** Head branch name (in the head repository). */
-  readonly headRef: string;
-  /** What the changes diff starts from: the PR base sha, or `origin/<base>`. */
+  /** What the diff starts from: `origin/<base>`. */
   readonly base: string;
-  /** The base branch name, fetched fresh by the merge-rule job. */
+  /** The base branch name, fetched fresh. */
   readonly baseRef: string;
   readonly fork: boolean;
   /** Whether the verifiers job should run on this head. */
@@ -45,25 +41,30 @@ export interface Target {
   readonly approvalHead: boolean;
 }
 
+export interface TargetContext {
+  readonly github: GitHubClient;
+  readonly config: Pick<LectioConfig, 'reviewer'>;
+  /** The run executes the default branch's copy (`GITHUB_REF` is the default branch). */
+  readonly onDefaultBranch: boolean;
+}
+
 type Json = Record<string, unknown>;
 
 const obj = (value: unknown): Json =>
   value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as Json) : {};
 const text = (value: unknown): string => (typeof value === 'string' ? value : '');
 
-const NOTHING: Omit<Target, 'reason'> = {
+const skip = (reason: string): Target => ({
   run: false,
+  reason,
   prNumber: 0,
   headSha: '',
-  headRef: '',
   base: '',
   baseRef: '',
   fork: false,
   verifiers: false,
   approvalHead: false,
-};
-
-const NEW_HEAD_ACTIONS: ReadonlySet<string> = new Set(['opened', 'synchronize', 'reopened']);
+});
 
 async function isApprovalHead(github: GitHubClient, sha: string): Promise<boolean> {
   const commit = await github.getCommit(sha);
@@ -76,66 +77,59 @@ function prNumberOf(value: unknown): number | null {
   return Number.isSafeInteger(number) && number > 0 ? number : null;
 }
 
-/** The target of a content-gates.yml run from its event name and payload. */
-export async function resolveTarget(
-  eventName: string,
-  payload: unknown,
-  github: GitHubClient,
-  config: Pick<LectioConfig, 'reviewer'>,
-): Promise<Target> {
-  const event = obj(payload);
-  if (eventName === 'pull_request') {
-    const pr = obj(event['pull_request']);
-    const head = obj(pr['head']);
-    const base = obj(pr['base']);
-    const number = prNumberOf(pr['number']);
-    if (number === null) throw new Error('pull_request event without a PR number');
-    const headSha = text(head['sha']);
-    const approvalHead = await isApprovalHead(github, headSha);
-    return {
-      run: true,
-      reason: `pull_request ${text(event['action'])} on #${String(number)}`,
-      prNumber: number,
-      headSha,
-      headRef: text(head['ref']),
-      base: text(base['sha']),
-      baseRef: text(base['ref']),
-      fork: text(obj(head['repo'])['full_name']) !== text(obj(base['repo'])['full_name']),
-      verifiers: NEW_HEAD_ACTIONS.has(text(event['action'])) && !approvalHead,
-      approvalHead,
-    };
-  }
-  let number: number | null;
-  let verifiers: boolean;
-  if (eventName === 'issue_comment') {
-    const issue = obj(event['issue']);
-    if (issue['pull_request'] === undefined) return { ...NOTHING, reason: 'a comment on an issue, not a PR' };
-    if (!isApprovalCommand(text(obj(event['comment'])['body']), config.reviewer.approvalCommand))
-      return { ...NOTHING, reason: `a comment that is not ${config.reviewer.approvalCommand}` };
-    number = prNumberOf(issue['number']);
-    verifiers = false;
-  } else if (eventName === 'workflow_dispatch') {
-    number = prNumberOf(obj(event['inputs'])['pr']);
-    verifiers = true;
-  } else {
-    return { ...NOTHING, reason: `content-gates.yml does not handle ${eventName} events` };
-  }
-  if (number === null) throw new Error(`${eventName} event without a valid PR number`);
-  const pr = await github.getPr(number);
-  if (pr.state !== 'open') return { ...NOTHING, reason: `#${String(number)} is ${pr.state}` };
+async function targetOf(github: GitHubClient, pr: PullRequest, reason: string, newHead: boolean): Promise<Target> {
   const approvalHead = await isApprovalHead(github, pr.headSha);
   return {
     run: true,
-    reason: `${eventName} on #${String(number)}`,
-    prNumber: number,
+    reason,
+    prNumber: pr.number,
     headSha: pr.headSha,
-    headRef: pr.head,
     base: `origin/${pr.base}`,
     baseRef: pr.base,
     fork: pr.fork,
-    verifiers: verifiers && !approvalHead,
+    verifiers: newHead && !approvalHead && !pr.fork,
     approvalHead,
   };
+}
+
+async function fromWorkflowRun(event: Json, github: GitHubClient): Promise<Target> {
+  const run = obj(event['workflow_run']);
+  const headSha = text(run['head_sha']);
+  const listed = (Array.isArray(run['pull_requests']) ? run['pull_requests'] : [])
+    .map((pr) => prNumberOf(obj(pr)['number']))
+    .filter((number): number is number => number !== null);
+  const candidates =
+    listed.length > 0
+      ? await Promise.all(listed.map((number) => github.getPr(number)))
+      : (await github.listPrs({ state: 'open' })).filter((pr) => pr.headSha === headSha);
+  const pr = candidates.find((candidate) => candidate.state === 'open' && candidate.headSha === headSha);
+  if (pr === undefined) return skip(`no open PR has head ${headSha} any more; a newer run decides`);
+  const reason = `workflow_run (${text(run['event'])}) on #${String(pr.number)} at ${headSha}`;
+  return targetOf(github, pr, reason, run['event'] === 'pull_request');
+}
+
+/** The target of a trusted content-gates.yml run from its event name and payload. */
+export async function resolveTarget(eventName: string, payload: unknown, context: TargetContext): Promise<Target> {
+  const { github, config } = context;
+  const event = obj(payload);
+  if (eventName === 'workflow_run') return fromWorkflowRun(event, github);
+  let number: number | null;
+  if (eventName === 'issue_comment') {
+    const issue = obj(event['issue']);
+    if (issue['pull_request'] === undefined) return skip('a comment on an issue, not a PR');
+    if (!isApprovalCommand(text(obj(event['comment'])['body']), config.reviewer.approvalCommand))
+      return skip(`a comment that is not ${config.reviewer.approvalCommand}`);
+    number = prNumberOf(issue['number']);
+  } else if (eventName === 'workflow_dispatch') {
+    if (!context.onDefaultBranch) return skip('a dispatch off the default branch runs nothing (not main’s copy)');
+    number = prNumberOf(obj(event['inputs'])['pr']);
+  } else {
+    return skip(`content-gates.yml does not handle ${eventName} events`);
+  }
+  if (number === null) throw new Error(`${eventName} event without a valid PR number`);
+  const pr = await github.getPr(number);
+  if (pr.state !== 'open') return skip(`#${String(number)} is ${pr.state}`);
+  return targetOf(github, pr, `${eventName} on #${String(number)}`, eventName === 'workflow_dispatch');
 }
 
 /** The changed paths the content gates check. */

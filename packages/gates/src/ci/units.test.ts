@@ -5,7 +5,7 @@ import { AnthropicLlmClient } from '@lectio/provider-anthropic';
 import { LiveSourceFetcher } from '@lectio/provider-fetch';
 import { OpenAiLlmClient } from '@lectio/provider-openai';
 import { FakeGitHubClient, ProviderError } from '@lectio/providers';
-import type { GitCommit, GitHubClient, IssueComment, IssueEvent } from '@lectio/providers';
+import type { GitCommit, GitHubClient, IssueComment, IssueEvent, WorkflowRun } from '@lectio/providers';
 
 import type { GateResult } from '../core/result.ts';
 import {
@@ -23,8 +23,9 @@ import {
   approvalCommitOf,
   isApprovalCommand,
   pickApproval,
-  runName,
+  approvalArtifactName,
   runPrNumber,
+  runsMainCopy,
   toPullRequestCommit,
 } from './facts.ts';
 import {
@@ -129,32 +130,71 @@ describe('checkout', () => {
     ]);
   });
 
-  it('asks git for the diff, a base file, the commit list and reads the worktree', () => {
+  it('reads regular-file blobs at the head only, never a symbolic link or submodule', () => {
     const calls: string[][] = [];
     const exec = (args: readonly string[]): string => {
       calls.push([...args]);
-      if (args[0] === 'diff') return `A\0${PASSAGE}\0`;
-      if (args[0] === 'ls-tree') return '';
+      if (args[0] === 'diff' && args[1] === '--raw')
+        return `:000000 120000 ${'0'.repeat(40)} ${SHA_A} A\0calendar/2026.json\0`;
+      if (args[0] === 'diff') return `A\0${PASSAGE}\0A\0calendar/2026.json\0`;
+      if (args[0] === 'ls-tree')
+        return args[3] === PASSAGE
+          ? `100644 blob ${SHA_B}\t${PASSAGE}\n`
+          : `120000 blob ${SHA_A}\tcalendar/2026.json\n`;
+      if (args[0] === 'cat-file') return '{"blob":true}';
       return `${SHA_A} ${SHA_B}\n`;
     };
-    const checkout = gitCheckout(REPO_ROOT, exec);
-    expect(checkout.changedFiles('origin/main', 'HEAD')).toEqual([{ path: PASSAGE, status: 'added' }]);
-    expect(checkout.show('origin/main', PASSAGE)).toBeNull();
-    expect(checkout.revList('origin/main', 'HEAD')).toEqual([{ sha: SHA_A, parents: [SHA_B] }]);
-    expect(calls.at(-1)).toEqual(['rev-list', '--parents', 'origin/main..HEAD']);
-    expect(checkout.readFile('package.json')).toContain('"workspaces"');
-    expect(checkout.readFile('no/such/file')).toBeNull();
+    const checkout = gitCheckout(REPO_ROOT, SHA_A, exec);
+    expect(checkout.changedFiles('origin/main', SHA_A)).toEqual([
+      { path: 'calendar/2026.json', status: 'added' },
+      { path: PASSAGE, status: 'added' },
+    ]);
+    expect(checkout.nonRegular('origin/main', SHA_A)).toEqual(['calendar/2026.json']);
+    expect(checkout.readFile(PASSAGE)).toBe('{"blob":true}');
+    expect(calls.at(-2)).toEqual(['ls-tree', SHA_A, '--', PASSAGE]);
+    expect(calls.at(-1)).toEqual(['cat-file', 'blob', SHA_B]);
+    // A symlink to /proc/self/environ reads as absent: its target is never read.
+    expect(checkout.readFile('calendar/2026.json')).toBeNull();
+    expect(calls.at(-1)).toEqual(['ls-tree', SHA_A, '--', 'calendar/2026.json']);
+    expect(checkout.show('origin/main', PASSAGE)).toBe('{"blob":true}');
+    expect(checkout.revList('origin/main', SHA_A)).toEqual([{ sha: SHA_A, parents: [SHA_B] }]);
+    expect(calls.at(-1)).toEqual(['rev-list', '--parents', `origin/main..${SHA_A}`]);
   });
 });
 
 describe('facts', () => {
-  it('ties runs to PRs by their PR list or their run-name', () => {
-    expect(runPrNumber({ prNumbers: [3, 7], displayTitle: '' }, 7)).toBe(7);
-    expect(runPrNumber({ prNumbers: [], displayTitle: runName(7) }, 7)).toBe(7);
-    expect(runPrNumber({ prNumbers: [], displayTitle: runName(8) }, 7)).toBe(8);
-    expect(runPrNumber({ prNumbers: [3], displayTitle: 'CI' }, 7)).toBe(3);
-    expect(runPrNumber({ prNumbers: [], displayTitle: `${runName(0)}` }, 7)).toBe(0);
-    expect(runPrNumber({ prNumbers: [], displayTitle: 'Content gates · PR #7 again' }, 7)).toBe(0);
+  const run = (overrides: Partial<WorkflowRun>): WorkflowRun => ({
+    id: 77,
+    workflowFile: 'content-gates.yml',
+    event: 'workflow_run',
+    headSha: SHA_B,
+    headBranch: 'main',
+    prNumbers: [],
+    status: 'completed',
+    conclusion: 'success',
+    actor: 'x',
+    displayTitle: '',
+    createdAt: '2026-10-05T10:00:00Z',
+    ...overrides,
+  });
+
+  it('trusts only runs of main’s copy', () => {
+    expect(runsMainCopy(run({}), 'main')).toBe(true);
+    expect(runsMainCopy(run({ event: 'issue_comment' }), 'main')).toBe(true);
+    expect(runsMainCopy(run({ event: 'workflow_dispatch' }), 'main')).toBe(true);
+    expect(runsMainCopy(run({ event: 'workflow_dispatch', headBranch: 'feature' }), 'main')).toBe(false);
+    expect(runsMainCopy(run({ event: 'pull_request', prNumbers: [7] }), 'main')).toBe(false);
+  });
+
+  it('ties a run to a PR only through its approval artifact, never its title or PR list', async () => {
+    const artifacts = (names: string[]) =>
+      ({ listRunArtifacts: () => Promise.resolve(names) }) as unknown as GitHubClient;
+    const named = artifacts([approvalArtifactName(7, SHA_A)]);
+    expect(await runPrNumber(run({}), named, 7, SHA_A, 'main')).toBe(7);
+    expect(await runPrNumber(run({}), named, 8, SHA_A, 'main')).toBe(0);
+    expect(await runPrNumber(run({}), named, 7, SHA_B, 'main')).toBe(0);
+    expect(await runPrNumber(run({ displayTitle: 'Content gates · PR #7' }), artifacts([]), 7, SHA_A, 'main')).toBe(0);
+    expect(await runPrNumber(run({ event: 'pull_request', prNumbers: [7] }), named, 7, SHA_A, 'main')).toBe(0);
   });
 
   it('recognises the approval command on the first line only', () => {
@@ -193,6 +233,10 @@ describe('facts', () => {
       at: t1,
     });
     // The label no longer on the PR, another label, an edited comment: none counts.
+    expect(pickApproval([event(REVIEWER, t3)], [comment(REVIEWER, t1)], ['approved'], CONFIG)).toMatchObject({
+      via: 'label',
+      at: t3,
+    });
     expect(pickApproval([event(REVIEWER, t1)], [], [], CONFIG)).toBeNull();
     expect(pickApproval([event(REVIEWER, t1, 'bug')], [], ['approved', 'bug'], CONFIG)).toBeNull();
     expect(pickApproval([], [comment(REVIEWER, t1, '/approve', t2)], [], CONFIG)).toBeNull();
@@ -221,82 +265,104 @@ describe('facts', () => {
 
   it('reads approval commits, a missing run and a merge commit as invalid, and rethrows other errors', async () => {
     const github = new FakeGitHubClient();
-    expect(await approvalCommitOf(commit('no trailer'), github, 7)).toBeNull();
+    expect(await approvalCommitOf(commit('no trailer'), github, 7, 'main')).toBeNull();
     const trailer = `Lectio-Approval: human run=55 head=${SHA_A}`;
-    expect(await approvalCommitOf(commit(trailer, { parents: [SHA_A, SHA_B] }), github, 7)).toMatchObject({
+    expect(await approvalCommitOf(commit(trailer, { parents: [SHA_A, SHA_B] }), github, 7, 'main')).toMatchObject({
       parentSha: `${SHA_A},${SHA_B}`,
       run: { workflow: '(no such run)', prNumber: 0 },
     });
     const broken = { getWorkflowRun: () => Promise.reject(new ProviderError('timeout', 'slow')) };
-    await expect(approvalCommitOf(commit(trailer), broken as unknown as GitHubClient, 7)).rejects.toThrow('slow');
+    await expect(approvalCommitOf(commit(trailer), broken as unknown as GitHubClient, 7, 'main')).rejects.toThrow(
+      'slow',
+    );
   });
 });
 
 describe('target', () => {
-  const github = newRepo();
-  const prEvent = (action: string, headRepo = 'nyabongo/lectio') => ({
-    action,
-    pull_request: {
-      number: 7,
-      head: { sha: github.headOf('main'), ref: 'research/x', repo: { full_name: headRepo } },
-      base: { sha: SHA_A, ref: 'main', repo: { full_name: 'nyabongo/lectio' } },
-    },
+  const context = (github: GitHubClient, onDefaultBranch = true) => ({ github, config: CONFIG, onDefaultBranch });
+  const runEvent = (headSha: string, pullRequests?: unknown[], event = 'pull_request') => ({
+    workflow_run: { head_sha: headSha, event, ...(pullRequests === undefined ? {} : { pull_requests: pullRequests }) },
   });
 
-  it('reads pull_request events: verifiers only on a new head', async () => {
-    expect(await resolveTarget('pull_request', prEvent('opened'), github, CONFIG)).toEqual({
+  it('resolves a workflow_run from the PRs GitHub lists, else by head sha, and only while that is the head', async () => {
+    const bot = newRepo();
+    const number = await openPr(bot, REVIEWER);
+    const head = bot.headOf('research/mt-20');
+    expect(await resolveTarget('workflow_run', runEvent(head, [{ number }]), context(bot))).toEqual({
       run: true,
-      reason: 'pull_request opened on #7',
-      prNumber: 7,
-      headSha: github.headOf('main'),
-      headRef: 'research/x',
-      base: SHA_A,
+      reason: `workflow_run (pull_request) on #${String(number)} at ${head}`,
+      prNumber: number,
+      headSha: head,
+      base: 'origin/main',
       baseRef: 'main',
       fork: false,
       verifiers: true,
       approvalHead: false,
     });
-    expect(await resolveTarget('pull_request', prEvent('labeled', 'someone/lectio'), github, CONFIG)).toMatchObject({
+    // A fork PR or a dispatched run lists no PR: found by head sha. No verifiers off a pull_request run.
+    expect(await resolveTarget('workflow_run', runEvent(head, [], 'workflow_dispatch'), context(bot))).toMatchObject({
+      prNumber: number,
+      verifiers: false,
+    });
+    expect(await resolveTarget('workflow_run', runEvent(head), context(bot))).toMatchObject({ prNumber: number });
+    // The head moved on, or the listed PR is not at this head: nothing to do here.
+    expect(
+      await resolveTarget('workflow_run', runEvent(SHA_A, [{ number }, { number: 'x' }]), context(bot)),
+    ).toMatchObject({
+      run: false,
+      reason: `no open PR has head ${SHA_A} any more; a newer run decides`,
+    });
+    expect(await resolveTarget('workflow_run', null, context(bot))).toMatchObject({ run: false });
+  });
+
+  it('never runs the verifiers for a fork PR', async () => {
+    const bot = newRepo();
+    const person = bot.as('someone');
+    await person.createBranch({ name: 'fork-branch' });
+    await person.pushCommit({ branch: 'fork-branch', message: 'x', files: [{ path: PASSAGE, content: PASSAGE_TEXT }] });
+    const fork = await person.openForkPr({ head: 'fork-branch', title: 't', body: '', headRepo: 'someone/lectio' });
+    expect(await resolveTarget('workflow_run', runEvent(fork.headSha, []), context(bot))).toMatchObject({
       fork: true,
       verifiers: false,
     });
-    await expect(resolveTarget('pull_request', { pull_request: {} }, github, CONFIG)).rejects.toThrow(
-      /without a PR number/,
-    );
   });
 
-  it('reads /approve comments and dispatches from the PR, and skips everything else', async () => {
+  it('reads /approve comments and dispatches on main from the PR, and skips everything else', async () => {
     const bot = newRepo();
     const number = await openPr(bot, REVIEWER);
     const comment = (body: string) => ({ issue: { number, pull_request: {} }, comment: { body } });
-    expect(await resolveTarget('issue_comment', comment('/approve'), bot, CONFIG)).toMatchObject({
+    expect(await resolveTarget('issue_comment', comment('/approve'), context(bot))).toMatchObject({
       run: true,
       prNumber: number,
       base: 'origin/main',
       verifiers: false,
     });
-    expect(await resolveTarget('issue_comment', comment('nice'), bot, CONFIG)).toMatchObject({ run: false });
+    expect(await resolveTarget('issue_comment', comment('nice'), context(bot))).toMatchObject({ run: false });
     expect(
-      await resolveTarget('issue_comment', { issue: { number }, comment: { body: '/approve' } }, bot, CONFIG),
+      await resolveTarget('issue_comment', { issue: { number }, comment: { body: '/approve' } }, context(bot)),
     ).toMatchObject({ run: false, reason: 'a comment on an issue, not a PR' });
-    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: String(number) } }, bot, CONFIG)).toMatchObject({
+    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: String(number) } }, context(bot))).toMatchObject({
       run: true,
       verifiers: true,
       approvalHead: false,
     });
-    expect(await resolveTarget('push', {}, bot, CONFIG)).toMatchObject({ run: false });
-    await expect(resolveTarget('workflow_dispatch', { inputs: { pr: 'x' } }, bot, CONFIG)).rejects.toThrow(
+    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: number } }, context(bot, false))).toMatchObject({
+      run: false,
+      reason: 'a dispatch off the default branch runs nothing (not main’s copy)',
+    });
+    expect(await resolveTarget('push', {}, context(bot))).toMatchObject({ run: false });
+    await expect(resolveTarget('workflow_dispatch', { inputs: { pr: 'x' } }, context(bot))).rejects.toThrow(
       /valid PR number/,
     );
-    await expect(resolveTarget('workflow_dispatch', null, bot, CONFIG)).rejects.toThrow(/valid PR number/);
+    await expect(resolveTarget('workflow_dispatch', null, context(bot))).rejects.toThrow(/valid PR number/);
 
-    await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
-    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: number } }, bot, CONFIG)).toMatchObject({
+    await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
+    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: number } }, context(bot))).toMatchObject({
       approvalHead: true,
       verifiers: false,
     });
     await bot.closePr(number);
-    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: number } }, bot, CONFIG)).toMatchObject({
+    expect(await resolveTarget('workflow_dispatch', { inputs: { pr: number } }, context(bot))).toMatchObject({
       run: false,
       reason: `#${String(number)} is closed`,
     });
@@ -376,7 +442,7 @@ describe('approval commit', () => {
     return { bot, pr, input };
   }
 
-  it('records the approval on a PR without passages by rewriting a changed file unchanged', async () => {
+  it('records the approval on a PR without passages with a commit that changes no file', async () => {
     const { bot, pr, input } = await setup({ 'calendar/2026.json': '{}\n' });
     const { commit, reviewed } = await writeApprovalCommit({
       ...input,
@@ -384,18 +450,18 @@ describe('approval commit', () => {
     });
     expect(reviewed).toEqual([]);
     expect(commit.parents).toEqual([pr.headSha]);
+    expect(await bot.getPrFiles(input.prNumber)).toEqual([{ path: 'calendar/2026.json', status: 'added' }]);
     expect(bot.fileAt(commit.sha, 'calendar/2026.json')).toBe('{}\n');
   });
 
-  it('refuses when nothing is left to sit on, or an auto approval has no verifier summary', async () => {
-    const { input } = await setup({ 'docs/old.md': null });
-    await expect(
-      writeApprovalCommit({ ...input, write: { kind: 'auto', results: [], now: new Date() } }),
-    ).rejects.toBeInstanceOf(ApprovalCommitError);
+  it('refuses an auto approval without a verifier summary', async () => {
     const passage = await setup({ [PASSAGE]: PASSAGE_TEXT });
     await expect(
       writeApprovalCommit({ ...passage.input, write: { kind: 'auto', results: DETERMINISTIC_PASS, now: new Date() } }),
     ).rejects.toThrow(`${PASSAGE} has no verifierSummary from live verifiers`);
+    await expect(
+      writeApprovalCommit({ ...passage.input, write: { kind: 'auto', results: [], now: new Date() } }),
+    ).rejects.toBeInstanceOf(ApprovalCommitError);
   });
 });
 
@@ -429,7 +495,12 @@ describe('merge job', () => {
     expect(merged).toMatchObject({ merged: true, exitCode: 0, deployed: false });
     expect(logs.at(-1)).toBe(`::notice::${DEPLOY_WORKFLOW} does not exist yet (L-062); nothing to deploy`);
     expect(await runMergeJob({ github: bot, prNumber: number, sha: head, log })).toMatchObject({ merged: false });
-    expect(logs.at(-1)).toContain('is merged');
+    expect(logs.at(-1)).toContain('is already merged');
+    const closedBot = newRepo();
+    const closed = await openPr(closedBot, 'research-bot');
+    await closedBot.closePr(closed);
+    expect(await runMergeJob({ github: closedBot, prNumber: closed, sha: SHA_A, log })).toMatchObject({ exitCode: 1 });
+    expect(logs.at(-1)).toBe(`merge: not merging: #${String(closed)} is closed`);
 
     const forkBot = newRepo();
     await forkBot.as('someone').createBranch({ name: 'fork-branch' });
@@ -488,7 +559,8 @@ describe('merge-rule job', () => {
 
   async function input(bot: FakeGitHubClient, number: number, overrides: Partial<MergeRuleJobInput> = {}) {
     const pr = await bot.getPr(number);
-    return {
+    const base: MergeRuleJobInput = {
+      phase: 'decide',
       github: bot,
       config: CONFIG,
       checkout: await fakeCheckout(bot, number),
@@ -496,13 +568,14 @@ describe('merge-rule job', () => {
       prNumber: number,
       headSha: pr.headSha,
       base: 'main',
+      defaultBranch: 'main',
       runId: '5',
       results: AUTO_RESULTS,
       format: plainJson,
       now: () => new Date('2026-10-05T12:00:00Z'),
       log: quiet,
-      ...overrides,
-    } satisfies MergeRuleJobInput;
+    };
+    return { ...base, ...overrides };
   }
 
   it('does nothing for a closed PR or a head that moved', async () => {
@@ -511,62 +584,85 @@ describe('merge-rule job', () => {
     expect(await runMergeRuleJob(await input(bot, number, { headSha: SHA_A }))).toMatchObject({
       decision: null,
       exitCode: 0,
+      write: false,
     });
     await bot.closePr(number);
     expect((await runMergeRuleJob(await input(bot, number))).summary).toContain('is closed');
+    expect(bot.publishedChecks).toEqual([]);
   });
 
-  it('reports a fork PR in the summary only and ends red', async () => {
+  it('reports a fork PR as a red check and the summary only', async () => {
     const bot = newRepo();
     const person = bot.as('someone');
     await person.createBranch({ name: 'fork-branch' });
     await person.pushCommit({ branch: 'fork-branch', message: 'x', files: [{ path: PASSAGE, content: PASSAGE_TEXT }] });
     const fork = await person.openForkPr({ head: 'fork-branch', title: 't', body: '', headRepo: 'someone/lectio' });
     const outcome = await runMergeRuleJob(await input(bot, fork.number, { note: 'offline' }));
-    expect(outcome).toMatchObject({ decision: 'needs-review', exitCode: 1, dispatched: [] });
+    expect(outcome).toMatchObject({ decision: 'needs-review', exitCode: 1, write: false, dispatched: [] });
     expect(outcome.summary).toContain('fork PR: report only');
     expect(outcome.summary).toContain('- offline');
+    expect(bot.publishedChecks).toEqual([expect.objectContaining({ headSha: fork.headSha, conclusion: 'failure' })]);
     expect((await bot.getPr(fork.number)).labels).toEqual([]);
     expect(await bot.listComments(fork.number)).toEqual([]);
+  });
+
+  it('asks for the artifact in phase decide and commits only in phase approve', async () => {
+    const bot = newRepo();
+    const number = await openPr(bot, 'research-bot');
+    const head = bot.headOf('research/mt-20');
+    await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
+    const decided = await runMergeRuleJob(await input(bot, number));
+    expect(decided).toMatchObject({ decision: 'auto-merge', exitCode: 0, write: true });
+    expect(decided.approvalArtifact).toBe(`lectio-approval-pr${String(number)}-${head}`);
+    expect(bot.headOf('research/mt-20')).toBe(head);
+    expect(bot.publishedChecks.filter((check) => check.headSha === head && check.conclusion === 'success')).toEqual([]);
+
+    // The decision changed before phase approve: no commit, red check.
+    const changed = await runMergeRuleJob(await input(bot, number, { phase: 'approve', results: DETERMINISTIC_PASS }));
+    expect(changed).toMatchObject({ decision: 'needs-review', exitCode: 1, write: false });
+    expect(changed.summary).toContain('no approval commit: the decision changed');
+    expect(bot.headOf('research/mt-20')).toBe(head);
   });
 
   it('ends red when a dispatch fails or the head moved before the commit, and rethrows unknown errors', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     const registry = { ...REGISTRY, workflows: [...REGISTRY.workflows, 'missing.yml'] };
-    const outcome = await runMergeRuleJob(await input(bot, number, { registry }));
+    const outcome = await runMergeRuleJob(await input(bot, number, { registry, phase: 'approve' }));
     expect(outcome).toMatchObject({ decision: 'auto-merge', exitCode: 1 });
     expect(outcome.summary).toContain('could not dispatch missing.yml');
 
     const second = newRepo();
     const other = await openPr(second, 'research-bot');
-    await simulateRun(second, other, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    await simulateRun(second, other, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     const moved = override(second, {
       commitFiles: () => Promise.reject(new ProviderError('conflict', 'head moved')),
     });
-    const conflict = await runMergeRuleJob(await input(second, other, { github: moved }));
+    const conflict = await runMergeRuleJob(await input(second, other, { github: moved, phase: 'approve' }));
     expect(conflict).toMatchObject({ decision: 'auto-merge', exitCode: 1, dispatched: [] });
     expect(conflict.summary).toContain('no approval commit: head moved');
 
     const broken = override(second, { commitFiles: () => Promise.reject(new TypeError('bug')) });
-    await expect(runMergeRuleJob(await input(second, other, { github: broken }))).rejects.toThrow('bug');
+    await expect(runMergeRuleJob(await input(second, other, { github: broken, phase: 'approve' }))).rejects.toThrow(
+      'bug',
+    );
   });
 
-  it('approves a PR without passages with an approval commit that reviews nothing', async () => {
+  it('approves a PR without passages with an approval commit that only records the approval', async () => {
     const bot = newRepo();
     const number = await openPr(bot, REVIEWER, { 'calendar/2026.json': '{}\n' });
-    await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     await bot.as(REVIEWER).addLabels(number, ['approved']);
-    const outcome = await runMergeRuleJob(await input(bot, number, { results: DETERMINISTIC_PASS }));
+    const outcome = await runMergeRuleJob(await input(bot, number, { results: DETERMINISTIC_PASS, phase: 'approve' }));
     expect(outcome.decision).toBe('human-approved');
-    expect(outcome.summary).toContain(`approval commit ${outcome.approvalCommitSha ?? ''}; dispatching`);
+    expect(outcome.summary).toContain(`approval commit ${outcome.approvalCommitSha ?? ''} records the approval`);
   });
 
   it('ignores a bot-signed approval commit below the head that is not valid', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     const parent = bot.headOf('research/mt-20');
     await bot.pushCommit({
       branch: 'research/mt-20',
@@ -579,8 +675,7 @@ describe('merge-rule job', () => {
       message: 'more',
       files: [{ path: 'passages/notes.txt', content: 'y' }],
     });
-    await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
-    const outcome = await runMergeRuleJob(await input(bot, number, { results: DETERMINISTIC_PASS }));
-    expect(outcome.decision).toBe('needs-review');
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
+    expect(outcome.mergeRule.decision).toBe('needs-review');
   });
 });

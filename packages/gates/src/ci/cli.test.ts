@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import type { FakeGitHubClient } from '@lectio/providers';
 
-import { CI_USAGE, runCiCli } from './cli.ts';
+import { APPROVAL_RECORD, CI_USAGE, runCiCli } from './cli.ts';
 import type { CiCliOptions } from './cli.ts';
 import {
   AUTO_RESULTS,
@@ -21,7 +21,6 @@ import {
   plainJson,
   simulateRun,
 } from './fixtures/content-gates.ts';
-import { RUN_NAME_PREFIX } from './facts.ts';
 
 let dir: string;
 let logs: string[];
@@ -69,33 +68,43 @@ describe('lectio-gates ci', () => {
   });
 
   describe('resolve', () => {
-    it('writes the target of a pull_request run to $GITHUB_OUTPUT', async () => {
+    it('writes the target of a workflow_run to $GITHUB_OUTPUT', async () => {
       const github = newRepo();
-      const head = github.headOf('main');
+      const number = await openPr(github, 'research-bot');
+      const head = github.headOf('research/mt-20');
       const event = writeJson('event.json', {
-        action: 'synchronize',
-        pull_request: {
-          number: 7,
-          head: { sha: head, ref: 'research/x', repo: { full_name: 'a/b' } },
-          base: { sha: 'b'.repeat(40), ref: 'main', repo: { full_name: 'a/b' } },
-        },
+        workflow_run: { head_sha: head, event: 'pull_request', pull_requests: [{ number }] },
       });
-      const env = { ...options().env, GITHUB_EVENT_NAME: 'pull_request', GITHUB_EVENT_PATH: join(dir, event) };
+      const env = { ...options().env, GITHUB_EVENT_NAME: 'workflow_run', GITHUB_EVENT_PATH: join(dir, event) };
       expect(await runCiCli(['resolve'], options({ env, github }))).toBe(0);
+      const reason = `workflow_run (pull_request) on #${String(number)} at ${head}`;
       expect(read('output').split('\n')).toEqual([
         'run=true',
-        'reason=pull_request synchronize on #7',
-        'pr=7',
+        `reason=${reason}`,
+        `pr=${String(number)}`,
         `head-sha=${head}`,
-        'head-ref=research/x',
-        `base=${'b'.repeat(40)}`,
+        'base=origin/main',
         'base-ref=main',
         'fork=false',
         'verifiers=true',
         'approval-head=false',
         '',
       ]);
-      expect(logs[0]).toBe('resolve: pull_request synchronize on #7');
+      expect(logs[0]).toBe(`resolve: ${reason}`);
+    });
+
+    it('runs a dispatch only on the default branch', async () => {
+      const github = newRepo();
+      const number = await openPr(github, 'research-bot');
+      const event = writeJson('event.json', { inputs: { pr: String(number) } });
+      const base = { GITHUB_EVENT_NAME: 'workflow_dispatch', GITHUB_EVENT_PATH: join(dir, event) };
+      await runCiCli(['resolve'], options({ env: { ...base, GITHUB_REF: 'refs/heads/attacker' }, github }));
+      expect(logs).toContain('output run=false');
+      await runCiCli(
+        ['resolve'],
+        options({ env: { ...base, GITHUB_REF: 'refs/heads/trunk', DEFAULT_BRANCH: 'trunk' }, github }),
+      );
+      expect(logs).toContain('output run=true');
     });
 
     it('needs the event, and builds provider-gh itself when no client is injected', async () => {
@@ -117,8 +126,9 @@ describe('lectio-gates ci', () => {
   });
 
   describe('changes', () => {
-    const checkout = (paths: string[]) => ({
+    const checkout = (paths: string[], nonRegular: string[] = []) => ({
       changedFiles: () => paths.map((path) => ({ path, status: 'modified' as const })),
+      nonRegular: () => nonRegular,
       show: () => null,
       revList: () => [],
       readFile: () => null,
@@ -129,6 +139,19 @@ describe('lectio-gates ci', () => {
       expect(await runCiCli(args, options({ checkout: checkout(['docs/a.md', 'README.md']) }))).toBe(0);
       expect(read('output')).toBe('relevant=false\n');
       expect(read('summary')).toContain('Nothing relevant to the content gates changed');
+    });
+
+    it('fails for a changed symbolic link or submodule, before any gate reads the tree', async () => {
+      const args = ['changes', '--root', 'pr-head', '--base', 'origin/main', '--head', 'a'.repeat(40)];
+      const links = checkout(['calendar/2026.json', 'corpus/x'], ['calendar/2026.json', 'corpus/x']);
+      expect(await runCiCli(args, options({ checkout: links }))).toBe(1);
+      expect(errors[0]).toBe(
+        '::error file=calendar/2026.json::calendar/2026.json is not a regular file (symbolic link or submodule)',
+      );
+      expect(read('summary')).toContain('Refused: calendar/2026.json, corpus/x are not regular files.');
+      expect(read('output')).toBe('relevant=true\n');
+      expect(await runCiCli(args, options({ checkout: checkout(['a'], ['a']) }))).toBe(1);
+      expect(read('summary')).toContain('Refused: a is not a regular file.');
     });
 
     it('marks content changes relevant, from git by default', async () => {
@@ -151,7 +174,18 @@ describe('lectio-gates ci', () => {
     async function prepared(): Promise<{ bot: FakeGitHubClient; number: number; head: string }> {
       const bot = newRepo();
       const number = await openPr(bot, 'research-bot');
-      await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+      await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
+      bot.addWorkflowRun({
+        id: 4242,
+        workflowFile: 'content-gates.yml',
+        event: 'workflow_run',
+        headSha: bot.headOf('main'),
+        headBranch: 'main',
+        prNumbers: [],
+        status: 'in_progress',
+        conclusion: null,
+        actor: 'x',
+      });
       return { bot, number, head: bot.headOf('research/mt-20') };
     }
 
@@ -167,24 +201,52 @@ describe('lectio-gates ci', () => {
       'out/missing/gates.json',
     ];
 
-    it('decides, writes the approval commit and its outputs; the run on it merges', async () => {
+    it('decides, records the approval artifact, writes the approval commit; the run on it merges', async () => {
       const { bot, number, head } = await prepared();
       const checkout = await fakeCheckout(bot, number);
       const args = ['merge-rule', '--pr', String(number), '--head-sha', head, '--base', 'main', '--root', 'pr-head'];
-      expect(
-        await runCiCli([...args, ...reports()], options({ github: bot, checkout, format: undefined, now: undefined })),
-      ).toBe(0);
+      const run = (extra: string[]) =>
+        runCiCli(
+          [...args, ...extra, ...reports()],
+          options({ github: bot, checkout, format: undefined, now: undefined }),
+        );
+      expect(await run([])).toBe(0);
+      const artifact = `lectio-approval-pr${String(number)}-${head}`;
+      expect(read('output')).toBe(
+        `decision=auto-merge\nmanual-merge=false\nwrite=true\napproval-artifact=${artifact}\napproval-commit=\n`,
+      );
+      expect(JSON.parse(read(APPROVAL_RECORD))).toEqual({ pr: number, head, run: '4242', decision: 'auto-merge' });
+      expect(bot.headOf('research/mt-20')).toBe(head);
+
+      bot.addRunArtifact(4242, artifact);
+      expect(await run(['--phase', 'approve'])).toBe(0);
       const approval = bot.headOf('research/mt-20');
-      expect(read('output')).toBe(`decision=auto-merge\nmanual-merge=false\napproval-commit=${approval}\n`);
+      expect(read('output')).toContain(`write=false\napproval-artifact=\napproval-commit=${approval}\n`);
       expect(read('summary')).toContain('the deterministic gates ran with the offline fake fetcher');
       expect(logs).toContain('merge-rule: out/missing/gates.json is missing (that job did not run)');
 
-      const dispatched = bot.dispatches.find((dispatch) => dispatch.file === 'content-gates.yml');
-      const run = await bot.getWorkflowRun(dispatched?.runId ?? 0);
-      expect(run.displayTitle).toBe(`${RUN_NAME_PREFIX}${String(number)}`);
-      for (const check of ['changes', 'deterministic', 'merge-rule']) bot.setCheck(approval, check, 'success');
+      for (const check of REGISTRY.checks) bot.setCheck(approval, check, 'success');
       expect(await runCiCli(['merge', '--pr', String(number), '--sha', approval], options({ github: bot }))).toBe(0);
       expect(bot.merges).toHaveLength(1);
+      expect(await runCiCli(['merge-rule', ...args.slice(1), '--phase', 'later'], options())).toBe(2);
+      expect(errors.at(-2)).toBe('lectio-gates ci: --phase must be decide or approve (got "later")');
+    });
+
+    it('publishes a green merge-rule check when nothing relevant changed', async () => {
+      const bot = newRepo();
+      const sha = bot.headOf('main');
+      expect(await runCiCli(['skip', '--head-sha', sha, '--reason', 'docs only'], options({ github: bot }))).toBe(0);
+      expect(bot.publishedChecks).toEqual([
+        {
+          name: 'merge-rule',
+          headSha: sha,
+          conclusion: 'success',
+          title: 'nothing to decide',
+          summary: 'docs only',
+          actor: bot.actor,
+        },
+      ]);
+      expect(await runCiCli(['skip', '--head-sha', sha], options({ github: bot }))).toBe(2);
     });
 
     it('reads injected report files and ends red while waiting for review', async () => {

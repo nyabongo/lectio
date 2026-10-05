@@ -1,5 +1,5 @@
 /**
- * The `merge` job of content-gates.yml. Not a required check (so not in the registry); it runs in
+ * The `merge` job of the trusted content-gates.yml. Not a required check (so not in the registry); it runs in
  * the same run after `merge-rule`, and only when that job returned `approved-commit` for a PR that
  * is not merged by hand.
  *
@@ -41,6 +41,11 @@ const refuse = (log: (line: string) => void, message: string): MergeJobOutcome =
 export async function runMergeJob(input: MergeJobInput): Promise<MergeJobOutcome> {
   const { github, prNumber, sha, log } = input;
   const pr = await github.getPr(prNumber);
+  if (pr.state === 'merged') {
+    // Another run of the trusted workflow (dispatched and workflow_run) merged it first.
+    log(`merge: #${String(prNumber)} is already merged; nothing to do`);
+    return { merged: false, exitCode: 0, deployed: false };
+  }
   if (pr.state !== 'open') return refuse(log, `#${String(prNumber)} is ${pr.state}`);
   if (pr.fork) return refuse(log, 'a fork PR is merged by a maintainer');
   if (pr.headSha !== sha) return refuse(log, `the head is ${pr.headSha}, not the approval commit ${sha}`);

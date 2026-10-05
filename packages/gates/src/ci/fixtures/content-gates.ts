@@ -18,7 +18,7 @@ import type { GateResult } from '../../core/result.ts';
 import { APPROVAL_WORKFLOW } from '../../merge-rule/index.ts';
 import type { FormatJson } from '../../review/approve.ts';
 import type { CommitLink, PrCheckout } from '../checkout.ts';
-import { ACTIONS_BOT, runName } from '../facts.ts';
+import { ACTIONS_BOT, CHECKS_WORKFLOW } from '../facts.ts';
 import { runMergeJob } from '../merge-job.ts';
 import type { MergeJobOutcome } from '../merge-job.ts';
 import { runMergeRuleJob } from '../merge-rule-job.ts';
@@ -59,10 +59,8 @@ export function newRepo(files: Readonly<Record<string, string>> = { 'README.md':
   const workflows = Object.fromEntries(
     Object.entries(registryJobs()).map(([workflow, jobs]) => [
       workflow,
-      // content-gates.yml reports its checks from the simulated run, not on dispatch.
-      workflow === APPROVAL_WORKFLOW
-        ? { runName: (inputs: Readonly<Record<string, string>>) => runName(Number(inputs['pr'])) }
-        : { jobs },
+      // The content workflows report their checks from the simulated runs, not on dispatch.
+      workflow === APPROVAL_WORKFLOW || workflow === CHECKS_WORKFLOW ? {} : { jobs },
     ]),
   );
   return new FakeGitHubClient({
@@ -103,8 +101,16 @@ const STATUS: Readonly<Record<PrFile['status'], ChangedFile['status']>> = {
   renamed: 'renamed',
 };
 
-/** A {@link PrCheckout} over the fake: the PR's current head, its files and its commits since `base`. */
-export async function fakeCheckout(bot: FakeGitHubClient, number: number, base = 'main'): Promise<PrCheckout> {
+/**
+ * A {@link PrCheckout} over the fake: the PR's current head, its files and its commits since `base`.
+ * `nonRegular` lists the changed paths to treat as symbolic links (the fake has no file modes).
+ */
+export async function fakeCheckout(
+  bot: FakeGitHubClient,
+  number: number,
+  base = 'main',
+  nonRegular: readonly string[] = [],
+): Promise<PrCheckout> {
   const pr = await bot.getPr(number);
   const files = (await bot.getPrFiles(number)).map((file): ChangedFile => ({
     path: file.path,
@@ -128,11 +134,13 @@ export async function fakeCheckout(bot: FakeGitHubClient, number: number, base =
     links.push({ sha, parents: commit.parents });
     pending.push(...commit.parents);
   }
+  const regular = (path: string): boolean => !nonRegular.includes(path);
   return {
     changedFiles: () => files,
-    show: (ref, path) => bot.fileAt(ref, path) ?? null,
+    nonRegular: () => [...nonRegular],
+    show: (ref, path) => (regular(path) ? (bot.fileAt(ref, path) ?? null) : null),
     revList: () => links,
-    readFile: (path) => bot.fileAt(pr.headSha, path) ?? null,
+    readFile: (path) => (regular(path) ? (bot.fileAt(pr.headSha, path) ?? null) : null),
   };
 }
 
@@ -197,18 +205,42 @@ export interface SimulatedRun {
 }
 
 export interface SimulateOptions {
-  readonly event: 'pull_request' | 'issue_comment' | 'workflow_dispatch';
+  /**
+   * The trusted run's event: `workflow_run` (a PR-side `pull_request` run completed),
+   * `issue_comment` (`/approve`) or `workflow_dispatch` (on main, by the merge-rule job).
+   */
+  readonly event: 'workflow_run' | 'issue_comment' | 'workflow_dispatch';
   readonly results: readonly GateResult[];
-  /** An existing run (a dispatched one) instead of a new one. */
+  /** An existing trusted run (a dispatched one) instead of a new one. */
   readonly run?: WorkflowRun;
   readonly config?: LectioConfig;
   readonly now?: Date;
+  /** Changed paths the checkout reports as symbolic links. */
+  readonly nonRegular?: readonly string[];
+}
+
+/** The PR-side content-checks.yml run on the PR head: GitHub's observation of it, and its two checks. */
+export function contentChecksRun(bot: FakeGitHubClient, number: number, headSha: string, branch: string): WorkflowRun {
+  bot.setCheck(headSha, 'changes', 'success');
+  bot.setCheck(headSha, 'deterministic', 'success');
+  return bot.addWorkflowRun({
+    workflowFile: CHECKS_WORKFLOW,
+    event: 'pull_request',
+    headSha,
+    headBranch: branch,
+    prNumbers: [number],
+    status: 'completed',
+    conclusion: 'success',
+    actor: 'someone',
+  });
 }
 
 /**
- * One content-gates.yml run for PR `number` on its current head. Like GitHub, a `pull_request` or
- * `workflow_dispatch` run reports its job checks on the PR head, and an `issue_comment` run on
- * main's tip. The merge job runs when merge-rule returned `approved-commit` (and not manualMerge).
+ * One run of the trusted content-gates.yml (main's copy) for PR `number` on its current head, as the
+ * workflow plays it: (for `workflow_run`, the PR-side run first) merge-rule `decide`, the approval
+ * artifact upload when an approval commit is due, merge-rule `approve`, and the merge job when the
+ * head is a valid approval commit. Its jobs report on main's tip; `merge-rule` reaches the PR head
+ * through the Checks API.
  */
 export async function simulateRun(
   bot: FakeGitHubClient,
@@ -217,38 +249,39 @@ export async function simulateRun(
 ): Promise<SimulatedRun> {
   const pr = await bot.getPr(number);
   const headSha = pr.headSha;
-  const checksOn = options.event === 'issue_comment' ? bot.headOf('main') : headSha;
+  if (options.event === 'workflow_run') contentChecksRun(bot, number, headSha, pr.head);
   const run =
     options.run ??
     bot.addWorkflowRun({
       workflowFile: APPROVAL_WORKFLOW,
       event: options.event,
-      headSha: checksOn,
-      headBranch: options.event === 'issue_comment' ? 'main' : pr.head,
-      prNumbers: options.event === 'pull_request' ? [number] : [],
-      displayTitle: runName(number),
+      headSha: bot.headOf('main'),
+      headBranch: 'main',
+      prNumbers: [],
       status: 'in_progress',
       conclusion: null,
       actor: pr.author,
     });
-  const deterministicOk = options.results.every((result) => result.gate === 'verifiers' || result.status !== 'fail');
-  bot.setCheck(checksOn, 'changes', 'success');
-  bot.setCheck(checksOn, 'deterministic', deterministicOk ? 'success' : 'failure');
-  const mergeRule = await runMergeRuleJob({
+  const input = {
     github: bot,
     config: options.config ?? CONFIG,
-    checkout: await fakeCheckout(bot, number),
+    checkout: await fakeCheckout(bot, number, 'main', options.nonRegular),
     registry: REGISTRY,
     prNumber: number,
     headSha,
     base: 'main',
+    defaultBranch: 'main',
     runId: String(run.id),
     results: options.results,
     format: plainJson,
     now: () => options.now ?? new Date('2026-10-05T12:00:00Z'),
     log: () => undefined,
-  });
-  bot.setCheck(checksOn, 'merge-rule', mergeRule.exitCode === 0 ? 'success' : 'failure');
+  };
+  let mergeRule = await runMergeRuleJob({ ...input, phase: 'decide' });
+  if (mergeRule.write) {
+    bot.addRunArtifact(run.id, mergeRule.approvalArtifact as string);
+    mergeRule = await runMergeRuleJob({ ...input, phase: 'approve' });
+  }
   const merge =
     mergeRule.decision === 'approved-commit' && !mergeRule.manualMerge
       ? await runMergeJob({ github: bot, prNumber: number, sha: headSha, log: () => undefined })
@@ -256,8 +289,14 @@ export async function simulateRun(
   return { run, headSha, mergeRule, merge };
 }
 
-/** The content-gates.yml run the merge-rule job dispatched last (`null` when none). */
+/** The trusted content-gates.yml run the merge-rule job dispatched last (`null` when none). */
 export async function lastDispatchedGatesRun(bot: FakeGitHubClient): Promise<WorkflowRun | null> {
   const dispatch = bot.dispatches.filter((entry) => entry.file === APPROVAL_WORKFLOW).at(-1);
   return dispatch === undefined ? null : bot.getWorkflowRun(dispatch.runId);
+}
+
+/** Plays the PR-side content-checks.yml run the merge-rule job dispatched on the approval commit. */
+export function dispatchedChecksReport(bot: FakeGitHubClient, sha: string): void {
+  bot.setCheck(sha, 'changes', 'success');
+  bot.setCheck(sha, 'deterministic', 'success');
 }

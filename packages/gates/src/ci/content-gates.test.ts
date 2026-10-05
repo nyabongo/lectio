@@ -1,10 +1,11 @@
 /**
- * content-gates.yml end to end on the fake GitHub: both approval paths from a pending passage to
- * main, the approval-commit rules, label transitions and the guards around protected paths.
+ * The content gates end to end on the fake GitHub: the PR-side content-checks.yml and the trusted
+ * content-gates.yml (main's copy). Both approval paths from a pending passage to main, the
+ * approval-commit rules, label transitions and the guards around protected paths and symlinks.
  */
 import { describe, expect, it } from 'vitest';
 
-import type { FakeGitHubClient } from '@lectio/providers';
+import type { FakeGitHubClient, WorkflowRun } from '@lectio/providers';
 
 import { APPROVAL_WORKFLOW, formatApprovalTrailer } from '../merge-rule/index.ts';
 import {
@@ -19,6 +20,8 @@ import {
   SCHEMA_FAIL,
   STRANGER,
   SUMMARY,
+  contentChecksRun,
+  dispatchedChecksReport,
   lastDispatchedGatesRun,
   newRepo,
   openPr,
@@ -26,11 +29,12 @@ import {
   registryJobs,
   simulateRun,
 } from './fixtures/content-gates.ts';
-import { ACTIONS_BOT, runName } from './facts.ts';
+import { ACTIONS_BOT, CHECKS_WORKFLOW, approvalArtifactName } from './facts.ts';
 import { runMergeJob } from './merge-job.ts';
-import { DECISION_LABELS } from './merge-rule-job.ts';
+import { DECISION_LABELS, MERGE_RULE_CHECK } from './merge-rule-job.ts';
 
 const BRANCH = 'research/mt-20';
+const APPROVED = 'approved';
 
 interface Review {
   status: string;
@@ -49,27 +53,36 @@ async function decisionLabels(bot: FakeGitHubClient, number: number): Promise<st
   return pr.labels.filter((label) => (DECISION_LABELS as readonly string[]).includes(label));
 }
 
-/** Plays the run the merge-rule job dispatched on the approval commit. */
+/** The merge-rule check published last on `sha`. */
+function mergeRuleCheck(bot: FakeGitHubClient, sha: string) {
+  return bot.publishedChecks.filter((check) => check.name === MERGE_RULE_CHECK && check.headSha === sha).at(-1);
+}
+
+/** Plays the dispatched PR-side run and the dispatched trusted run on the approval commit. */
 async function dispatchedRun(bot: FakeGitHubClient, number: number) {
+  dispatchedChecksReport(bot, bot.headOf(BRANCH));
   const run = await lastDispatchedGatesRun(bot);
-  expect(run).not.toBeNull();
+  expect(run).toMatchObject({ event: 'workflow_dispatch', headBranch: 'main' });
   return simulateRun(bot, number, { event: 'workflow_dispatch', results: DETERMINISTIC_PASS, run: run ?? undefined });
 }
 
-describe('content-gates: a pending passage reaches main approved', () => {
+describe('content gates: a pending passage reaches main approved', () => {
   it('(a) the author is the reviewer and adds the approved label', async () => {
     const bot = newRepo();
     const number = await openPr(bot, REVIEWER);
 
-    const opened = await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
+    const opened = await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
     expect(opened.mergeRule).toMatchObject({ decision: 'needs-review', exitCode: 1, label: 'needs-review' });
+    expect(mergeRuleCheck(bot, opened.headSha)).toMatchObject({ conclusion: 'failure', title: 'needs-review' });
     expect(bot.dispatches).toEqual([]);
 
-    await bot.as(REVIEWER).addLabels(number, [CONFIG_LABEL]);
-    const labeled = await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    await bot.as(REVIEWER).addLabels(number, [APPROVED]);
+    const labeled = await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     expect(labeled.mergeRule).toMatchObject({ decision: 'human-approved', exitCode: 0, label: 'auto-merge-candidate' });
     const approvalSha = bot.headOf(BRANCH);
     expect(labeled.mergeRule.approvalCommitSha).toBe(approvalSha);
+    expect(await bot.listRunArtifacts(labeled.run.id)).toEqual([approvalArtifactName(number, labeled.headSha)]);
+    expect(mergeRuleCheck(bot, labeled.headSha)).toMatchObject({ conclusion: 'success', actor: ACTIONS_BOT });
 
     // One signed bot commit on the decided head, with the review block and the trailer.
     const commit = await bot.getCommit(approvalSha);
@@ -84,9 +97,9 @@ describe('content-gates: a pending passage reaches main approved', () => {
       approvedVia: 'label',
     });
 
-    // Every registered workflow dispatched once on the head branch; content-gates gets the PR.
-    expect(bot.dispatches.map((dispatch) => [dispatch.file, dispatch.ref, dispatch.sha])).toEqual(
-      REGISTRY.workflows.map((workflow) => [workflow, BRANCH, approvalSha]),
+    // Every registered workflow dispatched once: on the head branch, except the trusted one on main.
+    expect(bot.dispatches.map((dispatch) => [dispatch.file, dispatch.ref])).toEqual(
+      REGISTRY.workflows.map((workflow) => [workflow, workflow === APPROVAL_WORKFLOW ? 'main' : BRANCH]),
     );
     expect(bot.dispatches.find((dispatch) => dispatch.file === APPROVAL_WORKFLOW)?.inputs).toEqual({
       pr: String(number),
@@ -106,7 +119,7 @@ describe('content-gates: a pending passage reaches main approved', () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
 
-    const opened = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    const opened = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(opened.mergeRule).toMatchObject({ decision: 'auto-merge', exitCode: 0, label: 'auto-merge-candidate' });
     const approvalSha = bot.headOf(BRANCH);
     const commit = await bot.getCommit(approvalSha);
@@ -130,35 +143,34 @@ describe('content-gates: a pending passage reaches main approved', () => {
   it('merges only after the merge-rule check on the approval commit has finished', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     const approvalSha = bot.headOf(BRANCH);
-    // The dispatched run has reported changes and deterministic, but merge-rule is still running.
-    bot.setCheck(approvalSha, 'changes', 'success');
-    bot.setCheck(approvalSha, 'deterministic', 'success');
-    await expect(
-      runMergeJob({ github: bot, prNumber: number, sha: approvalSha, log: () => undefined }),
-    ).rejects.toThrow(/did not finish: merge-rule/);
-    bot.setCheck(approvalSha, 'merge-rule', null);
-    await expect(
-      runMergeJob({ github: bot, prNumber: number, sha: approvalSha, log: () => undefined }),
-    ).rejects.toThrow(/did not finish: merge-rule/);
+    dispatchedChecksReport(bot, approvalSha);
+    const merge = () => runMergeJob({ github: bot, prNumber: number, sha: approvalSha, log: () => undefined });
+    await expect(merge()).rejects.toThrow(/did not finish: merge-rule/);
+    bot.setCheck(approvalSha, MERGE_RULE_CHECK, null);
+    await expect(merge()).rejects.toThrow(/did not finish: merge-rule/);
     expect(bot.merges).toEqual([]);
-    bot.setCheck(approvalSha, 'merge-rule', 'success');
-    expect((await runMergeJob({ github: bot, prNumber: number, sha: approvalSha, log: () => undefined })).merged).toBe(
-      true,
-    );
+    await bot.createCheckRun({
+      name: MERGE_RULE_CHECK,
+      headSha: approvalSha,
+      conclusion: 'success',
+      title: '',
+      summary: '',
+    });
+    expect((await merge()).merged).toBe(true);
   });
 
   it('every workflow in .github/required-checks/ reports on the approval commit', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     const approvalSha = bot.headOf(BRANCH);
     await dispatchedRun(bot, number);
     const { checks, ok } = await bot.waitForRequiredChecks({ sha: approvalSha });
     expect(ok).toBe(true);
     for (const [workflow, jobs] of Object.entries(registryJobs())) {
-      expect(bot.dispatches.some((dispatch) => dispatch.file === workflow && dispatch.sha === approvalSha)).toBe(true);
+      expect(bot.dispatches.some((dispatch) => dispatch.file === workflow)).toBe(true);
       for (const job of jobs)
         expect(checks.find((check) => check.name === job)).toEqual({
           name: job,
@@ -172,9 +184,10 @@ describe('content-gates: a pending passage reaches main approved', () => {
   it('dispatches exactly one round: the run on the approval commit dispatches nothing', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     const round = bot.dispatches.length;
     expect(round).toBe(REGISTRY.workflows.length);
+    dispatchedChecksReport(bot, bot.headOf(BRANCH));
     const run = await lastDispatchedGatesRun(bot);
     // Even with fresh green verifier results, the approval commit is not decided again.
     const final = await simulateRun(bot, number, {
@@ -185,85 +198,160 @@ describe('content-gates: a pending passage reaches main approved', () => {
     expect(final.mergeRule).toMatchObject({ decision: 'approved-commit', dispatched: [] });
     expect(final.mergeRule.approvalCommitSha).toBeUndefined();
     expect(bot.dispatches.slice(round).map((dispatch) => dispatch.file)).toEqual(['deploy.yml']);
+    // A second trusted run on the same commit (workflow_run of the dispatched check) finds it merged.
+    const again = await runMergeJob({ github: bot, prNumber: number, sha: final.headSha, log: () => undefined });
+    expect(again).toEqual({ merged: false, exitCode: 0, deployed: false });
   });
 });
 
-const CONFIG_LABEL = 'approved';
+describe('content gates: approval commits', () => {
+  type Writer = (bot: FakeGitHubClient, number: number, parent: string) => WorkflowRun;
 
-describe('content-gates: approval commits', () => {
-  /**
-   * A PR whose head is a commit with `message`, pushed by `author` (`verified` as given) on top of
-   * a content commit that no run has checked yet; `runId` is the PR's pull_request run on the
-   * commit before it.
-   */
-  async function forged(message: (parent: string, runId: string) => string, author = ACTIONS_BOT, verified = true) {
+  /** A trusted-looking run of content-gates.yml, `overrides` applied, with no artifact unless given. */
+  const writerRun =
+    (overrides: Partial<WorkflowRun> = {}, artifact?: (number: number, parent: string) => string): Writer =>
+    (bot, number, parent) => {
+      const run = bot.addWorkflowRun({
+        workflowFile: APPROVAL_WORKFLOW,
+        event: 'workflow_run',
+        headSha: bot.headOf('main'),
+        headBranch: 'main',
+        prNumbers: [],
+        status: 'completed',
+        conclusion: 'success',
+        actor: 'someone',
+        ...overrides,
+      });
+      if (artifact !== undefined) bot.addRunArtifact(run.id, artifact(number, parent));
+      return run;
+    };
+  const validArtifact = (number: number, parent: string) => approvalArtifactName(number, parent);
+
+  /** A PR whose head is a commit with an approval trailer naming `writer`'s run, pushed by `author`. */
+  async function forged(writer: Writer, options: { author?: string; verified?: boolean; head?: string } = {}) {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    const first = await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
-    await pushContent(bot, 'research-bot', BRANCH, PASSAGE_TEXT.replace('"summary": "', '"summary": "Edited. '));
+    await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
     const parent = bot.headOf(BRANCH);
-    await bot.as(author).pushCommit({
+    const run = writer(bot, number, parent);
+    await bot.as(options.author ?? ACTIONS_BOT).pushCommit({
       branch: BRANCH,
-      message: message(parent, String(first.run.id)),
+      message: `Approve\n\n${formatApprovalTrailer({ kind: 'auto', runId: String(run.id), head: options.head ?? parent })}\n`,
       files: [{ path: 'passages/notes.txt', content: 'x' }],
-      verified,
+      verified: options.verified ?? true,
     });
-    return { bot, number, parent, first };
+    return { bot, number };
   }
 
-  const trailer = (parent: string, runId: string) => `Approve\n\nLectio-Approval: auto run=${runId} head=${parent}\n`;
+  it('accepts a trusted run that uploaded the approval artifact for this PR and parent', async () => {
+    const { bot, number } = await forged(writerRun({}, validArtifact));
+    for (const check of REGISTRY.checks) bot.setCheck(bot.headOf(BRANCH), check, 'success');
+    const outcome = await simulateRun(bot, number, { event: 'workflow_dispatch', results: DETERMINISTIC_PASS });
+    expect(outcome.mergeRule.decision).toBe('approved-commit');
+    expect(outcome.merge?.merged).toBe(true);
+  });
 
-  it.each([
-    ['a wrong author', () => forged(trailer, REVIEWER, true), /not authored by github-actions\[bot\]/],
-    ['an unsigned commit', () => forged(trailer, ACTIONS_BOT, false), /signature is not verified/],
+  it.each<[string, () => ReturnType<typeof forged>, RegExp]>([
+    [
+      'a wrong author',
+      () => forged(writerRun({}, validArtifact), { author: REVIEWER, verified: true }),
+      /not authored by github-actions\[bot\]/,
+    ],
+    [
+      'an unsigned commit',
+      () => forged(writerRun({}, validArtifact), { verified: false }),
+      /signature is not verified/,
+    ],
     [
       'a trailer head that is not the parent',
-      () => forged((_parent, runId) => trailer('f'.repeat(40), runId)),
+      () => forged(writerRun({}, validArtifact), { head: 'f'.repeat(40) }),
       /is not the commit's parent/,
     ],
-    ['a run id that does not exist', () => forged((parent) => trailer(parent, '123456789')), /no such run/],
+    ['a run id that does not exist', () => forged(() => ({ id: 123456789 }) as WorkflowRun), /no such run/],
+    ['a trusted run without the approval artifact', () => forged(writerRun()), /belongs to PR #0/],
     [
-      'a pull_request run whose head is not the parent',
-      () => forged((parent, runId) => trailer(parent, runId)),
-      /pull_request run \d+ ran on/,
+      'a trusted run whose artifact names another PR',
+      () => forged(writerRun({}, (_n, parent) => approvalArtifactName(999, parent))),
+      /belongs to PR #0/,
+    ],
+    [
+      'a trusted run whose artifact names another head',
+      () => forged(writerRun({}, (n) => approvalArtifactName(n, 'e'.repeat(40)))),
+      /belongs to PR #0/,
+    ],
+    [
+      'a pull_request run of a PR copy of content-gates.yml, even with the artifact and the PR listed',
+      () =>
+        forged((bot, number, parent) =>
+          writerRun({ event: 'pull_request', prNumbers: [number], headSha: parent, headBranch: BRANCH }, validArtifact)(
+            bot,
+            number,
+            parent,
+          ),
+        ),
+      /belongs to PR #0/,
+    ],
+    [
+      'a dispatch run on a foreign branch (not main’s copy)',
+      () => forged(writerRun({ event: 'workflow_dispatch', headBranch: 'attacker/branch' }, validArtifact)),
+      /belongs to PR #0/,
+    ],
+    [
+      'a run whose title names this PR (titles are never trusted)',
+      () =>
+        forged(
+          writerRun({
+            event: 'workflow_dispatch',
+            headBranch: 'attacker/branch',
+            displayTitle: 'Content gates · PR #1',
+          }),
+        ),
+      /belongs to PR #0/,
+    ],
+    [
+      'a run of another workflow',
+      () => forged(writerRun({ workflowFile: CHECKS_WORKFLOW }, validArtifact)),
+      /is a content-checks.yml run, not content-gates.yml/,
     ],
   ])('blocks a forged trailer: %s', async (_name, make, reason) => {
     const { bot, number } = await make();
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(outcome.mergeRule).toMatchObject({ decision: 'blocked', exitCode: 1, label: 'gates-failed' });
     expect(outcome.mergeRule.summary).toMatch(reason);
     expect(outcome.merge).toBeNull();
     expect(bot.merges).toEqual([]);
   });
 
-  it('blocks a trailer naming a run of another PR', async () => {
+  it('blocks a spoofed title that targets another PR: a run of PR A cannot approve PR B', async () => {
     const bot = newRepo();
+    const victim = await openPr(bot, 'research-bot');
+    await simulateRun(bot, victim, { event: 'workflow_run', results: FLAGGED_RESULTS });
     const other = await openPr(bot, 'research-bot', { 'passages/other.json': '{}' }, 'research/other');
-    const otherRun = await simulateRun(bot, other, { event: 'pull_request', results: FLAGGED_RESULTS });
-    const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
-    const parent = bot.headOf(BRANCH);
+    // A legitimate trusted run for the other PR, whose title claims the victim.
+    const run = writerRun({ displayTitle: `Content gates · PR #${String(victim)}` }, (_n, parent) =>
+      approvalArtifactName(other, parent),
+    )(bot, victim, bot.headOf(BRANCH));
     await bot.pushCommit({
       branch: BRANCH,
-      message: trailer(parent, String(otherRun.run.id)),
+      message: `x\n\n${formatApprovalTrailer({ kind: 'auto', runId: String(run.id), head: bot.headOf(BRANCH) })}\n`,
       files: [{ path: 'passages/notes.txt', content: 'x' }],
       verified: true,
     });
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    const outcome = await simulateRun(bot, victim, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(outcome.mergeRule.decision).toBe('blocked');
-    expect(outcome.mergeRule.summary).toContain(`belongs to PR #${String(other)}, not #${String(number)}`);
+    expect(outcome.mergeRule.summary).toContain(`belongs to PR #0, not #${String(victim)}`);
   });
 
   it('flagged → a reviewer comments /approve (issue_comment run) → a valid trailer → merged', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    const flagged = await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
+    const flagged = await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
     expect(await decisionLabels(bot, number)).toEqual(['needs-review']);
     expect(flagged.mergeRule.decision).toBe('needs-review');
 
     await bot.as(REVIEWER).postComment(number, '/approve');
     const approved = await simulateRun(bot, number, { event: 'issue_comment', results: DETERMINISTIC_PASS });
-    expect(approved.run).toMatchObject({ event: 'issue_comment', prNumbers: [], displayTitle: runName(number) });
+    expect(approved.run).toMatchObject({ event: 'issue_comment', prNumbers: [], headBranch: 'main' });
     expect(approved.mergeRule.decision).toBe('human-approved');
     expect(await decisionLabels(bot, number)).toEqual(['auto-merge-candidate']);
     const approvalSha = bot.headOf(BRANCH);
@@ -282,17 +370,17 @@ describe('content-gates: approval commits', () => {
   });
 });
 
-describe('content-gates: labels and approvals', () => {
+describe('content gates: labels and approvals', () => {
   it('fail → fixed → auto-merge', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    const failed = await simulateRun(bot, number, { event: 'pull_request', results: SCHEMA_FAIL });
+    const failed = await simulateRun(bot, number, { event: 'workflow_run', results: SCHEMA_FAIL });
     expect(failed.mergeRule).toMatchObject({ decision: 'blocked', exitCode: 1 });
     expect(await decisionLabels(bot, number)).toEqual(['gates-failed']);
     expect(failed.mergeRule.summary).toContain('gates failed');
 
     await pushContent(bot, 'research-bot', BRANCH, PASSAGE_TEXT.replace('"summary": "', '"summary": "Fixed. '));
-    const fixed = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    const fixed = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(fixed.mergeRule.decision).toBe('auto-merge');
     expect(await decisionLabels(bot, number)).toEqual(['auto-merge-candidate']);
   });
@@ -300,10 +388,10 @@ describe('content-gates: labels and approvals', () => {
   it('ignores an approval from a handle that is not configured', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
-    await bot.as(STRANGER).addLabels(number, [CONFIG_LABEL]);
+    await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
+    await bot.as(STRANGER).addLabels(number, [APPROVED]);
     await bot.as(STRANGER).postComment(number, '/approve');
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     expect(outcome.mergeRule).toMatchObject({ decision: 'needs-review', label: 'needs-review' });
     expect(outcome.mergeRule.summary).toContain(
       `@${STRANGER} via comment ignored: not a handle in config.reviewer.githubHandles`,
@@ -311,19 +399,32 @@ describe('content-gates: labels and approvals', () => {
     expect(bot.dispatches).toEqual([]);
   });
 
+  it('a label the reviewer removed and someone else re-added does not approve', async () => {
+    const bot = newRepo();
+    const number = await openPr(bot, 'research-bot');
+    await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
+    await bot.as(REVIEWER).addLabels(number, [APPROVED]);
+    await bot.as(REVIEWER).removeLabels(number, [APPROVED]);
+    await bot.as(STRANGER).addLabels(number, [APPROVED]);
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
+    expect(outcome.mergeRule.decision).toBe('needs-review');
+    expect(outcome.mergeRule.summary).toContain(`approval by @${STRANGER} via label ignored`);
+    expect(bot.dispatches).toEqual([]);
+  });
+
   it('an approval followed by a new content commit needs review again', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
-    await bot.as(REVIEWER).addLabels(number, [CONFIG_LABEL]);
-    const approved = await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
+    await bot.as(REVIEWER).addLabels(number, [APPROVED]);
+    const approved = await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     expect(approved.mergeRule.decision).toBe('human-approved');
 
     // The author edits the content on top of the approval commit, keeping the approved block.
     const passage = JSON.parse(bot.fileAt(BRANCH, PASSAGE) as string) as { summary: string };
     passage.summary = `${passage.summary} Revised.`;
     await pushContent(bot, 'research-bot', BRANCH, `${JSON.stringify(passage, null, 2)}\n`);
-    const edited = await simulateRun(bot, number, { event: 'pull_request', results: FLAGGED_RESULTS });
+    const edited = await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
     expect(edited.mergeRule).toMatchObject({ decision: 'needs-review', label: 'needs-review' });
     expect(edited.mergeRule.summary).toMatch(
       /approval by @nyabongo via label ignored: given at .*, not after the last content commit/,
@@ -346,24 +447,33 @@ describe('content-gates: labels and approvals', () => {
       lastReviewedAt: '2026-10-05T09:00:00Z',
     };
     const number = await openPr(bot, 'research-bot', { [PASSAGE]: JSON.stringify(passage) });
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(outcome.mergeRule.decision).toBe('blocked');
   });
 });
 
-describe('content-gates: protected paths', () => {
+describe('content gates: protected paths and symlinks', () => {
   const editedDecide = "export function decide() {\n  return { decision: 'auto-merge', reasons: [] };\n}\n";
 
-  it('a PR that edits decide to always auto-merge does not change its own decision', async () => {
+  // The PR copy of decide is never executed (only main's tooling runs; workflow.test.ts checks
+  // that nothing runs from pr-head/). Here the decision comes from this checkout's decide, and
+  // the only reasons are the protected path and the file outside passages/.
+  it('a PR that edits decide to always auto-merge is decided by main’s decide: protected path', async () => {
     const bot = newRepo({ 'packages/gates/src/merge-rule/index.ts': '// decide\n' });
     const number = await openPr(bot, 'research-bot', {
       [PASSAGE]: PASSAGE_TEXT,
       'packages/gates/src/merge-rule/index.ts': editedDecide,
     });
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
-    // The tooling's decide ran (from this checkout); the PR's copy was only data.
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(outcome.mergeRule).toMatchObject({ decision: 'needs-review', label: 'needs-review' });
-    expect(outcome.mergeRule.summary).toContain('packages/gates/src/merge-rule/index.ts is under packages/gates/**');
+    const reasons = outcome.mergeRule.summary
+      .split('### Merge rule')[1]
+      ?.split('\n')
+      .filter((line) => line.startsWith('- '));
+    expect(reasons).toEqual([
+      '- packages/gates/src/merge-rule/index.ts is under packages/gates/** (never auto-merged)',
+      '- packages/gates/src/merge-rule/index.ts is outside passages/',
+    ]);
     expect(bot.dispatches).toEqual([]);
   });
 
@@ -372,7 +482,7 @@ describe('content-gates: protected paths', () => {
     async (path) => {
       const bot = newRepo();
       const number = await openPr(bot, 'research-bot', { [PASSAGE]: PASSAGE_TEXT, [path]: 'x\n' });
-      const outcome = await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
+      const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
       expect(outcome.mergeRule.decision).toBe('needs-review');
       expect(bot.dispatches).toEqual([]);
     },
@@ -381,10 +491,10 @@ describe('content-gates: protected paths', () => {
   it('never writes an approval commit, dispatches or merges for a .github/** PR, even when approved', async () => {
     const bot = newRepo();
     const number = await openPr(bot, REVIEWER, { [PASSAGE]: PASSAGE_TEXT, '.github/workflows/x.yml': 'on: push\n' });
-    await simulateRun(bot, number, { event: 'pull_request', results: AUTO_RESULTS });
-    await bot.as(REVIEWER).addLabels(number, [CONFIG_LABEL]);
+    await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
+    await bot.as(REVIEWER).addLabels(number, [APPROVED]);
     const head = bot.headOf(BRANCH);
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: DETERMINISTIC_PASS });
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     expect(outcome.mergeRule).toMatchObject({
       decision: 'human-approved',
       manualMerge: true,
@@ -395,14 +505,31 @@ describe('content-gates: protected paths', () => {
     expect(outcome.mergeRule.summary).toContain('a maintainer merges it by hand');
     expect(bot.headOf(BRANCH)).toBe(head);
     expect(outcome.merge).toBeNull();
+    expect(mergeRuleCheck(bot, head)).toMatchObject({ conclusion: 'success', title: 'human-approved (manual merge)' });
     // Even if asked directly, the merge job refuses.
     const merge = await runMergeJob({ github: bot, prNumber: number, sha: head, log: () => undefined });
     expect(merge).toEqual({ merged: false, exitCode: 1, deployed: false });
     expect(bot.merges).toEqual([]);
   });
+
+  it('blocks a PR with a changed symbolic link, never reading or committing what it points to', async () => {
+    const bot = newRepo();
+    const number = await openPr(bot, REVIEWER, { 'calendar/2026.json': '/proc/self/environ' });
+    contentChecksRun(bot, number, bot.headOf(BRANCH), BRANCH);
+    await bot.as(REVIEWER).addLabels(number, [APPROVED]);
+    const outcome = await simulateRun(bot, number, {
+      event: 'workflow_run',
+      results: DETERMINISTIC_PASS,
+      nonRegular: ['calendar/2026.json'],
+    });
+    expect(outcome.mergeRule).toMatchObject({ decision: 'blocked', label: 'gates-failed', exitCode: 1 });
+    expect(outcome.mergeRule.summary).toContain('calendar/2026.json is not a regular file');
+    expect(outcome.mergeRule.summary).toContain('runner/regular-files');
+    expect(bot.dispatches).toEqual([]);
+  });
 });
 
-describe('content-gates: claims', () => {
+describe('content gates: claims', () => {
   it('needs a verifier record for every claim before auto-merging', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
@@ -417,7 +544,7 @@ describe('content-gates: claims', () => {
           }
         : result,
     );
-    const outcome = await simulateRun(bot, number, { event: 'pull_request', results: partial });
+    const outcome = await simulateRun(bot, number, { event: 'workflow_run', results: partial });
     expect(outcome.mergeRule.decision).toBe('needs-review');
     expect(outcome.mergeRule.summary).toContain('claim c5');
   });

@@ -6,6 +6,7 @@
  * The helper runs on an in-memory copy of the changed passages read from the PR head: nothing in
  * the PR's working tree is written or executed. Files are formatted with the tooling checkout's
  * Prettier config (`toolRoot`), never with one the PR brings (a `.prettierrc.cjs` would be code).
+ * PR files are read as regular-file blobs (`PrCheckout`), so a symbolic link never reaches a commit.
  */
 import { join } from 'node:path';
 
@@ -147,25 +148,17 @@ export function approvalMessage(kind: ApprovalKind, prNumber: number, runId: str
 
 /**
  * Writes the review blocks and the approval commit on `branch`, refusing when the branch head is no
- * longer `headSha`. When no review block changes (a PR without passages), the commit rewrites one
- * changed file with its own content, so it changes nothing but still records the approval.
+ * longer `headSha`. Only validated passage and translation JSON is ever written; when no review
+ * block changes (a PR without passages), the commit changes no file and only records the approval.
  */
 export async function writeApprovalCommit(input: ApprovalCommitInput): Promise<ApprovalCommitResult> {
   const changes = await reviewChanges(input);
-  const reviewed = changes.map((change) => change.path);
-  if (changes.length === 0) {
-    const kept = input.changedFiles
-      .filter((file) => file.status !== 'deleted')
-      .map((file) => ({ path: file.path, content: input.checkout.readFile(file.path) }))
-      .find((file): file is FileChange & { content: string } => file.content !== null);
-    if (kept === undefined) throw new ApprovalCommitError('the PR changes no file the approval commit can sit on');
-    changes.push(kept);
-  }
   const commit = await input.github.commitFiles({
     branch: input.branch,
     message: approvalMessage(input.write.kind, input.prNumber, input.runId, input.headSha),
     files: changes,
     expectedHeadSha: input.headSha,
+    allowEmpty: true,
   });
-  return { commit, reviewed };
+  return { commit, reviewed: changes.map((change) => change.path) };
 }
