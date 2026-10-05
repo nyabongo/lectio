@@ -49,11 +49,15 @@ def flutter(*args)
   Dir.chdir(APP_ROOT) { sh("flutter", *args) }
 end
 
-# Decodes a base64 environment variable into a file under RUNNER_TEMP (or a
-# temporary directory) and returns its path. The value is never printed.
+# Where the decoded signing files go: RUNNER_TEMP in CI (the workflow's cleanup
+# step removes the same names there), else the system temporary directory.
+SIGNING_DIR = ENV["RUNNER_TEMP"] || Dir.tmpdir
+SIGNING_FILES = %w[distribution.p12 lectio.mobileprovision ExportOptions.plist].freeze
+
+# Decodes a base64 environment variable into SIGNING_DIR/file_name (mode 600)
+# and returns its path. The value is never printed.
 def decode_env_to_file(variable, file_name)
-  dir = ENV["RUNNER_TEMP"] || Dir.mktmpdir
-  path = File.join(dir, file_name)
+  path = File.join(SIGNING_DIR, file_name)
   File.binwrite(path, Base64.decode64(ENV.fetch(variable)))
   File.chmod(0o600, path)
   path
@@ -112,40 +116,46 @@ platform :ios do
       next
     end
 
-    # A temporary keychain (fastlane_tmp_keychain) the certificate goes into.
-    setup_ci(force: true)
-    certificate = decode_env_to_file("IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64", "distribution.p12")
-    import_certificate(
-      certificate_path: certificate,
-      certificate_password: ENV.fetch("IOS_DISTRIBUTION_CERTIFICATE_PASSWORD"),
-      keychain_name: "fastlane_tmp_keychain",
-      keychain_password: ""
-    )
-    profile = decode_env_to_file("IOS_PROVISIONING_PROFILE_BASE64", "lectio.mobileprovision")
-    install_provisioning_profile(path: profile)
-    details = FastlaneCore::ProvisioningProfile.parse(profile)
-    team_id = details.fetch("TeamIdentifier").first
-    profile_name = details.fetch("Name")
+    begin
+      # A temporary keychain (fastlane_tmp_keychain) the certificate goes into.
+      setup_ci(force: true)
+      certificate = decode_env_to_file("IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64", "distribution.p12")
+      import_certificate(
+        certificate_path: certificate,
+        certificate_password: ENV.fetch("IOS_DISTRIBUTION_CERTIFICATE_PASSWORD"),
+        keychain_name: "fastlane_tmp_keychain",
+        keychain_password: ""
+      )
+      profile = decode_env_to_file("IOS_PROVISIONING_PROFILE_BASE64", "lectio.mobileprovision")
+      install_provisioning_profile(path: profile)
+      details = FastlaneCore::ProvisioningProfile.parse(profile)
+      team_id = details.fetch("TeamIdentifier").first
+      profile_name = details.fetch("Name")
 
-    update_code_signing_settings(
-      path: File.join(APP_ROOT, "ios/Runner.xcodeproj"),
-      use_automatic_signing: false,
-      targets: ["Runner"],
-      build_configurations: ["Release"],
-      team_id: team_id,
-      bundle_identifier: BUNDLE_ID,
-      code_sign_identity: "Apple Distribution",
-      profile_name: profile_name
-    )
-    export_options = File.join(ENV["RUNNER_TEMP"] || Dir.mktmpdir, "ExportOptions.plist")
-    File.write(export_options, {
-      "method" => "app-store-connect",
-      "teamID" => team_id,
-      "signingStyle" => "manual",
-      "provisioningProfiles" => { BUNDLE_ID => profile_name },
-      "uploadSymbols" => true
-    }.to_plist)
-    flutter("build", "ipa", "--release", "--export-options-plist=#{export_options}", *version_args(options))
+      update_code_signing_settings(
+        path: File.join(APP_ROOT, "ios/Runner.xcodeproj"),
+        use_automatic_signing: false,
+        targets: ["Runner"],
+        build_configurations: ["Release"],
+        team_id: team_id,
+        bundle_identifier: BUNDLE_ID,
+        code_sign_identity: "Apple Distribution",
+        profile_name: profile_name
+      )
+      export_options = File.join(SIGNING_DIR, "ExportOptions.plist")
+      File.write(export_options, {
+        "method" => "app-store-connect",
+        "teamID" => team_id,
+        "signingStyle" => "manual",
+        "provisioningProfiles" => { BUNDLE_ID => profile_name },
+        "uploadSymbols" => true
+      }.to_plist)
+      flutter("build", "ipa", "--release", "--export-options-plist=#{export_options}", *version_args(options))
+    ensure
+      # The certificate (with its private key), the profile and the export
+      # options never outlive the build, whether it passed or failed.
+      FileUtils.rm_f(SIGNING_FILES.map { |name| File.join(SIGNING_DIR, name) })
+    end
   end
 
   desc "Upload the signed ipa to TestFlight with the App Store Connect API key"

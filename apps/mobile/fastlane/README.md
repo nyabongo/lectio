@@ -19,8 +19,8 @@ BUNDLE_GEMFILE=fastlane/Gemfile bundle install
 BUNDLE_GEMFILE=fastlane/Gemfile bundle exec fastlane check_metadata
 ```
 
-`Gemfile.lock` is committed and CI installs it frozen. If it is ever missing, the Android job resolves it for every
-platform the jobs use and uploads it as the `fastlane-gemfile-lock` artifact to commit here.
+`Gemfile.lock` is committed and CI installs it frozen; a run without it fails. After changing the `Gemfile`, run
+`bundle lock --add-platform ruby x86_64-linux arm64-darwin` here and commit the lock.
 
 ## When it runs
 
@@ -29,21 +29,25 @@ platform the jobs use and uploads it as the `fastlane-gemfile-lock` artifact to 
   higher one. To retry a failed upload, push a new tag rather than re-running the old run (a re-run reuses its
   number, which the stores reject once a build with it was uploaded).
 - **workflow_dispatch** (Actions → Mobile release → Run workflow, any branch): a dry run. It checks the metadata,
-  builds a debug-signed release bundle and an unsigned iOS archive, and never reads a signing or store secret.
+  builds a debug-signed release bundle and an unsigned iOS archive. No job of a dispatch run references a secret:
+  the secret-presence check runs only on tag pushes, and the signing jobs (`android-release`, `ios-release`) only
+  when it found the signing secrets.
 
 A tag run without the secrets below builds what it can and skips signing and upload with a note in the job summary;
 it does not fail.
 
 ## Secrets (owner)
 
-Repository secrets (Settings → Secrets and variables → Actions). Each step gets only the secrets it uses.
+Repository secrets (Settings → Secrets and variables → Actions). Each step gets only the secrets it uses. The
+decoded keystore, `.p12`, profile and export options live in `$RUNNER_TEMP` only while their build step runs (the
+Fastfile's `ensure` and the step's `trap` delete them; an always-run step deletes them again with the keychain).
 
 | Secret                                    | What                                                                       |
 | ----------------------------------------- | -------------------------------------------------------------------------- |
 | `ANDROID_UPLOAD_KEYSTORE_BASE64`          | The upload keystore (`.jks`), `base64 -w0 upload-keystore.jks`.            |
-| `ANDROID_UPLOAD_KEYSTORE_PASSWORD`        | Its store password (ASCII).                                                |
+| `ANDROID_UPLOAD_KEYSTORE_PASSWORD`        | Its store password (ASCII, one line).                                      |
 | `ANDROID_UPLOAD_KEY_ALIAS`                | The key alias.                                                             |
-| `ANDROID_UPLOAD_KEY_PASSWORD`             | The key password (ASCII).                                                  |
+| `ANDROID_UPLOAD_KEY_PASSWORD`             | The key password (ASCII, one line).                                        |
 | `PLAY_SERVICE_ACCOUNT_JSON`               | A Google Cloud service account JSON key with release access in Play.       |
 | `IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64` | The Apple Distribution certificate and private key as `.p12`, base64.      |
 | `IOS_DISTRIBUTION_CERTIFICATE_PASSWORD`   | The `.p12` export password (not empty).                                    |
@@ -54,7 +58,8 @@ Repository secrets (Settings → Secrets and variables → Actions). Each step g
 
 The Android key is the **upload key** (Play App Signing holds the app-signing key). It reaches Gradle as the
 `android.injected.signing.*` properties, so `android/app/build.gradle.kts` keeps its debug fallback for local
-`flutter run --release`; the workflow then checks the bundle is not debug-signed. The team id and profile name come
+`flutter run --release`. The Gradle daemon is off for that build, the properties are removed right after it, and
+the bundle's signer must match the upload key's SHA-256 fingerprint. The team id and profile name come
 from the provisioning profile itself.
 
 Repository variable `PLAY_RELEASE_STATUS` (optional): the Play release status, `draft` by default. Play only accepts
@@ -70,6 +75,12 @@ build without a click in the Play Console.
 3. Add the secrets and push `mobile-v0.1.0` (or the next version) on main.
 
 Store review and the first real upload are outside L-109.
+
+Hardening for the owner (repository settings, not done by L-109): a tag on any commit runs that commit's copy of
+this workflow, so the "tag on main" check is advisory. To enforce it, move the 11 store secrets into a protected
+`mobile-release` environment whose deployment rule allows only `mobile-v*` tags (optionally with a required
+reviewer), declare `environment: mobile-release` on the `secrets`, `android-release` and `ios-release` jobs, and add a tag
+ruleset that restricts who can create `mobile-v*` tags.
 
 ## Store metadata drafts
 
