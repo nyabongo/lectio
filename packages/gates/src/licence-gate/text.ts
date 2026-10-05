@@ -140,61 +140,72 @@ export interface QuotedSpan {
   readonly unterminated: boolean;
 }
 
-const OPEN_BEFORE = /[\s([{“"«—–-]/u;
+const OPEN_BEFORE = /[\s([{“”"„«‘—–-]/u;
 const WORD_CHAR = /[\p{L}\p{N}]/u;
+const SPACE = /\s/u;
 
-/** Spans between paired marks: `“…”`, `«…»` and straight `"…"`. An unclosed mark runs to the end. */
-function doubleQuoted(text: string): QuotedSpan[] {
-  const spans: QuotedSpan[] = [];
-  const pairs: readonly (readonly [string, string])[] = [
-    ['“', '”'],
-    ['«', '»'],
-    ['"', '"'],
-  ];
-  for (const [open, close] of pairs) {
-    let from = -1;
-    for (let i = 0; i < text.length; i++) {
-      const ch = text.charAt(i);
-      if (from < 0 && ch === open) from = i + 1;
-      else if (from >= 0 && ch === close) {
-        spans.push({ start: from, end: i, unterminated: false });
-        from = -1;
-      }
-    }
-    if (from >= 0) spans.push({ start: from, end: text.length, unterminated: true });
-  }
-  return spans;
+interface QuoteFamily {
+  /** Marks that may open a quotation, at the start of a word. */
+  readonly openers: string;
+  /** Marks that may close one, at the end of a word. */
+  readonly closers: string;
+  /** Whether an unclosed opener runs to the end of the field (`true`) or is ignored. */
+  readonly unclosedRunsToEnd: boolean;
 }
 
 /**
- * Spans between single marks (`‘…’` or `'…'`). A mark opens only at the start of a word (after a
- * space or opening punctuation) and closes only at the end of one, so the apostrophes in
- * `owner’s` and `’tis` are not quotes. An unclosed single mark is ignored: it is more likely an
- * apostrophe than a quotation.
+ * Double quotes are one family, so mismatched and regional pairs still pair up: `“…”`, `“…"`,
+ * `"…"`, German `„…“` and Swedish `”…”`. Single quotes are another (`‘…’`, `'…'`); an unclosed
+ * single mark is ignored because it is more likely an apostrophe than a quotation.
  */
-function singleQuoted(text: string): QuotedSpan[] {
+const FAMILIES: readonly QuoteFamily[] = [
+  { openers: '“”"„', closers: '“”"', unclosedRunsToEnd: true },
+  { openers: "‘'", closers: "’'", unclosedRunsToEnd: false },
+];
+
+/**
+ * Spans of one family. A mark opens only at the start of a word (after a space or opening
+ * punctuation, before a non-space) and closes only at the end of one (after a non-space, before
+ * a non-letter), so the apostrophes in `owner’s` and `’tis` are not quotes.
+ */
+function familySpans(text: string, family: QuoteFamily): QuotedSpan[] {
   const spans: QuotedSpan[] = [];
   let from = -1;
   for (let i = 0; i < text.length; i++) {
     const ch = text.charAt(i);
-    if (ch !== '‘' && ch !== '’' && ch !== "'") continue;
     const before = i === 0 ? ' ' : text.charAt(i - 1);
     const after = i + 1 < text.length ? text.charAt(i + 1) : ' ';
-    const opens = ch !== '’' && OPEN_BEFORE.test(before) && !/\s/u.test(after);
-    const closes = ch !== '‘' && !/\s/u.test(before) && !WORD_CHAR.test(after);
-    if (from >= 0 && closes) {
+    if (from >= 0 && family.closers.includes(ch) && !SPACE.test(before) && !WORD_CHAR.test(after)) {
       spans.push({ start: from, end: i, unterminated: false });
       from = -1;
-    } else if (from < 0 && opens) {
+    } else if (from < 0 && family.openers.includes(ch) && OPEN_BEFORE.test(before) && !SPACE.test(after)) {
       from = i + 1;
     }
   }
+  if (from >= 0 && family.unclosedRunsToEnd) spans.push({ start: from, end: text.length, unterminated: true });
+  return spans;
+}
+
+/** Spans between guillemets `«…»` (French style puts spaces inside). An unclosed mark runs to the end. */
+function guillemetSpans(text: string): QuotedSpan[] {
+  const spans: QuotedSpan[] = [];
+  let from = -1;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text.charAt(i);
+    if (from < 0 && ch === '«') from = i + 1;
+    else if (from >= 0 && ch === '»') {
+      spans.push({ start: from, end: i, unterminated: false });
+      from = -1;
+    }
+  }
+  if (from >= 0) spans.push({ start: from, end: text.length, unterminated: true });
   return spans;
 }
 
 /** Every quoted span in `text`, ordered by start offset. Nested quotes are reported on their own too. */
 export function quotedSpans(text: string): QuotedSpan[] {
-  return [...doubleQuoted(text), ...singleQuoted(text)].sort((a, b) => a.start - b.start);
+  const spans = [...FAMILIES.flatMap((family) => familySpans(text, family)), ...guillemetSpans(text)];
+  return spans.sort((a, b) => a.start - b.start);
 }
 
 /** Up to `max` words of `text` from `start` to `end`, with an ellipsis when cut: for messages. */

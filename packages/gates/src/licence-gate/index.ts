@@ -68,8 +68,8 @@ export const LICENCE_RULES = {
   ),
   guardIndex: defineRule(
     'licence/guard-index',
-    'The public-domain shingle index loads and matches the configured shingle size and the textguard normaliser version.',
-    'Rebuild the index with `npm run guard:build` (packages/textguard) and commit corpus/guard/ together.',
+    'The public-domain shingle index loads and matches the configured shingle size and the textguard normaliser version, and licenceGuard.maxBibleRunWords is at least the shingle size.',
+    'Rebuild the index with `npm run guard:build` (packages/textguard) and commit corpus/guard/ together, or fix licenceGuard in config.',
   ),
 } as const;
 
@@ -156,7 +156,7 @@ function checkBible(
   const items: GateResultItem[] = [];
   for (const field of fields) {
     const run = longestRun(field.text, index);
-    if (run.words === 0 || run.words < limits.maxBibleRunWords) continue;
+    if (run.words < limits.maxBibleRunWords) continue;
     items.push(
       finding(LICENCE_RULES.pdBibleOverlap, {
         file,
@@ -194,19 +194,26 @@ type SourceOutcome = { readonly words: SourceWords; readonly via: string } | { r
 
 function describeError(error: unknown): string {
   const text = (error instanceof Error ? error.message : String(error)).replace(/\s+/gu, ' ').trim();
-  return `fetch failed: ${text === '' ? '(no message)' : text}`;
+  return `fetching or reading the page failed: ${text === '' ? '(no message)' : text}`;
 }
 
+/**
+ * Fetches and prepares one source. Never rejects: a failure anywhere (the fetch, reading the
+ * page, indexing it) becomes a problem, so the source is flagged unchecked and the promises the
+ * gate creates up front can never reject unhandled.
+ */
 async function fetchSource(fetcher: SourceFetcher, source: WebSourceRef): Promise<SourceOutcome> {
-  let page: FetchedSource;
   try {
-    page = await fetcher.fetch(source.url, source.archivedUrl === undefined ? {} : { archivedUrl: source.archivedUrl });
+    const page: FetchedSource = await fetcher.fetch(
+      source.url,
+      source.archivedUrl === undefined ? {} : { archivedUrl: source.archivedUrl },
+    );
+    const readable = readableText(page);
+    if ('problem' in readable) return readable;
+    return { words: indexSourceWords(readable.text), via: page.fromArchive === true ? ' (archived copy)' : '' };
   } catch (error) {
     return { problem: describeError(error) };
   }
-  const readable = readableText(page);
-  if ('problem' in readable) return readable;
-  return { words: indexSourceWords(readable.text), via: page.fromArchive === true ? ' (archived copy)' : '' };
 }
 
 async function checkCommentary(
@@ -300,6 +307,17 @@ async function run(context: GateContext, loader: GuardIndexLoader) {
     items.push(
       finding(LICENCE_RULES.guardIndex, {
         message: `${guard.problem}. Without the index no note can be checked against public-domain Bible wording.`,
+      }),
+    );
+  }
+  if (limits.maxBibleRunWords < limits.shingleSize) {
+    items.push(
+      finding(LICENCE_RULES.guardIndex, {
+        message:
+          `config error: licenceGuard.maxBibleRunWords (${String(limits.maxBibleRunWords)}) is below ` +
+          `licenceGuard.shingleSize (${String(limits.shingleSize)}). The index cannot see a run shorter than one ` +
+          'shingle, so the real limit would silently be the shingle size. Raise maxBibleRunWords or rebuild the index ' +
+          'with a smaller shingle size.',
       }),
     );
   }

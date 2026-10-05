@@ -91,6 +91,16 @@ describe('quotedSpans', () => {
     expect(quotedSpans(text)).toEqual([{ start: 9, end: text.length, unterminated: true }]);
   });
 
+  it('pairs mismatched and regional double quotes', () => {
+    expect(inner('He said “why stand idle" and left.')).toEqual(['why stand idle']);
+    expect(inner('Luther: „one two three“ and Swedish ”a b c d e f g h i j k l” end.')).toEqual([
+      'one two three',
+      'a b c d e f g h i j k l',
+    ]);
+    expect(inner('A 6" board, 2"x4", is not a quotation.')).toEqual([]);
+    expect(inner('(“first”) and "second".')).toEqual(['first', 'second']);
+  });
+
   it('finds single quotes but not apostrophes', () => {
     expect(inner('The owner’s ‘friend’ and the workers’ pay')).toEqual(['friend']);
     expect(inner("He called him 'friend', not 'servant'.")).toEqual(['friend', 'servant']);

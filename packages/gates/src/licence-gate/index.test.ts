@@ -266,6 +266,17 @@ describe('licence/pd-bible-overlap', () => {
     expect(findings(result, LICENCE_RULES.quotedEnglishRun)).toHaveLength(1);
   });
 
+  it('reports maxBibleRunWords below the shingle size as a config error', async () => {
+    const result = await check(passage(), { limits: { maxBibleRunWords: 7 } });
+    expect(result.status).toBe('fail');
+    expect(findings(result, LICENCE_RULES.guardIndex).map((item) => item.message)).toEqual([
+      'config error: licenceGuard.maxBibleRunWords (7) is below licenceGuard.shingleSize (8). The index cannot see a ' +
+        'run shorter than one shingle, so the real limit would silently be the shingle size. Raise maxBibleRunWords ' +
+        'or rebuild the index with a smaller shingle size.',
+    ]);
+    expect(findings(await check(passage(), { limits: { maxBibleRunWords: 8 } }), LICENCE_RULES.guardIndex)).toEqual([]);
+  });
+
   it('refuses an index whose shingle size or normaliser version does not match', async () => {
     const sized = await check(passage(), { limits: { shingleSize: 6 } });
     expect(findings(sized, LICENCE_RULES.guardIndex)[0]?.message).toMatch(
@@ -322,6 +333,13 @@ describe('licence/commentary-overlap', () => {
           'writes its own notes.',
       },
     ]);
+  });
+
+  it('does not reduce already reduced text/html text again, so a run between < and > is still found', async () => {
+    const text = `Read it this way: if n < 3 then ${commentaryRun(13)} while m > 2 holds.`;
+    const fetcher = pages({ [SOURCE_URL]: { text, contentType: 'text/html; charset=utf-8' } });
+    const result = await check(cited(`${commentaryRun(13)}. [c1]`), { fetcher });
+    expect(findings(result, LICENCE_RULES.commentaryOverlap)[0]?.message).toMatch(/^13 words are copied/u);
   });
 
   it('checks HTML pages after reducing them to text', async () => {
@@ -383,7 +401,7 @@ describe('licence/commentary-unchecked', () => {
         file: FILE,
         pointer: '/sources/0',
         message:
-          `source s1 (${SOURCE_URL}) could not be checked for copied wording: fetch failed: request timed out after ` +
+          `source s1 (${SOURCE_URL}) could not be checked for copied wording: fetching or reading the page failed: request timed out after ` +
           '30s. An unchecked source never passes silently; a reviewer must compare the note with it.',
       },
     ]);
@@ -407,8 +425,56 @@ describe('licence/commentary-unchecked', () => {
     const reject = (value: unknown): SourceFetcher => ({ fetch: () => Promise.reject(value as Error) });
     const message = async (value: unknown): Promise<string | undefined> =>
       findings(await check(body, { fetcher: reject(value) }), LICENCE_RULES.commentaryUnchecked)[0]?.message;
-    expect(await message(new Error(''))).toContain('fetch failed: (no message).');
-    expect(await message('socket\n hang up')).toContain('fetch failed: socket hang up.');
+    expect(await message(new Error(''))).toContain('fetching or reading the page failed: (no message).');
+    expect(await message('socket\n hang up')).toContain('fetching or reading the page failed: socket hang up.');
+  });
+
+  it('flags a page that breaks while being read, without crashing or leaving a rejection behind', async () => {
+    let release: () => void = () => undefined;
+    const slow = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const broken = {
+      status: 200,
+      contentType: 'text/plain',
+      retrievedAt: '2026-10-05T00:00:00.000Z',
+      get text(): string {
+        throw new RangeError('Invalid code point 99999999');
+      },
+    };
+    const fetcher: SourceFetcher = {
+      fetch: async (url) => {
+        if (url === SOURCE_URL) {
+          await slow;
+          return { status: 200, text: PSEUDO_COMMENTARY, contentType: 'text/plain', retrievedAt: broken.retrievedAt };
+        }
+        return broken;
+      },
+    };
+    const two = passage({ sources: [webSource('slow', SOURCE_URL), webSource('bad', OTHER_URL)] });
+    const pending = check(two, { fetcher });
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    release();
+    const result = await pending;
+    expect(result.status).toBe('flag');
+    expect(findings(result, LICENCE_RULES.commentaryUnchecked).map((item) => item.message)).toEqual([
+      `source bad (${OTHER_URL}) could not be checked for copied wording: fetching or reading the page failed: ` +
+        'Invalid code point 99999999. An unchecked source never passes silently; a reviewer must compare the note with it.',
+    ]);
+    expect(result.meta).toMatchObject({ sourcesFetched: 2, sourcesChecked: 1 });
+  });
+
+  it('checks a page with an out-of-range numeric entity', async () => {
+    const html = `<!doctype html><p>&#99999999; ${PSEUDO_COMMENTARY} &#x110000;</p>`;
+    const fetcher = pages({ [SOURCE_URL]: { text: html, contentType: 'text/html' } });
+    const result = await check(
+      passage({ paragraphs: [`${commentaryRun(13)}. [c1]`], sources: [webSource('s1', SOURCE_URL)] }),
+      {
+        fetcher,
+      },
+    );
+    expect(findings(result, LICENCE_RULES.commentaryUnchecked)).toEqual([]);
+    expect(findings(result, LICENCE_RULES.commentaryOverlap)).toHaveLength(1);
   });
 });
 
