@@ -8,10 +8,10 @@
 import type { LiturgicalColour } from '@lectio/schema/common';
 import { assertNever } from '@lectio/shared';
 
-import { insightCaption } from './cards.ts';
+import { cardDate, insightCaption } from './cards.ts';
 import type { DayCard, InsightCard, OriginalPhrase, ReadingCard, ShareCard } from './cards.ts';
 import { GREEK_STACK, HEBREW_STACK, SANS_STACK, SERIF_STACK } from './fonts.ts';
-import { displayUrl, formatLongDate, graphemes, hasHebrew, hebrewVisualWords, normalise, truncate } from './text.ts';
+import { displayUrl, graphemes, hasHebrew, hebrewVisualWords, normalise, truncate } from './text.ts';
 
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 630;
@@ -148,7 +148,7 @@ function frame(card: ShareCard, ...body: Child[]): CardNode {
 export function dayTemplate(card: DayCard): CardNode {
   const celebration = truncate(card.celebration, LIMITS.celebration);
   const body: Child[] = [
-    eyebrow(formatLongDate(card.date)),
+    eyebrow(cardDate(card)),
     text(
       celebration,
       {
@@ -176,7 +176,10 @@ export function dayTemplate(card: DayCard): CardNode {
       el(
         { alignItems: 'center', marginTop: 'auto', paddingBottom: 28 },
         el({ width: 14, height: 14, borderRadius: 7, backgroundColor: BAND_COLOURS[card.colour], marginRight: 16 }),
-        text(`Gospel · ${truncate(card.gospelRef, LIMITS.gospelRef)}`, { fontWeight: 600, fontSize: 36 }),
+        text(`${card.gospelLabel ?? 'Gospel'} · ${truncate(card.gospelRef, LIMITS.gospelRef)}`, {
+          fontWeight: 600,
+          fontSize: 36,
+        }),
       ),
     );
   }
@@ -186,7 +189,7 @@ export function dayTemplate(card: DayCard): CardNode {
 export function readingTemplate(card: ReadingCard): CardNode {
   return frame(
     card,
-    eyebrow(`${truncate(card.slotLabel, LIMITS.slotLabel)} · ${formatLongDate(card.date)}`),
+    eyebrow(`${truncate(card.slotLabel, LIMITS.slotLabel)} · ${cardDate(card)}`),
     text(truncate(card.ref, LIMITS.ref), {
       fontFamily: SERIF_STACK,
       fontWeight: 600,
@@ -229,7 +232,7 @@ export function insightTemplate(card: InsightCard, options: TemplateOptions = {}
   const quote = `“${truncate(card.quote, LIMITS.quote - 2)}”`;
   return frame(
     card,
-    eyebrow(formatLongDate(card.date)),
+    eyebrow(cardDate(card)),
     text(
       quote,
       {
