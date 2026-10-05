@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "A companion to the daily Mass readings: their history, their original words, and a voice.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "packageManager": "npm@10.9.9",
   "engines": {
