@@ -55,14 +55,55 @@ class SettingsScope extends InheritedNotifier<SettingsController> {
   }
 }
 
-/// [data] with [size] applied on top of the device's own text scale.
+/// The device's own [TextScaler] with the reader's text-size [factor] on
+/// top.
+///
+/// The factor enlarges the font size before the device scales it, so the
+/// platform's own curve still applies: Android 14+ scales large text less
+/// than body text (non-linear font scaling), and composing keeps that,
+/// where multiplying one linear factor would flatten it. Over a linear
+/// device scale it is the plain product of the two.
+@immutable
+class ReaderTextScaler extends TextScaler {
+  /// Creates a scaler applying [factor], then [device].
+  const new(this.device, this.factor) : assert(factor > 0, 'factor > 0');
+
+  /// The device's text scaler (from its accessibility settings).
+  final TextScaler device;
+
+  /// The reader's text-size factor ([TextSize.scale]).
+  final double factor;
+
+  /// The font size [textScaleFactor] reports the scale at.
+  static const double bodySize = 14;
+
+  @override
+  double scale(double fontSize) => device.scale(fontSize * factor);
+
+  /// The scale at body-text size; prefer [scale].
+  @override
+  double get textScaleFactor => scale(bodySize) / bodySize;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReaderTextScaler &&
+        other.device == device &&
+        other.factor == factor;
+  }
+
+  @override
+  int get hashCode => Object.hash(device, factor);
+
+  @override
+  String toString() => '$device after reader ${factor}x';
+}
+
+/// [data] with [size] applied on top of the device's own text scale, through
+/// a [ReaderTextScaler], so non-linear system scaling keeps its shape.
 MediaQueryData withTextSize(MediaQueryData data, TextSize size) {
-  // The device's factor at a body-text size, so non-linear system scaling
-  // (Android 14+) keeps its proportion.
-  const bodySize = 14.0;
-  final deviceFactor = data.textScaler.scale(bodySize) / bodySize;
+  if (size.scale == 1) return data;
   return data.copyWith(
-    textScaler: TextScaler.linear(deviceFactor * size.scale),
+    textScaler: ReaderTextScaler(data.textScaler, size.scale),
   );
 }
 

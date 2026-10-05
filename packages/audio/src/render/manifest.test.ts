@@ -86,6 +86,30 @@ describe('readManifest and writeManifest', () => {
   });
 });
 
+describe('billedWithoutFile', () => {
+  it('round-trips characters billed without a file, sorted by month, and leaves the field out when empty', () => {
+    const manifest: AudioManifest = {
+      version: 1,
+      entries: { a: ENTRY },
+      billedWithoutFile: { '2026-11': 4, '2026-10': 12 },
+    };
+    const text = serializeManifest(manifest);
+    expect(text.indexOf('"2026-10"')).toBeLessThan(text.indexOf('"2026-11"'));
+    expect(parseManifest(text)).toEqual(manifest);
+    expect(serializeManifest({ ...manifest, billedWithoutFile: {} })).not.toContain('billedWithoutFile');
+    expect(charactersThisMonth(manifest, new Date('2026-10-15T00:00:00Z'))).toBe(62);
+    expect(charactersThisMonth(manifest, new Date('2026-12-15T00:00:00Z'))).toBe(0);
+  });
+
+  it('rejects malformed months and counts', () => {
+    for (const billed of [[], { '2026-1': 3 }, { '2026-10': -1 }, { '2026-10': 1.5 }]) {
+      expect(() => parseManifest(json({ version: 1, entries: {}, billedWithoutFile: billed }))).toThrow(
+        'audio manifest: invalid billedWithoutFile',
+      );
+    }
+  });
+});
+
 describe('charactersThisMonth', () => {
   it('sums the characters billed in the UTC month of now', () => {
     const manifest: AudioManifest = {

@@ -184,6 +184,45 @@ describe('render', () => {
     expect(result.characters).toBe(plan.characters);
   });
 
+  it('records the characters billed for a file whose upload failed, so the month budget still counts them', async () => {
+    const clock = new FakeClock({ start: '2026-10-05T06:00:00.000Z' });
+    const storage = new MemoryObjectStorage();
+    const put = storage.put.bind(storage);
+    vi.spyOn(storage, 'put').mockImplementation((key, body, options) =>
+      key === MANIFEST_KEY ? put(key, body, options) : Promise.reject(new ProviderError('invalid-request', 'denied')),
+    );
+    const plan = planFor(SEGMENTS.slice(0, 2));
+    const earlier: AudioManifest = { ...emptyManifest(), billedWithoutFile: { '2026-09': 5 } };
+    const result = await render(plan, new FakeTtsProvider(), storage, { manifest: earlier, clock, sleep: noSleep });
+    expect(result.failed).toHaveLength(2);
+    expect(result.characters).toBe(plan.characters);
+    const billed = { '2026-09': 5, '2026-10': plan.characters };
+    expect(result.manifest.billedWithoutFile).toEqual(billed);
+    expect((await readManifest(storage)).billedWithoutFile).toEqual(billed);
+  });
+
+  it('drops the entry of a stale file it could not render again, and writes that down', async () => {
+    const storage = new MemoryObjectStorage();
+    const first = await render(planFor(SEGMENTS.slice(0, 2)), new FakeTtsProvider(), storage, {
+      manifest: emptyManifest(),
+    });
+    const [lost, kept] = Object.keys(first.manifest.entries).sort() as [string, string];
+    const plan = planRender(SEGMENTS.slice(0, 2), first.manifest, {
+      voices: VOICES,
+      ttsVersion: 'fake-1',
+      format: 'wav',
+      storedKeys: [kept],
+    });
+    expect(plan.stale).toEqual([lost]);
+    const text = plan.items[0]?.text as string;
+    const tts = new FlakyTts({ [text]: [new ProviderError('invalid-request', 'no')] });
+    const fresh = new MemoryObjectStorage();
+    const result = await render(plan, tts, fresh, { manifest: first.manifest });
+    expect(result.failed.map((f) => f.key)).toEqual([lost]);
+    expect(Object.keys(result.manifest.entries)).toEqual([kept]);
+    expect(Object.keys((await readManifest(fresh)).entries)).toEqual([kept]);
+  });
+
   it('does not write the manifest when nothing succeeded', async () => {
     const storage = new MemoryObjectStorage();
     const tts = new FlakyTts({ [SEGMENTS[0]?.text as string]: [new ProviderError('invalid-request', 'bad')] });

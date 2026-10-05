@@ -40,11 +40,6 @@ List<Map<String, Object?>> readingsOf(Map<String, Object?> day) {
   return (mass['readings']! as List<Object?>).cast<Map<String, Object?>>();
 }
 
-/// The [Semantics] widget labelled [label].
-Finder semanticsLabelled(String label) => find.byWidgetPredicate(
-  (widget) => widget is Semantics && widget.properties.label == label,
-);
-
 /// Scrolls [finder] into view.
 Future<void> reveal(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
@@ -174,11 +169,12 @@ void main() {
       expect(find.text(TodayStrings.notesMissing), findsNothing);
       expect(find.text(TodayStrings.offline), findsNothing);
       expect(
-        semanticsLabelled(
+        find.bySemanticsLabel(
           'Text of Mt 20:1-16a at www.drbo.org (opens outside the app)',
         ),
         findsOneWidget,
       );
+      expect(find.bySemanticsLabel('Notes on Mt 20:1-16a'), findsOneWidget);
       await reveal(tester, find.text(TodayStrings.listen));
       expect(find.text(TodayStrings.listen), findsOneWidget);
     });
