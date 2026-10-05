@@ -1,5 +1,5 @@
 /**
- * scripts/repo/setup.sh (L-032) run against a fake `gh` (fixtures/fake-gh.mjs): dry-run output,
+ * scripts/repo/setup.sh (L-032) run against a fake `gh` (fixtures/fake-gh.sh): dry-run output,
  * registry-driven required checks, the writes a real run makes, and shellcheck. Picked up by the
  * root `tests/*` project glob; not part of unit coverage (the script is bash).
  */

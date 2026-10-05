@@ -1,5 +1,5 @@
 /**
- * scripts/repo/setup.sh (L-032) against a fake `gh` (fixtures/fake-gh.mjs). Nothing here talks to
+ * scripts/repo/setup.sh (L-032) against a fake `gh` (fixtures/fake-gh.sh). Nothing here talks to
  * GitHub: the fake records every call and answers the two reads the script makes.
  */
 import { spawnSync } from 'node:child_process';
@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
 const script = join(repoRoot, 'scripts/repo/setup.sh');
 const registry = join(repoRoot, '.github/required-checks');
-const fakeGh = fileURLToPath(new URL('fixtures/fake-gh.mjs', import.meta.url));
+const fakeGh = fileURLToPath(new URL('fixtures/fake-gh.sh', import.meta.url));
 const extraRegistry = fileURLToPath(new URL('fixtures/extra-registry', import.meta.url));
 
 interface Call {
@@ -33,7 +33,7 @@ let work: string;
 beforeEach(() => {
   work = mkdtempSync(join(tmpdir(), 'lectio-setup-'));
   mkdirSync(join(work, 'bin'));
-  writeFileSync(join(work, 'bin/gh'), `#!/bin/sh\nexec node ${JSON.stringify(fakeGh)} "$@"\n`, { mode: 0o755 });
+  writeFileSync(join(work, 'bin/gh'), `#!/bin/sh\nexec bash ${JSON.stringify(fakeGh)} "$@"\n`, { mode: 0o755 });
 });
 
 afterEach(() => {
@@ -53,10 +53,14 @@ function run(args: string[], env: Record<string, string> = {}): Run {
       ...env,
     },
   });
+  // Records end in \x1d; arguments are \x1f-terminated; \x1e introduces the stdin (fixtures/fake-gh.sh).
   const calls = readFileSync(log, 'utf8')
-    .split('\n')
-    .filter((line) => line !== '')
-    .map((line) => JSON.parse(line) as Call);
+    .split('\x1d')
+    .filter((record) => record !== '')
+    .map((record): Call => {
+      const [argText = '', stdin] = record.split('\x1e');
+      return { args: argText.split('\x1f').slice(0, -1), stdin: stdin ?? null };
+    });
   return { status: result.status, stdout: result.stdout, stderr: result.stderr, calls };
 }
 
@@ -267,8 +271,8 @@ describe('setup.sh input checks', () => {
 describe('setup.sh lint', () => {
   const shellcheck = spawnSync('shellcheck', ['--version']).status === 0;
   // ubuntu-latest ships shellcheck, so CI always runs this; locally it is skipped when absent.
-  it.runIf(shellcheck || process.env['CI'] === 'true')('is shellcheck clean', () => {
-    const result = spawnSync('shellcheck', ['--severity=style', script], { encoding: 'utf8' });
+  it.runIf(shellcheck || process.env['CI'] === 'true')('is shellcheck clean (with the fake gh)', () => {
+    const result = spawnSync('shellcheck', ['--severity=style', script, fakeGh], { encoding: 'utf8' });
     expect(result.error).toBeUndefined();
     expect(result.stdout + result.stderr).toBe('');
     expect(result.status).toBe(0);
