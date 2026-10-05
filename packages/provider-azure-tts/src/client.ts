@@ -41,14 +41,18 @@ export interface AzureTtsOptions {
   readonly key: string;
   /** Speech resource region, for example `westeurope`. Ignored when `endpoint` is set. */
   readonly region?: string;
-  /** Full synthesis URL, overriding the one derived from `region`. */
+  /** Full synthesis URL (https only), overriding the one derived from `region`. */
   readonly endpoint?: string;
   /** Code points of text per request (default {@link DEFAULT_MAX_CHUNK_CHARS}). */
   readonly maxChunkChars?: number;
   /** Attempts per chunk, including the first (default {@link DEFAULT_MAX_ATTEMPTS}). */
   readonly maxAttempts?: number;
-  /** First retry delay; doubles on each retry up to `maxDelayMs`. */
+  /** First retry delay; doubles on each retry up to `maxDelayMs`. A non-negative integer. */
   readonly baseDelayMs?: number;
+  /**
+   * Longest wait between attempts, at least `baseDelayMs`. A `Retry-After` longer than this stops
+   * the retries instead of being shortened, so a throttled resource is not hammered.
+   */
   readonly maxDelayMs?: number;
   /** Per-request timeout. */
   readonly timeoutMs?: number;
@@ -77,11 +81,27 @@ export function mp3DurationMs(bytes: number): number {
 
 const defaultSleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
-function positiveInteger(name: string, value: number, max = Number.MAX_SAFE_INTEGER): number {
-  if (!Number.isInteger(value) || value < 1 || value > max) {
-    throw new RangeError(`${name} must be an integer from 1 to ${max}, got ${value}`);
+function boundedInteger(name: string, value: number, min: number, max = Number.MAX_SAFE_INTEGER): number {
+  if (!Number.isInteger(value) || value < min || value > max) {
+    throw new RangeError(`${name} must be an integer from ${min} to ${max}, got ${value}`);
   }
   return value;
+}
+
+const positiveInteger = (name: string, value: number, max?: number): number => boundedInteger(name, value, 1, max);
+
+/** An endpoint override: an absolute https URL, since the request carries the resource key. */
+function httpsEndpoint(endpoint: string): string {
+  let url: URL;
+  try {
+    url = new URL(endpoint);
+  } catch {
+    throw new ProviderError('invalid-request', `Azure Speech endpoint is not a URL: "${endpoint}"`);
+  }
+  if (url.protocol !== 'https:') {
+    throw new ProviderError('invalid-request', `Azure Speech endpoint must use https: "${endpoint}"`);
+  }
+  return endpoint;
 }
 
 /** Seconds (or an HTTP date) from a `Retry-After` header, as milliseconds; undefined when absent or unreadable. */
@@ -138,7 +158,7 @@ export class AzureTtsProvider implements TtsProvider {
   constructor(options: AzureTtsOptions) {
     if (options.key.trim() === '') throw new ProviderError('invalid-request', 'Azure Speech key is empty');
     if (options.endpoint !== undefined) {
-      this.#endpoint = options.endpoint;
+      this.#endpoint = httpsEndpoint(options.endpoint);
     } else if (options.region !== undefined) {
       this.#endpoint = azureTtsEndpoint(options.region);
     } else {
@@ -151,8 +171,8 @@ export class AzureTtsProvider implements TtsProvider {
       MAX_CHUNK_CHARS_LIMIT,
     );
     this.#maxAttempts = positiveInteger('maxAttempts', options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS);
-    this.#baseDelayMs = options.baseDelayMs ?? DEFAULT_BASE_DELAY_MS;
-    this.#maxDelayMs = options.maxDelayMs ?? DEFAULT_MAX_DELAY_MS;
+    this.#baseDelayMs = boundedInteger('baseDelayMs', options.baseDelayMs ?? DEFAULT_BASE_DELAY_MS, 0);
+    this.#maxDelayMs = boundedInteger('maxDelayMs', options.maxDelayMs ?? DEFAULT_MAX_DELAY_MS, this.#baseDelayMs);
     this.#timeoutMs = positiveInteger('timeoutMs', options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
     this.#fetch = options.fetch ?? fetch;
     this.#sleep = options.sleep ?? defaultSleep;
@@ -207,8 +227,16 @@ export class AzureTtsProvider implements TtsProvider {
         error = errorForThrown(thrown);
       }
       if (!error.retryable || attempt >= this.#maxAttempts) throw error;
+      if (wait !== undefined && wait > this.#maxDelayMs) {
+        // Waiting less than the service asked for would only be throttled again: stop, and say so.
+        throw new ProviderError(
+          error.code,
+          `${error.message}; Retry-After of ${String(Math.ceil(wait / 1000))} s exceeds the ${String(this.#maxDelayMs)} ms retry cap, giving up`,
+          { retryable: false, cause: error },
+        );
+      }
       const backoff = Math.min(this.#maxDelayMs, this.#baseDelayMs * 2 ** (attempt - 1));
-      await this.#sleep(Math.min(this.#maxDelayMs, wait ?? backoff));
+      await this.#sleep(wait ?? backoff);
     }
   }
 }

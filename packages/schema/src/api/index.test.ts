@@ -17,7 +17,7 @@ import {
   validateApiPassageIndex,
   validateApiUpcoming,
 } from './index.ts';
-import type { ApiAudio, ApiDay, ApiDayReading, ApiNotes } from './index.ts';
+import type { ApiAudio, ApiDay, ApiDayReading, ApiNotes, ApiSegment } from './index.ts';
 
 /** Fixture names are `<document>` or `<document>--<case>`; the document picks the validator. */
 const VALIDATORS: Record<string, ValidateFunction> = {
@@ -40,10 +40,12 @@ const MT = '/masses/0/readings/3';
 const EXPECTED_FAILURES: Record<string, [instancePath: string, keyword: string]> = {
   'calendar--reading-without-has-notes': ['/days/0/masses/0/readings/0', 'required'],
   'day--audio-not-http': [`${MT}/passage/context/audio/url`, 'pattern'],
+  'day--audio-without-duration': [`${MT}/passage/context/audio`, 'required'],
   'day--context-without-audio': [`${MT}/passage/context`, 'required'],
   'day--pending-review': [`${MT}/passage/review/status`, 'const'],
   'day--provenance-leak': [`${MT}/passage`, 'additionalProperties'],
   'day--reading-with-text': [MT, 'additionalProperties'],
+  'day--segment-unknown-kind': ['/masses/0/segments/0/kind', 'enum'],
   'day--unknown-colour': ['/colour', 'enum'],
   'day--wrong-api-version': ['/apiVersion', 'const'],
   'index--changed-endpoint': ['/endpoints/day', 'const'],
@@ -112,26 +114,35 @@ describe('api schemas', () => {
     expect(notes.properties.sources).toBe(passageSchema.properties.sources);
   });
 
-  it('allows null or an http(s) URL for audio', () => {
+  it('allows null or an http(s) URL with a duration, always present and possibly null, for audio', () => {
     const day = loadFixture('api', 'valid', 'day') as ApiDay;
     const reading = day.masses[0]?.readings[3] as ApiDayReading;
     const notes = reading.passage as ApiNotes;
     expect(notes.context.audio).toBeNull();
-    const audio = { ...notes, context: { ...notes.context, audio: { url: 'https://a.example/x.mp3' } } };
-    const withAudio = { ...day, masses: [{ ...day.masses[0], readings: [{ ...reading, passage: audio }] }] };
-    expect(validateApiDay(withAudio)).toBe(true);
-    const negative = {
-      ...audio,
-      context: { ...audio.context, audio: { url: 'https://a.example/x.mp3', durationSeconds: -1 } },
-    };
-    expect(
-      validateApiDay({ ...withAudio, masses: [{ ...day.masses[0], readings: [{ ...reading, passage: negative }] }] }),
-    ).toBe(false);
+    const withAudio = (audio: unknown): unknown => ({
+      ...day,
+      masses: [
+        { ...day.masses[0], readings: [{ ...reading, passage: { ...notes, context: { ...notes.context, audio } } }] },
+      ],
+    });
+    expect(validateApiDay(withAudio({ url: 'https://a.example/x.mp3', durationSeconds: null }))).toBe(true);
+    expect(validateApiDay(withAudio({ url: 'https://a.example/x.mp3', durationSeconds: 12.5 }))).toBe(true);
+    expect(validateApiDay(withAudio({ url: 'https://a.example/x.mp3' }))).toBe(false);
+    expect(validateApiDay(withAudio({ url: 'https://a.example/x.mp3', durationSeconds: -1 }))).toBe(false);
+  });
+
+  it('lists the narration segments of each Mass, optional for older documents', () => {
+    const day = loadFixture('api', 'valid', 'day--with-audio') as ApiDay;
+    const segments = day.masses[0]?.segments ?? [];
+    expect(segments.map((segment) => segment.kind)).toEqual(['context', 'translation-note', 'translation-note']);
+    expect(segments[0]?.audio).toEqual({ url: 'https://audio.example/audio/v1/0123abcd.mp3', durationSeconds: 74.5 });
+    expect(validateApiDay(loadFixture('api', 'valid', 'day'))).toBe(true);
   });
 
   it('derives types from the schemas', () => {
     expectTypeOf<ApiDay['apiVersion']>().toEqualTypeOf<1>();
-    expectTypeOf<ApiAudio>().toEqualTypeOf<{ url: string; durationSeconds?: number } | null>();
+    expectTypeOf<ApiAudio>().toEqualTypeOf<{ url: string; durationSeconds: number | null } | null>();
+    expectTypeOf<ApiSegment['kind']>().toEqualTypeOf<'context' | 'translation-note'>();
     expectTypeOf<ApiNotes['review']['status']>().toEqualTypeOf<'approved'>();
   });
 });

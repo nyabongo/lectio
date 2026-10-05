@@ -68,9 +68,15 @@ class DayHeader extends StatelessWidget {
           ),
         ),
         if (principal != null)
-          InLanguage(
-            language: principal.language,
-            child: Text(principal.text, style: theme.textTheme.headlineMedium),
+          Semantics(
+            header: true,
+            child: InLanguage(
+              language: principal.language,
+              child: Text(
+                principal.text,
+                style: theme.textTheme.headlineMedium,
+              ),
+            ),
           ),
         if (day != null) ...[
           const SizedBox(height: 8),
@@ -133,10 +139,14 @@ class _Rank extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(
-          TodayStrings.of(context)
-              .rankAndColourLabel(celebration.rank, celebration.colour),
-          style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
+        // Wraps instead of overflowing at 200% text on a narrow phone.
+        Flexible(
+          child: Text(
+            TodayStrings.of(
+              context,
+            ).rankAndColourLabel(celebration.rank, celebration.colour),
+            style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
+          ),
         ),
       ],
     );
@@ -310,15 +320,21 @@ class ReadingCard extends StatelessWidget {
                   FilledButton.tonalIcon(
                     onPressed: onNotes,
                     icon: const Icon(Icons.menu_book_outlined),
-                    label: Text(strings.notes),
+                    label: Text(
+                      strings.notes,
+                      semanticsLabel: strings.notesSemantics(reading.ref),
+                    ),
                   ),
-                Semantics(
-                  label: strings.linkoutSemantics(reading.ref, reading.linkout),
-                  button: true,
-                  excludeSemantics: true,
-                  child: TextButton(
-                    onPressed: onText,
-                    child: Text(strings.text),
+                // The label replaces the button's text for screen readers;
+                // the button keeps its tap action.
+                TextButton(
+                  onPressed: onText,
+                  child: Text(
+                    strings.text,
+                    semanticsLabel: strings.linkoutSemantics(
+                      reading.ref,
+                      reading.linkout,
+                    ),
                   ),
                 ),
               ],

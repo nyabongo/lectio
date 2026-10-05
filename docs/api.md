@@ -10,11 +10,27 @@ fresh as the last build (on merge and daily, L-062).
   `packages/schema/json/api-*.schema.json` for non-TypeScript clients.
 - Every document carries `"apiVersion": 1`.
 
+**Status:** v1 is stable. It is the contract between the site, the service worker and the Flutter apps; changes
+follow the [stability policy](#stability-policy).
+
 ## Base URL
 
 All paths below are relative to the API root, `<site.baseUrl>api/v1/`. For the production config that is
 `https://nyabongo.github.io/lectio/api/v1/`. `index.json` repeats the root as `apiRoot` and lists the endpoint
 templates under `endpoints`, so a client only needs to know where `index.json` is.
+
+The root follows `site.baseUrl` in `config/lectio.config.json`. If the owner moves the site to a custom domain
+(decision L-206, [#103](https://github.com/nyabongo/lectio/issues/103)), the root moves with it: the Flutter apps
+read theirs from `--dart-define=LECTIO_API_BASE_URL=…` (default above, `apps/mobile/lib/data/api_client.dart`), so a
+new domain also means a new app build. See the [operator handbook](operator-handbook.md#domain-and-hosting).
+
+## Clients
+
+| Client                     | Code                                                     | Reads                                                                    |
+| -------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Service worker (L-061)     | `apps/web/src/sw/`                                       | `index.json`, then `days/{date}.json` for the next days, for offline use |
+| Flutter apps (L-100–L-117) | `apps/mobile/lib/data/`                                  | `index.json`, `upcoming.json`, `days/…`, `passages/…` (English for now)  |
+| Anything else              | JSON Schemas in `packages/schema/json/api-*.schema.json` | read-only, no key, no rate limit beyond the static host's                |
 
 ## Endpoints
 
@@ -62,7 +78,17 @@ The build date is "today" in the site time zone (`site.timezone`, `Africa/Nairob
 pins it (the fixture build uses `2026-09-20`). `upcoming.json` covers `from` = build date to `to` = build date + 13
 days; dates the calendar does not have are left out. Because the file is only as fresh as the last build, a client
 that needs "the next seven days from the device date" (the service worker, the app's prefetch) should compute the
-dates itself and fetch `days/{date}.json` for each, using `index.json` → `dates` to know what exists.
+dates itself and fetch `days/{date}.json` for each. `index.json` → `dates` gives the first and last date with a day
+file, but it is **not a guaranteed continuous range**: the years in between may have gaps (a year without a calendar
+file, for example). Use `years` and the calendar files to know which dates exist, and treat a 404 for a day file as
+"no such day".
+
+### Caching
+
+Every file is a static file on the Pages CDN, which sends `ETag` and `Last-Modified`. Clients should make
+**conditional requests** (`If-None-Match` / `If-Modified-Since`) when they refresh a file they already have, and keep
+their copy on `304 Not Modified`. The daily rebuild rewrites most files, so polling more than a few times a day gains
+nothing.
 
 ### Example: `days/2026-09-20.json` (abridged)
 
@@ -100,7 +126,11 @@ dates itself and fetch `days/{date}.json` for each, using `index.json` → `date
             "ref": "Mt 20:1-16a",
             "locale": "en",
             "summary": "…",
-            "context": { "title": "Labourers in the vineyard", "paragraphs": ["… [c1] …"], "audio": null },
+            "context": {
+              "title": "Labourers in the vineyard",
+              "paragraphs": ["… [c1] …"],
+              "audio": { "url": "https://…/audio/en/3f…a1.mp3", "durationSeconds": 74.5 }
+            },
             "translationNotes": [{ "id": "v15-evil-eye", "verse": "20:15", "…": "…", "audio": null }],
             "claims": [{ "id": "c1", "text": "…", "sourceIds": ["davies-allison"], "sensitive": false }],
             "sources": [{ "id": "davies-allison", "type": "print", "citation": "…" }],
@@ -128,10 +158,43 @@ dates itself and fetch `days/{date}.json` for each, using `index.json` → `date
 
 ## Audio
 
-The context note and every translation note carry an `audio` field. It is `null` until the narration pipeline
-(Phase 2, L-082) renders audio; then it becomes `{ "url": "https://…", "durationSeconds": 74.5 }`
-(`durationSeconds` optional). Clients must treat `null` as "use device text-to-speech". Later issues may add
-segment lists (L-082) next to these fields; that is an additive change.
+The context note and every translation note carry an `audio` field: `null`, or
+`{ "url": "https://…", "durationSeconds": 74.5 }`. `durationSeconds` is **always present** and is `null` when the
+length is unknown. Clients must treat `audio: null` as "use device text-to-speech".
+
+The files are rendered in the deploy job (L-082, `npm run audio:render -- --auto`) and stored in object storage under
+`config.tts.storage.publicBaseUrl`, keyed by a hash of the spoken text, the voice and the TTS engine version, so a
+note keeps its URL until its text changes. `audio` is `null` when the note has not been rendered yet, and **always**
+`null` while no live voice is configured: without the TTS and storage secrets the deploy renders with the fake voice
+for checking only and publishes none of it. The secrets and how to turn audio on are in the
+[operator handbook](operator-handbook.md#narration-audio).
+
+### Segments (the Listen queue)
+
+Each Mass in a day document carries `segments`: the Listen queue for that Mass, in play order. For every reading with
+approved notes (in Mass order, a passage read twice narrated once) there is a `context` segment and then one
+`translation-note` segment per note.
+
+```json
+{
+  "id": "MT.20.1-16/note/v15-evil-eye",
+  "kind": "translation-note",
+  "slot": "gospel",
+  "passageKey": "MT.20.1-16",
+  "locale": "en",
+  "title": "envious · ophthalmos sou ponēros",
+  "script": "Translation note on Matthew chapter 20, verse 15, the word “envious”. …",
+  "audio": null
+}
+```
+
+- `id` is `<passage key>/context` or `<passage key>/note/<note id>`: stable across days and years, and the same
+  segment's `audio` equals the matching note's `audio`.
+- `script` is what the voice reads: Lectio's own commentary in spoken form (references spelled out, no claim
+  markers, URLs or non-Latin script). It is never the reading text. Device text-to-speech should read `script` when
+  `audio` is `null`.
+- `segments` is new in L-082 and optional in the schema, so documents from older builds still validate; every
+  document the site builds now has it (possibly empty).
 
 ## Stability policy
 
@@ -139,7 +202,7 @@ v1 is **additive only**. Within v1 we may:
 
 - add new optional fields to any document, or new values where a field is documented as open;
 - turn a `null` placeholder (such as `audio`) into a value of its documented shape;
-- add new documents and endpoints (for example localised endpoints under `/api/v1/<locale>/`, L-113);
+- add new documents and endpoints (as the Kiswahili mirror under `sw/` did, L-113; another locale would follow it);
 - add days, years and passages as content grows.
 
 Within v1 we will never remove a field or a document, rename one, change its type or meaning, or make a nullable
@@ -151,6 +214,14 @@ Clients must therefore **ignore fields they do not recognise** and must not fail
 describe the current v1 shape exactly (`additionalProperties: false`) so that the site's tests catch accidental
 leaks; when a field is added, the schema is updated in the same pull request, and clients validating against an
 older copy of the schema should validate loosely.
+
+## Changing the API
+
+1. Change the schema in `packages/schema/src/api/` and its valid and invalid fixtures, then run
+   `npm run schema:emit` so `packages/schema/json/` matches.
+2. Change the builder in `apps/web/src/lib/api.ts` (and `notes-locale.ts` for the `sw/` mirror).
+3. Update this page in the same pull request. A change that is not additive is a v2, not an edit to v1.
+4. Check the readers: the service worker (`apps/web/src/sw/`) and the Flutter models (`apps/mobile/lib/data/`).
 
 ## Tests
 

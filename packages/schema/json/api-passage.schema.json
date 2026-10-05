@@ -38,10 +38,10 @@
                 {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["url"],
+                  "required": ["url", "durationSeconds"],
                   "properties": {
                     "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
-                    "durationSeconds": { "type": "number", "minimum": 0 }
+                    "durationSeconds": { "anyOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }] }
                   }
                 }
               ]
@@ -77,10 +77,10 @@
                   {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["url"],
+                    "required": ["url", "durationSeconds"],
                     "properties": {
                       "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
-                      "durationSeconds": { "type": "number", "minimum": 0 }
+                      "durationSeconds": { "anyOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }] }
                     }
                   }
                 ]

@@ -71,6 +71,14 @@ class ReadingStrings {
   /// Heading of a source list.
   String get sources => _t('reading_sources');
 
+  /// What a screen reader says for a citation of the sources [numbers], as
+  /// the site's `reading.cite` label does.
+  String cite(List<int> numbers) {
+    final n = numbers.join(', ');
+    if (numbers.length == 1) return _t('reading_cite', {'n': n});
+    return _t('app_reading_citeMany', {'n': n});
+  }
+
   /// The link to an archived copy of a web source.
   String get archived => _t('reading_archived');
 

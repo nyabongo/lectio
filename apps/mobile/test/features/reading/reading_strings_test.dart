@@ -21,6 +21,11 @@ void main() {
     expect(strings.verified(3), 'Verified · 3 sources');
   });
 
+  test('citations read as words', () {
+    expect(strings.cite([6]), 'Source 6');
+    expect(strings.cite([4, 5]), 'Sources 4, 5');
+  });
+
   test('the review method', () {
     expect(strings.method('human'), contains('human reviewer'));
     expect(strings.method('auto'), contains('two independent AI verifiers'));

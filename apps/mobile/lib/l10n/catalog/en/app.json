@@ -18,6 +18,7 @@
     "offline": "Offline: showing the copy saved on this device.",
     "refreshFailed": "The day could not be refreshed: showing the copy saved on this device.",
     "linkFailed": "The text could not be opened.",
+    "notesLabel": "Notes on {ref}",
     "linkoutLabel": "Text of {ref} at {source} (opens outside the app)"
   },
   "reading": {
@@ -25,6 +26,7 @@
     "loading": "Loading the readings…",
     "loadFailed": "The readings could not be loaded. Check your connection and try again.",
     "offline": "Offline: showing the notes saved on this device.",
+    "citeMany": "Sources {n}",
     "noReadings": "There are no readings for this day yet.",
     "noSuchReading": "This day has no {slot}.",
     "linkFailed": "The link could not be opened."

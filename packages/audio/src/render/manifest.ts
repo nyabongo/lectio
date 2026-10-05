@@ -35,6 +35,11 @@ export interface AudioManifest {
   readonly version: number;
   /** Entries by storage key (`audio/<locale>/<hash>.<ext>`). */
   readonly entries: Readonly<Record<string, ManifestEntry>>;
+  /**
+   * Characters billed for audio that never got an entry (synthesized, then the upload failed), by UTC month
+   * (`2026-10`). They still count against the monthly budget. Absent when there are none.
+   */
+  readonly billedWithoutFile?: Readonly<Record<string, number>>;
 }
 
 export function emptyManifest(): AudioManifest {
@@ -75,14 +80,22 @@ export function parseManifest(text: string): AudioManifest {
   }
   const entries: Record<string, ManifestEntry> = {};
   for (const [key, entry] of Object.entries(data['entries'])) entries[key] = checkEntry(key, entry);
-  return { version: MANIFEST_VERSION, entries };
+  const billed = data['billedWithoutFile'];
+  if (billed === undefined) return { version: MANIFEST_VERSION, entries };
+  const valid =
+    isRecord(billed) && Object.entries(billed).every(([month, count]) => /^\d{4}-\d{2}$/.test(month) && isCount(count));
+  if (!valid) throw new TypeError('audio manifest: invalid billedWithoutFile');
+  return { version: MANIFEST_VERSION, entries, billedWithoutFile: billed as Record<string, number> };
 }
 
 /** Stable JSON: entries sorted by key, so an unchanged manifest serialises to the same bytes. */
 export function serializeManifest(manifest: AudioManifest): string {
   const keys = Object.keys(manifest.entries).sort();
   const entries = Object.fromEntries(keys.map((key) => [key, manifest.entries[key]]));
-  return `${JSON.stringify({ version: manifest.version, entries }, null, 2)}\n`;
+  const billed = manifest.billedWithoutFile ?? {};
+  const months = Object.keys(billed).sort();
+  const extra = months.length === 0 ? {} : { billedWithoutFile: Object.fromEntries(months.map((m) => [m, billed[m]])) };
+  return `${JSON.stringify({ version: manifest.version, entries, ...extra }, null, 2)}\n`;
 }
 
 /** The stored manifest, or an empty one when storage has none yet. */
@@ -98,10 +111,10 @@ export async function writeManifest(storage: ObjectStorage, manifest: AudioManif
   });
 }
 
-/** Characters billed by entries created in the UTC calendar month of `now`. */
+/** Characters billed in the UTC calendar month of `now`: by entries created then, and for audio that got no file. */
 export function charactersThisMonth(manifest: AudioManifest, now: Date): number {
   const month = now.toISOString().slice(0, 7);
   return Object.values(manifest.entries)
     .filter((entry) => new Date(entry.createdAt).toISOString().slice(0, 7) === month)
-    .reduce((sum, entry) => sum + entry.characters, 0);
+    .reduce((sum, entry) => sum + entry.characters, manifest.billedWithoutFile?.[month] ?? 0);
 }

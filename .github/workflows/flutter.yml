@@ -14,6 +14,13 @@
 # `ios` is not a required check. It runs after `flutter` on push to main and on
 # PRs labelled `ios-build` (the `labeled` trigger re-runs the workflow when the
 # label is added).
+#
+# Goldens (L-108, apps/mobile/test/goldens/screens/) are drawn here on Linux,
+# never locally. To draw new ones, run this workflow by hand on the PR branch
+# with `update_goldens`, download the `flutter-goldens` artifact into
+# apps/mobile/test/goldens/screens/ and commit it. Every run uploads the
+# goldens it compared against, and the diffs as `flutter-golden-failures`
+# when a compare fails.
 name: Flutter
 
 on:
@@ -22,6 +29,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
+    inputs:
+      update_goldens:
+        description: Redraw the golden images instead of comparing them
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -127,8 +139,27 @@ jobs:
       # still count (as uncovered) in lcov.
       - run: dart run tool/check_coverage.dart --prepare
         if: steps.changes.outputs.relevant == 'true'
+      - name: Redraw the goldens
+        if: steps.changes.outputs.relevant == 'true' && inputs.update_goldens
+        run: flutter test --update-goldens test/goldens/screens_golden_test.dart
       - run: flutter test --coverage
         if: steps.changes.outputs.relevant == 'true'
+      - name: Upload goldens
+        if: ${{ !cancelled() && steps.changes.outputs.relevant == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-goldens
+          path: apps/mobile/test/goldens/screens/*.png
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Upload golden failures
+        if: ${{ failure() && steps.changes.outputs.relevant == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-golden-failures
+          path: apps/mobile/test/goldens/failures/
+          retention-days: 14
+          if-no-files-found: ignore
       # Dart line coverage >= minCoverage (96) in tool/check_coverage.dart,
       # generated *.g.dart/*.freezed.dart excluded.
       - run: dart run tool/check_coverage.dart

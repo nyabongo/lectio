@@ -102,6 +102,12 @@
   "app_today_offline": "Offline: showing the copy saved on this device.",
   "app_today_refreshFailed": "The day could not be refreshed: showing the copy saved on this device.",
   "app_today_linkFailed": "The text could not be opened.",
+  "app_today_notesLabel": "Notes on {ref}",
+  "@app_today_notesLabel": {
+    "placeholders": {
+      "ref": {}
+    }
+  },
   "app_today_linkoutLabel": "Text of {ref} at {source} (opens outside the app)",
   "@app_today_linkoutLabel": {
     "placeholders": {
@@ -119,6 +125,12 @@
   "app_reading_loading": "Loading the readings…",
   "app_reading_loadFailed": "The readings could not be loaded. Check your connection and try again.",
   "app_reading_offline": "Offline: showing the notes saved on this device.",
+  "app_reading_citeMany": "Sources {n}",
+  "@app_reading_citeMany": {
+    "placeholders": {
+      "n": {}
+    }
+  },
   "app_reading_noReadings": "There are no readings for this day yet.",
   "app_reading_noSuchReading": "This day has no {slot}.",
   "@app_reading_noSuchReading": {

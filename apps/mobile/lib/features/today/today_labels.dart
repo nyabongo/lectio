@@ -132,6 +132,10 @@ class TodayStrings {
     return _t('day_massOptions', {'count': count});
   }
 
+  /// What a screen reader says for a reading's Notes button, which names the
+  /// reading, since every card has one.
+  String notesSemantics(String ref) => _t('app_today_notesLabel', {'ref': ref});
+
   /// What a screen reader says for a reading's link-out: the reference, the
   /// site it opens and that it leaves the app.
   String linkoutSemantics(String ref, Uri linkout) {

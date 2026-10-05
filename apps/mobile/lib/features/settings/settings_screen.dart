@@ -47,7 +47,10 @@ class SettingsScreen extends StatelessWidget {
 
     Widget heading(String text) => Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(text, style: theme.textTheme.titleMedium),
+      child: Semantics(
+        header: true,
+        child: Text(text, style: theme.textTheme.titleMedium),
+      ),
     );
 
     Widget hint(String text) => Padding(

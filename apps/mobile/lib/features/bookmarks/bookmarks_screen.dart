@@ -174,7 +174,7 @@ class _Heading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Text(text, style: style),
+      child: Semantics(header: true, child: Text(text, style: style)),
     );
   }
 }
