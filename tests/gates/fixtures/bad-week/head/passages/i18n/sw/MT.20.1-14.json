@@ -1,0 +1,46 @@
+{
+  "translationOf": "MT.20.1-14",
+  "locale": "sw",
+  "sourceSha256": "7f2d76d47a308d3eefbdd4ac25a5086645185972b66adbde29b4e8886c667daf",
+  "summary": "Mwenye shamba anawalipa walioajiriwa mwisho sawa na wa kwanza, na kuuliza kama wema wake ni sababu ya kinyongo.",
+  "context": {
+    "title": "Wafanyakazi katika shamba la mizabibu",
+    "paragraphs": [
+      "Mathayo peke yake anaandika mfano huu, katikati ya misemo miwili kuhusu wa mwisho kuwa wa kwanza. [c1] Swali la mwisho la mwenye shamba linatumia nahau ya Kiyahudi ya jicho ovu. [c2]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "evil-eye",
+      "anchor": "wivu",
+      "gloss": "jicho lako ovu",
+      "summary": "Kigiriki kinauliza “je, jicho lako ni ovu?”, nahau ya kuonea wivu mema ya mwingine.",
+      "body": "Jicho ovu lilikuwa picha inayojulikana ya ubahili na kinyongo (Kum 15:9). [c2] Tafsiri inabadilisha picha hiyo kuwa hisia tu. [c2]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Mfano wa wafanyakazi katika shamba la mizabibu unapatikana katika Mathayo peke yake."
+    },
+    {
+      "id": "c2",
+      "text": "“Jicho ovu” ilikuwa nahau ya Kiyahudi ya ubahili au kuonea wivu mema ya mwingine."
+    }
+  ],
+  "provenance": {
+    "generator": "research-cli",
+    "runId": "translate-fixture",
+    "models": ["claude-opus-5-5"],
+    "promptVersion": "translate-v1",
+    "createdAt": "2026-10-05T07:50:00Z"
+  },
+  "review": {
+    "status": "approved",
+    "method": "human",
+    "reviewers": ["nyabongo"],
+    "approvedVia": "label",
+    "lastReviewedAt": "2026-10-06T09:00:00Z"
+  },
+  "schemaVersion": 1
+}

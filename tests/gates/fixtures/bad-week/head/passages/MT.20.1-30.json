@@ -1,0 +1,70 @@
+{
+  "key": "MT.20.1-30",
+  "ref": "Mt 20:1-30",
+  "locale": "en",
+  "summary": "A landowner pays the last hired the same as the first, and asks whether his goodness is a cause for resentment.",
+  "context": {
+    "title": "Labourers in the vineyard",
+    "paragraphs": [
+      "Matthew alone records this parable, placed between two sayings about the last being first. [c1] The owner’s closing question uses the Jewish idiom of the evil eye. [c2]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "evil-eye",
+      "verse": "20:15",
+      "anchor": "envious",
+      "original": {
+        "text": "ὀφθαλμός σου πονηρός",
+        "lang": "grc",
+        "translit": "ophthalmos sou ponēros",
+        "gloss": "your eye evil"
+      },
+      "summary": "Greek asks “is your eye evil?”, an idiom for begrudging another’s good.",
+      "body": "The evil eye was a familiar image for stinginess and resentment (Deut 15:9). [c2] English trades the image for an abstract feeling. [c2]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The parable of the labourers in the vineyard appears only in Matthew.",
+      "sourceIds": ["householder-page"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "An “evil eye” was a Jewish idiom for stinginess or begrudging another’s good.",
+      "sourceIds": ["dt-15-9"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "dt-15-9",
+      "type": "scripture",
+      "citation": "Deuteronomy 15:9",
+      "ref": "Dt 15:9"
+    },
+    {
+      "id": "householder-page",
+      "type": "web",
+      "citation": "A commentary page written for the bad-week fixture",
+      "url": "https://commentary.example.org/bad-week/matthew-20",
+      "excerpt": "told by Matthew alone among the evangelists",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T08:00:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "fixture",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-09-01T08:42:10Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
