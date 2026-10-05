@@ -57,7 +57,10 @@ describe('sha256', () => {
     const bytes = new TextEncoder().encode('abc');
     const hash = 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad';
     expect(sha256Hex(bytes)).toBe(hash);
-    expect(() => verifySha256(bytes, hash.toUpperCase(), 'abc')).not.toThrow();
+    expect(() => verifySha256(bytes, hash, 'abc')).not.toThrow();
+    expect(() => verifySha256(bytes, hash.toUpperCase(), 'abc')).toThrow(
+      new CorpusError('abc: "sha256" must be 64 lower-case hex digits'),
+    );
     expect(() => verifySha256(bytes, '0'.repeat(64), 'abc')).toThrow(
       new CorpusError(`sha256 mismatch for abc: expected ${'0'.repeat(64)}, got ${hash}`),
     );
@@ -104,6 +107,16 @@ describe('downloadPinned', () => {
     await expect(downloadPinned(downloader, { url, sha256 }, dest)).rejects.toThrow(/sha256 mismatch/);
     await expect(stat(dest)).rejects.toThrow(/ENOENT/);
     await expect(stat(`${dest}.partial`)).rejects.toThrow(/ENOENT/);
+  });
+
+  it('rejects an upper-case or malformed pinned hash before touching the network', async () => {
+    const dir = await tempDir();
+    const downloader = fakeDownloader({ [url]: bytes });
+    await expect(downloadPinned(downloader, { url, sha256: sha256.toUpperCase() }, join(dir, 'x'))).rejects.toThrow(
+      `${url}: "sha256" must be 64 lower-case hex digits`,
+    );
+    await expect(downloadPinned(downloader, { url, sha256: 'abc' }, join(dir, 'x'))).rejects.toThrow(CorpusError);
+    expect(downloader.requests).toEqual([]);
   });
 
   it('propagates downloader and file-system errors', async () => {
@@ -170,6 +183,20 @@ describe('writers', () => {
     await expect(writeChapter(root, 'grc-x', 'mt', 1, {})).rejects.toThrow('invalid book code');
     await expect(writeChapter(root, 'bad/x', 'MT', 1, {})).rejects.toThrow('invalid edition id');
     await expect(writeChapter(root, 'grc-x', 'MT', '1/2', {})).rejects.toThrow('invalid chapter');
+  });
+
+  it('validates contents with the reader validators, so the reader never rejects what was written', async () => {
+    const root = await tempDir();
+    const { edition: _edition, ...info } = (await listLicences(fixtureRoot))[0] as SourceInfo & { edition: string };
+    await expect(writeEditionMetadata(root, 'grc-x', { ...info, sha256: 'A'.repeat(64) }, '')).rejects.toThrow(
+      /grc-x.SOURCE\.json: "sha256" must be 64 lower-case hex digits/,
+    );
+    await expect(
+      writeEditionMetadata(root, 'grc-x', { ...info, language: 'eng' } as unknown as SourceInfo, ''),
+    ).rejects.toThrow(/"language" must be one of/);
+    const bad = { '1': [['only']] } as unknown as Parameters<typeof writeChapter>[4];
+    await expect(writeChapter(root, 'grc-x', 'MT', 1, bad)).rejects.toThrow(/1\.json: verse 1 token 0/);
+    await expect(stat(join(root, 'grc-x'))).rejects.toThrow(/ENOENT/);
   });
 
   it('writes byte-identical files for the same input', async () => {

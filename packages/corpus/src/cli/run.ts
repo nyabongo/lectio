@@ -8,6 +8,7 @@ import { openCorpus } from '../corpus.ts';
 import type { MatchMode } from '../corpus.ts';
 import { CorpusError } from '../format.ts';
 import { formatLicences, listLicences } from '../licences.ts';
+import { phraseWords } from '../normalise.ts';
 
 export interface CliIo {
   readonly out: (line: string) => void;
@@ -25,13 +26,15 @@ function isWorkspaceRoot(dir: string): boolean {
 }
 
 /**
- * The corpus directory: `LECTIO_CORPUS_ROOT` if set, else `<repo>/corpus`, where the repo root is the nearest
- * ancestor of `INIT_CWD` (or `cwd`) whose package.json declares workspaces.
+ * The corpus directory: `LECTIO_CORPUS_ROOT` if set (a relative path is resolved against `INIT_CWD`, the directory
+ * the user ran npm from, or `cwd` without it), else `<repo>/corpus`, where the repo root is the nearest ancestor of
+ * `INIT_CWD` (or `cwd`) whose package.json declares workspaces.
  */
 export function resolveCorpusRoot(env: NodeJS.ProcessEnv, cwd: string): string {
   const explicit = env['LECTIO_CORPUS_ROOT'];
-  if (explicit !== undefined && explicit !== '') return resolve(cwd, explicit);
-  let dir = resolve(env['INIT_CWD'] ?? cwd);
+  const base = resolve(env['INIT_CWD'] ?? cwd);
+  if (explicit !== undefined && explicit !== '') return resolve(base, explicit);
+  let dir = base;
   while (!isWorkspaceRoot(dir)) {
     const parent = dirname(dir);
     if (parent === dir) throw new CorpusError(`no workspace root above ${env['INIT_CWD'] ?? cwd}`);
@@ -67,7 +70,8 @@ function parseFindArgs(args: readonly string[]): { positional: string[]; match: 
 }
 
 /**
- * `corpus:find`: prints the verse's matching tokens. Several trailing words are looked up as a phrase.
+ * `corpus:find`: prints the verse's matching tokens. Several words (several arguments, or words joined by a Hebrew
+ * maqaf) are looked up as a phrase.
  * Exit code 0 when found, 1 when not found (or the verse is missing), 2 on usage or corpus errors.
  */
 export async function runFind(args: readonly string[], root: string, io: CliIo): Promise<number> {
@@ -86,7 +90,8 @@ export async function runFind(args: readonly string[], root: string, io: CliIo):
       io.err(`${where}: verse not in corpus`);
       return 1;
     }
-    if (words.length > 1) {
+    const { language } = await corpus.source(edition);
+    if (phraseWords(language, query).length > 1) {
       const found = await corpus.phraseOccurs(edition, book, chapter, verse, query, { match: parsed.match });
       io.out(`${where}: phrase "${query}" ${found ? 'occurs' : 'does not occur'} (match: ${parsed.match})`);
       return found ? 0 : 1;

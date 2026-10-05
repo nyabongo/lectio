@@ -53,6 +53,7 @@ describe('parseChapter', () => {
   it.each([
     ['x', 'expected an object of verses'],
     [{ 'a b': [] }, 'invalid verse key "a b"'],
+    [{ '07': [] }, 'invalid verse key "07"'],
     [{ '1': 'x' }, 'verse 1 must be an array of tokens'],
     [{ '1': [['only']] }, 'verse 1 token 0 must be [surface, lemma, morph?]'],
     [{ '1': [['a', 'b'], ['a', 'b', 'c', 'd']] }, 'verse 1 token 1 must be [surface, lemma, morph?]'],
@@ -75,6 +76,9 @@ describe('identifiers', () => {
     expect(segment('verse', 'A')).toBe('A');
     expect(() => segment('verse', '1/2')).toThrow('invalid verse: "1/2"');
     expect(() => segment('chapter', 1.5)).toThrow('invalid chapter: 1.5');
+    expect(() => segment('chapter', '01')).toThrow('invalid chapter: "01"');
+    expect(segment('verse', 0)).toBe('0');
+    expect(segment('verse', '10a')).toBe('10a');
   });
 });
 

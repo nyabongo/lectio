@@ -50,7 +50,8 @@ export const LICENSE_FILE = 'LICENSE.md';
 
 const EDITION_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const BOOK_CODE = /^[A-Z0-9]+$/;
-const SEGMENT = /^[A-Za-z0-9]+$/;
+/** Letters and digits, without a leading zero ("01" would name a file or key that is never there). */
+const SEGMENT = /^(?!0[0-9])[A-Za-z0-9]+$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 
 export function assertEditionId(edition: string): void {
@@ -61,7 +62,15 @@ export function assertBookCode(book: string): void {
   if (!BOOK_CODE.test(book)) throw new CorpusError(`invalid book code: ${JSON.stringify(book)}`);
 }
 
-/** Chapter and verse numbers may be numbers or strings of letters and digits (e.g. Greek Esther "A"). */
+/**
+ * Chapter and verse numbers may be numbers or strings of letters and digits (e.g. Greek Esther "A"). Leading zeros
+ * are rejected rather than silently finding nothing.
+ */
+/** Throws a CorpusError unless `sha256` is 64 lower-case hex digits (the form SOURCE.json records). */
+export function assertSha256(sha256: string, where: string): void {
+  if (!SHA256.test(sha256)) throw new CorpusError(`${where}: "sha256" must be 64 lower-case hex digits`);
+}
+
 export function segment(kind: 'chapter' | 'verse', value: number | string): string {
   const text = String(value);
   if (!SEGMENT.test(text)) throw new CorpusError(`invalid ${kind}: ${JSON.stringify(value)}`);
@@ -98,7 +107,7 @@ export function parseSource(value: unknown, where: string): SourceInfo {
   if (!(LANGUAGES as readonly string[]).includes(source.language)) {
     throw new CorpusError(`${where}: "language" must be one of ${LANGUAGES.join(', ')}`);
   }
-  if (!SHA256.test(source.sha256)) throw new CorpusError(`${where}: "sha256" must be 64 lower-case hex digits`);
+  assertSha256(source.sha256, where);
   return {
     name: source.name,
     language: source.language,

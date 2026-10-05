@@ -66,6 +66,18 @@ describe('runFind', () => {
     expect(out[1]).toBe('  word 1: verbum  lemma -');
   });
 
+  it('looks up a single maqaf-joined argument as a phrase', async () => {
+    const { out, io } = capture();
+    expect(await runFind(['hbo-test', 'GN', '1', '7', 'אֶת־הָרָקִיעַ'], fixtureRoot, io)).toBe(0);
+    expect(out).toEqual(['hbo-test GN 1:7: phrase "אֶת־הָרָקִיעַ" occurs (match: either)']);
+  });
+
+  it('finds a Hebrew word without its prefix (Deut 15:9 רעה)', async () => {
+    const { out, io } = capture();
+    expect(await runFind(['hbo-test', 'DT', '15', '9', 'רעה', '--match', 'surface'], fixtureRoot, io)).toBe(0);
+    expect(out[1]).toBe('  word 1: וְ/רָעָ֣ה  lemma c/7489  morph HC/Vqp3fs');
+  });
+
   it('looks up several words as a phrase', async () => {
     const yes = capture();
     expect(await runFind(['hbo-test', 'GN', '1', '7', 'את', 'הרקיע'], fixtureRoot, yes.io)).toBe(0);
@@ -132,6 +144,15 @@ describe('runLicences', () => {
 describe('resolveCorpusRoot', () => {
   it('prefers LECTIO_CORPUS_ROOT', () => {
     expect(resolveCorpusRoot({ LECTIO_CORPUS_ROOT: 'x/corpus' }, '/work')).toBe(resolve('/work', 'x/corpus'));
+    expect(resolveCorpusRoot({ LECTIO_CORPUS_ROOT: '/abs/corpus', INIT_CWD: '/repo' }, '/work')).toBe(
+      resolve('/abs/corpus'),
+    );
+  });
+
+  it('resolves a relative LECTIO_CORPUS_ROOT against INIT_CWD, where the user ran npm', () => {
+    expect(resolveCorpusRoot({ LECTIO_CORPUS_ROOT: 'corpus', INIT_CWD: '/repo' }, '/repo/packages/corpus')).toBe(
+      resolve('/repo', 'corpus'),
+    );
   });
 
   it('finds the workspace root above INIT_CWD or cwd', () => {
