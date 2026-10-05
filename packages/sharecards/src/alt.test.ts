@@ -16,6 +16,21 @@ describe('cardAltText', () => {
     expect(cardAltText(bare)).toBe('Lectio card for Sunday 20 September 2026: Twenty-fifth Sunday in Ordinary Time.');
   });
 
+  it('a card in another language uses its own date, Gospel label, opening and language names (L-113)', () => {
+    const labels = {
+      cardFor: (date: string) => `Kadi ya Lectio ya ${date}`,
+      languageNames: { grc: 'Kigiriki', hbo: 'Kiebrania', arc: 'Kiaramu', la: 'Kilatini' },
+    };
+    const sw = { dateLabel: 'Jumapili 20 Septemba 2026' };
+    const { subtitle: _s, ...day } = dayFixture;
+    expect(cardAltText({ ...day, ...sw, gospelLabel: 'Injili' }, labels)).toBe(
+      'Kadi ya Lectio ya Jumapili 20 Septemba 2026: Twenty-fifth Sunday in Ordinary Time. Injili: Matthew 20:1–16.',
+    );
+    expect(cardAltText({ ...insightFixture, ...sw, caption: 'Maelezo' }, labels)).toMatch(
+      /^Kadi ya Lectio ya Jumapili 20 Septemba 2026: “.+”\. Kigiriki: .+\. Maelezo$/,
+    );
+  });
+
   it('reading: slot, reference and summary', () => {
     expect(cardAltText(readingFixture)).toBe(
       `Lectio card for Sunday 20 September 2026: Gospel, Matthew 20:1–16. ${readingFixture.summary}`,

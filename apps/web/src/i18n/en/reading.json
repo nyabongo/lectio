@@ -31,5 +31,9 @@
   "unverified": "Not yet verified",
   "lastReviewed": "Last reviewed {date}",
   "report": "Report an issue",
-  "disclaimer": "A study aid, not Church teaching. Every claim cites its sources: check them for yourself."
+  "disclaimer": "A study aid, not Church teaching. Every claim cites its sources: check them for yourself.",
+  "englishOnly": {
+    "badge": "English only",
+    "text": "These notes have no reviewed translation yet, so they are shown in English."
+  }
 }

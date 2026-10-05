@@ -7,6 +7,8 @@
 import { BUILD_DATE, expect, test } from './fixtures.ts';
 
 const MAX_BYTES = 300 * 1024;
+const EN_ALT = /^Lectio card for /;
+const SW_ALT = /^Kadi ya Lectio ya Jumapili 20 Septemba 2026/;
 
 const pages = [
   { name: 'day', path: `${BUILD_DATE}/`, image: `og/${BUILD_DATE}.png`, type: 'website' },
@@ -19,6 +21,22 @@ const pages = [
   },
   // No approved notes yet: the page shares its day's card.
   { name: 'pending reading', path: `${BUILD_DATE}/first-reading/`, image: `og/${BUILD_DATE}.png`, type: 'article' },
+  // Kiswahili cards (L-113), with Kiswahili alt text.
+  { name: 'sw day', path: `sw/${BUILD_DATE}/`, image: `og/sw/${BUILD_DATE}.png`, type: 'website', alt: SW_ALT },
+  {
+    name: 'sw reading',
+    path: `sw/${BUILD_DATE}/gospel/`,
+    image: `og/sw/${BUILD_DATE}/gospel.png`,
+    type: 'article',
+    alt: SW_ALT,
+  },
+  {
+    name: 'sw insight',
+    path: `sw/${BUILD_DATE}/gospel/notes/v15-evil-eye/`,
+    image: `og/sw/${BUILD_DATE}/gospel/v15-evil-eye.png`,
+    type: 'article',
+    alt: SW_ALT,
+  },
 ];
 
 /** `<meta property|name="key" content="…">` values of a document. */
@@ -30,7 +48,13 @@ function metaTags(html: string): Map<string, string> {
   return tags;
 }
 
-for (const { name, path, image, type } of pages) {
+for (const { name, path, image, type, alt = EN_ALT } of pages as {
+  name: string;
+  path: string;
+  image: string;
+  type: string;
+  alt?: RegExp;
+}[]) {
   test(`og: ${name} page has its share image`, async ({ request }, testInfo) => {
     test.skip(testInfo.project.name !== 'desktop', 'the images do not depend on the viewport');
     const response = await request.get(path);
@@ -44,7 +68,7 @@ for (const { name, path, image, type } of pages) {
     expect(tags.get('twitter:card')).toBe('summary_large_image');
     expect(tags.get('og:image:width')).toBe('1200');
     expect(tags.get('og:image:height')).toBe('630');
-    expect(tags.get('og:image:alt')).toMatch(/^Lectio card for /);
+    expect(tags.get('og:image:alt')).toMatch(alt);
 
     const url = new URL(tags.get('og:image') ?? '');
     expect(url.protocol).toMatch(/^https?:$/);
