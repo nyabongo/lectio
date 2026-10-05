@@ -10,12 +10,16 @@
  * Header and footer strings come from `src/i18n/<lang>/common.json` (L-051) and links are locale-prefixed with
  * `localePath`; slots `head` (extra head elements, e.g. the SEO component of L-058) and `header-actions` (extra
  * header controls) let pages add to both.
+ *
+ * PWA (L-061): the manifest, theme colour and icons are linked here, and `PwaUpdate` registers the service worker
+ * and holds the update-available toast.
  */
 import '../styles/global.css';
 
+import PwaUpdate from '../components/pwa/PwaUpdate.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../i18n/index.ts';
 import { headScript } from '../lib/settings.ts';
-import { colourAttribute, themeCss } from '../lib/theme.ts';
+import { ACCENTS, DEFAULT_COLOUR, colourAttribute, themeCss } from '../lib/theme.ts';
 import { withBase } from '../lib/site.ts';
 
 export interface Props {
@@ -54,6 +58,10 @@ const links = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content={ACCENTS.light[DEFAULT_COLOUR].accent} />
+    <link rel="manifest" href={withBase(base, 'manifest.webmanifest')} />
+    <link rel="icon" href={withBase(base, 'icons/icon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase(base, 'icons/apple-touch-icon.png')} />
     <title>{fullTitle}</title>
     {description !== undefined && <meta name="description" content={description} />}
     <link rel="preload" href={withBase(base, 'fonts/source-sans-3-latin-400-normal.woff2')} as="font" type="font/woff2" crossorigin />
@@ -93,6 +101,7 @@ const links = {
         <p><a href={links.about}>{t(lang, 'common.footer.about')}</a></p>
       </div>
     </footer>
+    <PwaUpdate lang={lang} />
   </body>
 </html>
 
@@ -154,7 +163,9 @@ const links = {
 
   .site-nav {
     display: flex;
-    gap: var(--space-2xs);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0 var(--space-2xs);
   }
 
   .site-nav a {

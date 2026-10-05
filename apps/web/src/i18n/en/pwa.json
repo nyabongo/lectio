@@ -1,0 +1,16 @@
+{
+  "update": {
+    "message": "A new version of Lectio is ready.",
+    "reload": "Reload",
+    "dismiss": "Not now"
+  },
+  "offline": {
+    "title": "Offline",
+    "description": "This page is not saved on this device yet.",
+    "eyebrow": "No connection",
+    "heading": "This page is not saved for offline reading",
+    "body": "Lectio keeps today, the next six days and every day you have opened on this device, so you can read them without a connection. This page is not one of them yet. It will open once you are back online.",
+    "home": "Go to today",
+    "retry": "Try again"
+  }
+}

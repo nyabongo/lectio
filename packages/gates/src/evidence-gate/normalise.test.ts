@@ -8,7 +8,20 @@ import {
   normaliseText,
   stripTags,
   wordCount,
+  type MatchWork,
 } from './normalise.ts';
+
+/**
+ * The complexity probes below count the matcher's work instead of timing it, so machine load
+ * cannot fail them. Each scales one input by four and allows at most this growth in work: linear
+ * work grows about four times, quadratic sixteen.
+ */
+const GROWTH_LIMIT = 6;
+const SENTENCE = 'The owner of the house went out at the third hour and saw the others standing in the market. ';
+
+function newWork(): MatchWork {
+  return { scanned: 0, visits: 0 };
+}
 
 describe('decodeEntities', () => {
   it('decodes numeric references and common named entities', () => {
@@ -93,14 +106,18 @@ describe('whole-word, windowed matching', () => {
     expect(excerptOccurs('a b c … d e f … g h i', three)).toBe(true);
   });
 
-  it('stays fast on many repeated pieces over long repetitive text (no exponential backtracking)', () => {
-    const page = 'The owner of the house went out at the third hour and saw the others standing in the market. '.repeat(
-      200,
-    );
-    const start = performance.now();
-    expect(excerptOccurs(`${'the … '.repeat(12)}unicorn`, page)).toBe(false);
-    expect(excerptOccurs(`${'the … '.repeat(12)}market`, page)).toBe(true);
-    expect(performance.now() - start).toBeLessThan(500);
+  it('does work linear in the number of repeated pieces over long repetitive text (no exponential backtracking)', () => {
+    const page = SENTENCE.repeat(100);
+    const visits = (k: number, last = 'unicorn'): number => {
+      const work = newWork();
+      expect(excerptOccurs(`${'the … '.repeat(k)}${last}`, page, work)).toBe(last !== 'unicorn');
+      return work.visits;
+    };
+    // One more piece must not multiply the work (unmemoised backtracking multiplies it about twentyfold).
+    expect(visits(3) / visits(2)).toBeLessThan(3);
+    // Four times the pieces costs about four times the work.
+    expect(visits(24) / visits(6)).toBeLessThan(GROWTH_LIMIT);
+    expect(visits(12, 'market')).toBeGreaterThan(0);
   });
 
   it('matches with inline tags glued or spaced, whichever the page needs', () => {
@@ -115,6 +132,30 @@ describe('whole-word, windowed matching', () => {
       true,
     );
     expect(excerptOccurs('1The kingdom of', '<p><sup>1</sup> The kingdom of</p>')).toBe(false);
+  });
+
+  it('searches only the gap window for each later piece, so work grows with the page, not its square', () => {
+    const work = (repeats: number): MatchWork => {
+      const page = SENTENCE.repeat(repeats);
+      const total = newWork();
+      expect(excerptOccurs('the … unicorn', page, total)).toBe(false);
+      expect(excerptOccurs('the … others standing in … the market', page, total)).toBe(true);
+      return total;
+    };
+    const small = work(500);
+    const large = work(2000);
+    expect(SENTENCE.length * 2000).toBeGreaterThan(180_000);
+    // Four times the page costs about four times the work; searching to the end of the page costs sixteen.
+    expect(large.scanned / small.scanned).toBeLessThan(GROWTH_LIMIT);
+    expect(large.visits / small.visits).toBeLessThan(GROWTH_LIMIT);
+  });
+
+  it('finds a later piece exactly at the edge of the gap window and not beyond it', () => {
+    // The gap runs from the end of one piece to the start of the next; spaces collapse, so pad with words.
+    const page = (filler: string) => `alpha beta gamma ${filler}${' x'.repeat(198)} delta epsilon zeta`;
+    expect(page('xx').indexOf('delta') - 'alpha beta gamma'.length).toBe(400);
+    expect(excerptOccurs('alpha beta gamma … delta epsilon zeta', page('xx'))).toBe(true);
+    expect(excerptOccurs('alpha beta gamma … delta epsilon zeta', page('xxx'))).toBe(false);
   });
 
   it('drops pieces with no letter or digit', () => {
