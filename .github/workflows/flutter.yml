@@ -1,0 +1,169 @@
+# Flutter app (apps/mobile, L-100). Flutter is not installed locally, so this
+# workflow is the compiler and test runner: iterate on a draft PR.
+#
+# `flutter` is a required check (.github/required-checks/flutter.json), so there
+# is no trigger-level `paths:` filter. Instead its changes step diffs against
+# the PR base, or origin/main for any other event (for a push to main, where
+# origin/main is HEAD, the previous tip), and the job exits green when nothing
+# under apps/mobile, packages/schema/fixtures or this file changed.
+# `workflow_dispatch` lets the merge-rule job (L-031) re-run it on the approval
+# commit.
+#
+# `ios` is not a required check. It runs after `flutter` on push to main and on
+# PRs labelled `ios-build` (the `labeled` trigger re-runs the workflow when the
+# label is added).
+name: Flutter
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    working-directory: apps/mobile
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      relevant: ${{ steps.changes.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Did apps/mobile or the schema fixtures change?
+        id: changes
+        working-directory: .
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            base="$PR_BASE"
+          elif [ "$EVENT" = push ] && [ -n "$BEFORE" ] && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            base="$BEFORE"
+          else
+            base=origin/main
+          fi
+          echo "Diffing against $base"
+          changed="$(git diff --name-only "$base"...HEAD)"
+          if grep -qE '^(apps/mobile/|packages/schema/fixtures/|\.github/workflows/flutter\.yml$)' <<<"$changed"; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nothing relevant to the Flutter app changed."
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Nothing to do
+        if: steps.changes.outputs.relevant != 'true'
+        working-directory: .
+        run: echo "No changes under apps/mobile or packages/schema/fixtures; the check passes."
+      - uses: actions/setup-java@v6
+        if: steps.changes.outputs.relevant == 'true'
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        if: steps.changes.outputs.relevant == 'true'
+        with:
+          channel: stable
+          flutter-version-file: apps/mobile/pubspec.yaml
+          cache: true
+      - run: flutter pub get
+        if: steps.changes.outputs.relevant == 'true'
+      - name: dart format --set-exit-if-changed
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          if ! dart format --output=none --set-exit-if-changed .; then
+            echo "::error::Run 'dart format .' in apps/mobile. The formatter would change:"
+            dart format . >/dev/null
+            git diff
+            exit 1
+          fi
+      - run: flutter analyze
+        if: steps.changes.outputs.relevant == 'true'
+      - run: flutter test --coverage
+        if: steps.changes.outputs.relevant == 'true'
+      # Dart line coverage >= minCoverage (96) in tool/check_coverage.dart, every
+      # lib/ file loaded by a test, generated *.g.dart/*.freezed.dart excluded.
+      - run: dart run tool/check_coverage.dart
+        if: steps.changes.outputs.relevant == 'true'
+      - name: Upload lcov
+        if: ${{ !cancelled() && steps.changes.outputs.relevant == 'true' && hashFiles('apps/mobile/coverage/lcov.info') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-coverage-lcov
+          path: apps/mobile/coverage/lcov.info
+          retention-days: 14
+      # Until android/ and ios/ are committed, generate them from the pinned
+      # Flutter (flutter create never overwrites existing files) and keep them
+      # as an artifact for the first issue that needs native changes.
+      - name: Materialise platform folders
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          if [ ! -d android ] || [ ! -d ios ]; then
+            flutter create --no-pub --org io.github.nyabongo --project-name lectio --platforms android,ios .
+          fi
+          grep -q 'applicationId = "io.github.nyabongo.lectio"' android/app/build.gradle.kts
+          grep -q 'PRODUCT_BUNDLE_IDENTIFIER = io.github.nyabongo.lectio;' ios/Runner.xcodeproj/project.pbxproj
+      - name: Upload platform folders
+        if: steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-platforms
+          path: |
+            apps/mobile/android
+            apps/mobile/ios
+            apps/mobile/pubspec.lock
+          retention-days: 14
+      - run: flutter build apk --debug
+        if: steps.changes.outputs.relevant == 'true'
+      - name: Upload debug APK
+        if: steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: lectio-debug-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
+
+  ios:
+    needs: flutter
+    if: >-
+      needs.flutter.outputs.relevant == 'true' &&
+      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ios-build')))
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: apps/mobile/pubspec.yaml
+          cache: true
+      - run: flutter pub get
+      - name: Materialise platform folders
+        run: |
+          if [ ! -d ios ]; then
+            flutter create --no-pub --org io.github.nyabongo --project-name lectio --platforms ios .
+          fi
+      - run: flutter build ios --no-codesign --debug
+      - name: Upload Runner.app
+        uses: actions/upload-artifact@v7
+        with:
+          name: lectio-ios-debug
+          path: apps/mobile/build/ios/iphoneos/Runner.app
+          retention-days: 14
+          if-no-files-found: error
