@@ -59,9 +59,9 @@ void main() {
       source
         ..addError(StateError('bad link'))
         ..add(Uri.parse('lectio://2026-09-20/gospel/notes/v15-evil-eye'));
-      await source.close();
-      await subscription.asFuture<void>();
+      await pumpEventQueue();
       await subscription.cancel();
+      await source.close();
       expect(links.takeInitialLocation(), _note);
     });
 
