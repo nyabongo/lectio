@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lectio/data/models/day.dart';
 import 'package:lectio/features/listen/listen_queue.dart';
 import 'package:lectio/features/listen/listen_segment.dart';
 
+import '../../data/fixtures.dart';
 import 'fake_players.dart';
 
 void main() {
@@ -524,6 +526,56 @@ void main() {
       expect(queue.fallingBack, isFalse);
       expect(player.calls, isEmpty);
       expect(speech.calls, ['speak en 1.0 Script 2.']);
+    });
+  });
+
+  group('the API queue', () {
+    // masses[].segments of the fixture day: the context and the first note
+    // are rendered, the second note is not.
+    final english = segmentsForMass(
+      parseApiDay(fixtureJson('day-with-segments')).masses.single,
+    );
+    final masses =
+        fixtureObject('day-with-segments')['masses']! as List<Object?>;
+    final mass = masses.single! as Map<String, Object?>;
+    final scripts = [
+      for (final item in mass['segments']! as List<Object?>)
+        (item! as Map<String, Object?>)['script']! as String,
+    ];
+
+    test('the device voice reads the API script', () async {
+      await queue.load('a', english);
+      await queue.skipTo(2);
+      expect(speech.calls, ['speak en 1.0 ${scripts[2]}']);
+      expect(scripts[2], startsWith('Translation note on Matthew chapter 20'));
+    });
+
+    test('a file that will not load is read from the API script', () async {
+      player.broken.add(english.first.audio!.url);
+      await queue.load('a', english);
+      await queue.play();
+      expect(speech.calls, ['speak en 1.0 ${scripts[0]}']);
+    });
+
+    test('in Kiswahili, the mirror script, or the English one without a '
+        'Kiswahili voice', () async {
+      final kiswahili = segmentsForMass(
+        parseApiDay(fixtureJson('day-with-segments')).masses.single,
+        localized: parseApiDay(fixtureJson('day-sw-with-segments'))
+            .masses
+            .single,
+        language: 'sw',
+      );
+      await queue.load('a', kiswahili);
+      await queue.skipTo(2);
+      expect(speech.calls.single, startsWith('speak sw 1.0 Maelezo ya'));
+
+      speech
+        ..calls.clear()
+        ..voices = {'en'};
+      queue.forgetVoices();
+      await queue.skipTo(2);
+      expect(speech.calls, ['stop', 'speak en 1.0 ${scripts[2]}']);
     });
   });
 
