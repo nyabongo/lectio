@@ -8,3 +8,5 @@
 /apps/mobile/tool/check_coverage.dart    @nyabongo
 /scripts/check-required-checks.mjs       @nyabongo
 /packages/shared/src/required-checks.ts  @nyabongo
+/.github/coverage-ignore-allowlist.json  @nyabongo
+/eslint.config.js                        @nyabongo

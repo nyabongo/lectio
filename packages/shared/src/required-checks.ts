@@ -8,7 +8,10 @@
  * the approval commit), have no trigger-level `paths:`/`paths-ignore:` (a
  * filtered required check never reports and blocks the merge forever), and
  * define every listed check: a job whose display name (`name:`, falling back to
- * the job id) equals the listed entry and that has no matrix.
+ * the job id) equals the listed entry and that has no matrix. No two non-matrix
+ * jobs in a listed workflow may share a display name (branch protection could not tell
+ * their checks apart, so one could pass for the other), and a registry file may
+ * not list the same check twice.
  *
  * `npm run required-checks` (scripts/check-required-checks.mjs) is the thin CLI.
  */
@@ -51,6 +54,9 @@ export function parseRegistryFile({ file, source }: RegistryFile): RegistryEntry
   }
   if (!Array.isArray(jobs) || jobs.length === 0 || !jobs.every((job) => typeof job === 'string' && job !== '')) {
     problems.push(`${file}: "jobs" must be a non-empty array of check names (job name or id)`);
+  } else {
+    const duplicates = jobs.filter((job: string, index) => jobs.indexOf(job) !== index);
+    for (const job of new Set(duplicates)) problems.push(`${file}: "jobs" lists '${String(job)}' more than once`);
   }
   return problems.length > 0 ? problems : { workflow: workflow as string, jobs: jobs as string[] };
 }
@@ -89,16 +95,30 @@ export function checkWorkflow(workflow: string, source: string, jobs: string[]):
 
   // Branch protection matches the check name a job reports: its `name:` if set,
   // otherwise its id. A matrix job reports one check per combination
-  // (`name (a, b)`), so it can never match a single registered name.
+  // (`name (a, b)`), so it can never match a single registered name, and it
+  // never collides with a plain job of the same name; only plain jobs are
+  // checked for duplicate names.
   const defined = isRecord(doc['jobs']) ? doc['jobs'] : {};
-  const byCheckName = new Map<string, { id: string; job: Record<string, unknown> }>();
+  const plain = new Map<string, { id: string; job: Record<string, unknown> }>();
+  const matrix = new Map<string, { id: string; job: Record<string, unknown> }>();
   for (const [id, job] of Object.entries(defined)) {
     const config = isRecord(job) ? job : {};
     const name = typeof config['name'] === 'string' ? config['name'] : id;
-    byCheckName.set(name, { id, job: config });
+    if (isRecord(config['strategy']) && 'matrix' in config['strategy']) {
+      if (!matrix.has(name)) matrix.set(name, { id, job: config });
+      continue;
+    }
+    const clash = plain.get(name);
+    if (clash !== undefined) {
+      problems.push(
+        `${workflow}: jobs '${clash.id}' and '${id}' both report a check named '${name}'; give each job a unique name: so branch protection can tell them apart`,
+      );
+      continue;
+    }
+    plain.set(name, { id, job: config });
   }
   for (const listed of jobs) {
-    const match = byCheckName.get(listed);
+    const match = plain.get(listed) ?? matrix.get(listed);
     if (match === undefined) {
       const byId = defined[listed];
       problems.push(
@@ -106,7 +126,7 @@ export function checkWorkflow(workflow: string, source: string, jobs: string[]):
           ? `${workflow}: job '${listed}' reports as '${byId['name']}'; list the check name branch protection sees`
           : `${workflow}: job '${listed}' is listed as a required check but not defined`,
       );
-    } else if (isRecord(match.job['strategy']) && 'matrix' in match.job['strategy']) {
+    } else if (!plain.has(listed)) {
       problems.push(
         `${workflow}: job '${match.id}' uses strategy.matrix, so it never reports a check named '${listed}'`,
       );
