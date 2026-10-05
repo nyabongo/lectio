@@ -1,0 +1,518 @@
+{
+  "key": "LK.8.19-21",
+  "ref": "Lk 8:19-21",
+  "locale": "en",
+  "summary": "Told that his mother and brothers are outside, Jesus names as his family those who hear the word of God and do it.",
+  "context": {
+    "title": "Mother and brothers",
+    "paragraphs": [
+      "Matthew and Mark tell the same scene but place it before the parables, while Luke places it after them. [c1] Luke follows Mark in a shortened form. [c2] He leaves out the motive Mark gives earlier, that the family set out to take hold of Jesus because people said he was beside himself. [c3]",
+      "In Luke the visit closes the teaching on the sower. [c4] The seed is the word of God, the good soil are those who hear the word and hold it fast, and the next saying warns hearers to take care how they hear. [c5] The family’s arrival gives Jesus the occasion to name who the good soil are. [c4]",
+      "The saying does not set Mary aside. [c6] Luke has already shown her accepting the angel’s word and keeping these things in her heart, and Bengel remarks that she herself kept the word. [c6] The Pulpit Commentary draws the lesson that something is more solemn even than family ties, holy as they are. [c7]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "adelphoi",
+      "verse": "8:19",
+      "anchor": "brothers",
+      "original": {
+        "text": "ἀδελφοὶ",
+        "lang": "grc",
+        "translit": "adelphoi",
+        "gloss": "brothers, kinsmen"
+      },
+      "summary": "Adelphoi means brothers, but biblical usage stretches the word to near kin; how these were related is disputed.",
+      "body": "Adelphos means brother, but like Hebrew ach it can cover any kinsman, as when Lot is called Abraham’s brother. [c8] Three old readings exist: cousins, the Latin view since Jerome; sons of Joseph by a first marriage, held by many Greek Fathers; and sons of Joseph and Mary, the view of Helvidius. [c9] Catholic tradition, holding Mary’s perpetual virginity, rejects the last; Thayer argues for it. [c10] The word alone does not settle the question. [c11]"
+    },
+    {
+      "id": "paregeneto",
+      "verse": "8:19",
+      "anchor": "came",
+      "original": {
+        "text": "Παρεγένετο",
+        "lang": "grc",
+        "translit": "paregeneto",
+        "gloss": "came (singular verb)"
+      },
+      "summary": "In the SBL Greek text the verb is singular, though its subject is “his mother and his brothers”.",
+      "body": "In the SBL Greek text the verb is singular, though its subject is the mother and the brothers together. [c12] The Greek text used by the Cambridge Bible has the plural instead. [c12] The Cambridge Bible observes that the singular reading would give Mary a specially prominent part in the visit. [c13]"
+    },
+    {
+      "id": "logos-tou-theou",
+      "verse": "8:21",
+      "anchor": "word of God",
+      "original": {
+        "text": "τὸν λόγον τοῦ θεοῦ",
+        "lang": "grc",
+        "translit": "ton logon tou theou",
+        "gloss": "the word of God"
+      },
+      "summary": "Where Mark and Matthew speak of God’s will, Luke speaks of the word of God, the seed of the sower parable.",
+      "body": "Mark ends the scene with doing the will of God, and Matthew with the will of the Father, but Luke has hearing the word of God. [c14] The phrase reaches back to 8:11, where the seed is the word of God. [c15] Ellicott takes it in its widest sense, every form in which a revelation from God reaches the human mind. [c16]"
+    },
+    {
+      "id": "poiountes",
+      "verse": "8:21",
+      "anchor": "do it",
+      "original": {
+        "text": "ποιοῦντες",
+        "lang": "grc",
+        "translit": "poiountes",
+        "gloss": "doing"
+      },
+      "summary": "Hearing has to issue in doing: Luke pairs the two verbs here and in 6:47.",
+      "body": "Luke pairs hearing with doing here, as he does in 6:47 at the close of the Sermon on the Plain. [c17] In 11:28 Jesus likewise calls blessed those who hear the word of God and keep it. [c18] The Cambridge Bible puts the point sharply: hearing without obedience was more than valueless. [c19] The Pulpit Commentary adds that this greater blessedness is open to all who will. [c18]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Matthew 12:46-50 and Mark 3:31-35 report the same incident as Luke 8:19-21, but Luke places it after the teaching in parables and the other two Gospels before.",
+      "sourceIds": ["mt-12-46-50", "mk-3-31-35", "ellicott-lk-8-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Luke gives the section in accordance with Mark, but in a shortened form.",
+      "sourceIds": ["meyer-lk-8-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Mark 3:21 gives the fullest account of the family’s motive, that they went out to seize him because they said he was beside himself; Luke’s shortened account does not include it.",
+      "sourceIds": ["mk-3-21", "cambridge-lk-8-19", "meyer-lk-8-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "In Luke the connection is topical: the visit gives Jesus occasion to indicate who represent the good, fruitful soil of the parable of the sower.",
+      "sourceIds": ["expositors-lk-8-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "In Luke 8:11 the seed is the word of God, in 8:15 the good soil are those who hear the word and hold it fast, and 8:18 warns hearers to take heed how they hear.",
+      "sourceIds": ["lk-8-11", "lk-8-15", "lk-8-18"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Luke presents Mary as accepting the angel’s word (1:38) and keeping these things in her heart (2:19); Bengel remarks that she herself kept the word and was blessed for it, so the saying does not set her aside.",
+      "sourceIds": ["lk-1-38", "lk-2-19", "bengel-lk-11-28"],
+      "sensitive": true
+    },
+    {
+      "id": "c7",
+      "text": "The Pulpit Commentary draws from Luke 8:21 the lesson that there is something more solemn even than family ties, holy and binding though they are.",
+      "sourceIds": ["pulpit-lk-8-21"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Ἀδελφός means a brother but, like the Hebrew אָח, can denote any blood relation or kinsman, as in Genesis 14:16, where Lot is called Abraham’s brother.",
+      "sourceIds": ["thayer-adelphos", "gn-14-16", "catholic-enc-brethren-loose"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Three views of the brethren of the Lord are old: the Latins (with few exceptions) hold they were cousins, the majority of the Greek Fathers took them as sons of Joseph by a first marriage, and Helvidius held they were sons of Joseph and Mary.",
+      "sourceIds": [
+        "catholic-enc-brethren-helvidius",
+        "catholic-enc-brethren-greek",
+        "catholic-enc-brethren-latin",
+        "thayer-adelphos-jerome"
+      ],
+      "sensitive": true
+    },
+    {
+      "id": "c10",
+      "text": "Catholic tradition, citing the ancient belief in Mary’s perpetual virginity, holds that the brethren were not sons of Joseph and Mary, while Thayer’s lexicon argues that they were own brothers born after Jesus.",
+      "sourceIds": ["catholic-enc-brethren-virginity", "thayer-adelphos-own"],
+      "sensitive": true
+    },
+    {
+      "id": "c11",
+      "text": "The word brethren by itself furnishes no certain indication of the exact relationship.",
+      "sourceIds": ["catholic-enc-brethren-no-certain"],
+      "sensitive": true
+    },
+    {
+      "id": "c12",
+      "text": "The SBL Greek New Testament reads the singular Παρεγένετο in Luke 8:19, while the Greek text used by the Cambridge Bible reads a plural.",
+      "sourceIds": ["lk-8-19", "cambridge-lk-8-19-plural"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "The Cambridge Bible notes that the singular reading would imply that Mary took a specially prominent part in the incident.",
+      "sourceIds": ["cambridge-lk-8-19-prominent"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Where Mark 3:35 has doing the will of God and Matthew 12:50 the will of my Father, Luke 8:21 has hearing and doing the word of God.",
+      "sourceIds": ["mk-3-35", "mt-12-50", "ellicott-lk-8-21"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The phrase λόγος τοῦ θεοῦ in Luke 8:21 recalls Luke 8:11, where the seed is the word of God.",
+      "sourceIds": ["lk-8-11", "expositors-lk-8-21"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Ellicott takes the word of God in Luke 8 in its widest sense, including every form by which a revelation from God is conveyed to the mind.",
+      "sourceIds": ["ellicott-lk-8-11"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Luke 6:47, at the close of the Sermon on the Plain, also pairs hearing and doing Jesus’ words.",
+      "sourceIds": ["lk-6-47", "expositors-lk-8-21"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Luke 11:28 calls blessed those who hear the word of God and keep it, a saying parallel to Luke 8:21; the Pulpit Commentary notes that all may attain this blessedness.",
+      "sourceIds": ["lk-11-28", "cambridge-lk-11-28", "pulpit-lk-11-28"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "The Cambridge Bible comments that hearing without obedience was more than valueless.",
+      "sourceIds": ["cambridge-lk-11-28-obedience"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "lk-8-19",
+      "type": "scripture",
+      "citation": "Luke 8:19",
+      "ref": "Lk 8:19",
+      "excerpt": "Παρεγένετο",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-8-11",
+      "type": "scripture",
+      "citation": "Luke 8:11",
+      "ref": "Lk 8:11",
+      "excerpt": "ὁ σπόρος ἐστὶν ὁ λόγος τοῦ θεοῦ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-8-15",
+      "type": "scripture",
+      "citation": "Luke 8:15",
+      "ref": "Lk 8:15",
+      "excerpt": "ἀκούσαντες τὸν λόγον κατέχουσιν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-8-18",
+      "type": "scripture",
+      "citation": "Luke 8:18",
+      "ref": "Lk 8:18",
+      "excerpt": "βλέπετε οὖν πῶς ἀκούετε",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-6-47",
+      "type": "scripture",
+      "citation": "Luke 6:47",
+      "ref": "Lk 6:47",
+      "excerpt": "ἀκούων μου τῶν λόγων καὶ ποιῶν αὐτούς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-11-28",
+      "type": "scripture",
+      "citation": "Luke 11:28",
+      "ref": "Lk 11:28",
+      "excerpt": "οἱ ἀκούοντες τὸν λόγον τοῦ θεοῦ καὶ φυλάσσοντες",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-1-38",
+      "type": "scripture",
+      "citation": "Luke 1:38",
+      "ref": "Lk 1:38",
+      "excerpt": "γένοιτό μοι κατὰ τὸ ῥῆμά σου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-2-19",
+      "type": "scripture",
+      "citation": "Luke 2:19",
+      "ref": "Lk 2:19",
+      "excerpt": "πάντα συνετήρει τὰ ῥήματα ταῦτα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-3-21",
+      "type": "scripture",
+      "citation": "Mark 3:21",
+      "ref": "Mk 3:21",
+      "excerpt": "κρατῆσαι αὐτόν, ἔλεγον γὰρ ὅτι ἐξέστη",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-3-31-35",
+      "type": "scripture",
+      "citation": "Mark 3:31-35",
+      "ref": "Mk 3:31-35"
+    },
+    {
+      "id": "mt-12-46-50",
+      "type": "scripture",
+      "citation": "Matthew 12:46-50",
+      "ref": "Mt 12:46-50"
+    },
+    {
+      "id": "mk-3-35",
+      "type": "scripture",
+      "citation": "Mark 3:35",
+      "ref": "Mk 3:35",
+      "excerpt": "τὸ θέλημα τοῦ θεοῦ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-12-50",
+      "type": "scripture",
+      "citation": "Matthew 12:50",
+      "ref": "Mt 12:50",
+      "excerpt": "τὸ θέλημα τοῦ πατρός μου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "gn-14-16",
+      "type": "scripture",
+      "citation": "Genesis 14:16",
+      "ref": "Gn 14:16",
+      "excerpt": "לוֹט אָחִיו",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ellicott-lk-8-19",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 8:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "St. Luke places it after the teaching by parables",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "meyer-lk-8-19",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 8:19-21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "in accordance with Mark, but in a shortened form",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "cambridge-lk-8-19",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 8:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "The fullest account of their motives is found in Mark 3:21",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "cambridge-lk-8-19-plural",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 8:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "Our text has the plural; the reading paregeneto (sing.)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "cambridge-lk-8-19-prominent",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 8:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "would imply that the Virgin took a specially prominent part",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "expositors-lk-8-19",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 8:19-21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "who are they who represent the good, fruitful soil",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "ellicott-lk-8-21",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 8:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-21.htm",
+      "excerpt": "But note the use of “the word of God,” instead of",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "expositors-lk-8-21",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 8:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-21.htm",
+      "excerpt": "Cf. chap. Luke 6:47, and λόγος τοῦ Θεοῦ, Luke 8:11.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "pulpit-lk-8-21",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 8:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-21.htm",
+      "excerpt": "there was something more solemn even than family ties",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:04:00Z"
+    },
+    {
+      "id": "ellicott-lk-8-11",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 8:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-11.htm",
+      "excerpt": "is obviously to be taken in its widest sense",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "bengel-lk-11-28",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Luke 11:28 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/11-28.htm",
+      "excerpt": "She however was one who herself also kept the word",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "cambridge-lk-11-28",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 11:28 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/11-28.htm",
+      "excerpt": "See Luke 8:21. Our Lord invariably and systematically discouraged",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "cambridge-lk-11-28-obedience",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 11:28 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/11-28.htm",
+      "excerpt": "Hearing without obedience was more than valueless",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "pulpit-lk-11-28",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 11:28 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/11-28.htm",
+      "excerpt": "to that something all, if they pleased, might attain",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "thayer-adelphos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀδελφός (Bible Hub, Strong's 80)",
+      "url": "https://biblehub.com/greek/80.htm",
+      "excerpt": "denotes any blood-relation or kinsman",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "thayer-adelphos-jerome",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀδελφός (Bible Hub, Strong's 80)",
+      "url": "https://biblehub.com/greek/80.htm",
+      "excerpt": "the current opinion among the doctors of the church since Jerome",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "thayer-adelphos-own",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀδελφός (Bible Hub, Strong's 80)",
+      "url": "https://biblehub.com/greek/80.htm",
+      "excerpt": "but own brothers, born after Jesus, is clear principally from",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-loose",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "is often loosely extended to all near, or even distant, relatives",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-helvidius",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "His uterine brothers the sons of Joseph and Mary",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-greek",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "as sons of St. Joseph by a first marriage",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-latin",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "The Latins, on the contrary, with few exceptions",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-virginity",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "the great antiquity of the belief in the perpetual virginity of Mary",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-no-certain",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "the word furnishes no certain indication of the exact nature",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:16:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021b-lk-8-19-21",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T10:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
