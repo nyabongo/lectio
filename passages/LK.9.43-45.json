@@ -20,7 +20,7 @@
         "text": "θέσθε ὑμεῖς εἰς τὰ ὦτα ὑμῶν",
         "lang": "grc",
         "translit": "thesthe hymeis eis ta ōta hymōn",
-        "gloss": "put you into your ears"
+        "gloss": "you, put into your ears"
       },
       "summary": "Greek says “put these words into your ears”: take them into memory and keep them there.",
       "body": "The Greek is concrete: put or set these words into your ears. [c10] Thayer explains the idiom as taking words into memory and holding them there. [c11] Interpreters differ over which words are meant: Meyer thinks of the crowd’s amazement, while Jamieson, Fausset and Brown point to the prediction that follows. [c12] Bengel calls the ears the first degree of understanding, which the disciples’ hearts had not yet reached. [c13]"
@@ -62,7 +62,7 @@
         "gloss": "they were afraid to ask"
       },
       "summary": "Luke, like Mark, records that the disciples were afraid to ask Jesus about the saying.",
-      "body": "Mark’s parallel at Mk 9:32 records the same fear of asking, in almost the same words. [c22] Jamieson, Fausset and Brown suggest the disciples were afraid of laying themselves open to rebuke. [c23] The Pulpit Commentary suggests instead that the saying was so unwelcome that they may have pushed it from their minds, as people do with painful forebodings. [c24] Either way, the silence leaves the saying unexplained for now. [c25]"
+      "body": "Mark’s parallel at Mk 9:32 records the same fear of asking, in almost the same words. [c22] Mark has the compound verb eperōtēsai where Luke has the simple erōtēsai. [c25] Jamieson, Fausset and Brown suggest the disciples were afraid of laying themselves open to rebuke. [c23] The Pulpit Commentary suggests instead that the saying was so unwelcome that they may have pushed it from their minds, as people do with painful forebodings. [c24]"
     }
   ],
   "claims": [
@@ -171,7 +171,7 @@
     {
       "id": "c18",
       "text": "Παρακαλύπτω means to cover over, hide or conceal, and Lk 9:45 is its only New Testament occurrence.",
-      "sourceIds": ["thayer-parakalypto", "biblehub-parakalypto-occurrence"],
+      "sourceIds": ["thayer-parakalypto", "englishmans-parakalypto-occurrence"],
       "sensitive": false
     },
     {
@@ -212,8 +212,8 @@
     },
     {
       "id": "c25",
-      "text": "In Lk 9:45 the disciples do not ask, so the saying remains unexplained to them.",
-      "sourceIds": ["lk-9-45"],
+      "text": "For asking, Mk 9:32 has the compound verb ἐπερωτῆσαι where Lk 9:45 has the simple ἐρωτῆσαι.",
+      "sourceIds": ["mk-9-32", "lk-9-45"],
       "sensitive": false
     }
   ],
@@ -543,13 +543,13 @@
       "retrievedAt": "2026-10-05T09:08:00Z"
     },
     {
-      "id": "biblehub-parakalypto-occurrence",
+      "id": "englishmans-parakalypto-occurrence",
       "type": "web",
-      "citation": "Bible Hub Topical Lexicon, Strong's Greek 3871 παρακαλύπτω (Bible Hub)",
-      "url": "https://biblehub.com/greek/3871.htm",
-      "excerpt": "The sole New Testament instance, Luke 9:45",
+      "citation": "Englishman's Greek Concordance (Wigram), 3871 παρακαλύπτω (Bible Hub)",
+      "url": "https://biblehub.com/greek/strongs_3871.htm",
+      "excerpt": "Strong's Greek: 3871. παρακαλύπτω (parakaluptó) — 1 Occurrence",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T09:08:00Z"
+      "retrievedAt": "2026-10-05T12:40:00Z"
     }
   ],
   "provenance": {

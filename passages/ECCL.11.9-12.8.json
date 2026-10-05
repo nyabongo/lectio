@@ -6,9 +6,9 @@
   "context": {
     "title": "Remember your Creator before the evil days",
     "paragraphs": [
-      "The reading opens with a call to the young man to rejoice in his youth, followed at once by the warning that God will bring him into judgment. [c1] Some commentators hear the call as ironic, while Gill takes it as serious advice within limits. [c2] Many judge the chapter break at 12:1 misplaced, since the thought runs straight on. [c3]",
+      "The reading opens with a call to the young man to rejoice in his youth, followed at once by the warning that God will bring him into judgment. [c1] Some commentators hear the call as ironic, while Gill takes it as serious advice within limits. [c2] Others judge the chapter break at 12:1 misplaced, since the thought runs straight on. [c3]",
       "Then comes one of the book’s three continuous sections, a description of death in 12:1-8. [c4] Commentators commonly read the failing house of 12:3 as the ageing body, the keepers as arms and the grinders as teeth. [c5] Ellicott warns that such anatomy grows forced in detail, and the Cambridge Bible notes a second line of reading: death approaching like a storm. [c6][c7]",
-      "In 12:7 the dust returns to the earth, echoing Gen 2:7 and 3:19. [c8] Ellicott sees the speaker rising here above his earlier doubt in 3:21 about where the human spirit goes. [c9] The Targum and the Talmud identified Qoheleth with Solomon. [c10] The closing refrain of 12:8 repeats the book’s opening words in 1:2, framing the whole. [c11]"
+      "In 12:7 the dust returns to the earth, echoing the creation of man in Gen 2:7 and the sentence of Gen 3:19. [c8] Ellicott sees the speaker rising here above his earlier doubt in 3:21 about where the human spirit goes. [c9] The closing refrain of 12:8 then resumes the book’s opening words in 1:2, framing the whole book. [c11]"
     ]
   },
   "translationNotes": [
@@ -61,8 +61,8 @@
         "translit": "bêt ʿôlāmô",
         "gloss": "house of his eternity"
       },
-      "summary": "Literally “the house of his eternity”: the grave or Sheol, a phrase Jews long used for the grave.",
-      "body": "The phrase is literally the house of his eternity, ʿôlām meaning long duration. [c24][c25] The Targum takes it as the grave, and the Cambridge Bible prefers Sheol, the dwelling-place of the dead. [c26][c27] The same commentary reports, after Ginsburg, that the phrase was in common use among the Jews of his day. [c27] It adds that the thought of immortality, though not prominent here, is not excluded. [c28]"
+      "summary": "Literally “the house of his eternity”: the grave or Sheol; Ginsburg reports the phrase in common use among the Jews of his own day.",
+      "body": "The phrase is literally the house of his eternity, ʿôlām meaning long duration. [c24][c25] The Targum takes it as the grave, and the Cambridge Bible prefers Sheol, the dwelling-place of the dead. [c26][c27] The same commentary reports, after Ginsburg, that the phrase was in common use among the Jews of Ginsburg’s own day. [c27] It adds that the thought of immortality, though not prominent here, is not excluded. [c28]"
     }
   ],
   "claims": [
@@ -80,7 +80,7 @@
     },
     {
       "id": "c3",
-      "text": "Commentators judge the chapter division at Eccl 12:1 unfortunate, since the new chapter would more naturally begin at 11:9.",
+      "text": "Some commentators, such as Ellicott and the Pulpit Commentary, judge the chapter division at Eccl 12:1 unfortunate, since the new chapter would more naturally begin at 11:9.",
       "sourceIds": ["pulpit-eccl-12-1-division", "ellicott-eccl-11-9"],
       "sensitive": false
     },
@@ -119,12 +119,6 @@
       "text": "Ellicott holds that in Eccl 12:7 the preacher has risen above the doubt of Eccl 3:21 about whether the human spirit goes upward.",
       "sourceIds": ["ellicott-eccl-12-7", "eccl-3-21"],
       "sensitive": true
-    },
-    {
-      "id": "c10",
-      "text": "The ancients, including the Peshitta, the Targum and the Talmud, identified the author of Ecclesiastes with Solomon.",
-      "sourceIds": ["je-ecclesiastes-solomon"],
-      "sensitive": false
     },
     {
       "id": "c11",
@@ -224,7 +218,7 @@
     },
     {
       "id": "c27",
-      "text": "The Cambridge Bible takes the eternal home as the grave or, more probably, Sheol, and reports Ginsburg's statement that the phrase was in common use among Jews of his time.",
+      "text": "The Cambridge Bible takes the eternal home as the grave or, more probably, Sheol, and reports Ginsburg's statement that the phrase was in common use among modern Jews, that is, the Jews of Ginsburg's own day.",
       "sourceIds": ["cambridge-eccl-12-5-sheol", "cambridge-eccl-12-5-ginsburg"],
       "sensitive": false
     },
@@ -672,15 +666,6 @@
       "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
       "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
       "excerpt": "a description of death, xii. 1-8",
-      "excerptLang": "en",
-      "retrievedAt": "2026-10-05T09:15:00Z"
-    },
-    {
-      "id": "je-ecclesiastes-solomon",
-      "type": "web",
-      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
-      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
-      "excerpt": "led the ancients to identify him with Solomon",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:15:00Z"
     }
