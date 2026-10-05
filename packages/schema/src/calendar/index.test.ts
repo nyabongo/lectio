@@ -12,6 +12,7 @@ const EXPECTED_FAILURES: Record<string, [instancePath: string, keyword: string]>
   'fractional-year': ['/year', 'type'],
   'impossible-date': ['/days/1/date', 'format'],
   'linkout-not-http': ['/days/1/masses/0/readings/3/linkout', 'pattern'],
+  'names-without-sw': ['/days/1/celebrations/0/names', 'required'],
   'no-celebrations': ['/days/1/celebrations', 'minItems'],
   'no-masses-without-missing-flag': ['/days/2/masses', 'minItems'],
   'reading-with-text': ['/days/1/masses/0/readings/3', 'additionalProperties'],

@@ -64,13 +64,30 @@ const massSchema = {
   },
 } as const;
 
+/**
+ * A celebration's name in each calendar language (L-111). `en` repeats `name`; `sw` is the Kiswahili
+ * name from `calendar/i18n/sw.json`, or the English name where that file flags a fallback.
+ */
+const celebrationNamesSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['en', 'sw'],
+  properties: {
+    en: nonEmptyStringSchema,
+    sw: nonEmptyStringSchema,
+  },
+} as const;
+
 const celebrationSchema = {
   type: 'object',
   additionalProperties: false,
   required: ['id', 'name', 'rank', 'colour'],
   properties: {
     id: slugSchema,
+    /** English name (romcal's, or the regional override's). */
     name: nonEmptyStringSchema,
+    /** Optional so files built before L-111 stay valid; `calendar:build` always writes it. */
+    names: celebrationNamesSchema,
     rank: { type: 'string', enum: CELEBRATION_RANKS },
     colour: liturgicalColourSchema,
   },
