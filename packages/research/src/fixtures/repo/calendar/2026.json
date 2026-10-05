@@ -1,0 +1,234 @@
+{
+  "year": 2026,
+  "region": "kenya",
+  "generatedBy": "@lectio/research planner fixture",
+  "days": [
+    {
+      "date": "2026-10-01",
+      "season": "ordinary-time",
+      "seasonWeek": 26,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "therese-of-lisieux",
+          "name": "Saint Thérèse of the Child Jesus",
+          "rank": "memorial",
+          "colour": "white"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jb 19:21-27",
+              "key": "JOB.19.21-27",
+              "linkout": "https://www.drbo.org/chapter/18019.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 27:7-8a, 8b-9abc, 13-14",
+              "key": "PS.27.7-9_27.13-14",
+              "linkout": "https://www.drbo.org/chapter/21027.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 10:1-12",
+              "key": "LK.10.1-12",
+              "linkout": "https://www.drbo.org/chapter/49010.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-10-02",
+      "season": "ordinary-time",
+      "seasonWeek": 26,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "guardian-angels",
+          "name": "The Holy Guardian Angels",
+          "rank": "memorial",
+          "colour": "white"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 55:6-9",
+              "key": "IS.55.6-9",
+              "linkout": "https://www.drbo.org/chapter/29055.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 139:1-3",
+              "key": "PS.139.1-3",
+              "linkout": "https://www.drbo.org/chapter/21139.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 18:1-5, 10",
+              "key": "MT.18.1-5_18.10",
+              "linkout": "https://www.drbo.org/chapter/47018.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-10-03",
+      "season": "ordinary-time",
+      "seasonWeek": 26,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "saturday-week-26",
+          "name": "Saturday of the Twenty-sixth Week",
+          "rank": "weekday",
+          "colour": "green"
+        }
+      ],
+      "masses": [],
+      "lectionaryMissing": true
+    },
+    {
+      "date": "2026-10-04",
+      "season": "ordinary-time",
+      "seasonWeek": 27,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "ordinary-time-27-sunday",
+          "name": "Twenty-seventh Sunday in Ordinary Time",
+          "rank": "sunday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "vigil",
+          "label": "Vigil Mass",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 2:18-24",
+              "key": "GN.2.18-24",
+              "linkout": "https://www.drbo.org/chapter/01002.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 10:2-16",
+              "key": "MK.10.2-16",
+              "linkout": "https://www.drbo.org/chapter/48010.htm"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 2:18-24",
+              "key": "GN.2.18-24",
+              "linkout": "https://www.drbo.org/chapter/01002.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 2:9-11",
+              "key": "HEB.2.9-11",
+              "linkout": "https://www.drbo.org/chapter/65002.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 10:2-12",
+              "key": "MK.10.2-16",
+              "linkout": "https://www.drbo.org/chapter/48010.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-10-06",
+      "season": "ordinary-time",
+      "seasonWeek": 27,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "tuesday-week-27",
+          "name": "Tuesday of the Twenty-seventh Week",
+          "rank": "weekday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gal 1:13-24",
+              "key": "GAL.1.13-24",
+              "linkout": "https://www.drbo.org/chapter/55001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 10:1-12",
+              "key": "LK.10.1-12",
+              "linkout": "https://www.drbo.org/chapter/49010.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-12-31",
+      "season": "christmas",
+      "seasonWeek": 1,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "christmas-octave-7",
+          "name": "Seventh Day within the Octave of the Nativity",
+          "rank": "weekday",
+          "colour": "white"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:1-18",
+              "key": "JN.1.1-18",
+              "linkout": "https://www.drbo.org/chapter/50001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    }
+  ]
+}
