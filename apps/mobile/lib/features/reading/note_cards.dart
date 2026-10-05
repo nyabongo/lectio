@@ -380,11 +380,7 @@ class NoteCard extends StatelessWidget {
       ),
     );
     if (!highlighted) return card;
-    return Semantics(
-      container: true,
-      label: _strings.linkedNote,
-      child: card,
-    );
+    return Semantics(container: true, label: _strings.linkedNote, child: card);
   }
 }
 
@@ -461,12 +457,7 @@ class ContextPanel extends StatelessWidget {
 /// into view and highlighted; an unknown id leaves the tab as it is.
 class OriginalPanel extends StatefulWidget {
   /// Creates the Original tab of [passage], shown on [page].
-  const new({
-    required this.passage,
-    required this.page,
-    this.note,
-    super.key,
-  });
+  const new({required this.passage, required this.page, this.note, super.key});
 
   /// The approved notes.
   final PassageNotes passage;
