@@ -1,9 +1,9 @@
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { openRepo } from '@lectio/content';
 import type { ContentRepo } from '@lectio/content';
@@ -28,6 +28,7 @@ import {
   reportPlan,
   resolveTargets,
   runRender,
+  siteManifestOf,
   storageFor,
   summaryMarkdown,
   translationSegments,
@@ -36,6 +37,22 @@ import {
 
 const FIXTURE_REPO = fileURLToPath(new URL('../script/fixtures/repo', import.meta.url));
 const LOCALE_REPO = fileURLToPath(new URL('../locale/fixtures/repo', import.meta.url));
+
+/** Makes `key` look missing from `storage`, as an object deleted from the bucket would. */
+function hide(storage: MemoryObjectStorage, key: string): void {
+  const { list, head, get } = {
+    list: storage.list.bind(storage),
+    head: storage.head.bind(storage),
+    get: storage.get.bind(storage),
+  };
+  vi.spyOn(storage, 'list').mockImplementation(async (prefix) =>
+    (await list(prefix)).filter((info) => info.key !== key),
+  );
+  vi.spyOn(storage, 'head').mockImplementation((k) => (k === key ? Promise.resolve(null) : head(k)));
+  vi.spyOn(storage, 'get').mockImplementation((k) => (k === key ? Promise.resolve(null) : get(k)));
+}
+
+type TtsProviderLike = { readonly formats: readonly TtsFormat[]; synthesize(request: TtsRequest): Promise<TtsResult> };
 
 /** Every secret the live providers need. */
 const SECRETS = {
@@ -247,6 +264,27 @@ describe('translationSegments', () => {
   });
 });
 
+describe('siteManifestOf', () => {
+  it('drops stale keys unless they were rendered or adopted again', () => {
+    const entry = {
+      url: 'https://x/',
+      bytes: 1,
+      durationMs: null,
+      voice: 'v',
+      ttsVersion: 'fake-1',
+      format: 'wav',
+      createdAt: '2026-10-01T00:00:00Z',
+      contentType: 'audio/wav',
+      characters: 1,
+    } as const;
+    const manifest = { version: 1, entries: { a: entry, b: entry, c: entry, d: entry } };
+    expect(Object.keys(siteManifestOf(manifest, ['a', 'b', 'c'], { rendered: ['b'], adopted: ['c'] }).entries)).toEqual(
+      ['b', 'c', 'd'],
+    );
+    expect(Object.keys(siteManifestOf(manifest, ['a']).entries)).toEqual(['b', 'c', 'd']);
+  });
+});
+
 describe('summaryMarkdown', () => {
   const plan = planRender([], emptyManifest(), { voices: {}, ttsVersion: 'fake-1', format: 'wav' });
 
@@ -272,7 +310,7 @@ describe('summaryMarkdown', () => {
     expect(text).toContain('Provider `azure`, storage `s3`.');
     expect(text).toContain('- rendered 1, adopted 0, failed 0 (12 characters billed)');
     expect(text).toContain('- site audio: manifest handed to the web build');
-    expect(text).toContain('**Stopped:** boom');
+    expect(text).toContain('**Stopped early:** boom');
     expect(text).not.toContain('segments,');
   });
 });
@@ -523,7 +561,7 @@ describe('runRender', () => {
     expect(result.code).toBe(1);
     expect(result.err.at(-1)).toBe('audio:render: audio manifest: unsupported version 9');
     expect(await readFile(join(dir, 'summary.md'), 'utf8')).toContain(
-      '**Stopped:** audio manifest: unsupported version 9',
+      '**Stopped early:** audio manifest: unsupported version 9',
     );
   });
 
@@ -551,12 +589,28 @@ describe('runRender', () => {
     expect(result.code).toBe(1);
     expect(result.err.at(-1)).toMatch(/^audio:render: \d+ characters exceed the 10 left this month$/);
     expect(result.out).toHaveLength(1);
-    expect(await readFile(join(dir, 'summary.md'), 'utf8')).toMatch(/\*\*Stopped:\*\* \d+ characters exceed/);
+    expect(await readFile(join(dir, 'summary.md'), 'utf8')).toMatch(
+      /\*\*Stopped early:\*\* \d+ characters exceed the 10 left this month; nothing new was rendered, and the audio already recorded stays published/,
+    );
   });
 
-  it('writes the site manifest for configured storage with a public base URL', async () => {
+  /** A live run (the azure route with a stand-in voice) into `storage`. */
+  const live = async (args: string[], tts: Mp3Tts | TtsProviderLike, storage: MemoryObjectStorage) => {
+    env = { ...env, ...SECRETS };
+    const { out, err, io } = capture();
+    const code = await runRender(['--provider', 'azure', '--storage', 's3', ...args], {
+      cwd: dir,
+      env,
+      io,
+      clock,
+      live: { tts, storage },
+    });
+    return { code, out, err };
+  };
+
+  it('writes the site manifest for a live voice in configured storage with a public base URL', async () => {
     await writeConfig(1_000_000, 'https://cdn.example/');
-    const result = await run(['--storage', 'fs:out', '--site-manifest', 'site.json']);
+    const result = await live(['--site-manifest', 'site.json'], new Mp3Tts(), new MemoryObjectStorage());
     expect(result.code).toBe(0);
     const site = parseManifest(await readFile(join(dir, 'site.json'), 'utf8'));
     expect(Object.values(site.entries).every((entry) => entry.url.startsWith('https://cdn.example/audio/en/'))).toBe(
@@ -564,13 +618,120 @@ describe('runRender', () => {
     );
   });
 
+  it('never publishes the fake voice, nor sends it to live storage', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const fs = await run(['--storage', 'fs:out', '--site-manifest', 'site.json']);
+    expect(fs.code).toBe(0);
+    expect(fs.out.at(-1)).toBe('audio:render: no site manifest: these files are not published');
+    await expect(readFile(join(dir, 'site.json'))).rejects.toThrow();
+    const s3 = await run(['--provider', 'fake', '--storage', 's3']);
+    expect(s3.code).toBe(2);
+    expect(s3.err.some((line) => line.startsWith('audio:render: the fake voice never goes to live storage'))).toBe(
+      true,
+    );
+  });
+
   it('exits 1 and names the files that failed', async () => {
-    // A file where the objects directory should be makes every write fail.
-    await mkdir(join(dir, 'store'));
-    await writeFile(join(dir, 'store', 'objects'), '');
-    const result = await run(['--storage', 'fs:store', '--retries', '0']);
+    const failing = {
+      formats: ['mp3'] as const,
+      synthesize: (): Promise<TtsResult> => Promise.reject(new ProviderError('invalid-request', 'no')),
+    };
+    const result = await live(['--retries', '0'], failing, new MemoryObjectStorage());
     expect(result.code).toBe(1);
     expect(result.err.filter((line) => line.startsWith('  failed audio/en/'))).toHaveLength(3);
+  });
+
+  it('drops an entry whose file went missing and could not be rendered again from the site manifest', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const storage = new MemoryObjectStorage();
+    expect((await live(['--site-manifest', 'first.json'], new Mp3Tts(), storage)).code).toBe(0);
+    const before = parseManifest(await readFile(join(dir, 'first.json'), 'utf8'));
+    const [lost, ...kept] = Object.keys(before.entries).sort() as [string, ...string[]];
+    hide(storage, lost);
+    const failing = {
+      formats: ['mp3'] as const,
+      synthesize: (): Promise<TtsResult> => Promise.reject(new ProviderError('rate-limited', 'throttled')),
+    };
+    const result = await live(['--retries', '0', '--site-manifest', 'site.json'], failing, storage);
+    expect(result.code).toBe(1);
+    expect(result.err).toContain(`  missing from storage, rendering again: ${lost}`);
+    const site = parseManifest(await readFile(join(dir, 'site.json'), 'utf8'));
+    expect(Object.keys(site.entries).sort()).toEqual(kept);
+    // render() also drops it from the stored manifest, so the next run does not trust it either.
+    expect(Object.keys((await readManifest(storage)).entries).sort()).toEqual(kept);
+  });
+
+  it('keeps the audio already recorded on the site when the budget stops the run', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const storage = new MemoryObjectStorage();
+    expect((await live(['--site-manifest', 'first.json'], new Mp3Tts(), storage)).code).toBe(0);
+    const first = parseManifest(await readFile(join(dir, 'first.json'), 'utf8'));
+    // One file goes missing, and the budget now leaves nothing to render it again with.
+    const [lost, ...kept] = Object.keys(first.entries).sort() as [string, ...string[]];
+    hide(storage, lost);
+    const used = Object.values(first.entries).reduce((sum, entry) => sum + entry.characters, 0);
+    await writeConfig(used, 'https://cdn.example/');
+    const tts = new Mp3Tts();
+    const result = await live(['--site-manifest', 'site.json', '--summary', 'summary.md'], tts, storage);
+    expect(result.code).toBe(1);
+    expect(tts.requests).toEqual([]);
+    const site = parseManifest(await readFile(join(dir, 'site.json'), 'utf8'));
+    expect(Object.keys(site.entries).sort()).toEqual(kept);
+    const summary = await readFile(join(dir, 'summary.md'), 'utf8');
+    expect(summary).toContain('**Stopped early:**');
+    expect(summary).toContain('- site audio: manifest handed to the web build');
+  });
+
+  it('keeps the audio already recorded on the site when the run fails part-way', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const storage = new MemoryObjectStorage();
+    expect((await live(['--site-manifest', 'first.json'], new Mp3Tts(), storage)).code).toBe(0);
+    // Listing the bucket fails after the manifest was read.
+    vi.spyOn(storage, 'list').mockRejectedValue(new Error('r2 list timed out'));
+    const result = await live(['--site-manifest', 'site.json', '--summary', 'summary.md'], new Mp3Tts(), storage);
+    expect(result.code).toBe(1);
+    expect(result.err).toContain('audio:render: r2 list timed out');
+    const site = parseManifest(await readFile(join(dir, 'site.json'), 'utf8'));
+    expect(site.entries).toEqual(parseManifest(await readFile(join(dir, 'first.json'), 'utf8')).entries);
+    expect(await readFile(join(dir, 'summary.md'), 'utf8')).toContain('**Stopped early:** r2 list timed out');
+  });
+
+  it('writes the site manifest before rendering, so a killed step still leaves the recorded audio', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const storage = new MemoryObjectStorage();
+    expect((await live(['--site-manifest', 'first.json'], new Mp3Tts(), storage)).code).toBe(0);
+    const recorded = parseManifest(await readFile(join(dir, 'first.json'), 'utf8')).entries;
+    const passage = JSON.parse(await readFile(join(repo, 'passages', 'MT.20.1-16.json'), 'utf8')) as Passage;
+    await writeFile(
+      join(repo, 'passages', 'MT.20.1-16.json'),
+      JSON.stringify({ ...passage, summary: passage.summary, context: { ...passage.context, title: 'A new title' } }),
+    );
+    const seen: unknown[] = [];
+    const tts = new Mp3Tts();
+    const synthesize = tts.synthesize.bind(tts);
+    tts.synthesize = async (request) => {
+      seen.push(parseManifest(await readFile(join(dir, 'site.json'), 'utf8')).entries);
+      return synthesize(request);
+    };
+    expect((await live(['--site-manifest', 'site.json'], tts, storage)).code).toBe(0);
+    expect(seen).toEqual([recorded]);
+  });
+
+  it('writes no site manifest when the stored one cannot be read', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const storage = new MemoryObjectStorage();
+    await storage.put(MANIFEST_KEY, '{"version": 9, "entries": {}}', { contentType: 'application/json' });
+    const result = await live(['--site-manifest', 'site.json'], new Mp3Tts(), storage);
+    expect(result.code).toBe(1);
+    expect(result.err.at(-1)).toBe('audio:render: no site manifest: the stored manifest could not be read');
+    await expect(readFile(join(dir, 'site.json'))).rejects.toThrow();
+  });
+
+  it('writes no site manifest on a dry run', async () => {
+    await writeConfig(1_000_000, 'https://cdn.example/');
+    const result = await live(['--dry-run', '--site-manifest', 'site.json'], new Mp3Tts(), new MemoryObjectStorage());
+    expect(result.code).toBe(0);
+    await expect(readFile(join(dir, 'site.json'))).rejects.toThrow();
   });
 
   it('rejects bad usage with exit code 2', async () => {

@@ -43,6 +43,7 @@ import type {
 
 import { localeSegments } from '../locale/repo.ts';
 import { charactersThisMonth, readManifest, serializeManifest } from '../render/manifest.ts';
+import type { AudioManifest } from '../render/manifest.ts';
 import { findOrphans, pickFormat, planRender } from '../render/plan.ts';
 import type { Orphan, RenderPlan } from '../render/plan.ts';
 import { render } from '../render/render.ts';
@@ -355,7 +356,7 @@ export interface RenderSummary {
   readonly storage: string;
   /** From `--auto`; `undefined` when the provider and storage were chosen by flags or config. */
   readonly auto?: AutoTargets;
-  /** Whether the manifest went to `--site-manifest` (the site links the files). */
+  /** Whether a manifest went to `--site-manifest` (the site links the files), even after an early stop. */
   readonly published: boolean;
   readonly segments?: number;
   readonly plan?: RenderPlan;
@@ -394,13 +395,28 @@ export function summaryMarkdown(summary: RenderSummary): string {
     );
   }
   lines.push(`- site audio: ${summary.published ? 'manifest handed to the web build' : 'none (all `audio` null)'}`);
-  if (summary.problem !== undefined) lines.push('', `**Stopped:** ${summary.problem}`);
+  if (summary.problem !== undefined) lines.push('', `**Stopped early:** ${summary.problem}`);
   return `${lines.join('\n')}\n`;
 }
 
 async function writeText(path: string, text: string, append: boolean): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
   await (append ? appendFile(path, text) : writeFile(path, text));
+}
+
+/**
+ * The manifest the web build may publish: `manifest` without the stale keys (entries whose object is missing from
+ * storage) that this run did not render or adopt again, so the site never links to a file that does not exist.
+ */
+export function siteManifestOf(
+  manifest: AudioManifest,
+  stale: readonly string[],
+  recovered: Pick<RenderResult, 'rendered' | 'adopted'> = { rendered: [], adopted: [] },
+): AudioManifest {
+  const back = new Set([...recovered.rendered, ...recovered.adopted]);
+  const drop = new Set(stale.filter((key) => !back.has(key)));
+  const entries = Object.fromEntries(Object.entries(manifest.entries).filter(([key]) => !drop.has(key)));
+  return { version: manifest.version, entries };
 }
 
 /** Runs the CLI; resolves to the exit code (0 done, 1 failures or budget, 2 usage). */
@@ -421,6 +437,10 @@ export async function runRender(argv: readonly string[], context: RenderCliConte
     );
   }
   const targets = auto ?? resolveTargets(args, config, env, io);
+  if (targets.provider === 'fake' && targets.storage === 's3') {
+    io.err(`audio:render: the fake voice never goes to live storage; use --storage fs:<dir> or memory\n${USAGE}`);
+    return 2;
+  }
   const tts = ttsFor(targets.provider, config, env, context.live?.tts);
   const storage = storageFor(targets.storage, cwd, config, env, context.live?.storage);
   for (const problem of [tts, storage]) {
@@ -430,33 +450,61 @@ export async function runRender(argv: readonly string[], context: RenderCliConte
     }
   }
   // Fake audio is never published: its entries keep bare keys, and the site gets no manifest.
-  const published = auto === undefined ? config.tts.storage.publicBaseUrl !== '' : auto.live;
-  const summary: { -readonly [K in keyof RenderSummary]: RenderSummary[K] } = {
+  const published = auto?.live ?? (targets.provider !== 'fake' && config.tts.storage.publicBaseUrl !== '');
+  const summary: MutableSummary = {
     provider: targets.provider,
     storage: targets.storage,
     published: false,
     ...(auto === undefined ? {} : { auto }),
   };
-  const finish = async (code: number): Promise<number> => {
-    if (args.summary !== undefined) await writeText(resolve(cwd, args.summary), summaryMarkdown(summary), true);
-    return code;
+  const state: RenderState = {};
+  const siteFile = args.siteManifest !== undefined && published && !args.dryRun ? args.siteManifest : undefined;
+  const writeSite = async (site: AudioManifest): Promise<void> => {
+    if (siteFile !== undefined) await writeText(resolve(cwd, siteFile), serializeManifest(site), false);
   };
 
+  let code: number;
   try {
-    const code = await renderAll(args, context, {
+    code = await renderAll(args, context, {
       config,
       provider: targets.provider,
       tts: tts as TtsProvider,
       store: storage as ObjectStorage,
       published,
       summary,
+      state,
+      writeSite,
     });
-    return await finish(code);
   } catch (error) {
     summary.problem = (error as Error).message;
     io.err(`audio:render: ${summary.problem}`);
-    return finish(1);
+    code = 1;
   }
+
+  // Even after an early stop the site keeps the audio already recorded (minus files that went missing), so a spent
+  // budget or a failure never takes published narration off the site.
+  if (args.siteManifest !== undefined && !args.dryRun) {
+    if (!published) {
+      io.out('audio:render: no site manifest: these files are not published');
+    } else if (state.manifest === undefined) {
+      io.err('audio:render: no site manifest: the stored manifest could not be read');
+    } else {
+      await writeSite(siteManifestOf(state.result?.manifest ?? state.manifest, state.plan?.stale ?? [], state.result));
+      summary.published = true;
+      io.out(`audio:render: site manifest written to ${args.siteManifest}`);
+    }
+  }
+  if (args.summary !== undefined) await writeText(resolve(cwd, args.summary), summaryMarkdown(summary), true);
+  return code;
+}
+
+type MutableSummary = { -readonly [K in keyof RenderSummary]: RenderSummary[K] };
+
+/** What a run got to before it stopped, for the site manifest. */
+interface RenderState {
+  manifest?: AudioManifest;
+  plan?: RenderPlan;
+  result?: RenderResult;
 }
 
 interface RenderSetup {
@@ -465,17 +513,21 @@ interface RenderSetup {
   readonly tts: TtsProvider;
   readonly store: ObjectStorage;
   readonly published: boolean;
-  readonly summary: { -readonly [K in keyof RenderSummary]: RenderSummary[K] };
+  readonly summary: MutableSummary;
+  readonly state: RenderState;
+  /** Writes the site manifest (when there is one to write). */
+  readonly writeSite: (site: AudioManifest) => Promise<void>;
 }
 
 async function renderAll(args: RenderArgs, context: RenderCliContext, setup: RenderSetup): Promise<number> {
   const { io, cwd } = context;
-  const { config, provider, store, summary } = setup;
+  const { config, provider, store, summary, state } = setup;
   const clock = context.clock ?? systemClock;
 
   const repo = openRepo(resolve(findRepoRoot(cwd), config.content.root));
   const segments = [...approvedSegments(repo, io), ...translationSegments(repo, args.locales, io)];
   const manifest = await readManifest(store);
+  state.manifest = manifest;
   const storedKeys = (await store.list('audio/')).map((info) => info.key);
   const plan = planRender(segments, manifest, {
     voices: config.tts.voices,
@@ -483,6 +535,9 @@ async function renderAll(args: RenderArgs, context: RenderCliContext, setup: Ren
     format: pickFormat(setup.tts.formats),
     storedKeys,
   });
+  state.plan = plan;
+  // Written now and again at the end: if the step is killed (timeout) mid-render, the site keeps what was recorded.
+  await setup.writeSite(siteManifestOf(manifest, plan.stale));
   const orphans = findOrphans(plan, manifest, storedKeys);
   const remaining = Math.max(0, config.tts.monthlyCharBudget - charactersThisMonth(manifest, clock.now()));
   summary.segments = segments.length;
@@ -490,8 +545,10 @@ async function renderAll(args: RenderArgs, context: RenderCliContext, setup: Ren
 
   reportPlan(segments.length, plan, orphans, remaining, io);
   if (plan.characters > remaining) {
-    summary.problem = `${String(plan.characters)} characters exceed the ${String(remaining)} left this month`;
-    io.err(`audio:render: ${summary.problem}`);
+    summary.problem =
+      `${String(plan.characters)} characters exceed the ${String(remaining)} left this month; ` +
+      'nothing new was rendered, and the audio already recorded stays published';
+    io.err(`audio:render: ${String(plan.characters)} characters exceed the ${String(remaining)} left this month`);
     return 1;
   }
   if (args.dryRun) {
@@ -507,21 +564,12 @@ async function renderAll(args: RenderArgs, context: RenderCliContext, setup: Ren
     publicBaseUrl: setup.published ? config.tts.storage.publicBaseUrl : '',
     clock,
   });
+  state.result = result;
   summary.result = result;
   io.out(
     `audio:render: rendered ${String(result.rendered.length)}, adopted ${String(result.adopted.length)}, ` +
       `failed ${String(result.failed.length)} (${String(result.characters)} characters billed)`,
   );
   for (const { key, error } of result.failed) io.err(`  failed ${key}: ${error.message}`);
-
-  if (args.siteManifest !== undefined) {
-    if (setup.published) {
-      await writeText(resolve(cwd, args.siteManifest), serializeManifest(result.manifest), false);
-      summary.published = true;
-      io.out(`audio:render: site manifest written to ${args.siteManifest}`);
-    } else {
-      io.out('audio:render: no site manifest: these files are not published');
-    }
-  }
   return result.failed.length > 0 ? 1 : 0;
 }
