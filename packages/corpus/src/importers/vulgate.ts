@@ -12,7 +12,7 @@
  * ADR 0004. Markup and speaker labels are dropped; each word keeps its attached punctuation as its surface form and
  * has an empty lemma (the source is not lemmatised). A prologue is stored as verse `prologue` of chapter 1.
  */
-import { mkdir, mkdtemp, readdir, readFile, rename, rm } from 'node:fs/promises';
+import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -21,13 +21,21 @@ import type { ChapterVerses, SourceInfo, Token } from '../format.ts';
 import { downloadPinned } from '../import/download.ts';
 import type { Downloader, PinnedArchive } from '../import/download.ts';
 import { unpackTarball, writeChapter, writeEditionMetadata } from '../import/unpack.ts';
+import { corpusDownloader, replaceEdition } from './shared.ts';
+import type { RenameDir } from './shared.ts';
 
 export const VULGATE_EDITION = 'lat-vulgate-clementine';
 
 const COMMIT = 'edc85da058be630183d26e4deb6714ade80e600c';
 const WEBSITE_COMMIT = '48da7dbf64990b44afb7fb809dc7e28bc119817f';
 
-/** The pinned upstream: the text repository's archive at commit edc85da (2022-10-22, the latest correction). */
+/**
+ * The pinned upstream: the text repository's archive at commit edc85da (2022-10-22, the latest correction). The
+ * project publishes no release files, so Bitbucket's generated archive is the pin. Generated archives are not
+ * promised to stay byte-identical: if Bitbucket regenerates this one, the sha256 check refuses it and the import
+ * stops without touching the corpus. The fallback is then to check the new archive's files against a clone at the
+ * pinned commit (or the per-file blob hashes of its tree) and, if they match, record the new sha256 here.
+ */
 export const CLEMENTINE_VULGATE: PinnedArchive & { readonly version: string } = {
   url: `https://bitbucket.org/clementinetextproject/text/get/${COMMIT}.tar.gz`,
   sha256: 'bd7c226655a51424fdb195f38000e7a215d48ec8c88391227c85418b7e7db0c7',
@@ -233,7 +241,7 @@ export interface ImportVulgateOptions {
   /** The upstream archive. Defaults to the pinned CLEMENTINE_VULGATE; tests pass a fixture archive. */
   readonly archive?: PinnedArchive & { readonly version: string };
   /** Renames a directory. Defaults to node:fs `rename`; injectable so tests can make the final swap fail. */
-  readonly renameDir?: (from: string, to: string) => Promise<void>;
+  readonly renameDir?: RenameDir;
 }
 
 export interface ImportSummary {
@@ -272,34 +280,10 @@ async function readReadme(dir: string): Promise<string> {
 }
 
 /**
- * Moves the staged edition to `target`. An existing edition is first moved to `backup` and moved back if the swap
- * fails, so the corpus always holds either the old or the new edition, never a partial one.
- */
-async function swapIn(
-  staged: string,
-  target: string,
-  backup: string,
-  renameDir: (from: string, to: string) => Promise<void>,
-): Promise<void> {
-  let hadOld = true;
-  try {
-    await renameDir(target, backup);
-  } catch (error) {
-    if (!isNotFound(error)) throw error;
-    hadOld = false;
-  }
-  try {
-    await renameDir(staged, target);
-  } catch (error) {
-    if (hadOld) await renameDir(backup, target);
-    throw error;
-  }
-}
-
-/**
  * Downloads (or reuses) the pinned archive, verifies its sha256, and rebuilds `corpus/lat-vulgate-clementine` from
  * scratch, so a re-run produces byte-identical files. The edition is written to a staging directory under the corpus
- * root and swapped in only once every file is written; a failure leaves the previous edition in place.
+ * root and swapped in only once every file is written (see `replaceEdition`); a failure leaves the previous edition
+ * in place.
  */
 export async function importClementineVulgate(options: ImportVulgateOptions): Promise<ImportSummary> {
   const archive = options.archive ?? CLEMENTINE_VULGATE;
@@ -310,56 +294,27 @@ export async function importClementineVulgate(options: ImportVulgateOptions): Pr
     await unpackTarball(cached, work, { strip: 1 });
     const books = await readBooks(work);
     const readme = await readReadme(work);
-    await mkdir(options.corpusRoot, { recursive: true });
-    const staging = await mkdtemp(join(options.corpusRoot, '.staging-vulgate-'));
-    try {
-      let chapters = 0;
-      let verses = 0;
-      for (const [book, content] of books) {
-        for (const [chapter, chapterVerses] of content) {
-          await writeChapter(staging, VULGATE_EDITION, book, chapter, chapterVerses);
-          chapters += 1;
-          verses += Object.keys(chapterVerses).filter((key) => key !== PROLOGUE_VERSE).length;
+    return await replaceEdition(
+      options.corpusRoot,
+      VULGATE_EDITION,
+      async (staging) => {
+        let chapters = 0;
+        let verses = 0;
+        for (const [book, content] of books) {
+          for (const [chapter, chapterVerses] of content) {
+            await writeChapter(staging, VULGATE_EDITION, book, chapter, chapterVerses);
+            chapters += 1;
+            verses += Object.keys(chapterVerses).filter((key) => key !== PROLOGUE_VERSE).length;
+          }
         }
-      }
-      await writeEditionMetadata(staging, VULGATE_EDITION, vulgateSource(archive), licenceText(archive, readme));
-      await swapIn(
-        join(staging, VULGATE_EDITION),
-        join(options.corpusRoot, VULGATE_EDITION),
-        join(staging, 'previous'),
-        options.renameDir ?? rename,
-      );
-      return { edition: VULGATE_EDITION, books: books.size, chapters, verses };
-    } finally {
-      await rm(staging, { recursive: true, force: true });
-    }
+        await writeEditionMetadata(staging, VULGATE_EDITION, vulgateSource(archive), licenceText(archive, readme));
+        return { edition: VULGATE_EDITION, books: books.size, chapters, verses };
+      },
+      options.renameDir,
+    );
   } finally {
     await rm(work, { recursive: true, force: true });
   }
-}
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
-
-/** A Downloader over the Fetch API (Node's global fetch by default). Throws on a non-2xx response. */
-export function fetchDownloader(fetchImpl: typeof fetch = globalThis.fetch): Downloader {
-  return {
-    async fetchBytes(url) {
-      let response: Response;
-      try {
-        response = await fetchImpl(url);
-      } catch (error) {
-        throw new CorpusError(`GET ${url}: ${errorMessage(error)}`);
-      }
-      if (!response.ok) throw new CorpusError(`GET ${url}: HTTP ${response.status}`);
-      try {
-        return new Uint8Array(await response.arrayBuffer());
-      } catch (error) {
-        throw new CorpusError(`GET ${url}: reading the body failed: ${errorMessage(error)}`);
-      }
-    },
-  };
 }
 
 export interface ImportCliIo {
@@ -369,20 +324,23 @@ export interface ImportCliIo {
 
 /**
  * `npm run corpus:import:latin`: imports into `corpusRoot`, caching the archive in `.cache/corpus` next to it (the
- * repository's git-ignored cache). Exit code 0 on success, 2 on a corpus error (bad hash, unexpected upstream layout,
+ * repository's git-ignored cache). The script injects the live downloader (`LiveDownloader` from
+ * `@lectio/provider-fetch`). Exit code 0 on success, 2 on a corpus error (bad hash, unexpected upstream layout,
  * network or HTTP error).
  */
 export async function runImportVulgate(
   corpusRoot: string,
   io: ImportCliIo,
-  {
-    downloader = fetchDownloader(),
-    archive,
-  }: { downloader?: Downloader; archive?: ImportVulgateOptions['archive'] } = {},
+  { downloader, archive }: { downloader: Downloader; archive?: ImportVulgateOptions['archive'] },
 ): Promise<number> {
   try {
     const cacheDir = join(dirname(corpusRoot), '.cache', 'corpus');
-    const summary = await importClementineVulgate({ downloader, corpusRoot, cacheDir, ...(archive && { archive }) });
+    const summary = await importClementineVulgate({
+      downloader: corpusDownloader(downloader),
+      corpusRoot,
+      cacheDir,
+      ...(archive && { archive }),
+    });
     io.out(
       `${summary.edition}: ${summary.books} books, ${summary.chapters} chapters, ${summary.verses} verses ` +
         `written to ${join(corpusRoot, summary.edition)}`,

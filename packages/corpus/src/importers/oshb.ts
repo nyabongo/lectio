@@ -24,13 +24,21 @@ import type { ChapterVerses, SourceInfo, Token } from '../format.ts';
 import { downloadPinned } from '../import/download.ts';
 import type { Downloader, PinnedArchive } from '../import/download.ts';
 import { unpackTarball, writeChapter, writeEditionMetadata } from '../import/unpack.ts';
+import { corpusDownloader, replaceEdition } from './shared.ts';
 
 export const OSHB_EDITION = 'hbo-oshb';
 
 /** The pinned upstream commit of openscriptures/morphhb (master, 2024-08-27). */
 export const OSHB_COMMIT = '3d15126fb1ef74867fc1434be1942e837932691f';
 
-/** GitHub's archive of the pinned commit and its sha256 (the archive is byte-stable; verified on download). */
+/**
+ * GitHub's archive of the pinned commit and its sha256 (verified on download). The newest release asset,
+ * `OSHB-v.2.2.zip` (2021), is seven commits behind the pinned commit, so the generated archive is the pin. GitHub does
+ * not promise that generated archives stay byte-identical: if it regenerates this one, the sha256 check refuses it
+ * and the import stops without touching the corpus. The fallback is then to check the new archive's tree against the
+ * pinned commit (`git archive` of a clone at that commit, or the per-file blob hashes of its tree) and, if it
+ * matches, record the new sha256 here.
+ */
 export const OSHB_ARCHIVE: PinnedArchive = {
   url: `https://github.com/openscriptures/morphhb/archive/${OSHB_COMMIT}.tar.gz`,
   sha256: 'f979b5357fb18391928cd42ee1b95594db6e4f71d8da4e893c6c18f2688093a6',
@@ -202,17 +210,6 @@ export function parseOsisBook(xml: string, osis: string): OsisBook {
   return { book, chapters };
 }
 
-/** A Downloader over the WHATWG fetch API (Node's global fetch by default); non-2xx responses throw. */
-export function fetchDownloader(fetchImpl: typeof fetch = fetch): Downloader {
-  return {
-    async fetchBytes(url) {
-      const response = await fetchImpl(url);
-      if (!response.ok) throw new Error(`GET ${url} failed: HTTP ${response.status}`);
-      return new Uint8Array(await response.arrayBuffer());
-    },
-  };
-}
-
 export interface ImportOshbOptions {
   /** The corpus root (normally `<repo>/corpus`). */
   readonly root: string;
@@ -235,8 +232,9 @@ export interface ImportSummary {
 }
 
 /**
- * Downloads (or reuses the cached copy of) the pinned archive, verifies its sha256, and rewrites
- * `corpus/hbo-oshb/` from scratch, so a re-run gives byte-identical files and no stale chapter survives.
+ * Downloads (or reuses the cached copy of) the pinned archive, verifies its sha256, and rebuilds `corpus/hbo-oshb/`
+ * from scratch in a staging directory that is swapped in only when complete (see `replaceEdition`), so a failure
+ * never leaves a partial edition, a re-run gives byte-identical files, and no stale chapter survives.
  */
 export async function importOshb(options: ImportOshbOptions): Promise<ImportSummary> {
   const archive = options.archive ?? OSHB_ARCHIVE;
@@ -260,22 +258,22 @@ export async function importOshb(options: ImportOshbOptions): Promise<ImportSumm
       throw new CorpusError('archive has no LICENSE.md');
     });
 
-    await rm(join(options.root, OSHB_EDITION), { recursive: true, force: true });
-    await writeEditionMetadata(options.root, OSHB_EDITION, oshbSource(archive, version), licence);
-    let chapters = 0;
-    let verses = 0;
-    let tokens = 0;
-    for (const { book, chapters: bookChapters } of books) {
-      for (const [chapter, chapterVerses] of bookChapters) {
-        await writeChapter(options.root, OSHB_EDITION, book, chapter, chapterVerses);
-        chapters += 1;
-        for (const verseTokens of Object.values(chapterVerses)) {
-          verses += 1;
-          tokens += verseTokens.length;
+    const { chapters, verses, tokens } = await replaceEdition(options.root, OSHB_EDITION, async (staging) => {
+      await writeEditionMetadata(staging, OSHB_EDITION, oshbSource(archive, version), licence);
+      const counts = { chapters: 0, verses: 0, tokens: 0 };
+      for (const { book, chapters: bookChapters } of books) {
+        for (const [chapter, chapterVerses] of bookChapters) {
+          await writeChapter(staging, OSHB_EDITION, book, chapter, chapterVerses);
+          counts.chapters += 1;
+          for (const verseTokens of Object.values(chapterVerses)) {
+            counts.verses += 1;
+            counts.tokens += verseTokens.length;
+          }
         }
+        log(`${book}: ${bookChapters.size} chapters`);
       }
-      log(`${book}: ${bookChapters.size} chapters`);
-    }
+      return counts;
+    });
     return { edition: OSHB_EDITION, books: books.length, chapters, verses, tokens };
   } finally {
     await rm(unpacked, { recursive: true, force: true });
@@ -284,19 +282,20 @@ export async function importOshb(options: ImportOshbOptions): Promise<ImportSumm
 
 /**
  * `npm run corpus:import:hebrew` (scripts/corpus/import-hebrew.mjs): imports into the corpus root that the other
- * corpus CLIs use, caching the archive in `<corpus root>/../.cache/corpus`. Exit code 0 on success, 1 on failure.
+ * corpus CLIs use, caching the archive in `<corpus root>/../.cache/corpus`. The script injects the live downloader
+ * (`LiveDownloader` from `@lectio/provider-fetch`). Exit code 0 on success, 1 on failure.
  */
 export async function runImportHebrew(
   env: NodeJS.ProcessEnv,
   cwd: string,
   io: CliIo,
-  overrides: Partial<Pick<ImportOshbOptions, 'downloader' | 'archive' | 'version'>> = {},
+  overrides: Pick<ImportOshbOptions, 'downloader'> & Partial<Pick<ImportOshbOptions, 'archive' | 'version'>>,
 ): Promise<number> {
   try {
     const root = resolveCorpusRoot(env, cwd);
     const summary = await importOshb({
-      downloader: fetchDownloader(),
       ...overrides,
+      downloader: corpusDownloader(overrides.downloader),
       root,
       cacheDir: join(dirname(root), '.cache', 'corpus'),
       log: io.out,

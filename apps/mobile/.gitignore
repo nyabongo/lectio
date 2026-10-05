@@ -1,0 +1,42 @@
+# Flutter / Dart tooling
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+
+# IDEs
+*.iml
+.idea/
+
+# Android
+android/.gradle/
+android/local.properties
+android/**/gradle-wrapper.jar
+android/gradlew
+android/gradlew.bat
+android/captures/
+android/app/debug
+android/app/profile
+android/app/release
+*.keystore
+key.properties
+
+# iOS
+ios/**/Pods/
+ios/**/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/**/DerivedData/
+ios/**/xcuserdata/
+ios/Runner/GeneratedPluginRegistrant.*
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# Written by tool/check_coverage.dart --prepare
+test/coverage_imports_test.dart

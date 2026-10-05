@@ -1,0 +1,6 @@
+# Lectio is a public study aid: every page may be indexed.
+# The build rewrites the Sitemap line for the configured site and base path (src/integrations/sitemap.ts).
+User-agent: *
+Allow: /
+
+Sitemap: https://nyabongo.github.io/lectio/sitemap-index.xml

@@ -1,12 +1,14 @@
 import { getBook, isBookCode } from './books.ts';
 import type { Book } from './books.ts';
 import { RefError } from './errors.ts';
+import { chapterLabel, isLetteredChapter } from './greek-esther.ts';
 import type { Point, Ref, Segment } from './types.ts';
 
 const PART = /^[a-g]{1,7}$/;
 
-function pointLabel(point: Point): string {
-  return point.v === undefined ? String(point.c) : `${point.c}:${point.v}${point.part ?? ''}`;
+function pointLabel(book: Book, point: Point): string {
+  const chapter = chapterLabel(book.code, point.c);
+  return point.v === undefined ? chapter : `${chapter}:${point.v}${point.part ?? ''}`;
 }
 
 function checkNumber(n: number, what: string, input: string | undefined): void {
@@ -34,7 +36,14 @@ export function checkSegment(book: Book, segment: Segment, input?: string): void
   if ((start.v === undefined) !== (end.v === undefined)) {
     throw new RefError(
       'MIXED_RANGE',
-      `A range cannot run from ${pointLabel(start)} to ${pointLabel(end)}: both ends must be whole chapters or both verses`,
+      `A range cannot run from ${pointLabel(book, start)} to ${pointLabel(book, end)}: both ends must be whole chapters or both verses`,
+      input,
+    );
+  }
+  if (isLetteredChapter(book.code, start.c) !== isLetteredChapter(book.code, end.c)) {
+    throw new RefError(
+      'MIXED_RANGE',
+      `A range cannot run from ${pointLabel(book, start)} to ${pointLabel(book, end)}: Esther's lettered chapters (A–F) and numbered chapters are cited separately`,
       input,
     );
   }
@@ -49,7 +58,7 @@ export function checkSegment(book: Book, segment: Segment, input?: string): void
   if (descending) {
     throw new RefError(
       'DESCENDING',
-      `The range ends at ${pointLabel(end)}, before its start at ${pointLabel(start)}`,
+      `The range ends at ${pointLabel(book, end)}, before its start at ${pointLabel(book, start)}`,
       input,
     );
   }

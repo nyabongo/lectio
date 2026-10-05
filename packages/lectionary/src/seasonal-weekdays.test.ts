@@ -60,13 +60,15 @@ describe('seasonal-weekdays block', () => {
     result = crosscheckBlock(BLOCK, loaded.files, data as never, loaded.registry);
   });
 
-  it('passes lectionary:check, and every reading is provisional (but the Greek Esther one) with a LitCal or OLM 1981 source', () => {
+  it('passes lectionary:check, and every reading is provisional with a LitCal or OLM 1981 source', () => {
     expect(loaded.problems).toEqual([]);
     expect(checkLectionary(loaded.files, loaded.registry).problems).toEqual([]);
     const rows = blockRows(loaded.files);
-    expect(
-      rows.filter((row) => row.reading.status !== 'provisional').map((row) => [row.id, row.reading.status]),
-    ).toEqual([['proper-of-time:lent-weekday-1-thu day first-reading', 'disputed']]);
+    expect(rows.filter((row) => row.reading.status !== 'provisional')).toEqual([]);
+    // Greek Esther is keyed by its NABRE lettered chapter (L-049).
+    expect(rows.find((row) => row.id === 'proper-of-time:lent-weekday-1-thu day first-reading')?.reading.ref).toBe(
+      'Est C:12, 14-16, 23-25',
+    );
     expect(new Set(rows.map((row) => splitSource(row.reading.source)?.id))).toEqual(new Set(['litcal', 'olm-1981']));
   });
 

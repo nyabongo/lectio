@@ -170,19 +170,24 @@ export function tokenForms(language: Language, text: string, options: TokenForms
   return [...forms];
 }
 
+/** Languages whose corpus lemmas are Strong's numbers (OSHB-style `1254 a`). */
+const STRONGS_LANGUAGES: ReadonlySet<Language> = new Set<Language>(['hbo', 'arc']);
+
 /**
  * Splits a phrase into normalised words at whitespace and at the Hebrew maqaf, which joins words in writing but
  * separates tokens in the corpus. A "/" morpheme separator inside a query word is stripped, so the word compares
- * as a whole. A Strong's number followed by a lone Latin letter is one word in its lemmaKey spelling, so the lemma
- * phrase `7225 1254 a 430` has three words (`7225`, `1254a`, `430`).
+ * as a whole. In Hebrew and Aramaic, whose lemmas are Strong's numbers with suffix letters, a Strong's number
+ * followed by a lone Latin letter is one word in its lemmaKey spelling, so the lemma phrase `7225 1254 a 430` has
+ * three words (`7225`, `1254a`, `430`); other languages keep the letter as a word of its own.
  */
 export function phraseWords(language: Language, phrase: string): string[] {
   const normalise = normaliserFor(language);
+  const strongs = STRONGS_LANGUAGES.has(language);
   const words: string[] = [];
   for (const part of phrase.split(/[\s־]+/u)) {
     const word = normalise(part);
     const previous = words.at(-1);
-    if (previous !== undefined && LATIN_LETTER.test(word) && STRONGS_NUMBER.test(previous)) {
+    if (strongs && previous !== undefined && LATIN_LETTER.test(word) && STRONGS_NUMBER.test(previous)) {
       words[words.length - 1] = lemmaKey(`${previous} ${word}`);
     } else if (word !== '') {
       words.push(word);

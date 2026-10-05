@@ -76,27 +76,6 @@ export function siteContext(options?: SiteContextOptions): SiteContext {
   return context;
 }
 
-/** Intl locale used to format dates for a site locale: British-style day-month order for English. */
-export function dateLocale(locale: string): string {
-  return locale === 'en' ? 'en-GB' : locale;
-}
-
-/** The header's date title, e.g. `Sunday 20 September 2026` for `2026-09-20` in English. */
-export function formatDateTitle(date: IsoDate, locale: string): string {
-  if (!isIsoDate(date)) throw new RangeError(`date must be an ISO date (YYYY-MM-DD), got ${JSON.stringify(date)}`);
-  const parts = new Intl.DateTimeFormat(dateLocale(locale), {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).formatToParts(new Date(`${date}T00:00:00Z`));
-  // The deck's style drops the comma after the weekday: "Sunday 20 September 2026".
-  return parts
-    .map((part, index) => (part.type === 'literal' && parts[index - 1]?.type === 'weekday' ? ' ' : part.value))
-    .join('');
-}
-
 /** Today's date in `timezone` (the config's `site.timezone`), as an ISO date. */
 export function todayIn(timezone: string, now: Date = new Date()): IsoDate {
   return toIsoDateInZone(now, timezone);

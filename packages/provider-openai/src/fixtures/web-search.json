@@ -1,0 +1,113 @@
+{
+  "id": "resp_web_0001",
+  "object": "response",
+  "created_at": 1759622400,
+  "status": "completed",
+  "background": false,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": "You are a careful assistant used in an automated contract test. Answer briefly.",
+  "max_output_tokens": 512,
+  "max_tool_calls": null,
+  "model": "gpt-5-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0003",
+      "type": "reasoning",
+      "summary": []
+    },
+    {
+      "id": "ws_0001",
+      "type": "web_search_call",
+      "status": "completed",
+      "action": {
+        "type": "search",
+        "query": "boiling point of water at sea level"
+      }
+    },
+    {
+      "id": "ws_0002",
+      "type": "web_search_call",
+      "status": "completed",
+      "action": {
+        "type": "open_page",
+        "url": "https://en.wikipedia.org/wiki/Boiling_point"
+      }
+    },
+    {
+      "id": "msg_0003",
+      "type": "message",
+      "status": "completed",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "{\"verdict\": \"supported\", \"support\": 0.97, \"sensitive\": false, \"reasons\": [\"Standard boiling point of water at 1 atm is 100 degrees Celsius.\"]}",
+          "annotations": [
+            {
+              "type": "url_citation",
+              "start_index": 70,
+              "end_index": 130,
+              "url": "https://en.wikipedia.org/wiki/Boiling_point",
+              "title": "Boiling point - Wikipedia"
+            },
+            {
+              "type": "url_citation",
+              "start_index": 70,
+              "end_index": 130,
+              "url": "https://en.wikipedia.org/wiki/Boiling_point",
+              "title": "Boiling point - Wikipedia"
+            },
+            {
+              "type": "url_citation",
+              "start_index": 0,
+              "end_index": 20,
+              "url": "https://www.usgs.gov/water-science-school/science/boiling-point-water",
+              "title": ""
+            }
+          ],
+          "logprobs": []
+        }
+      ]
+    }
+  ],
+  "parallel_tool_calls": true,
+  "previous_response_id": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "store": false,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "json_schema",
+      "name": "lectio_response",
+      "strict": false,
+      "schema": {}
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "search_context_size": "medium"
+    }
+  ],
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 1840,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 220,
+    "output_tokens_details": {
+      "reasoning_tokens": 120
+    },
+    "total_tokens": 2060
+  },
+  "user": null,
+  "metadata": {}
+}

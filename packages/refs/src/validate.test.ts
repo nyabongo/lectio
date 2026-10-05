@@ -22,6 +22,11 @@ describe('checkRef', () => {
     ['a mixed range', at({ c: 1, v: 1 }, { c: 2 }), 'MIXED_RANGE'],
     ['a descending chapter range', at({ c: 2 }, { c: 1 }), 'DESCENDING'],
     [
+      'a range from a numbered into a lettered Esther chapter',
+      { book: 'EST', segments: [{ start: { c: 4, v: 17 }, end: { c: 103, v: 2 } }] },
+      'MIXED_RANGE',
+    ],
+    [
       'a whole chapter in a one-chapter book',
       { book: 'JUDE', segments: [{ start: { c: 1 }, end: { c: 1 } }] },
       'SINGLE_CHAPTER',
@@ -41,5 +46,7 @@ describe('checkRef', () => {
   it('returns the book of a well-formed ref', () => {
     expect(checkRef(at({ c: 5, v: 3, part: 'ab' }, { c: 5, v: 9 })).code).toBe('MT');
     expect(checkRef(at({ c: 5, v: 8, part: 'abcd' }, { c: 5, v: 8, part: 'e' })).code).toBe('MT');
+    // Chapters past 100 are ordinary numbers outside Esther.
+    expect(checkRef(at({ c: 4, v: 1 }, { c: 103, v: 2 })).code).toBe('MT');
   });
 });

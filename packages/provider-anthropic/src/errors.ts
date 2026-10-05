@@ -50,7 +50,11 @@ export function toProviderError(error: unknown): ProviderError {
     // Errors sent inside a stream (for example `overloaded_error`) carry a type but no status.
     const code = codeForType(error.type) ?? (error.status === undefined ? 'unavailable' : codeForStatus(error.status));
     const status = error.status === undefined ? 'stream error' : `HTTP ${String(error.status)}`;
-    return new ProviderError(code, `Anthropic API ${status}: ${error.message}`, { cause: error });
+    // 409 is transient on the Anthropic API (the SDK's own policy retries it too).
+    return new ProviderError(code, `Anthropic API ${status}: ${error.message}`, {
+      cause: error,
+      ...(code === 'conflict' ? { retryable: true } : {}),
+    });
   }
   const message = error instanceof Error ? error.message : String(error);
   return new ProviderError('invalid-request', `Anthropic client error: ${message}`, {

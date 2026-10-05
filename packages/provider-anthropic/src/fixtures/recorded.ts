@@ -1,9 +1,12 @@
 /**
- * Test helpers: serve recorded Anthropic Messages API responses through msw.
+ * Test helpers: serve Anthropic Messages API responses through msw.
  *
- * The `*.json` files next to this one are complete `Message` objects as the API returns
- * them (ids and encrypted fields shortened). The client streams, so `sseResponse` replays a
- * message as the server-sent-event sequence the API emits for it.
+ * The `*.json` files next to this one are hand-built: complete `Message` objects written in
+ * the API's recorded wire shape (no key existed when they were made; ids, signatures and
+ * encrypted fields are made up). They include the empty, signed `thinking` block Claude
+ * Opus 5.5 and Sonnet 5.5 return by default. L-212 replaces them with real captures.
+ * The client streams, so `sseResponse` replays a message as the server-sent-event sequence
+ * the API emits for it.
  */
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -75,6 +78,20 @@ export function sseBody(message: RecordedMessage): string {
           }),
         );
       }
+    } else if (block['type'] === 'thinking') {
+      // Thinking streams as an empty block, then its text (empty by default) and signature as deltas.
+      parts.push(
+        event('content_block_start', {
+          type: 'content_block_start',
+          index,
+          content_block: { type: 'thinking', thinking: '', signature: '' },
+        }),
+        event('content_block_delta', {
+          type: 'content_block_delta',
+          index,
+          delta: { type: 'signature_delta', signature: block['signature'] },
+        }),
+      );
     } else {
       parts.push(event('content_block_start', { type: 'content_block_start', index, content_block: block }));
     }
@@ -108,12 +125,18 @@ export function errorResponse(
   });
 }
 
-/** A stream that starts and then fails with an `error` event (how mid-stream overloads arrive). */
+/**
+ * A stream that starts (input billed, 5 output tokens so far) and then fails with an `error`
+ * event, which is how mid-stream overloads arrive.
+ */
 export function streamErrorResponse(type: string, message: string): HttpResponse<string> {
   const start = loadRecorded('text');
+  const usage = { ...start.usage, output_tokens: 5 };
   const body =
-    event('message_start', { type: 'message_start', message: { ...start, content: [], stop_reason: null } }) +
-    event('error', { type: 'error', error: { type, message } });
+    event('message_start', {
+      type: 'message_start',
+      message: { ...start, content: [], stop_reason: null, usage },
+    }) + event('error', { type: 'error', error: { type, message } });
   return new HttpResponse(body, { headers: { 'content-type': 'text/event-stream' } });
 }
 

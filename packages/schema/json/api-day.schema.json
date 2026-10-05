@@ -1,0 +1,284 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nyabongo/lectio/schema/api-day.schema.json",
+  "title": "Lectio API v1 day",
+  "description": "One liturgical day (/api/v1/days/{date}.json): celebrations, Masses and readings by reference and link-out, with the approved notes of each reading inline. Never contains the reading text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "date",
+    "season",
+    "seasonWeek",
+    "sundayCycle",
+    "weekdayCycle",
+    "colour",
+    "celebrations",
+    "lectionaryMissing",
+    "masses"
+  ],
+  "properties": {
+    "apiVersion": { "const": 1 },
+    "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "format": "date" },
+    "season": {
+      "type": "string",
+      "enum": ["advent", "christmas", "ordinary-time", "lent", "paschal-triduum", "easter"]
+    },
+    "seasonWeek": { "type": "integer", "minimum": 0, "maximum": 34 },
+    "sundayCycle": { "type": "string", "enum": ["A", "B", "C"] },
+    "weekdayCycle": { "type": "string", "enum": ["I", "II"] },
+    "colour": { "type": "string", "enum": ["white", "red", "green", "violet", "rose", "black", "gold"] },
+    "celebrations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "rank", "colour"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+          "name": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+          "rank": {
+            "type": "string",
+            "enum": ["solemnity", "sunday", "feast", "memorial", "optional-memorial", "commemoration", "weekday"]
+          },
+          "colour": { "type": "string", "enum": ["white", "red", "green", "violet", "rose", "black", "gold"] }
+        }
+      }
+    },
+    "lectionaryMissing": { "type": "boolean" },
+    "masses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "readings"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+          "label": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+          "readings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["slot", "ref", "key", "linkout", "passage"],
+              "properties": {
+                "slot": {
+                  "type": "string",
+                  "enum": [
+                    "first-reading",
+                    "psalm",
+                    "second-reading",
+                    "gospel",
+                    "reading-1",
+                    "reading-2",
+                    "reading-3",
+                    "reading-4",
+                    "reading-5",
+                    "reading-6",
+                    "reading-7",
+                    "reading-8",
+                    "reading-9",
+                    "psalm-1",
+                    "psalm-2",
+                    "psalm-3",
+                    "psalm-4",
+                    "psalm-5",
+                    "psalm-6",
+                    "psalm-7",
+                    "psalm-8",
+                    "psalm-9",
+                    "epistle"
+                  ]
+                },
+                "ref": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                "key": {
+                  "type": "string",
+                  "pattern": "^([1-3]?[A-Z]{2,5}\\.[1-9][0-9]{0,2}(-[1-9][0-9]{0,2}|\\.[1-9][0-9]{0,2}(-([1-9][0-9]{0,2}\\.)?[1-9][0-9]{0,2})?)?(_[1-9][0-9]{0,2}(-[1-9][0-9]{0,2}|\\.[1-9][0-9]{0,2}(-([1-9][0-9]{0,2}\\.)?[1-9][0-9]{0,2})?)?)*|EST\\.([1-9][0-9]{0,2}|[A-F])(-([1-9][0-9]{0,2}|[A-F])|\\.[1-9][0-9]{0,2}(-(([1-9][0-9]{0,2}|[A-F])\\.)?[1-9][0-9]{0,2})?)?(_([1-9][0-9]{0,2}|[A-F])(-([1-9][0-9]{0,2}|[A-F])|\\.[1-9][0-9]{0,2}(-(([1-9][0-9]{0,2}|[A-F])\\.)?[1-9][0-9]{0,2})?)?)*)$",
+                  "maxLength": 120
+                },
+                "linkout": { "type": "string", "format": "uri", "pattern": "^https?://" },
+                "passage": {
+                  "anyOf": [
+                    { "type": "null" },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "key",
+                        "ref",
+                        "locale",
+                        "summary",
+                        "context",
+                        "translationNotes",
+                        "claims",
+                        "sources",
+                        "review"
+                      ],
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "pattern": "^([1-3]?[A-Z]{2,5}\\.[1-9][0-9]{0,2}(-[1-9][0-9]{0,2}|\\.[1-9][0-9]{0,2}(-([1-9][0-9]{0,2}\\.)?[1-9][0-9]{0,2})?)?(_[1-9][0-9]{0,2}(-[1-9][0-9]{0,2}|\\.[1-9][0-9]{0,2}(-([1-9][0-9]{0,2}\\.)?[1-9][0-9]{0,2})?)?)*|EST\\.([1-9][0-9]{0,2}|[A-F])(-([1-9][0-9]{0,2}|[A-F])|\\.[1-9][0-9]{0,2}(-(([1-9][0-9]{0,2}|[A-F])\\.)?[1-9][0-9]{0,2})?)?(_([1-9][0-9]{0,2}|[A-F])(-([1-9][0-9]{0,2}|[A-F])|\\.[1-9][0-9]{0,2}(-(([1-9][0-9]{0,2}|[A-F])\\.)?[1-9][0-9]{0,2})?)?)*)$",
+                          "maxLength": 120
+                        },
+                        "ref": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                        "locale": {
+                          "type": "string",
+                          "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$"
+                        },
+                        "summary": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$", "maxLength": 140 },
+                        "context": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": ["title", "paragraphs", "audio"],
+                          "properties": {
+                            "title": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                            "paragraphs": {
+                              "type": "array",
+                              "minItems": 1,
+                              "items": { "type": "string", "pattern": "^([^\\[\\]]+(\\[c[1-9][0-9]*\\])+)+$" }
+                            },
+                            "audio": {
+                              "anyOf": [
+                                { "type": "null" },
+                                {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": ["url"],
+                                  "properties": {
+                                    "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+                                    "durationSeconds": { "type": "number", "minimum": 0 }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "translationNotes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": ["id", "verse", "anchor", "original", "summary", "body", "audio"],
+                            "properties": {
+                              "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+                              "verse": { "type": "string", "pattern": "^[1-9][0-9]{0,2}:[1-9][0-9]{0,2}$" },
+                              "anchor": { "type": "string", "pattern": "^\\S+( \\S+){0,5}$", "maxLength": 80 },
+                              "original": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": ["text", "lang", "translit", "gloss"],
+                                "properties": {
+                                  "text": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                                  "lang": { "type": "string", "enum": ["grc", "hbo", "arc", "lat"] },
+                                  "translit": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                                  "gloss": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" }
+                                }
+                              },
+                              "summary": {
+                                "type": "string",
+                                "minLength": 1,
+                                "pattern": "^\\S(.*\\S)?$",
+                                "maxLength": 200
+                              },
+                              "body": { "type": "string", "pattern": "^([^\\[\\]]+(\\[c[1-9][0-9]*\\])+)+$" },
+                              "audio": {
+                                "anyOf": [
+                                  { "type": "null" },
+                                  {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "required": ["url"],
+                                    "properties": {
+                                      "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+                                      "durationSeconds": { "type": "number", "minimum": 0 }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "claims": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": ["id", "text", "sourceIds", "sensitive"],
+                            "properties": {
+                              "id": { "type": "string", "pattern": "^c[1-9][0-9]*$" },
+                              "text": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                              "sourceIds": {
+                                "type": "array",
+                                "minItems": 1,
+                                "uniqueItems": true,
+                                "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 }
+                              },
+                              "sensitive": { "type": "boolean" }
+                            }
+                          }
+                        },
+                        "sources": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": ["id", "type", "citation"],
+                            "properties": {
+                              "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+                              "type": { "type": "string", "enum": ["scripture", "web", "print"] },
+                              "citation": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                              "url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+                              "archivedUrl": { "type": "string", "format": "uri", "pattern": "^https?://" },
+                              "ref": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                              "excerpt": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+                              "excerptLang": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$"
+                                  },
+                                  { "type": "string", "enum": ["grc", "hbo", "arc", "lat"] }
+                                ]
+                              },
+                              "retrievedAt": { "type": "string", "format": "date-time" }
+                            },
+                            "dependentRequired": { "excerptLang": ["excerpt"] },
+                            "allOf": [
+                              {
+                                "if": { "properties": { "type": { "const": "scripture" } } },
+                                "then": { "required": ["ref"] }
+                              },
+                              {
+                                "if": { "properties": { "type": { "const": "web" } } },
+                                "then": { "required": ["url", "retrievedAt"] }
+                              }
+                            ]
+                          }
+                        },
+                        "review": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": ["status", "method", "lastReviewedAt"],
+                          "properties": {
+                            "status": { "const": "approved" },
+                            "method": { "type": "string", "enum": ["human", "auto"] },
+                            "lastReviewedAt": {
+                              "anyOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

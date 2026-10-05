@@ -2,8 +2,8 @@
  * Converts a Lectio response schema (JSON Schema 2020-12 subset, see `@lectio/providers`
  * `json-schema.ts`) into the subset Anthropic structured outputs accept.
  *
- * Structured outputs reject numeric bounds, string lengths, patterns, `maxItems`, `minItems`
- * above 1, conditionals and most object keywords, and require `additionalProperties: false`
+ * Structured outputs reject numeric bounds, string lengths, `maxItems`, `minItems` above 1,
+ * conditionals, most object keywords and regex features beyond simple patterns, and require `additionalProperties: false`
  * on every object. Following the SDK helpers, each unsupported keyword is removed and
  * written into the field's `description` (for example `{minimum: 0, maximum: 1}`) so the
  * model still sees it; the client then validates the parsed answer against the original
@@ -42,6 +42,17 @@ const DROPPED = new Set([
 
 /** Keywords copied unchanged. */
 const KEPT = new Set(['type', 'enum', 'const', 'title', 'required']);
+
+/**
+ * Regex features structured outputs do not support in `pattern`: lookaround, backreferences
+ * (numbered and named) and word boundaries.
+ */
+const UNSUPPORTED_PATTERN = /\(\?<?[=!]|\\[1-9]|\\k<|\\[bB]/;
+
+/** True when `pattern` can be sent as is (a simple regex); otherwise it moves into the description. */
+export function isSupportedPattern(pattern: string): boolean {
+  return !UNSUPPORTED_PATTERN.test(pattern);
+}
 
 function isSchema(value: unknown): value is Schema {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -83,6 +94,7 @@ function transform(input: unknown): unknown {
       out[target] = [...existing, ...value.map(transform)];
     } else if (key === 'format' && typeof value === 'string' && SUPPORTED_FORMATS.has(value)) out[key] = value;
     else if (key === 'minItems' && (value === 0 || value === 1)) out[key] = value;
+    else if (key === 'pattern' && typeof value === 'string' && isSupportedPattern(value)) out[key] = value;
     else notes.push([key, value]);
   }
 

@@ -33,6 +33,7 @@ describe('toStructuredOutputSchema', () => {
       properties: {
         when: { type: 'string', format: 'date', default: '2026-01-01' },
         link: { type: 'string', format: 'url', pattern: '^https://' },
+        word: { type: 'string', pattern: '^\\bword(?=s)' },
         kind: { $ref: '#/definitions/kind' },
         other: { $ref: '#/$defs/other' },
         tags: { type: 'array', minItems: 2, items: { const: 'a' } },
@@ -51,7 +52,8 @@ describe('toStructuredOutputSchema', () => {
       type: ['object', 'null'],
       properties: {
         when: { type: 'string', format: 'date' },
-        link: { type: 'string', description: '{format: "url", pattern: "^https://"}' },
+        link: { type: 'string', pattern: '^https://', description: '{format: "url"}' },
+        word: { type: 'string', description: '{pattern: "^\\\\bword(?=s)"}' },
         kind: { $ref: '#/$defs/kind' },
         other: { $ref: '#/$defs/other' },
         tags: { type: 'array', items: { const: 'a' }, description: '{minItems: 2}' },

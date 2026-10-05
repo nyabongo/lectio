@@ -6,8 +6,9 @@ export type VersificationErrorCode =
   /** The verse exists but the target scheme has nothing that corresponds to it. */
   | 'NO_COUNTERPART'
   /**
-   * Greek Esther: the NABRE lettered chapters (A–F), the RSV-CE chapters 11–16
-   * and the extra verses of the Vulgate and LXX Esther are not supported.
+   * A verse of Greek Esther's additions (NABRE lettered chapters A–F, Vulgate
+   * 10:4–16:24) mapped to a scheme with no verse numbers for them: `lxx`
+   * (Rahlfs letters them, 4:17k; use `greekEstherLxx`) or `english`.
    */
   | 'UNSUPPORTED_GREEK_ESTHER'
   /** A reference whose verses would land in more than one book of the target scheme. */

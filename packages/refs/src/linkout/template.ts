@@ -1,5 +1,6 @@
 import { getBook } from '../books.ts';
 import { formatRef } from '../format.ts';
+import { chapterLabel } from '../greek-esther.ts';
 import type { Ref } from '../types.ts';
 import { firstChapter } from './drbo.ts';
 import { LinkoutError } from './errors.ts';
@@ -11,7 +12,7 @@ import { LinkoutError } from './errors.ts';
  * - `{book}`: Lectio book code (ADR 0004), `MT`, `1COR`
  * - `{bookName}`: English name, `Matthew`, `1 Corinthians`
  * - `{bookSlug}`: the name lower-cased with everything but letters and digits removed, `matthew`, `1corinthians`, `songofsongs`
- * - `{chapter}`: the first chapter of the reference
+ * - `{chapter}`: the first chapter of the reference; Esther's lettered chapters give their letter, `C`
  * - `{verse}`: the first verse of the reference, empty for a whole chapter
  * - `{query}`: the whole reference written out, `Matthew 20:1–16`
  * - `{osis}`: OSIS book id, `Matt`
@@ -52,7 +53,7 @@ export function templateValues(ref: Ref, date?: string): Record<TemplateToken, s
     book: book.code,
     bookName: book.name,
     bookSlug: book.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
-    chapter: String(firstChapter(ref)),
+    chapter: chapterLabel(ref.book, firstChapter(ref)),
     verse: String(ref.segments[0]?.start.v ?? ''),
     query: formatRef(ref, { style: 'long' }),
     osis: book.osis,

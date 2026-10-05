@@ -38,7 +38,10 @@ export interface FindResult {
 
 export interface Corpus {
   readonly root: string;
-  /** Edition ids (directories holding a SOURCE.json), sorted. */
+  /**
+   * Edition ids, sorted: directories holding a SOURCE.json that declares a `language`. Other folders, such as the
+   * licence guard's `corpus/guard` (whose SOURCE.json describes an index, not an edition), are not editions.
+   */
   editions(): Promise<string[]>;
   /** The edition's SOURCE.json; throws a CorpusError for an unknown edition. */
   source(edition: string): Promise<SourceInfo>;
@@ -89,13 +92,32 @@ export async function readTextFile(path: string): Promise<string | undefined> {
   }
 }
 
+/**
+ * The names of the directories in `path` (none if it does not exist). Dot-folders are skipped, so an importer's
+ * leftover `.staging-*` directory is never taken for an edition.
+ */
 export async function listSubdirectories(path: string): Promise<string[]> {
   try {
     const entries = await readdir(path, { withFileTypes: true });
-    return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+    return entries.filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name);
   } catch (error) {
     if (isNotFound(error)) return [];
     throw error;
+  }
+}
+
+/**
+ * Whether a SOURCE.json text belongs to an edition. Only a JSON object without a `language` key (such as the licence
+ * guard's index description) is not one; anything else malformed still counts, so `source()` reports the error
+ * instead of the edition silently disappearing.
+ */
+function isEditionSource(text: string | undefined): boolean {
+  if (text === undefined) return false;
+  try {
+    const json = JSON.parse(text) as unknown;
+    return typeof json !== 'object' || json === null || Array.isArray(json) || 'language' in json;
+  } catch {
+    return true;
   }
 }
 
@@ -195,7 +217,7 @@ export function openCorpus(root: string, options: OpenCorpusOptions = {}): Corpu
     async editions() {
       const directories = await listDirectories(root);
       const withSource = await Promise.all(
-        directories.map(async (name) => ((await readFile(join(root, name, SOURCE_FILE))) === undefined ? [] : [name])),
+        directories.map(async (name) => (isEditionSource(await readFile(join(root, name, SOURCE_FILE))) ? [name] : [])),
       );
       return withSource.flat().sort(byCodePoint);
     },

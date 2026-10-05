@@ -3,8 +3,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { server } from '@lectio/shared/test-server';
-import { http, HttpResponse } from 'msw';
 import { c as createTar } from 'tar';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -13,7 +11,6 @@ import { CorpusError } from '../format.ts';
 import { sha256Hex } from '../import/download.ts';
 import type { Downloader, PinnedArchive } from '../import/download.ts';
 import {
-  fetchDownloader,
   importMorphgntTree,
   importSblgnt,
   MORPHGNT_BOOK_CODES,
@@ -221,6 +218,7 @@ describe('importSblgnt', () => {
     await writeFile(join(root, SBLGNT_EDITION, 'MT', '99.json'), '{}\n');
     await importSblgnt(options);
     expect(await snapshot(root)).toEqual(first);
+    expect(await readdir(root)).toEqual([SBLGNT_EDITION]);
     expect(downloader.requests).toEqual([archive.url]);
   });
 
@@ -268,24 +266,6 @@ describe('importMorphgntTree', () => {
   });
 });
 
-describe('fetchDownloader', () => {
-  it('returns the response bytes through global fetch', async () => {
-    server.use(
-      http.get('https://example.test/a.tar.gz', () => HttpResponse.arrayBuffer(new Uint8Array([1, 2, 3]).buffer)),
-    );
-    expect(await fetchDownloader().fetchBytes('https://example.test/a.tar.gz')).toEqual(new Uint8Array([1, 2, 3]));
-  });
-
-  it('throws a CorpusError on an HTTP error, with an injected fetch too', async () => {
-    server.use(http.get('https://example.test/missing', () => new HttpResponse(null, { status: 404 })));
-    await expect(fetchDownloader().fetchBytes('https://example.test/missing')).rejects.toThrow(
-      'GET https://example.test/missing: HTTP 404',
-    );
-    const fake = (async () => new Response(null, { status: 500 })) as unknown as typeof fetch;
-    await expect(fetchDownloader(fake).fetchBytes('u')).rejects.toThrow('GET u: HTTP 500');
-  });
-});
-
 describe('runImportGreek', () => {
   function capture() {
     const out: string[] = [];
@@ -307,22 +287,33 @@ describe('runImportGreek', () => {
     expect((await stat(join(dir, '.cache', 'corpus', 'morphgnt-sblgnt-c0ffee.tar.gz'))).isFile()).toBe(true);
   });
 
-  it('downloads the pinned archive with fetch and exits 1 on a corpus error', async () => {
-    server.use(http.get(MORPHGNT_SBLGNT_ARCHIVE.url, () => HttpResponse.text('not the archive')));
+  it('downloads the pinned archive with the injected downloader and exits 1 on a corpus error', async () => {
+    const downloader = fakeDownloader({ [MORPHGNT_SBLGNT_ARCHIVE.url]: new TextEncoder().encode('not the archive') });
     const dir = await tempDir();
     const { err, io } = capture();
-    expect(await runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, io)).toBe(1);
+    expect(await runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, io, { downloader })).toBe(1);
+    expect(downloader.requests).toEqual([MORPHGNT_SBLGNT_ARCHIVE.url]);
     expect(err[0]).toMatch(/^sha256 mismatch for https:\/\/github\.com\/morphgnt\/sblgnt\/archive\//);
   });
 
-  it('rethrows unexpected errors', async () => {
+  it('reports a downloader failure as a corpus error naming the URL', async () => {
     const dir = await tempDir();
+    const { err, io } = capture();
     const downloader: Downloader = {
       fetchBytes: () => Promise.reject(new TypeError('network down')),
     };
+    expect(await runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'c') }, dir, io, { downloader })).toBe(1);
+    expect(err).toEqual([`GET ${MORPHGNT_SBLGNT_ARCHIVE.url}: network down`]);
+  });
+
+  it('rethrows unexpected errors', async () => {
+    const { bytes, archive } = await upstreamArchive();
+    const dir = await tempDir();
+    await writeFile(join(dir, 'corpus'), 'a file where the corpus directory should be');
+    const downloader = fakeDownloader({ [archive.url]: bytes });
     await expect(
-      runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'c') }, dir, capture().io, { downloader }),
-    ).rejects.toThrow('network down');
+      runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, capture().io, { downloader, archive }),
+    ).rejects.toThrow(/EEXIST|ENOTDIR/);
   });
 });
 

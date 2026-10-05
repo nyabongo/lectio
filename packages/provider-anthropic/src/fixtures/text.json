@@ -5,6 +5,11 @@
   "model": "claude-sonnet-5-5",
   "content": [
     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "EpoBCkgIBxABGAIiQHRleHQtc2lnbmF0dXJl"
+    },
+    {
       "type": "text",
       "text": "Yes. At standard sea-level pressure (1 atm), pure water boils at 100 °C.",
       "citations": null
@@ -19,6 +24,9 @@
     "cache_creation_input_tokens": 0,
     "cache_read_input_tokens": 0,
     "server_tool_use": null,
-    "service_tier": "standard"
+    "service_tier": "standard",
+    "output_tokens_details": {
+      "thinking_tokens": 7
+    }
   }
 }

@@ -7,7 +7,7 @@ import { server } from '@lectio/shared/test-server';
 import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { AnthropicLlmClient, createAnthropicLlmClient } from './client.ts';
+import { AnthropicLlmClient, DEFAULT_THINKING_TOKENS, createAnthropicLlmClient } from './client.ts';
 import type { AnthropicLlmClientOptions } from './client.ts';
 import {
   BASE_URL,
@@ -108,7 +108,7 @@ describe('AnthropicLlmClient requests', () => {
     expect(calls.bodies).toEqual([
       {
         model: 'claude-sonnet-5-5',
-        max_tokens: 1024,
+        max_tokens: 1024 + DEFAULT_THINKING_TOKENS,
         system: 'You check claims.',
         messages: [{ role: 'user', content: 'Does water boil at 100 °C at sea level?' }],
         output_config: { effort: 'high' },
@@ -224,15 +224,16 @@ describe('AnthropicLlmClient answers', () => {
 
   it('continues a paused server-tool turn and joins its content', async () => {
     const full = loadRecorded('web-tools');
-    const paused = { ...full, content: full.content.slice(0, 2), stop_reason: 'pause_turn' };
-    const rest = { ...full, content: full.content.slice(2) };
+    const paused = { ...full, content: full.content.slice(0, 3), stop_reason: 'pause_turn' };
+    const rest = { ...full, content: full.content.slice(3) };
     const calls = serve(paused, rest);
     const response = await setup().client.generate(schemaAsk({ tools: [{ kind: 'web_search' }] }));
 
     expect(calls.bodies).toHaveLength(2);
     expect(calls.bodies[1]?.messages).toEqual([
       { role: 'user', content: 'Does water boil at 100 °C at sea level?' },
-      { role: 'assistant', content: full.content.slice(0, 2) },
+      // The paused turn goes back as is, signed thinking block included.
+      { role: 'assistant', content: full.content.slice(0, 3) },
     ]);
     expect(response.usage).toEqual({ inputTokens: 11642, outputTokens: 374, cachedInputTokens: 2048, webSearches: 2 });
     expect(response.citations).toHaveLength(1);
@@ -324,7 +325,65 @@ describe('AnthropicLlmClient malformed JSON', () => {
   });
 });
 
+describe('AnthropicLlmClient truncation and billed model', () => {
+  it('rejects a plain answer cut off at max_tokens, charging it', async () => {
+    const calls = serve(variant('text', { stop_reason: 'max_tokens' }));
+    const { client, meter } = setup();
+    const error = await rejection(client.generate(ask()));
+    expect(error).toBeInstanceOf(LlmOutputError);
+    expect(error.message).toContain('answer truncated at 5120 output tokens (thinking used 7)');
+    expect((error as LlmOutputError).rawText).toBe(
+      'Yes. At standard sea-level pressure (1 atm), pure water boils at 100 °C.',
+    );
+    expect(calls.bodies).toHaveLength(1);
+    expect(meter.entries()).toHaveLength(1);
+  });
+
+  it('does not spend a repair turn on truncated JSON', async () => {
+    const good = loadRecorded('json');
+    const cut = textMessage('{"verdict":"supported","support":0.9', { output_tokens_details: null });
+    const calls = serve({ ...cut, stop_reason: 'max_tokens' }, good);
+    const error = await rejection(setup({ thinkingTokens: 0 }).client.generate(schemaAsk({ maxTokens: 512 })));
+    expect(error.message).toContain('truncated at 512 output tokens (thinking used 0)');
+    expect((error as LlmOutputError).rawText).toBe('{"verdict":"supported","support":0.9');
+    expect(calls.bodies).toHaveLength(1);
+    expect(calls.bodies[0]?.max_tokens).toBe(512);
+  });
+
+  it('bills and reports the requested id when the API echoes an unpriced one', async () => {
+    serve(variant('text', { model: 'claude-sonnet-5-5-20261001' }));
+    const { client, meter } = setup();
+    const response = await client.generate(ask());
+    expect(response.model).toBe('claude-sonnet-5-5');
+    expect(meter.entries()[0]).toMatchObject({
+      model: 'claude-sonnet-5-5',
+      note: 'anthropic:confirmer:claude-sonnet-5-5',
+    });
+  });
+
+  it('bills a priced answering model under its own id', async () => {
+    serve(variant('text', { model: 'claude-opus-5-5' }));
+    const { client, meter } = setup();
+    const response = await client.generate(ask());
+    expect(response.model).toBe('claude-opus-5-5');
+    expect(meter.entries()[0]?.usd).toBe(meter.price('claude-opus-5-5', response.usage));
+  });
+
+  it('refuses to start when the budget is already spent', async () => {
+    const calls = serve(loadRecorded('text'));
+    const meter = createCostMeter({ pricing: DEFAULT_CONFIG.pricing, ceilingUsd: 0 });
+    await expect(setup({ costMeter: meter }).client.generate(ask())).rejects.toBeInstanceOf(BudgetExceededError);
+    expect(calls.bodies).toHaveLength(0);
+  });
+});
+
 describe('AnthropicLlmClient retries', () => {
+  it('retries a 409 conflict', async () => {
+    const calls = serve(() => errorResponse(409, 'conflict_error', 'busy'), loadRecorded('text'));
+    await setup().client.generate(ask());
+    expect(calls.bodies).toHaveLength(2);
+  });
+
   it('retries a rate limit after the retry-after delay', async () => {
     const calls = serve(
       () => errorResponse(429, 'rate_limit_error', 'slow down', { 'retry-after': '2' }),
@@ -348,6 +407,8 @@ describe('AnthropicLlmClient retries', () => {
     expect(calls.bodies).toHaveLength(4);
     expect(sleeps).toEqual([1000, 2000, 4000]);
     expect(meter.entries()).toHaveLength(1);
+    // The attempt that failed mid-stream had started generating, so its usage is charged too.
+    expect(meter.entries()[0]?.usage).toEqual({ inputTokens: 82, outputTokens: 28 });
   });
 
   it('retries a dropped connection', async () => {
