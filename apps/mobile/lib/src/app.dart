@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/features/bookmarks/bookmarks_controller.dart';
+import 'package:lectio/features/notifications/daily_reminder_scheduler.dart';
 import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
 import 'package:lectio/src/routing/router.dart';
@@ -11,13 +14,15 @@ import 'package:lectio/src/theme/liturgical_colour.dart';
 class LectioApp extends StatefulWidget {
   /// Creates the app with the accent for [colour], starting at
   /// [initialLocation]. [settings] and [bookmarks] default to controllers in
-  /// memory; `main` passes ones saved on the device.
+  /// memory; `main` passes ones saved on the device, and the daily
+  /// [reminders] that follow [settings].
   const new({
     super.key,
     this.colour = LiturgicalColour.green,
     this.initialLocation = '/today',
     this.settings,
     this.bookmarks,
+    this.reminders,
   });
 
   /// The liturgical colour that tints the accent.
@@ -31,6 +36,11 @@ class LectioApp extends StatefulWidget {
 
   /// Bookmarks and personal notes.
   final BookmarksController? bookmarks;
+
+  /// The daily reminder, shared with the screens below through
+  /// [DailyReminderScope]; when it switches itself off because notifications
+  /// are not allowed, the app says why in a snack bar.
+  final DailyReminderScheduler? reminders;
 
   @override
   State<LectioApp> createState() => _LectioAppState();
@@ -47,15 +57,32 @@ class _LectioAppState extends State<LectioApp> {
   late final BookmarksController _bookmarks =
       widget.bookmarks ?? BookmarksController(MemoryKeyValueStore());
 
+  final GlobalKey<ScaffoldMessengerState> _messenger =
+      GlobalKey<ScaffoldMessengerState>();
+
+  StreamSubscription<void>? _refusals;
+
+  @override
+  void initState() {
+    super.initState();
+    _refusals = widget.reminders?.permissionRefusals.listen(
+      (_) => _messenger.currentState?.showSnackBar(
+        const SnackBar(content: Text(ReminderStrings.permissionRefused)),
+      ),
+    );
+  }
+
   @override
   void dispose() {
+    unawaited(_refusals?.cancel());
     _router.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SettingsScope(
+    final reminders = widget.reminders;
+    final app = SettingsScope(
       notifier: _settings,
       child: BookmarksScope(
         notifier: _bookmarks,
@@ -63,6 +90,7 @@ class _LectioAppState extends State<LectioApp> {
           listenable: _settings,
           builder: (context, _) => MaterialApp.router(
             title: 'Lectio',
+            scaffoldMessengerKey: _messenger,
             theme: buildLectioTheme(widget.colour, Brightness.light),
             darkTheme: buildLectioTheme(widget.colour, Brightness.dark),
             themeMode: _settings.settings.theme.mode,
@@ -72,5 +100,7 @@ class _LectioAppState extends State<LectioApp> {
         ),
       ),
     );
+    if (reminders == null) return app;
+    return DailyReminderScope(scheduler: reminders, child: app);
   }
 }
