@@ -108,13 +108,23 @@ The rules for each part:
 
 | id | locator regex | example |
 |---|---|---|
-| `litcal` | `[a-z_]+(/[a-z]{2})?\.json#[A-Za-z0-9]+(\.[a-z]+)?` | `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25` |
+| `litcal` | `[A-Za-z_]+(/[A-Za-z_]+)*/[a-z]{2}\.json#[A-Za-z0-9_]+(\.[a-z]+)?` | `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25` |
 | `olm-1981` | `p[0-9]+#[0-9]+` | `olm-1981 p97#133` |
 | `ddw-decree` | `[0-9]{4}-[0-9]{2}-[0-9]{2}#.+` (date and Prot. N.) | `ddw-decree 2016-06-03#Prot.NNN/16` |
 | `ke-lect-2020` | `v[1-3]:p[0-9]+#[0-9]+` | `ke-lect-2020 v3:p412#133` |
 | `ke-dm-2018` | `p[0-9]+` | `ke-dm-2018 p1534` |
 
 Full line regex: `^(?<id>[a-z0-9-]+)(?:@(?<rev>[0-9a-f]{40}))? (?<locator>\S+)$`.
+
+`litcal` locators are paths relative to `jsondata/sourcedata/rite/roman/lectionary/` (or `jsondata/sourcedata/rite/roman/` for `decrees/…`), then `#<key>[.<mass>]`. These must **match** (L-016 should make them test fixtures):
+
+- `dominicale_et_festivum_A/en.json#OrdSunday25`
+- `dominicale_et_festivum_A/en.json#Christmas.vigil`
+- `feriale_per_annum_II/en.json#OrdWeekday24Monday`
+- `sanctorum/en.json#StMatthewEvangelist`
+- `decrees/lectionary/en.json#StMaryMagdalene` (the key name only illustrates the format)
+
+These must **not** match: `en.json#OrdSunday25` (no directory) and `../en.json#OrdSunday25`.
 
 Page numbers and the Prot. N. in the examples are illustrative. The `#<n>` after a page is the OLM 1981 lectionary number. Whether the Kenyan print uses OLM numbering or US renumbering must be confirmed (Q1).
 
@@ -147,7 +157,7 @@ Conversions to handle (the tables live in L-006):
 3. **Commercial status.** Is Lectio non-commercial? This decides whether Felix Just's tables may be consulted for disputes.
 4. **OLM 1981 copy.** Do you approve buying a print copy (LEV) as the citable gap-fill source?
 5. **Kenya propers.** Kiswahili *Misale ya Kila Siku* as a second source, or the Kenyan *Daily Missal* alone with owner review?
-6. **LitCal provenance.** LitCal's English citations are US-lectionary data, and its maintainers verify corrections against usccb.org pages. It is not a USCCB scrape: it is a curated Apache-2.0 corpus, and citations are facts. Please confirm that this satisfies the "no datasets derived from usccb.org" rule.
+6. ~~**LitCal provenance.**~~ **Answered** by the owner's decision of 2026-10-05, which names LitCal as the primary source. Citations are facts, and LitCal is a curated Apache-2.0 corpus, not a scrape, although its maintainers check corrections against usccb.org pages. Revisit this if upstream provenance changes.
 
 ## Downstream changes
 
