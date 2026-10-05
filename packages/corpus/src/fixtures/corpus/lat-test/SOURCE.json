@@ -1,0 +1,10 @@
+{
+  "name": "Latin test edition (synthetic)",
+  "language": "lat",
+  "upstreamUrl": "https://example.test/lat-test.tar.gz",
+  "version": "fixture-1",
+  "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "licence": "CC0-1.0",
+  "attribution": "Synthetic Latin tokens written for the tests.",
+  "versification": "Vulgate"
+}

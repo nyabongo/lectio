@@ -1,0 +1,10 @@
+{
+  "name": "Hebrew test edition (fragment of the Westminster Leningrad Codex)",
+  "language": "hbo",
+  "upstreamUrl": "https://example.test/hbo-test.tar.gz",
+  "version": "fixture-1",
+  "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "licence": "LicenseRef-PublicDomain",
+  "attribution": "Fragment of the Westminster Leningrad Codex (public domain).",
+  "versification": "NABRE"
+}
