@@ -30,8 +30,14 @@ export interface InsightView {
  * The Insight page for `noteId` on the reading at `date`/`slot`, or `null` when there is no such reading, its
  * passage is missing or not approved, or it has no note with that id.
  */
-export function insightPage(repo: ContentRepo, date: string, slot: string, noteId: string): InsightView | null {
-  const reading = readingPage(repo, date, slot);
+export function insightPage(
+  repo: ContentRepo,
+  date: string,
+  slot: string,
+  noteId: string,
+  locale?: string,
+): InsightView | null {
+  const reading = readingPage(repo, date, slot, locale);
   const notes = reading?.notes ?? null;
   if (reading === null || notes === null) return null;
   const note = notes.translationNotes.find((candidate) => candidate.id === noteId);

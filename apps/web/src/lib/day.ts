@@ -19,6 +19,7 @@ import type { CalendarDay, Celebration, Reading } from '@lectio/schema/calendar'
 import { addDays } from '@lectio/shared';
 import type { IsoDate } from '@lectio/shared';
 
+import { celebrationName } from './calendar-names.ts';
 import type { MessageParams } from './i18n.ts';
 import { linkoutSource, principalFirst, readingPath } from './reading.ts';
 import { dayColour } from './theme.ts';
@@ -343,11 +344,11 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
       readingView(env, date, options.config, reading, owners.get((reading as Reading).slot) === mass.id),
     ),
   }));
-  const celebrationViews = celebrations.map(({ name, rank, colour }: Celebration) => ({
-    name,
-    rank: rankLabel(env, rank),
-    colour,
-    colourLabel: colourLabel(env, colour),
+  const celebrationViews = celebrations.map((celebration: Celebration) => ({
+    name: celebrationName(celebration, lang),
+    rank: rankLabel(env, celebration.rank),
+    colour: celebration.colour,
+    colourLabel: colourLabel(env, celebration.colour),
   }));
   const title = celebrationViews[0]?.name ?? formatDate(lang, date);
   const dateLabel = formatDate(lang, date);
@@ -422,7 +423,7 @@ export function upcomingDays(env: DayEnv, repo: Pick<ContentRepo, 'listDays'>, d
       date: day.date,
       href: env.paths(dayPath(day.date)),
       dateLabel,
-      title: celebrations[0]?.name ?? dateLabel,
+      title: celebrations[0] === undefined ? dateLabel : celebrationName(celebrations[0], env.lang),
     };
   });
 }

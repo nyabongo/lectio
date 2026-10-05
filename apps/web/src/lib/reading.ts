@@ -15,6 +15,8 @@ import type { ContentRepo, ResolvedDay, ResolvedMass, ResolvedReading } from '@l
 import type { Reading } from '@lectio/schema/calendar';
 import type { Passage, PassageClaim, PassageSource, TranslationNote } from '@lectio/schema/passage';
 
+import { celebrationName } from './calendar-names.ts';
+
 /** The repository that takes content reports (`.github/ISSUE_TEMPLATE/content-issue.yml` lives there). */
 export const CONTENT_ISSUE_REPO = 'https://github.com/nyabongo/lectio';
 
@@ -237,7 +239,7 @@ export interface ReadingView {
 }
 
 /** The view of `reading` on `day`. Notes come only from an approved passage. */
-export function readingView(day: ResolvedDay, reading: ResolvedReading): ReadingView {
+export function readingView(day: ResolvedDay, reading: ResolvedReading, locale?: string): ReadingView {
   // Read the calendar fields through `Reading`: `astro check` sees the schema types as `any`.
   const { slot, ref, key, linkout }: Reading = reading;
   const path = readingPath(day.date, slot);
@@ -249,7 +251,7 @@ export function readingView(day: ResolvedDay, reading: ResolvedReading): Reading
     key,
     linkout,
     path,
-    celebration: celebration?.name ?? null,
+    celebration: celebration === undefined ? null : celebrationName(celebration, locale),
     colour: celebration?.colour ?? null,
     notes: reading.approved && reading.passage !== null ? notesView(reading.passage, path) : null,
   };
@@ -285,11 +287,11 @@ export function readingsBySlot(day: ResolvedDay): Map<string, ResolvedReading> {
 }
 
 /** The Reading page for `date` and `slot`, or `null` when the calendar has no such day or slot. */
-export function readingPage(repo: ContentRepo, date: string, slot: string): ReadingView | null {
+export function readingPage(repo: ContentRepo, date: string, slot: string, locale?: string): ReadingView | null {
   const day = repo.resolveDay(date);
   if (day === null) return null;
   const reading = readingsBySlot(day).get(slot);
-  return reading === undefined ? null : readingView(day, reading);
+  return reading === undefined ? null : readingView(day, reading, locale);
 }
 
 /** Static paths for `pages/[date]/[slot]/index.astro`: one per reading slot of every day in every calendar. */
