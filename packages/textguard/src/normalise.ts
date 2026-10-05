@@ -6,6 +6,12 @@
  * punctuation and line breaks. Hyphens and dashes separate words. Number-only
  * tokens (inline verse numbers such as "16" or "¹⁷") are transparent: they are
  * dropped, so a run is not split by the verse numbers quoted inside it.
+ *
+ * Combining marks (Unicode category M) belong to the word they sit on, so pointed
+ * Hebrew (niqqud, cantillation) and decomposed (NFD) Greek or Latin count one word
+ * per word, like their precomposed forms. The Hebrew maqaf (U+05BE) is a dash and
+ * separates words, as in the OSHB word division; geresh and gershayim (U+05F3,
+ * U+05F4) join like an apostrophe.
  */
 
 /** Bumped whenever normalisation or hashing changes; recorded in SOURCE.json (older indexes must be rebuilt). */
@@ -18,7 +24,7 @@ export interface Token {
   readonly end: number;
 }
 
-const WORD = /[\p{L}\p{N}]+(?:['’ʼ][\p{L}\p{N}]+)*/gu;
+const WORD = /[\p{L}\p{N}][\p{L}\p{M}\p{N}]*(?:['’ʼ׳״][\p{L}\p{N}][\p{L}\p{M}\p{N}]*)*/gu;
 const MARKS = /\p{M}/gu;
 const NOT_WORD_CHAR = /[^\p{L}\p{N}]/gu;
 const NUMBER_ONLY = /^\p{N}+$/u;

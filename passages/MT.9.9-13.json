@@ -1,0 +1,629 @@
+{
+  "key": "MT.9.9-13",
+  "ref": "Mt 9:9-13",
+  "locale": "en",
+  "summary": "Jesus calls Matthew from the toll-house, eats with tax collectors and sinners, and answers his critics with Hosea’s word on mercy.",
+  "context": {
+    "title": "The call of Matthew",
+    "paragraphs": [
+      "Mark and Luke tell the same call but name the man Levi, and commentators generally take Levi and Matthew to be one person. [c1] The name Matthew is usually explained as “gift of God”. [c2] In its list of the Twelve, this Gospel calls him “Matthew the tax collector”, keeping his old trade in view. [c3]",
+      "Matthew sat at a toll-house, probably the customs post at Capernaum by the lake, where duty was levied on goods passing through. [c4] Tax-farming lent itself to extortion, and Jewish collectors under Roman rule were widely despised. [c5] Rabbinic law reflects this reputation: a tax-gatherer could serve neither as a judge nor as a witness. [c6]",
+      "Luke says that the meal was a great feast that Levi gave in his own house. [c7] The objectors were Pharisees, whose members pledged themselves to Levitical purity and kept the purity of the Temple even at their daily meals, avoiding close contact with the careless. [c8] On table fellowship with publicans and sinners, Jesus differed sharply from them. [c9]",
+      "The Jewish Encyclopedia adds that Jesus fully agreed with the Pharisees on the main doctrine, citing the greatest commandment scene in Mark 12:28-34, so the dispute here is about practice within Israel. [c9][c10] Jesus answers from Israel’s own prophet, quoting Hosea 6:6, and only Matthew includes the citation in this scene. [c11] He quotes the same line again in Mt 12:7, in a dispute about the Sabbath. [c12]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "telonion",
+      "verse": "9:9",
+      "anchor": "tax office",
+      "original": {
+        "text": "τελώνιον",
+        "lang": "grc",
+        "translit": "telōnion",
+        "gloss": "toll-house"
+      },
+      "summary": "Telōnion names a fixed customs post, the place where tolls were assessed, not the tax itself.",
+      "body": "Thayer gives two senses for telōnion, the toll itself and the toll-house where the collector sat, and files this verse under the second. [c13] Vincent explains that sitting at the office meant sitting on its raised bench, which stood for the whole establishment. [c14] Older English rendered the phrase “receipt of custom”, while the Revised Version has “place of toll”, which keeps the sense of a place. [c15]"
+    },
+    {
+      "id": "sinners",
+      "verse": "9:10",
+      "anchor": "tax collectors and sinners",
+      "original": {
+        "text": "τελῶναι καὶ ἁμαρτωλοὶ",
+        "lang": "grc",
+        "translit": "telōnai kai hamartōloi",
+        "gloss": "toll-collectors and sinners"
+      },
+      "summary": "A fixed pairing in the Gospels: “sinners” here are people known for definite wrongdoing, not everyone.",
+      "body": "Thayer distinguishes, among other uses of hamartōlos, anyone not free from sin and people marked by definite vices, such as tax-gatherers. [c16] He files the pairing in this verse under the latter, but places the sinners of verse 13 under the former, where all are sinners. [c17] Ellicott adds that the word may have included Gentiles here, though it does not have to mean them. [c18]"
+    },
+    {
+      "id": "ischyontes",
+      "verse": "9:12",
+      "anchor": "those who are well",
+      "original": {
+        "text": "ἰσχύοντες",
+        "lang": "grc",
+        "translit": "ischyontes",
+        "gloss": "the strong"
+      },
+      "summary": "Literally “the strong”: Matthew and Mark use a word of strength, where Luke has the plainer medical “healthy”.",
+      "body": "Ischyontes literally means those who are strong, and Luke’s parallel uses hygiainontes, those in health. [c19] Mark 2:17 has the same word as Matthew. [c20] Commentators hear a touch of irony in the proverb: the strong are those who think themselves whole, so Jesus answers his critics on their own terms. [c21]"
+    },
+    {
+      "id": "eleos",
+      "verse": "9:13",
+      "anchor": "I desire mercy",
+      "original": {
+        "text": "Ἔλεος θέλω καὶ οὐ θυσίαν",
+        "lang": "grc",
+        "translit": "eleos thelō kai ou thysian",
+        "gloss": "mercy I want and not sacrifice"
+      },
+      "summary": "Eleos stands for Hosea’s ḥesed, steadfast kindness; “and not” is a Hebrew way of saying “rather than”.",
+      "body": "In Hosea 6:6 the Hebrew word is ḥesed, which BDB defines as goodness or kindness, though in this verse it is possibly piety toward God. [c22] Thayer files the Greek eleos here under the readiness of people to help those in trouble. [c23] The form “mercy and not sacrifice” is a Hebrew way of stating a preference, not a rejection of sacrifice, which God had himself commanded. [c24]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Mark 2:14 and Luke 5:27 name the tax collector called at the toll-house Levi, and the identification of Levi with Matthew is generally accepted.",
+      "sourceIds": ["mk-2-14", "cambridge-mt-9-9-levi"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The name Matthew is explained as meaning “gift of God”.",
+      "sourceIds": ["ellicott-mt-9-9-name", "cambridge-mt-9-9-name"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "In the list of the Twelve in Mt 10:3, Matthew is called “the tax collector”, and this Gospel keeps his former occupation in view.",
+      "sourceIds": ["mt-10-3", "jfb-mt-9-9-occupation"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "The toll-house was probably the custom-house of the lake at Capernaum, where customs were levied on produce passing in and out.",
+      "sourceIds": ["ellicott-mt-9-9-custom", "vincent-mt-9-9-capernaum"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Roman customs dues were farmed out and lent themselves to extortion, making publicans unpopular, especially Jews exploiting their fellow Jews.",
+      "sourceIds": ["je-publican-extortion", "je-publican-fellow-jews"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Tax-gatherers were ineligible to serve as judges or as witnesses (Sanh. 25b).",
+      "sourceIds": ["je-tax-gatherers-judge"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Luke 5:29 says that Levi made a great feast for Jesus in his own house.",
+      "sourceIds": ["lk-5-29", "barnes-mt-9-10"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Members of the Pharisaic brotherhood pledged strict observance of Levitical purity, observed at daily meals the purity of the priest in the Temple, and avoided close association with the ʿam ha-areẓ.",
+      "sourceIds": ["je-pharisees-purity", "je-pharisees-meals"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "On intercourse with the ʿam ha-areẓ, the publican and the sinner, Jesus differed widely from the Pharisees.",
+      "sourceIds": ["je-pharisees-jesus-differ"],
+      "sensitive": true
+    },
+    {
+      "id": "c10",
+      "text": "According to the Jewish Encyclopedia, Jesus fully agreed with the Pharisees on the main doctrine, as Mark 12:28-34, the question of the first commandment, still shows.",
+      "sourceIds": ["je-pharisees-jesus-agree", "je-pharisees-mark-12", "mk-12-28"],
+      "sensitive": true
+    },
+    {
+      "id": "c11",
+      "text": "Jesus cites Hosea 6:6, and among the parallel accounts only Matthew gives the reference to Hosea.",
+      "sourceIds": ["hos-6-6", "pulpit-mt-9-10-hosea"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Jesus cites Hosea 6:6 again in Mt 12:7, in reference to the Sabbath.",
+      "sourceIds": ["mt-12-7", "ellicott-mt-9-13-sabbath"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Thayer gives τελώνιον the senses customs or toll, and toll-house or place of toll, citing Mt 9:9 under the second.",
+      "sourceIds": ["thayer-telonion"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Sitting at the toll-office means sitting on its elevated bench, which stood for the whole establishment.",
+      "sourceIds": ["vincent-mt-9-9-bench"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The Authorised Version has “receipt of custom” and the Revised Version “place of toll”.",
+      "sourceIds": ["pulpit-mt-9-9-place-of-toll"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Thayer distinguishes ἁμαρτωλός in the sense not free from sin from the sense of men stained with definite vices, such as tax-gatherers.",
+      "sourceIds": ["thayer-hamartolos-not-free", "thayer-hamartolos-vices"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Thayer lists the combination τελῶναι καὶ ἁμαρτωλοί in Mt 9:10 under the sense of definite vices, and Mt 9:13 under the sense in which all men are sinners.",
+      "sourceIds": ["mt-9-10", "thayer-hamartolos-vices", "thayer-hamartolos-all"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Ellicott says that “sinners” may have included Gentiles but does not necessarily designate them.",
+      "sourceIds": ["ellicott-mt-9-10-gentiles"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Οἱ ἰσχύοντες literally means “they that are strong”, and Luke 5:31 has οἱ ὑγιαίνοντες, “they that are in health”.",
+      "sourceIds": ["mt-9-12", "lk-5-31", "ellicott-mt-9-12-strong"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Mark 2:17 uses the same word ἰσχύοντες as Mt 9:12.",
+      "sourceIds": ["mk-2-17"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "There is irony in the saying, spoken from the standpoint of those addressed: “the whole” are those who think themselves whole.",
+      "sourceIds": [
+        "cambridge-mt-9-12-irony",
+        "cambridge-mt-9-12-think",
+        "ellicott-mt-9-12-irony",
+        "ellicott-mt-9-12-standpoint"
+      ],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "Hosea 6:6 uses חֶסֶד, which BDB glosses goodness, kindness, and for Hos 6:6 possibly piety toward God.",
+      "sourceIds": ["hos-6-6", "bdb-hesed", "bdb-hesed-hosea"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Thayer lists ἔλεος in Mt 9:13 under human readiness to help those in trouble.",
+      "sourceIds": ["thayer-eleos"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "“Mercy and not sacrifice” is a Hebrew mode of speaking meaning a preference for mercy, not a rejection of the sacrifices God had appointed.",
+      "sourceIds": ["barnes-mt-9-13-hebrew", "barnes-mt-9-13-appointed", "cambridge-mt-9-13-rather"],
+      "sensitive": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "mk-2-14",
+      "type": "scripture",
+      "citation": "Mark 2:14",
+      "ref": "Mk 2:14",
+      "excerpt": "Λευὶν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-12-28",
+      "type": "scripture",
+      "citation": "Mark 12:28",
+      "ref": "Mk 12:28",
+      "excerpt": "ἐντολὴ πρώτη πάντων",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-9-10",
+      "type": "scripture",
+      "citation": "Matthew 9:10",
+      "ref": "Mt 9:10",
+      "excerpt": "τελῶναι καὶ ἁμαρτωλοὶ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-9-12",
+      "type": "scripture",
+      "citation": "Matthew 9:12",
+      "ref": "Mt 9:12",
+      "excerpt": "ἰσχύοντες",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-10-3",
+      "type": "scripture",
+      "citation": "Matthew 10:3",
+      "ref": "Mt 10:3",
+      "excerpt": "Μαθθαῖος ὁ τελώνης",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-12-7",
+      "type": "scripture",
+      "citation": "Matthew 12:7",
+      "ref": "Mt 12:7",
+      "excerpt": "Ἔλεος θέλω καὶ οὐ θυσίαν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-2-17",
+      "type": "scripture",
+      "citation": "Mark 2:17",
+      "ref": "Mk 2:17",
+      "excerpt": "ἰσχύοντες",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-5-29",
+      "type": "scripture",
+      "citation": "Luke 5:29",
+      "ref": "Lk 5:29",
+      "excerpt": "δοχὴν μεγάλην",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-5-31",
+      "type": "scripture",
+      "citation": "Luke 5:31",
+      "ref": "Lk 5:31",
+      "excerpt": "ὑγιαίνοντες",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "hos-6-6",
+      "type": "scripture",
+      "citation": "Hosea 6:6",
+      "ref": "Hos 6:6",
+      "excerpt": "חֶסֶד חָפַצְתִּי וְלֹא זָבַח",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "cambridge-mt-9-9-levi",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "The identification of Matthew with Levi can scarcely be seriously disputed",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-mt-9-9-name",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "Probably the name Matthew, “Gift of God,” was adopted",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-9-name",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "means “the gift of God,” or, more strictly, “the gift of Jehovah”",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-9-custom",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "Literally, at the custom-house, the douane of the lake",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "jfb-mt-9-9-occupation",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "he is careful not to sink his occupation",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-mt-9-9-capernaum",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "This customs-office was at Capernaum",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-mt-9-9-bench",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "the elevated platform or bench which was the principal feature",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "pulpit-mt-9-9-place-of-toll",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Matthew 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-9.htm",
+      "excerpt": "receipt of custom ; at the place of toll (Revised Version)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "je-publican-extortion",
+      "type": "web",
+      "citation": "Crawford Howell Toy and Joseph Jacobs, “Publican”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12430-publican",
+      "excerpt": "lent themselves to extortion; hence the unpopularity of the publicans",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:20:00Z"
+    },
+    {
+      "id": "je-publican-fellow-jews",
+      "type": "web",
+      "citation": "Crawford Howell Toy and Joseph Jacobs, “Publican”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12430-publican",
+      "excerpt": "they were Jews exploiting their fellow Jews",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:20:00Z"
+    },
+    {
+      "id": "je-tax-gatherers-judge",
+      "type": "web",
+      "citation": "“Tax-Gatherers”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/14273-tax-gatherers",
+      "excerpt": "ineligible to serve as judge or even as a witness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:20:00Z"
+    },
+    {
+      "id": "barnes-mt-9-10",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Matthew 9:10 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-10.htm",
+      "excerpt": "This was at a feast given to him by \"Levi\" or \"Matthew,\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "je-pharisees-purity",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Pharisees”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12087-pharisees",
+      "excerpt": "pledged themselves to the strict observance of Levitical purity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:22:00Z"
+    },
+    {
+      "id": "je-pharisees-meals",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Pharisees”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12087-pharisees",
+      "excerpt": "purity in his daily meals as did the priest in the Temple",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:22:00Z"
+    },
+    {
+      "id": "je-pharisees-jesus-differ",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Pharisees”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12087-pharisees",
+      "excerpt": "the publican, and the sinner, did Jesus differ widely from the Pharisees",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:22:00Z"
+    },
+    {
+      "id": "je-pharisees-jesus-agree",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Pharisees”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12087-pharisees",
+      "excerpt": "In regard to the main doctrine he fully agreed with them",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:22:00Z"
+    },
+    {
+      "id": "je-pharisees-mark-12",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Pharisees”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12087-pharisees",
+      "excerpt": "as the old version (Mark xii. 28-34) still has it",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:22:00Z"
+    },
+    {
+      "id": "pulpit-mt-9-10-hosea",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Matthew 9:10 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-10.htm",
+      "excerpt": "Matthew alone gives the reference to Hosea",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-13-sabbath",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-13.htm",
+      "excerpt": "cited once again by our Lord in reference to the Sabbath",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-telonion",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. τελώνιον (Bible Hub, Strong's 5058)",
+      "url": "https://biblehub.com/greek/5058.htm",
+      "excerpt": "toll-house, place of toll, tax-office",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-hamartolos-not-free",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἁμαρτωλός (Bible Hub, Strong's 268)",
+      "url": "https://biblehub.com/greek/268.htm",
+      "excerpt": "not free from sin. In this sense all men are sinners",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-hamartolos-all",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἁμαρτωλός (Bible Hub, Strong's 268)",
+      "url": "https://biblehub.com/greek/268.htm",
+      "excerpt": "all men are sinners; as, Matthew 9:13",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-hamartolos-vices",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἁμαρτωλός (Bible Hub, Strong's 268)",
+      "url": "https://biblehub.com/greek/268.htm",
+      "excerpt": "men stained with certain definite vices or crimes, e. g. the tax-gatherers",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-10-gentiles",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:10 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-10.htm",
+      "excerpt": "may have included Gentiles, but does not necessarily designate them",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-12-strong",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "Literally, They that are strong",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-12-irony",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "in another than our Lord we might term grave irony",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-12-standpoint",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "speaking from the thoughts and standpoint of those addressed",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-mt-9-12-irony",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "There is a touch of irony in the words",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-mt-9-12-think",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "they who think themselves whole",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-hesed",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חֶסֶד (Bible Hub, Strong's 2617)",
+      "url": "https://biblehub.com/hebrew/2617.htm",
+      "excerpt": "goodness, kindness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-hesed-hosea",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חֶסֶד (Bible Hub, Strong's 2617)",
+      "url": "https://biblehub.com/hebrew/2617.htm",
+      "excerpt": "Hosea 6:6 for piety I delight in and not in peace-offering",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-eleos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἔλεος (Bible Hub, Strong's 1656)",
+      "url": "https://biblehub.com/greek/1656.htm",
+      "excerpt": "readiness to help those in trouble, Matthew 9:13",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-mt-9-13-hebrew",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Matthew 9:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-13.htm",
+      "excerpt": "a Hebrew mode of speaking, and means, \"I prefer mercy to sacrifice;\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-mt-9-13-appointed",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Matthew 9:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-13.htm",
+      "excerpt": "for he had appointed and commanded many",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-mt-9-13-rather",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 9:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-13.htm",
+      "excerpt": "I require mercy rather than sacrifice",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021a-mt-9-9-13",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T11:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
