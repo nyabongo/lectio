@@ -1,0 +1,605 @@
+{
+  "key": "LK.9.7-9",
+  "ref": "Lk 9:7-9",
+  "locale": "en",
+  "summary": "Herod Antipas hears of Jesus, is perplexed by talk of John raised or Elijah returned, and keeps trying to see him.",
+  "context": {
+    "title": "Herod’s perplexity",
+    "paragraphs": [
+      "Luke sets this scene between the sending out of the Twelve and their return, so what reaches Herod is probably news of their mission. [c1] Matthew and Mark follow it with the full story of John’s death, which Luke does not tell. [c2] He has already reported that Herod shut John up in prison. [c3]",
+      "This Herod is Antipas, a son of Herod the Great, who ruled Galilee and Peraea after his father’s death. [c4] John had condemned his marriage to Herodias, the wife of his half-brother Philip, and that cost John his life. [c5] Matthew and Mark have Herod himself say that John has risen; Luke gives the idea to others and leaves Herod uncertain. [c6]",
+      "The rumours echo hopes of the time: Malachi had promised that Elijah would be sent before the day of the Lord. [c7] Some also expected Jeremiah or another of the great prophets to return as a herald of the Messiah. [c8] The same three answers come back later in the chapter, when Jesus asks who the crowds say he is. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "tetraarches",
+      "verse": "9:7",
+      "anchor": "tetrarch",
+      "original": {
+        "text": "τετραάρχης",
+        "lang": "grc",
+        "translit": "tetraarchēs",
+        "gloss": "ruler of a fourth"
+      },
+      "summary": "Tetrarch first meant the ruler of a quarter of a region, but by now named any minor prince.",
+      "body": "The word joins four and rule, and first meant the governor of a fourth part of a region. [c10] It later lost that strict sense and could name any petty prince over a modest territory. [c11] Luke, like Matthew, gives Antipas this exact title, while Mark calls him king. [c12]"
+    },
+    {
+      "id": "diaporeo",
+      "verse": "9:7",
+      "anchor": "perplexed",
+      "original": {
+        "text": "διηπόρει",
+        "lang": "grc",
+        "translit": "diēporei",
+        "gloss": "was utterly at a loss"
+      },
+      "summary": "Diēporei pictures someone who tries every way through and finds none: complete perplexity.",
+      "body": "Diaporeo means to be entirely at a loss, and in the New Testament only Luke uses it. [c13] Vincent explains it as going through the whole list of possible ways and finding no way out. [c14] Meyer describes a man who could reach no certainty at all about who Jesus was. [c15] English perplexed is right, but the Greek is stronger than a passing puzzle. [c13][c14]"
+    },
+    {
+      "id": "ephane",
+      "verse": "9:8",
+      "anchor": "appeared",
+      "original": {
+        "text": "ἐφάνη",
+        "lang": "grc",
+        "translit": "ephanē",
+        "gloss": "appeared"
+      },
+      "summary": "Elijah “appeared” rather than “was raised”, because Scripture says he was taken up without dying.",
+      "body": "Luke says that John has been raised from the dead, but that Elijah has appeared. [c16] Commentators explain the change by Elijah’s being taken up to heaven without dying, so he could return without rising. [c17] Bengel notes that the verb stands midway between the words for rising used of John and of the old prophets. [c18]"
+    },
+    {
+      "id": "ezetei-idein",
+      "verse": "9:9",
+      "anchor": "trying to see him",
+      "original": {
+        "text": "ἐζήτει ἰδεῖν αὐτόν",
+        "lang": "grc",
+        "translit": "ezētei idein auton",
+        "gloss": "was seeking to see him"
+      },
+      "summary": "Herod “was seeking” to see Jesus, a wish Luke picks up again at the Passion.",
+      "body": "The verb means he sought, not merely wished, and literally reads was seeking. [c19] Luke returns to this desire at the Passion, when Pilate sends Jesus to Herod and Herod is glad at last to see him. [c20] Just before, Herod says I beheaded John with an emphatic I, which commentators hear as the voice of a troubled conscience. [c21]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Lk 9:7-9 stands between the mission of the Twelve (Lk 9:1-6) and their return (Lk 9:10), and what Herod heard most naturally refers to that mission.",
+      "sourceIds": ["lk-9-6", "lk-9-10", "cambridge-lk-9-7", "expositors-lk-9-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Matthew and Mark follow this scene with the account of John the Baptist’s death, which Luke does not tell.",
+      "sourceIds": ["mk-6-17", "pulpit-lk-9-9", "expositors-lk-9-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Luke has already reported, in Lk 3:19-20, that Herod the tetrarch shut John up in prison.",
+      "sourceIds": ["lk-3-20"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Herod the tetrarch was Herod Antipas, a son of Herod the Great, and after his father’s death ruled Galilee and Peraea.",
+      "sourceIds": ["pulpit-lk-9-7", "pulpit-lk-9-7-galilee"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Antipas married Herodias, the wife of his half-brother Philip, and John’s remonstrances against this marriage led to his death.",
+      "sourceIds": ["mk-6-17", "pulpit-lk-9-7-herodias", "pulpit-lk-9-7-john"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "In Matthew and Mark Herod himself expresses the belief that John has risen, while Luke attributes it to others and leaves Herod in suspense.",
+      "sourceIds": ["mk-6-16", "ellicott-lk-9-7", "expositors-lk-9-7-say"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Mal 3:23 (4:5 in some Bibles) promises that Elijah the prophet will be sent before the day of the Lord, and the rumour about Elijah accords with this prophecy.",
+      "sourceIds": ["mal-3-23", "cambridge-lk-9-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Jeremiah and other great prophets were looked for by some Jews as heralds of the coming Messiah.",
+      "sourceIds": ["pulpit-lk-9-8", "cambridge-lk-9-8-jeremiah"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "In Lk 9:19 the disciples report the same three opinions: John the Baptist, Elijah, or one of the old prophets risen.",
+      "sourceIds": ["lk-9-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Τετράρχης (from τέτρα and ἄρχω) strictly means a governor of the fourth part of a region.",
+      "sourceIds": ["thayer-tetrarches"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "The word lost its strict etymological force and came to denote a petty prince over a territory of comparatively narrow limits.",
+      "sourceIds": ["thayer-tetrarches-petty"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Luke, like Matthew, calls Herod ὁ τετραάρχης, where Mark calls him βασιλεύς.",
+      "sourceIds": ["lk-9-7", "mk-6-14", "expositors-lk-9-7-title"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Διαπορέω means to be entirely at a loss, and in the New Testament only Luke uses it.",
+      "sourceIds": ["lk-9-7-diaporeo", "thayer-diaporeo", "meyer-lk-9-7-only"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Vincent explains διαπορέω as going through the whole list of possible ways and finding no way out.",
+      "sourceIds": ["vincent-lk-9-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Meyer explains that Herod could not in the least arrive at certainty about the person of Jesus.",
+      "sourceIds": ["meyer-lk-9-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Luke uses ἠγέρθη (was raised) of John in Lk 9:7 but ἐφάνη (appeared) of Elijah in Lk 9:8.",
+      "sourceIds": ["lk-9-7-raised", "lk-9-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Ἐφάνη is used of Elijah because he had not died but been taken up to heaven (2 Kgs 2:11).",
+      "sourceIds": ["2kgs-2-11", "expositors-lk-9-8", "cambridge-lk-9-8-translation"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Bengel notes that ἐφάνη is put midway between ἠγέρθη and ἀνέστη, the verbs used in Lk 9:7-8 of John and of the old prophets.",
+      "sourceIds": ["lk-9-8-aneste", "bengel-lk-9-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Ἐζήτει literally means “was seeking”: Herod did more than desire to see Jesus.",
+      "sourceIds": ["lk-9-9", "cambridge-lk-9-9", "vincent-lk-9-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Luke returns to Herod’s desire in Lk 23:8, when Pilate sends Jesus to Herod on the day of the crucifixion.",
+      "sourceIds": ["lk-23-8", "ellicott-lk-9-9", "pulpit-lk-9-9-saw"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "The emphatic ἐγὼ in “I beheaded” (Lk 9:9) is read as the voice of a guilty, troubled conscience.",
+      "sourceIds": ["lk-9-9-ego", "expositors-lk-9-9-ego", "meyer-lk-9-9"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "lk-9-6",
+      "type": "scripture",
+      "citation": "Luke 9:6",
+      "ref": "Lk 9:6",
+      "excerpt": "εὐαγγελιζόμενοι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-10",
+      "type": "scripture",
+      "citation": "Luke 9:10",
+      "ref": "Lk 9:10",
+      "excerpt": "ἀπόστολοι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-7",
+      "type": "scripture",
+      "citation": "Luke 9:7",
+      "ref": "Lk 9:7",
+      "excerpt": "τετραάρχης",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-7-diaporeo",
+      "type": "scripture",
+      "citation": "Luke 9:7",
+      "ref": "Lk 9:7",
+      "excerpt": "διηπόρει",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-7-raised",
+      "type": "scripture",
+      "citation": "Luke 9:7",
+      "ref": "Lk 9:7",
+      "excerpt": "ἠγέρθη ἐκ νεκρῶν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-8",
+      "type": "scripture",
+      "citation": "Luke 9:8",
+      "ref": "Lk 9:8",
+      "excerpt": "Ἠλίας ἐφάνη",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-8-aneste",
+      "type": "scripture",
+      "citation": "Luke 9:8",
+      "ref": "Lk 9:8",
+      "excerpt": "ἀνέστη",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-9",
+      "type": "scripture",
+      "citation": "Luke 9:9",
+      "ref": "Lk 9:9",
+      "excerpt": "ἐζήτει ἰδεῖν αὐτόν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-9-ego",
+      "type": "scripture",
+      "citation": "Luke 9:9",
+      "ref": "Lk 9:9",
+      "excerpt": "ἐγὼ ἀπεκεφάλισα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-19",
+      "type": "scripture",
+      "citation": "Luke 9:19",
+      "ref": "Lk 9:19",
+      "excerpt": "Ἠλίαν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-3-20",
+      "type": "scripture",
+      "citation": "Luke 3:19-20",
+      "ref": "Lk 3:20",
+      "excerpt": "ἐν φυλακῇ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-23-8",
+      "type": "scripture",
+      "citation": "Luke 23:8",
+      "ref": "Lk 23:8",
+      "excerpt": "Ἡρῴδης",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-6-14",
+      "type": "scripture",
+      "citation": "Mark 6:14",
+      "ref": "Mk 6:14",
+      "excerpt": "βασιλεὺς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-6-16",
+      "type": "scripture",
+      "citation": "Mark 6:16",
+      "ref": "Mk 6:16",
+      "excerpt": "ἀπεκεφάλισα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-6-17",
+      "type": "scripture",
+      "citation": "Mark 6:17-29",
+      "ref": "Mk 6:17",
+      "excerpt": "Ἡρῳδιάδα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mal-3-23",
+      "type": "scripture",
+      "citation": "Malachi 3:23",
+      "ref": "Mal 3:23",
+      "excerpt": "אֵלִיָּה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "2kgs-2-11",
+      "type": "scripture",
+      "citation": "2 Kings 2:11",
+      "ref": "2 Kgs 2:11"
+    },
+    {
+      "id": "cambridge-lk-9-7",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "seems to be a special reference to the work of the Twelve",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "expositors-lk-9-7",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "most naturally taken as referring to the mission of the Twelve",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "expositors-lk-9-7-say",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "make Herod himself say",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "expositors-lk-9-7-title",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "ὁ τετράρχης as in Mt., βασιλεὺς in Mk.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-7",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "Herod is represented as himself expressing this belief",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "meyer-lk-9-7",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "could not in the least arrive at certainty",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "meyer-lk-9-7-only",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "Only Luke has the word in the New Testament.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "meyer-lk-9-9",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "The twofold ἐγώ has the emphasis of the terrified heart.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "vincent-lk-9-7",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "the whole list of possible ways, and finds no way out",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-7",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "This was Herod Antipas; he was a son of Herod the Great",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-7-galilee",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "prince-ruler of Galilee, Peraea",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-7-herodias",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "the beautiful wife of his half-brother Philip",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-7-john",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-7.htm",
+      "excerpt": "his fearless remonstrances against this wicked marriage",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-8",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-8.htm",
+      "excerpt": "In accordance with the prophecy of Malachi 4:5.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-8-jeremiah",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-8.htm",
+      "excerpt": "The Jews thought that Jeremiah or one of the other great prophets",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-8-translation",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-8.htm",
+      "excerpt": "because of Elijah’s translation to heaven",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-8",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-8.htm",
+      "excerpt": "were looked for as heralds of the coming Messiah",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "expositors-lk-9-8",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-8.htm",
+      "excerpt": "one who had not died, but been translated",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "bengel-lk-9-8",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Luke 9:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-8.htm",
+      "excerpt": "This is put midway between ἠγέρθη, was raised up, and ἀνέστη",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-9",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "Literally, “was seeking",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "vincent-lk-9-9",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "He did more than desire.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-9",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "St. Luke returns (Luke 23:8) to the working of this desire",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-9",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "Here, in SS. Matthew and Mark, follows the dramatic and vivid account",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-9-saw",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "He saw him the day of the Crucifixion, when Pilate sent him",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "expositors-lk-9-9",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "but the grim story not told",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "expositors-lk-9-9-ego",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-9.htm",
+      "excerpt": "the “I” of a guilty troubled conscience",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "thayer-tetrarches",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. τετράρχης (Bible Hub, Strong's 5076)",
+      "url": "https://biblehub.com/greek/5076.htm",
+      "excerpt": "a governor of the fourth part of any region",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "thayer-tetrarches-petty",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. τετράρχης (Bible Hub, Strong's 5076)",
+      "url": "https://biblehub.com/greek/5076.htm",
+      "excerpt": "the word lost its strict etymological force",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    },
+    {
+      "id": "thayer-diaporeo",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. διαπορέω (Bible Hub, Strong's 1280)",
+      "url": "https://biblehub.com/greek/1280.htm",
+      "excerpt": "to be entirely at a loss, to be in perplexity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:35:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021d-lk-9-7-9",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T10:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
