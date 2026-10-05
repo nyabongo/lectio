@@ -509,6 +509,25 @@ void main() {
       expect(find.byType(ReadingCard), findsNothing);
     });
 
+    testWidgets('a day without any Mass explains it instead of missing data', (
+      tester,
+    ) async {
+      api.serve(
+        'days/$seedDate.json',
+        editedDay((day) {
+          day['lectionaryMissing'] = false;
+          day['noMass'] = true;
+          day['masses'] = <Object?>[];
+        }),
+      );
+      await pumpToday(tester);
+
+      expect(find.text(TodayStrings.en.holySaturdayNoMass), findsOneWidget);
+      expect(find.text(TodayStrings.en.lectionaryMissing), findsNothing);
+      expect(find.text(TodayStrings.en.listen), findsNothing);
+      expect(find.byType(ReadingCard), findsNothing);
+    });
+
     testWidgets('a day without notes keeps every link-out', (tester) async {
       api.serve(
         'days/$seedDate.json',

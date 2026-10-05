@@ -16,6 +16,7 @@ void main() {
       expect(day.colour, 'green');
       expect(day.liturgicalColour, LiturgicalColour.green);
       expect(day.lectionaryMissing, isFalse);
+      expect(day.noMass, isFalse);
 
       final celebration = day.celebrations.single;
       expect(celebration.id, 'ordinary-time-25-sunday');
@@ -65,6 +66,17 @@ void main() {
       final day = parseApiDay(json);
       expect(day.readings.single.slot, 'reading-10');
       expect(day.liturgicalColour, LiturgicalColour.green);
+    });
+
+    test('reads noMass on a day without any Mass', () {
+      final json = fixtureObject('day')
+        ..['noMass'] = true
+        ..['masses'] = <Object?>[];
+      final day = parseApiDay(json);
+      expect(day.noMass, isTrue);
+      expect(day.masses, isEmpty);
+      final notBool = fixtureObject('day')..['noMass'] = 'yes';
+      expect(() => parseApiDay(notBool), throwsFormatException);
     });
 
     test('rejects another apiVersion or a broken day', () {

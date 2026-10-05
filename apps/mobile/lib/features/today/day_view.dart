@@ -190,7 +190,9 @@ class DayDetails extends StatelessWidget {
     final hasNotes = day.readings.any((reading) => reading.passage != null);
     final showMassLabels = masses.length > 1;
     final String? message;
-    if (day.lectionaryMissing || masses.isEmpty) {
+    if (day.noMass) {
+      message = strings.holySaturdayNoMass;
+    } else if (day.lectionaryMissing || masses.isEmpty) {
       message = strings.lectionaryMissing;
     } else if (!hasNotes) {
       message = strings.notesMissing;
