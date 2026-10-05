@@ -22,6 +22,7 @@ export const versification = createVersification({ texts: VRS_DATA, schemes: SCH
 export const {
   chapterCount,
   chapterLength,
+  firstVerse,
   verseCounts,
   isRealVerse,
   mapVerse,

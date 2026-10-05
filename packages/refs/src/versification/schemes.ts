@@ -15,7 +15,8 @@ import type { BookCode } from '../books.ts';
  *   English Bibles. Use it for Douay-Rheims link-outs and the Clementine text.
  *   Psalms 115 and 147 are numbered from verses 10 and 12 (Stuttgart
  *   numbering): 115:10-19 is Hebrew 116:10-19 and 147:12-20 is Hebrew
- *   147:12-20, and 115:1-9 and 147:1-11 do not exist. The printed Clementine
+ *   147:12-20, and 115:1-9 and 147:1-11 do not exist (`firstVerse` gives 10
+ *   and 12, `chapterLength` the last verse, 19 and 20). The printed Clementine
  *   text numbers them 115:1-10 and 147:1-9, so a Clementine import (L-012) must
  *   add 9 and 11 to those verse numbers before using this scheme.
  *

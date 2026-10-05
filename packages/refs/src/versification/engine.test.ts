@@ -73,6 +73,22 @@ describe('coalesce', () => {
     expect(coalesce('JL', [], true, length)).toEqual([]);
   });
 
+  it('treats a chapter that starts after verse 1 as whole from its first verse', () => {
+    const first = (_book: string, c: number): number | undefined => (c === 4 ? 10 : undefined);
+    const run = (c: number, from: number): VerseId[] =>
+      Array.from({ length: (length('JL', c) ?? 0) - from + 1 }, (_, i) => v(c, from + i));
+    expect(coalesce('JL', [...run(3, 1), ...run(4, 10)], true, length, first)).toEqual([
+      { start: { c: 3 }, end: { c: 4 } },
+    ]);
+    expect(coalesce('JL', run(4, 10), false, length, first)).toEqual([
+      { start: { c: 4, v: 10 }, end: { c: 4, v: 21 } },
+    ]);
+    expect(coalesce('JL', [...run(3, 1), ...run(4, 10)], true, length)).toEqual([
+      { start: { c: 3 }, end: { c: 3 } },
+      { start: { c: 4, v: 10 }, end: { c: 4, v: 21 } },
+    ]);
+  });
+
   it('refuses verses from another book', () => {
     expect(() => coalesce('JL', [v(1, 1), v(1, 2, 'AM')], false, length)).toThrow(/falls in another book/);
   });
