@@ -1,0 +1,339 @@
+---
+/**
+ * Settings (L-057): text size, theme, default playback speed, language and clearing offline data. Preferences stay
+ * on the device; the store, its validation and the inline head script live in src/lib/settings.ts.
+ *
+ * The static HTML checks the defaults; the client script checks the saved values on load, saves every change at
+ * once and applies the theme and text size live. The base layout's head script applies the saved theme and size
+ * before paint on every page.
+ */
+import Seo from '../../components/seo/Seo.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import { DEFAULT_SETTINGS, LANGUAGES, PLAYBACK_SPEEDS } from '../../lib/settings.ts';
+
+const lang = DEFAULT_LOCALE;
+const title = t(lang, 'settings.title');
+const description = t(lang, 'settings.description');
+const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 2 });
+
+const textSizes = [
+  { value: 'small', label: t(lang, 'settings.textSize.small') },
+  { value: 'default', label: t(lang, 'settings.textSize.default') },
+  { value: 'large', label: t(lang, 'settings.textSize.large') },
+  { value: 'larger', label: t(lang, 'settings.textSize.larger') },
+];
+const themes = [
+  { value: 'system', label: t(lang, 'settings.theme.system') },
+  { value: 'light', label: t(lang, 'settings.theme.light') },
+  { value: 'dark', label: t(lang, 'settings.theme.dark') },
+];
+const speeds = PLAYBACK_SPEEDS.map((speed) => ({
+  value: String(speed),
+  label: t(lang, 'settings.speed.option', { speed: number.format(speed) }),
+}));
+const languageNames: Record<string, string> = {
+  en: t(lang, 'settings.language.en'),
+  sw: t(lang, 'settings.language.sw'),
+};
+const languages = LANGUAGES.map((language) => ({ ...language, label: languageNames[language.code] }));
+const messages = {
+  saved: t(lang, 'settings.saved'),
+  notSaved: t(lang, 'settings.notSaved'),
+  cleared: t(lang, 'settings.offline.cleared'),
+  unsupported: t(lang, 'settings.offline.unsupported'),
+  failed: t(lang, 'settings.offline.failed'),
+};
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path="settings/" />
+
+  <div class="settings">
+    <h1>{title}</h1>
+    <p class="intro">{t(lang, 'settings.intro')}</p>
+
+    <form class="settings-form" data-settings-form data-messages={JSON.stringify(messages)}>
+      <fieldset class="card">
+        <legend>{t(lang, 'settings.textSize.legend')}</legend>
+        <div class="segmented">
+          {
+            textSizes.map((option) => (
+              <label class="segment">
+                <input
+                  type="radio"
+                  name="textSize"
+                  value={option.value}
+                  checked={option.value === DEFAULT_SETTINGS.textSize}
+                />
+                <span>{option.label}</span>
+              </label>
+            ))
+          }
+        </div>
+        <p class="preview">{t(lang, 'settings.textSize.preview')}</p>
+      </fieldset>
+
+      <fieldset class="card" aria-describedby="theme-hint">
+        <legend>{t(lang, 'settings.theme.legend')}</legend>
+        <div class="segmented">
+          {
+            themes.map((option) => (
+              <label class="segment">
+                <input type="radio" name="theme" value={option.value} checked={option.value === DEFAULT_SETTINGS.theme} />
+                <span>{option.label}</span>
+              </label>
+            ))
+          }
+        </div>
+        <p class="hint" id="theme-hint">{t(lang, 'settings.theme.hint')}</p>
+      </fieldset>
+
+      <fieldset class="card" aria-describedby="speed-hint">
+        <legend>{t(lang, 'settings.speed.legend')}</legend>
+        <div class="segmented">
+          {
+            speeds.map((option) => (
+              <label class="segment">
+                <input
+                  type="radio"
+                  name="playbackSpeed"
+                  value={option.value}
+                  checked={option.value === String(DEFAULT_SETTINGS.playbackSpeed)}
+                />
+                <span>{option.label}</span>
+              </label>
+            ))
+          }
+        </div>
+        <p class="hint" id="speed-hint">{t(lang, 'settings.speed.hint')}</p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>{t(lang, 'settings.language.legend')}</legend>
+        <div class="segmented">
+          {
+            languages.map((option) => (
+              <label class="segment" lang={option.code}>
+                <input
+                  type="radio"
+                  name="language"
+                  value={option.code}
+                  checked={option.code === DEFAULT_SETTINGS.language}
+                  disabled={!option.available}
+                />
+                <span>{option.label}</span>
+                {!option.available && <span class="soon" lang={lang}>{t(lang, 'settings.language.comingSoon')}</span>}
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="card" aria-describedby="offline-hint">
+        <legend>{t(lang, 'settings.offline.legend')}</legend>
+        <p class="hint" id="offline-hint">{t(lang, 'settings.offline.hint')}</p>
+        <button type="button" class="button" data-clear-offline>{t(lang, 'settings.offline.clear')}</button>
+      </fieldset>
+
+      <p class="status" role="status" aria-live="polite" data-settings-status></p>
+    </form>
+  </div>
+</BaseLayout>
+
+<script>
+  import { applySettings, browserStorage, clearOfflineData, createSettingsSession } from '../../lib/settings.ts';
+
+  const form = document.querySelector<HTMLFormElement>('[data-settings-form]');
+  const status = document.querySelector<HTMLElement>('[data-settings-status]');
+  if (form !== null && status !== null) {
+    const messages = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
+    // Empty the live region first so a repeated message ("Saved…" twice) is announced again.
+    const say = (key: string): void => {
+      status.textContent = '';
+      window.setTimeout(() => {
+        status.textContent = messages[key] ?? '';
+      }, 50);
+    };
+    // Changes build on the settings in memory, so they add up even when storage cannot save them.
+    const session = createSettingsSession(browserStorage());
+    for (const [name, value] of Object.entries(session.current)) {
+      const input = form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${String(value)}"]`);
+      if (input !== null) input.checked = true;
+    }
+    // Transitions start only after the saved choices have been styled (the read forces that style pass), so they
+    // do not visibly fade in over the defaults on load.
+    void form.offsetWidth;
+    form.dataset.ready = '';
+    form.addEventListener('change', (event) => {
+      const input = event.target as HTMLInputElement;
+      const { settings, saved } = session.change(input.name, input.value);
+      applySettings(document.documentElement, settings);
+      say(saved ? 'saved' : 'notSaved');
+    });
+    form.querySelector('[data-clear-offline]')?.addEventListener('click', () => {
+      void clearOfflineData().then((result) => say(result.status));
+    });
+  }
+</script>
+
+<style>
+  .settings {
+    max-width: 44rem;
+  }
+
+  .intro {
+    color: var(--colour-muted);
+  }
+
+  .settings-form {
+    display: grid;
+    gap: var(--space-s);
+    margin-top: var(--space-m);
+  }
+
+  .card {
+    margin: 0;
+    min-width: 0;
+    padding: var(--space-s);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-left: var(--band-height) solid var(--colour-accent);
+    border-radius: var(--radius-m);
+  }
+
+  legend {
+    float: left;
+    width: 100%;
+    margin-bottom: var(--space-xs);
+    padding: 0;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+    line-height: var(--leading-snug);
+  }
+
+  .segmented {
+    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+
+  .segment {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    padding-inline: var(--space-s);
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    background: var(--colour-bg);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .settings-form[data-ready] .segment {
+    transition:
+      background-color var(--duration-quick) var(--ease-out),
+      color var(--duration-quick) var(--ease-out);
+  }
+
+  .segment:hover {
+    background: var(--colour-wash);
+  }
+
+  .segment input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+  }
+
+  .segment:has(input:checked) {
+    background: var(--colour-accent);
+    border-color: var(--colour-accent);
+    color: var(--colour-on-accent);
+  }
+
+  /* Forced colours override backgrounds, so mark the selected segment with a thick system-colour outline. */
+  @media (forced-colors: active) {
+    .segment:has(input:checked) {
+      outline: 3px solid Highlight;
+      outline-offset: 1px;
+      border-color: Highlight;
+    }
+
+    .segment:has(input:focus-visible) {
+      outline-color: CanvasText;
+    }
+  }
+
+  .segment:has(input:focus-visible) {
+    outline: var(--focus-width) solid var(--colour-focus);
+    outline-offset: 2px;
+  }
+
+  .segment:has(input:disabled) {
+    cursor: not-allowed;
+    color: var(--colour-muted);
+    background: var(--colour-wash);
+    border-style: dashed;
+  }
+
+  .soon {
+    font-size: var(--step--2);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .preview {
+    clear: both;
+    margin: var(--space-s) 0 0;
+    padding: var(--space-xs) var(--space-s);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: var(--leading-snug);
+    background: var(--colour-accent-wash);
+    border-radius: var(--radius-s);
+  }
+
+  .hint {
+    clear: both;
+    margin: var(--space-xs) 0 0;
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .card .hint:first-of-type:not(:last-child) {
+    margin: 0 0 var(--space-xs);
+  }
+
+  .button {
+    min-height: var(--tap-target);
+    padding-inline: var(--space-s);
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+    background: var(--colour-bg);
+    border: var(--rule-width) solid currentColor;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .button:hover {
+    background: var(--colour-accent-wash);
+  }
+
+  .status {
+    min-height: 1lh;
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+</style>

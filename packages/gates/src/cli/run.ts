@@ -7,14 +7,16 @@
  *
  * `run` reads files from the working tree at `--root`, so `--head` must be the commit checked out
  * there (it is refused otherwise). `--pr` is a JSON file of `PullRequestFacts` (core/pull-request.ts);
- * without it the facts come from the git diff, with PR number `--pr-number` (0: no PR, a local run).
+ * without it the facts come from the git diff (renames and review blocks set to approved included),
+ * with PR number `--pr-number` (0: no PR, a local run). `decide` reads the changed passages from
+ * the working tree, so `--head` must be checked out there too.
  *
  * `run` exits 1 when a gate fails (a flag, which needs review, exits 0). `decide` passes the
  * results to the merge rule and exits 0 for approved-commit, human-approved and auto-merge, else 1.
  * Usage errors exit 2. Relative paths start at the directory npm was invoked from (`INIT_CWD`).
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { ParseArgsOptionsConfig } from 'node:util';
 
@@ -25,9 +27,9 @@ import type { ProviderSet } from '@lectio/providers';
 import { validateGateResult } from '@lectio/schema/gate-result';
 
 import type { Gate } from '../core/gate.ts';
-import { createContext } from '../core/gate.ts';
+import { createContext, nodeReadText } from '../core/gate.ts';
 import { checkedOutAt, createGit, nodeGitExec } from '../core/git.ts';
-import type { Git, GitExec } from '../core/git.ts';
+import type { ChangedFile, Git, GitExec } from '../core/git.ts';
 import { renderComment } from '../core/markdown.ts';
 import { formatFinding, skipReason } from '../core/result.ts';
 import type { GateResult } from '../core/result.ts';
@@ -35,7 +37,7 @@ import { runGates } from '../core/runner.ts';
 import type { GateReport } from '../core/runner.ts';
 import { parsePullRequestFacts } from '../core/pull-request.ts';
 import type { PullRequestFacts } from '../core/pull-request.ts';
-import { GREEN_DECISIONS, decide } from '../merge-rule/index.ts';
+import { GREEN_DECISIONS, changedClaims, decide, factsFromChanges } from '../merge-rule/index.ts';
 import { GATES, ruleBookFor, selectGates } from '../registry.ts';
 
 export const USAGE = [
@@ -191,21 +193,24 @@ async function decideCommand(args: readonly string[], options: GatesCliOptions):
     'pr-number': { type: 'string', default: '0' },
   });
   if (values.results === undefined) throw new UsageError('decide needs --results <gates.json>');
-  const { git, config, read, write, path } = setup(options, values);
+  const { root, exec, git, config, read, write, path } = setup(options, values);
   const results = readResults(read(path(values.results)), values.results);
-  const pr: PullRequestFacts =
-    values.pr === undefined
-      ? {
-          number: Number(values['pr-number']),
-          files: git.changedFiles(values.base, values.head).map((file) => file.path),
-          reviewEdits: [],
-          approval: null,
-          approvalCommit: null,
-          lastContentCommitAt: null,
-          fork: false,
-        }
-      : readPullRequestFacts(read(path(values.pr)), values.pr);
-  const outcome = decide({ results, config, pr });
+  // The merge rule reads the changed passages (claims, review blocks) from the working tree.
+  if (!checkedOutAt(exec, root, values.head)) {
+    throw new UsageError(`--head ${values.head} is not the commit checked out at ${root}; check it out first`);
+  }
+  const readFile = (file: string): string | null => nodeReadText(join(root, file));
+  let pr: PullRequestFacts;
+  let changedFiles: readonly ChangedFile[];
+  if (values.pr === undefined) {
+    changedFiles = git.changedFiles(values.base, values.head);
+    const view = { changedFiles, readFile, readBase: (file: string) => git.show(values.base, file) };
+    pr = factsFromChanges(view, Number(values['pr-number']));
+  } else {
+    pr = readPullRequestFacts(read(path(values.pr)), values.pr);
+    changedFiles = pr.files.map((file): ChangedFile => ({ path: file, status: 'modified' }));
+  }
+  const outcome = decide({ results, config, pr, claims: changedClaims({ changedFiles, readFile }) });
   options.log(`decision: ${outcome.decision}`);
   for (const reason of outcome.reasons) options.log(`  - ${reason}`);
   if (values.json !== undefined) write(path(values.json), `${JSON.stringify(outcome, null, 2)}\n`);

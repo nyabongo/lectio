@@ -1,0 +1,330 @@
+---
+/**
+ * The Reading page, `/[date]/[slot]/` (e.g. `/2026-09-20/gospel/`): one reading of a day with its Context and
+ * Original (translation notes) panels and a Text ↗ link-out to the configured licensed source. The reading text is
+ * never shown here.
+ *
+ * Without JavaScript both panels render in order with their headings and the tab bar is a list of in-page links;
+ * the script below upgrades it to ARIA tabs (arrow keys, Home/End, the URL fragment selects a tab). Notes come from
+ * `readingPage()` in src/lib/reading.ts, which returns notes only for an approved passage, so a pending passage
+ * shows "in preparation" and none of its content.
+ */
+import NoteCard from '../../../components/notes/NoteCard.astro';
+import MarkedText from '../../../components/notes/MarkedText.astro';
+import Verification from '../../../components/notes/Verification.astro';
+import Seo from '../../../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { dayPath, slotLabel } from '../../../lib/day.ts';
+import { linkoutSource, readingPage, readingStaticPaths } from '../../../lib/reading.ts';
+import { siteContext, withBase } from '../../../lib/site.ts';
+
+export function getStaticPaths() {
+  return readingStaticPaths(siteContext().repo);
+}
+
+const { date, slot } = Astro.params;
+const { config, repo } = siteContext();
+const view = readingPage(repo, date, slot);
+if (view === null) throw new Error(`no reading for ${date}/${slot}`);
+
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const { notes } = view;
+// Slot names are shared with the day pages (`day.slot.*`), so both say the same thing.
+const dayEnv = { lang, messages: { t, formatDate }, paths: (path: string) => withBase(base, localePath(lang, path)) };
+const slotText = slotLabel(dayEnv, view.slot);
+const dateText = formatDate(lang, view.date);
+const title = t(lang, 'reading.pageTitle', { ref: view.ref, slot: slotText });
+const description = notes?.summary ?? t(lang, 'reading.description', { ref: view.ref, date: dateText });
+const source = linkoutSource(config, view.linkout);
+const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  date={view.date}
+  celebration={view.celebration ?? undefined}
+  colour={view.colour ?? undefined}
+  lang={lang}
+>
+  <Seo slot="head" title={title} description={description} path={view.path} type="article" lang={lang} />
+  <article class="reading" data-reading={view.key}>
+    <a class="reading__back" href={dayHref}>
+      <span aria-hidden="true">←</span>
+      {t(lang, 'reading.backToDay', { date: dateText })}
+    </a>
+    <header class="reading__header">
+      <p class="eyebrow">{slotText}</p>
+      <h1 class="reading__ref">{view.ref}</h1>
+      {notes !== null && <p class="reading__summary">{notes.summary}</p>}
+    </header>
+
+    <div class="tabs" data-tabs>
+      <nav class="tabs__list" data-tablist aria-label={t(lang, 'reading.tabs.label')}>
+        <a class="tabs__tab" id="tab-context" href="#context" data-tab="context">{t(lang, 'reading.tabs.context')}</a>
+        <a class="tabs__tab" id="tab-original" href="#original" data-tab="original">{t(lang, 'reading.tabs.original')}</a>
+      </nav>
+      <a
+        class="tabs__tab tabs__linkout"
+        href={view.linkout}
+        target="_blank"
+        rel="noopener external"
+        aria-label={t(lang, 'reading.tabs.textLabel', { ref: view.ref, source })}
+      >
+        {t(lang, 'reading.tabs.text')}
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <section class="panel" id="context" data-panel="context" aria-labelledby="context-heading">
+      <h2 class="panel__heading" id="context-heading">{t(lang, 'reading.tabs.context')}</h2>
+      {
+        notes === null ? (
+          <p class="pending">{t(lang, 'reading.pending')}</p>
+        ) : (
+          <div class="context">
+            <h3 class="context__title">{notes.context.title}</h3>
+            {notes.context.paragraphs.map((paragraph) => (
+              <p>
+                <MarkedText segments={paragraph} lang={lang} />
+              </p>
+            ))}
+            <Verification
+              sources={notes.context.sources}
+              method={notes.method}
+              lastReviewedAt={notes.lastReviewedAt}
+              reportUrl={notes.context.reportUrl}
+              lang={lang}
+            />
+          </div>
+        )
+      }
+    </section>
+
+    <section class="panel" id="original" data-panel="original" aria-labelledby="original-heading">
+      <h2 class="panel__heading" id="original-heading">{t(lang, 'reading.tabs.original')}</h2>
+      {
+        notes === null ? (
+          <p class="pending">{t(lang, 'reading.pending')}</p>
+        ) : notes.translationNotes.length === 0 ? (
+          <p class="pending">{t(lang, 'reading.noNotes')}</p>
+        ) : (
+          <div class="notes">
+            {notes.translationNotes.map((note) => (
+              <NoteCard note={note} method={notes.method} lastReviewedAt={notes.lastReviewedAt} lang={lang} />
+            ))}
+          </div>
+        )
+      }
+    </section>
+
+    {notes !== null && <p class="reading__disclaimer">{t(lang, 'reading.disclaimer')}</p>}
+  </article>
+</BaseLayout>
+
+<script>
+  import { READING_TABS, initialTab, tabKeyTarget } from '../../../lib/reading.ts';
+  import type { ReadingTab } from '../../../lib/reading.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-tabs]');
+  const list = root?.querySelector<HTMLElement>('[data-tablist]');
+  const tabs = [...(list?.querySelectorAll<HTMLAnchorElement>('[data-tab]') ?? [])];
+  const panels = [...document.querySelectorAll<HTMLElement>('[data-panel]')];
+
+  function isTab(value: string | undefined): value is ReadingTab {
+    return (READING_TABS as readonly string[]).includes(value ?? '');
+  }
+
+  function panelOf(id: string): ReadingTab | null {
+    const panel = document.getElementById(id)?.closest<HTMLElement>('[data-panel]')?.dataset.panel;
+    return isTab(panel) ? panel : null;
+  }
+
+  function select(name: ReadingTab, focus = false): void {
+    for (const tab of tabs) {
+      const selected = tab.dataset.tab === name;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+      if (selected && focus) tab.focus();
+    }
+    for (const panel of panels) panel.hidden = panel.dataset.panel !== name;
+  }
+
+  if (root && list && tabs.length === panels.length) {
+    root.classList.add('tabs--js');
+    document.documentElement.classList.add('reading-tabs');
+    list.setAttribute('role', 'tablist');
+    for (const tab of tabs) {
+      tab.setAttribute('role', 'tab');
+      tab.setAttribute('aria-controls', tab.dataset.tab ?? '');
+      tab.addEventListener('click', (event) => {
+        event.preventDefault();
+        const name = tab.dataset.tab;
+        if (!isTab(name)) return;
+        select(name);
+        history.replaceState(null, '', `#${name}`);
+      });
+      tab.addEventListener('keydown', (event) => {
+        const target = tabKeyTarget(event.key, tabs.indexOf(tab), tabs.length);
+        const name = target === null ? undefined : tabs[target]?.dataset.tab;
+        if (!isTab(name)) return;
+        event.preventDefault();
+        select(name, true);
+        history.replaceState(null, '', `#${name}`);
+      });
+    }
+    for (const panel of panels) {
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', `tab-${panel.dataset.panel ?? ''}`);
+      panel.tabIndex = 0;
+    }
+    // Hiding the other panel moves content after the browser has scrolled to the fragment, so scroll to its
+    // target again (a tab name itself needs no scroll).
+    const showFragment = (): void => {
+      const tab = initialTab(location.hash, panelOf);
+      select(tab);
+      const id = location.hash.slice(1);
+      if (id !== '' && !isTab(id)) {
+        let target: HTMLElement | null = null;
+        try {
+          target = document.getElementById(decodeURIComponent(id));
+        } catch {
+          target = document.getElementById(id);
+        }
+        target?.scrollIntoView();
+      }
+    };
+    showFragment();
+    window.addEventListener('hashchange', showFragment);
+  }
+</script>
+
+<style>
+  .reading {
+    max-width: 46rem;
+  }
+
+  .reading__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    margin-bottom: var(--space-2xs);
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    color: var(--colour-muted);
+    text-decoration: none;
+  }
+
+  .reading__back:hover {
+    color: var(--colour-link);
+  }
+
+  .reading__header .eyebrow {
+    margin-bottom: var(--space-3xs);
+  }
+
+  .reading__ref {
+    margin-bottom: var(--space-2xs);
+  }
+
+  .reading__summary {
+    font-size: var(--step-1);
+    color: var(--colour-muted);
+    line-height: var(--leading-snug);
+  }
+
+  .tabs {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-2xs);
+    margin: var(--space-m) 0 var(--space-m);
+    background: var(--colour-bg);
+    border-bottom: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .tabs__list {
+    display: flex;
+    gap: var(--space-2xs);
+  }
+
+  .tabs__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    min-height: var(--tap-target);
+    padding: var(--space-2xs) var(--space-xs);
+    margin-bottom: calc(-1 * var(--rule-width));
+    font-weight: var(--weight-strong);
+    color: var(--colour-muted);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    transition:
+      color var(--duration-quick) var(--ease-out),
+      border-color var(--duration-quick) var(--ease-out);
+  }
+
+  .tabs__tab:hover {
+    color: var(--colour-ink);
+  }
+
+  .tabs__tab[aria-selected='true'] {
+    color: var(--colour-ink);
+    border-bottom-color: var(--colour-accent);
+  }
+
+  .tabs__linkout {
+    margin-inline-start: auto;
+    color: var(--colour-link);
+  }
+
+  .panel {
+    margin-bottom: var(--space-l);
+    scroll-margin-top: calc(var(--tap-target) + var(--space-m));
+  }
+
+  .panel:focus-visible {
+    outline-offset: var(--space-2xs);
+  }
+
+  /* With the tabs live the tab names the panel, so the panel headings stay for screen readers only. */
+  :global(.reading-tabs) .panel__heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .context__title {
+    font-size: var(--step-2);
+  }
+
+  .context p {
+    font-size: var(--step-0);
+  }
+
+  .notes {
+    display: grid;
+    gap: var(--space-s);
+  }
+
+  .pending {
+    padding: var(--space-s);
+    background: var(--colour-wash);
+    border-radius: var(--radius-m);
+    color: var(--colour-muted);
+  }
+
+  .reading__disclaimer {
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+</style>

@@ -10,7 +10,7 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 import { DUMMY_DIFF, DUMMY_FILES, dummyGate, passingGate } from '../core/fixtures/dummy-gate.ts';
 import { COMMENT_MARKER_LINE } from '../core/markdown.ts';
 import type * as MergeRule from '../merge-rule/index.ts';
-import { GATE_IDS } from '../registry.ts';
+import { GATES, GATE_IDS } from '../registry.ts';
 import { USAGE, runGatesCli } from './run.ts';
 import type { GatesCliOptions } from './run.ts';
 
@@ -96,14 +96,17 @@ describe('lectio-gates run', () => {
     expect(code).toBe(0);
   });
 
-  it('runs the stubs from the real registry', async () => {
-    const code = await runGatesCli(['run', '--gates', 'licence , verifiers'], options({ gates: undefined }));
+  // The gates still on their L-023 stub; each of L-024 to L-028 drops out of this list when it lands.
+  const stubs = GATES.filter((gate) => gate.rules.length === 0);
+  it.skipIf(stubs.length === 0)('runs the stubs from the real registry', async () => {
+    const list = stubs.map((gate) => gate.id).join(' , ');
+    const code = await runGatesCli(['run', '--gates', list], options({ gates: undefined }));
     expect(code).toBe(0);
-    expect(logs).toEqual([
-      'licence: skipped (not implemented (L-026))',
-      'verifiers: skipped (no live confirmer or refuter client (API key missing); a person reviews)',
-      'lectio-gates: skipped',
-    ]);
+    expect(logs).toHaveLength(stubs.length + 1);
+    stubs.forEach((gate, i) => {
+      expect(logs[i]).toMatch(new RegExp(`^${gate.id}: skipped \\(not implemented \\(L-02[4-8]\\)\\)$`));
+    });
+    expect(logs.at(-1)).toBe('lectio-gates: skipped');
   });
 
   it('refuses a --head that is not checked out at --root, and accepts one that is', async () => {
@@ -158,8 +161,8 @@ describe('lectio-gates decide', () => {
       options(),
     );
     expect(code).toBe(1);
-    expect(logs[0]).toBe('decision: needs-review');
-    expect(JSON.parse(read('out/decision.json'))).toMatchObject({ decision: 'needs-review' });
+    expect(logs[0]).toBe('decision: blocked');
+    expect(JSON.parse(read('out/decision.json'))).toMatchObject({ decision: 'blocked' });
   });
 
   it('builds the PR facts from git when --pr is missing', async () => {
@@ -171,7 +174,32 @@ describe('lectio-gates decide', () => {
     };
     expect(await runGatesCli(['decide', '--results', 'gates.json', '--base', 'main'], options({ gitExec }))).toBe(1);
     expect(seen).toEqual([['diff', '--name-status', '-z', 'main...HEAD']]);
-    expect(logs).toEqual(['decision: needs-review', '  - not implemented (L-028)']);
+    expect(logs).toEqual(['decision: blocked', '  - the dummy gate failed']);
+  });
+
+  it('without --pr, checks review blocks set to approved and the old paths of renames', async () => {
+    writeFileSync(join(dir, 'gates.json'), JSON.stringify({ results: [] }));
+    const rename = ['R100', 'config/old.json', 'passages/NEW.json', ''].join('\0');
+    const gitExec = (args: readonly string[]): string => (args[0] === 'diff' ? rename : '');
+    const passage = (status: string) => JSON.stringify({ claims: [{ id: 'c1' }], review: { status } });
+
+    writeFileSync(join(dir, 'passages/NEW.json'), passage('approved'));
+    expect(await runGatesCli(['decide', '--results', 'gates.json'], options({ gitExec }))).toBe(1);
+    expect(logs).toContain(
+      '  - passages/NEW.json sets its review block to approved without a verified approval or a valid approval commit',
+    );
+
+    logs = [];
+    writeFileSync(join(dir, 'passages/NEW.json'), passage('pending'));
+    expect(await runGatesCli(['decide', '--results', 'gates.json'], options({ gitExec }))).toBe(1);
+    expect(logs).toContain('  - config/old.json is under config/** (never auto-merged)');
+  });
+
+  it('decide refuses a --head that is not checked out', async () => {
+    await writeReport();
+    const gitExec = (args: readonly string[]): string => (args.at(-1) === 'HEAD^{commit}' ? 'aaa' : 'bbb');
+    expect(await runGatesCli(['decide', '--results', 'gates.json', '--head', 'feature'], options({ gitExec }))).toBe(2);
+    expect(errors[0]).toMatch(/--head feature is not the commit checked out/);
   });
 
   it('exits 0 for a green decision and passes --pr-number into the facts', async () => {
