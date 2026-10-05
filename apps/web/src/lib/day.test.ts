@@ -165,6 +165,18 @@ describe('dayPageView with the fixture content root', () => {
     expect(view.description).toContain('Isaiah 55:6–9; Psalm 145:2–3, 8–9, 17–18;');
   });
 
+  it('builds the meta description from the date, celebration, season and readings, in the page language', () => {
+    const view = dayPageView(env, context, '2026-09-20');
+    expect(view?.description).toMatch(
+      /^Sunday 20 September 2026: Twenty-fifth Sunday in Ordinary Time\. Ordinary Time, Week 25\. Readings: Isaiah 55:6–9; /,
+    );
+    const sw = dayPageView({ ...env, lang: 'sw' }, context, '2026-09-20');
+    expect(sw?.description).toMatch(
+      /^Jumapili 20 Septemba 2026: Twenty-fifth Sunday in Ordinary Time\. Kipindi cha Kawaida, Juma la 25\. Masomo: Isaiah 55:6–9; /,
+    );
+    expect(sw?.season).toBe('Kipindi cha Kawaida · Juma la 25');
+  });
+
   it('shows a day with no notes with every reference and link-out, and no Reading page links', () => {
     const view = dayPageView(env, context, '2026-09-19');
     const readings = view?.masses[0]?.readings ?? [];
@@ -290,7 +302,9 @@ describe('dayView edge cases', () => {
     const view = dayView(env, day({ lectionaryMissing: true }, []), { config: DEFAULT_CONFIG });
     expect(view.masses).toEqual([]);
     expect(view.missing).toBe('The readings for this day are not listed yet.');
-    expect(view.description).toBe('Easter Vigil, Saturday 3 April 2027. The readings for this day are not listed yet.');
+    expect(view.description).toBe(
+      'Saturday 3 April 2027: Easter Vigil. Paschal Triduum. The readings for this day are not listed yet.',
+    );
   });
 
   it('falls back to the date as the title when a day lists no celebration', () => {

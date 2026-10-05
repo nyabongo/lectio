@@ -353,6 +353,10 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
   const dateLabel = formatDate(lang, date);
   const refs = masses[0]?.readings.map((reading) => reading.refLabel) ?? [];
   const missing = lectionaryMissing || masses.length === 0 ? t(lang, 'day.lectionaryMissing') : null;
+  const seasonText = seasonLabel(env, season, seasonWeek);
+  // The meta description says what the day's share card says (its alt text, L-088): date, celebration, season and
+  // readings; `·` becomes a comma, as some screen readers read it out as "middle dot".
+  const described = { date: dateLabel, title, season: seasonText.replaceAll(' · ', ', ') };
   return {
     date,
     lang,
@@ -360,7 +364,7 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     colour: dayColour(day.day),
     title,
     celebrations: celebrationViews,
-    season: seasonLabel(env, season, seasonWeek),
+    season: seasonText,
     cycles: t(lang, 'day.cycles', { sunday: sundayCycle, weekday: weekdayCycle }),
     masses,
     massOptions: masses.length > 1 ? t(lang, 'day.massOptions', { count: masses.length }) : null,
@@ -373,8 +377,8 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     pageTitle: t(lang, 'day.pageTitle', { title, date: dateLabel }),
     description:
       refs.length === 0
-        ? t(lang, 'day.descriptionNoReadings', { title, date: dateLabel })
-        : t(lang, 'day.description', { title, date: dateLabel, refs: refs.join('; ') }),
+        ? t(lang, 'day.descriptionNoReadings', described)
+        : t(lang, 'day.description', { ...described, refs: refs.join('; ') }),
   };
 }
 
