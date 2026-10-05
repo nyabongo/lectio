@@ -414,13 +414,15 @@ void main() {
     testWidgets('overlapping speaks leave one watchdog, the last one', (
       tester,
     ) async {
-      engine = build(startTimeout: const Duration(seconds: 5));
+      // Its own engine, made and disposed on the test's fake clock; the
+      // group's engine stays on the real one for tearDown.
+      final overlapping = build(startTimeout: const Duration(seconds: 5));
       tts.held['sw-TZ'] = Completer<void>();
 
       // The first speak sets its watchdog while the second still waits for
       // its voice; the second's watchdog then replaces the first's.
-      unawaited(engine.speak('One.', locale: 'en', speed: 1));
-      unawaited(engine.speak('Moja.', locale: 'sw', speed: 1));
+      unawaited(overlapping.speak('One.', locale: 'en', speed: 1));
+      unawaited(overlapping.speak('Moja.', locale: 'sw', speed: 1));
       await tester.pump();
       expect(tts.calls, containsAll(['speak One.', 'language sw-TZ']));
       expect(tts.calls, isNot(contains('speak Moja.')));
@@ -436,7 +438,8 @@ void main() {
       // Only the second watchdog barks, a full timeout after its speak.
       await tester.pump(const Duration(seconds: 2));
       expect(failures, ['The device voice did not start']);
-      await engine.dispose();
+      unawaited(overlapping.dispose());
+      await tester.pump();
     });
 
     test('a late start after the watchdog stopped the utterance leaves no '
