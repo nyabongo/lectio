@@ -18,13 +18,13 @@ waits for a person.
 
 They run in this order: the cheap deterministic gates first, then the verifiers, then the merge rule.
 
-| #   | Gate                        | Kind                   | Rules | What it checks                                                                                                                                                                                                              |
-| --- | --------------------------- | ---------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Schema tests (`schema`)     | deterministic          | 20    | Every changed passage, translation and calendar file is valid, well keyed and fully cited: each sentence ends in a claim marker, each claim names a source, nothing is orphaned and approvals are well formed.              |
-| 2   | Evidence tests (`evidence`) | deterministic          | 4     | The cited evidence exists: web excerpts are found on the fetched page, scripture excerpts and original-language words occur in the corpus at that verse. Print sources cannot be checked, so they are flagged for a person. |
-| 3   | Licence guard (`licence`)   | deterministic          | 6     | No long verbatim run from an English Bible or a cited commentary: quoted spans, overlap with the public-domain Bible index, overlap with each fetched web source and excerpt length all have limits.                        |
-| 4   | LLM verifiers (`verifiers`) | LLM, trusted side only | 8     | Two models from different families see only the claims and their sources: the confirmer checks support, the refuter tries to refute. Each gives a verdict and a support score per claim.                                    |
-| 5   | Merge rule (`merge-rule`)   | decision               | 22    | Reads the other gates’ results, the config and the facts of the PR (approvals, approval commits, paths, fork) and decides one of the decisions below. It never closes a PR.                                                 |
+| #   | Gate                        | Kind                   | Rules | What it checks                                                                                                                                                                                                                                                                                                                |
+| --- | --------------------------- | ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Schema tests (`schema`)     | deterministic          | 21    | Every changed passage, translation and calendar file is valid, well keyed and fully cited: each sentence ends in a claim marker, each claim names a source, nothing is orphaned and approvals are well formed.                                                                                                                |
+| 2   | Evidence tests (`evidence`) | deterministic          | 4     | The cited evidence exists: web excerpts are found on the fetched page, scripture excerpts and original-language words occur in the corpus at that verse. Print sources cannot be checked, so they are flagged for a person.                                                                                                   |
+| 3   | Licence guard (`licence`)   | deterministic          | 6     | No long verbatim run from an English Bible or a cited commentary: quoted spans, overlap with the public-domain Bible index, overlap with each fetched web source and excerpt length all have limits. Translations are scanned too, against the English passage’s sources; their main safeguard is the mandatory human review. |
+| 4   | LLM verifiers (`verifiers`) | LLM, trusted side only | 8     | Two models from different families see only the claims and their sources: the confirmer checks support, the refuter tries to refute. Each gives a verdict and a support score per claim.                                                                                                                                      |
+| 5   | Merge rule (`merge-rule`)   | decision               | 22    | Reads the other gates’ results, the config and the facts of the PR (approvals, approval commits, paths, fork) and decides one of the decisions below. It never closes a PR.                                                                                                                                                   |
 
 ## How a content PR is checked
 
@@ -205,8 +205,10 @@ Every finding names one of these rules. The PR comment repeats the rule and its 
   - Fix: Rebuild the year with `npm run calendar:build`, or set the reading’s `key` to the key `toKey(parseRef(ref))` gives.
 - **`schema/valid-translation`**: Every passages/i18n/<locale>/<key>.json file is valid JSON and matches the translated-passage schema (@lectio/schema/translated-passage).
   - Fix: Correct the field named in the message; a translation carries only the localised summary, context, note texts and claim texts, with the English ids.
+- **`schema/translation-path`**: Every file under passages/ is either a passage (passages/<key>.json) or a translation at passages/i18n/<locale>/<key>.json, spelled exactly so: lower-case `passages` and `i18n`, a non-English locale, a passage key and the `.json` extension. No other subdirectory, case variant or nesting is allowed, so no file escapes the translation checks and the translation hold.
+  - Fix: Move the file to passages/i18n/<locale>/<key>.json (lower-case, one locale directory, a passage key as the file name), or remove it.
 - **`schema/translation-of-exists`**: A translation sits at passages/i18n/<locale>/<translationOf>.json, with `locale` naming its directory, and the English passage passages/<translationOf>.json exists and is valid.
-  - Fix: Move or rename the file to match `locale` and `translationOf`, or add (or restore) the English passage it translates; delete translations of a removed passage.
+  - Fix: Move or rename the file to match `locale` and `translationOf`, or add (or restore) the English passage it translates; move translations of a renamed passage to the new key, and delete translations of a removed one.
 - **`schema/translation-matches-source`**: A translation lines up with its English passage: the same translation-note and claim ids, the same number of context paragraphs, and the same `[cN]` markers in each paragraph and note body.
   - Fix: Translate every note and claim of the English file under its English id, keep the paragraphs one for one, and copy each claim marker to the matching place.
 - **`schema/translation-not-stale`**: A translation’s `sourceSha256` equals the hash of the English passage’s translatable fields, so it says what the English says now.
@@ -231,9 +233,9 @@ Every finding names one of these rules. The PR comment repeats the rule and its 
 
 - **`licence/quoted-english-run`**: A quoted English span in a passage note is at most licenceGuard.maxQuotedWords words long.
   - Fix: Quote a single word or a short phrase, or say it in your own words; the reading itself is linked out, never quoted at length.
-- **`licence/pd-bible-overlap`**: No note text shares a run of licenceGuard.maxBibleRunWords or more words with a public-domain English Bible (World English Bible, Douay-Rheims).
+- **`licence/pd-bible-overlap`**: No note or translation text shares a run of licenceGuard.maxBibleRunWords or more words with a public-domain English Bible (World English Bible, Douay-Rheims).
   - Fix: Rewrite the sentence in your own words and point to the verse by reference instead of reproducing its wording.
-- **`licence/commentary-overlap`**: No note text shares a run of more than licenceGuard.maxCommentaryRunWords words with the fetched text of a cited web source.
+- **`licence/commentary-overlap`**: No note or translation text shares a run of more than licenceGuard.maxCommentaryRunWords words with the fetched text of a web source cited by the passage (for a translation, by the English passage it translates).
   - Fix: Paraphrase the commentary in your own words; keep the source in sources[] and, if needed, a short excerpt.
 - **`licence/commentary-unchecked`**: Every cited web source can be fetched and read, so the note can be checked against it.
   - Fix: Fix the URL or add an archivedUrl that loads; otherwise a reviewer must compare the note with the source by hand.
@@ -277,7 +279,7 @@ Every finding names one of these rules. The PR comment repeats the rule and its 
   - Fix: Nothing to fix.
 - **`merge-rule/protected-path`**: A PR that changes packages/gates/**, .github/** or config/** always needs a person (not configurable).
   - Fix: Ask a reviewer to approve, or split the content change from the code or config change.
-- **`merge-rule/translation-needs-person`**: A PR that changes a translation (passages/i18n/**) always needs a person (not configurable): translations never auto-merge.
+- **`merge-rule/translation-needs-person`**: A PR that changes a translation (passages/i18n/**), or any file in a subdirectory of passages/ in any letter case (passages/I18N/**), always needs a person (not configurable): translations never auto-merge.
   - Fix: Ask a configured reviewer who reads the language to approve with the label or /approve.
 - **`merge-rule/auto-merge-enabled`**: Auto-merge happens only while autoMerge.enabled is true.
   - Fix: Ask a reviewer to approve.
@@ -364,7 +366,7 @@ L-033 bad-week fixture ([#230](https://github.com/nyabongo/lectio/pull/230)) lan
 #### Pull request
 
 - **info** · `licence/pd-bible-overlap` (Licence guard): Limitation: The index only detects overlap with World English Bible and Douay-Rheims wording. Copyrighted modern translations (NABRE, RSV-2CE, Jerusalem Bible) are caught only where they share runs with those texts; the quoted-run rule, the research prompt rules and human review are the remaining safeguards.
-  - Rule: No note text shares a run of licenceGuard.maxBibleRunWords or more words with a public-domain English Bible (World English Bible, Douay-Rheims).
+  - Rule: No note or translation text shares a run of licenceGuard.maxBibleRunWords or more words with a public-domain English Bible (World English Bible, Douay-Rheims).
   - Fix: Rewrite the sentence in your own words and point to the verse by reference instead of reproducing its wording.
 
 #### `passages/MT.20.1-16.json`
