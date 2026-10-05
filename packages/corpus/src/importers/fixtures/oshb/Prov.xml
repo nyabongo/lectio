@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fragment of openscriptures/morphhb wlc/Prov.xml (WLC text public domain; OSHB lemmas and morphology CC BY 4.0,
+     "Original work of the Open Scriptures Hebrew Bible available at https://github.com/openscriptures/morphhb"). -->
+<osis xmlns="http://www.bibletechnologies.net/2003/OSIS/namespace">
+  <osisText xml:lang="he" osisIDWork="OSHB" osisRefWork="Bible">
+    <div type="book" osisID="Prov">
+      <chapter osisID="Prov.28">
+        <verse osisID="Prov.28.22">
+          <w lemma="926" morph="HVNrmsa" id="20b9p">נִֽבֳהָ֥ל</w>
+          <w lemma="l/1952" n="1.1" morph="HRd/Ncmsa" id="20iWG">לַ/ה֗וֹן</w>
+          <w lemma="376" n="1.0" morph="HNcmsc" id="20v6C">אִ֭ישׁ</w>
+          <w lemma="7451 a" morph="HAamsc" id="20nag">רַ֣ע</w>
+          <w lemma="5869 a" n="1" morph="HNcbsa" id="20gmi">עָ֑יִן</w>
+          <w lemma="c/3808" morph="HC/Tn" id="20ERU">וְ/לֹֽא</w><seg type="x-maqqef">־</seg><w lemma="3045" n="0.0" morph="HVqi3ms" id="20t7c">יֵ֝דַע</w>
+          <w lemma="3588 a" morph="HC" id="20Y1F">כִּי</w><seg type="x-maqqef">־</seg><w lemma="2639" morph="HNcmsa" id="20JXq">חֶ֥סֶר</w>
+          <w lemma="935" n="0" morph="HVqi3ms/Sp3ms" id="20W2g">יְבֹאֶֽ/נּוּ</w><seg type="x-sof-pasuq">׃</seg>
+        </verse>
+      </chapter>
+    </div>
+  </osisText>
+</osis>
