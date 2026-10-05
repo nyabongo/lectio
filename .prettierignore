@@ -1,0 +1,9 @@
+node_modules
+coverage
+dist
+.astro
+package-lock.json
+corpus
+calendar/*.json
+apps/mobile
+**/__generated__

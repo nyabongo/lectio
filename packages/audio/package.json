@@ -1,0 +1,25 @@
+{
+  "name": "@lectio/audio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Narration script builder and TTS rendering pipeline.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "audio:render": "tsx ../../scripts/run-planned.mjs L-081 src/cli/render.ts"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/schema": "0.0.0",
+    "@lectio/refs": "0.0.0",
+    "@lectio/content": "0.0.0",
+    "@lectio/providers": "0.0.0",
+    "@lectio/provider-azure-tts": "0.0.0",
+    "@lectio/provider-s3": "0.0.0"
+  }
+}

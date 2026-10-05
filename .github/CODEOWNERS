@@ -1,0 +1,10 @@
+# The coverage floor and CI are owner-reviewed. Changes to these paths need
+# @nyabongo's approval once branch protection is applied (L-032).
+/vitest.config.ts                        @nyabongo
+/vitest.setup.ts                         @nyabongo
+/.github/                                @nyabongo
+/scripts/check-coverage-floor.mjs        @nyabongo
+/packages/shared/src/coverage-floor.ts   @nyabongo
+/apps/mobile/tool/check_coverage.dart    @nyabongo
+/scripts/check-required-checks.mjs       @nyabongo
+/packages/shared/src/required-checks.ts  @nyabongo

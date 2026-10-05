@@ -1,0 +1,138 @@
+# Unit CI. Always offline: no secrets, and the msw guard in vitest.setup.ts
+# fails any unmocked HTTP request. Every job here is a required check
+# (.github/required-checks/ci.json), so there is no trigger-level `paths:`
+# filter, and `workflow_dispatch` lets the merge-rule job (L-031) re-run CI on
+# the approval commits it pushes.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  unit-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Fails when any metric drops below the 96% thresholds in vitest.config.ts.
+      - run: npx vitest run --coverage
+      - name: Coverage summary
+        if: ${{ !cancelled() && hashFiles('coverage/coverage-summary.json') != '' }}
+        run: npm run --silent coverage:summary >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload lcov
+        if: ${{ !cancelled() && hashFiles('coverage/lcov.info') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-lcov
+          path: |
+            coverage/lcov.info
+            coverage/coverage-summary.json
+          retention-days: 14
+
+  coverage-floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Fails if a vitest threshold or the Dart threshold is set below 96, or if
+      # coverage.include stops covering packages/*/src or apps/web/src/sw.
+      - run: npm run coverage:floor
+
+  lockfile-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      # Lockfile output depends on the npm version: use the one pinned in
+      # package.json "packageManager" so agents and CI resolve identically.
+      - name: Use the pinned npm
+        run: npm install -g "npm@$(node -p "require('./package.json').packageManager.replace(/^npm@/, '')")"
+      # npm ci fails when package-lock.json does not satisfy the manifests.
+      - run: npm ci
+      # ...and re-resolving must not change the committed lockfile.
+      - run: npm install --package-lock-only --ignore-scripts
+      - name: package-lock.json is in sync with the workspace manifests
+        run: git diff --exit-code package-lock.json
+
+  actionlint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ACTIONLINT_VERSION: 1.7.12
+      # sha256 of actionlint_1.7.12_linux_amd64.tar.gz from the release's checksums file.
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install actionlint
+        run: |
+          curl -sSfL -o actionlint.tar.gz \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  actionlint.tar.gz" | sha256sum -c -
+          tar -xzf actionlint.tar.gz actionlint
+      - run: ./actionlint -color
+
+  required-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Every .github/required-checks/<workflow>.json names an existing workflow
+      # with workflow_dispatch, no trigger-level paths:, and every listed job.
+      - run: npm run required-checks

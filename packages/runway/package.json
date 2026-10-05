@@ -1,0 +1,22 @@
+{
+  "name": "@lectio/runway",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Content runway monitor.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "runway": "tsx ../../scripts/run-planned.mjs L-073 src/cli.ts"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/content": "0.0.0",
+    "@lectio/providers": "0.0.0",
+    "@lectio/provider-gh": "0.0.0"
+  }
+}

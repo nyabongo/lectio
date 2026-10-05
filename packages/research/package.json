@@ -1,0 +1,28 @@
+{
+  "name": "@lectio/research",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local research CLI: planner, agent, validation, publishing, back-fill.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "research": "tsx ../../scripts/run-planned.mjs L-038 src/cli/index.ts"
+  },
+  "dependencies": {
+    "@lectio/shared": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/schema": "0.0.0",
+    "@lectio/refs": "0.0.0",
+    "@lectio/corpus": "0.0.0",
+    "@lectio/content": "0.0.0",
+    "@lectio/gates": "0.0.0",
+    "@lectio/providers": "0.0.0",
+    "@lectio/provider-gh": "0.0.0",
+    "@lectio/provider-fetch": "0.0.0",
+    "@lectio/provider-anthropic": "0.0.0"
+  }
+}

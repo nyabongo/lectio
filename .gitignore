@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# build and test output
+coverage/
+dist/
+.astro/
+out/
+*.tsbuildinfo
+test-results/
+playwright-report/
+apps/web/e2e/__screenshots__/
+
+# local caches and renders
+.cache/
+.audio-out/
+
+# env and secrets
+.env
+.env.*
+!.env.example
+
+# editors and OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+
+# agent worktrees
+.claude/worktrees/
