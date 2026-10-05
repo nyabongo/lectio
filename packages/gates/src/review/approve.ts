@@ -7,15 +7,25 @@
  * - `approveAuto` records an auto-merge approval (`method: auto`, `approvedVia: auto`) with the
  *   verifiers' summary.
  *
- * Both are idempotent: a file that already carries the approval is left byte-for-byte unchanged
- * (its `lastReviewedAt` is not bumped). Every file is validated against the passage schema
- * before anything is written, and nothing is written unless every file succeeds. Files are
- * written with the repository's Prettier config, so `format:check` stays green.
+ * Both are keyed on the approval event. A repeat of the same event (same reviewer, channel and
+ * time for a human approval; same verifier summary and time for an auto approval) leaves the
+ * file byte-for-byte unchanged. A new event (a later approval, another channel, a new summary)
+ * rewrites the block, so `lastReviewedAt` always records the latest approval. Decision 003 only
+ * counts an approval made after the last content commit, so approving edited content is always a
+ * new event, and the CI job (L-031) always has a review block to commit after a fixup. Each
+ * outcome carries the SHA-256 of the passage without its review block (`contentHash`) for the
+ * approval commit; the passage schema has no field to store it in the file itself.
+ *
+ * Every file is validated against the passage schema before anything is written, and the writes
+ * are atomic as a set: each file is written to a temporary file next to it, then renamed into
+ * place; if any step fails, the files already replaced are restored and the temporary files
+ * removed. Files are written with the repository's Prettier config, so `format:check` stays green.
  *
  * `npm run review:approve -- <files…> --reviewer <handle>` calls `approveHuman` locally; the CI
  * merge-rule job (L-031) calls both functions directly.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
@@ -26,7 +36,7 @@ import { format, resolveConfig } from 'prettier';
 export type VerifierSummary = NonNullable<PassageReview['verifierSummary']>;
 export type HumanApprovalChannel = 'cli' | 'label' | 'comment';
 
-/** Why an approval was refused; nothing has been written when it is thrown. */
+/** Why an approval was refused. Nothing has been written when this (or any other error) is thrown. */
 export class ReviewError extends Error {
   override readonly name = 'ReviewError';
 }
@@ -35,11 +45,23 @@ export class ReviewError extends Error {
 export interface ReviewFs {
   readFile(path: string): string;
   writeFile(path: string, text: string): void;
+  /** Replaces `to` with `from` (atomic within one file system). */
+  rename(from: string, to: string): void;
+  /** Deletes `path`; no error when it does not exist. */
+  remove(path: string): void;
 }
 
 export const nodeReviewFs: ReviewFs = {
   readFile: (path) => readFileSync(path, 'utf8'),
-  writeFile: (path, text) => writeFileSync(path, text, 'utf8'),
+  writeFile: (path, text) => {
+    writeFileSync(path, text, 'utf8');
+  },
+  rename: (from, to) => {
+    renameSync(from, to);
+  },
+  remove: (path) => {
+    rmSync(path, { force: true });
+  },
 };
 
 /** Serialises a passage for `path`; the default formats with the repository's Prettier config. */
@@ -59,6 +81,7 @@ export interface ApproveHumanOptions extends WriteOptions {
   /** GitHub handle of the person approving (a leading `@` is ignored). */
   readonly reviewer: string;
   readonly via: HumanApprovalChannel;
+  /** When the approval happened: the label or comment event time in CI, the clock locally. */
   readonly now: Date | string;
   /** Supplies `reviewer.githubHandles`. */
   readonly config: Pick<LectioConfig, 'reviewer'>;
@@ -66,8 +89,10 @@ export interface ApproveHumanOptions extends WriteOptions {
 
 export interface ApprovalOutcome {
   readonly file: string;
-  /** `false` when the file already carried this approval and was left untouched. */
+  /** `false` when the file already recorded this approval event and was left untouched. */
   readonly changed: boolean;
+  /** SHA-256 (hex) of the passage without its review block: the content that was approved. */
+  readonly contentHash: string;
 }
 
 /** An RFC 3339 UTC timestamp to the second. */
@@ -90,7 +115,10 @@ export function configuredHandle(reviewer: string, config: Pick<LectioConfig, 'r
   return handle;
 }
 
-/** The review block after a human approval by `handle`, or `null` when `review` already records it. */
+/**
+ * The review block after a human approval by `handle` via `via` at `lastReviewedAt`, or `null`
+ * when `review` already records exactly that approval. Earlier human reviewers are kept.
+ */
 export function humanReview(
   review: PassageReview,
   handle: string,
@@ -98,8 +126,9 @@ export function humanReview(
   lastReviewedAt: string,
 ): PassageReview | null {
   const humanApproved = review.status === 'approved' && review.method === 'human';
-  if (humanApproved && review.reviewers.includes(handle)) return null;
-  const reviewers = humanApproved ? [...review.reviewers, handle] : [handle];
+  const known = humanApproved && review.reviewers.includes(handle);
+  if (known && review.approvedVia === via && review.lastReviewedAt === lastReviewedAt) return null;
+  const reviewers = !humanApproved ? [handle] : known ? [...review.reviewers] : [...review.reviewers, handle];
   return { status: 'approved', method: 'human', reviewers, approvedVia: via, lastReviewedAt };
 }
 
@@ -113,22 +142,28 @@ export function checkVerifierSummary(summary: VerifierSummary): void {
   }
 }
 
-/** Key-order-independent equality for JSON values. */
-function sameJson(a: unknown, b: unknown): boolean {
-  const canon = (value: unknown): unknown =>
-    value !== null && typeof value === 'object' && !Array.isArray(value)
+/** JSON with object keys sorted, so equal values serialise equally. */
+function canonicalJson(value: unknown): string {
+  const canon = (inner: unknown): unknown =>
+    inner !== null && typeof inner === 'object' && !Array.isArray(inner)
       ? Object.fromEntries(
-          Object.entries(value)
+          Object.entries(inner)
             .sort(([x], [y]) => (x < y ? -1 : 1))
-            .map(([key, inner]) => [key, canon(inner)]),
+            .map(([key, nested]) => [key, canon(nested)]),
         )
-      : Array.isArray(value)
-        ? value.map(canon)
-        : value;
-  return JSON.stringify(canon(a)) === JSON.stringify(canon(b));
+      : Array.isArray(inner)
+        ? inner.map(canon)
+        : inner;
+  return JSON.stringify(canon(value));
 }
 
-/** The review block after an auto approval, or `null` when `review` already records it. */
+/** SHA-256 (hex) of `passage` without its review block, independent of key order and formatting. */
+export function passageContentHash(passage: Passage): string {
+  const { review: _review, ...content } = passage;
+  return createHash('sha256').update(canonicalJson(content)).digest('hex');
+}
+
+/** The review block after an auto approval at `lastReviewedAt`, or `null` when `review` already records it. */
 export function autoReview(
   review: PassageReview,
   verifierSummary: VerifierSummary,
@@ -142,18 +177,7 @@ export function autoReview(
     lastReviewedAt,
     verifierSummary,
   };
-  return sameJson({ ...review, lastReviewedAt }, target) ? null : target;
-}
-
-function readPassage(fs: ReviewFs, file: string): Passage {
-  if (contentKindOf(file) !== 'passage') throw new ReviewError(`${file}: not a passage file (passages/<key>.json)`);
-  let text: string;
-  try {
-    text = fs.readFile(file);
-  } catch (error) {
-    throw new ReviewError(`${file}: cannot read file (${(error as Error).message})`);
-  }
-  return checked(() => checkPassage(parseJson(text, file), file, basename(file, '.json')));
+  return canonicalJson(review) === canonicalJson(target) ? null : target;
 }
 
 function checked<T>(fn: () => T): T {
@@ -161,6 +185,62 @@ function checked<T>(fn: () => T): T {
     return fn();
   } catch (error) {
     throw new ReviewError((error as Error).message);
+  }
+}
+
+function readPassage(fs: ReviewFs, file: string): { passage: Passage; text: string } {
+  if (contentKindOf(file) !== 'passage') throw new ReviewError(`${file}: not a passage file (passages/<key>.json)`);
+  let text: string;
+  try {
+    text = fs.readFile(file);
+  } catch (error) {
+    throw new ReviewError(`${file}: cannot read file (${(error as Error).message})`);
+  }
+  return { passage: checked(() => checkPassage(parseJson(text, file), file, basename(file, '.json'))), text };
+}
+
+interface PlannedWrite {
+  readonly file: string;
+  readonly text: string;
+  readonly original: string;
+}
+
+/** The temporary file a write goes through before it is renamed into place. */
+export function tempPathFor(file: string): string {
+  return `${file}.lectio-review-${String(process.pid)}.tmp`;
+}
+
+/** Runs `fn`, ignoring any error: used for best-effort cleanup after a failure. */
+function attempt(fn: () => void): void {
+  try {
+    fn();
+  } catch {
+    // The original error is what the caller sees.
+  }
+}
+
+/**
+ * Writes every file as one set: each text goes to a temporary file next to its target, then each
+ * is renamed into place. On any failure, the targets already replaced get their original text
+ * back, every temporary file is removed, and the error is rethrown.
+ */
+function writeAll(fs: ReviewFs, writes: readonly PlannedWrite[]): void {
+  const replaced: PlannedWrite[] = [];
+  try {
+    for (const { file, text } of writes) fs.writeFile(tempPathFor(file), text);
+    for (const write of writes) {
+      fs.rename(tempPathFor(write.file), write.file);
+      replaced.push(write);
+    }
+  } catch (error) {
+    for (const { file, original } of replaced.reverse()) {
+      attempt(() => {
+        fs.writeFile(tempPathFor(file), original);
+        fs.rename(tempPathFor(file), file);
+      });
+    }
+    for (const { file } of writes) attempt(() => fs.remove(tempPathFor(file)));
+    throw error;
   }
 }
 
@@ -174,18 +254,18 @@ async function applyReview(
   const formatJson = options.format ?? prettierJson;
   if (files.length === 0) throw new ReviewError('no files to approve');
   const planned = files.map((file) => {
-    const passage = readPassage(fs, file);
+    const { passage, text } = readPassage(fs, file);
     const review = update(passage.review);
     const next = review === null ? null : checked(() => checkPassage({ ...passage, review }, file));
-    return { file, next };
+    return { file, original: text, next, contentHash: passageContentHash(passage) };
   });
   const outcomes: ApprovalOutcome[] = [];
-  const writes: { file: string; text: string }[] = [];
-  for (const entry of planned) {
-    if (entry.next !== null) writes.push({ file: entry.file, text: await formatJson(entry.next, entry.file) });
-    outcomes.push({ file: entry.file, changed: entry.next !== null });
+  const writes: PlannedWrite[] = [];
+  for (const { file, original, next, contentHash } of planned) {
+    if (next !== null) writes.push({ file, text: await formatJson(next, file), original });
+    outcomes.push({ file, changed: next !== null, contentHash });
   }
-  for (const { file, text } of writes) fs.writeFile(file, text);
+  writeAll(fs, writes);
   return outcomes;
 }
 

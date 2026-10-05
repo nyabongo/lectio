@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { createGit, nodeGitExec, parseNameStatus } from './git.ts';
+import { checkedOutAt, createGit, nodeGitExec, parseNameStatus } from './git.ts';
 import type { GitExec } from './git.ts';
 
 describe('parseNameStatus', () => {
@@ -116,6 +116,13 @@ describe('createGit against a real repository', () => {
     ]);
     expect(git.show('main', 'passages/A.1.json')).toBe('{"v":1}\n');
     expect(git.show('main', 'passages/B.2.json')).toBeNull();
+  });
+
+  it('checkedOutAt compares a ref with the checkout', () => {
+    expect(checkedOutAt(nodeGitExec, dir, 'HEAD')).toBe(true);
+    expect(checkedOutAt(nodeGitExec, dir, 'pr')).toBe(true);
+    expect(checkedOutAt(nodeGitExec, dir, 'main')).toBe(false);
+    expect(checkedOutAt(nodeGitExec, dir, 'no-such-ref')).toBe(false);
   });
 
   it('nodeGitExec throws when git fails', () => {

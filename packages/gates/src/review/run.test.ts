@@ -22,6 +22,13 @@ function setup(overrides: Partial<ApproveCliOptions> = {}) {
     writeFile: (path, text) => {
       files[path] = text;
     },
+    rename: (from, to) => {
+      files[to] = files[from] ?? '';
+      delete files[from];
+    },
+    remove: (path) => {
+      delete files[path];
+    },
   };
   const format: FormatJson = (value) => Promise.resolve(`${JSON.stringify(value, null, 2)}\n`);
   const options: ApproveCliOptions = {
@@ -54,6 +61,15 @@ describe('review:approve', () => {
     });
     expect(await runApprove(['--reviewer=nyabongo', 'passages/MT.20.1-16.json'], options)).toBe(0);
     expect(logs.at(-1)).toBe('unchanged passages/MT.20.1-16.json');
+  });
+
+  it('a later run is a new approval and refreshes lastReviewedAt', async () => {
+    const { files, logs, options } = setup();
+    await runApprove(['passages/MT.20.1-16.json', '--reviewer', 'nyabongo'], options);
+    const later = { ...options, now: () => new Date('2026-10-07T08:00:00Z') };
+    expect(await runApprove(['passages/MT.20.1-16.json', '--reviewer', 'nyabongo'], later)).toBe(0);
+    expect(logs).toEqual(['approved passages/MT.20.1-16.json', 'approved passages/MT.20.1-16.json']);
+    expect(JSON.parse(files[FIXTURE] ?? '').review.lastReviewedAt).toBe('2026-10-07T08:00:00Z');
   });
 
   it('exits 1 for an unknown handle', async () => {
@@ -92,6 +108,8 @@ describe('review:approve', () => {
         writeFile: () => {
           throw new Error('disk full');
         },
+        rename: () => undefined,
+        remove: () => undefined,
       },
     });
     await expect(runApprove(['passages/MT.20.1-16.json', '--reviewer', 'nyabongo'], options)).rejects.toThrow(

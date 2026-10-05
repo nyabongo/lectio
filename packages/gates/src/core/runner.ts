@@ -51,6 +51,12 @@ function checked(gate: Gate, result: unknown): GateResult {
     const message = `${gate.id} returned a result for "${result.gate}"`;
     return resultFromFindings(gate.id, [finding(RUNNER_RULES.invalidResult, { message })]);
   }
+  if (result.status === 'skipped' && result.items.length > 0) {
+    // The schema allows it, but a skipped gate that reports findings would hide them: overall
+    // status ignores skipped results. Surface them as a failure instead.
+    const message = `${gate.id} reported ${String(result.items.length)} findings but status skipped`;
+    return { ...result, status: 'fail', items: [...result.items, finding(RUNNER_RULES.invalidResult, { message })] };
+  }
   const declared = new Set(gate.rules.map((rule) => rule.id));
   const unknown = [...new Set(result.items.map((item) => item.ruleId).filter((id) => !declared.has(id)))];
   if (unknown.length === 0) return result;
