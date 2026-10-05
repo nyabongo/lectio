@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { NoteView, SourceView } from '../../lib/reading.ts';
 import NoteCard from './NoteCard.astro';
+import NotesLanguage from './NotesLanguage.astro';
 import SourceList from './SourceList.astro';
 import Verification from './Verification.astro';
 
@@ -134,5 +135,20 @@ describe('SourceList', () => {
     expect(html).toContain('Archived copy');
     expect(html).toMatch(/<blockquote[^>]*lang="hbo" dir="rtl"/);
     expect(html).toContain('Isaiah 55:8');
+  });
+});
+
+describe('NotesLanguage (L-113)', () => {
+  it('labels English notes on a Kiswahili page “English only”, in Kiswahili', async () => {
+    const html = await container.renderToString(NotesLanguage, { props: { contentLang: 'en', lang: 'sw' } });
+    expect(html).toContain('data-notes-lang="en"');
+    expect(html).toContain('Kiingereza pekee');
+    expect(html).toContain('yanaonyeshwa kwa Kiingereza');
+  });
+
+  it('renders nothing when the notes are in the page’s language', async () => {
+    const html = await container.renderToString(NotesLanguage, { props: { contentLang: undefined, lang: 'sw' } });
+    expect(html).not.toContain('notes-lang');
+    expect(await container.renderToString(NotesLanguage, { props: {} })).not.toContain('notes-lang');
   });
 });

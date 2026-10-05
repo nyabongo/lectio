@@ -31,5 +31,9 @@
   "unverified": "Bado haijathibitishwa",
   "lastReviewed": "Ilipitiwa mara ya mwisho {date}",
   "report": "Ripoti tatizo",
-  "disclaimer": "Msaada wa kujifunzia, si mafundisho ya Kanisa. Kila dai linataja vyanzo vyake: vikague mwenyewe."
+  "disclaimer": "Msaada wa kujifunzia, si mafundisho ya Kanisa. Kila dai linataja vyanzo vyake: vikague mwenyewe.",
+  "englishOnly": {
+    "badge": "Kiingereza pekee",
+    "text": "Madokezo haya bado hayana tafsiri iliyokaguliwa, kwa hiyo yanaonyeshwa kwa Kiingereza."
+  }
 }

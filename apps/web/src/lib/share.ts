@@ -8,6 +8,10 @@
  * analytics or tracking parameters: the query string is dropped. The same rules are pinned by the test vectors in
  * packages/schema/fixtures/share-text.json, which the Flutter app reuses.
  *
+ * On a page in another locale (L-113) the share text is that page's: its own title, the insight the page shows (the
+ * reviewed translation from `localeRepo()` in src/lib/notes-locale.ts, else the English summary) and its `/<locale>/`
+ * link, so a Kiswahili reader shares Kiswahili. Nothing here depends on the language; the callers pass those lines.
+ *
  * Nothing here touches the network; the browser APIs come in as arguments so the logic is unit-tested.
  */
 

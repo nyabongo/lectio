@@ -6,19 +6,21 @@
  *
  * The documents are built from the content repository by src/lib/search.ts (only approved notes, no reading text);
  * this module only supplies the UI-catalog labels (season, slot, date, book) and the real `pagefind` package.
- * Only the default locale is indexed (a Kiswahili index is L-113).
+ * Every site locale is indexed (L-113): each locale's Reading pages, with the notes they show (`localeRepo`), under
+ * their own URLs and `lang`, so the search page of each locale finds its own pages.
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { openRepo } from '@lectio/content';
-import { getBook, isBookCode } from '@lectio/refs';
+import { isBookCode } from '@lectio/refs';
 import type { AstroIntegration } from 'astro';
 
 import { seasonName, slotLabel } from '../lib/day.ts';
 import type { DayEnv } from '../lib/day.ts';
 import { buildCatalogs, formatDate, translate } from '../lib/i18n.ts';
+import { bookNameIn, localeRepo } from '../lib/notes-locale.ts';
 import { PAGEFIND_DIR, searchDocuments, writeSearchIndex } from '../lib/search.ts';
 import type { PagefindApi, SearchLabels } from '../lib/search.ts';
 import type { LectioIntegrationOptions } from './types.ts';
@@ -48,7 +50,7 @@ export function searchLabels(options: LectioIntegrationOptions, lang: string): S
     paths: (path) => path,
   };
   return {
-    book: (code) => (isBookCode(code) ? getBook(code).name : code),
+    book: (code) => (isBookCode(code) ? bookNameIn(lang, code) : code),
     season: (season) => seasonName(env, season),
     slot: (slot) => slotLabel(env, slot),
     date: dateText,
@@ -61,9 +63,17 @@ export async function buildSearchIndex(
   outDir: string,
   api?: PagefindApi,
 ): Promise<number> {
-  const lang = options.config.site.defaultLocale;
-  const docs = searchDocuments(openRepo(options.contentRoot), lang, searchLabels(options, lang));
-  return writeSearchIndex(api ?? (await import('pagefind')), docs, join(outDir, PAGEFIND_DIR), lang);
+  const { locales, defaultLocale } = options.config.site;
+  const repo = openRepo(options.contentRoot);
+  const docs = locales.flatMap((lang) =>
+    searchDocuments(
+      localeRepo(repo, lang, { defaultLocale }),
+      lang,
+      searchLabels(options, lang),
+      lang === defaultLocale ? '' : `${lang}/`,
+    ),
+  );
+  return writeSearchIndex(api ?? (await import('pagefind')), docs, join(outDir, PAGEFIND_DIR), defaultLocale);
 }
 
 export function pagefind(options: LectioIntegrationOptions): AstroIntegration {

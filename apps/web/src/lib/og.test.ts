@@ -22,6 +22,7 @@ import {
   insightCard,
   metaContents,
   noteVerseLabel,
+  ogAltLabels,
   ogCard,
   ogDayPaths,
   ogEnvOptions,
@@ -40,6 +41,7 @@ import {
   renderWithFallback,
   resetOgStats,
 } from './og.ts';
+import { localeRepo } from './notes-locale.ts';
 import type { OgContext } from './og.ts';
 import { siteContext } from './site.ts';
 
@@ -204,6 +206,73 @@ describe('ogImageForPage', () => {
     expect(ogImageForPage(context, '1999-01-01/')).toBeNull();
     expect(ogImageForPage(context, '1999-01-01/gospel/')).toBeNull();
     expect(ogImageForPage(context, '2026-09-20/gospel/notes/no-such-note/')).toBeNull();
+  });
+});
+
+describe('Kiswahili cards (L-113)', () => {
+  const sw: OgContext = {
+    ...context,
+    env: { lang: 'sw', messages: { t, formatDate }, paths: (path) => `${BASE}sw/${path}` },
+    repo: localeRepo(repo, 'sw'),
+    defaultLocale: 'en',
+  };
+
+  it('puts each Kiswahili image under og/sw/, and the default locale’s at the root', () => {
+    expect(ogImagePath({ kind: 'day', date: SUNDAY }, 'sw')).toBe('og/sw/2026-09-20.png');
+    expect(ogImagePath({ kind: 'reading', date: SUNDAY, slot: 'gospel' }, 'sw', 'en')).toBe(
+      'og/sw/2026-09-20/gospel.png',
+    );
+    expect(ogImagePath({ kind: 'day', date: SUNDAY }, 'en')).toBe('og/2026-09-20.png');
+    expect(ogImagePath({ kind: 'day', date: SUNDAY }, 'sw', 'sw')).toBe('og/2026-09-20.png');
+  });
+
+  it('writes the day card’s date, Gospel label and reference in Kiswahili', () => {
+    expect(dayCard(sw, SUNDAY)).toMatchObject({
+      url: 'https://lectio.example/lectio/sw/2026-09-20/',
+      dateLabel: 'Jumapili 20 Septemba 2026',
+      gospelLabel: 'Injili',
+      gospelRef: 'Mathayo 20:1–16a',
+    });
+    expect(dayCard({ ...sw, repo: withoutMasses(sw.repo) }, SUNDAY)).not.toHaveProperty('gospelLabel');
+  });
+
+  it('builds the reading card from the reviewed Kiswahili summary', () => {
+    expect(readingCard(sw, SUNDAY, 'gospel')).toMatchObject({
+      url: 'https://lectio.example/lectio/sw/2026-09-20/gospel/',
+      slotLabel: 'Injili',
+      ref: 'Mathayo 20:1–16a',
+      dateLabel: 'Jumapili 20 Septemba 2026',
+      summary: expect.stringMatching(/^Mwenye shamba anawalipa/) as string,
+    });
+  });
+
+  it('builds the insight card from the Kiswahili anchor with a Kiswahili caption', () => {
+    expect(insightCard(sw, SUNDAY, 'gospel', 'v15-evil-eye')).toMatchObject({
+      url: 'https://lectio.example/lectio/sw/2026-09-20/gospel/notes/v15-evil-eye/',
+      quote: 'wivu',
+      ref: 'Mathayo 20:15',
+      caption: 'Kile ambacho Kigiriki cha Injili ya leo kinasema hasa — Mathayo 20:15',
+    });
+    expect(noteVerseLabel('Mt 20:1-16a', '15', 'sw')).toBe('Mathayo 20:15');
+  });
+
+  it('points a Kiswahili page at its Kiswahili image with Kiswahili alt text', () => {
+    expect(ogImageForPage(sw, '2026-09-20/gospel/notes/v15-evil-eye/')).toEqual({
+      src: '/lectio/og/sw/2026-09-20/gospel/v15-evil-eye.png',
+      width: 1200,
+      height: 630,
+      alt:
+        'Kadi ya Lectio ya Jumapili 20 Septemba 2026: “wivu”. Kigiriki: ophthalmos sou ponēros. ' +
+        'Kile ambacho Kigiriki cha Injili ya leo kinasema hasa — Mathayo 20:15',
+    });
+    expect(ogImageForPage(sw, '2026-09-20/first-reading/')?.src).toBe('/lectio/og/sw/2026-09-20.png');
+    expect(ogAltLabels(context)).toEqual({});
+  });
+
+  it('shows the English summary on a Kiswahili card when the translation is stale or missing', () => {
+    const fallback = { ...sw, repo: localeRepo(repo, 'sw', { translations: () => null }) };
+    expect(readingCard(fallback, SUNDAY, 'gospel')?.summary).toBe(readingCard(context, SUNDAY, 'gospel')?.summary);
+    expect(insightCard(fallback, SUNDAY, 'gospel', 'v15-evil-eye')?.quote).toBe('envious');
   });
 });
 
@@ -396,6 +465,18 @@ describe('checkOgDist', () => {
 
   it('passes a site whose pages all have valid images', async () => {
     expect(await checkOgDist(dist, SITE, '/lectio')).toEqual({ pages: 3, images: 1, problems: [] });
+  });
+
+  it('wants a page under a locale to use that locale’s image (L-113)', async () => {
+    await put('og/sw/2026-09-20.png', pngHeader(1200, 630));
+    await put('sw/2026-09-20/index.html', page('https://lectio.example/lectio/og/sw/2026-09-20.png'));
+    await put('sw/2026-09-20/gospel/index.html', page('https://lectio.example/lectio/og/2026-09-20.png'));
+    await put('sw/calendar/index.html', page('https://lectio.example/lectio/_astro/brand.png'));
+    const report = await checkOgDist(dist, SITE, '/lectio/', ['sw']);
+    expect(report.images).toBe(2);
+    expect(report.problems).toEqual([
+      'sw/2026-09-20/gospel/index.html: og:image og/2026-09-20.png is not a page image under og/sw/',
+    ]);
   });
 
   it('reports every kind of problem', async () => {

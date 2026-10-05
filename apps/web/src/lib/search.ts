@@ -3,6 +3,9 @@
  * `lectio:pagefind` integration (src/integrations/pagefind.ts) writes the index into `dist/pagefind/` after the
  * build, and the search page lazily loads Pagefind's own UI from there.
  *
+ * Every locale is indexed (L-113): the `/sw/` Reading pages are documents in `sw` with the notes they show (the
+ * reviewed Kiswahili translation, else English), under `/sw/…` URLs; see `writeSearchIndex`.
+ *
  * Only note content is searchable. Each Reading page with an approved passage becomes one search document whose
  * `data-pagefind-body` holds the passage summary, its Context panel and its translation notes, never the reading
  * text (which Lectio never stores). The document is generated from the same view models the Reading page renders
@@ -79,10 +82,20 @@ export function plainText(segments: readonly Segment[]): string {
     .trim();
 }
 
-/** The search documents for one day: one per reading slot whose passage is approved. */
-export function dayDocuments(day: ResolvedDay, lang: string, labels: SearchLabels): SearchDocument[] {
+/**
+ * The search documents for one day: one per reading slot whose passage is approved. `lang` is the language of the
+ * pages they stand for, and `localePrefix` those pages' path prefix (`sw/` for the Kiswahili mirror, L-113; empty
+ * for the default locale). Pass the day as that locale's content view (`localeRepo`), so the documents hold the
+ * notes the page shows: the reviewed translation, else the English notes.
+ */
+export function dayDocuments(
+  day: ResolvedDay,
+  lang: string,
+  labels: SearchLabels,
+  localePrefix = '',
+): SearchDocument[] {
   return [...readingsBySlot(day).values()].flatMap((reading) => {
-    const view = readingView(day, reading);
+    const view = readingView(day, reading, lang);
     const { notes } = view;
     if (notes === null) return [];
     const date = labels.date(view.date);
@@ -96,7 +109,7 @@ export function dayDocuments(day: ResolvedDay, lang: string, labels: SearchLabel
     ];
     return [
       {
-        url: `/${view.path}`,
+        url: `/${localePrefix}${view.path}`,
         lang,
         title: `${view.ref} · ${labels.slot(view.slot)} · ${date}`,
         ref: view.ref,
@@ -111,12 +124,19 @@ export function dayDocuments(day: ResolvedDay, lang: string, labels: SearchLabel
   });
 }
 
-/** Every search document of the content repository, in calendar order. */
-export function searchDocuments(repo: ContentRepo, lang: string, labels: SearchLabels): SearchDocument[] {
+/** Every search document of the content repository, in calendar order (see `dayDocuments` for the locale). */
+export function searchDocuments(
+  repo: ContentRepo,
+  lang: string,
+  labels: SearchLabels,
+  localePrefix = '',
+): SearchDocument[] {
   return repo
     .years()
     .flatMap((year) =>
-      repo.listDays(`${String(year)}-01-01`, `${String(year)}-12-31`).flatMap((day) => dayDocuments(day, lang, labels)),
+      repo
+        .listDays(`${String(year)}-01-01`, `${String(year)}-12-31`)
+        .flatMap((day) => dayDocuments(day, lang, labels, localePrefix)),
     );
 }
 
@@ -176,6 +196,10 @@ function check(step: string, errors: readonly string[]): void {
  * Indexes `docs` with Pagefind and writes the bundle to `outputPath` (normally `<outDir>/pagefind`). Throws on any
  * Pagefind error so a broken index fails the build. Returns the number of pages indexed. The Pagefind service is
  * closed afterwards, even on failure.
+ *
+ * Documents in one language are indexed as `lang`. Documents in several (the `/sw/` mirror, L-113) are indexed by
+ * each document's `<html lang>`: Pagefind writes one index per language and the search UI loads the one matching
+ * its own page's `lang`, so `/sw/search/` finds Kiswahili pages and `/search/` English ones.
  */
 export async function writeSearchIndex(
   api: PagefindApi,
@@ -184,7 +208,8 @@ export async function writeSearchIndex(
   lang: string,
 ): Promise<number> {
   try {
-    const { errors, index } = await api.createIndex({ forceLanguage: lang });
+    const multilingual = new Set(docs.map((doc) => doc.lang)).size > 1;
+    const { errors, index } = await api.createIndex(multilingual ? {} : { forceLanguage: lang });
     check('createIndex', errors);
     if (index === undefined) throw new Error('Pagefind createIndex returned no index');
     for (const doc of docs)

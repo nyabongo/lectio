@@ -1,6 +1,15 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
+import { DEFAULT_CONFIG } from '@lectio/config';
+import { openRepo } from '@lectio/content';
 import { describe, expect, it, vi } from 'vitest';
+
+import { t } from '../i18n/index.ts';
+import { dayPageView } from './day.ts';
+import { insightPage } from './insight.ts';
+import { localeRepo } from './notes-locale.ts';
+import { readingPage } from './reading.ts';
 
 import {
   INSIGHT_MAX_LENGTH,
@@ -220,5 +229,58 @@ describe('parseShareConfig', () => {
     ['no url', JSON.stringify({ text: 'x', payload: { title: 'T', text: 'x' } })],
   ])('returns null when %s', (_name, json) => {
     expect(parseShareConfig(json)).toBeNull();
+  });
+});
+
+describe('Kiswahili share text (L-113)', () => {
+  const repo = openRepo(fileURLToPath(new URL('../../test/fixtures/content', import.meta.url)));
+  const sw = localeRepo(repo, 'sw');
+  const SITE = 'https://nyabongo.github.io/lectio/sw/2026-09-20/gospel/';
+
+  it('shares a /sw/ reading with its reviewed Kiswahili summary and the /sw/ link', () => {
+    const view = readingPage(sw, '2026-09-20', 'gospel', 'sw');
+    const text = buildShareText({ ref: view?.ref ?? '', insight: view?.notes?.summary ?? null, url: `${SITE}?utm=x` });
+    expect(text).toBe(
+      [
+        'Mt 20:1-16a',
+        'Mwenye shamba anawalipa walioajiriwa mwisho sawa na wa kwanza, na kuuliza kama wema wake ni sababu ya kinyongo.',
+        SITE,
+      ].join('\n'),
+    );
+  });
+
+  it('shares a /sw/ insight under its Kiswahili title and note summary', () => {
+    const view = insightPage(sw, '2026-09-20', 'gospel', 'v15-evil-eye', 'sw');
+    const title = t('sw', 'insight.pageTitle', {
+      anchor: view?.note.anchor ?? '',
+      ref: view?.reading.ref ?? '',
+      verse: view?.note.verse ?? '',
+    });
+    const config = shareConfig({
+      title,
+      ref: title,
+      insight: view?.note.summary ?? null,
+      url: `${SITE}notes/v15-evil-eye/`,
+    });
+    expect(config.payload.title).toBe('“wivu” · Mt 20:1-16a, mstari 15');
+    expect(config.payload.text).toBe(
+      '“wivu” · Mt 20:1-16a, mstari 15\nKigiriki kinauliza “je, jicho lako ni ovu?”, nahau ya kuonea wivu mema ya mwingine.',
+    );
+  });
+
+  it('shares the English summary when the translation is stale or missing, as the page shows it', () => {
+    const fallback = localeRepo(repo, 'sw', { translations: () => null });
+    const view = readingPage(fallback, '2026-09-20', 'gospel', 'sw');
+    expect(shareLines({ ref: view?.ref ?? '', insight: view?.notes?.summary ?? null })[1]).toMatch(/^A landowner/);
+  });
+
+  it('shares a /sw/ day with its Gospel’s Kiswahili summary', () => {
+    const env = {
+      lang: 'sw',
+      messages: { t, formatDate: (_locale: string, date: string) => date },
+      paths: (path: string) => path,
+    };
+    const day = dayPageView(env, { config: DEFAULT_CONFIG, repo: sw }, '2026-09-20');
+    expect(dayShareInsight(day as NonNullable<typeof day>)).toMatch(/^Mwenye shamba/);
   });
 });

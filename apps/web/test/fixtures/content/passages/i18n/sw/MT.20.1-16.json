@@ -1,0 +1,51 @@
+{
+  "translationOf": "MT.20.1-16",
+  "locale": "sw",
+  "sourceSha256": "e4f2ada6af54f64214cd4b40684ee3aab5b39d44170432aef3e5590e86038e99",
+  "summary": "Mwenye shamba anawalipa walioajiriwa mwisho sawa na wa kwanza, na kuuliza kama wema wake ni sababu ya kinyongo.",
+  "context": {
+    "title": "Wafanyakazi katika shamba la mizabibu",
+    "paragraphs": [
+      "Mathayo peke yake anaandika mfano huu, katikati ya misemo miwili kuhusu wa mwisho kuwa wa kwanza. [c1] Dinari ilikuwa ujira wa kawaida wa kibarua kwa siku moja katika Palestina ya karne ya kwanza. [c2]",
+      "Swali la mwisho la mwenye shamba linatumia nahau ya Kiyahudi ya jicho ovu, picha ya kuonea wivu bahati njema ya mwingine. [c3] Mathayo tayari ameweka jicho safi dhidi ya jicho ovu katika Mahubiri ya Mlimani. [c4]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "v15-evil-eye",
+      "anchor": "wivu",
+      "gloss": "jicho lako ovu",
+      "summary": "Kigiriki kinauliza “je, jicho lako ni ovu?”, nahau ya kuonea wivu mema ya mwingine.",
+      "body": "Jicho ovu lilikuwa picha inayojulikana ya ubahili na kinyongo (Kum 15:9; Mit 28:22). Tafsiri inabadilisha picha hiyo kuwa hisia tu na kupoteza mwangwi wa Mt 6:22-23. [c3][c4]"
+    },
+    {
+      "id": "v15-agathos",
+      "anchor": "mkarimu",
+      "gloss": "mwema",
+      "summary": "Mwenye shamba anajiita “mwema”, si “mkarimu” tu.",
+      "body": "Agathos ndilo neno ambalo Yesu analitumia kwa Mungu peke yake katika Mt 19:17, mistari michache kabla. Mfano huu unahusu yeye mwenye shamba ni nani, si tu anacholipa. [c5]"
+    }
+  ],
+  "claims": [
+    { "id": "c1", "text": "Mfano wa wafanyakazi katika shamba la mizabibu unapatikana katika Mathayo peke yake." },
+    { "id": "c2", "text": "Dinari ilikuwa ujira wa kawaida wa kibarua kwa siku moja." },
+    { "id": "c3", "text": "“Jicho ovu” ilikuwa nahau ya Kiyahudi ya ubahili au kuonea wivu mema ya mwingine." },
+    { "id": "c4", "text": "Mt 6:22-23 inalinganisha jicho safi na jicho ovu." },
+    { "id": "c5", "text": "Katika Mt 19:17 Yesu anasema kwamba ni mmoja tu aliye mwema, akitumia agathos." }
+  ],
+  "provenance": {
+    "generator": "fake",
+    "runId": "translate-fixture",
+    "models": [],
+    "promptVersion": "translate-v1",
+    "createdAt": "2026-10-05T07:50:00Z"
+  },
+  "review": {
+    "status": "approved",
+    "method": "human",
+    "reviewers": ["fixture-reviewer"],
+    "approvedVia": "label",
+    "lastReviewedAt": "2026-10-05T09:00:00Z"
+  },
+  "schemaVersion": 1
+}

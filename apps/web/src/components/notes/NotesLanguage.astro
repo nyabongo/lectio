@@ -1,0 +1,47 @@
+---
+/**
+ * The "English only" badge (L-113): on a page in another locale whose notes have no approved, up-to-date translation
+ * (`localeRepo()` in src/lib/notes-locale.ts), it says the notes below are shown in English and why. Renders nothing
+ * when the notes are in the page's own language. `contentLang` is the notes' language when it differs from the
+ * page's (`partLang`), as the pages already compute it for `lang` attributes.
+ */
+import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+
+export interface Props {
+  /** The notes' language when it differs from the page's (`partLang(notes.lang, lang)`), else `undefined`. */
+  contentLang?: string | undefined;
+  lang?: string;
+}
+
+const { contentLang, lang = DEFAULT_LOCALE } = Astro.props;
+---
+
+{
+  contentLang !== undefined && (
+    <p class="notes-lang" data-notes-lang={contentLang}>
+      <span class="notes-lang__badge">{t(lang, 'reading.englishOnly.badge')}</span>
+      <span class="notes-lang__text">{t(lang, 'reading.englishOnly.text')}</span>
+    </p>
+  )
+}
+
+<style>
+  .notes-lang {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3xs) var(--space-2xs);
+    margin: 0 0 var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .notes-lang__badge {
+    padding: 0.1em 0.6em;
+    font-weight: var(--weight-strong);
+    color: var(--colour-ink);
+    background: var(--colour-wash);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-s);
+  }
+</style>

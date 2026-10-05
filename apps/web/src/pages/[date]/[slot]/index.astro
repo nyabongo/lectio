@@ -11,6 +11,7 @@
  */
 import NoteCard from '../../../components/notes/NoteCard.astro';
 import MarkedText from '../../../components/notes/MarkedText.astro';
+import NotesLanguage from '../../../components/notes/NotesLanguage.astro';
 import Verification from '../../../components/notes/Verification.astro';
 import Seo from '../../../components/seo/Seo.astro';
 import ShareButton from '../../../components/share/ShareButton.astro';
@@ -19,6 +20,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { dayPath, slotLabel } from '../../../lib/day.ts';
 import { insightPath } from '../../../lib/insight.ts';
 import { partLang } from '../../../lib/locales.ts';
+import { siteRepo } from '../../../lib/notes-locale.ts';
 import { linkoutSource, readingPage, readingStaticPaths } from '../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../lib/site.ts';
 
@@ -27,14 +29,15 @@ export function getStaticPaths() {
 }
 
 const { date, slot } = Astro.params;
-const { config, repo } = siteContext();
+const { config } = siteContext();
 const lang = localeOf(Astro.url);
-const view = readingPage(repo, date, slot, lang);
+// Approved, up-to-date translations in the page's language, else the English notes (L-113).
+const view = readingPage(siteRepo(lang), date, slot, lang);
 if (view === null) throw new Error(`no reading for ${date}/${slot}`);
 
 const base = import.meta.env.BASE_URL;
 const { notes } = view;
-// Notes stay in their own language (English) on other locales' pages: mark them (WCAG 3.1.2).
+// Notes without a translation stay in English on other locales' pages: mark them (WCAG 3.1.2) and badge them.
 const notesLang = partLang(notes?.lang, lang);
 // Slot names are shared with the day pages (`day.slot.*`), so both say the same thing.
 const dayEnv = { lang, messages: { t, formatDate }, paths: (path: string) => withBase(base, localePath(lang, path)) };
@@ -64,6 +67,7 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
     <header class="reading__header">
       <p class="eyebrow">{slotText}</p>
       <h1 class="reading__ref">{view.ref}</h1>
+      {notes !== null && <NotesLanguage contentLang={notesLang} lang={lang} />}
       {notes !== null && <p class="reading__summary" lang={notesLang}>{notes.summary}</p>}
       <ShareButton title={title} shareRef={view.ref} insight={notes?.summary ?? null} path={view.path} lang={lang} />
     </header>

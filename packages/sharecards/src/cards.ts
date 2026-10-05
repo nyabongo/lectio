@@ -6,6 +6,8 @@
  */
 import type { LiturgicalColour } from '@lectio/schema/common';
 
+import { formatLongDate } from './text.ts';
+
 interface CardBase {
   /** The liturgical day, `YYYY-MM-DD`; shown as `Sunday 20 September 2026`. */
   readonly date: string;
@@ -13,6 +15,11 @@ interface CardBase {
   readonly colour: LiturgicalColour;
   /** Absolute permalink; shown without the scheme in the footer. */
   readonly url: string;
+  /**
+   * The date as the card shows it, for a card in another language (`Jumapili 20 Septemba 2026`); defaults to
+   * {@link formatLongDate} of `date` in English.
+   */
+  readonly dateLabel?: string;
 }
 
 /** `/[date]`: the day at a glance. */
@@ -24,6 +31,8 @@ export interface DayCard extends CardBase {
   readonly subtitle?: string;
   /** Gospel reference as displayed, e.g. `Matthew 20:1–16`; omitted when the day has none yet. */
   readonly gospelRef?: string;
+  /** The word before `gospelRef` (`Injili` on a Kiswahili card); defaults to `Gospel`. */
+  readonly gospelLabel?: string;
 }
 
 /** `/[date]/[slot]`: one reading by reference with its one-line summary. */
@@ -71,6 +80,11 @@ export const LANGUAGE_NAMES: Readonly<Record<OriginalLanguage, string>> = {
   arc: 'Aramaic',
   la: 'Latin',
 };
+
+/** The date as a card shows it: its `dateLabel`, else `Sunday 20 September 2026`. */
+export function cardDate(card: { readonly date: string; readonly dateLabel?: string }): string {
+  return card.dateLabel ?? formatLongDate(card.date);
+}
 
 /** `What the Greek of today's Gospel really says — Matthew 20:15`. */
 export function insightCaption(card: Pick<InsightCard, 'original' | 'slotLabel' | 'ref'>): string {
