@@ -99,17 +99,27 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
   const contentRoot = join(context.repoRoot, config.content.root);
   const repo = context.repo ?? openRepo(contentRoot);
   const ledger = join(context.repoRoot, LEDGER_PATH);
+  // A ledger that does not read refuses a batch, but the estimate still prints, with spend unknown.
+  let spentUsd: number | null = null;
+  let ledgerProblem: string | undefined;
+  try {
+    spentUsd = ledgerTotals(readLedger(ledger)).spentUsd;
+  } catch (error) {
+    if (args.execute) throw error;
+    ledgerProblem = (error as Error).message;
+  }
   const estimate = estimateBackfill({
     ...resolveYears(args, repo.years()),
     today: toIsoDateInZone(clock.now(), config.site.timezone),
     repo,
     config,
     ...(args.perPassageUsd === undefined ? {} : { perPassageUsd: args.perPassageUsd }),
-    spentUsd: ledgerTotals(readLedger(ledger)).spentUsd,
+    spentUsd,
   });
   io.out(formatEstimate(estimate));
 
   if (!args.execute) {
+    if (ledgerProblem !== undefined) io.err(`warning: ${ledgerProblem}`);
     say('', 'Estimate only: nothing was generated. Pass --execute to research the next batch.');
     return 0;
   }
@@ -132,14 +142,16 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
   const reservation = live
     ? await reserveSpend(ledger, { run: `backfill-${at()}-${randomUUID().slice(0, 8)}`, at: at(), wantUsd, totalUsd })
     : null;
-  if (!live && estimate.leftUsd < 0.01) {
+  // With --execute the ledger read, so spend and what is left are known.
+  const leftUsd = estimate.leftUsd as number;
+  if (!live && leftUsd < 0.01) {
     io.err(
-      `research backfill: the back-fill ceiling is used up (${money(estimate.spentUsd)} of ${money(totalUsd)} ` +
+      `research backfill: the back-fill ceiling is used up (${money(spentUsd as number)} of ${money(totalUsd)} ` +
         `research.budget.backfillTotalUsd in ${LEDGER_PATH}); nothing was generated.`,
     );
     return 1;
   }
-  const ceilingUsd = reservation?.reservedUsd ?? Math.min(wantUsd, estimate.leftUsd);
+  const ceilingUsd = reservation?.reservedUsd ?? Math.min(wantUsd, leftUsd);
   if (common.dryRunForced) say('', '--provider fake: dry run, nothing is published.');
   else if (common.dryRun) say('', 'Dry run: nothing is published.');
   say(
@@ -200,13 +212,23 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
     return report.rows.some((row) => row.problem) ? 1 : 0;
   } finally {
     if (reservation !== null) {
-      const spentUsd = kit?.meter.spentUsd() ?? 0;
-      await settleSpend(ledger, { run: reservation.run, at: at(), spentUsd });
-      const total = reservation.spentBeforeUsd + spentUsd;
-      say(
-        `Back-fill spend: ${money(spentUsd)} in this batch; ${money(total)} of ${money(totalUsd)} spent in total, ` +
-          `${money(Math.max(0, totalUsd - total))} left (${LEDGER_PATH}; commit it so other clones count it).`,
-      );
+      const batchUsd = kit?.meter.spentUsd() ?? 0;
+      const settlement = { run: reservation.run, at: at(), spentUsd: batchUsd };
+      // A failure here is reported, never thrown: the batch's own outcome (or error) stands.
+      try {
+        await settleSpend(ledger, settlement);
+        const total = reservation.spentBeforeUsd + batchUsd;
+        say(
+          `Back-fill spend: ${money(batchUsd)} in this batch; ${money(total)} of ${money(totalUsd)} spent in total, ` +
+            `${money(Math.max(0, totalUsd - total))} left (${LEDGER_PATH}; commit it so other clones count it).`,
+        );
+      } catch (error) {
+        io.err(
+          `research backfill: could not record what run ${reservation.run} spent (${money(batchUsd)}) in ` +
+            `${LEDGER_PATH}: ${(error as Error).message}. Its whole reservation still counts; append this line ` +
+            `to the ledger by hand: ${JSON.stringify(settlement)}`,
+        );
+      }
     }
   }
 }

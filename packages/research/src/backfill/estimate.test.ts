@@ -73,6 +73,12 @@ describe('estimateBackfill', () => {
       ceilingCovers: 1,
     });
     expect(estimateBackfill({ ...input, config, spentUsd: 7 })).toMatchObject({ leftUsd: 0, ceilingCovers: 0 });
+    // A ledger that does not read: spend unknown, the ceiling as a whole.
+    expect(estimateBackfill({ ...input, config, perPassageUsd: 1, spentUsd: null })).toMatchObject({
+      spentUsd: null,
+      leftUsd: null,
+      ceilingCovers: 5,
+    });
   });
 
   it('has no cost limit at a $0 average, and no batches without reviewer capacity', () => {

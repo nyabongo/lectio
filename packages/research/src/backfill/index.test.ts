@@ -1,7 +1,7 @@
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
 import type { ContentRepo } from '@lectio/content';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
@@ -310,9 +310,58 @@ describe('research backfill', () => {
     expect(ledgerTotals(readLedger(ledger))).toEqual({ spentUsd: 0, openRuns: 0 });
 
     writeFileSync(ledger, 'not json\n');
-    const broken = capture();
-    expect(await main(['backfill'], context, broken.io)).toBe(1);
-    expect(broken.err[0]).toContain('line 1 is not a ledger entry');
+    // The estimate still prints, with spend unknown; a batch is refused.
+    const estimate = capture();
+    expect(await main(['backfill'], context, estimate.io)).toBe(0);
+    expect(estimate.out.join('\n')).toContain(
+      'Back-fill ceiling: $10.00 (research.budget.backfillTotalUsd): spent so far unknown (the spend ledger does ' +
+        'not read), so what is left is unknown too.',
+    );
+    expect(estimate.err).toHaveLength(1);
+    expect(estimate.err[0]).toMatch(/^warning: research backfill: .* line 1 is not a ledger entry/u);
+    const batch = capture();
+    expect(await main(['backfill', '--execute', '--budget', '5'], context, batch.io)).toBe(1);
+    expect(batch.err[0]).toContain('line 1 is not a ledger entry');
+    expect(batch.out).toEqual([]);
+  });
+
+  it('reports a settlement it cannot record without hiding the batch outcome or error', async () => {
+    const { context } = setUp({ backfillTotalUsd: 10 });
+    const ledger = join(context.repoRoot, LEDGER_PATH);
+    const compose = context.compose as (options: ComposeOptions) => Promise<Toolkit>;
+    // After the reservation the ledger becomes a directory, so the settlement cannot be appended.
+    const breakLedger = (): void => {
+      rmSync(ledger);
+      mkdirSync(ledger);
+    };
+    const settles: CliContext = {
+      ...context,
+      compose: (options) => {
+        breakLedger();
+        return compose(options);
+      },
+    };
+    const ran = capture();
+    expect(await main(['backfill', '--execute', '--budget', '5', '--dry-run'], settles, ran.io)).toBe(0);
+    expect(ran.out.at(-1)).toMatch(/^Back-fill: 1 passage\(s\) ready/u);
+    expect(ran.err.at(-1)).toMatch(
+      /^research backfill: could not record what run backfill-\S+ spent \(\$\d+\.\d{2}\) in research\/backfill-ledger\.jsonl: .*EISDIR.*append this line to the ledger by hand: \{"run":"backfill-[^"]+","at":"[^"]+","spentUsd":[\d.]+\}$/u,
+    );
+
+    rmSync(ledger, { recursive: true });
+    const failing: CliContext = {
+      ...context,
+      compose: () => {
+        breakLedger();
+        return Promise.reject(new ProviderSetupError('ANTHROPIC_API_KEY is not set'));
+      },
+    };
+    const both = capture();
+    expect(await main(['backfill', '--execute', '--budget', '5'], failing, both.io)).toBe(1);
+    expect(both.err).toHaveLength(2);
+    expect(both.err[0]).toContain('could not record what run');
+    expect(both.err[0]).toContain('"spentUsd":0}');
+    expect(both.err[1]).toBe('ANTHROPIC_API_KEY is not set');
   });
 
   it('opens the repository, corpus, clock and providers itself when the context has none', async () => {

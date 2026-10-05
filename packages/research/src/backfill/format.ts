@@ -15,9 +15,11 @@ function ceilingLine(estimate: BackfillEstimate): string {
   if (ceilingUsd <= 0) {
     return `Back-fill ceiling: ${money(0)} (research.budget.backfillTotalUsd): estimate only, nothing is generated.`;
   }
-  const head =
-    `Back-fill ceiling: ${money(ceilingUsd)} (research.budget.backfillTotalUsd): ` +
-    `${money(spentUsd)} spent so far, ${money(leftUsd)} left; `;
+  const name = `Back-fill ceiling: ${money(ceilingUsd)} (research.budget.backfillTotalUsd): `;
+  if (spentUsd === null || leftUsd === null) {
+    return `${name}spent so far unknown (the spend ledger does not read), so what is left is unknown too.`;
+  }
+  const head = `${name}${money(spentUsd)} spent so far, ${money(leftUsd)} left; `;
   // Under a cent cannot pay for a research call (./ledger.ts refuses the batch).
   if (leftUsd < 0.01) return `${head}used up, nothing more is generated.`;
   const covers = ceilingCovers === null || ceilingCovers >= remaining.length;

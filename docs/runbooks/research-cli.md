@@ -144,8 +144,11 @@ npm run research -- backfill --execute --budget 20    # research one batch (need
   with `the back-fill ceiling is used up`. To back-fill more, the owner raises `backfillTotalUsd` in a config PR.
   `--provider fake` reads the ledger (the same caps apply) but records nothing, since it spends nothing real.
 - The batch ends with `Back-fill: N passage(s) ready in this batch; M left, estimated $X.` Only passages that got a
-  PR (or, in a dry run, would have) count as ready. Then `Back-fill spend: $X in this batch; $Y of $Z spent in
-total, $W left`.
+  PR (or, in a dry run, would have) count as ready. Then it prints the spend:
+
+  ```text
+  Back-fill spend: $X in this batch; $Y of $Z spent in total, $W left
+  ```
 
 ### The spend ledger
 
@@ -159,16 +162,19 @@ starts and one when it ends.
 
 - **Reserve, then settle.** Before it builds a provider, a batch reserves its whole ceiling; when it ends (also on an
   error) it records what its meter spent, which frees the rest. A run with a reservation and no settlement (still
-  running, or killed) counts at its full reservation, so the ledger can over-count but never under-count. To release
-  a killed run's reservation, append its `spentUsd` line by hand from the run's output (or `0` if it spent nothing).
+  running, or killed, including by Ctrl-C) counts at its full reservation, so the ledger can over-count but never
+  under-count. To release a killed run's reservation, append its `spentUsd` line by hand from the run's output (or
+  `0` if it spent nothing). If the batch cannot write its settlement, it says so and prints the exact line to
+  append; the batch's own result and errors are still reported.
 - **Concurrent batches.** Reserving reads the total and appends under an exclusive lock file,
   `research/backfill-ledger.jsonl.lock`, so two batches started together on one clone cannot reserve the same
-  dollars. A lock older than a minute is treated as left by a killed process and removed; if a batch reports
+  dollars. A lock older than a minute is treated as left by a killed process and taken over: it is renamed away and
+  removed only if it is still the same file, so a live lock is never deleted. If a batch reports
   `another back-fill holds …`, wait, or delete the lock file when no back-fill is running.
 - **Commit it.** The ledger lives in your clone. After back-fill batches, commit `research/backfill-ledger.jsonl` to
   `main` (a small PR) so a fresh clone or another machine counts the same spend. Never delete or rewrite lines: a
-  missing line lets later batches spend that money again. A line the CLI cannot read stops back-fill until it is
-  fixed. Batches run on two machines at once are not coordinated: run back-fill from one clone at a time.
+  missing line lets later batches spend that money again. A line the CLI cannot read stops `--execute` until it is
+  fixed; the estimate still prints, with a warning and the spend shown as unknown. Batches run on two machines at once are not coordinated: run back-fill from one clone at a time.
 
 ## Troubleshooting
 

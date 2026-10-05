@@ -11,9 +11,30 @@
  * is still running (or one that crashed before it settled) keeps its share. Reserving reads the
  * total and appends under an exclusive lock file (`<ledger>.lock`, created with `O_EXCL`), so two
  * batches started at the same time on one checkout cannot both spend the same remaining dollars.
- * A lock older than {@link LedgerOptions.staleMs} is left over from a killed process and is removed.
+ *
+ * A lock older than {@link LedgerOptions.staleMs} is left over from a killed process. It is taken
+ * over without ever deleting a live lock ({@link takeStaleLock}): it is renamed away atomically,
+ * and removed only if the renamed file is still the one judged stale (same inode and mtime);
+ * otherwise it is put back. A holder likewise removes the lock on release only if it is still its
+ * own file. The one window left: while a mistakenly renamed live lock is being put back (a few
+ * microseconds), a third run could create a lock of its own. That needs a stale lock and three
+ * batches starting within microseconds on one clone.
  */
-import { appendFileSync, closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, rmSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+import {
+  appendFileSync,
+  closeSync,
+  existsSync,
+  fstatSync,
+  linkSync,
+  lstatSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+} from 'node:fs';
+import type { Stats } from 'node:fs';
 import { dirname } from 'node:path';
 
 import { BudgetRefusedError } from '../cli/budget.ts';
@@ -74,7 +95,7 @@ function parseLine(line: string, number: number, path: string): LedgerEntry {
   }
   throw new BudgetRefusedError(
     `research backfill: ${path} line ${String(number)} is not a ledger entry; nothing was spent. ` +
-      'Fix the line (see docs/runbooks/research-cli.md#back-fill) and run again.',
+      'Fix the line (see docs/runbooks/research-cli.md#the-spend-ledger) and run again.',
   );
 }
 
@@ -112,7 +133,41 @@ const defaultSleep = (ms: number): Promise<void> =>
     setTimeout(resolve, ms);
   });
 
-/** Runs `body` holding `<path>.lock`; waits for another holder, removes a stale lock. */
+const sameFile = (a: Stats, b: Stats): boolean => a.dev === b.dev && a.ino === b.ino;
+
+/**
+ * Takes over the stale lock `lock`, which was `judged` stale: renames it to a unique name (atomic),
+ * then removes it if it is still that file (same inode and mtime). If another run replaced the lock
+ * in the meantime, its live lock is linked back in place. `true` when the stale lock was removed.
+ */
+export function takeStaleLock(
+  lock: string,
+  judged: Stats,
+  rename: (from: string, to: string) => void = renameSync,
+): boolean {
+  const tomb = `${lock}.${String(process.pid)}-${randomUUID()}.stale`;
+  try {
+    rename(lock, tomb);
+  } catch {
+    return false; // gone already: another run took it over or its holder released it
+  }
+  const moved = lstatSync(tomb);
+  const stale = sameFile(moved, judged) && moved.mtimeMs === judged.mtimeMs;
+  if (!stale) {
+    try {
+      linkSync(tomb, lock);
+    } catch {
+      // A third run created a lock while the path was empty; it holds the lock now.
+    }
+  }
+  rmSync(tomb);
+  return stale;
+}
+
+/**
+ * Runs `body` holding `<path>.lock`; waits for another holder, takes over a stale lock
+ * ({@link takeStaleLock}), and on release removes the lock only if it is still its own.
+ */
 export async function withLedgerLock<T>(path: string, body: () => T, options: LedgerOptions = {}): Promise<T> {
   const { timeoutMs = 10_000, staleMs = 60_000, sleep = defaultSleep, nowMs = Date.now } = options;
   const lock = `${path}.lock`;
@@ -126,21 +181,24 @@ export async function withLedgerLock<T>(path: string, body: () => T, options: Le
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
     }
     if (fd !== undefined) {
+      const mine = fstatSync(fd);
       try {
         return body();
       } finally {
         closeSync(fd);
-        rmSync(lock, { force: true });
+        const current = lstatSync(lock, { throwIfNoEntry: false });
+        if (current !== undefined && sameFile(current, mine)) rmSync(lock);
       }
     }
-    let age: number;
+    const now = nowMs();
+    let held: Stats;
     try {
-      age = nowMs() - lstatSync(lock).mtimeMs;
+      held = lstatSync(lock);
     } catch {
       continue; // released since the attempt above
     }
-    if (age > staleMs) {
-      rmSync(lock, { force: true });
+    if (now - held.mtimeMs > staleMs) {
+      takeStaleLock(lock, held);
       continue;
     }
     if (nowMs() - start >= timeoutMs) {

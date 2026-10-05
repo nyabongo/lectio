@@ -1,11 +1,37 @@
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { execFile } from 'node:child_process';
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  renameSync,
+  rmSync,
+  utimesSync,
+  writeFileSync,
+} from 'node:fs';
+import type { Stats } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { BudgetRefusedError } from '../cli/budget.ts';
-import { LEDGER_PATH, ledgerTotals, readLedger, reserveSpend, settleSpend, withLedgerLock } from './ledger.ts';
+import {
+  LEDGER_PATH,
+  ledgerTotals,
+  readLedger,
+  reserveSpend,
+  settleSpend,
+  takeStaleLock,
+  withLedgerLock,
+} from './ledger.ts';
+import type { Reservation } from './ledger.ts';
+
+const TSX = fileURLToPath(new URL('../../../../node_modules/.bin/tsx', import.meta.url));
+const CHILD = fileURLToPath(new URL('fixtures/reserve-child.ts', import.meta.url));
 
 let dir: string;
 let path: string;
@@ -90,15 +116,101 @@ describe('reserveSpend and settleSpend', () => {
     expect(existsSync(`${path}.lock`)).toBe(false);
   });
 
-  it('serialises batches that start together, so they never reserve the same dollars', async () => {
+  it('makes reservations that wait on a held lock take turns once it is released', async () => {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(`${path}.lock`, '');
+    let waits = 0;
+    // Every reservation finds the lock held; the fourth wait releases it.
+    const sleep = (): Promise<void> => {
+      waits++;
+      if (waits === 4) rmSync(`${path}.lock`);
+      return Promise.resolve();
+    };
     const reservations = await Promise.all(
       ['a', 'b', 'c', 'd'].map((run) =>
-        reserveSpend(path, { run, at, wantUsd: 2, totalUsd: 5 }, noWait).catch((error: unknown) => error),
+        reserveSpend(path, { run, at, wantUsd: 2, totalUsd: 5 }, { sleep }).catch((error: unknown) => error),
       ),
     );
-    expect(reservations.slice(0, 3)).toMatchObject([{ reservedUsd: 2 }, { reservedUsd: 2 }, { reservedUsd: 1 }]);
-    expect(reservations[3]).toBeInstanceOf(BudgetRefusedError);
+    expect(waits).toBeGreaterThanOrEqual(4);
+    expect(reservations.filter((r) => r instanceof BudgetRefusedError)).toHaveLength(1);
+    const reserved = reservations.flatMap((r) =>
+      r instanceof BudgetRefusedError ? [] : [(r as Reservation).reservedUsd],
+    );
+    expect(reserved.sort()).toEqual([1, 2, 2]);
     expect(ledgerTotals(readLedger(path)).spentUsd).toBe(5);
+  });
+
+  it('never lets separate processes reserve the same dollars', async () => {
+    mkdirSync(dirname(path), { recursive: true });
+    // Hold the lock until every process is started and waiting, so they all contend for it.
+    writeFileSync(`${path}.lock`, '');
+    const runs = ['p1', 'p2', 'p3', 'p4', 'p5'];
+    const outputs = runs.map(
+      (run) =>
+        new Promise<string>((resolve, reject) => {
+          execFile(TSX, [CHILD, path, run, join(dir, `${run}.ready`)], { timeout: 30_000 }, (error, stdout) => {
+            if (error) reject(error);
+            else resolve(stdout);
+          });
+        }),
+    );
+    while (!runs.every((run) => existsSync(join(dir, `${run}.ready`)))) {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    rmSync(`${path}.lock`);
+    const results = (await Promise.all(outputs)).map(
+      (stdout) => JSON.parse(stdout) as { reservedUsd?: number; refused?: string },
+    );
+    const reserved = results.flatMap((result) => (result.reservedUsd === undefined ? [] : [result.reservedUsd]));
+    expect(reserved.sort()).toEqual([1, 2, 2]);
+    expect(results.filter((result) => result.refused?.includes('the back-fill ceiling is used up'))).toHaveLength(2);
+    expect(ledgerTotals(readLedger(path))).toEqual({ spentUsd: 5, openRuns: 3 });
+    expect(existsSync(`${path}.lock`)).toBe(false);
+  }, 60_000);
+});
+
+describe('takeStaleLock', () => {
+  const lock = (): string => `${path}.lock`;
+  const judgedStale = (): Stats => {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(lock(), 'stale');
+    return lstatSync(lock());
+  };
+
+  it('removes the lock it judged stale', () => {
+    expect(takeStaleLock(lock(), judgedStale())).toBe(true);
+    expect(readdirSync(dirname(path))).toEqual([]);
+  });
+
+  it('does nothing when the lock is already gone', () => {
+    const judged = judgedStale();
+    rmSync(lock());
+    expect(takeStaleLock(lock(), judged)).toBe(false);
+    expect(readdirSync(dirname(path))).toEqual([]);
+  });
+
+  it('puts back a live lock another run created after the check', () => {
+    const judged = judgedStale();
+    // Another run took the stale lock over first and holds a fresh one.
+    rmSync(lock());
+    writeFileSync(lock(), 'live');
+    utimesSync(lock(), new Date(judged.mtimeMs + 5_000), new Date(judged.mtimeMs + 5_000));
+    expect(takeStaleLock(lock(), judged)).toBe(false);
+    expect(readFileSync(lock(), 'utf8')).toBe('live');
+    expect(readdirSync(dirname(path))).toEqual(['backfill-ledger.jsonl.lock']);
+  });
+
+  it('leaves the lock to a third run that created one while the path was empty', () => {
+    const judged = judgedStale();
+    rmSync(lock());
+    writeFileSync(lock(), 'live');
+    const rename = (from: string, to: string): void => {
+      renameSync(from, to);
+      writeFileSync(lock(), 'third');
+    };
+    expect(takeStaleLock(lock(), judged, rename)).toBe(false);
+    expect(readFileSync(lock(), 'utf8')).toBe('third');
+    expect(readdirSync(dirname(path))).toEqual(['backfill-ledger.jsonl.lock']);
   });
 });
 
@@ -129,6 +241,21 @@ describe('withLedgerLock', () => {
     hold();
     const later = Date.now() + 120_000;
     expect(await withLedgerLock(path, () => 1, { ...noWait, nowMs: () => later })).toBe(1);
+    expect(readdirSync(dirname(path))).toEqual([]);
+  });
+
+  it('on release leaves a lock that is no longer its own', async () => {
+    await withLedgerLock(path, () => {
+      // Another run took the lock over (this holder was too slow) and holds a new one.
+      rmSync(lock());
+      writeFileSync(lock(), 'theirs');
+    });
+    expect(readFileSync(lock(), 'utf8')).toBe('theirs');
+    rmSync(lock());
+    await withLedgerLock(path, () => {
+      rmSync(lock());
+    });
+    expect(existsSync(lock())).toBe(false);
   });
 
   it('tries again at once when the lock goes between the attempt and the check', async () => {

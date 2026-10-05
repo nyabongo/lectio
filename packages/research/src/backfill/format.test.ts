@@ -47,6 +47,14 @@ describe('formatEstimate', () => {
     expect(formatEstimate(short)).toContain('$2.00 spent so far, $3.00 left; covers 2 of 3 passages; $1.50 short.');
   });
 
+  it('says when the spend ledger does not read', () => {
+    const unknown: BackfillEstimate = { ...base, ceilingUsd: 5, spentUsd: null, leftUsd: null, ceilingCovers: 3 };
+    expect(formatEstimate(unknown)).toContain(
+      'Back-fill ceiling: $5.00 (research.budget.backfillTotalUsd): spent so far unknown (the spend ledger does not ' +
+        'read), so what is left is unknown too.',
+    );
+  });
+
   it('says when earlier batches used the ceiling up', () => {
     const spent: BackfillEstimate = { ...base, ceilingUsd: 5, spentUsd: 5, leftUsd: 0, ceilingCovers: 0 };
     expect(formatEstimate(spent)).toContain(
