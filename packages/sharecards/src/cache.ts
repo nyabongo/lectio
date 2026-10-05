@@ -1,10 +1,12 @@
 /**
  * Cache keys for rendered cards. A build that keeps card PNGs between runs (the site's `.cache/og`, L-088) looks
  * them up by {@link cardCacheKey}: the card's input, the template options, {@link TEMPLATE_VERSION} and a
- * fingerprint of the font bytes. Change a template or the renderer and bump `TEMPLATE_VERSION` (cache.test.ts fails
- * until you do); change a font file and the fingerprint changes on its own.
+ * fingerprint of the font bytes and the installed satori and resvg versions. Change a template or the renderer code
+ * and bump `TEMPLATE_VERSION` (cache.test.ts fails until you do); a new font file or renderer version changes the
+ * key on its own.
  */
 import { createHash } from 'node:crypto';
+import { createRequire } from 'node:module';
 
 import type { Font } from 'satori';
 
@@ -47,19 +49,35 @@ export function fontsFingerprint(fonts: readonly Font[]): string {
   return fingerprint;
 }
 
+/** Versions of the packages that turn a card into pixels. */
+export interface RendererVersions {
+  readonly satori: string;
+  readonly resvg: string;
+}
+
+/** The installed satori and `@resvg/resvg-js` versions, read from their package.json files. */
+export function rendererVersions(): RendererVersions {
+  const require = createRequire(import.meta.url);
+  const version = (name: string) => (require(`${name}/package.json`) as { version: string }).version;
+  return { satori: version('satori'), resvg: version('@resvg/resvg-js') };
+}
+
 export interface CacheKeyOptions extends TemplateOptions {
   /** The fonts the card will be rendered with; defaults to the bundled set. */
   readonly fonts?: readonly Font[];
+  /** The renderer versions; defaults to the installed ones ({@link rendererVersions}). */
+  readonly renderer?: RendererVersions;
 }
 
 /**
  * A hex SHA-256 that changes whenever the rendered card could: a different card input or template option, a new
- * {@link TEMPLATE_VERSION}, or different font bytes.
+ * {@link TEMPLATE_VERSION}, different font bytes, or another satori or resvg version.
  */
 export async function cardCacheKey(card: ShareCard, options: CacheKeyOptions = {}): Promise<string> {
-  const { fonts, ...template } = options;
+  const { fonts, renderer, ...template } = options;
   const input = canonicalJson({
     version: TEMPLATE_VERSION,
+    renderer: renderer ?? rendererVersions(),
     fonts: fontsFingerprint(fonts ?? (await loadFonts())),
     template,
     card,

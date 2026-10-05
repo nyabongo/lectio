@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { TEMPLATE_VERSION, canonicalJson, cardCacheKey, fontsFingerprint } from './cache.ts';
+import { TEMPLATE_VERSION, canonicalJson, cardCacheKey, fontsFingerprint, rendererVersions } from './cache.ts';
 import { dayFixture, hebrewInsightFixture, insightFixture } from './fixtures/cards.ts';
 import recorded from './fixtures/template-source.json' with { type: 'json' };
 import { loadFonts } from './fonts.ts';
@@ -52,6 +52,16 @@ describe('cardCacheKey', () => {
     expect(await cardCacheKey(hebrewInsightFixture, { fonts })).toBe(base);
     expect(await cardCacheKey(hebrewInsightFixture, { fonts: fonts.slice(1) })).not.toBe(base);
     expect(await cardCacheKey(insightFixture)).not.toBe(base);
+  });
+
+  it('changes with the satori and resvg versions', async () => {
+    const installed = rendererVersions();
+    expect(installed.satori).toMatch(/^\d+\.\d+\.\d+/);
+    expect(installed.resvg).toMatch(/^\d+\.\d+\.\d+/);
+    const base = await cardCacheKey(dayFixture);
+    expect(await cardCacheKey(dayFixture, { renderer: installed })).toBe(base);
+    expect(await cardCacheKey(dayFixture, { renderer: { ...installed, satori: '99.0.0' } })).not.toBe(base);
+    expect(await cardCacheKey(dayFixture, { renderer: { ...installed, resvg: '99.0.0' } })).not.toBe(base);
   });
 
   it('is exported from the package entry point', () => {

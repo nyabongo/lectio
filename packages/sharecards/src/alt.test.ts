@@ -10,7 +10,7 @@ describe('cardAltText', () => {
   it('day: date, celebration, subtitle and Gospel', () => {
     expect(cardAltText(dayFixture)).toBe(
       'Lectio card for Sunday 20 September 2026: Twenty-fifth Sunday in Ordinary Time. ' +
-        'Year A · Ordinary Time, week 25. Gospel: Matthew 20:1–16.',
+        'Year A, Ordinary Time, week 25. Gospel: Matthew 20:1–16.',
     );
     const { subtitle: _s, gospelRef: _g, ...bare } = dayFixture;
     expect(cardAltText(bare)).toBe('Lectio card for Sunday 20 September 2026: Twenty-fifth Sunday in Ordinary Time.');
@@ -22,12 +22,21 @@ describe('cardAltText', () => {
     );
   });
 
-  it('insight: quote, language and caption', () => {
+  it('insight: quote, original phrase (transliterated when it can be) and caption', () => {
     expect(cardAltText(insightFixture)).toBe(
-      'Lectio card for Sunday 20 September 2026: “Is your eye evil?”, a note on the Greek. ' +
+      'Lectio card for Sunday 20 September 2026: “Is your eye evil?”. Greek: ὁ ὀφθαλμός σου πονηρός ἐστιν. ' +
         'What the Greek of today’s Gospel really says — Matthew 20:15',
     );
-    expect(cardAltText(hebrewInsightFixture)).toContain(hebrewInsightFixture.caption);
+    expect(cardAltText(hebrewInsightFixture)).toBe(
+      `Lectio card for Sunday 20 September 2026: “An evil eye”. Hebrew: wə-rā‘â ‘ênəkā. ${hebrewInsightFixture.caption}`,
+    );
+  });
+
+  it('insight: leaves the phrase out when the card does', () => {
+    expect(cardAltText(insightFixture, { omitOriginal: true })).toBe(
+      'Lectio card for Sunday 20 September 2026: “Is your eye evil?”. ' +
+        'What the Greek of today’s Gospel really says — Matthew 20:15',
+    );
   });
 
   it('truncates fields as the card does', () => {
