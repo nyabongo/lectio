@@ -5,8 +5,11 @@
  * After an intentional design change, regenerate the goldens and review them by eye:
  *   UPDATE_GOLDEN=1 npx vitest run --project @lectio/sharecards
  */
+import { execFile } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
@@ -16,7 +19,7 @@ import type { ShareCard } from './cards.ts';
 import { dayFixture, hebrewInsightFixture, insightFixture, readingFixture } from './fixtures/cards.ts';
 import { loadFonts } from './fonts.ts';
 import { MAX_PNG_BYTES, renderCard, renderCardSvg, renderNodeSvg, svgToPng } from './render.ts';
-import { CARD_HEIGHT, CARD_WIDTH, el, originalNode } from './templates.ts';
+import { CARD_HEIGHT, CARD_WIDTH, PALETTE, el, originalNode } from './templates.ts';
 import type { CardNode } from './templates.ts';
 
 const GOLDEN_DIR = fileURLToPath(new URL('./fixtures/golden/', import.meta.url));
@@ -68,6 +71,28 @@ describe('renderCard', () => {
     expect(first.equals(second)).toBe(true);
   });
 
+  it('is deterministic across processes: a fresh Node process renders the same bytes', async () => {
+    // A new process loads the fonts, satori and resvg from scratch, so nothing cached in this one can hide a
+    // difference.
+    const module = (path: string) => JSON.stringify(new URL(path, import.meta.url).href);
+    const script = [
+      "import { createHash } from 'node:crypto';",
+      `const { renderCard } = await import(${module('./render.ts')});`,
+      `const { insightFixture } = await import(${module('./fixtures/cards.ts')});`,
+      "process.stdout.write(createHash('sha256').update(await renderCard(insightFixture)).digest('hex'));",
+    ].join('\n');
+    const { stdout } = await promisify(execFile)(
+      process.execPath,
+      ['--import', 'tsx', '--input-type=module', '--eval', script],
+      { cwd: fileURLToPath(new URL('../../..', import.meta.url)), timeout: 60_000 },
+    );
+    const local = createHash('sha256')
+      .update(await renderCard(insightFixture))
+      .digest('hex');
+    expect(stdout).toMatch(/^[0-9a-f]{64}$/);
+    expect(stdout).toBe(local);
+  }, 90_000);
+
   it('draws text as paths, so the PNG does not depend on installed fonts', async () => {
     const svg = await renderCardSvg(dayFixture);
     expect(svg).toMatch(/^<svg[^>]+width="1200"[^>]+height="630"/);
@@ -92,6 +117,22 @@ describe('renderCard', () => {
     expect(diffPixels(visual, translit)).toBeGreaterThan(0);
   });
 
+  it('throws before rendering when maxBytes is not a non-negative safe integer', async () => {
+    for (const maxBytes of [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, 2 ** 53]) {
+      await expect(renderCard(dayFixture, { maxBytes }), String(maxBytes)).rejects.toThrow(
+        /maxBytes must be a non-negative safe integer/,
+      );
+    }
+    await expect(renderCard(dayFixture, { maxBytes: 0 })).rejects.toThrow(/over the 0-byte budget/);
+  });
+
+  it('leaves the original-language line off when asked', async () => {
+    const full = decode(await renderCard(insightFixture));
+    const bare = decode(await renderCard(insightFixture, { omitOriginal: true }));
+    expect([bare.width, bare.height]).toEqual([1200, 630]);
+    expect(diffPixels(full, bare)).toBeGreaterThan(0);
+  });
+
   it('keeps every field inside the card however long the input', async () => {
     const long = 'Extraordinarily long words keep coming '.repeat(20);
     const card: ShareCard = {
@@ -100,8 +141,23 @@ describe('renderCard', () => {
       caption: long,
       url: `https://lectio.example/${'x'.repeat(200)}`,
     };
-    const png = await renderCard(card);
-    expect(decode(png).width).toBe(1200);
+    const image = decode(await renderCard(card));
+    expect([image.width, image.height]).toEqual([1200, 630]);
+
+    // Nothing is drawn in the card's margins: outside the padded content box (band 24 px, padding 60/72/44/72,
+    // less a few pixels for anti-aliasing) every pixel is still paper.
+    const paper = [1, 3, 5].map((at) => Number.parseInt(PALETTE.paper.slice(at, at + 2), 16));
+    const box = { left: 24 + 72 - 6, right: CARD_WIDTH - 72 + 6, top: 60 - 6, bottom: CARD_HEIGHT - 44 + 6 };
+    const inked: string[] = [];
+    for (let y = 0; y < image.height; y += 1) {
+      for (let x = 24; x < image.width; x += 1) {
+        if (x >= box.left && x < box.right && y >= box.top && y < box.bottom) continue;
+        const offset = (y * image.width + x) * 4;
+        const pixel = [image.data[offset], image.data[offset + 1], image.data[offset + 2]];
+        if (pixel.some((channel, i) => channel !== paper[i])) inked.push(`${String(x)},${String(y)}`);
+      }
+    }
+    expect(inked.slice(0, 10)).toEqual([]);
   });
 });
 

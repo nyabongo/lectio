@@ -8,6 +8,9 @@
  */
 export const packageName = '@lectio/sharecards';
 
+export { cardAltText } from './alt.ts';
+export { TEMPLATE_VERSION, canonicalJson, cardCacheKey, fontsFingerprint } from './cache.ts';
+export type { CacheKeyOptions } from './cache.ts';
 export { LANGUAGE_NAMES, insightCaption } from './cards.ts';
 export type {
   CardKind,
@@ -22,6 +25,6 @@ export { DEFAULT_FONTS_DIR, FONT_FILES, loadFonts } from './fonts.ts';
 export type { FontFile } from './fonts.ts';
 export { MAX_PNG_BYTES, renderCard, renderCardSvg } from './render.ts';
 export type { RenderOptions } from './render.ts';
-export { BAND_COLOURS, CARD_HEIGHT, CARD_WIDTH, LIMITS, cardTemplate } from './templates.ts';
+export { BAND_COLOURS, CARD_HEIGHT, CARD_WIDTH, HebrewLayoutError, LIMITS, cardTemplate } from './templates.ts';
 export type { CardNode, HebrewMode, TemplateOptions } from './templates.ts';
 export { displayUrl, formatLongDate, truncate } from './text.ts';

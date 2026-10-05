@@ -41,10 +41,17 @@ export function renderCardSvg(card: ShareCard, options: RenderOptions = {}): Pro
   return renderNodeSvg(cardTemplate(card, options), CARD_WIDTH, CARD_HEIGHT, options.fonts);
 }
 
-/** The card as a 1200×630 PNG; throws if it exceeds the size budget (default {@link MAX_PNG_BYTES}). */
+/**
+ * The card as a 1200×630 PNG; throws if it exceeds the size budget (default {@link MAX_PNG_BYTES}), or a
+ * `RangeError` before rendering if `maxBytes` is not a non-negative safe integer.
+ */
 export async function renderCard(card: ShareCard, options: RenderOptions = {}): Promise<Buffer> {
-  const png = svgToPng(await renderCardSvg(card, options));
   const budget = options.maxBytes ?? MAX_PNG_BYTES;
+  // NaN or Infinity would silently switch the budget off.
+  if (!Number.isSafeInteger(budget) || budget < 0) {
+    throw new RangeError(`maxBytes must be a non-negative safe integer, got ${String(budget)}`);
+  }
+  const png = svgToPng(await renderCardSvg(card, options));
   if (png.length > budget) {
     throw new Error(
       `${card.kind} card for ${card.url} is ${String(png.length)} bytes, over the ${String(budget)}-byte budget`,
