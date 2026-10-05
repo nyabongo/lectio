@@ -1,0 +1,304 @@
+# Content gates (L-031): the only workflow that goes online (owner exception, L-201).
+#
+# Cheap deterministic gates first (schema, evidence and licence, fetching sources live with the
+# SSRF guard on); the two LLM verifiers only if those pass; then the merge rule decides, labels and
+# writes the approval commit, and a separate job merges. A failed check never closes a PR.
+#
+#   changes → deterministic → verifiers → merge-rule → merge
+#
+# Required checks (.github/required-checks/content-gates.json): changes, deterministic, merge-rule.
+# No trigger-level `paths:` (a filtered required check never reports); `changes` decides whether
+# anything relevant changed (passages/, calendar/, corpus/, config/) and every gate job otherwise
+# exits green without running a gate.
+#
+# Threat model and trust boundaries
+# - Base-checkout rule: every job checks out main for tooling and runs `npm ci` there. The PR head
+#   is fetched only as data into a separate worktree (pr-head/) that the gates read. The PR's
+#   package.json, lockfile and npm scripts are never installed or run, so a PR that edits `decide`
+#   or a gate cannot change its own decision. The required-check registry, the config and the
+#   Prettier config come from main too.
+# - Fork PRs get a read-only token and no secrets: the merge rule reports in the job summary only
+#   and a maintainer merges by hand. Same-repository branches are pushed only by collaborators.
+#   A `pull_request` run uses the PR branch's copy of this file, which is why `decide` never lets a
+#   `.github/**` PR auto-merge and this workflow neither writes an approval commit for it, nor
+#   dispatches, nor merges it: a maintainer merges it by hand after human approval.
+# - `issue_comment` runs (an `/approve` comment) always execute main's copy of this file.
+# - Permissions are per job. The jobs that read PR content and fetch URLs from it (changes,
+#   deterministic, verifiers) hold `contents: read` and no write token; only `verifiers` receives
+#   secrets, and only the two verifier LLM keys (the only LLM secrets CI ever holds). The write
+#   jobs (merge-rule, merge) never install or run anything from the PR: their checkouts do not
+#   persist the token, and GH_TOKEN is passed only to the one tooling step that needs it.
+# - Commits made with GITHUB_TOKEN start no workflow, so merge-rule dispatches every workflow in
+#   .github/required-checks/ on the approval commit; the dispatched run of this workflow sees a
+#   valid approval commit (`approved-commit`), dispatches nothing and hands over to `merge`.
+name: Content gates
+run-name: Content gates · PR #${{ github.event.pull_request.number || github.event.issue.number || inputs.pr }}
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number
+        required: true
+        type: string
+
+permissions: {}
+
+# One run per PR at a time; runs are never cancelled half-way through writing labels or commits.
+concurrency:
+  group: content-gates-${{ github.event.pull_request.number || github.event.issue.number || inputs.pr }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  changes:
+    # Comments: only `/approve` on a PR (config.reviewer.approvalCommand; the tooling re-checks it
+    # against the config, this is the cheap pre-filter).
+    if: ${{ github.event_name != 'issue_comment' || (github.event.issue.pull_request && startsWith(github.event.comment.body, '/approve')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.resolve.outputs.run }}
+      pr: ${{ steps.resolve.outputs.pr }}
+      head-sha: ${{ steps.resolve.outputs.head-sha }}
+      base: ${{ steps.resolve.outputs.base }}
+      base-ref: ${{ steps.resolve.outputs.base-ref }}
+      fork: ${{ steps.resolve.outputs.fork }}
+      verifiers: ${{ steps.resolve.outputs.verifiers }}
+      relevant: ${{ steps.changes.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Resolve the PR and head
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run --silent -w @lectio/gates gates -- ci resolve
+      - name: Fetch the PR head as data (pr-head/)
+        if: steps.resolve.outputs.run == 'true'
+        env:
+          PR: ${{ steps.resolve.outputs.pr }}
+          HEAD_SHA: ${{ steps.resolve.outputs.head-sha }}
+          BASE_REF: ${{ steps.resolve.outputs.base-ref }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head" "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
+          git worktree add --detach pr-head "$HEAD_SHA"
+      # On a pull request the diff is against the PR base; on any other event against
+      # origin/<base> (normally origin/main).
+      - name: Detect relevant changes
+        id: changes
+        if: steps.resolve.outputs.run == 'true'
+        env:
+          BASE: ${{ steps.resolve.outputs.base }}
+        run: npm run --silent -w @lectio/gates gates -- ci changes --root pr-head --base "$BASE"
+
+  deterministic:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: The changes job succeeded
+        if: needs.changes.result != 'success'
+        run: |
+          echo "::error::the changes job did not succeed"
+          exit 1
+      - uses: actions/checkout@v7
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - if: needs.changes.outputs.relevant == 'true'
+        run: npm ci
+      - name: Fetch the PR head as data (pr-head/)
+        if: needs.changes.outputs.relevant == 'true'
+        env:
+          PR: ${{ needs.changes.outputs.pr }}
+          HEAD_SHA: ${{ needs.changes.outputs.head-sha }}
+          BASE_REF: ${{ needs.changes.outputs.base-ref }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head" "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
+          git worktree add --detach pr-head "$HEAD_SHA"
+      # Schema, evidence and licence, with the live fetcher (SSRF guard on).
+      - name: Deterministic gates
+        if: needs.changes.outputs.relevant == 'true'
+        env:
+          BASE: ${{ needs.changes.outputs.base }}
+        run: >-
+          npm run --silent -w @lectio/gates gates -- run --gates schema,evidence,licence --fetch live
+          --root pr-head --base "$BASE" --json out/deterministic/gates.json --markdown out/deterministic/comment.md
+      - name: Gate summary
+        if: ${{ !cancelled() && hashFiles('out/deterministic/comment.md') != '' }}
+        run: cat out/deterministic/comment.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && hashFiles('out/deterministic/gates.json') != '' }}
+        with:
+          name: deterministic
+          path: out/deterministic/
+          retention-days: 14
+
+  verifiers:
+    needs: [changes, deterministic]
+    # Skipped on approval commits, labels and /approve comments (no new content to verify).
+    if: ${{ needs.deterministic.result == 'success' && needs.changes.outputs.relevant == 'true' && needs.changes.outputs.verifiers == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Fetch the PR head as data (pr-head/)
+        env:
+          PR: ${{ needs.changes.outputs.pr }}
+          HEAD_SHA: ${{ needs.changes.outputs.head-sha }}
+          BASE_REF: ${{ needs.changes.outputs.base-ref }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head" "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
+          git worktree add --detach pr-head "$HEAD_SHA"
+      # Live clients only for the keys that are set; without both, the gate is skipped and the
+      # merge rule asks for review. Fork PRs receive no secrets.
+      - name: LLM verifiers
+        env:
+          BASE: ${{ needs.changes.outputs.base }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: >-
+          npm run --silent -w @lectio/gates gates -- run --gates verifiers --fetch live --llm live
+          --root pr-head --base "$BASE" --json out/verifiers/gates.json --markdown out/verifiers/comment.md
+      - name: Gate summary
+        if: ${{ !cancelled() && hashFiles('out/verifiers/comment.md') != '' }}
+        run: cat out/verifiers/comment.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && hashFiles('out/verifiers/gates.json') != '' }}
+        with:
+          name: verifiers
+          path: out/verifiers/
+          retention-days: 14
+
+  merge-rule:
+    needs: [changes, deterministic, verifiers]
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      checks: read
+    outputs:
+      decision: ${{ steps.decide.outputs.decision }}
+      manual-merge: ${{ steps.decide.outputs.manual-merge }}
+    steps:
+      - name: The changes job succeeded
+        if: needs.changes.result != 'success'
+        run: |
+          echo "::error::the changes job did not succeed"
+          exit 1
+      - uses: actions/checkout@v7
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - if: needs.changes.outputs.relevant == 'true'
+        run: npm ci
+      - name: Fetch the PR head as data (pr-head/)
+        if: needs.changes.outputs.relevant == 'true'
+        env:
+          PR: ${{ needs.changes.outputs.pr }}
+          HEAD_SHA: ${{ needs.changes.outputs.head-sha }}
+          BASE_REF: ${{ needs.changes.outputs.base-ref }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head" "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
+          git worktree add --detach pr-head "$HEAD_SHA"
+      - uses: actions/download-artifact@v8
+        if: needs.changes.outputs.relevant == 'true'
+        with:
+          path: out
+      # Decides, labels, comments, writes the approval commit and dispatches; never merges.
+      - name: Merge rule
+        id: decide
+        if: needs.changes.outputs.relevant == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ needs.changes.outputs.pr }}
+          HEAD_SHA: ${{ needs.changes.outputs.head-sha }}
+          BASE_REF: ${{ needs.changes.outputs.base-ref }}
+        run: >-
+          npm run --silent -w @lectio/gates gates -- ci merge-rule --pr "$PR" --head-sha "$HEAD_SHA"
+          --base "origin/$BASE_REF" --root pr-head
+          --results out/deterministic/gates.json --results out/verifiers/gates.json
+
+  merge:
+    needs: [changes, merge-rule]
+    if: ${{ needs.merge-rule.result == 'success' && needs.merge-rule.outputs.decision == 'approved-commit' && needs.merge-rule.outputs.manual-merge != 'true' && needs.changes.outputs.fork != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+      checks: read
+      statuses: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Waits for every required check in the registry on the approval commit, squash-merges with
+      # --match-head-commit, then dispatches deploy.yml (a notice until it exists, L-062).
+      - name: Merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ needs.changes.outputs.pr }}
+          HEAD_SHA: ${{ needs.changes.outputs.head-sha }}
+        run: npm run --silent -w @lectio/gates gates -- ci merge --pr "$PR" --sha "$HEAD_SHA"

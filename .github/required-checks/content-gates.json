@@ -1,0 +1,4 @@
+{
+  "workflow": "content-gates.yml",
+  "jobs": ["changes", "deterministic", "merge-rule"]
+}
