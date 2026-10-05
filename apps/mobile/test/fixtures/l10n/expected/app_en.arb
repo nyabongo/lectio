@@ -1,0 +1,48 @@
+{
+  "@@locale": "en",
+  "Zeta_retry": "Try {what} again in {seconds}s",
+  "@Zeta_retry": {
+    "placeholders": {
+      "seconds": {},
+      "what": {}
+    }
+  },
+  "Zeta_empty": "",
+  "app_close": "Close",
+  "app_count": "Showing {count} of {total}",
+  "@app_count": {
+    "placeholders": {
+      "count": {},
+      "total": {}
+    }
+  },
+  "day_title": "Today",
+  "day_b": "A repeated key keeps its first place and takes the last value",
+  "day_2": "An integer-like key keeps its place",
+  "day_masses": "{count, plural, zero{No Masses} one{{count} Mass} many{{count} Masses (many)} other{{count} Masses}}",
+  "@day_masses": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "day_notes": "{count, plural, few{{count} notes ({kind})} other{{count} notes ({kind})}}",
+  "@day_notes": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "kind": {}
+    }
+  },
+  "day_slot_psalm": "Psalm {n}",
+  "@day_slot_psalm": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "day_slot_other": "Other links",
+  "day_slot_nested_deep": "Quote \"this\", a back\\slash, a tab\t, a slash / and a control \u0001 character",
+  "day_unicode": "Kiswahili, Ελληνικά, עברית, emoji 😀, line separator and a lone \ud800 surrogate"
+}

@@ -29,6 +29,8 @@ architecture is in [docs/architecture.md](docs/architecture.md).
 - npm is pinned (`packageManager` in package.json, npm 10.9.9); regenerate the lockfile only with that version.
 - Lockfile conflict: rebase, `git checkout origin/main -- package-lock.json`, `npm install`, commit.
 - Flutter: iterate through CI on a draft PR.
+- After changing an i18n catalog (`apps/web/src/i18n/**` or `apps/mobile/lib/l10n/catalog/**`), run
+  `npm run l10n:sync` and commit the regenerated `apps/mobile/lib/l10n/` files (no Dart SDK needed).
 
 ## Conventions
 

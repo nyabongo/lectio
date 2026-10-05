@@ -8,6 +8,7 @@ What CI runs, from this directory:
 
 ```sh
 flutter pub get --enforce-lockfile
+dart run tool/sync_l10n.dart --check            # lib/l10n is in step with the catalogs (npm run l10n:sync fixes it)
 dart format --set-exit-if-changed .
 flutter analyze
 dart run tool/check_coverage.dart --prepare   # writes test/coverage_imports_test.dart (git-ignored)
