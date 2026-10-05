@@ -1,0 +1,10 @@
+{
+  "pageTitle": "“{anchor}” · {ref}, verse {verse}",
+  "eyebrow": "Translation note · {ref}",
+  "backToReading": "All notes for {ref}",
+  "sources": "Sources",
+  "verified": {
+    "one": "Verified against {count} source.",
+    "other": "Verified against {count} sources."
+  }
+}
