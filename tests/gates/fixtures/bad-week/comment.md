@@ -265,7 +265,7 @@
   - Rule: Translations never auto-merge: every pending translation in a pull request waits for a person.
   - Fix: Ask a configured reviewer to read the translation and approve it (`npm run review:approve`, the approval label or the approval comment).
 
-<sub>Base `` · head `bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb` · 0 changed files. Each finding names its rule; the fix says what to change.</sub>
+<sub>Base `origin/main` · head `bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb` · 35 changed files. Each finding names its rule; the fix says what to change.</sub>
 
 ### Merge rule: `blocked` (gates failed)
 

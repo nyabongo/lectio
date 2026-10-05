@@ -125,7 +125,7 @@ describe('the bad week', () => {
       pr: factsFromChanges(context),
       claims: changedClaims(context),
     });
-    const comment = renderDecisionComment(report.results, outcome, [], HEAD);
+    const comment = renderDecisionComment(report, outcome, []);
     // Prettier-formatted (tables aligned) so the snapshot passes format:check; the markdown is the same.
     const snapshot = join(BAD_WEEK_DIR, 'comment.md');
     const options = (await resolveConfig(snapshot)) ?? {};
