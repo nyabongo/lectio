@@ -8,14 +8,15 @@
  * `headScript()` (src/lib/settings.ts, L-057) applies the reader's saved theme and text size before first paint.
  *
  * Header and footer strings come from `src/i18n/<lang>/common.json` (L-051) and links are locale-prefixed with
- * `localePath`; slots `head` (extra head elements, e.g. the SEO component of L-058) and `header-actions` (extra
- * header controls) let pages add to both.
+ * `localePath`; the nav ends with the language switcher (L-110); slots `head` (extra head elements, e.g. the SEO
+ * component of L-058) and `header-actions` (extra header controls) let pages add to both.
  *
  * PWA (L-061): the manifest, theme colour and icons are linked here, and `PwaUpdate` registers the service worker
  * and holds the update-available toast.
  */
 import '../styles/global.css';
 
+import LocaleSwitcher from '../components/locale-switcher/LocaleSwitcher.astro';
 import PwaUpdate from '../components/pwa/PwaUpdate.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../i18n/index.ts';
 import { headScript } from '../lib/settings.ts';
@@ -88,6 +89,7 @@ const links = {
           <a href={links.calendar}>{t(lang, 'common.nav.calendar')}</a>
           <a href={links.search}>{t(lang, 'common.nav.search')}</a>
           <a href={links.settings}>{t(lang, 'common.nav.settings')}</a>
+          <LocaleSwitcher lang={lang} />
           <slot name="header-actions" />
         </nav>
       </div>

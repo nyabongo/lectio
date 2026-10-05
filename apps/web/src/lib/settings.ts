@@ -33,10 +33,13 @@ export const TEXT_SIZE_NAMES = Object.keys(TEXT_SIZES) as readonly TextSize[];
 export const PLAYBACK_SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2] as const;
 export type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
 
-/** UI languages: `available: false` ones are listed as coming soon and cannot be chosen yet. */
+/**
+ * UI languages: `available: false` ones are listed as coming soon and cannot be chosen yet. The settings page also
+ * marks a language unavailable when the site is not built in it (`config.site.locales`).
+ */
 export const LANGUAGES = [
   { code: 'en', available: true },
-  { code: 'sw', available: false },
+  { code: 'sw', available: true },
 ] as const;
 export type LanguageCode = Extract<(typeof LANGUAGES)[number], { available: true }>['code'];
 
@@ -125,6 +128,20 @@ export function loadSettings(storage: SettingsStorage | null): Settings {
     return parseSettings(storage.getItem(STORAGE_KEY));
   } catch {
     return DEFAULT_SETTINGS;
+  }
+}
+
+/**
+ * The language the reader chose and saved (with the language switcher or on the settings page), or `null` when no
+ * valid language is stored: unlike `loadSettings`, the default does not count as a choice.
+ */
+export function savedLanguage(storage: SettingsStorage | null): LanguageCode | null {
+  if (storage === null) return null;
+  try {
+    const stored = JSON.parse(storage.getItem(STORAGE_KEY) ?? 'null') as unknown;
+    return isRecord(stored) && isLanguage(stored.language) ? stored.language : null;
+  } catch {
+    return null;
   }
 }
 
