@@ -25,8 +25,12 @@ class DeepLinks {
     return pending;
   }
 
-  /// Sends later links to [router].
-  void attach(GoRouter router) => _router = router;
+  /// Sends later links to [router], and the one waiting, if any.
+  void attach(GoRouter router) {
+    _router = router;
+    final pending = takeInitialLocation();
+    if (pending != null) router.go(pending);
+  }
 
   /// Stops sending links to [router], when it is the attached one.
   void detach(GoRouter router) {

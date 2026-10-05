@@ -31,7 +31,7 @@ void main() {
     final vectors = fixture['vectors']! as List<Object?>;
     test('are all here', () => expect(vectors, hasLength(greaterThan(10))));
     for (final vector in vectors.cast<Map<String, Object?>>()) {
-      test(vector['name'], () {
+      test(vector['name']! as String, () {
         final input = vector['input']! as Map<String, Object?>;
         expect(_build(input), vector['expected']);
       });
@@ -41,7 +41,7 @@ void main() {
   group('share-text.json invalid inputs throw', () {
     final invalid = fixture['invalid']! as List<Object?>;
     for (final vector in invalid.cast<Map<String, Object?>>()) {
-      test(vector['name'], () {
+      test(vector['name']! as String, () {
         final input = vector['input']! as Map<String, Object?>;
         expect(() => _build(input), throwsArgumentError);
       });

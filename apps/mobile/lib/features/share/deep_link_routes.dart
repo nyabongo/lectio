@@ -2,8 +2,8 @@ import 'package:go_router/go_router.dart';
 import 'package:lectio/features/share/site_links.dart';
 
 const String _date = r':date(\d{4}-\d{2}-\d{2})';
-const String _slot = r':slot([a-z][a-z0-9-]*)';
-const String _note = r':note([A-Za-z0-9_-]+)';
+const String _slot = ':slot([a-z][a-z0-9-]*)';
+const String _note = ':note([A-Za-z0-9_-]+)';
 
 /// The site page paths the router accepts, under each locale prefix.
 const List<String> _sitePaths = [

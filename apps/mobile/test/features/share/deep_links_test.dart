@@ -61,6 +61,7 @@ void main() {
         ..add(Uri.parse('lectio://2026-09-20/gospel/notes/v15-evil-eye'));
       await source.close();
       await subscription.asFuture<void>();
+      await subscription.cancel();
       expect(links.takeInitialLocation(), _note);
     });
 
@@ -138,10 +139,16 @@ void main() {
       addTearDown(first.dispose);
       addTearDown(second.dispose);
       links
+        ..openReminder('2026-09-19')
         ..attach(first)
         ..detach(second)
         ..openReminder('2026-09-20');
       expect(links.takeInitialLocation(), isNull);
+      // The waiting link went to the router when it was attached.
+      expect(
+        first.routeInformationProvider.value.uri.toString(),
+        '/today?date=2026-09-20',
+      );
     });
   });
 }
