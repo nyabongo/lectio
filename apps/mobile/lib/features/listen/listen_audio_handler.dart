@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:lectio/features/listen/listen_queue.dart';
 import 'package:lectio/features/listen/listen_segment.dart';
+import 'package:lectio/features/listen/listen_strings.dart';
 
 /// The Android notification channel of the Listen controls.
 const String listenNotificationChannelId = 'io.github.nyabongo.lectio.listen';
@@ -89,9 +90,9 @@ MediaItem mediaItemFor(ListenSegment segment, {Duration? duration}) {
     title: segment.title,
     album: segment.ref,
     artist: 'Lectio',
-    displaySubtitle: segment.kind == SegmentKind.context
-        ? '${segment.ref} · Context'
-        : '${segment.ref} · Translation note',
+    displaySubtitle:
+        '${segment.ref} · '
+        '${ListenStrings.forLanguage(segment.locale).kindLabel(segment.kind)}',
     duration: duration ?? segment.audio?.duration,
   );
 }

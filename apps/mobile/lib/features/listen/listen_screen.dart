@@ -12,6 +12,8 @@ import 'package:lectio/features/listen/listen_strings.dart';
 import 'package:lectio/features/settings/app_settings.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
 import 'package:lectio/features/today/today_screen.dart';
+import 'package:lectio/l10n/in_language.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 
@@ -36,8 +38,11 @@ set appListenQueue(ListenQueue? queue) {
   _appListenQueue = queue;
 }
 
-/// The id of the queue of [mass] on [date], for example `2026-09-20/day`.
-String listenQueueId(String date, String mass) => '$date/$mass';
+/// The id of the queue of [mass] on [date] in the UI [language], for example
+/// `2026-09-20/day` (English) or `2026-09-20/day/sw`.
+String listenQueueId(String date, String mass, [String language = 'en']) {
+  return language == defaultApiLocale ? '$date/$mass' : '$date/$mass/$language';
+}
 
 /// The Listen tab: the day's notes as a queue of narrated segments, with
 /// play, pause, skip and speed, each note from its audio file or read by the
@@ -45,9 +50,12 @@ String listenQueueId(String date, String mass) => '$date/$mass';
 ///
 /// It shows the device's date, or [date] (`/listen?date=…`), and the Mass
 /// [mass] (default: the first). The day is read offline-first from
-/// [repository]; [queue] plays it and keeps playing after the screen
-/// closes. The speed starts at the reader's Settings choice, and choosing
-/// another here saves it there.
+/// [repository]; in Kiswahili, reviewed Kiswahili notes come from the `sw/`
+/// mirror and play in Kiswahili (`segmentsForMass`). When the device has no
+/// Kiswahili voice, the screen says so and those notes play in English.
+/// [queue] plays the notes and keeps playing after the screen closes. The
+/// speed starts at the reader's Settings choice, and choosing another here
+/// saves it there.
 class ListenScreen extends StatefulWidget {
   /// Creates the Listen screen.
   const new({
@@ -81,20 +89,17 @@ class ListenScreen extends StatefulWidget {
 class _ListenScreenState extends State<ListenScreen> {
   late String _date = _initialDate();
   late String? _massId = widget.mass;
-  StreamSubscription<DataSnapshot<ApiDay>>? _subscription;
+  String? _language;
+  final List<StreamSubscription<DataSnapshot<ApiDay>>> _subscriptions = [];
   DataSnapshot<ApiDay>? _snapshot;
+  ApiDay? _localized;
   Object? _error;
   double? _appliedSpeed;
+  Future<bool>? _voiceCheck;
 
   String _initialDate() {
     return parseIsoDate(widget.date) ??
         isoDate((widget.clock ?? DateTime.now)());
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _listen();
   }
 
   @override
@@ -105,6 +110,13 @@ class _ListenScreenState extends State<ListenScreen> {
       _appliedSpeed = speed;
       unawaited(widget.queue.setSpeed(speed));
     }
+    final language = LectioLocalizations.of(context).languageCode;
+    if (language != _language) {
+      _language = language;
+      _voiceCheck = null;
+      _reset();
+      _listen();
+    }
   }
 
   @override
@@ -113,27 +125,61 @@ class _ListenScreenState extends State<ListenScreen> {
     if (widget.date != oldWidget.date || widget.mass != oldWidget.mass) {
       _date = _initialDate();
       _massId = widget.mass;
-      _snapshot = null;
-      _error = null;
+      _reset();
       _listen();
     }
   }
 
   @override
   void dispose() {
-    unawaited(_subscription?.cancel());
+    _cancel();
     super.dispose();
   }
 
+  void _reset() {
+    _snapshot = null;
+    _localized = null;
+    _error = null;
+  }
+
+  void _cancel() {
+    for (final subscription in _subscriptions) {
+      unawaited(subscription.cancel());
+    }
+    _subscriptions.clear();
+  }
+
+  /// Watches the English day, and the UI language's mirror of it when there
+  /// is one.
   void _listen() {
-    unawaited(_subscription?.cancel());
-    _subscription = widget.repository.watchDay(_date).listen((snapshot) {
-      setState(() {
-        _snapshot = snapshot;
-        _error = null;
-      });
-      _refreshQueue(snapshot.value);
-    }, onError: (Object error) => setState(() => _error = error));
+    _cancel();
+    final english = widget.repository.forLocale(defaultApiLocale);
+    _subscriptions.add(
+      english.watchDay(_date).listen((snapshot) {
+        setState(() {
+          _snapshot = snapshot;
+          _error = null;
+        });
+        _refreshQueue();
+      }, onError: (Object error) => setState(() => _error = error)),
+    );
+    final locale = apiLocaleFor(_language);
+    if (locale == defaultApiLocale) return;
+    _subscriptions.add(
+      widget.repository
+          .forLocale(locale)
+          .watchDay(_date)
+          .listen(
+            (snapshot) {
+              setState(() => _localized = snapshot.value);
+              _refreshQueue();
+            },
+            onError: (Object error) {
+              // Without the mirror the notes play in English.
+              debugPrint('Listen: no $locale day ($error)');
+            },
+          ),
+    );
   }
 
   void _retry() {
@@ -141,11 +187,35 @@ class _ListenScreenState extends State<ListenScreen> {
     _listen();
   }
 
-  /// Gives the queue newly rendered audio when it already plays this day.
-  void _refreshQueue(ApiDay day) {
-    for (final mass in day.masses) {
-      final id = listenQueueId(day.date, mass.id);
-      final segments = segmentsForMass(mass);
+  /// The queue of [mass], in the UI language.
+  List<ListenSegment> _segments(Mass<DayReading> mass) {
+    Mass<DayReading>? localized;
+    for (final candidate in _localized?.masses ?? <Mass<DayReading>>[]) {
+      if (candidate.id == mass.id) localized = candidate;
+    }
+    return segmentsForMass(
+      mass,
+      localized: localized,
+      language: _language ?? defaultApiLocale,
+    );
+  }
+
+  String _queueId(Mass<DayReading> mass) {
+    return listenQueueId(
+      _snapshot!.value.date,
+      mass.id,
+      _language ?? defaultApiLocale,
+    );
+  }
+
+  /// Gives the queue newly rendered audio or translations when it already
+  /// plays this day.
+  void _refreshQueue() {
+    final snapshot = _snapshot;
+    if (snapshot == null) return;
+    for (final mass in snapshot.value.masses) {
+      final id = _queueId(mass);
+      final segments = _segments(mass);
       if (widget.queue.holds(id, segments)) {
         unawaited(widget.queue.load(id, segments));
       }
@@ -175,8 +245,22 @@ class _ListenScreenState extends State<ListenScreen> {
     );
   }
 
+  /// Whether to say the device has no voice for [segments]' language: only
+  /// when a translated note has no recording, and asked once.
+  Future<bool>? _missingVoice(List<ListenSegment> segments) {
+    for (final segment in segments) {
+      if (segment.usesSpeech && segment.fallback != null) {
+        return _voiceCheck ??= widget.queue
+            .canSpeak(segment.locale)
+            .then((able) => !able);
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final strings = ListenStrings.of(context);
     final snapshot = _snapshot;
     final error = _error;
     if (snapshot == null) {
@@ -185,26 +269,26 @@ class _ListenScreenState extends State<ListenScreen> {
       }
       return _Message(
         text: error is ApiNotFoundException
-            ? ListenStrings.emptyDay
-            : ListenStrings.loadFailed,
+            ? strings.emptyDay
+            : strings.loadFailed,
         onRetry: error is ApiNotFoundException ? null : _retry,
       );
     }
     final day = snapshot.value;
     final masses = [
       for (final mass in day.masses)
-        if (segmentsForMass(mass).isNotEmpty) mass,
+        if (_segments(mass).isNotEmpty) mass,
     ];
     final Widget content;
     if (masses.isEmpty) {
-      content = const _Message(text: ListenStrings.nothingToPlay);
+      content = _Message(text: strings.nothingToPlay);
     } else {
       final mass = masses.firstWhere(
         (mass) => mass.id == _massId,
         orElse: () => masses.first,
       );
-      final id = listenQueueId(day.date, mass.id);
-      final segments = segmentsForMass(mass);
+      final id = _queueId(mass);
+      final segments = _segments(mass);
       content = ListenableBuilder(
         listenable: widget.queue,
         builder: (context, _) => _QueueView(
@@ -215,6 +299,7 @@ class _ListenScreenState extends State<ListenScreen> {
           queue: widget.queue,
           loaded: widget.queue.holds(id, segments),
           offline: snapshot.refreshError != null,
+          missingVoice: _missingVoice(segments),
           onMass: (id) => setState(() => _massId = id),
           onPlay: (index) => unawaited(_playFrom(id, segments, index)),
           onSpeed: _chooseSpeed,
@@ -250,11 +335,40 @@ class _Message extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: FilledButton.tonal(
               onPressed: retry,
-              child: const Text(ListenStrings.retry),
+              child: Text(ListenStrings.of(context).retry),
             ),
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Says the device has no voice for the notes' language once [missing]
+/// completes with `true`.
+class _MissingVoice extends StatelessWidget {
+  const new({required this.missing});
+
+  final Future<bool> missing;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: missing,
+      builder: (context, snapshot) {
+        if (snapshot.data != true) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.info_outline, size: 18),
+              const SizedBox(width: 6),
+              Expanded(child: Text(ListenStrings.of(context).noVoice)),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -271,6 +385,7 @@ class _QueueView extends StatelessWidget {
     required this.queue,
     required this.loaded,
     required this.offline,
+    required this.missingVoice,
     required this.onMass,
     required this.onPlay,
     required this.onSpeed,
@@ -283,6 +398,7 @@ class _QueueView extends StatelessWidget {
   final ListenQueue queue;
   final bool loaded;
   final bool offline;
+  final Future<bool>? missingVoice;
   final ValueChanged<String> onMass;
 
   /// Plays from a segment, or toggles play and pause with `null`.
@@ -291,20 +407,26 @@ class _QueueView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ListenStrings.of(context);
     final theme = Theme.of(context);
     final index = loaded ? queue.index : 0;
     final current = segments[index];
     final status = loaded ? queue.status : ListenStatus.idle;
     final active = loaded && queue.active;
     final speaking = loaded ? queue.speaking : current.usesSpeech;
+    final fallingBack = loaded && queue.fallingBack;
     final celebration = day.celebrations.isEmpty
         ? null
-        : day.celebrations.first.name;
+        : day.celebrations.first.nameIn(strings.languageCode);
+    final missing = missingVoice;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         if (celebration != null)
-          Text(celebration, style: theme.textTheme.titleLarge),
+          InLanguage(
+            language: celebration.language,
+            child: Text(celebration.text, style: theme.textTheme.titleLarge),
+          ),
         if (masses.length > 1) ...[
           const SizedBox(height: 8),
           Wrap(
@@ -321,10 +443,8 @@ class _QueueView extends StatelessWidget {
           ),
         ] else
           Text(mass.label, style: theme.textTheme.bodyMedium),
-        if (offline) ...[
-          const SizedBox(height: 8),
-          const Text(ListenStrings.offline),
-        ],
+        if (offline) ...[const SizedBox(height: 8), Text(strings.offline)],
+        if (missing != null) _MissingVoice(missing: missing),
         const SizedBox(height: 16),
         Card(
           child: Padding(
@@ -333,19 +453,32 @@ class _QueueView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${ListenStrings.position(index, segments.length)} · '
-                  '${current.ref} · ${ListenStrings.kindLabel(current.kind)}',
+                  '${strings.position(index, segments.length)} · '
+                  '${current.ref} · ${strings.kindLabel(current.kind)}',
                   style: theme.textTheme.labelLarge,
                 ),
                 const SizedBox(height: 4),
-                Text(current.title, style: theme.textTheme.titleMedium),
+                InLanguage(
+                  language: current.locale,
+                  child: Text(
+                    current.title,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                if (fallingBack) ...[
+                  const SizedBox(height: 4),
+                  _Marker(icon: Icons.translate, text: strings.inEnglish),
+                ],
                 if (speaking) ...[
                   const SizedBox(height: 4),
-                  const _DeviceVoice(),
+                  _Marker(
+                    icon: Icons.record_voice_over_outlined,
+                    text: strings.deviceVoice,
+                  ),
                 ],
                 if (status == ListenStatus.completed) ...[
                   const SizedBox(height: 4),
-                  const Text(ListenStrings.finished),
+                  Text(strings.finished),
                 ],
                 if (loaded &&
                     !speaking &&
@@ -354,6 +487,7 @@ class _QueueView extends StatelessWidget {
                   _Progress(queue: queue),
                 const SizedBox(height: 8),
                 _Controls(
+                  strings: strings,
                   active: active,
                   canGoBack: loaded,
                   canGoOn: loaded && index + 1 < segments.length,
@@ -368,7 +502,7 @@ class _QueueView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Text(ListenStrings.queue, style: theme.textTheme.titleMedium),
+        Text(strings.queue, style: theme.textTheme.titleMedium),
         for (final (i, segment) in segments.indexed)
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -378,35 +512,42 @@ class _QueueView extends StatelessWidget {
                   ? Icons.graphic_eq
                   : Icons.play_circle_outline,
             ),
-            title: Text(segment.title),
-            subtitle: Text(_subtitle(segment)),
+            title: InLanguage(
+              language: segment.locale,
+              child: Text(segment.title),
+            ),
+            subtitle: Text(_subtitle(strings, segment)),
             onTap: () => onPlay(i),
           ),
       ],
     );
   }
 
-  String _subtitle(ListenSegment segment) {
+  String _subtitle(ListenStrings strings, ListenSegment segment) {
     final length = segment.audio?.duration;
     return [
       segment.ref,
-      ListenStrings.kindLabel(segment.kind),
-      if (segment.usesSpeech) ListenStrings.deviceVoice,
+      strings.kindLabel(segment.kind),
+      if (segment.usesSpeech) strings.deviceVoice,
       if (length != null) clockLabel(length),
     ].join(' · ');
   }
 }
 
-class _DeviceVoice extends StatelessWidget {
-  const new();
+/// A small icon and label under the current segment's title.
+class _Marker extends StatelessWidget {
+  const new({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
-        Icon(Icons.record_voice_over_outlined, size: 18),
-        SizedBox(width: 6),
-        Flexible(child: Text(ListenStrings.deviceVoice)),
+        Icon(icon, size: 18),
+        const SizedBox(width: 6),
+        Flexible(child: Text(text)),
       ],
     );
   }
@@ -452,6 +593,7 @@ class _Progress extends StatelessWidget {
 
 class _Controls extends StatelessWidget {
   const new({
+    required this.strings,
     required this.active,
     required this.canGoBack,
     required this.canGoOn,
@@ -462,6 +604,7 @@ class _Controls extends StatelessWidget {
     required this.onSpeed,
   });
 
+  final ListenStrings strings;
   final bool active;
   final bool canGoBack;
   final bool canGoOn;
@@ -478,23 +621,23 @@ class _Controls extends StatelessWidget {
       spacing: 8,
       children: [
         IconButton(
-          tooltip: ListenStrings.previous,
+          tooltip: strings.previous,
           icon: const Icon(Icons.skip_previous),
           onPressed: canGoBack ? onPrevious : null,
         ),
         IconButton.filled(
-          tooltip: active ? ListenStrings.pause : ListenStrings.play,
+          tooltip: active ? strings.pause : strings.play,
           iconSize: 36,
           icon: Icon(active ? Icons.pause : Icons.play_arrow),
           onPressed: onToggle,
         ),
         IconButton(
-          tooltip: ListenStrings.next,
+          tooltip: strings.next,
           icon: const Icon(Icons.skip_next),
           onPressed: canGoOn ? onNext : null,
         ),
         PopupMenuButton<double>(
-          tooltip: ListenStrings.speed,
+          tooltip: strings.speed,
           initialValue: speed,
           onSelected: onSpeed,
           itemBuilder: (context) => [

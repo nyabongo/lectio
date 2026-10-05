@@ -11,6 +11,7 @@ import 'package:lectio/features/listen/listen_strings.dart';
 import 'package:lectio/features/settings/app_settings.dart';
 import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 
 import '../../data/fake_api.dart';
 import '../../data/fixtures.dart';
@@ -25,6 +26,26 @@ String editedDay(void Function(Map<String, Object?> day) edit) {
   final day = fixtureObject('day-with-audio');
   edit(day);
   return jsonEncode(day);
+}
+
+/// The seed day as the `sw/` mirror serves it: the Gospel's notes reviewed
+/// in Kiswahili, without recordings yet, or left in English (the mirror's
+/// fallback, also without recordings) when [translated] is false.
+String swahiliDay({bool translated = true}) {
+  return editedDay((day) {
+    final readings = massesOf(day).single['readings']! as List<Object?>;
+    final gospel = readings.last! as Map<String, Object?>;
+    final passage = gospel['passage']! as Map<String, Object?>;
+    final context = passage['context']! as Map<String, Object?>
+      ..['audio'] = null;
+    for (final note in passage['translationNotes']! as List<Object?>) {
+      (note! as Map<String, Object?>)['audio'] = null;
+    }
+    if (translated) {
+      passage['locale'] = 'sw';
+      context['title'] = 'Wafanyakazi shambani';
+    }
+  });
 }
 
 /// The masses of [day].
@@ -55,10 +76,21 @@ void main() {
     settings = SettingsController(MemoryKeyValueStore());
   });
 
+  final locale = ValueNotifier(const Locale('en'));
+  tearDown(() => locale.value = const Locale('en'));
+
   Widget app(Widget child) {
     return SettingsScope(
       notifier: settings,
-      child: MaterialApp(home: Scaffold(body: child)),
+      child: ValueListenableBuilder<Locale>(
+        valueListenable: locale,
+        builder: (context, value, _) => MaterialApp(
+          locale: value,
+          supportedLocales: supportedLocales,
+          localizationsDelegates: lectioLocalizationsDelegates,
+          home: Scaffold(body: child),
+        ),
+      ),
     );
   }
 
@@ -101,19 +133,19 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('1×'), findsOneWidget);
-    expect(tooltip(ListenStrings.play), findsOneWidget);
+    expect(tooltip(ListenStrings.en.play), findsOneWidget);
     expect(queue.status, ListenStatus.idle);
     expect(queue.queueId, isNull);
   });
 
   testWidgets('plays, shows progress and pauses', (tester) async {
     await pumpListen(tester);
-    await tester.tap(tooltip(ListenStrings.play));
+    await tester.tap(tooltip(ListenStrings.en.play));
     await tester.pumpAndSettle();
 
     expect(queue.queueId, listenQueueId(seedDate, 'day'));
     expect(queue.status, ListenStatus.playing);
-    expect(tooltip(ListenStrings.pause), findsOneWidget);
+    expect(tooltip(ListenStrings.en.pause), findsOneWidget);
     expect(find.text('0:00 / 1:00'), findsOneWidget);
     expect(find.byIcon(Icons.graphic_eq), findsOneWidget);
 
@@ -125,10 +157,10 @@ void main() {
     );
     expect(bar.value, 0.5);
 
-    await tester.tap(tooltip(ListenStrings.pause));
+    await tester.tap(tooltip(ListenStrings.en.pause));
     await tester.pumpAndSettle();
     expect(queue.status, ListenStatus.paused);
-    expect(tooltip(ListenStrings.play), findsOneWidget);
+    expect(tooltip(ListenStrings.en.play), findsOneWidget);
   });
 
   testWidgets('a file of unknown length shows only the position', (
@@ -150,15 +182,15 @@ void main() {
     expect(queue.index, 2);
     expect(queue.speaking, isTrue);
     expect(find.text('3 of 3 · Mt 20:1-16a · Translation note'), findsOne);
-    expect(find.text(ListenStrings.deviceVoice), findsOneWidget);
+    expect(find.text(ListenStrings.en.deviceVoice), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsNothing);
     expect(speech.calls.single, startsWith('speak en 1.0 Translation note'));
 
-    await tester.tap(tooltip(ListenStrings.previous));
+    await tester.tap(tooltip(ListenStrings.en.previous));
     await tester.pumpAndSettle();
     expect(queue.index, 1);
 
-    await tester.tap(tooltip(ListenStrings.next));
+    await tester.tap(tooltip(ListenStrings.en.next));
     await tester.pumpAndSettle();
     expect(queue.index, 2);
   });
@@ -170,7 +202,7 @@ void main() {
     speech.complete();
     await tester.pumpAndSettle();
     expect(queue.status, ListenStatus.completed);
-    expect(find.text(ListenStrings.finished), findsOneWidget);
+    expect(find.text(ListenStrings.en.finished), findsOneWidget);
   });
 
   testWidgets('starts at the Settings speed and saves a new one', (
@@ -181,7 +213,7 @@ void main() {
     expect(queue.speed, 1.25);
     expect(find.text('1.25×'), findsOneWidget);
 
-    await tester.tap(tooltip(ListenStrings.speed));
+    await tester.tap(tooltip(ListenStrings.en.speed));
     await tester.pumpAndSettle();
     await tester.tap(find.text('1.5×').last);
     await tester.pumpAndSettle();
@@ -198,10 +230,10 @@ void main() {
 
     expect(queue.queueId, '2026-09-13/day');
     expect(queue.status, ListenStatus.playing);
-    expect(tooltip(ListenStrings.play), findsOneWidget);
+    expect(tooltip(ListenStrings.en.play), findsOneWidget);
     expect(find.byIcon(Icons.graphic_eq), findsNothing);
 
-    await tester.tap(tooltip(ListenStrings.play));
+    await tester.tap(tooltip(ListenStrings.en.play));
     await tester.pumpAndSettle();
     expect(queue.queueId, listenQueueId(seedDate, 'day'));
     expect(queue.index, 0);
@@ -224,7 +256,7 @@ void main() {
     expect(queue.index, 1);
     expect(queue.segments.first.usesSpeech, isFalse);
     expect(find.text('2 of 3 · Mt 20:1-16a · Translation note'), findsOne);
-    expect(tooltip(ListenStrings.pause), findsOneWidget);
+    expect(tooltip(ListenStrings.en.pause), findsOneWidget);
   });
 
   testWidgets('offers only Masses with something to play', (tester) async {
@@ -273,7 +305,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('1 of 3 · Mt 20:1-16a · Context'), findsOneWidget);
 
-    await tester.tap(tooltip(ListenStrings.play));
+    await tester.tap(tooltip(ListenStrings.en.play));
     await tester.pumpAndSettle();
     expect(queue.queueId, listenQueueId(seedDate, 'day'));
   });
@@ -291,23 +323,23 @@ void main() {
       }),
     );
     await pumpListen(tester);
-    expect(find.text(ListenStrings.nothingToPlay), findsOneWidget);
-    expect(find.text(ListenStrings.retry), findsNothing);
+    expect(find.text(ListenStrings.en.nothingToPlay), findsOneWidget);
+    expect(find.text(ListenStrings.en.retry), findsNothing);
   });
 
   testWidgets('a date without a day says so', (tester) async {
     await pumpListen(tester, date: '2026-01-01');
-    expect(find.text(ListenStrings.emptyDay), findsOneWidget);
-    expect(find.text(ListenStrings.retry), findsNothing);
+    expect(find.text(ListenStrings.en.emptyDay), findsOneWidget);
+    expect(find.text(ListenStrings.en.retry), findsNothing);
   });
 
   testWidgets('a failed load can be retried', (tester) async {
     api.offline = true;
     await pumpListen(tester);
-    expect(find.text(ListenStrings.loadFailed), findsOneWidget);
+    expect(find.text(ListenStrings.en.loadFailed), findsOneWidget);
 
     api.offline = false;
-    await tester.tap(find.text(ListenStrings.retry));
+    await tester.tap(find.text(ListenStrings.en.retry));
     await tester.pumpAndSettle();
     expect(find.text('1 of 3 · Mt 20:1-16a · Context'), findsOneWidget);
   });
@@ -322,7 +354,7 @@ void main() {
     );
     api.offline = true;
     await pumpListen(tester);
-    expect(find.text(ListenStrings.offline), findsOneWidget);
+    expect(find.text(ListenStrings.en.offline), findsOneWidget);
     expect(find.text('1 of 3 · Mt 20:1-16a · Context'), findsOneWidget);
   });
 
@@ -333,7 +365,7 @@ void main() {
       editedDay((day) => day['date'] = '2026-09-21'),
     );
     await pumpListen(tester, date: '2026-09-21');
-    await tester.tap(tooltip(ListenStrings.play));
+    await tester.tap(tooltip(ListenStrings.en.play));
     await tester.pumpAndSettle();
     expect(queue.queueId, listenQueueId('2026-09-21', 'day'));
   });
@@ -360,6 +392,75 @@ void main() {
     expect(screen.date, seedDate);
     expect(screen.mass, 'day');
     expect(screen.queue, queue);
+  });
+
+  group('in Kiswahili', () {
+    setUp(() {
+      locale.value = const Locale('sw');
+      api.serve('sw/days/$seedDate.json', swahiliDay());
+    });
+
+    testWidgets('plays reviewed Kiswahili notes in Kiswahili', (tester) async {
+      await pumpListen(tester);
+      final strings = ListenStrings.forLanguage('sw');
+      expect(find.text('Wafanyakazi shambani'), findsNWidgets(2));
+      expect(find.text(strings.noVoice), findsNothing);
+
+      await tester.tap(find.byTooltip(strings.play));
+      await tester.pumpAndSettle();
+      expect(queue.queueId, listenQueueId(seedDate, 'day', 'sw'));
+      expect(queue.queueId, '$seedDate/day/sw');
+      expect(speech.calls.single, startsWith('speak sw 1.0 Wafanyakazi'));
+      expect(find.text(strings.deviceVoice), findsOneWidget);
+      expect(find.text(strings.inEnglish), findsNothing);
+    });
+
+    testWidgets('says when the device has no Kiswahili voice, and plays '
+        'the English note', (tester) async {
+      speech.voices = {'en'};
+      await pumpListen(tester);
+      final strings = ListenStrings.forLanguage('sw');
+      expect(find.text(strings.noVoice), findsOneWidget);
+
+      await tester.tap(find.byTooltip(strings.play));
+      await tester.pumpAndSettle();
+      expect(queue.fallingBack, isTrue);
+      expect(find.text(strings.inEnglish), findsOneWidget);
+      expect(
+        player.calls.first,
+        'load https://audio.example/audio/v1/0123abcd.mp3',
+      );
+      expect(speech.calls, isEmpty);
+    });
+
+    testWidgets('notes the mirror leaves in English play in English', (
+      tester,
+    ) async {
+      api.serve('sw/days/$seedDate.json', swahiliDay(translated: false));
+      speech.voices = {'en'};
+      await pumpListen(tester);
+      final strings = ListenStrings.forLanguage('sw');
+      expect(find.text('Labourers in the vineyard'), findsNWidgets(2));
+      // Nothing is translated, so nothing is missing a voice.
+      expect(find.text(strings.noVoice), findsNothing);
+      expect(speech.asked, isEmpty);
+    });
+
+    testWidgets('without the mirror the English notes play', (tester) async {
+      api.remove('sw/days/$seedDate.json');
+      await pumpListen(tester);
+      expect(find.text('Labourers in the vineyard'), findsNWidgets(2));
+    });
+
+    testWidgets('follows a change of language', (tester) async {
+      locale.value = const Locale('en');
+      await pumpListen(tester);
+      expect(find.text('Labourers in the vineyard'), findsNWidgets(2));
+
+      locale.value = const Locale('sw');
+      await tester.pumpAndSettle();
+      expect(find.text('Wafanyakazi shambani'), findsNWidgets(2));
+    });
   });
 
   test('clockLabel writes minutes and hours', () {

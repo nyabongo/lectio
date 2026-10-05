@@ -1,5 +1,6 @@
 import 'package:lectio/data/models/day.dart';
 import 'package:lectio/data/models/notes.dart';
+import 'package:lectio/features/listen/locale.dart';
 
 /// What a [ListenSegment] narrates.
 enum SegmentKind {
@@ -31,6 +32,7 @@ class ListenSegment {
     required this.title,
     required this.script,
     this.audio,
+    this.fallback,
   });
 
   /// `<passage key>/context` or `<passage key>/note/<note id>`.
@@ -62,6 +64,10 @@ class ListenSegment {
   /// The rendered narration, or `null` to use text-to-speech.
   final Audio? audio;
 
+  /// The same note in English, played instead when this segment has no
+  /// file and the device has no voice for [locale]; `null` for English.
+  final ListenSegment? fallback;
+
   /// Whether the device voice reads this segment.
   bool get usesSpeech => audio == null;
 }
@@ -80,7 +86,15 @@ String _sentence(String text) {
   return '$text.';
 }
 
-ListenSegment _contextSegment(String slot, PassageNotes passage) {
+/// Whether [passage] is in English, whose scripts open with English
+/// connecting words; other languages read the notes as they are.
+bool _english(PassageNotes passage) => passage.locale == 'en';
+
+ListenSegment _contextSegment(
+  String slot,
+  PassageNotes passage,
+  ListenSegment? fallback,
+) {
   final context = passage.context;
   final title = spokenText(context.title);
   return ListenSegment(
@@ -92,12 +106,13 @@ ListenSegment _contextSegment(String slot, PassageNotes passage) {
     locale: passage.locale,
     title: title,
     script: [
-      'Context for ${passage.ref}.',
+      if (_english(passage)) 'Context for ${passage.ref}.',
       _sentence(title),
       for (final paragraph in context.paragraphs)
         _sentence(spokenText(paragraph)),
     ].where((part) => part.isNotEmpty).join(' '),
     audio: context.audio,
+    fallback: fallback,
   );
 }
 
@@ -105,12 +120,18 @@ ListenSegment _noteSegment(
   String slot,
   PassageNotes passage,
   TranslationNote note,
+  ListenSegment? fallback,
 ) {
   final original = note.original;
-  final word = note.anchor.contains(' ') ? 'words' : 'word';
-  final intro =
-      'Translation note on ${passage.ref}, verse ${note.verse}, '
-      'the $word “${note.anchor}”.';
+  final String intro;
+  if (_english(passage)) {
+    final word = note.anchor.contains(' ') ? 'words' : 'word';
+    intro =
+        'Translation note on ${passage.ref}, verse ${note.verse}, '
+        'the $word “${note.anchor}”. Literally “${original.gloss}”.';
+  } else {
+    intro = '“${note.anchor}”: ${original.translit}, “${original.gloss}”.';
+  }
   return ListenSegment(
     id: '${passage.key}/note/${note.id}',
     kind: SegmentKind.translationNote,
@@ -119,29 +140,71 @@ ListenSegment _noteSegment(
     ref: passage.ref,
     locale: passage.locale,
     title: '${note.anchor} · ${original.translit}',
-    script: [
-      intro,
-      'Literally “${original.gloss}”.',
-      _sentence(spokenText(note.body)),
-    ].join(' '),
+    script: '$intro ${_sentence(spokenText(note.body))}',
     audio: note.audio,
+    fallback: fallback,
   );
+}
+
+/// The segments of [passage] in [slot]: its context note, then each
+/// translation note, each with the segment of the same id in [fallbacks]
+/// (the English ones, for a translation).
+List<ListenSegment> _passageSegments(
+  String slot,
+  PassageNotes passage, [
+  Map<String, ListenSegment> fallbacks = const {},
+]) {
+  final context = '${passage.key}/context';
+  return [
+    _contextSegment(slot, passage, fallbacks[context]),
+    for (final note in passage.translationNotes)
+      _noteSegment(
+        slot,
+        passage,
+        note,
+        fallbacks['${passage.key}/note/${note.id}'],
+      ),
+  ];
 }
 
 /// The Listen queue of [mass]: its readings' approved notes in order, each
 /// passage once.
-List<ListenSegment> segmentsForMass(Mass<DayReading> mass) {
+///
+/// In the UI [language] `sw`, a passage whose notes [localized] (the same
+/// Mass from the `sw/` mirror) has as a reviewed translation is narrated in
+/// Kiswahili (`narratedPassage`), each segment keeping its English original
+/// as [ListenSegment.fallback] for a device without a Kiswahili voice. Other
+/// passages stay in English, with their recordings.
+List<ListenSegment> segmentsForMass(
+  Mass<DayReading> mass, {
+  Mass<DayReading>? localized,
+  String language = 'en',
+}) {
+  final translations = <String, PassageNotes>{};
+  for (final reading in localized?.readings ?? const <DayReading>[]) {
+    final passage = reading.passage;
+    if (passage != null) translations[passage.key] = passage;
+  }
   final seen = <String>{};
   final out = <ListenSegment>[];
   for (final reading in mass.readings) {
-    final passage = reading.passage;
-    if (passage == null || !seen.add(passage.key)) continue;
-    out
-      ..add(_contextSegment(reading.slot, passage))
-      ..addAll([
-        for (final note in passage.translationNotes)
-          _noteSegment(reading.slot, passage, note),
-      ]);
+    final english = reading.passage;
+    if (english == null || !seen.add(english.key)) continue;
+    final englishSegments = _passageSegments(reading.slot, english);
+    final narrated = narratedPassage(
+      language: language,
+      english: english,
+      localized: translations[english.key],
+    );
+    if (identical(narrated, english)) {
+      out.addAll(englishSegments);
+    } else {
+      out.addAll(
+        _passageSegments(reading.slot, narrated, {
+          for (final segment in englishSegments) segment.id: segment,
+        }),
+      );
+    }
   }
   return List.unmodifiable(out);
 }

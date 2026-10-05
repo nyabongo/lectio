@@ -88,4 +88,64 @@ void main() {
       expect(segments[1].script, contains('the words “evil eye”'));
     });
   });
+
+  group('segmentsForMass in Kiswahili', () {
+    /// The seed Mass with the Gospel's notes in [locale], without audio.
+    Mass<DayReading> mirrorMass(String locale) {
+      final json = fixtureObject('day-with-audio');
+      final mass = (json['masses']! as List<Object?>).single!;
+      final readings = (mass as Map<String, Object?>)['readings']!;
+      final gospel = (readings as List<Object?>).last! as Map<String, Object?>;
+      final passage = gospel['passage']! as Map<String, Object?>;
+      passage['locale'] = locale;
+      final context = passage['context']! as Map<String, Object?>
+        ..['audio'] = null
+        ..['title'] = 'Wafanyakazi shambani';
+      context['paragraphs'] = <Object?>['Dinari moja. [c1]'];
+      for (final note in passage['translationNotes']! as List<Object?>) {
+        (note! as Map<String, Object?>)['audio'] = null;
+      }
+      return parseApiDay(json).masses.single;
+    }
+
+    final english = parseApiDay(fixtureJson('day-with-audio')).masses.single;
+
+    test('narrates reviewed translations with the English as fallback', () {
+      final segments = segmentsForMass(
+        english,
+        localized: mirrorMass('sw'),
+        language: 'sw',
+      );
+      expect(segments, hasLength(3));
+      final [context, evilEye, _] = segments;
+      expect(context.locale, 'sw');
+      expect(context.title, 'Wafanyakazi shambani');
+      expect(context.script, 'Wafanyakazi shambani. Dinari moja.');
+      expect(context.usesSpeech, isTrue);
+      expect(context.fallback?.id, context.id);
+      expect(context.fallback?.locale, 'en');
+      expect(context.fallback?.audio, isNotNull);
+      expect(
+        evilEye.script,
+        startsWith('“envious”: ophthalmos sou ponēros, “your eye evil”. '),
+      );
+      expect(evilEye.fallback?.id, evilEye.id);
+    });
+
+    test('keeps English notes the mirror has not translated', () {
+      final segments = segmentsForMass(
+        english,
+        localized: mirrorMass('en'),
+        language: 'sw',
+      );
+      expect(segments.first.locale, 'en');
+      expect(segments.first.audio, isNotNull);
+      expect(segments.first.fallback, isNull);
+    });
+
+    test('ignores the mirror in English', () {
+      final segments = segmentsForMass(english, localized: mirrorMass('sw'));
+      expect(segments.first.locale, 'en');
+    });
+  });
 }

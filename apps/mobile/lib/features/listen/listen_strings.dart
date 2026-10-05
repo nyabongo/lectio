@@ -1,59 +1,91 @@
+import 'package:flutter/widgets.dart';
 import 'package:lectio/features/listen/listen_segment.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 
-/// The English strings of the Listen screen and its lock-screen controls.
-/// L-114 moves them to the l10n catalog.
-abstract final class ListenStrings {
-  /// Shown when the day could not be fetched and nothing is saved.
-  static const String loadFailed =
-      'The day could not be loaded. Check your connection and try again.';
+/// The words of the Listen screen and its lock-screen controls in the UI
+/// language, from the app's catalog (`app_listen_*`).
+class ListenStrings {
+  /// The strings of [_l10n].
+  const new(this._l10n);
 
-  /// Retries loading the day.
-  static const String retry = 'Try again';
+  /// The strings of the nearest localizations (English without them).
+  factory of(BuildContext context) {
+    return ListenStrings(LectioLocalizations.of(context));
+  }
+
+  /// The strings of [language] (English when the app does not have it).
+  factory forLanguage(String language) {
+    return ListenStrings(LectioLocalizations.forLanguage(language));
+  }
+
+  /// The English strings.
+  static final ListenStrings en = ListenStrings(LectioLocalizations.en);
+
+  final LectioLocalizations _l10n;
+
+  String _t(String key, [Map<String, Object> params = const {}]) {
+    return _l10n.text('app_listen_$key', params);
+  }
+
+  /// The UI language, for example `sw`.
+  String get languageCode => _l10n.languageCode;
 
   /// A date the API publishes no day document for.
-  static const String emptyDay = 'There is no calendar day for this date yet.';
+  String get emptyDay => _t('emptyDay');
+
+  /// The day could not be fetched and nothing is saved.
+  String get loadFailed => _t('loadFailed');
+
+  /// Retries loading the day.
+  String get retry => _l10n.text('pwa_offline_retry');
 
   /// A day without approved notes to narrate.
-  static const String nothingToPlay =
-      'There are no notes to listen to for this day yet. Notes are narrated '
-      'once they have been checked and approved.';
+  String get nothingToPlay => _t('nothingToPlay');
 
   /// A saved day is shown because the network could not be reached.
-  static const String offline =
-      'Offline: notes without a saved recording are read by the device voice.';
+  String get offline => _t('offline');
 
   /// Plays the queue.
-  static const String play = 'Play';
+  String get play => _t('play');
 
   /// Pauses the queue.
-  static const String pause = 'Pause';
+  String get pause => _t('pause');
 
   /// Goes to the next segment.
-  static const String next = 'Next note';
+  String get next => _t('next');
 
   /// Goes to the previous segment, or the start of this one.
-  static const String previous = 'Previous note';
+  String get previous => _t('previous');
 
   /// The speed menu.
-  static const String speed = 'Playback speed';
+  String get speed => _t('speed');
 
   /// Marks a segment read by the device's text-to-speech.
-  static const String deviceVoice = 'Device voice';
+  String get deviceVoice => _t('deviceVoice');
+
+  /// Marks a Kiswahili note played as its English original.
+  String get inEnglish => _t('inEnglish');
+
+  /// Says the device has no Kiswahili voice, so notes without a Kiswahili
+  /// recording play in English.
+  String get noVoice => _t('noVoice');
 
   /// Heading of the queue list.
-  static const String queue = 'Queue';
+  String get queue => _t('queue');
 
   /// Shown once the last segment has played.
-  static const String finished = 'Finished. Play to start again.';
+  String get finished => _t('finished');
 
-  /// The kind of [kind], as shown under a segment.
-  static String kindLabel(SegmentKind kind) => switch (kind) {
-    SegmentKind.context => 'Context',
-    SegmentKind.translationNote => 'Translation note',
+  /// The name of [kind], as shown under a segment.
+  String kindLabel(SegmentKind kind) => switch (kind) {
+    SegmentKind.context => _t('kindContext'),
+    SegmentKind.translationNote => _t('kindNote'),
   };
 
-  /// Where the current segment sits: `2 of 5`.
-  static String position(int index, int count) => '${index + 1} of $count';
+  /// Where the segment at [index] sits among [count]: `2 of 5`.
+  String position(int index, int count) {
+    return _t('position', {'index': index + 1, 'count': count});
+  }
 }
 
 /// [duration] as `m:ss`, or `h:mm:ss` from an hour.
