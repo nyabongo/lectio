@@ -28,6 +28,8 @@ import type { GateResult, Severity } from '../core/result.ts';
 import { defineRule } from '../core/rules.ts';
 import type { Rule } from '../core/rules.ts';
 import { approvalCommitProblems } from './approval.ts';
+import { UNREADABLE_CLAIMS, changedClaims } from './claims.ts';
+import type { ClaimRef } from './claims.ts';
 import { approvedReviewEdits } from './review-edits.ts';
 import { VERIFIER_ROLES, readVerifierClaims } from './verifiers.ts';
 
@@ -37,11 +39,18 @@ export {
   APPROVAL_WORKFLOW,
   approvalCommitProblems,
   formatApprovalTrailer,
-  isApprovalCommit,
-  lastContentCommitAt,
   parseApprovalTrailer,
 } from './approval.ts';
-export type { ApprovalKind, ApprovalTrailer, PullRequestCommit } from './approval.ts';
+export type { ApprovalKind, ApprovalTrailer } from './approval.ts';
+export { UNREADABLE_CLAIMS, changedClaims } from './claims.ts';
+export type { ClaimRef } from './claims.ts';
+export {
+  UNSEEN_COMMIT_AT,
+  headObservationsFromRuns,
+  isApprovalCommit,
+  lastContentCommitAt,
+} from './content-commits.ts';
+export type { HeadObservation, ObservedRun, PullRequestCommit } from './content-commits.ts';
 export { approvedReviewEdits } from './review-edits.ts';
 export { VERDICTS, VERIFIER_ROLES, readVerifierClaims } from './verifiers.ts';
 export type {
@@ -72,6 +81,11 @@ export interface DecideInput {
   readonly results: readonly GateResult[];
   readonly config: LectioConfig;
   readonly pr: PullRequestFacts;
+  /**
+   * Every claim of the changed passages at the PR head (`changedClaims`). Auto-merge needs a
+   * verifier record for each one.
+   */
+  readonly claims: readonly ClaimRef[];
 }
 
 export interface DecideOutput {
@@ -80,6 +94,9 @@ export interface DecideOutput {
   /**
    * The PR changes `.github/**`: whatever the decision, the merge job (L-031) must not merge it or
    * dispatch workflows; a maintainer merges it by hand after approval. Omitted when false.
+   * This flag is the only safeguard for such PRs: a `pull_request` (or dispatched) run executes the
+   * PR branch's own content-gates.yml, so a PR that edits it can mint a bot-signed approval commit
+   * that passes the validity rule. `decide` cannot tell, so L-031 must honour this flag.
    */
   readonly manualMerge?: true;
 }
@@ -134,6 +151,11 @@ export const MERGE_RULES = {
     'merge-rule/verifiers-ran',
     'The verifiers must run and report readable per-claim scores before a PR can auto-merge.',
     'Re-run the gates with both verifier keys configured, or ask a reviewer to approve.',
+  ),
+  everyClaimVerified: defineRule(
+    'merge-rule/every-claim-verified',
+    'The verifiers report a record for every claim of every changed passage.',
+    'Re-run the verifiers so they check every claim, or ask a reviewer to approve.',
   ),
   liveVerifiers: defineRule(
     'merge-rule/live-verifiers',
@@ -305,6 +327,16 @@ function verifierConditions(input: DecideInput, results: readonly GateResult[]):
   if (read.claims.length === 0) return [{ rule: MERGE_RULES.verifiersRan, message: 'the verifiers checked no claims' }];
 
   const reasons: DecisionReason[] = [];
+  const recorded = new Set(read.claims.map((claim) => `${claim.file}\0${claim.claimId}`));
+  for (const expected of input.claims) {
+    if (!recorded.has(`${expected.file}\0${expected.claimId}`))
+      reasons.push({
+        rule: MERGE_RULES.everyClaimVerified,
+        file: expected.file,
+        ...(expected.claimId === UNREADABLE_CLAIMS ? {} : { claimId: expected.claimId }),
+        message: `claim ${expected.claimId} (${expected.file}) has no verifier record`,
+      });
+  }
   let refutations = 0;
   for (const claim of read.claims) {
     const at = { file: claim.file, claimId: claim.claimId };
@@ -436,30 +468,44 @@ const SEVERITY: Readonly<Record<Decision, Severity>> = {
   'auto-merge': 'info',
 };
 
-/**
- * The PR facts a gate run can see: the changed files (old paths of renames included) and the
- * review blocks set to approved, with PR number 0 (no PR, so no approval commit is valid). Approvals, approval commits, commit times and fork status come
- * from GitHub, so only the CI job (L-031) knows them and calls `decide` itself.
- */
-export function factsFromContext(context: GateContext): PullRequestFacts {
-  const files = context.changedFiles.flatMap((file) =>
+/** What `factsFromChanges` reads: the diff and the files on both sides of it. */
+export type ChangeView = Pick<GateContext, 'changedFiles' | 'readFile' | 'readBase'>;
+
+/** Every changed path, with the old path of a rename or copy, deduplicated. */
+export function changedPaths(changedFiles: ChangeView['changedFiles']): string[] {
+  const files = changedFiles.flatMap((file) =>
     file.previousPath === undefined ? [file.path] : [file.previousPath, file.path],
   );
+  return [...new Set(files)];
+}
+
+/**
+ * The PR facts a local run can see: the changed files (old paths of renames included) and the
+ * review blocks set to approved, with PR number `number` (0: no PR, so no approval commit is
+ * valid). Approvals, approval commits, push times and fork status come from GitHub, so only the CI
+ * job (L-031) knows them.
+ */
+export function factsFromChanges(view: ChangeView, number = 0): PullRequestFacts {
   return {
-    files: [...new Set(files)],
-    reviewEdits: approvedReviewEdits(context),
+    number,
+    files: changedPaths(view.changedFiles),
+    reviewEdits: approvedReviewEdits(view),
     approval: null,
     approvalCommit: null,
     lastContentCommitAt: null,
     fork: false,
-    number: 0,
   };
 }
 
 /** Runs the merge rule over the gates that ran before it and reports the decision and its reasons. */
 export function runMergeRule(context: GateContext): GateResult {
-  const facts = factsFromContext(context);
-  const { decision, reasons } = assess({ results: context.results, config: context.config, pr: facts });
+  const facts = factsFromChanges(context);
+  const { decision, reasons } = assess({
+    results: context.results,
+    config: context.config,
+    pr: facts,
+    claims: changedClaims(context),
+  });
   const items = reasons.map((reason) =>
     finding(reason.rule, {
       ...(reason.file === undefined ? {} : { file: reason.file }),

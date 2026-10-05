@@ -1,24 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  approvalCommitProblems,
-  formatApprovalTrailer,
-  isApprovalCommit,
-  lastContentCommitAt,
-  parseApprovalTrailer,
-} from './approval.ts';
-import type { PullRequestCommit } from './approval.ts';
-import {
-  APPROVAL_COMMIT_AT,
-  CONTENT_COMMIT_AT,
-  LATER_CONTENT_COMMIT_AT,
-  MAIN_TIP_SHA,
-  OTHER_SHA,
-  PARENT_SHA,
-  PR_NUMBER,
-  RUN_ID,
-  approvalCommit,
-} from './fixtures/facts.ts';
+import { approvalCommitProblems, formatApprovalTrailer, parseApprovalTrailer } from './approval.ts';
+import { MAIN_TIP_SHA, OTHER_SHA, PARENT_SHA, PR_NUMBER, RUN_ID, approvalCommit } from './fixtures/facts.ts';
 
 const TRAILER = `Lectio-Approval: human run=${RUN_ID} head=${PARENT_SHA}`;
 
@@ -111,42 +94,5 @@ describe('approval commit validity', () => {
         `the PR number is unknown, so run ${RUN_ID} cannot be tied to it`,
       ]);
     }
-  });
-});
-
-describe('last content commit', () => {
-  const content = (committedAt: string): PullRequestCommit => ({
-    committedAt,
-    message: 'Add MT.20.1-16',
-    authorIsBot: false,
-    signatureVerified: false,
-  });
-  const approval = (committedAt: string, overrides: Partial<PullRequestCommit> = {}): PullRequestCommit => ({
-    committedAt,
-    message: `Approve MT.20.1-16\n\n${TRAILER}`,
-    authorIsBot: true,
-    signatureVerified: true,
-    ...overrides,
-  });
-
-  it('skips signed bot approval commits only', () => {
-    expect(isApprovalCommit(approval(APPROVAL_COMMIT_AT))).toBe(true);
-    expect(isApprovalCommit(approval(APPROVAL_COMMIT_AT, { authorIsBot: false }))).toBe(false);
-    expect(isApprovalCommit(approval(APPROVAL_COMMIT_AT, { signatureVerified: false }))).toBe(false);
-    expect(isApprovalCommit(content(CONTENT_COMMIT_AT))).toBe(false);
-  });
-
-  it('is the latest content commit time; an approval commit never resets it', () => {
-    expect(lastContentCommitAt([content(CONTENT_COMMIT_AT), approval(APPROVAL_COMMIT_AT)])).toBe(CONTENT_COMMIT_AT);
-    expect(
-      lastContentCommitAt([content(LATER_CONTENT_COMMIT_AT), content(CONTENT_COMMIT_AT), approval(APPROVAL_COMMIT_AT)]),
-    ).toBe(LATER_CONTENT_COMMIT_AT);
-    expect(lastContentCommitAt([approval(APPROVAL_COMMIT_AT, { authorIsBot: false })])).toBe(APPROVAL_COMMIT_AT);
-  });
-
-  it('is null without content commits and throws on a bad time', () => {
-    expect(lastContentCommitAt([])).toBeNull();
-    expect(lastContentCommitAt([approval(APPROVAL_COMMIT_AT)])).toBeNull();
-    expect(() => lastContentCommitAt([content('yesterday')])).toThrow('invalid commit time: yesterday');
   });
 });

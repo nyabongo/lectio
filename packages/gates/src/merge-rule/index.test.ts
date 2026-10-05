@@ -28,8 +28,18 @@ import {
   verdict,
   verifierResult,
 } from './fixtures/facts.ts';
-import { DECISIONS, GREEN_DECISIONS, MERGE_RULES, assess, decide, factsFromContext, mergeRuleGate } from './index.ts';
+import {
+  DECISIONS,
+  GREEN_DECISIONS,
+  MERGE_RULES,
+  UNREADABLE_CLAIMS,
+  assess,
+  decide,
+  factsFromChanges,
+  mergeRuleGate,
+} from './index.ts';
 import type { PullRequestFacts } from '../core/pull-request.ts';
+import type { ClaimRef } from './claims.ts';
 
 function config(autoMerge: Partial<LectioConfig['autoMerge']> = {}, contentRoot = '.'): LectioConfig {
   return {
@@ -43,8 +53,9 @@ function run(
   results: readonly GateResult[] = greenResults(),
   pr: Partial<PullRequestFacts> = {},
   cfg: LectioConfig = config(),
+  claims: readonly ClaimRef[] = [],
 ) {
-  return decide({ results, config: cfg, pr: prFacts(pr) });
+  return decide({ results, config: cfg, pr: prFacts(pr), claims });
 }
 
 const human = { handle: 'nyabongo', via: 'label', at: APPROVED_AT } as const;
@@ -210,6 +221,26 @@ describe('needs-review', () => {
     );
   });
 
+  it('needs a verifier record for every claim of the changed passages', () => {
+    const expected = [
+      { file: PASSAGE, claimId: 'c1' },
+      { file: PASSAGE, claimId: 'c2' },
+    ];
+    expect(run(greenResults(), {}, config(), expected).decision).toBe('auto-merge');
+    expect(run(greenResults([claim('c1')]), {}, config(), expected).reasons).toEqual([
+      `claim c2 (${PASSAGE}) has no verifier record`,
+    ]);
+    const unreadable = [{ file: 'passages/X.json', claimId: UNREADABLE_CLAIMS }];
+    const outcome = assess({ results: greenResults(), config: config(), pr: prFacts(), claims: unreadable });
+    expect(outcome.reasons).toEqual([
+      expect.objectContaining({
+        file: 'passages/X.json',
+        message: `claim ${UNREADABLE_CLAIMS} (passages/X.json) has no verifier record`,
+      }),
+    ]);
+    expect(outcome.reasons[0]).not.toHaveProperty('claimId');
+  });
+
   it('a protected path needs review even with perfect scores and every option off', () => {
     const relaxed = config({ passagesOnly: false, flagsRequireReview: false, sensitiveClaimsRequireReview: false });
     expect(run(greenResults(), { files: [PASSAGE, 'config/lectio.config.json'] }, relaxed)).toEqual({
@@ -289,7 +320,7 @@ describe('needs-review', () => {
 
 describe('assess', () => {
   it('keeps the rule behind each reason', () => {
-    const outcome = assess({ results: greenResults(), config: config(), pr: prFacts({ fork: true }) });
+    const outcome = assess({ results: greenResults(), config: config(), pr: prFacts({ fork: true }), claims: [] });
     expect(outcome.reasons.map((reason) => reason.rule.id)).toEqual([MERGE_RULES.sameRepository.id]);
   });
 });
@@ -326,6 +357,14 @@ describe('mergeRuleGate', () => {
     expect(mergeRuleGate.id).toBe('merge-rule');
     expect(mergeRuleGate.rules.length).toBe(Object.keys(MERGE_RULES).length);
     expect(() => ruleBookFor([mergeRuleGate])).not.toThrow();
+  });
+
+  it('checks verifier coverage against the claims of the changed passages at the head', async () => {
+    const head = { [PASSAGE]: { claims: [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }] } };
+    const result = await mergeRuleGate.run(contextFor([{ path: PASSAGE, status: 'modified' }], head));
+    expect(result.items.map((item) => [item.ruleId, item.claimId])).toEqual([
+      ['merge-rule/every-claim-verified', 'c3'],
+    ]);
   });
 
   it('reports a green decision as a passing result with an info item', async () => {
@@ -398,7 +437,7 @@ describe('mergeRuleGate', () => {
       { path: PASSAGE, status: 'modified' },
       { path: 'passages/JN.1.1-5.json', status: 'renamed', previousPath: PASSAGE },
     ];
-    expect(factsFromContext(contextFor(files, {}))).toEqual({
+    expect(factsFromChanges(contextFor(files, {}))).toEqual({
       files: [PASSAGE, 'passages/JN.1.1-5.json'],
       reviewEdits: [],
       approval: null,

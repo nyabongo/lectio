@@ -9,6 +9,11 @@
  * Runs triggered by `issue_comment` report main's tip as their head SHA, so that last check
  * cannot apply to them. Anything else is a forged approval.
  *
+ * Binding to the decided head: the merge-rule job writes `head=` as the SHA it decided on (never
+ * the branch tip re-read at commit time), so `trailer head == parent` ties every approval
+ * commit, `issue_comment` ones included, to the content the approval saw. If a push lands during
+ * the run, the commit's parent differs from `head=` and the commit is blocked.
+ *
  * An approval commit is not a content commit: it never resets the time of the last content
  * commit, so the approval it records still counts after it lands.
  */
@@ -82,33 +87,4 @@ export function approvalCommitProblems(commit: ApprovalCommit, prNumber: number)
   if (run.event === 'pull_request' && run.headSha !== commit.parentSha)
     problems.push(`pull_request run ${commit.runId} ran on ${run.headSha}, not on the parent ${commit.parentSha}`);
   return problems;
-}
-
-/** A commit as the CI job lists them, oldest first or in any order. */
-export interface PullRequestCommit {
-  /** ISO timestamp (committer date). */
-  readonly committedAt: string;
-  readonly message: string;
-  readonly authorIsBot: boolean;
-  readonly signatureVerified: boolean;
-}
-
-/** A bot-authored, signed commit with a well-formed approval trailer; it does not reset approvals. */
-export function isApprovalCommit(commit: PullRequestCommit): boolean {
-  return commit.authorIsBot && commit.signatureVerified && parseApprovalTrailer(commit.message) !== null;
-}
-
-/**
- * `PullRequestFacts.lastContentCommitAt`: the latest commit time among the PR's commits, approval
- * commits excluded; `null` when every commit is an approval commit (or there are none).
- */
-export function lastContentCommitAt(commits: readonly PullRequestCommit[]): string | null {
-  let latest: { at: string; time: number } | null = null;
-  for (const commit of commits) {
-    if (isApprovalCommit(commit)) continue;
-    const time = Date.parse(commit.committedAt);
-    if (Number.isNaN(time)) throw new RangeError(`invalid commit time: ${commit.committedAt}`);
-    if (latest === null || time > latest.time) latest = { at: commit.committedAt, time };
-  }
-  return latest?.at ?? null;
 }

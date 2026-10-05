@@ -22,6 +22,8 @@ import {
   LATER_CONTENT_COMMIT_AT,
   MAIN_TIP_SHA,
   OTHER_SHA,
+  PARENT_SHA,
+  RUN_ID,
   PASSAGE,
   approvalCommit,
   failResult,
@@ -31,9 +33,20 @@ import {
   verdict,
   verifierResult,
 } from '../../packages/gates/src/merge-rule/fixtures/facts.ts';
-import { decide, lastContentCommitAt, mergeRuleGate } from '../../packages/gates/src/merge-rule/index.ts';
-import type { Decision, VerifierClaimRecord } from '../../packages/gates/src/merge-rule/index.ts';
-import { REPO_ROOT, gateTest } from './helpers/gate-test.ts';
+import {
+  UNSEEN_COMMIT_AT,
+  decide,
+  lastContentCommitAt,
+  mergeRuleGate,
+} from '../../packages/gates/src/merge-rule/index.ts';
+import type {
+  ClaimRef,
+  Decision,
+  HeadObservation,
+  PullRequestCommit,
+  VerifierClaimRecord,
+} from '../../packages/gates/src/merge-rule/index.ts';
+import { REPO_ROOT, contentContext, gateTest } from './helpers/gate-test.ts';
 
 interface SeedPassage {
   readonly review: { readonly status: string };
@@ -61,6 +74,27 @@ const plainClaims = () => seedClaims((record) => ({ ...record, sensitive: false 
 const perfect = (claims = plainClaims()): GateResult[] => [...DETERMINISTIC_PASS, verifierResult(claims)];
 
 const config: LectioConfig = loadConfig(undefined, { cwd: REPO_ROOT });
+
+/** Every seed claim: auto-merge needs a verifier record for each. */
+const seedRefs: readonly ClaimRef[] = seed.claims.map((claim) => ({ file: PASSAGE, claimId: claim.id }));
+
+// PR commits and when GitHub saw each head (server time; git dates are not an input).
+const APPROVAL_SHA = 'd'.repeat(40);
+const EARLY_SHA = 'e'.repeat(40);
+const LATE_SHA = 'f'.repeat(40);
+const contentCommit = (sha: string, message = 'Edit MT.20.1-16'): PullRequestCommit => ({
+  sha,
+  message,
+  authorIsBot: false,
+  signatureVerified: false,
+});
+const approvalCommitOnList = (sha: string): PullRequestCommit => ({
+  sha,
+  message: `Approve MT.20.1-16\n\nLectio-Approval: human run=${RUN_ID} head=${PARENT_SHA}`,
+  authorIsBot: true,
+  signatureVerified: true,
+});
+const seen = (sha: string, seenAt: string): HeadObservation => ({ sha, seenAt });
 
 const label = { handle: 'nyabongo', via: 'label', at: APPROVED_AT } as const;
 const comment = { handle: 'nyabongo', via: 'comment', at: APPROVED_AT } as const;
@@ -97,6 +131,25 @@ const TABLE: Record<string, Row> = {
       approvalCommit: approvalCommit({ run: { event: 'issue_comment', headSha: MAIN_TIP_SHA } }),
     },
     decision: 'approved-commit',
+  },
+  'valid approval commit on a .github/** PR → approved-commit, merged by hand (manualMerge)': {
+    results: DETERMINISTIC_PASS,
+    pr: { files: [PASSAGE, '.github/workflows/content-gates.yml'], approvalCommit: approvalCommit() },
+    decision: 'approved-commit',
+    manualMerge: true,
+  },
+  'issue_comment approval whose commit landed on a moved branch (trailer head = decided SHA ≠ parent) → blocked': {
+    results: DETERMINISTIC_PASS,
+    pr: {
+      approval: comment,
+      approvalCommit: approvalCommit({
+        trailerHead: PARENT_SHA, // the SHA the approval was decided on
+        parentSha: OTHER_SHA, // a push landed during the run
+        run: { event: 'issue_comment', headSha: MAIN_TIP_SHA },
+      }),
+    },
+    decision: 'blocked',
+    because: "is not the commit's parent",
   },
   'valid approval commit but a deterministic gate failed → blocked': {
     results: [failResult('schema')],
@@ -176,19 +229,52 @@ const TABLE: Record<string, Row> = {
   'the merge-rule approval commit after an approval is not a new content commit → still human-approved': {
     results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
     pr: {
-      approval: label,
+      approval: label, // 10:05
       reviewEdits: [PASSAGE],
-      lastContentCommitAt: lastContentCommitAt([
-        { committedAt: CONTENT_COMMIT_AT, message: 'Add MT.20.1-16', authorIsBot: false, signatureVerified: false },
-        {
-          committedAt: APPROVAL_COMMIT_AT,
-          message: `Approve MT.20.1-16\n\nLectio-Approval: human run=9876543210 head=${'a'.repeat(40)}`,
-          authorIsBot: true,
-          signatureVerified: true,
-        },
-      ]),
+      lastContentCommitAt: lastContentCommitAt(
+        [contentCommit(PARENT_SHA), approvalCommitOnList(APPROVAL_SHA)],
+        [seen(PARENT_SHA, CONTENT_COMMIT_AT), seen(APPROVAL_SHA, APPROVAL_COMMIT_AT)],
+      ),
     },
     decision: 'human-approved',
+  },
+  'backdated commit (GIT_COMMITTER_DATE 09:00) pushed after the approval → needs-review': {
+    results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
+    pr: {
+      approval: label, // 10:05
+      // Git dates are not an input at all: only when GitHub saw each head counts.
+      lastContentCommitAt: lastContentCommitAt(
+        [contentCommit(PARENT_SHA), contentCommit(LATE_SHA, 'backdated to 09:00')],
+        [seen(PARENT_SHA, CONTENT_COMMIT_AT), seen(LATE_SHA, LATER_CONTENT_COMMIT_AT)],
+      ),
+    },
+    decision: 'needs-review',
+    because: `not after the last content commit at ${LATER_CONTENT_COMMIT_AT}`,
+  },
+  'commit made before the approval but pushed after it (with a newer one) → needs-review': {
+    results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
+    pr: {
+      approval: label, // 10:05
+      // c2 was committed locally at 10:01 and pushed at 10:10 together with c3; c2 is never a head.
+      lastContentCommitAt: lastContentCommitAt(
+        [contentCommit(PARENT_SHA), contentCommit(EARLY_SHA, 'committed 10:01'), contentCommit(LATE_SHA)],
+        [seen(PARENT_SHA, CONTENT_COMMIT_AT), seen(LATE_SHA, LATER_CONTENT_COMMIT_AT)],
+      ),
+    },
+    decision: 'needs-review',
+    because: `not after the last content commit at ${LATER_CONTENT_COMMIT_AT}`,
+  },
+  'current head not yet seen by GitHub → needs-review': {
+    results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
+    pr: {
+      approval: label,
+      lastContentCommitAt: lastContentCommitAt(
+        [contentCommit(PARENT_SHA), contentCommit(LATE_SHA)],
+        [seen(PARENT_SHA, CONTENT_COMMIT_AT)],
+      ),
+    },
+    decision: 'needs-review',
+    because: `not after the last content commit at ${UNSEEN_COMMIT_AT}`,
   },
   'approval from a handle not in config.reviewer.githubHandles → needs-review': {
     results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
@@ -240,6 +326,11 @@ const TABLE: Record<string, Row> = {
     ),
     decision: 'needs-review',
     because: 'refuter support 0.89 is below 0.9',
+  },
+  'verifiers left out one seed claim (c24), perfect scores on the rest → needs-review': {
+    results: perfect(plainClaims().filter((record) => record.claimId !== 'c24')),
+    decision: 'needs-review',
+    because: 'claim c24 (passages/MT.20.1-16.json) has no verifier record',
   },
   'one refutation → needs-review': {
     results: perfect(
@@ -320,7 +411,12 @@ const TABLE: Record<string, Row> = {
 
 describe('merge rule decision table (decision 003)', () => {
   it.each(Object.entries(TABLE))('%s', (_name, row) => {
-    const outcome = decide({ results: row.results, config: row.config ?? config, pr: prFacts(row.pr) });
+    const outcome = decide({
+      results: row.results,
+      config: row.config ?? config,
+      pr: prFacts(row.pr),
+      claims: seedRefs,
+    });
     expect(outcome.decision).toBe(row.decision);
     expect(outcome.manualMerge).toBe(row.manualMerge);
     if (row.because !== undefined) expect(outcome.reasons.join('\n')).toContain(row.because);
@@ -334,17 +430,36 @@ describe('merge rule decision table (decision 003)', () => {
 
   it('never returns close', () => {
     for (const row of Object.values(TABLE)) {
-      const { decision } = decide({ results: row.results, config: row.config ?? config, pr: prFacts(row.pr) });
+      const { decision } = decide({
+        results: row.results,
+        config: row.config ?? config,
+        pr: prFacts(row.pr),
+        claims: seedRefs,
+      });
       expect(decision).not.toBe('close');
     }
   });
 });
 
 describe('the merge-rule gate over the repository content', () => {
-  // A gate run sees no approvals and no verifier scores yet, so it flags for review; these rules
-  // hold for the committed content all the same.
+  // Fails if a committed passage arrives with an approved review block that no approval wrote.
   gateTest('merge-rule/review-block-approved', { gate: mergeRuleGate, allow: ['info'] });
-  gateTest('merge-rule/protected-path', { gate: mergeRuleGate });
-  gateTest('merge-rule/approval-commit-valid', { gate: mergeRuleGate });
-  gateTest('merge-rule/passages-only', { gate: mergeRuleGate, files: [PASSAGE] });
+
+  it('reads the seed claims from the working tree: perfect scores still flag the sensitive ones', async () => {
+    const context = { ...contentContext([PASSAGE]), results: perfect(seedClaims()) };
+    const result = await mergeRuleGate.run(context);
+    expect(result.status).toBe('flag');
+    const sensitive = seed.claims.filter((claim) => claim.sensitive).map((claim) => claim.id);
+    expect(result.items.map((item) => [item.ruleId, item.claimId])).toEqual(
+      sensitive.map((id) => ['merge-rule/sensitive-claim', id]),
+    );
+  });
+
+  it('flags a seed claim the verifiers left out', async () => {
+    const context = { ...contentContext([PASSAGE]), results: perfect(plainClaims().slice(1)) };
+    const result = await mergeRuleGate.run(context);
+    expect(result.items.map((item) => [item.ruleId, item.claimId])).toEqual([
+      ['merge-rule/every-claim-verified', seed.claims[0]?.id],
+    ]);
+  });
 });
