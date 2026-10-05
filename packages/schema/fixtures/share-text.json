@@ -1,0 +1,143 @@
+{
+  "description": "Test vectors for buildShareText (apps/web/src/lib/share.ts), reused by the Flutter app (L-107). The text is the reference, the one-line insight (left out when empty) and the link, one per line. Whitespace runs become one space; the reference is cut to 100 and the insight to 160 code points, ellipsis included, at the last space when that keeps at least half of the room (else mid-word), dropping punctuation before the ellipsis; the query string is dropped so no tracking parameters travel; the fragment stays. Each invalid input throws.",
+  "limits": {
+    "ref": 100,
+    "insight": 160
+  },
+  "vectors": [
+    {
+      "name": "insight",
+      "input": {
+        "ref": "“your eye evil” · Mt 20:1-16a, verse 15",
+        "insight": "An “evil eye” is a grudging, envious eye, not a curse.",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/notes/v15-evil-eye/"
+      },
+      "expected": "“your eye evil” · Mt 20:1-16a, verse 15\nAn “evil eye” is a grudging, envious eye, not a curse.\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/notes/v15-evil-eye/"
+    },
+    {
+      "name": "reading",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": "A landowner pays the last hired the same as the first.",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\nA landowner pays the last hired the same as the first.\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "day",
+      "input": {
+        "ref": "Twenty-fifth Sunday in Ordinary Time, Sunday 20 September 2026",
+        "insight": "A landowner pays the last hired the same as the first.",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/"
+      },
+      "expected": "Twenty-fifth Sunday in Ordinary Time, Sunday 20 September 2026\nA landowner pays the last hired the same as the first.\nhttps://nyabongo.github.io/lectio/2026-09-20/"
+    },
+    {
+      "name": "no-insight",
+      "input": {
+        "ref": "Is 55:6-9",
+        "insight": null,
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/first-reading/"
+      },
+      "expected": "Is 55:6-9\nhttps://nyabongo.github.io/lectio/2026-09-20/first-reading/"
+    },
+    {
+      "name": "empty-insight",
+      "input": {
+        "ref": "Is 55:6-9",
+        "insight": "   ",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/first-reading/"
+      },
+      "expected": "Is 55:6-9\nhttps://nyabongo.github.io/lectio/2026-09-20/first-reading/"
+    },
+    {
+      "name": "whitespace-collapsed",
+      "input": {
+        "ref": "  Mt 20:1-16a\n",
+        "insight": "Line one\n\tline  two. ",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\nLine one line two.\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "long-insight-truncated-at-word",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": "Matthew’s Greek has the landowner ask whether the grumbler’s eye is evil because he is good: in the idiom of the day an evil eye is a stingy, envious eye, not a magical curse, and the parable turns on that contrast between grudging and generous seeing.",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\nMatthew’s Greek has the landowner ask whether the grumbler’s eye is evil because he is good: in the idiom of the day an evil eye is a stingy, envious eye, not…\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "long-ref-truncated",
+      "input": {
+        "ref": "The Twenty-fifth Sunday in Ordinary Time, with the Memorial of Saints Andrew Kim Tae-gŏn, Paul Chŏng Ha-sang and Companions",
+        "insight": null,
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/"
+      },
+      "expected": "The Twenty-fifth Sunday in Ordinary Time, with the Memorial of Saints Andrew Kim Tae-gŏn, Paul…\nhttps://nyabongo.github.io/lectio/2026-09-20/"
+    },
+    {
+      "name": "long-word-cut-mid-word",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "tracking-parameters-dropped",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": null,
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/?utm_source=whatsapp&utm_medium=share&fbclid=abc"
+      },
+      "expected": "Mt 20:1-16a\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "fragment-kept",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": null,
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/?ref=x#note-v15-evil-eye"
+      },
+      "expected": "Mt 20:1-16a\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/#note-v15-evil-eye"
+    },
+    {
+      "name": "astral-characters-counted-once",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": "𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\n𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊…\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    }
+  ],
+  "invalid": [
+    {
+      "name": "relative-url",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": null,
+        "url": "/lectio/2026-09-20/gospel/"
+      }
+    },
+    {
+      "name": "non-http-url",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": null,
+        "url": "javascript:alert(1)"
+      }
+    },
+    {
+      "name": "empty-ref",
+      "input": {
+        "ref": " \n ",
+        "insight": "Something.",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      }
+    }
+  ]
+}
