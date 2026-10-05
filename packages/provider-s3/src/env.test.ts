@@ -49,7 +49,10 @@ describe('s3OptionsFromEnv', () => {
   );
 
   it('rejects a malformed account id', () => {
-    expect(() => s3OptionsFromEnv({ ...secrets, [S3_ENV.r2AccountId]: 'evil.example.org/x' })).toThrow(ProviderError);
+    const env = { ...secrets, [S3_ENV.r2AccountId]: 'evil.example.org/x' };
+    expect(() => s3OptionsFromEnv(env)).toThrow(ProviderError);
+    expect(hasS3Secrets(env)).toBe(false);
+    expect(() => s3StorageProvider(context(env))).toThrow(/invalid Cloudflare account id/);
   });
 
   it('reports complete secrets', () => {

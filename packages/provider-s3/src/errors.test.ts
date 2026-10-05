@@ -14,7 +14,11 @@ describe('isMissingObject', () => {
   it('recognises missing keys', () => {
     expect(isMissingObject(new NoSuchKey({ message: 'gone', $metadata: meta(404) }))).toBe(true);
     expect(isMissingObject(new NotFound({ message: 'gone', $metadata: meta(404) }))).toBe(true);
-    expect(isMissingObject(serviceError('UnknownError', 404))).toBe(true);
+  });
+
+  it('surfaces 404s that are not a missing key', () => {
+    expect(isMissingObject(serviceError('UnknownError', 404))).toBe(false);
+    expect(isMissingObject(new NotFound({ message: 'odd', $metadata: meta(400) }))).toBe(false);
   });
 
   it('does not treat a missing bucket or other failures as a missing key', () => {
@@ -29,6 +33,7 @@ describe('isMissingObject', () => {
 describe('toProviderError', () => {
   it.each([
     [serviceError('TimeoutError'), 'timeout', true],
+    [Object.assign(new Error('aborted'), { name: 'AbortError' }), 'invalid-request', false],
     [serviceError('RequestTimeout', 400), 'timeout', true],
     [serviceError('Whatever', 408), 'timeout', true],
     [Object.assign(new Error('socket'), { code: 'ETIMEDOUT' }), 'timeout', true],

@@ -48,9 +48,16 @@ export function s3OptionsFromEnv(env: Env, publicBaseUrl = ''): S3ObjectStorageO
   };
 }
 
-/** True when `env` holds every secret {@link s3OptionsFromEnv} needs. */
+/**
+ * True when `env` holds every secret {@link s3OptionsFromEnv} needs. Never throws: a
+ * malformed `R2_ACCOUNT_ID` returns `false` here and is reported by {@link s3StorageProvider}.
+ */
 export function hasS3Secrets(env: Env): boolean {
-  return s3OptionsFromEnv(env) !== null;
+  try {
+    return s3OptionsFromEnv(env) !== null;
+  } catch {
+    return false;
+  }
 }
 
 /**

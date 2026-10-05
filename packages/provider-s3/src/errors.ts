@@ -8,12 +8,14 @@ interface SdkErrorShape {
   readonly $metadata?: { readonly httpStatusCode?: unknown };
 }
 
-const TIMEOUT_NAMES = new Set(['TimeoutError', 'RequestTimeout', 'RequestTimeoutException', 'AbortError']);
+const TIMEOUT_NAMES = new Set(['TimeoutError', 'RequestTimeout', 'RequestTimeoutException']);
 const THROTTLE_NAMES = new Set(['SlowDown', 'Throttling', 'ThrottlingException', 'TooManyRequestsException']);
 
 function codeFor(error: SdkErrorShape): ProviderErrorCode {
   const name = typeof error.name === 'string' ? error.name : '';
   const status = typeof error.$metadata?.httpStatusCode === 'number' ? error.$metadata.httpStatusCode : undefined;
+  // The caller cancelled through an AbortSignal: not a timeout, and retrying would defy the caller.
+  if (name === 'AbortError') return 'invalid-request';
   if (TIMEOUT_NAMES.has(name) || error.code === 'ETIMEDOUT' || status === 408) return 'timeout';
   if (THROTTLE_NAMES.has(name) || status === 429) return 'rate-limited';
   if (status === 501) return 'unsupported';
@@ -24,13 +26,18 @@ function codeFor(error: SdkErrorShape): ProviderErrorCode {
   return 'unavailable';
 }
 
-/** True when the SDK error says the object (not the bucket) does not exist. */
+/**
+ * True when the SDK error says the key does not exist: `NoSuchKey` (GET) or `NotFound`
+ * (the SDK's name for a bodiless HEAD 404). Other 404s, such as `NoSuchBucket`, are errors.
+ *
+ * A HEAD response has no body, so a 404 from a wrong bucket or a misconfigured endpoint
+ * also arrives as `NotFound` and reads as a missing key. If `head` returns `null` for an
+ * object that should exist, check `S3_BUCKET` and `S3_ENDPOINT` first.
+ */
 export function isMissingObject(error: unknown): boolean {
   if (typeof error !== 'object' || error === null) return false;
   const { name, $metadata } = error as SdkErrorShape;
-  if (name === 'NoSuchKey' || name === 'NotFound') return true;
-  // HEAD responses have no body, so a 404 carries no error code: treat it as a missing key.
-  return name !== 'NoSuchBucket' && $metadata?.httpStatusCode === 404;
+  return (name === 'NoSuchKey' || name === 'NotFound') && $metadata?.httpStatusCode === 404;
 }
 
 /** Maps an `@aws-sdk/client-s3` failure onto a {@link ProviderError}. */

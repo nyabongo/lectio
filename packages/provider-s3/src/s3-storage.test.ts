@@ -6,14 +6,15 @@ import {
   PutObjectCommand,
   S3ServiceException,
 } from '@aws-sdk/client-s3';
-import { ProviderError } from '@lectio/providers';
+import { MemoryObjectStorage, ProviderError } from '@lectio/providers';
+import type { ObjectStorage } from '@lectio/providers';
 import { server } from '@lectio/shared/test-server';
 import { HttpResponse, http } from 'msw';
 import { describe, expect, it } from 'vitest';
 
 import { IMMUTABLE_CACHE_CONTROL, NO_CACHE_CONTROL } from './cache-control.ts';
 import { mockBucket } from './fixtures/mock-bucket.ts';
-import { DEFAULT_CONTENT_TYPE, S3ObjectStorage, r2Endpoint } from './s3-storage.ts';
+import { DEFAULT_CONTENT_TYPE, S3ObjectStorage, isS3ObjectStorage, publicUrlFor, r2Endpoint } from './s3-storage.ts';
 
 const meta = (httpStatusCode: number) => ({ httpStatusCode, attempts: 1, totalRetryDelay: 0 });
 const HASH = '3f9a0c2b7d4e5f6011223344aabbccdd';
@@ -223,10 +224,21 @@ describe('S3ObjectStorage list', () => {
     const { storage, mock } = setup();
     mock.on(ListObjectsV2Command).resolvesOnce({
       Contents: [{}, { Key: 'gone' }],
-      IsTruncated: true,
+      IsTruncated: false,
       $metadata: meta(200),
     });
     expect(await storage.list()).toEqual([]);
+  });
+
+  it('fails on a truncated page without a continuation token', async () => {
+    const { storage, mock } = setup();
+    mock
+      .on(ListObjectsV2Command)
+      .resolvesOnce({ Contents: [{ Key: 'a' }], IsTruncated: true, $metadata: meta(200) })
+      .resolvesOnce({ Contents: [{ Key: 'a' }], IsTruncated: true, NextContinuationToken: '', $metadata: meta(200) });
+    expect((await rejection(storage.list('p/'))).code).toBe('malformed-output');
+    const error = await rejection(storage.list('p/'));
+    expect(error.message).toBe('s3 list "p/" is truncated but has no continuation token');
   });
 
   it('keeps at most listConcurrency HEAD requests in flight', async () => {
@@ -286,6 +298,20 @@ describe('S3ObjectStorage options', () => {
   it('refuses public URLs without a base', () => {
     const storage = new S3ObjectStorage({ bucket: 'b', client: mockBucket().client });
     expect(() => storage.publicUrl('x')).toThrow(expect.objectContaining({ code: 'unsupported' }));
+    expect(() => publicUrlFor('', 'x')).toThrow(expect.objectContaining({ code: 'unsupported' }));
+  });
+
+  it('builds public URLs without a storage instance', () => {
+    expect(publicUrlFor('https://audio.example.org/', `audio/en/${HASH}.mp3`)).toBe(
+      `https://audio.example.org/audio/en/${HASH}.mp3`,
+    );
+    expect(() => publicUrlFor('https://audio.example.org/', 'a//b')).toThrow(ProviderError);
+  });
+
+  it('narrows an ObjectStorage to S3ObjectStorage', () => {
+    const storage: ObjectStorage = new S3ObjectStorage({ bucket: 'b', client: mockBucket().client });
+    expect(isS3ObjectStorage(storage)).toBe(true);
+    expect(isS3ObjectStorage(new MemoryObjectStorage())).toBe(false);
   });
 
   it('derives the R2 endpoint from an account id', () => {
@@ -295,7 +321,8 @@ describe('S3ObjectStorage options', () => {
   });
 });
 
-describe('S3ObjectStorage over HTTP (msw)', () => {
+// The shared msw guard is off under LECTIO_LIVE=1 (npm run test:live), so these would reach the real host.
+describe.skipIf(process.env['LECTIO_LIVE'] === '1')('S3ObjectStorage over HTTP (msw)', () => {
   const endpoint = 'https://acct.r2.cloudflarestorage.com';
   const build = () =>
     new S3ObjectStorage({

@@ -41,6 +41,25 @@ export interface S3ObjectStorageOptions {
   readonly listConcurrency?: number;
 }
 
+/**
+ * The public URL of `key` under `publicBaseUrl` (`config.tts.storage.publicBaseUrl`), with
+ * each path segment percent-encoded. Works with any `ObjectStorage`, since the shared
+ * interface has no URL method. Throws `unsupported` when the base URL is `''`.
+ */
+export function publicUrlFor(publicBaseUrl: string, key: string): string {
+  assertValidKey(key);
+  if (publicBaseUrl === '') {
+    throw new ProviderError('unsupported', 'no public base URL is configured for the audio bucket');
+  }
+  const base = publicBaseUrl.endsWith('/') ? publicBaseUrl : `${publicBaseUrl}/`;
+  return base + key.split('/').map(encodeURIComponent).join('/');
+}
+
+/** Narrows an `ObjectStorage` (for example `createProviders(...).storage`) to {@link S3ObjectStorage}. */
+export function isS3ObjectStorage(storage: ObjectStorage): storage is S3ObjectStorage {
+  return storage instanceof S3ObjectStorage;
+}
+
 /** The S3 API endpoint of a Cloudflare account's R2 storage. */
 export function r2Endpoint(accountId: string): string {
   if (!/^[0-9a-z]+$/i.test(accountId)) {
@@ -202,7 +221,14 @@ export class S3ObjectStorage implements ObjectStorage {
       for (const object of page.Contents ?? []) {
         if (object.Key !== undefined) keys.push(object.Key);
       }
-      token = page.IsTruncated ? page.NextContinuationToken : undefined;
+      token = undefined;
+      if (page.IsTruncated) {
+        if (page.NextContinuationToken === undefined || page.NextContinuationToken === '') {
+          // Stopping here would return a silently short listing.
+          throw new ProviderError('malformed-output', `s3 list "${prefix}" is truncated but has no continuation token`);
+        }
+        token = page.NextContinuationToken;
+      }
     } while (token !== undefined);
     // S3 sorts by UTF-8 bytes; sort by JS string order to match the other ObjectStorage implementations.
     keys.sort();
@@ -212,15 +238,10 @@ export class S3ObjectStorage implements ObjectStorage {
   }
 
   /**
-   * The public URL of `key` under `publicBaseUrl`, with each path segment percent-encoded.
+   * The public URL of `key` under `publicBaseUrl` (see {@link publicUrlFor}).
    * Throws `unsupported` when the bucket has no public base URL.
    */
   publicUrl(key: string): string {
-    assertValidKey(key);
-    if (this.#publicBaseUrl === '') {
-      throw new ProviderError('unsupported', `no public base URL is configured for bucket "${this.bucket}"`);
-    }
-    const base = this.#publicBaseUrl.endsWith('/') ? this.#publicBaseUrl : `${this.#publicBaseUrl}/`;
-    return base + key.split('/').map(encodeURIComponent).join('/');
+    return publicUrlFor(this.#publicBaseUrl, key);
   }
 }
