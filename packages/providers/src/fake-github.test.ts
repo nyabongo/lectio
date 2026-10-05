@@ -372,6 +372,42 @@ describe('FakeGitHubClient checks and workflows', () => {
     expect(pinned.id).toBe(42);
   });
 
+  it('lists the artifacts a run uploaded', async () => {
+    const { bot } = setup();
+    const run = bot.addWorkflowRun({
+      workflowFile: 'content-gates.yml',
+      event: 'workflow_run',
+      headSha: 'abc',
+      headBranch: 'main',
+      prNumbers: [],
+      status: 'completed',
+      conclusion: 'success',
+      actor: OWNER,
+    });
+    expect(await bot.listRunArtifacts(run.id)).toEqual([]);
+    bot.addRunArtifact(run.id, 'z');
+    bot.addRunArtifact(run.id, 'a');
+    expect(await bot.listRunArtifacts(run.id)).toEqual(['a', 'z']);
+    await expect(bot.listRunArtifacts(1)).rejects.toThrow(/no workflow run/);
+  });
+
+  it('publishes check runs and allows an empty commit only when asked', async () => {
+    const { bot } = setup();
+    const sha = bot.headOf('main');
+    const input = { name: 'merge-rule', headSha: sha, conclusion: 'failure' as const, title: 't', summary: 's' };
+    expect(await bot.createCheckRun(input)).toEqual({
+      name: 'merge-rule',
+      headSha: sha,
+      status: 'completed',
+      conclusion: 'failure',
+    });
+    expect(bot.publishedChecks).toEqual([{ ...input, actor: bot.actor }]);
+    await expect(bot.commitFiles({ branch: 'main', message: 'x', files: [] })).rejects.toThrow(/at least one file/);
+    const empty = await bot.commitFiles({ branch: 'main', message: 'x', files: [], allowEmpty: true });
+    expect(empty.parents).toEqual([sha]);
+    expect(bot.fileAt(empty.sha, 'README.md')).toBe(bot.fileAt(sha, 'README.md'));
+  });
+
   it('lists the runs of a head sha, oldest first, with titles and server timestamps', async () => {
     const { bot } = setup();
     const fake = new FakeGitHubClient({

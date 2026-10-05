@@ -35,6 +35,11 @@ export interface CommitFilesInput {
   readonly files: readonly FileChange[];
   /** Rejects with a `conflict` error when the branch head is not this sha. */
   readonly expectedHeadSha?: string;
+  /**
+   * Allows `files: []`: a commit with the head's tree that changes nothing (an approval commit on a
+   * PR without a review block to write). Default false.
+   */
+  readonly allowEmpty?: boolean;
 }
 
 export type PrState = 'open' | 'closed' | 'merged';
@@ -131,6 +136,16 @@ export interface RequiredChecksResult {
   /** Every awaited check completed as success, neutral or skipped. */
   readonly ok: boolean;
   readonly checks: readonly CheckRun[];
+}
+
+/** A completed check run to publish on a commit (Checks API). */
+export interface CreateCheckRunInput {
+  readonly name: string;
+  readonly headSha: string;
+  readonly conclusion: CheckConclusion;
+  readonly title: string;
+  /** Markdown; GitHub truncates above 65,535 characters. */
+  readonly summary: string;
 }
 
 export interface WorkflowRun {
@@ -237,6 +252,18 @@ export interface GitHubClient {
    * `pull_request` runs of content-gates.yml (`headObservationsFromRuns`).
    */
   listRunsForSha(sha: string): Promise<readonly WorkflowRun[]>;
+  /**
+   * Publishes a completed check run on `headSha` (Checks API, `checks: write`). The trusted
+   * content-gates workflow (L-031) reports `merge-rule` on the PR head this way, because its own
+   * jobs report on main.
+   */
+  createCheckRun(input: CreateCheckRunInput): Promise<CheckRun>;
+  /**
+   * Names of the artifacts workflow run `id` uploaded (expired ones included), sorted. Only a run's
+   * own jobs can upload to it, so an artifact name is evidence of what that run did: the trusted
+   * merge-rule job (L-031) names one after the PR and head it approves before writing the commit.
+   */
+  listRunArtifacts(id: number): Promise<readonly string[]>;
 }
 
 /** The hidden HTML comment that marks a sticky comment or issue. */

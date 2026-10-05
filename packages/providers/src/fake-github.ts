@@ -6,6 +6,7 @@ import type {
   CheckRun,
   CommitFilesInput,
   CreateBranchInput,
+  CreateCheckRunInput,
   GitCommit,
   GitHubClient,
   Issue,
@@ -129,6 +130,8 @@ class FakeRepo {
   readonly repoLabels = new Set<string>();
   readonly dispatches: FakeDispatch[] = [];
   readonly merges: FakeMerge[] = [];
+  readonly checkOutputs: (CreateCheckRunInput & { readonly actor: string })[] = [];
+  readonly artifacts = new Map<number, string[]>();
   #seq = 0;
   #lastMs = -Infinity;
   #nextNumber = 1;
@@ -414,7 +417,8 @@ export class FakeGitHubClient implements GitHubClient {
     if (input.expectedHeadSha !== undefined && input.expectedHeadSha !== branch.head) {
       throw new ProviderError('conflict', `${input.branch} is at ${branch.head}, not ${input.expectedHeadSha}`);
     }
-    if (input.files.length === 0) throw new ProviderError('invalid-request', 'a commit needs at least one file');
+    if (input.files.length === 0 && input.allowEmpty !== true)
+      throw new ProviderError('invalid-request', 'a commit needs at least one file');
     const tree = new Map(repo.getCommit(branch.head).tree);
     for (const file of input.files) {
       if (file.content === null) tree.delete(file.path);
@@ -696,6 +700,34 @@ export class FakeGitHubClient implements GitHubClient {
     const run = this.#repo.runs.get(id);
     if (!run) throw new ProviderError('not-found', `no workflow run ${id}`);
     return run;
+  }
+
+  async createCheckRun(input: CreateCheckRunInput): Promise<CheckRun> {
+    const run: CheckRun = {
+      name: input.name,
+      headSha: input.headSha,
+      status: 'completed',
+      conclusion: input.conclusion,
+    };
+    this.#repo.setCheck(run);
+    this.#repo.checkOutputs.push({ ...input, actor: this.actor });
+    return run;
+  }
+
+  /** Records an artifact uploaded by run `id` (only that run's jobs can do this on GitHub). */
+  addRunArtifact(id: number, name: string): void {
+    const names = this.#repo.artifacts.get(id) ?? [];
+    this.#repo.artifacts.set(id, [...names, name]);
+  }
+
+  async listRunArtifacts(id: number): Promise<readonly string[]> {
+    if (!this.#repo.runs.has(id)) throw new ProviderError('not-found', `no workflow run ${id}`);
+    return [...(this.#repo.artifacts.get(id) ?? [])].sort();
+  }
+
+  /** Every check run published through `createCheckRun`, oldest first. */
+  get publishedChecks(): readonly (CreateCheckRunInput & { readonly actor: string })[] {
+    return [...this.#repo.checkOutputs];
   }
 
   async listRunsForSha(sha: string): Promise<readonly WorkflowRun[]> {
