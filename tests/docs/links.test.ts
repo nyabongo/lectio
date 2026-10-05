@@ -17,7 +17,7 @@ describe('repository docs', () => {
     ...markdownFiles(join(repoRoot, 'docs')),
   ];
 
-  it('covers README.md, CONTRIBUTING.md, config/README.md, the operator handbook and the API reference', () => {
+  it('covers README.md, CONTRIBUTING.md, config/README.md, the operator handbook, the API reference and the runbooks', () => {
     const shown = files.map((file) => file.slice(repoRoot.length));
     expect(shown).toEqual(
       expect.arrayContaining([
@@ -26,6 +26,8 @@ describe('repository docs', () => {
         'config/README.md',
         'docs/operator-handbook.md',
         'docs/api.md',
+        'docs/runbooks/research-cli.md',
+        'docs/runbooks/mobile-rc.md',
       ]),
     );
   });
