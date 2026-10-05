@@ -29,22 +29,30 @@ export interface ShareTextInput {
   readonly url: string;
 }
 
-/** `text` on one line: runs of whitespace (newlines included) become one space, and the ends are trimmed. */
+/**
+ * The whitespace the share text collapses: U+0020 SPACE and U+0009–U+000D (tab, line feed, vertical tab, form feed,
+ * carriage return) only. Other spaces (NBSP, U+2009, U+FEFF…) are kept as they are, so every platform agrees.
+ */
+const WHITESPACE_RUN = /[\t\n\v\f\r ]+/g;
+
+/** `text` on one line: runs of whitespace (see `WHITESPACE_RUN`) become one space, and the ends are trimmed. */
 export function oneLine(text: string): string {
-  return text.replace(/\s+/gu, ' ').trim();
+  return text.replace(WHITESPACE_RUN, ' ').replace(/^ | $/g, '');
 }
 
 /**
- * `text` (already on one line) cut to at most `max` characters (code points), ellipsis included: at the last space
- * that keeps at least half of the room, else mid-word. Trailing punctuation before the ellipsis is dropped.
+ * `text` (already on one line) cut to at most `max` code points, ellipsis included. Everything counts code points:
+ * the room is the first `max - 1` code points; the cut is at the last U+0020 in the room when its code-point index is
+ * at least half the room's length (rounded down), else at the end of the room (mid-word). Trailing spaces and
+ * `,;:.–—-` before the ellipsis are dropped.
  */
 export function truncate(text: string, max: number): string {
-  const chars = [...text];
+  const chars = Array.from(text);
   if (chars.length <= max) return text;
-  const room = chars.slice(0, max - 1).join('');
+  const room = chars.slice(0, max - 1);
   const space = room.lastIndexOf(' ');
-  const cut = space >= Math.floor(room.length / 2) ? room.slice(0, space) : room;
-  return `${cut.replace(/[\s,;:.–—-]+$/u, '')}${ELLIPSIS}`;
+  const cut = (space >= Math.floor(room.length / 2) ? room.slice(0, space) : room).join('');
+  return `${cut.replace(/[ ,;:.–—-]+$/u, '')}${ELLIPSIS}`;
 }
 
 /**
@@ -129,10 +137,11 @@ export interface ShareNavigator {
 }
 
 /**
- * How a share attempt ended: `shared` (the sheet completed), `cancelled` (the person closed the sheet) or
- * `fallback` (no Web Share, it refused the payload, or it failed: show the fallback popover instead).
+ * How a share attempt ended: `shared` (the sheet completed), `cancelled` (the person closed the sheet), `busy`
+ * (an earlier share is still pending: `InvalidStateError`, nothing to do) or `fallback` (no Web Share, it refused
+ * the payload, or it failed: show the fallback popover instead).
  */
-export type ShareOutcome = 'shared' | 'cancelled' | 'fallback';
+export type ShareOutcome = 'shared' | 'cancelled' | 'busy' | 'fallback';
 
 /** Opens the native share sheet when the browser has one, and says whether the fallback is needed. */
 export async function nativeShare(nav: ShareNavigator, payload: SharePayload): Promise<ShareOutcome> {
@@ -142,7 +151,9 @@ export async function nativeShare(nav: ShareNavigator, payload: SharePayload): P
     await nav.share(payload);
     return 'shared';
   } catch (error) {
-    return error instanceof Error && error.name === 'AbortError' ? 'cancelled' : 'fallback';
+    const name = error instanceof Error ? error.name : '';
+    if (name === 'AbortError') return 'cancelled';
+    return name === 'InvalidStateError' ? 'busy' : 'fallback';
   }
 }
 

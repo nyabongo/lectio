@@ -1,5 +1,5 @@
 {
-  "description": "Test vectors for buildShareText (apps/web/src/lib/share.ts), reused by the Flutter app (L-107). The text is the reference, the one-line insight (left out when empty) and the link, one per line. Whitespace runs become one space; the reference is cut to 100 and the insight to 160 code points, ellipsis included, at the last space when that keeps at least half of the room (else mid-word), dropping punctuation before the ellipsis; the query string is dropped so no tracking parameters travel; the fragment stays. Each invalid input throws.",
+  "description": "Test vectors for buildShareText (apps/web/src/lib/share.ts), reused by the Flutter app (L-107). The text is the reference, the one-line insight (left out when empty) and the link, one per line. Whitespace means U+0020 SPACE and U+0009–U+000D (tab, line feed, vertical tab, form feed, carriage return) only: each run of it becomes one space and it is trimmed from both ends; every other space (NBSP, U+2009, U+FEFF…) is kept as is. Lengths, the room and the word-boundary search all count Unicode code points (Dart: runes), never UTF-16 units; the reference is cut to 100 and the insight to 160 code points, ellipsis included, the room is the first limit−1 code points, cut at the last U+0020 in it when that index is at least floor(room/2), else at the end of the room (mid-word), then trailing U+0020 and ,;:.–—- are dropped before the ellipsis; the query string is dropped so no tracking parameters travel; the fragment stays. Each invalid input throws.",
   "limits": {
     "ref": 100,
     "insight": 160
@@ -103,6 +103,33 @@
         "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/?ref=x#note-v15-evil-eye"
       },
       "expected": "Mt 20:1-16a\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/#note-v15-evil-eye"
+    },
+    {
+      "name": "astral-characters-before-the-cut-space",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": "𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊 word word word word word word word word word word word word word word word word word word word word ",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\n𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊 word word word word word word word word word word word word word word word…\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "astral-characters-space-in-first-half-by-code-points",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": "𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\n𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊𝔊 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
+    },
+    {
+      "name": "nbsp-and-other-spaces-kept",
+      "input": {
+        "ref": "Mt 20:1-16a",
+        "insight": " Goodness and﻿ envy\t\u000b\f\r\n ",
+        "url": "https://nyabongo.github.io/lectio/2026-09-20/gospel/"
+      },
+      "expected": "Mt 20:1-16a\n Goodness and﻿ envy\nhttps://nyabongo.github.io/lectio/2026-09-20/gospel/"
     },
     {
       "name": "astral-characters-counted-once",

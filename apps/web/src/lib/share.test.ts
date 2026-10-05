@@ -60,6 +60,11 @@ describe('share text vectors (packages/schema/fixtures/share-text.json)', () => 
 describe('oneLine and truncate', () => {
   it('collapses whitespace', () => {
     expect(oneLine('  a\n\tb  c ')).toBe('a b c');
+    expect(oneLine('\r\na\vb\fc\r')).toBe('a b c');
+  });
+
+  it('keeps spaces outside U+0020 and U+0009–U+000D', () => {
+    expect(oneLine('\u00a0a\u2009b\ufeff')).toBe('\u00a0a\u2009b\ufeff');
   });
 
   it('leaves short text alone and cuts long text with an ellipsis', () => {
@@ -69,6 +74,11 @@ describe('oneLine and truncate', () => {
     expect(truncate('one two, three', 10)).toBe('one two…');
     expect(truncate('abcdefghijkl', 6)).toBe('abcde…');
     expect(truncate('.........', 5)).toBe('…');
+  });
+
+  it('counts code points when it looks for the word boundary', () => {
+    expect(truncate('𝔊𝔊𝔊𝔊 abcdefghzz', 12)).toBe('𝔊𝔊𝔊𝔊 abcdef…');
+    expect(truncate('𝔊𝔊𝔊𝔊𝔊𝔊 ab cdefgh', 12)).toBe('𝔊𝔊𝔊𝔊𝔊𝔊 ab…');
   });
 });
 
@@ -151,6 +161,8 @@ describe('nativeShare', () => {
   it('treats an AbortError as cancelled and any other failure as a fallback', async () => {
     const abort = Object.assign(new Error('closed'), { name: 'AbortError' });
     expect(await nativeShare({ share: () => Promise.reject(abort) }, payload)).toBe('cancelled');
+    const pending = Object.assign(new Error('earlier share pending'), { name: 'InvalidStateError' });
+    expect(await nativeShare({ share: () => Promise.reject(pending) }, payload)).toBe('busy');
     expect(await nativeShare({ share: () => Promise.reject(new Error('NotAllowed')) }, payload)).toBe('fallback');
     expect(await nativeShare({ share: () => Promise.reject(new Error('x')) }, payload)).toBe('fallback');
     expect(await nativeShare({ share: () => Promise.reject('AbortError') }, payload)).toBe('fallback');

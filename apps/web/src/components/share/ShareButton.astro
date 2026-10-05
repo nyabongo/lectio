@@ -96,11 +96,16 @@ const id = `share-${path.replace(/[^\w-]+/g, '-').replace(/^-+|-+$/g, '')}`;
     const messages = JSON.parse(root.dataset.messages ?? '{}') as Record<string, string>;
     const nav = navigator as unknown as ShareNavigator;
 
+    // Set while the native sheet is open, so a second tap neither shares again nor opens the popover behind it.
+    let pending = false;
     summary.addEventListener('click', (event) => {
       // An open popover closes as usual; a closed one tries the native sheet first.
       if (root.open || typeof nav.share !== 'function') return;
       event.preventDefault();
+      if (pending) return;
+      pending = true;
       void nativeShare(nav, config.payload).then((outcome) => {
+        pending = false;
         if (outcome === 'fallback') root.open = true;
       });
     });

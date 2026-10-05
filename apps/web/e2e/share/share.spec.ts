@@ -52,7 +52,7 @@ declare global {
 }
 
 /** Replaces `navigator.share` before any page script runs: it records each payload, then resolves or rejects. */
-async function stubShare(page: Page, outcome: 'resolve' | 'abort' | 'fail' = 'resolve'): Promise<void> {
+async function stubShare(page: Page, outcome: 'resolve' | 'abort' | 'fail' | 'pending' = 'resolve'): Promise<void> {
   await page.addInitScript((mode) => {
     window.__shared = [];
     Object.defineProperty(Navigator.prototype, 'share', {
@@ -60,6 +60,8 @@ async function stubShare(page: Page, outcome: 'resolve' | 'abort' | 'fail' = 're
       value: (data: unknown) => {
         window.__shared?.push(data);
         if (mode === 'resolve') return Promise.resolve();
+        // A sheet that stays open: the promise never settles.
+        if (mode === 'pending') return new Promise<void>(() => undefined);
         return Promise.reject(new DOMException('stub', mode === 'abort' ? 'AbortError' : 'NotAllowedError'));
       },
     });
@@ -101,6 +103,16 @@ test.describe('Share with Web Share', () => {
     await stubShare(page, 'abort');
     await page.goto(`${BUILD_DATE}/gospel/`);
     await ready(page);
+    await shareButton(page).click();
+    await expect.poll(() => page.evaluate(() => window.__shared?.length)).toBe(1);
+    await expect(popover(page)).toBeHidden();
+  });
+
+  test('a second tap while the sheet is open does nothing', async ({ page }) => {
+    await stubShare(page, 'pending');
+    await page.goto(`${BUILD_DATE}/gospel/`);
+    await ready(page);
+    await shareButton(page).click();
     await shareButton(page).click();
     await expect.poll(() => page.evaluate(() => window.__shared?.length)).toBe(1);
     await expect(popover(page)).toBeHidden();
