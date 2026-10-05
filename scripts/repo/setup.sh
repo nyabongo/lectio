@@ -31,8 +31,8 @@
 #   updated in place.
 # - Pages: source set to GitHub Actions (the deploy workflow itself is L-062).
 # - Environment `llm-verifiers`, deployable only from protected branches (main). Recommended home for
-#   ANTHROPIC_API_KEY and OPENAI_API_KEY; moving the secrets there and adding
-#   `environment: llm-verifiers` to the verifiers job in content-gates.yml are follow-ups.
+#   ANTHROPIC_API_KEY and OPENAI_API_KEY, which the verifiers job in content-gates.yml runs in. Move
+#   the keys there by hand, then delete the repository-level copies.
 #
 # Required-check rule (also in CONTRIBUTING.md, "Workflows and required checks"): a workflow whose
 # jobs are required checks never uses trigger-level `paths:`/`paths-ignore:` (a filtered check never
