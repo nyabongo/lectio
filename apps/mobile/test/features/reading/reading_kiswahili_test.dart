@@ -32,7 +32,9 @@ void main() {
           locale: Locale('sw'),
           supportedLocales: supportedLocales,
           localizationsDelegates: lectioLocalizationsDelegates,
-          home: Scaffold(body: ReadingScreen(date: seedDate, slot: 'gospel')),
+          home: Scaffold(
+            body: ReadingScreen(date: seedDate, slot: 'gospel'),
+          ),
         ),
       ),
     );
