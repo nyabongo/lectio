@@ -19,6 +19,11 @@ const int reminderDays = 7;
 /// to pass is not scheduled in the past.
 const Duration reminderMinimumLead = Duration(minutes: 1);
 
+/// How long scheduling waits for the celebration names. They are read all
+/// at once, so this caps the whole wait; a day not read by then gets the
+/// fallback title.
+const Duration defaultCelebrationTimeout = Duration(seconds: 5);
+
 /// The reminder's text (L-114 translates it).
 abstract final class ReminderStrings {
   /// The title when the day's celebration is unknown.
@@ -70,19 +75,26 @@ List<DateTime> upcomingReminderTimes(
 ///
 /// When permission is refused, [permissionRefusals] emits so the app can
 /// say why the switch turned off. [followAppResume] reschedules each time
-/// the app comes back to the foreground, which moves the 7-day window on.
+/// the app comes back to the foreground, which moves the 7-day window on;
+/// when notifications were turned off in the system settings meanwhile, it
+/// switches the reminder off the same way.
 ///
-/// Work runs one task at a time, in order. A platform failure, even an
-/// unregistered plugin, never stops the app: it is kept in [lastError] and
-/// the next task runs as usual.
+/// Work runs one task at a time, in order. A failure, even an unregistered
+/// plugin, never stops the app: it is reported to [FlutterError.reportError],
+/// kept in [lastError], and the next task runs as usual.
 class DailyReminderScheduler {
-  /// Creates a scheduler; `clock` gives the device time (default: now).
+  /// Creates a scheduler; `clock` gives the device time (default: now) and
+  /// [celebrationTimeout] caps the wait for the celebration names.
   new({
     required this._settings,
     required this._platform,
     required this._celebrations,
     DateTime Function()? clock,
+    this.celebrationTimeout = defaultCelebrationTimeout,
   }) : _clock = clock ?? DateTime.now;
+
+  /// How long scheduling waits for the celebration names.
+  final Duration celebrationTimeout;
 
   final SettingsController _settings;
   final ReminderPlatform _platform;
@@ -101,7 +113,7 @@ class DailyReminderScheduler {
   /// Completes when the work queued so far is done.
   Future<void> get idle => _queue;
 
-  /// The last platform failure, or `null`.
+  /// The last failure, or `null`.
   Object? get lastError => _lastError;
   Object? _lastError;
 
@@ -118,12 +130,25 @@ class DailyReminderScheduler {
     });
   }
 
-  /// Reschedules each time the app resumes. Needs the widgets binding;
-  /// calling it again does nothing.
+  /// Reschedules each time the app resumes, after checking that
+  /// notifications are still allowed. Needs the widgets binding; calling it
+  /// again does nothing.
   void followAppResume() {
-    _lifecycle ??= AppLifecycleListener(
-      onResume: () => unawaited(reschedule()),
-    );
+    _lifecycle ??= AppLifecycleListener(onResume: () => unawaited(resumed()));
+  }
+
+  /// What a resume does: when the reminder is on but notifications are no
+  /// longer allowed (turned off in the system settings), switches it off
+  /// as a refusal does; otherwise reschedules.
+  Future<void> resumed() {
+    return _enqueue(() async {
+      if (_settings.settings.dailyReminder &&
+          !await _platform.permissionGranted()) {
+        await _switchOff();
+        return;
+      }
+      await _apply();
+    });
   }
 
   /// Stops following the settings and the app's lifecycle. Scheduled
@@ -159,7 +184,7 @@ class DailyReminderScheduler {
     );
   }
 
-  /// Turns the reminder back off after permission was refused, unless the
+  /// Turns the reminder back off when permission is refused, unless the
   /// reader already did; that change schedules (cancels) on its own.
   Future<void> _switchOff() async {
     final settings = _settings.settings;
@@ -178,23 +203,24 @@ class DailyReminderScheduler {
     }
     // Every id is scheduled again, which replaces the pending reminders, so
     // there is no gap without one while the celebrations are read.
-    final reminders = <ReminderNotification>[];
     final times = upcomingReminderTimes(_clock(), settings.reminderTime);
+    final dates = [for (final at in times) isoDate(at)];
+    final names = await Future.wait([
+      for (final date in dates)
+        _celebrations
+            .celebrationOn(date)
+            .timeout(celebrationTimeout, onTimeout: () => null),
+    ]);
     for (final (index, at) in times.indexed) {
-      final date = isoDate(at);
-      final celebration = await _celebrations.celebrationOn(date);
-      reminders.add(
+      await _platform.schedule(
         ReminderNotification(
           id: reminderIdBase + index,
           at: at,
-          title: celebration ?? ReminderStrings.fallbackTitle,
+          title: names[index] ?? ReminderStrings.fallbackTitle,
           body: ReminderStrings.body,
-          date: date,
+          date: dates[index],
         ),
       );
-    }
-    for (final reminder in reminders) {
-      await _platform.schedule(reminder);
     }
   }
 
@@ -202,10 +228,18 @@ class DailyReminderScheduler {
     return _queue = _queue.then((_) async {
       try {
         await task();
-      } on Object catch (error) {
+      } on Object catch (error, stack) {
         // Even a plugin that is not registered (an Error) must never stop
-        // the app or the queue.
+        // the app or the queue, but it is reported, never swallowed.
         _lastError = error;
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            exception: error,
+            stack: stack,
+            library: 'lectio notifications',
+            context: ErrorDescription('while scheduling the daily reminder'),
+          ),
+        );
       }
     });
   }

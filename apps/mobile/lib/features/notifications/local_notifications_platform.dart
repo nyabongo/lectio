@@ -45,25 +45,42 @@ class LocalNotificationsPlatform implements ReminderPlatform {
   }
 
   @override
-  Future<bool> requestPermission() async {
+  Future<bool> requestPermission() {
+    return _ask(
+      android: (android) => android.requestNotificationsPermission(),
+      ios: (ios) => ios.requestPermissions(alert: true, sound: true),
+    );
+  }
+
+  @override
+  Future<bool> permissionGranted() {
+    return _ask(
+      android: (android) => android.areNotificationsEnabled(),
+      ios: (ios) async => (await ios.checkPermissions())?.isEnabled,
+    );
+  }
+
+  /// Runs [android] or [ios] on the current platform's plugin; `false` on
+  /// other platforms, when there is no answer or when the plugin fails (for
+  /// example a permission request already in progress).
+  Future<bool> _ask({
+    required Future<bool?> Function(AndroidFlutterLocalNotificationsPlugin)
+    android,
+    required Future<bool?> Function(IOSFlutterLocalNotificationsPlugin) ios,
+  }) async {
     try {
-      final android = _plugin
+      final onAndroid = _plugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >();
-      if (android != null) {
-        return await android.requestNotificationsPermission() ?? false;
-      }
-      final ios = _plugin
+      if (onAndroid != null) return await android(onAndroid) ?? false;
+      final onIos = _plugin
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
           >();
-      if (ios != null) {
-        return await ios.requestPermissions(alert: true, sound: true) ?? false;
-      }
+      if (onIos != null) return await ios(onIos) ?? false;
       return false;
     } on PlatformException {
-      // For example a permission request already in progress.
       return false;
     }
   }

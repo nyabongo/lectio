@@ -56,6 +56,9 @@ abstract interface class ReminderPlatform {
   /// completes with whether they are allowed.
   Future<bool> requestPermission();
 
+  /// Whether notifications are allowed now, without asking.
+  Future<bool> permissionGranted();
+
   /// Schedules [reminder], replacing any pending one with the same id.
   Future<void> schedule(ReminderNotification reminder);
 

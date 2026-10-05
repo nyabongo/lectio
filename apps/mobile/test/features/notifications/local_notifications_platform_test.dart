@@ -68,6 +68,16 @@ void main() {
       expect(await platform.requestPermission(), isFalse);
     });
 
+    test('checks whether notifications are allowed, without asking', () async {
+      final platform = LocalNotificationsPlatform();
+      answer = (_) => true;
+      expect(await platform.permissionGranted(), isTrue);
+      expect(calls.single.method, 'areNotificationsEnabled');
+
+      answer = (_) => null;
+      expect(await platform.permissionGranted(), isFalse);
+    });
+
     test('a failed permission request counts as refused', () async {
       answer = (_) => throw PlatformException(code: 'inProgress');
       expect(await LocalNotificationsPlatform().requestPermission(), isFalse);
@@ -153,6 +163,18 @@ void main() {
 
       answer = (_) => null;
       expect(await platform.requestPermission(), isFalse);
+    });
+
+    test('checks whether notifications are enabled', () async {
+      final platform = LocalNotificationsPlatform();
+      answer = (_) => {'isEnabled': true};
+      expect(await platform.permissionGranted(), isTrue);
+      expect(calls.single.method, 'checkPermissions');
+
+      answer = (_) => {'isEnabled': false};
+      expect(await platform.permissionGranted(), isFalse);
+      answer = (_) => null;
+      expect(await platform.permissionGranted(), isFalse);
     });
   });
 

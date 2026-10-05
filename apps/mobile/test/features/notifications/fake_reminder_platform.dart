@@ -7,6 +7,9 @@ class FakeReminderPlatform implements ReminderPlatform {
   /// What [requestPermission] answers.
   bool grantPermission = true;
 
+  /// What [permissionGranted] answers.
+  bool permissionAllowed = true;
+
   /// Runs while permission is being asked, before the answer.
   Future<void> Function()? whileAsking;
 
@@ -36,6 +39,12 @@ class FakeReminderPlatform implements ReminderPlatform {
   }
 
   @override
+  Future<bool> permissionGranted() async {
+    calls.add('permissionGranted');
+    return permissionAllowed;
+  }
+
+  @override
   Future<void> schedule(ReminderNotification reminder) async {
     calls.add('schedule ${reminder.id}');
     if (failSchedules) throw PlatformException(code: 'broken');
@@ -60,9 +69,14 @@ class FakeCelebrations implements CelebrationSource {
   /// The dates asked for, in order.
   final List<String> asked = [];
 
+  /// Dates whose answer waits for this future (forever when it never
+  /// completes).
+  final Map<String, Future<void>> holds = {};
+
   @override
   Future<String?> celebrationOn(String date) async {
     asked.add(date);
+    await holds[date];
     return names[date];
   }
 }

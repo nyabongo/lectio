@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,6 +43,15 @@ SettingsController _settingsWith({required bool reminder, String? time}) {
           '"reminderTime":"${time ?? '07:00'}"}',
     }),
   );
+}
+
+/// Collects what is reported to [FlutterError.reportError] during the test.
+List<FlutterErrorDetails> _captureReports() {
+  final reports = <FlutterErrorDetails>[];
+  final previous = FlutterError.onError;
+  FlutterError.onError = reports.add;
+  addTearDown(() => FlutterError.onError = previous);
+  return reports;
 }
 
 void main() {
@@ -232,7 +243,7 @@ void main() {
         ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
         ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await scheduler.idle;
-      expect(platform.calls, _scheduleAll);
+      expect(platform.calls, ['permissionGranted', ..._scheduleAll]);
       expect(platform.scheduled.first.date, '2026-09-23');
 
       scheduler.dispose();
@@ -242,6 +253,80 @@ void main() {
         ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await scheduler.idle;
       expect(platform.calls, isEmpty);
+    });
+
+    test('a resume after notifications were turned off in the system '
+        'settings switches the reminder off and says why', () async {
+      final settings = _settingsWith(reminder: true);
+      final scheduler = schedulerFor(settings);
+      await scheduler.start();
+      final refusals = <void>[];
+      scheduler.permissionRefusals.listen(refusals.add);
+      platform
+        ..calls.clear()
+        ..permissionAllowed = false;
+
+      await scheduler.resumed();
+      await scheduler.idle;
+
+      expect(settings.settings.dailyReminder, isFalse);
+      expect(refusals, hasLength(1));
+      expect(platform.calls, ['permissionGranted', ..._cancelAll]);
+      expect(platform.pending, isEmpty);
+    });
+
+    test('with the reminder off, a resume does not check permission', () async {
+      final scheduler = schedulerFor(_settingsWith(reminder: false));
+      await scheduler.start();
+      platform.calls.clear();
+
+      await scheduler.resumed();
+
+      expect(platform.calls, _cancelAll);
+    });
+
+    test('reads the celebrations of all 7 days at once', () async {
+      final release = Completer<void>();
+      for (var day = 20; day <= 26; day++) {
+        celebrations.holds['2026-09-$day'] = release.future;
+      }
+      final scheduler = schedulerFor(_settingsWith(reminder: true));
+      final started = scheduler.start();
+      await pumpEventQueue();
+
+      expect(celebrations.asked, hasLength(reminderDays));
+      expect(platform.pending, isEmpty);
+
+      release.complete();
+      await started;
+      expect(platform.pending, hasLength(reminderDays));
+    });
+
+    test('a day whose celebration is slow gets the fallback title', () async {
+      celebrations.holds['2026-09-20'] = Completer<void>().future;
+      final scheduler = DailyReminderScheduler(
+        settings: _settingsWith(reminder: true),
+        platform: platform,
+        celebrations: celebrations,
+        clock: () => now,
+        celebrationTimeout: const Duration(milliseconds: 10),
+      );
+      expect(
+        DailyReminderScheduler(
+          settings: _settingsWith(reminder: false),
+          platform: platform,
+          celebrations: celebrations,
+        ).celebrationTimeout,
+        defaultCelebrationTimeout,
+      );
+
+      await scheduler.start();
+
+      expect(platform.scheduled.first.title, ReminderStrings.fallbackTitle);
+      expect(
+        platform.scheduled[1].title,
+        'Saint Matthew, Apostle and Evangelist',
+      );
     });
 
     testWidgets('DailyReminderScope gives the scheduler to its subtree', (
@@ -361,12 +446,22 @@ void main() {
       expect(platform.pending, hasLength(reminderDays));
     });
 
-    test('a platform failure is kept and the next task still runs', () async {
+    test('a failure is reported and kept; the next task still runs', () async {
+      final reports = _captureReports();
       final settings = _settingsWith(reminder: true);
       final scheduler = schedulerFor(settings);
       platform.failSchedules = true;
       await scheduler.start();
       expect(scheduler.lastError, isA<PlatformException>());
+      expect(reports, hasLength(1));
+      final report = reports.single;
+      expect(report.exception, same(scheduler.lastError));
+      expect(report.stack, isNotNull);
+      expect(report.library, 'lectio notifications');
+      expect(
+        report.context.toString(),
+        contains('while scheduling the daily reminder'),
+      );
 
       platform.failSchedules = false;
       await scheduler.reschedule();

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/data/data.dart';
 import 'package:lectio/features/today/today_screen.dart';
@@ -29,6 +31,19 @@ void main() {
 
   testWidgets('main() starts on Today', (tester) async {
     SharedPreferences.setMockInitialValues({});
+    // The daily reminder (L-106) starts on the device's notifications plugin.
+    const channel = MethodChannel('dexterous.com/flutter/local_notifications');
+    AndroidFlutterLocalNotificationsPlugin.registerWith();
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (call) async => call.method == 'initialize' ? true : null,
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        null,
+      ),
+    );
     await app.main();
     await tester.pumpAndSettle();
 
