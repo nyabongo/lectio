@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  DEFAULT_LOCALE,
+  INTL_LOCALES,
   buildCatalogs,
   flattenCatalog,
   formatDate,
@@ -11,16 +11,19 @@ import {
   translate,
 } from './i18n.ts';
 
-const catalogs = buildCatalogs({
-  './en/common.json': { default: { nav: { calendar: 'Calendar' }, greeting: 'Hello, {name}' } },
-  './en/day.json': {
-    title: 'Today',
-    notes: { one: '{count} note', other: '{count} notes' },
-    words: { zero: 'no words', one: 'one word', other: '{count} words' },
-    items: { other: '{count} items' },
+const catalogs = buildCatalogs(
+  {
+    './en/common.json': { nav: { calendar: 'Calendar' }, greeting: 'Hello, {name}' },
+    './en/day.json': {
+      title: 'Today',
+      notes: { one: '{count} note', other: '{count} notes' },
+      words: { zero: 'no words', one: 'one word', other: '{count} words' },
+      items: { zero: 'no items', other: '{count} items' },
+    },
+    './sw/common.json': { nav: { calendar: 'Kalenda' } },
   },
-  './sw/common.json': { nav: { calendar: 'Kalenda' } },
-});
+  'en',
+);
 
 describe('parseCatalogPath', () => {
   it('reads the locale and feature from glob and plain paths', () => {
@@ -45,11 +48,26 @@ describe('flattenCatalog', () => {
     ]);
   });
 
-  it('treats an object with plural-like keys but no `other` as nesting', () => {
-    expect(flattenCatalog({ one: 'a', two: 'b' }, 'f', 'p')).toEqual([
-      ['f.one', 'a'],
+  it('treats a lone `other`, or plural keys without `one` or `other`, as nesting', () => {
+    expect(flattenCatalog({ links: { other: 'Other links' } }, 'f', 'p')).toEqual([['f.links.other', 'Other links']]);
+    expect(flattenCatalog({ zero: 'a', two: 'b' }, 'f', 'p')).toEqual([
+      ['f.zero', 'a'],
       ['f.two', 'b'],
     ]);
+  });
+
+  it('treats an object mixing plural and other keys, or with non-string forms, as nesting', () => {
+    expect(flattenCatalog({ one: 'a', other: 'b', title: 'c' }, 'f', 'p')).toHaveLength(3);
+    expect(flattenCatalog({ one: 'a', other: { x: 'b' } }, 'f', 'p')).toEqual([
+      ['f.one', 'a'],
+      ['f.other.x', 'b'],
+    ]);
+  });
+
+  it('requires an `other` form on a plural message', () => {
+    expect(() => flattenCatalog({ n: { one: 'a', few: 'b' } }, 'f', 'en/f.json')).toThrow(
+      'en/f.json: plural message "f.n" needs an "other" form',
+    );
   });
 
   it('rejects arrays, numbers, nulls, empty objects and odd keys', () => {
@@ -65,20 +83,31 @@ describe('flattenCatalog', () => {
 
 describe('buildCatalogs', () => {
   it('namespaces keys by file and groups them by locale', () => {
+    expect(catalogs.defaultLocale).toBe('en');
     expect([...catalogs.locales.keys()]).toEqual(['en', 'sw']);
     expect(catalogs.locales.get('en')?.get('common.nav.calendar')).toBe('Calendar');
     expect(catalogs.locales.get('en')?.get('day.title')).toBe('Today');
     expect(catalogs.sources.get('sw:common.nav.calendar')).toBe('./sw/common.json');
   });
 
+  it('keeps a top-level `default` key as an ordinary key', () => {
+    const settings = buildCatalogs({ './en/settings.json': { default: 'Default', dark: 'Dark' } }, 'en');
+    expect([...(settings.locales.get('en') ?? new Map()).entries()]).toEqual([
+      ['settings.default', 'Default'],
+      ['settings.dark', 'Dark'],
+    ]);
+    expect(translate(settings, 'en', 'settings.default')).toBe('Default');
+    expect(translate(settings, 'en', 'settings.dark')).toBe('Dark');
+  });
+
   it('throws when two files define the same key', () => {
-    expect(() => buildCatalogs({ './en/day.json': { extra: { x: 'a' } }, './en/day.extra.json': { x: 'b' } })).toThrow(
-      'key "day.extra.x" (en) is defined in both ./en/day.extra.json and ./en/day.json',
-    );
+    expect(() =>
+      buildCatalogs({ './en/day.json': { extra: { x: 'a' } }, './en/day.extra.json': { x: 'b' } }, 'en'),
+    ).toThrow('key "day.extra.x" (en) is defined in both ./en/day.extra.json and ./en/day.json');
   });
 
   it('allows the same key in different locales', () => {
-    expect(() => buildCatalogs({ './en/a.json': { x: 'a' }, './sw/a.json': { x: 'b' } })).not.toThrow();
+    expect(() => buildCatalogs({ './en/a.json': { x: 'a' }, './sw/a.json': { x: 'b' } }, 'en')).not.toThrow();
   });
 });
 
@@ -89,9 +118,14 @@ describe('translate', () => {
   });
 
   it('falls back to the default locale for untranslated keys and unknown locales', () => {
-    expect(DEFAULT_LOCALE).toBe('en');
     expect(translate(catalogs, 'sw', 'day.title')).toBe('Today');
     expect(translate(catalogs, 'fr', 'day.title')).toBe('Today');
+  });
+
+  it('falls back to whichever locale the catalogs name as default', () => {
+    const swFirst = buildCatalogs({ './sw/a.json': { x: 'Habari' }, './en/a.json': { y: 'Hello' } }, 'sw');
+    expect(translate(swFirst, 'en', 'a.x')).toBe('Habari');
+    expect(() => translate(swFirst, 'sw', 'a.y')).toThrow('unknown message key "a.y" (sw)');
   });
 
   it('fills placeholders, formatting numbers for the locale', () => {
@@ -106,7 +140,7 @@ describe('translate', () => {
     // English never selects `zero`, so 0 uses `other`.
     expect(translate(catalogs, 'en', 'day.words', { count: 0 })).toBe('0 words');
     expect(translate(catalogs, 'en', 'day.words', { count: 1 })).toBe('one word');
-    // A form the message lacks falls back to `other`.
+    // A form the message lacks (`one` here) falls back to `other`.
     expect(translate(catalogs, 'en', 'day.items', { count: 1 })).toBe('1 items');
   });
 
@@ -121,16 +155,23 @@ describe('translate', () => {
 });
 
 describe('intlLocale', () => {
-  it('uses British English for en and the locale itself otherwise', () => {
+  it('maps site locales through the table and passes others through', () => {
+    expect(INTL_LOCALES).toEqual({ en: 'en-GB', sw: 'sw-KE' });
     expect(intlLocale('en')).toBe('en-GB');
-    expect(intlLocale('sw')).toBe('sw');
+    expect(intlLocale('sw')).toBe('sw-KE');
+    expect(intlLocale('fr')).toBe('fr');
+    expect(intlLocale('toString')).toBe('toString');
   });
 });
 
 describe('formatDate', () => {
   it('formats an ISO date as a calendar day, whatever the timezone', () => {
     expect(formatDate('en', '2026-09-20', 'Africa/Nairobi')).toBe('Sunday 20 September 2026');
-    expect(formatDate('en', '2026-09-20', 'Pacific/Honolulu')).toBe('Sunday 20 September 2026');
+    expect(formatDate('en', '2026-12-25', 'Pacific/Honolulu')).toBe('Friday 25 December 2026');
+  });
+
+  it('formats other locales with their own month and day names', () => {
+    expect(formatDate('fr', '2026-09-20', 'UTC')).toBe('dimanche 20 septembre 2026');
   });
 
   it('formats a Date as the day it falls on in the timezone', () => {
@@ -144,6 +185,7 @@ describe('formatDate', () => {
   });
 
   it('rejects invalid dates', () => {
+    expect(() => formatDate('en', '20 September', 'UTC')).toThrow(RangeError);
     expect(() => formatDate('en', '2026-9-20', 'UTC')).toThrow(RangeError);
     expect(() => formatDate('en', '2026-02-30', 'UTC')).toThrow(/ISO date/);
     expect(() => formatDate('en', '2026-13-01', 'UTC')).toThrow(/ISO date/);
@@ -153,13 +195,14 @@ describe('formatDate', () => {
 
 describe('localePath', () => {
   it('keeps the default locale at the root', () => {
-    expect(localePath('en')).toBe('/');
-    expect(localePath('en', 'calendar/')).toBe('/calendar/');
-    expect(localePath('en', '//calendar/')).toBe('/calendar/');
+    expect(localePath('en', '', 'en')).toBe('/');
+    expect(localePath('en', 'calendar/', 'en')).toBe('/calendar/');
+    expect(localePath('en', '//calendar/', 'en')).toBe('/calendar/');
   });
 
   it('puts other locales under /<locale>/', () => {
-    expect(localePath('sw')).toBe('/sw/');
-    expect(localePath('sw', '/calendar/2026-09-20/')).toBe('/sw/calendar/2026-09-20/');
+    expect(localePath('sw', '', 'en')).toBe('/sw/');
+    expect(localePath('sw', '/calendar/2026-09-20/', 'en')).toBe('/sw/calendar/2026-09-20/');
+    expect(localePath('en', 'calendar/', 'sw')).toBe('/en/calendar/');
   });
 });

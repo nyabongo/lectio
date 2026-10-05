@@ -6,16 +6,15 @@
  * file name (`en/day.json` → `{ "title": "…" }` gives the key `day.title`). Adding a feature catalog is adding a
  * file: nothing else changes.
  *
- * A catalog value is a string or a nested object. An object whose keys are all `Intl.PluralRules` categories and
- * that has `other` (`{ "one": "{count} note", "other": "{count} notes" }`) is a plural message: `t` picks the form
- * for `params.count`. `{name}` placeholders are filled from `params`.
+ * A catalog value is a string or a nested object. A plural message is an object of two or more string values whose
+ * keys are all `Intl.PluralRules` categories (`zero`, `one`, `two`, `few`, `many`, `other`) and include `one` or
+ * `other`, e.g. `{ "one": "{count} note", "other": "{count} notes" }`; `t` picks the form for `params.count`, and
+ * a plural message must have `other` (the build fails without it). Any other object, including one whose only key
+ * is `other` (`{ "other": "Other links" }`), is ordinary nesting. `{name}` placeholders are filled from `params`.
  *
  * Everything here is pure (no file system, no config) so it is unit-tested directly; `src/i18n/index.ts` binds it
- * to the real catalogs and the config's timezone.
+ * to the real catalogs, the config's default locale and its timezone.
  */
-
-/** The locale served at the site root, and the fallback for keys a locale has not translated yet. */
-export const DEFAULT_LOCALE = 'en';
 
 /** Placeholder values for `t`. `count` also selects the plural form. */
 export type MessageParams = Readonly<Record<string, string | number>>;
@@ -31,6 +30,8 @@ export type LocaleCatalog = ReadonlyMap<string, Message>;
 
 /** Every locale's messages, plus the file that defined each key (for error messages and the catalog tests). */
 export interface Catalogs {
+  /** The locale served at the site root, and the fallback for keys a locale has not translated yet. */
+  readonly defaultLocale: string;
   readonly locales: ReadonlyMap<string, LocaleCatalog>;
   /** `<locale>:<key>` → the catalog path that defined it. */
   readonly sources: ReadonlyMap<string, string>;
@@ -44,9 +45,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function isPluralMessage(value: Record<string, unknown>): value is PluralMessage {
+function looksPlural(value: Record<string, unknown>): boolean {
   const keys = Object.keys(value);
-  return keys.includes('other') && keys.every((key) => PLURAL_CATEGORIES.has(key) && typeof value[key] === 'string');
+  return (
+    keys.length >= 2 &&
+    (keys.includes('one') || keys.includes('other')) &&
+    keys.every((key) => PLURAL_CATEGORIES.has(key) && typeof value[key] === 'string')
+  );
 }
 
 /** The `<locale>` and `<feature>` of a catalog path such as `./en/common.json`. */
@@ -63,7 +68,11 @@ export function parseCatalogPath(path: string): { locale: string; feature: strin
 export function flattenCatalog(value: unknown, namespace: string, path: string): [string, Message][] {
   if (typeof value === 'string') return [[namespace, value]];
   if (!isRecord(value)) throw new Error(`${path}: "${namespace}" must be a string or an object`);
-  if (isPluralMessage(value)) return [[namespace, value]];
+  if (looksPlural(value)) {
+    if (typeof value.other !== 'string')
+      throw new Error(`${path}: plural message "${namespace}" needs an "other" form`);
+    return [[namespace, value as PluralMessage]];
+  }
   const entries = Object.entries(value);
   if (entries.length === 0) throw new Error(`${path}: "${namespace}" is an empty object`);
   return entries.flatMap(([key, child]) => {
@@ -74,22 +83,21 @@ export function flattenCatalog(value: unknown, namespace: string, path: string):
 }
 
 /**
- * Merges catalog modules (path → parsed JSON, as `import.meta.glob(..., { eager: true })` returns them, with or
- * without a `default` wrapper) into per-locale flat catalogs. Throws when two files define the same key.
+ * Merges catalog files (path → parsed JSON, as `import.meta.glob(..., { eager: true, import: 'default' })` returns
+ * them) into per-locale flat catalogs. Each value is the file's JSON itself: a top-level `default` key is an
+ * ordinary key. Throws when two files define the same key.
  */
-export function buildCatalogs(modules: Readonly<Record<string, unknown>>): Catalogs {
+export function buildCatalogs(modules: Readonly<Record<string, unknown>>, defaultLocale: string): Catalogs {
   const locales = new Map<string, Map<string, Message>>();
   const sources = new Map<string, string>();
   for (const path of Object.keys(modules).sort()) {
     const { locale, feature } = parseCatalogPath(path);
-    const module = modules[path];
-    const json = isRecord(module) && 'default' in module ? module.default : module;
     let catalog = locales.get(locale);
     if (catalog === undefined) {
       catalog = new Map();
       locales.set(locale, catalog);
     }
-    for (const [key, message] of flattenCatalog(json, feature, path)) {
+    for (const [key, message] of flattenCatalog(modules[path], feature, path)) {
       const source = `${locale}:${key}`;
       const previous = sources.get(source);
       if (previous !== undefined)
@@ -98,16 +106,19 @@ export function buildCatalogs(modules: Readonly<Record<string, unknown>>): Catal
       catalog.set(key, message);
     }
   }
-  return { locales, sources };
+  return { defaultLocale, locales, sources };
 }
 
-/** The Intl locale used to format numbers, plurals and dates for a site locale (British-style dates for English). */
+/** Intl locales for site locales whose formatting should follow a region: British English, Kenyan Kiswahili. */
+export const INTL_LOCALES: Readonly<Record<string, string>> = { en: 'en-GB', sw: 'sw-KE' };
+
+/** The Intl locale used to format numbers, plurals and dates for a site locale (`INTL_LOCALES`, else itself). */
 export function intlLocale(locale: string): string {
-  return locale === 'en' ? 'en-GB' : locale;
+  return Object.hasOwn(INTL_LOCALES, locale) ? (INTL_LOCALES[locale] as string) : locale;
 }
 
 function lookup(catalogs: Catalogs, locale: string, key: string): Message | undefined {
-  return catalogs.locales.get(locale)?.get(key) ?? catalogs.locales.get(DEFAULT_LOCALE)?.get(key);
+  return catalogs.locales.get(locale)?.get(key) ?? catalogs.locales.get(catalogs.defaultLocale)?.get(key);
 }
 
 function interpolate(text: string, locale: string, key: string, params: MessageParams): string {
@@ -166,10 +177,10 @@ export function formatDate(
 }
 
 /**
- * A root-relative site path for `locale`: the default locale stays at the root (`/calendar/`), every other locale
+ * A root-relative site path for `locale`: `defaultLocale` stays at the root (`/calendar/`), every other locale
  * lives under `/<locale>/` (`/sw/calendar/`). Combine with `withBase` (src/lib/site.ts) for the base path.
  */
-export function localePath(locale: string, path = ''): string {
+export function localePath(locale: string, path: string, defaultLocale: string): string {
   const rest = path.replace(/^\/+/, '');
-  return locale === DEFAULT_LOCALE ? `/${rest}` : `/${locale}/${rest}`;
+  return locale === defaultLocale ? `/${rest}` : `/${locale}/${rest}`;
 }

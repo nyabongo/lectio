@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { buildCatalogs, translate } from '../lib/i18n.ts';
+import { buildCatalogs, flattenCatalog, parseCatalogPath, translate } from '../lib/i18n.ts';
+import { siteContext } from '../lib/site.ts';
 import { DEFAULT_LOCALE, catalogs, formatDate, localePath, t } from './index.ts';
 
 const i18nDir = fileURLToPath(new URL('.', import.meta.url));
@@ -21,12 +22,19 @@ const catalogFiles = walk(i18nDir)
   .filter((file) => file.endsWith('.json'))
   .map((file) => `./${relative(i18nDir, file).split('\\').join('/')}`);
 
+function readCatalog(file: string): unknown {
+  return JSON.parse(readFileSync(join(i18nDir, file), 'utf8')) as unknown;
+}
+
 /** Source files that can call `t` (tests excluded). */
 const sources = walk(srcDir).filter((file) => /\.(astro|[cm]?[jt]sx?)$/.test(file) && !/\.test\.[^/]+$/.test(file));
 
 // `t(<locale>, '<key>'` with a literal key; `t(<locale>, someVariable` is a dynamic key the checks cannot see.
-const LITERAL_CALL = /(?<![\w$.])(?<!function )t\(\s*[^,()]+?,\s*(['"`])([\w.-]+)\1/g;
-const DYNAMIC_CALL = /(?<![\w$.])(?<!function )t\(\s*[^,()]+?,\s*(?!['"`])[^\s)]/g;
+// The locale argument may itself call something (`t(getLang(), …)`, `t(pick(a, b), …)`), up to two levels deep.
+const CALL_START = String.raw`(?<![\w$.])(?<!function )t\(\s*`;
+const LOCALE_ARG = String.raw`(?:[^,()]|\((?:[^()]|\([^()]*\))*\))+?`;
+const LITERAL_CALL = new RegExp(String.raw`${CALL_START}${LOCALE_ARG},\s*(['"\x60])([\w.-]+)\1`, 'g');
+const DYNAMIC_CALL = new RegExp(String.raw`${CALL_START}${LOCALE_ARG},\s*(?!['"\x60])[^\s)]`, 'g');
 
 function keysIn(source: string): { keys: string[]; dynamic: number } {
   return {
@@ -47,10 +55,15 @@ describe('key scanner', () => {
       't("en", `common.c`)',
       'format(x, "common.ignored"); it(x, "nope"); obj.t(lang, "nope.method")',
       't(lang, key)',
+      "t(getLang(), 'common.d'); t(pick(a, b), 'common.e'); t(locale(of(x)), 'common.f')",
+      't(getLang(), keyFor(x))',
       'export function t(locale: string, key: string) {}',
       "/** calls `t(locale, '<feature>.<key>')` and `t(…)` */",
     ].join('\n');
-    expect(keysIn(sample)).toEqual({ keys: ['common.a', 'common.b', 'common.c'], dynamic: 1 });
+    expect(keysIn(sample)).toEqual({
+      keys: ['common.a', 'common.b', 'common.c', 'common.d', 'common.e', 'common.f'],
+      dynamic: 2,
+    });
   });
 });
 
@@ -61,12 +74,20 @@ describe('catalogs in src/i18n', () => {
   });
 
   it('defines no key in two files', () => {
-    const modules = Object.fromEntries(
-      catalogFiles.map((file) => [file, JSON.parse(readFileSync(join(i18nDir, file), 'utf8')) as unknown]),
-    );
-    const rebuilt = buildCatalogs(modules);
-    const total = [...rebuilt.locales.values()].reduce((sum, locale) => sum + locale.size, 0);
-    expect(rebuilt.sources.size).toBe(total);
+    // Flatten each file on its own (not through buildCatalogs, which would throw first) and list every key that
+    // more than one file of a locale defines.
+    const definedIn = new Map<string, string[]>();
+    for (const file of catalogFiles) {
+      const { locale, feature } = parseCatalogPath(file);
+      for (const [key] of flattenCatalog(readCatalog(file), feature, file)) {
+        const id = `${locale}:${key}`;
+        definedIn.set(id, [...(definedIn.get(id) ?? []), file]);
+      }
+    }
+    const duplicates = [...definedIn].filter(([, files]) => files.length > 1);
+    expect(duplicates).toEqual([]);
+    expect(definedIn.size).toBe(catalogs.sources.size);
+    expect(() => buildCatalogs(Object.fromEntries(catalogFiles.map((f) => [f, readCatalog(f)])), 'en')).not.toThrow();
   });
 
   it('uses only literal keys in t() calls', () => {
@@ -93,10 +114,8 @@ describe('catalogs in src/i18n', () => {
   });
 
   it('makes a new feature file work with no other edit', () => {
-    const modules = Object.fromEntries(
-      catalogFiles.map((file) => [file, JSON.parse(readFileSync(join(i18nDir, file), 'utf8')) as unknown]),
-    );
-    const withFoo = buildCatalogs({ ...modules, './en/foo.json': { x: 'Foo {n}' } });
+    const modules = Object.fromEntries(catalogFiles.map((file) => [file, readCatalog(file)]));
+    const withFoo = buildCatalogs({ ...modules, './en/foo.json': { x: 'Foo {n}' } }, DEFAULT_LOCALE);
     expect(translate(withFoo, 'en', 'foo.x', { n: 1 })).toBe('Foo 1');
     expect(translate(withFoo, 'en', 'common.nav.calendar')).toBe('Calendar');
   });
@@ -115,7 +134,11 @@ describe('src/i18n', () => {
     expect(formatDate('en', '2026-09-20', { month: 'long', year: 'numeric' })).toBe('September 2026');
   });
 
-  it('re-exports localePath', () => {
-    expect(localePath('sw', 'calendar/')).toBe('/sw/calendar/');
+  it('takes the default locale from the config and keeps it at the root', () => {
+    expect(DEFAULT_LOCALE).toBe(siteContext().config.site.defaultLocale);
+    expect(catalogs.defaultLocale).toBe(DEFAULT_LOCALE);
+    expect(localePath(DEFAULT_LOCALE, 'calendar/')).toBe('/calendar/');
+    expect(localePath(DEFAULT_LOCALE)).toBe('/');
+    expect(localePath('xx', 'calendar/')).toBe('/xx/calendar/');
   });
 });
