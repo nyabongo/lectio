@@ -133,7 +133,8 @@ const MASS_SLOTS: Readonly<Record<string, readonly ReadingSlot[]>> = { processio
 
 /**
  * Days without any Mass. Holy Saturday has no Mass of the day; the Easter Vigil held that night
- * belongs to Easter Sunday and is listed there only.
+ * belongs to Easter Sunday and is listed there only. The web and app copy for a `noMass` day is
+ * written for Holy Saturday (`day.holySaturdayNoMass`): a day added here needs its own copy.
  */
 export const NO_MASS_DAYS: ReadonlySet<string> = new Set(['holy-saturday']);
 

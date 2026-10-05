@@ -57,11 +57,6 @@ class TodayStrings {
   /// day needs its own copy.
   String get holySaturdayNoMass => _t('day_holySaturdayNoMass');
 
-  /// A day without any Mass (Holy Saturday).
-  static const String noMass =
-      'No Mass is celebrated on this day. The Easter Vigil, held after '
-      'nightfall, belongs to Easter Sunday, and its readings are listed there.';
-
   /// A date the API publishes no day document for.
   String get emptyDay => _t('app_today_emptyDay');
 
