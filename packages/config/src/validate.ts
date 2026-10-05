@@ -65,6 +65,23 @@ export function familyOfModel(model: string): LlmFamily | undefined {
   return MODEL_PREFIXES.find(([prefix]) => prefix.test(model))?.[1];
 }
 
+/**
+ * Why `timezone` cannot be used as the site time zone, or `null`. An unknown zone must fail here:
+ * `TZ=<unknown> date` in a workflow silently falls back to UTC and builds the wrong day.
+ */
+export function timezoneProblem(timezone: string): string | null {
+  let resolved: string;
+  try {
+    resolved = new Intl.DateTimeFormat('en', { timeZone: timezone }).resolvedOptions().timeZone;
+  } catch {
+    return `"${timezone}" is not a known IANA time zone (for example "Africa/Nairobi")`;
+  }
+  if (resolved !== timezone && resolved.toLowerCase() === timezone.toLowerCase()) {
+    return `write the time zone as "${resolved}": zone names are case-sensitive outside the JavaScript runtime`;
+  }
+  return null;
+}
+
 /** Rules that span several keys and so cannot be said in the JSON Schema. */
 function crossFieldIssues(config: LectioConfig): ConfigIssue[] {
   const issues: ConfigIssue[] = [];
@@ -78,6 +95,9 @@ function crossFieldIssues(config: LectioConfig): ConfigIssue[] {
         'two independent families are what makes the verification meaningful (L-207)',
     });
   }
+
+  const timezone = timezoneProblem(site.timezone);
+  if (timezone !== null) issues.push({ pointer: '/site/timezone', message: timezone });
 
   if (!site.locales.includes(site.defaultLocale)) {
     issues.push({ pointer: '/site/defaultLocale', message: `"${site.defaultLocale}" is not listed in site.locales` });

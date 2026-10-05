@@ -73,4 +73,12 @@ describe('the link checker', () => {
     expect(slugify('snake_case stays')).toBe('snake_case-stays');
     expect([...anchorsOf('# A\n## A ##\n<span id="x"></span>\n')]).toEqual(['a', 'a-1', 'x']);
   });
+
+  it('keeps code-span content in heading anchors, as GitHub does', () => {
+    expect([...anchorsOf('## Blocked (`gates-failed`)\n### `npm run verify` ##\n')]).toEqual([
+      'blocked-gates-failed',
+      'npm-run-verify',
+    ]);
+    expect([...anchorsOf('Text with `<a id="in-code">` only\n')]).toEqual([]);
+  });
 });

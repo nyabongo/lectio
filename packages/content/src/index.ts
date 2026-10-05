@@ -18,12 +18,14 @@ export {
   checkPassage,
   checkTranslatedPassage,
   contentKindOf,
+  contentPlaceAt,
+  pathUnderContentRoot,
   translationPlaceOf,
   nodeFs,
   parseJson,
   yearOfFileName,
 } from './files.ts';
-export type { ContentFs, ContentKind } from './files.ts';
+export type { ContentFs, ContentKind, ContentPlace } from './files.ts';
 export { approvedOnly, isApproved, openRepo } from './repo.ts';
 export type { ContentRepo, OpenRepoOptions, ResolvedDay, ResolvedMass, ResolvedReading } from './repo.ts';
 export { contentFilesUnder, runValidate, validateContentFiles } from './validate-files.ts';

@@ -20,7 +20,7 @@
  *
  * Live clients are injected by the caller (L-031) through the provider set.
  */
-import { checkContentText, contentKindOf } from '@lectio/content';
+import { checkContentText, contentPlaceAt } from '@lectio/content';
 import { createCostMeter } from '@lectio/providers';
 import type { LlmClient } from '@lectio/providers';
 import type { Passage } from '@lectio/schema/passage';
@@ -136,10 +136,11 @@ export function formatSupport(support: number): string {
   return (Math.floor(support * 1000 + 1e-9) / 1000).toFixed(3);
 }
 
-/** The changed passage files the gate verifies (deletions excluded). */
+/** The changed passage files under the content root the gate verifies (deletions excluded). */
 function passageFiles(context: GateContext): string[] {
+  const { root } = context.config.content;
   return context.changedFiles
-    .filter((file) => file.status !== 'deleted' && contentKindOf(file.path) === 'passage')
+    .filter((file) => file.status !== 'deleted' && contentPlaceAt(file.path, root)?.kind === 'passage')
     .map((file) => file.path);
 }
 

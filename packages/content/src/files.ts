@@ -3,7 +3,7 @@
  * Shared by the repository loader and `npm run content:validate`.
  */
 import { readFileSync, readdirSync } from 'node:fs';
-import { basename, dirname } from 'node:path';
+import { basename, dirname, posix } from 'node:path';
 
 import { validateCalendarYear } from '@lectio/schema/calendar';
 import type { CalendarYear } from '@lectio/schema/calendar';
@@ -128,6 +128,51 @@ export function contentKindOf(path: string): ContentKind | null {
   const dir = basename(dirname(path));
   if (dir === PASSAGES_DIR) return 'passage';
   if (dir === CALENDAR_DIR) return 'calendar';
+  return null;
+}
+
+/**
+ * A repository-relative POSIX path (`\` → `/`, `.` segments and a trailing `/` dropped), or `null`
+ * for an absolute path or one above the repository.
+ */
+function repoRelative(path: string): string | null {
+  const normalized = posix.normalize(path.replace(/\\/g, '/')).replace(/(.)\/+$/, '$1');
+  if (normalized.startsWith('/') || normalized === '..' || normalized.startsWith('../')) return null;
+  return normalized === '.' ? '' : normalized;
+}
+
+/**
+ * `path` relative to the content root `root` (both relative to the repository root, as in
+ * `config.content.root`), or `null` when `path` is outside it.
+ */
+export function pathUnderContentRoot(path: string, root: string): string | null {
+  const file = repoRelative(path);
+  const dir = repoRelative(root);
+  if (file === null || dir === null) return null;
+  if (dir === '') return file;
+  return file.startsWith(`${dir}/`) ? file.slice(dir.length + 1) : null;
+}
+
+/** What a content file is: a passage, a calendar year or a translation (with the locale and key its path promises). */
+export type ContentPlace =
+  { readonly kind: ContentKind } | { readonly kind: 'translation'; readonly locale: string; readonly key: string };
+
+/**
+ * What a repository-relative path is under the content root `root`, matching only the layout the
+ * loader reads: `passages/<name>.json`, `calendar/<name>.json` and `passages/i18n/<locale>/<key>.json`
+ * directly under the root. The same layout anywhere else in the repository (test fixtures, package
+ * data) is not content and gives `null`, unlike the root-blind {@link contentKindOf} and
+ * {@link translationPlaceOf}.
+ */
+export function contentPlaceAt(path: string, root: string): ContentPlace | null {
+  const relative = pathUnderContentRoot(path, root);
+  if (relative === null) return null;
+  const translation = parseTranslatedPassagePath(relative);
+  if (translation !== null) return { kind: 'translation', ...translation };
+  const parts = relative.split('/');
+  if (parts.length !== 2 || !relative.endsWith('.json')) return null;
+  if (parts[0] === PASSAGES_DIR) return { kind: 'passage' };
+  if (parts[0] === CALENDAR_DIR) return { kind: 'calendar' };
   return null;
 }
 

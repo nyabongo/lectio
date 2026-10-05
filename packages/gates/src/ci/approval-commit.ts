@@ -11,11 +11,11 @@
 import { join } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
-import { contentKindOf, translationPlaceOf } from '@lectio/content';
 import type { FileChange, GitCommit, GitHubClient } from '@lectio/providers';
 import { format, resolveConfig } from 'prettier';
 
 import type { ChangedFile } from '../core/git.ts';
+import { isReviewedContent } from '../merge-rule/review-edits.ts';
 import type { GateResult } from '../core/result.ts';
 import type { PullRequestApproval } from '../core/pull-request.ts';
 import { VERIFIERS_GATE_ID, formatApprovalTrailer } from '../merge-rule/index.ts';
@@ -61,16 +61,13 @@ export function memoryReviewFs(readFile: (path: string) => string | null): Revie
 }
 
 /**
- * The changed passage and translation (`passages/i18n/<locale>/<key>.json`) files the review block
- * is written to (deleted files excluded), sorted. Translations only ever reach the human path:
+ * The changed passage and translation (`passages/i18n/<locale>/<key>.json`) files under the content
+ * root `root` the review block is written to (deleted files excluded), sorted. Translations only ever reach the human path:
  * `decide` never auto-merges them and `approveAuto` refuses them.
  */
-export function approvedPassages(changedFiles: readonly ChangedFile[]): string[] {
+export function approvedPassages(changedFiles: readonly ChangedFile[], root: string): string[] {
   return changedFiles
-    .filter(
-      (file) =>
-        file.status !== 'deleted' && (contentKindOf(file.path) === 'passage' || translationPlaceOf(file.path) !== null),
-    )
+    .filter((file) => file.status !== 'deleted' && isReviewedContent(file.path, root))
     .map((file) => file.path)
     .sort();
 }
@@ -118,7 +115,7 @@ export class ApprovalCommitError extends Error {
 
 async function reviewChanges(input: ApprovalCommitInput): Promise<FileChange[]> {
   const { write, config, checkout } = input;
-  const passages = approvedPassages(input.changedFiles);
+  const passages = approvedPassages(input.changedFiles, config.content.root);
   if (passages.length === 0) return [];
   const fs = memoryReviewFs((path) => checkout.readFile(path));
   if (write.kind === 'human') {

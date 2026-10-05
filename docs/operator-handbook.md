@@ -46,7 +46,10 @@ required check. `scripts/repo/setup.sh --help` lists the options (`--repo`, `--r
 The script sets the Pages source to **GitHub Actions**. Check it under Settings → Pages; with any other source the
 deploy workflow fails at its first step ("configure-pages"). The site is then served at the URL in `site.baseUrl`
 (`https://nyabongo.github.io/lectio/` by default). The deploy job's smoke step fails if the configured URL does not
-answer, so `site.baseUrl` and `site.basePath` must match the real Pages URL.
+answer, so `site.baseUrl` and `site.basePath` must match the real Pages URL. Each build writes `build.json` (commit
+SHA, run id, build date and time) at the site root; the smoke step waits up to about five minutes for it to show the
+run's own build before it checks the pages, so a deploy that never goes live fails instead of passing on the previous
+build.
 
 ### Secrets
 
