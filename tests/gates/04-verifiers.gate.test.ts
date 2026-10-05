@@ -4,7 +4,8 @@
  * The named rule tests run the registry gate as CI does without API keys: `config.verifiers.mode`
  * is `auto` and the provider set holds only fakes, so the gate is skipped and reports nothing
  * (the merge rule then requires review). The scenarios below run the gate over the real seed
- * passage with scripted fake verifiers (`mode: fake`).
+ * passage with scripted fakes, either behind clients of the configured families (`mode: live`) or
+ * as `fake` clients (`mode: fake`, which always flags for review).
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,7 +17,7 @@ import type { LectioConfig } from '@lectio/config';
 import { createContext, renderComment, ruleBookFor, runGates } from '@lectio/gates';
 import type { GateReport, GateResult } from '@lectio/gates';
 import { FakeLlmClient, createProviders } from '@lectio/providers';
-import type { FakeLlmScript, FakeLlmScriptEntry } from '@lectio/providers';
+import type { FakeLlmScript, FakeLlmScriptEntry, LlmClient } from '@lectio/providers';
 import { validatePassage } from '@lectio/schema/passage';
 
 import { verifierGate } from '../../packages/gates/src/verifier-gate/index.ts';
@@ -31,15 +32,27 @@ gateTest('verifiers/claim-not-refuted');
 gateTest('verifiers/verifier-answered', { allow: ['warning', 'info'] });
 gateTest('verifiers/claim-supported', { allow: ['warning', 'info'] });
 gateTest('verifiers/claim-not-sensitive', { allow: ['warning', 'info'] });
-gateTest('verifiers/live-results', { allow: ['info'] });
+gateTest('verifiers/live-results');
 
 const verdict = (value: Record<string, unknown> = {}): FakeLlmScript => ({
   patch: { verdict: 'supported', support: 0.97, sensitive: false, rationale: 'The cited source states it.', ...value },
 });
 
-async function runOnSeed(confirmer: FakeLlmScriptEntry, refuter: FakeLlmScriptEntry): Promise<GateReport> {
+/** A client of `family` that answers through a scripted fake. */
+const behind = (family: LlmClient['family'], inner: LlmClient): LlmClient => ({
+  family,
+  generate: (request) => inner.generate(request),
+});
+
+async function runOnSeed(
+  confirmer: FakeLlmScriptEntry,
+  refuter: FakeLlmScriptEntry,
+  mode: 'live' | 'fake' = 'live',
+): Promise<GateReport> {
   const loaded = loadConfig(undefined, { cwd: REPO_ROOT });
-  const config: LectioConfig = { ...loaded, verifiers: { ...loaded.verifiers, mode: 'fake' } };
+  const config: LectioConfig = { ...loaded, verifiers: { ...loaded.verifiers, mode } };
+  const fakeConfirmer = new FakeLlmClient({ roles: { confirmer } });
+  const fakeRefuter = new FakeLlmClient({ roles: { refuter } });
   const context = createContext({
     root: REPO_ROOT,
     base: 'working-tree',
@@ -48,10 +61,12 @@ async function runOnSeed(confirmer: FakeLlmScriptEntry, refuter: FakeLlmScriptEn
     providers: createProviders(
       config,
       {},
-      {
-        confirmer: new FakeLlmClient({ roles: { confirmer } }),
-        refuter: new FakeLlmClient({ roles: { refuter } }),
-      },
+      mode === 'fake'
+        ? { confirmer: fakeConfirmer, refuter: fakeRefuter }
+        : {
+            confirmer: behind(config.verifiers.confirmer.family, fakeConfirmer),
+            refuter: behind(config.verifiers.refuter.family, fakeRefuter),
+          },
     ),
     git: { changedFiles: () => [{ path: SEED, status: 'added' }], show: () => null },
   });
@@ -66,7 +81,7 @@ describe('gate 4 over the seed passage', () => {
     expect(result.status).toBe('skipped');
   });
 
-  it('passes when both fake verifiers support every claim, with a valid verifierSummary', async () => {
+  it('passes when both (live-family) verifiers support every claim, with a valid verifierSummary', async () => {
     const result = first(await runOnSeed(verdict(), verdict({ support: 0.93 })));
     expect(result.status).toBe('pass');
     const files = result.meta['files'] as Record<string, { verifierSummary: unknown }>;
@@ -84,6 +99,15 @@ describe('gate 4 over the seed passage', () => {
     expect(validatePassage({ ...passage, review })).toBe(true);
   });
 
+  it('flags for review and records no verifierSummary when the verifiers are fakes', async () => {
+    const result = first(await runOnSeed(verdict(), verdict(), 'fake'));
+    expect(result.status).toBe('flag');
+    expect(result.items.map((item) => item.ruleId)).toEqual(['verifiers/live-results']);
+    const files = result.meta['files'] as Record<string, { verifierSummary: unknown }>;
+    expect(files[SEED]?.verifierSummary).toBeNull();
+    expect(result.meta['fake']).toBe(true);
+  });
+
   it('a refutation fails and the comment shows both verdicts', async () => {
     const report = await runOnSeed(verdict({ sensitive: true }), [
       verdict({ verdict: 'refuted', support: 0.15, rationale: 'The source does not say this.' }),
@@ -91,7 +115,7 @@ describe('gate 4 over the seed passage', () => {
     ]);
     expect(first(report).status).toBe('fail');
     const comment = renderComment(report, { gates: [verifierGate], rules: ruleBookFor([verifierGate]) });
-    expect(comment).toContain('confirmer: supported 0.97; refuter: refuted 0.15');
+    expect(comment).toContain('confirmer: supported 0.970; refuter: refuted 0.150');
     expect(comment).toContain('flagged sensitive by the confirmer');
   });
 });

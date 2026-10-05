@@ -10,8 +10,8 @@ import { createContext } from '../core/gate.ts';
 import { renderComment } from '../core/markdown.ts';
 import { runGates } from '../core/runner.ts';
 import { ruleBookFor } from '../registry.ts';
-import { SEED, SEED_PATH, SEED_TEXT, seedWithClaims, testContext, verdict } from './fixtures/context.ts';
-import { VERIFIER_RULES, runVerifiers, summarise, verifierGate } from './index.ts';
+import { SEED, SEED_PATH, SEED_TEXT, liveClient, seedWithClaims, testContext, verdict } from './fixtures/context.ts';
+import { VERIFIER_RULES, formatSupport, quoteModelText, runVerifiers, summarise, verifierGate } from './index.ts';
 
 const FILE = SEED_PATH;
 const three = { [FILE]: seedWithClaims(3) };
@@ -28,11 +28,6 @@ const fileMeta = (meta: Record<string, unknown>, file = FILE): FileMeta =>
 
 const ruleIds = (items: readonly { ruleId: string }[]): string[] => items.map((item) => item.ruleId);
 
-/** A client of a real family that answers through a fake. */
-function liveClient(family: LlmClient['family'], inner: LlmClient = new FakeLlmClient()): LlmClient {
-  return { family, generate: (request: LlmRequest) => inner.generate(request) };
-}
-
 describe('verifierGate', () => {
   it('declares its rules under the verifiers id and keeps the registry export', () => {
     expect(verifierGate.id).toBe('verifiers');
@@ -41,13 +36,12 @@ describe('verifierGate', () => {
     expect(() => ruleBookFor([verifierGate])).not.toThrow();
   });
 
-  it('all supported: passes with a schema-shaped verifierSummary for the real seed', async () => {
+  it('all supported (live clients): passes with a schema-shaped verifierSummary for the real seed', async () => {
     const { context, confirmer, refuter } = testContext();
     const result = await verifierGate.run(context);
     expect(validateGateResult(result)).toBe(true);
     expect(result.status).toBe('pass');
-    expect(ruleIds(result.items)).toEqual(['verifiers/live-results']);
-    expect(result.items[0]?.severity).toBe('info');
+    expect(result.items).toEqual([]);
     expect(confirmer.calls).toHaveLength(SEED.claims.length);
     expect(refuter.calls).toHaveLength(SEED.claims.length);
     const summary = fileMeta(result.meta).verifierSummary;
@@ -69,8 +63,8 @@ describe('verifierGate', () => {
     };
     expect(validatePassage({ ...SEED, review })).toBe(true);
     expect(result.meta).toMatchObject({
-      mode: 'fake',
-      fake: true,
+      mode: 'live',
+      fake: false,
       minSupport: 0.9,
       calls: SEED.claims.length * 2,
       prompts: {
@@ -80,6 +74,28 @@ describe('verifierGate', () => {
     });
     expect(result.meta['costUsd']).toBeGreaterThan(0);
     expect(result.meta).not.toHaveProperty('unpricedModels');
+  });
+
+  it('all supported on fake clients: flags for review and records no verifierSummary', async () => {
+    const { context } = testContext({ fake: true });
+    const result = await verifierGate.run(context);
+    expect(validateGateResult(result)).toBe(true);
+    expect(result.status).toBe('flag');
+    expect(result.items).toEqual([
+      expect.objectContaining({ ruleId: 'verifiers/live-results', severity: 'warning' }) as object,
+    ]);
+    expect(fileMeta(result.meta).verifierSummary).toBeNull();
+    expect(result.meta).toMatchObject({ mode: 'fake', fake: true });
+    expect((result.meta['claims'] as unknown[]).length).toBe(SEED.claims.length);
+  });
+
+  it('treats a fake slot as fake even when its client claims a real family', async () => {
+    const { context } = testContext({ mode: 'fake' });
+    const fakes = new Set([...context.providers.fakes, 'refuter' as const]);
+    const result = await verifierGate.run({ ...context, providers: { ...context.providers, fakes } });
+    expect(result.status).toBe('flag');
+    expect(result.meta['fake']).toBe(true);
+    expect(fileMeta(result.meta).verifierSummary).toBeNull();
   });
 
   it('sends each verifier only the claim and its sources, with the right model and prompt', async () => {
@@ -115,8 +131,8 @@ describe('verifierGate', () => {
     expect(result.status).toBe('fail');
     const item = result.items.find((entry) => entry.ruleId === 'verifiers/claim-not-refuted');
     expect(item).toMatchObject({ severity: 'error', file: FILE, pointer: '/claims/1', claimId: 'c2' });
-    expect(item?.message).toContain('confirmer: supported 0.95');
-    expect(item?.message).toContain('refuter: refuted 0.10 (“Mark 10 has it too.”)');
+    expect(item?.message).toContain('confirmer: supported 0.950');
+    expect(item?.message).toContain('refuter: refuted 0.100 (“Mark 10 has it too.”)');
     const meta = fileMeta(result.meta);
     expect(meta.verifierSummary).toMatchObject({ refutations: 1, minSupport: 0.1, refuter: { minSupport: 0.1 } });
     expect(meta.refutations).toEqual({ confirmer: 0, refuter: 1 });
@@ -139,7 +155,7 @@ describe('verifierGate', () => {
     expect(result.status).toBe('flag');
     const item = result.items.find((entry) => entry.ruleId === 'verifiers/claim-supported');
     expect(item).toMatchObject({ severity: 'warning', claimId: 'c3' });
-    expect(item?.message).toContain('confirmer: supported 0.60 (“Only implied.”)');
+    expect(item?.message).toContain('confirmer: supported 0.600 (“Only implied.”)');
     expect(fileMeta(result.meta).verifierSummary).toMatchObject({ minSupport: 0.6, confirmer: { minSupport: 0.6 } });
   });
 
@@ -163,7 +179,7 @@ describe('verifierGate', () => {
     expect(result.status).toBe('flag');
     const item = result.items.find((entry) => entry.ruleId === 'verifiers/claim-not-sensitive');
     expect(item).toMatchObject({ severity: 'warning', claimId: 'c2' });
-    expect(item?.message).toContain('confirmer: supported 0.95; refuter: supported 0.95');
+    expect(item?.message).toContain('confirmer: supported 0.950; refuter: supported 0.950');
     expect(item?.message).toContain('flagged sensitive by the confirmer and refuter');
     expect(fileMeta(result.meta).verifierSummary).toMatchObject({ sensitive: 1, refutations: 0 });
   });
@@ -197,7 +213,7 @@ describe('verifierGate', () => {
     expect(result.status).toBe('flag');
     const item = result.items.find((entry) => entry.ruleId === 'verifiers/verifier-answered');
     expect(item?.message).toMatch(/^c1 “.*”: confirmer: no verdict \(malformed: /);
-    expect(item?.message).toContain('refuter: supported 0.95');
+    expect(item?.message).toContain('refuter: supported 0.950');
     const meta = fileMeta(result.meta);
     expect(meta.verifierSummary).toBeNull();
     expect(meta.claims[0]?.confirmer).toMatchObject({ kind: 'malformed', attempts: 2 });
@@ -210,7 +226,7 @@ describe('verifierGate', () => {
     expect(result.status).toBe('flag');
     const item = result.items.find((entry) => entry.ruleId === 'verifiers/verifier-answered');
     expect(item).toMatchObject({ claimId: 'c1', severity: 'warning' });
-    expect(item?.message).toContain('refuter: no verdict (provider: scripted unavailable failure for refuter)');
+    expect(item?.message).toContain('refuter: no verdict (provider: “scripted unavailable failure for refuter”)');
     expect(fileMeta(result.meta).verifierSummary).toBeNull();
   });
 
@@ -319,11 +335,11 @@ describe('verifierGate', () => {
     ]);
 
     // A fake client stands in for a verifier only in fake mode.
-    const fakeResult = await verifierGate.run(testContext({ mode: 'live' }).context);
+    const fakeResult = await verifierGate.run(testContext({ mode: 'live', fake: true }).context);
     expect(ruleIds(fakeResult.items)).toEqual(['verifiers/two-families', 'verifiers/two-families']);
   });
 
-  it('reports unreadable passages as info and verifies the rest', async () => {
+  it('flags unreadable passages and verifies the rest', async () => {
     const { context } = testContext({
       files: { ...one, 'passages/JN.1.1-5.json': '{"oops' },
       changed: [
@@ -333,22 +349,35 @@ describe('verifierGate', () => {
       ],
     });
     const result = await verifierGate.run(context);
-    expect(result.status).toBe('pass');
+    expect(result.status).toBe('flag');
     const unreadable = result.items.filter((item) => item.ruleId === 'verifiers/passage-readable');
     expect(unreadable.map((item) => [item.file, item.severity])).toEqual([
-      ['passages/JN.1.1-5.json', 'info'],
-      ['passages/IS.55.6-9.json', 'info'],
+      ['passages/JN.1.1-5.json', 'warning'],
+      ['passages/IS.55.6-9.json', 'warning'],
     ]);
     expect(unreadable[0]?.message).toContain('not valid JSON');
     expect(unreadable[1]?.message).toBe('not verified: the file does not exist at the PR head');
-    expect(Object.keys(result.meta['files'] as object)).toEqual([FILE]);
+    expect(Object.keys(result.meta['files'] as object)).toEqual([
+      'passages/JN.1.1-5.json',
+      'passages/IS.55.6-9.json',
+      FILE,
+    ]);
+    expect(fileMeta(result.meta, 'passages/IS.55.6-9.json')).toEqual({
+      verifierSummary: null,
+      error: 'the file does not exist at the PR head',
+      claims: [],
+    });
   });
 
   it('records unpriced models instead of failing', async () => {
     const { context } = testContext({ files: one, confirmer: { ...verdict(), model: 'mystery-model' } });
     const result = await verifierGate.run(context);
     expect(result.meta['unpricedModels']).toEqual(['mystery-model']);
-    expect(fileMeta(result.meta).verifierSummary?.['confirmer']).toEqual({ model: 'mystery-model', minSupport: 0.95 });
+    // The summary names the configured model, not what one response claimed.
+    expect(fileMeta(result.meta).verifierSummary?.['confirmer']).toEqual({
+      model: 'claude-sonnet-5-5',
+      minSupport: 0.95,
+    });
   });
 
   it('uses injected prompt files', async () => {
@@ -367,16 +396,99 @@ describe('verifierGate', () => {
     const report = await runGates([verifierGate], context);
     const comment = renderComment(report, { gates: [verifierGate], rules: ruleBookFor([verifierGate]) });
     expect(comment).toContain('verifiers/claim-not-refuted');
-    expect(comment).toContain('confirmer: supported 0.95; refuter: refuted 0.05 (“Luke has a parallel.”)');
+    expect(comment).toContain('confirmer: supported 0.950; refuter: refuted 0.050 (“Luke has a parallel.”)');
     expect(comment).toContain('verifiers/claim-not-sensitive');
     expect(comment).toContain('flagged sensitive by the confirmer');
     expect(comment).toContain(VERIFIER_RULES.claimNotRefuted.statement);
   });
 });
 
+describe('meta.claims (the merge-rule contract)', () => {
+  it('has one record per claim with the generator flag and both verdicts, null without a verdict', async () => {
+    const { context } = testContext({
+      files: { [FILE]: seedWithClaims(3), 'passages/JN.1.1-5.json': '{"oops' },
+      confirmer: [verdict({ sensitive: true }), verdict({ verdict: 'uncertain', support: 0.5 }), verdict()],
+      refuter: [verdict({ verdict: 'refuted', support: 0.1 }), { fail: 'unavailable' }, verdict()],
+    });
+    const result = await verifierGate.run(context);
+    const supported = { verdict: 'supported', support: 0.95, sensitive: false };
+    const confirmers = [
+      { ...supported, sensitive: true },
+      { verdict: 'uncertain', support: 0.5, sensitive: false },
+      supported,
+    ];
+    const refuters = [{ verdict: 'refuted', support: 0.1, sensitive: false }, null, supported];
+    expect(result.meta['claims']).toEqual(
+      SEED.claims.slice(0, 3).map((claim, index) => ({
+        file: FILE,
+        claimId: claim.id,
+        sensitive: claim.sensitive,
+        confirmer: confirmers[index],
+        refuter: refuters[index],
+      })),
+    );
+  });
+
+  it('carries the generator sensitive flag', async () => {
+    const seed = JSON.parse(seedWithClaims(1)) as typeof SEED;
+    const flagged = { ...seed, claims: seed.claims.map((claim) => ({ ...claim, sensitive: true })) };
+    const { context } = testContext({ files: { [FILE]: JSON.stringify(flagged) } });
+    const result = await verifierGate.run(context);
+    expect(result.meta['claims']).toEqual([
+      {
+        file: FILE,
+        claimId: 'c1',
+        sensitive: true,
+        confirmer: { verdict: 'supported', support: 0.95, sensitive: false },
+        refuter: { verdict: 'supported', support: 0.95, sensitive: false },
+      },
+    ]);
+  });
+
+  it('is empty when no passage could be read', async () => {
+    const { context } = testContext({ files: { 'passages/JN.1.1-5.json': '{"oops' } });
+    expect((await verifierGate.run(context)).meta['claims']).toEqual([]);
+  });
+});
+
 describe('summarise', () => {
   it('returns null without claims', () => {
-    expect(summarise([])).toBeNull();
+    expect(summarise([], { confirmer: 'a', refuter: 'b' })).toBeNull();
+  });
+});
+
+describe('formatSupport', () => {
+  it.each([
+    [0.95, '0.950'],
+    [0.8999, '0.899'],
+    [0.895, '0.895'],
+    [0.9, '0.900'],
+    [0.57, '0.570'],
+    [1, '1.000'],
+    [0, '0.000'],
+  ])('%d → %s (truncated, never rounded up across the threshold)', (score, shown) => {
+    expect(formatSupport(score)).toBe(shown);
+  });
+});
+
+describe('quoteModelText', () => {
+  it('quotes and neutralises Markdown links, images, mentions, code and bare URLs', () => {
+    const text = quoteModelText(
+      'See ![x](https://evil.example/p.png) and [click](http://a.b) @nyabongo `rm` *b* www.x.org\n new',
+    );
+    expect(text.startsWith('“') && text.endsWith('”')).toBe(true);
+    expect(text).not.toMatch(/(^|[^\\])[[\]()]/);
+    expect(text).not.toContain('`');
+    expect(text).not.toContain('@nyabongo');
+    expect(text).toContain('@\u200bnyabongo');
+    expect(text).not.toContain('https://');
+    expect(text).not.toContain('www.x');
+    expect(text).toContain('\\*b\\*');
+    expect(text).not.toContain('\n');
+  });
+
+  it('truncates long text', () => {
+    expect(quoteModelText('a'.repeat(500), 10)).toBe(`“${'a'.repeat(9)}…”`);
   });
 });
 

@@ -183,7 +183,7 @@ const verifierSummarySchema = {
     refuter: verifierVerdictSchema,
     /** Lowest per-claim support from either verifier: min(confirmer.minSupport, refuter.minSupport). */
     minSupport: { type: 'number', minimum: 0, maximum: 1 },
-    /** Number of claims the refuter refuted. */
+    /** Number of `refuted` verdicts from either verifier (a claim refuted by both counts twice). */
     refutations: { type: 'integer', minimum: 0 },
     /** Number of claims marked sensitive. */
     sensitive: { type: 'integer', minimum: 0 },

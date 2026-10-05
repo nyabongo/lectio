@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
 import { FakeLlmClient, MemorySourceFetcher, createProviders } from '@lectio/providers';
-import type { FakeLlmScript, FakeLlmScriptEntry, FakeSourcePage, LiveProviders } from '@lectio/providers';
+import type { FakeLlmScript, FakeLlmScriptEntry, FakeSourcePage, LiveProviders, LlmClient } from '@lectio/providers';
 import type { Passage } from '@lectio/schema/passage';
 
 import { createContext } from '../../core/gate.ts';
@@ -37,7 +37,13 @@ export function verdict(
 export interface TestContextOptions {
   readonly files?: Readonly<Record<string, string>>;
   readonly changed?: readonly ChangedFile[];
+  /** Defaults to `live`, or `fake` with `fake: true`. */
   readonly mode?: LectioConfig['verifiers']['mode'];
+  /**
+   * `false` (default): the scripted fakes answer behind clients of the configured families, as
+   * live clients would. `true`: they are injected as family `fake` clients.
+   */
+  readonly fake?: boolean;
   readonly config?: LectioConfig;
   /** Scripts for fake confirmer and refuter clients, injected as live slots. */
   readonly confirmer?: FakeLlmScriptEntry;
@@ -54,16 +60,31 @@ export interface TestContext {
   readonly fetcher: MemorySourceFetcher;
 }
 
+/** A client of a real family that answers through `inner`. */
+export function liveClient(family: LlmClient['family'], inner: LlmClient = new FakeLlmClient()): LlmClient {
+  return { family, generate: (request) => inner.generate(request) };
+}
+
 export function testContext(options: TestContextOptions = {}): TestContext {
   const files = options.files ?? { [SEED_PATH]: SEED_TEXT };
   const changed: readonly ChangedFile[] =
     options.changed ?? Object.keys(files).map((path) => ({ path, status: 'added' as const }));
   const base = options.config ?? DEFAULT_CONFIG;
-  const config: LectioConfig = { ...base, verifiers: { ...base.verifiers, mode: options.mode ?? 'fake' } };
+  const config: LectioConfig = {
+    ...base,
+    verifiers: { ...base.verifiers, mode: options.mode ?? (options.fake === true ? 'fake' : 'live') },
+  };
   const confirmer = new FakeLlmClient({ roles: { confirmer: options.confirmer ?? verdict() } });
   const refuter = new FakeLlmClient({ roles: { refuter: options.refuter ?? verdict() } });
   const fetcher = new MemorySourceFetcher(options.pages ?? {});
-  const providers = createProviders(config, {}, { confirmer, refuter, fetcher, ...options.live });
+  const clients =
+    options.fake === true
+      ? { confirmer, refuter }
+      : {
+          confirmer: liveClient(config.verifiers.confirmer.family, confirmer),
+          refuter: liveClient(config.verifiers.refuter.family, refuter),
+        };
+  const providers = createProviders(config, {}, { ...clients, fetcher, ...options.live });
   const context = createContext({
     root: '/repo',
     base: 'origin/main',

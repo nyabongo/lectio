@@ -10,8 +10,11 @@
  *   a missing live client is an error; `fake` → runs on whatever clients are injected (tests).
  * - A refutation fails the gate; low support, a non-`supported` verdict, a sensitive flag or a
  *   verifier that gave no verdict flag it for review. Nothing here closes a PR.
+ * - `meta.claims` holds one {@link VerifierClaimRecord} per verified claim (file, claim id, the
+ *   generator's `sensitive` flag, each verifier's `{ verdict, support, sensitive }` or `null`):
+ *   the contract the merge rule (L-028) reads.
  * - `meta.files[<path>].verifierSummary` is the review block's `verifierSummary` (schema shape)
- *   when both verifiers answered every claim: each verifier's model and lowest support, the lower
+ *   when both live verifiers answered every claim (`null` for a fake run or an unreadable file): each verifier's model and lowest support, the lower
  *   of the two, the number of `refuted` verdicts from either verifier and the number of claims
  *   either flagged sensitive. `meta.prompts` records the prompt versions, `meta.costUsd` the cost.
  *
@@ -31,7 +34,7 @@ import { claimInput, fetchSourceTexts } from './input.ts';
 import { VERIFIER_ROLES, loadPrompt } from './prompts.ts';
 import type { ReadPrompt, VerifierPrompt, VerifierRole } from './prompts.ts';
 import { verifyClaim } from './verify.ts';
-import type { CallOutcome } from './verify.ts';
+import type { CallOutcome, Verdict } from './verify.ts';
 
 export { MAX_FETCHED_CHARS, claimInput, fetchSourceTexts, trimFetched } from './input.ts';
 export type { ClaimInput, SourceInput } from './input.ts';
@@ -80,10 +83,12 @@ export const VERIFIER_RULES = {
   ),
   liveResults: defineRule(
     'verifiers/live-results',
-    'Verifier results count as evidence only when they come from live models.',
-    'Nothing to fix in content: the verifiers ran on fake clients (config.verifiers.mode "fake").',
+    'Verifier results count as evidence only when they come from live models; a fake run always waits for a person.',
+    'Nothing to fix in content: the verifiers ran on fake clients (config.verifiers.mode "fake"), so no verifierSummary is recorded.',
   ),
 } as const;
+
+export type { ClaimResult };
 
 export interface VerifierGateOptions {
   /** Reads the prompt files; defaults to `packages/gates/prompts/`. */
@@ -94,6 +99,8 @@ interface ClaimResult {
   readonly id: string;
   readonly index: number;
   readonly text: string;
+  /** The generator's `claims[].sensitive` (never shown to the verifiers). */
+  readonly sensitive: boolean;
   readonly outcomes: Readonly<Record<VerifierRole, CallOutcome>>;
 }
 
@@ -102,6 +109,32 @@ type OkOutcome = Extract<CallOutcome, { ok: true }>;
 const isOk = (outcome: CallOutcome): outcome is OkOutcome => outcome.ok;
 
 const short = (text: string, max: number): string => (text.length <= max ? text : `${text.slice(0, max - 1)}…`);
+
+const ZWSP = '\u200b';
+
+/**
+ * Model-written text (a rationale, a provider error) made inert for the Markdown PR comment and
+ * quoted: whitespace collapsed, truncated, backslashes and Markdown punctuation escaped (no links,
+ * images, emphasis or code), `@mentions` and bare URLs broken with a zero-width space. HTML is
+ * escaped by the comment renderer.
+ */
+export function quoteModelText(text: string, max = 200): string {
+  const inert = short(text.replace(/\s+/g, ' ').trim(), max)
+    .replace(/`/g, "'")
+    .replace(/[\\[\]()*_~#|!]/g, (char) => `\\${char}`)
+    .replace(/@/g, `@${ZWSP}`)
+    .replace(/:\/\//g, `:${ZWSP}//`)
+    .replace(/www\./gi, (match) => `${match.slice(0, 3)}${ZWSP}.`);
+  return `“${inert}”`;
+}
+
+/**
+ * A support score for display, truncated (never rounded) to 3 decimals, so a score just under
+ * the threshold never reads as meeting it (0.8999 shows as 0.899, not 0.900).
+ */
+export function formatSupport(support: number): string {
+  return (Math.floor(support * 1000 + 1e-9) / 1000).toFixed(3);
+}
 
 /** The changed passage files the gate verifies (deletions excluded). */
 function passageFiles(context: GateContext): string[] {
@@ -144,10 +177,10 @@ function setupFindings(context: GateContext, fakeRoles: readonly VerifierRole[])
 }
 
 function describe(role: VerifierRole, outcome: CallOutcome, minSupport: number): string {
-  if (!isOk(outcome)) return `${role}: no verdict (${outcome.kind}: ${short(outcome.error, 160)})`;
+  if (!isOk(outcome)) return `${role}: no verdict (${outcome.kind}: ${quoteModelText(outcome.error, 160)})`;
   const { verdict, support, rationale } = outcome.verdict;
   const doubt = verdict !== 'supported' || support < minSupport;
-  return `${role}: ${verdict} ${support.toFixed(2)}${doubt ? ` (“${rationale}”)` : ''}`;
+  return `${role}: ${verdict} ${formatSupport(support)}${doubt ? ` (${quoteModelText(rationale)})` : ''}`;
 }
 
 /** One finding for a flagged claim, naming both verdicts and any sensitive flag; `null` when it is clean. */
@@ -184,14 +217,19 @@ function minSupportOf(claims: readonly ClaimResult[], role: VerifierRole): numbe
   return Math.min(...claims.map((claim) => (claim.outcomes[role] as OkOutcome).verdict.support));
 }
 
-/** The review block's `verifierSummary`, or `null` when a verifier left a claim without a verdict. */
-export function summarise(claims: readonly ClaimResult[]): VerifierSummary | null {
+/**
+ * The review block's `verifierSummary`, or `null` when a verifier left a claim without a verdict.
+ * `models` are the configured model ids of the two clients.
+ */
+export function summarise(
+  claims: readonly ClaimResult[],
+  models: Readonly<Record<VerifierRole, string>>,
+): VerifierSummary | null {
   if (claims.length === 0 || !claims.every((claim) => VERIFIER_ROLES.every((role) => claim.outcomes[role].ok))) {
     return null;
   }
-  const model = (role: VerifierRole): string => (claims[0]?.outcomes[role] as OkOutcome).model;
-  const confirmer = { model: model('confirmer'), minSupport: minSupportOf(claims, 'confirmer') };
-  const refuter = { model: model('refuter'), minSupport: minSupportOf(claims, 'refuter') };
+  const confirmer = { model: models.confirmer, minSupport: minSupportOf(claims, 'confirmer') };
+  const refuter = { model: models.refuter, minSupport: minSupportOf(claims, 'refuter') };
   const verdicts = claims.flatMap((claim) => VERIFIER_ROLES.map((role) => (claim.outcomes[role] as OkOutcome).verdict));
   return {
     confirmer,
@@ -201,6 +239,42 @@ export function summarise(claims: readonly ClaimResult[]): VerifierSummary | nul
     sensitive: claims.filter((claim) =>
       VERIFIER_ROLES.some((role) => (claim.outcomes[role] as OkOutcome).verdict.sensitive),
     ).length,
+  };
+}
+
+/** One verifier's verdict as the merge rule reads it, or `null` when it gave none. */
+export interface VerifierVerdictRecord {
+  readonly verdict: Verdict;
+  readonly support: number;
+  readonly sensitive: boolean;
+}
+
+/**
+ * One record per verified claim in `meta.claims`, the contract the merge rule (L-028) reads:
+ * `sensitive` is the generator's flag; `confirmer` / `refuter` is `null` without a verdict.
+ */
+export interface VerifierClaimRecord {
+  readonly file: string;
+  readonly claimId: string;
+  readonly sensitive: boolean;
+  readonly confirmer: VerifierVerdictRecord | null;
+  readonly refuter: VerifierVerdictRecord | null;
+}
+
+function verdictRecord(outcome: CallOutcome): VerifierVerdictRecord | null {
+  if (!isOk(outcome)) return null;
+  const { verdict, support, sensitive } = outcome.verdict;
+  return { verdict, support, sensitive };
+}
+
+/** The `meta.claims` record for `claim` in `file`. */
+export function claimRecord(file: string, claim: ClaimResult): VerifierClaimRecord {
+  return {
+    file,
+    claimId: claim.id,
+    sensitive: claim.sensitive,
+    confirmer: verdictRecord(claim.outcomes.confirmer),
+    refuter: verdictRecord(claim.outcomes.refuter),
   };
 }
 
@@ -239,16 +313,19 @@ export async function runVerifiers(context: GateContext, options: VerifierGateOp
     confirmer: loadPrompt('confirmer', options.readPrompt),
     refuter: loadPrompt('refuter', options.readPrompt),
   };
-  const fake = VERIFIER_ROLES.some((role) => context.providers[role].family === 'fake');
+  // Fail closed: a fake verdict must never look auto-mergeable (flag, and no verifierSummary).
+  const fake = fakeRoles.length > 0 || VERIFIER_ROLES.some((role) => context.providers[role].family === 'fake');
   const items: GateResultItem[] = fake
-    ? [finding(VERIFIER_RULES.liveResults, { severity: 'info', message: 'the verifiers ran on fake clients' })]
+    ? [finding(VERIFIER_RULES.liveResults, { severity: 'warning', message: 'the verifiers ran on fake clients' })]
     : [];
+  const models = { confirmer: verifiers.confirmer.model, refuter: verifiers.refuter.model };
   const prices = createCostMeter({ pricing });
   const unpriced = new Set<string>();
   let costUsd = 0;
   let calls = 0;
   let budget: string | undefined;
   const filesMeta: Record<string, unknown> = {};
+  const claimRecords: VerifierClaimRecord[] = [];
 
   const call = async (role: VerifierRole, input: ReturnType<typeof claimInput>): Promise<CallOutcome> => {
     if (budget !== undefined) return { ok: false, kind: 'budget', error: budget, usages: [], attempts: 0 };
@@ -275,8 +352,9 @@ export async function runVerifiers(context: GateContext, options: VerifierGateOp
     const passage = readPassage(context, file);
     if (typeof passage === 'string') {
       items.push(
-        finding(VERIFIER_RULES.passageReadable, { file, severity: 'info', message: `not verified: ${passage}` }),
+        finding(VERIFIER_RULES.passageReadable, { file, severity: 'warning', message: `not verified: ${passage}` }),
       );
+      filesMeta[file] = { verifierSummary: null, error: passage, claims: [] };
       continue;
     }
     const fetched = await fetchSourceTexts(passage, context.providers.fetcher);
@@ -285,9 +363,16 @@ export async function runVerifiers(context: GateContext, options: VerifierGateOp
       const input = claimInput(claim, passage, fetched);
       const confirmer = await call('confirmer', input);
       const refuter = await call('refuter', input);
-      claims.push({ id: claim.id, index, text: claim.text, outcomes: { confirmer, refuter } });
+      claims.push({
+        id: claim.id,
+        index,
+        text: claim.text,
+        sensitive: claim.sensitive,
+        outcomes: { confirmer, refuter },
+      });
     }
     for (const claim of claims) {
+      claimRecords.push(claimRecord(file, claim));
       const item = claimFinding(file, claim, autoMerge.minSupport);
       if (item !== null) items.push(item);
     }
@@ -297,7 +382,7 @@ export async function runVerifiers(context: GateContext, options: VerifierGateOp
         return isOk(outcome) && outcome.verdict.verdict === 'refuted';
       }).length;
     filesMeta[file] = {
-      verifierSummary: summarise(claims),
+      verifierSummary: fake ? null : summarise(claims, models),
       refutations: { confirmer: count('confirmer'), refuter: count('refuter') },
       claims: claims.map((claim) => ({
         id: claim.id,
@@ -320,6 +405,7 @@ export async function runVerifiers(context: GateContext, options: VerifierGateOp
     costUsd: Math.round(costUsd * 1_000_000) / 1_000_000,
     ...(unpriced.size > 0 ? { unpricedModels: [...unpriced].sort() } : {}),
     files: filesMeta,
+    claims: claimRecords,
   });
 }
 
