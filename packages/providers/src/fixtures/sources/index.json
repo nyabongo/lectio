@@ -1,0 +1,5 @@
+{
+  "https://example.org/codex-history": { "file": "codex-history.txt", "contentType": "text/plain; charset=utf-8" },
+  "https://example.org/moved": { "status": 301, "text": "" },
+  "https://example.org/escape": { "file": "../../outside.txt" }
+}
