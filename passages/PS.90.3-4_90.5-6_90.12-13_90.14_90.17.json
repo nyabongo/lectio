@@ -1,0 +1,584 @@
+{
+  "key": "PS.90.3-4_90.5-6_90.12-13_90.14_90.17",
+  "ref": "Ps 90:3-4, 5-6, 12-13, 14, 17",
+  "locale": "en",
+  "summary": "Mortals return to dust and wither like grass before the eternal God; the psalm asks for a wise heart, mercy and lasting work.",
+  "context": {
+    "title": "A prayer of Moses",
+    "paragraphs": [
+      "Psalm 90 opens the fourth book of the Psalter, and its heading calls it a prayer of Moses, the man of God. [c1] The same title is given to Moses in Deut 33:1. [c2] Many modern commentators doubt that Moses wrote it, noting its closeness to Deuteronomy and an outlook that seems to reach beyond his age. [c3]",
+      "The selection leaves out the psalm’s middle verses, which speak of a life spent under God’s anger at sin. [c4] It keeps the contrast between God, for whom a thousand years are like yesterday, and mortals who return to dust and pass like grass. [c5] The second letter of Peter takes up the saying about a thousand years. [c6]",
+      "In Palestine some grasses shoot up lushly in spring and are soon scorched and gone, which gives the image its force. [c7] The closing prayer asks God for a morning of mercy after a night of trouble, and to establish the work of our hands, a phrase frequent in Deuteronomy. [c8][c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "dakka",
+      "verse": "90:3",
+      "anchor": "dust",
+      "original": {
+        "text": "דַּכָּא",
+        "lang": "hbo",
+        "translit": "dakkāʾ",
+        "gloss": "what is crushed fine"
+      },
+      "summary": "Dakka means what is crushed small; the psalm echoes Genesis 3:19 in words of its own.",
+      "body": "Dakka properly means something beaten or crushed very fine, and hence dust. [c10] The Cambridge Bible renders it pulverisation, the dissolving of the body into its elements. [c11] The verse plainly recalls Gen 3:19, where the man taken from the ground is told he will return to dust, though the psalmist chooses different words. [c12]"
+    },
+    {
+      "id": "shuv",
+      "verse": "90:13",
+      "anchor": "Return",
+      "original": {
+        "text": "שׁוּבָה",
+        "lang": "hbo",
+        "translit": "šûbāh",
+        "gloss": "turn!"
+      },
+      "summary": "The prayer’s “Return” uses the verb of verse 3, where God bids mortals return to dust.",
+      "body": "Verse 13 opens with the verb shuv, the same verb God uses in verse 3 when he tells mortals to return to the dust. [c13] Keil and Delitzsch hear the prayer of Moses in Exod 32:12 and read it as a plea that God turn from his anger. [c14] The Cambridge Bible adds that Scripture speaks of God relenting in human terms, without implying that he changes his purpose. [c15]"
+    },
+    {
+      "id": "heart-of-wisdom",
+      "verse": "90:12",
+      "anchor": "wisdom of heart",
+      "original": {
+        "text": "לְבַב חָכְמָה",
+        "lang": "hbo",
+        "translit": "lĕbab ḥokmâ",
+        "gloss": "a heart of wisdom"
+      },
+      "summary": "Hebrew asks for “a heart of wisdom”, brought in like a harvest, once our days are rightly counted.",
+      "body": "Literally the line asks God to make us know how to count our days, so that we may bring in a heart of wisdom. [c16] The verb for bringing in was used of garnering the harvest. [c17] The petition follows from the fear of God in verse 11, which is the beginning of wisdom. [c18] Ellicott reads the verse differently, with God rather than man as the one who reckons the days. [c19]"
+    },
+    {
+      "id": "noam",
+      "verse": "90:17",
+      "anchor": "favor",
+      "original": {
+        "text": "נֹעַם",
+        "lang": "hbo",
+        "translit": "nōʿam",
+        "gloss": "pleasantness"
+      },
+      "summary": "No‘am means pleasantness, a word that joins beauty and kindly favour, much like the Greek charis.",
+      "body": "No‘am properly means pleasantness, and from there beauty or grace. [c20] Ellicott compares the Greek charis and the English grace, which likewise join beauty and favour. [c21] The Septuagint renders it splendour. [c22] The psalm closes by asking that the gracious kindliness of the Lord rest on his people and make their ordinary daily work endure. [c23]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Psalm 90 begins Book IV of the Psalter (Psalms 90-106), and its title ascribes it to Moses, the man of God.",
+      "sourceIds": ["ps-90-1", "cambridge-ps-90-book"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "“Man of God” is a title of honour applied to Moses in Deut 33:1.",
+      "sourceIds": ["dt-33-1", "cambridge-ps-90-man-of-god"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Commentators such as the Cambridge Bible and Ellicott doubt Mosaic authorship, pointing to the psalm’s Deuteronomic language and a retrospect wider than was possible to Moses.",
+      "sourceIds": ["cambridge-ps-90-moses", "ellicott-ps-90-moses"],
+      "sensitive": true
+    },
+    {
+      "id": "c4",
+      "text": "Ps 90:7-11, omitted from the selection, describe life spent under the cloud of God’s wrath for sin.",
+      "sourceIds": ["ps-90-7", "cambridge-ps-90-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Ps 90:3-6 contrasts God, to whom a thousand years are as yesterday, with mortals whom God returns to dust and who pass like grass.",
+      "sourceIds": ["ps-90-4", "ps-90-5", "barnes-ps-90-3", "cambridge-ps-90-5"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "2 Pet 3:8 takes up the saying of Ps 90:4 about a thousand years and a day.",
+      "sourceIds": ["2pt-3-8", "cambridge-ps-90-4"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Some grasses of the Jordan valley shoot up with great luxuriance in early spring and are quickly scorched and burnt up.",
+      "sourceIds": ["cambridge-ps-90-5-grass"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The prayer for satisfaction “in the morning” (Ps 90:14) implies that it has been night, a time of trouble, for Israel.",
+      "sourceIds": ["ps-90-14", "kd-ps-90-14", "pulpit-ps-90-14"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "“The work of our hands” (Ps 90:17) is a phrase characteristic of Deuteronomy, where it occurs seven times.",
+      "sourceIds": ["cambridge-ps-90-17-deut"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Dakka means properly anything beaten or broken small or very fine, and hence dust.",
+      "sourceIds": ["ps-90-3-dakka", "barnes-ps-90-3-dakka"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "The Cambridge Bible explains dakka as literally pulverisation, implying the dissolution of the body into its elements.",
+      "sourceIds": ["cambridge-ps-90-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Ps 90:3 plainly refers to Gen 3:19, though the psalmist uses different words.",
+      "sourceIds": ["gn-3-19", "cambridge-ps-90-3-genesis"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Ps 90:3 and Ps 90:13 both use the verb שׁוּב: God bids mortals return (to dust), and the psalmist bids God turn.",
+      "sourceIds": ["ps-90-3-shuv", "ps-90-13", "barnes-ps-90-3-return"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Keil and Delitzsch read Ps 90:13 in the language of Moses’ prayer in Exod 32:12, as a plea for the turning away of God’s anger.",
+      "sourceIds": ["ex-32-12", "kd-ps-90-13", "kd-ps-90-13-anger"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The Cambridge Bible notes that God’s relenting is spoken of after the manner of men, not implying that he can regret his course of action.",
+      "sourceIds": ["cambridge-ps-90-13"],
+      "sensitive": true
+    },
+    {
+      "id": "c16",
+      "text": "Ps 90:12 literally reads “to number our days make us know, and we will bring a heart of wisdom”.",
+      "sourceIds": ["ps-90-12", "barnes-ps-90-12"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "The verb in “bring a heart of wisdom” is used of garnering in the harvest.",
+      "sourceIds": ["cambridge-ps-90-12"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The Cambridge Bible links the petition of Ps 90:12 to the fear of God in Ps 90:11, which is the beginning of wisdom.",
+      "sourceIds": ["cambridge-ps-90-12-fear"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Ellicott argues that the natural reading makes God, not man, the reckoner of the days in Ps 90:12.",
+      "sourceIds": ["ellicott-ps-90-12"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "No‘am means properly pleasantness, then beauty, splendour or grace.",
+      "sourceIds": ["ps-90-17", "barnes-ps-90-17"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Ellicott compares no‘am with Greek χάρις and English “grace”, which combine the ideas of beauty and favour.",
+      "sourceIds": ["ellicott-ps-90-17"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "The Septuagint renders no‘am in Ps 90:17 as λαμπρότης, splendour.",
+      "sourceIds": ["barnes-ps-90-17-lxx"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "The Cambridge Bible explains the beauty of the Lord as his gracious kindliness, and the work of our hands as all the ordinary undertakings of daily life.",
+      "sourceIds": ["cambridge-ps-90-17", "cambridge-ps-90-17-work"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "ps-90-1",
+      "type": "scripture",
+      "citation": "Psalm 90:1",
+      "ref": "Ps 90:1",
+      "excerpt": "לְמֹשֶׁה אִישׁ־הָאֱלֹהִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "dt-33-1",
+      "type": "scripture",
+      "citation": "Deuteronomy 33:1",
+      "ref": "Dt 33:1",
+      "excerpt": "אִישׁ הָאֱלֹהִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-3-dakka",
+      "type": "scripture",
+      "citation": "Psalm 90:3",
+      "ref": "Ps 90:3",
+      "excerpt": "דַּכָּא",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-3-shuv",
+      "type": "scripture",
+      "citation": "Psalm 90:3",
+      "ref": "Ps 90:3",
+      "excerpt": "שׁוּבוּ בְנֵי־אָדָם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-4",
+      "type": "scripture",
+      "citation": "Psalm 90:4",
+      "ref": "Ps 90:4",
+      "excerpt": "אֶלֶף שָׁנִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-5",
+      "type": "scripture",
+      "citation": "Psalm 90:5",
+      "ref": "Ps 90:5",
+      "excerpt": "כֶּחָצִיר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-7",
+      "type": "scripture",
+      "citation": "Psalm 90:7-11",
+      "ref": "Ps 90:7-11"
+    },
+    {
+      "id": "ps-90-12",
+      "type": "scripture",
+      "citation": "Psalm 90:12",
+      "ref": "Ps 90:12",
+      "excerpt": "וְנָבִא לְבַב חָכְמָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-13",
+      "type": "scripture",
+      "citation": "Psalm 90:13",
+      "ref": "Ps 90:13",
+      "excerpt": "שׁוּבָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-14",
+      "type": "scripture",
+      "citation": "Psalm 90:14",
+      "ref": "Ps 90:14",
+      "excerpt": "בַבֹּקֶר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-90-17",
+      "type": "scripture",
+      "citation": "Psalm 90:17",
+      "ref": "Ps 90:17",
+      "excerpt": "נֹעַם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gn-3-19",
+      "type": "scripture",
+      "citation": "Genesis 3:19",
+      "ref": "Gn 3:19",
+      "excerpt": "וְאֶל־עָפָר תָּשׁוּב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ex-32-12",
+      "type": "scripture",
+      "citation": "Exodus 32:12",
+      "ref": "Ex 32:12",
+      "excerpt": "שׁוּב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "2pt-3-8",
+      "type": "scripture",
+      "citation": "2 Peter 3:8",
+      "ref": "2 Pt 3:8",
+      "excerpt": "χίλια ἔτη ὡς ἡμέρα μία",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "cambridge-ps-90-book",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), introduction to Psalm 90 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "BOOK IV Psalms 90-106",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-man-of-god",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on the title of Psalm 90 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "Man of God is a title of honour, applied to Moses",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-moses",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), introduction to Psalm 90 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "the Deuteronomic language of the Psalm points to a later date",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "ellicott-ps-90-moses",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), introduction to Psalm 90 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ellicott/psalms/90.htm",
+      "excerpt": "a far more extended retrospect than was possible to Moses",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-7",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:7-12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "under the cloud of God’s wrath for the punishment of its sins",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "barnes-ps-90-3",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 90:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-3.htm",
+      "excerpt": "God causes man to return to dust",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "barnes-ps-90-3-dakka",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 90:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-3.htm",
+      "excerpt": "means properly anything beaten or broken small or very fine",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "barnes-ps-90-3-return",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 90:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-3.htm",
+      "excerpt": "Return to your dust; go back to the earth",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-3",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-3.htm",
+      "excerpt": "dakkâ, lit. pulverisation, implies the dissolution of the body",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-3-genesis",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-3.htm",
+      "excerpt": "The Psalmist plainly refers to Genesis 3:19, though he chooses different words",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-4",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-4.htm",
+      "excerpt": "Cp. 2 Peter 3:8, where the converse truth is also affirmed",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-5",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-5.htm",
+      "excerpt": "Another figure for the transitoriness of human life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-5-grass",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:5, quoting H. B. Tristram (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-5.htm",
+      "excerpt": "shooting up in early spring with the greatest luxuriance",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "kd-ps-90-14",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 90:13-14 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-13.htm",
+      "excerpt": "there lies the thought that it has been night hitherto in Israel",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "pulpit-ps-90-14",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 90:14 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-14.htm",
+      "excerpt": "after a night of trouble, give us a bright morning",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-17-deut",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "A phrase characteristic of Deuteronomy, where it occurs seven times",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "kd-ps-90-13",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 90:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-13.htm",
+      "excerpt": "the well-known language of prayer of Moses in Exodus 32:12",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "kd-ps-90-13-anger",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 90:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-13.htm",
+      "excerpt": "for the turning away of His anger",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-13",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "not of course that He can regret His course of action",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "barnes-ps-90-12",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 90:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-12.htm",
+      "excerpt": "and we will bring a heart of wisdom",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-12",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "The verb is used of garnering in the harvest",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-12-fear",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "which is “the beginning of wisdom” requires",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "ellicott-ps-90-12",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 90:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-12.htm",
+      "excerpt": "the reckoner of the days",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "barnes-ps-90-17",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 90:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-17.htm",
+      "excerpt": "means properly \"pleasantness;\" then, beauty, splendor; then grace",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "barnes-ps-90-17-lxx",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 90:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-17.htm",
+      "excerpt": "The Septuagint renders it here, λαμπρότης lamprotēs, \"splendor;\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "ellicott-ps-90-17",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 90:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/90-17.htm",
+      "excerpt": "seems to combine the ideas of “beauty” and “favour.”",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-17",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "the gracious kindliness of Jehovah",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    },
+    {
+      "id": "cambridge-ps-90-17-work",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 90:17 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/cambridge/psalms/90.htm",
+      "excerpt": "All the ordinary undertakings of daily life are meant",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:30:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021d-ps-90",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:50:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
