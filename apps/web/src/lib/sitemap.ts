@@ -15,12 +15,24 @@ import { normaliseBase } from './site.ts';
 export const SITEMAP_INDEX = 'sitemap-index.xml';
 
 /**
+ * Pages that are `noindex` and so stay out of the sitemap, by their last path segment (in any locale and under
+ * any base path): the search page (L-060) has no content of its own.
+ */
+export const NOINDEX_PAGES: ReadonlySet<string> = new Set(['search']);
+
+/**
  * Whether a built URL is an HTML page that belongs in the sitemap. Files with an extension (the static JSON API,
- * OG images, feeds) are not pages; `@astrojs/sitemap` already leaves out the 404 page.
+ * OG images, feeds) are not pages, nor are the `NOINDEX_PAGES`; `@astrojs/sitemap` already leaves out the 404 page.
  */
 export function isSitemapPage(url: string): boolean {
   const { pathname } = new URL(url);
   const last = pathname.slice(pathname.lastIndexOf('/') + 1);
+  // A directory URL (`…/search/`): its page name is the segment before the trailing slash.
+  if (last === '')
+    return !pathname
+      .split('/')
+      .slice(-2, -1)
+      .some((segment) => NOINDEX_PAGES.has(segment));
   return !last.includes('.') || last.endsWith('.html');
 }
 
