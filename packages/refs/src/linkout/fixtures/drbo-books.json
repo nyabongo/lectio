@@ -1,0 +1,666 @@
+{
+  "description": "drbo.org chapter URL pattern checked for all 73 books (L-007). For each book the first and last chapter page answered HTTP 200 with the title \"Douay-Rheims Bible, <siteName> Chapter <n>\", and the page after the last chapter redirected (HTTP 302). Only URLs, page titles and chapter counts are recorded; no reading text.",
+  "checked": "2026-10-05",
+  "pattern": "https://www.drbo.org/chapter/{Douay-Rheims book number, 2 digits}{chapter, 3 digits}.htm",
+  "books": [
+    {
+      "code": "GN",
+      "douayRheimsNumber": 1,
+      "siteName": "Genesis",
+      "drboChapters": 50,
+      "vulgateChapters": 50,
+      "firstChapterUrl": "https://www.drbo.org/chapter/01001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/01050.htm"
+    },
+    {
+      "code": "EX",
+      "douayRheimsNumber": 2,
+      "siteName": "Exodus",
+      "drboChapters": 40,
+      "vulgateChapters": 40,
+      "firstChapterUrl": "https://www.drbo.org/chapter/02001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/02040.htm"
+    },
+    {
+      "code": "LV",
+      "douayRheimsNumber": 3,
+      "siteName": "Leviticus",
+      "drboChapters": 27,
+      "vulgateChapters": 27,
+      "firstChapterUrl": "https://www.drbo.org/chapter/03001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/03027.htm"
+    },
+    {
+      "code": "NM",
+      "douayRheimsNumber": 4,
+      "siteName": "Numbers",
+      "drboChapters": 36,
+      "vulgateChapters": 36,
+      "firstChapterUrl": "https://www.drbo.org/chapter/04001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/04036.htm"
+    },
+    {
+      "code": "DT",
+      "douayRheimsNumber": 5,
+      "siteName": "Deuteronomy",
+      "drboChapters": 34,
+      "vulgateChapters": 34,
+      "firstChapterUrl": "https://www.drbo.org/chapter/05001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/05034.htm"
+    },
+    {
+      "code": "JOS",
+      "douayRheimsNumber": 6,
+      "siteName": "Josue (Joshua)",
+      "drboChapters": 24,
+      "vulgateChapters": 24,
+      "firstChapterUrl": "https://www.drbo.org/chapter/06001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/06024.htm"
+    },
+    {
+      "code": "JGS",
+      "douayRheimsNumber": 7,
+      "siteName": "Judges",
+      "drboChapters": 21,
+      "vulgateChapters": 21,
+      "firstChapterUrl": "https://www.drbo.org/chapter/07001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/07021.htm"
+    },
+    {
+      "code": "RU",
+      "douayRheimsNumber": 8,
+      "siteName": "Ruth",
+      "drboChapters": 4,
+      "vulgateChapters": 4,
+      "firstChapterUrl": "https://www.drbo.org/chapter/08001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/08004.htm"
+    },
+    {
+      "code": "1SM",
+      "douayRheimsNumber": 9,
+      "siteName": "1 Kings (1 Samuel)",
+      "drboChapters": 31,
+      "vulgateChapters": 31,
+      "firstChapterUrl": "https://www.drbo.org/chapter/09001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/09031.htm"
+    },
+    {
+      "code": "2SM",
+      "douayRheimsNumber": 10,
+      "siteName": "2 Kings (2 Samuel)",
+      "drboChapters": 24,
+      "vulgateChapters": 24,
+      "firstChapterUrl": "https://www.drbo.org/chapter/10001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/10024.htm"
+    },
+    {
+      "code": "1KGS",
+      "douayRheimsNumber": 11,
+      "siteName": "3 Kings (1 Kings)",
+      "drboChapters": 22,
+      "vulgateChapters": 22,
+      "firstChapterUrl": "https://www.drbo.org/chapter/11001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/11022.htm"
+    },
+    {
+      "code": "2KGS",
+      "douayRheimsNumber": 12,
+      "siteName": "4 Kings (2 Kings)",
+      "drboChapters": 25,
+      "vulgateChapters": 25,
+      "firstChapterUrl": "https://www.drbo.org/chapter/12001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/12025.htm"
+    },
+    {
+      "code": "1CHR",
+      "douayRheimsNumber": 13,
+      "siteName": "1 Paralipomenon (1 Chronicles)",
+      "drboChapters": 29,
+      "vulgateChapters": 29,
+      "firstChapterUrl": "https://www.drbo.org/chapter/13001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/13029.htm"
+    },
+    {
+      "code": "2CHR",
+      "douayRheimsNumber": 14,
+      "siteName": "2 Paralipomenon (2 Chronicles)",
+      "drboChapters": 36,
+      "vulgateChapters": 36,
+      "firstChapterUrl": "https://www.drbo.org/chapter/14001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/14036.htm"
+    },
+    {
+      "code": "EZR",
+      "douayRheimsNumber": 15,
+      "siteName": "1 Esdras (Ezra)",
+      "drboChapters": 10,
+      "vulgateChapters": 10,
+      "firstChapterUrl": "https://www.drbo.org/chapter/15001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/15010.htm"
+    },
+    {
+      "code": "NEH",
+      "douayRheimsNumber": 16,
+      "siteName": "2 Esdras (Nehemiah)",
+      "drboChapters": 13,
+      "vulgateChapters": 13,
+      "firstChapterUrl": "https://www.drbo.org/chapter/16001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/16013.htm"
+    },
+    {
+      "code": "TB",
+      "douayRheimsNumber": 17,
+      "siteName": "Tobias (Tobit)",
+      "drboChapters": 14,
+      "vulgateChapters": 14,
+      "firstChapterUrl": "https://www.drbo.org/chapter/17001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/17014.htm"
+    },
+    {
+      "code": "JDT",
+      "douayRheimsNumber": 18,
+      "siteName": "Judith",
+      "drboChapters": 16,
+      "vulgateChapters": 16,
+      "firstChapterUrl": "https://www.drbo.org/chapter/18001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/18016.htm"
+    },
+    {
+      "code": "EST",
+      "douayRheimsNumber": 19,
+      "siteName": "Esther",
+      "drboChapters": 16,
+      "vulgateChapters": 10,
+      "firstChapterUrl": "https://www.drbo.org/chapter/19001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/19016.htm",
+      "note": "drbo.org also has the Greek additions as chapters 11-16; L-006 does not support Greek Esther, so the builder only produces chapters 1-10."
+    },
+    {
+      "code": "1MC",
+      "douayRheimsNumber": 45,
+      "siteName": "1 Machabees",
+      "drboChapters": 16,
+      "vulgateChapters": 16,
+      "firstChapterUrl": "https://www.drbo.org/chapter/45001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/45016.htm"
+    },
+    {
+      "code": "2MC",
+      "douayRheimsNumber": 46,
+      "siteName": "2 Machabees",
+      "drboChapters": 15,
+      "vulgateChapters": 15,
+      "firstChapterUrl": "https://www.drbo.org/chapter/46001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/46015.htm"
+    },
+    {
+      "code": "JB",
+      "douayRheimsNumber": 20,
+      "siteName": "Job",
+      "drboChapters": 42,
+      "vulgateChapters": 42,
+      "firstChapterUrl": "https://www.drbo.org/chapter/20001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/20042.htm"
+    },
+    {
+      "code": "PS",
+      "douayRheimsNumber": 21,
+      "siteName": "Psalms",
+      "drboChapters": 150,
+      "vulgateChapters": 150,
+      "firstChapterUrl": "https://www.drbo.org/chapter/21001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/21150.htm"
+    },
+    {
+      "code": "PRV",
+      "douayRheimsNumber": 22,
+      "siteName": "Proverbs",
+      "drboChapters": 31,
+      "vulgateChapters": 31,
+      "firstChapterUrl": "https://www.drbo.org/chapter/22001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/22031.htm"
+    },
+    {
+      "code": "ECCL",
+      "douayRheimsNumber": 23,
+      "siteName": "Ecclesiastes",
+      "drboChapters": 12,
+      "vulgateChapters": 12,
+      "firstChapterUrl": "https://www.drbo.org/chapter/23001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/23012.htm"
+    },
+    {
+      "code": "SG",
+      "douayRheimsNumber": 24,
+      "siteName": "Canticles (Solomon)",
+      "drboChapters": 8,
+      "vulgateChapters": 8,
+      "firstChapterUrl": "https://www.drbo.org/chapter/24001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/24008.htm"
+    },
+    {
+      "code": "WIS",
+      "douayRheimsNumber": 25,
+      "siteName": "Wisdom",
+      "drboChapters": 19,
+      "vulgateChapters": 19,
+      "firstChapterUrl": "https://www.drbo.org/chapter/25001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/25019.htm"
+    },
+    {
+      "code": "SIR",
+      "douayRheimsNumber": 26,
+      "siteName": "Ecclesiasticus (Sirach)",
+      "drboChapters": 51,
+      "vulgateChapters": 52,
+      "firstChapterUrl": "https://www.drbo.org/chapter/26001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/26051.htm",
+      "note": "vul.vrs (libpalaso) has 52 chapters; drbo.org ends at 51. Sirach is identity-mapped in L-006, so lectionary references (chapters 1-51) keep their chapter."
+    },
+    {
+      "code": "IS",
+      "douayRheimsNumber": 27,
+      "siteName": "Isaias (Isaiah)",
+      "drboChapters": 66,
+      "vulgateChapters": 66,
+      "firstChapterUrl": "https://www.drbo.org/chapter/27001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/27066.htm"
+    },
+    {
+      "code": "JER",
+      "douayRheimsNumber": 28,
+      "siteName": "Jeremias (Jeremiah)",
+      "drboChapters": 52,
+      "vulgateChapters": 52,
+      "firstChapterUrl": "https://www.drbo.org/chapter/28001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/28052.htm"
+    },
+    {
+      "code": "LAM",
+      "douayRheimsNumber": 29,
+      "siteName": "Lamentations",
+      "drboChapters": 5,
+      "vulgateChapters": 5,
+      "firstChapterUrl": "https://www.drbo.org/chapter/29001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/29005.htm"
+    },
+    {
+      "code": "BAR",
+      "douayRheimsNumber": 30,
+      "siteName": "Baruch",
+      "drboChapters": 6,
+      "vulgateChapters": 6,
+      "firstChapterUrl": "https://www.drbo.org/chapter/30001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/30006.htm"
+    },
+    {
+      "code": "EZ",
+      "douayRheimsNumber": 31,
+      "siteName": "Ezechiel (Ezekiel)",
+      "drboChapters": 48,
+      "vulgateChapters": 48,
+      "firstChapterUrl": "https://www.drbo.org/chapter/31001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/31048.htm"
+    },
+    {
+      "code": "DN",
+      "douayRheimsNumber": 32,
+      "siteName": "Daniel",
+      "drboChapters": 14,
+      "vulgateChapters": 14,
+      "firstChapterUrl": "https://www.drbo.org/chapter/32001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/32014.htm"
+    },
+    {
+      "code": "HOS",
+      "douayRheimsNumber": 33,
+      "siteName": "Osee (Hosea)",
+      "drboChapters": 14,
+      "vulgateChapters": 14,
+      "firstChapterUrl": "https://www.drbo.org/chapter/33001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/33014.htm"
+    },
+    {
+      "code": "JL",
+      "douayRheimsNumber": 34,
+      "siteName": "Joel",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/34001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/34003.htm"
+    },
+    {
+      "code": "AM",
+      "douayRheimsNumber": 35,
+      "siteName": "Amos",
+      "drboChapters": 9,
+      "vulgateChapters": 9,
+      "firstChapterUrl": "https://www.drbo.org/chapter/35001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/35009.htm"
+    },
+    {
+      "code": "OB",
+      "douayRheimsNumber": 36,
+      "siteName": "Abdias (Obadiah)",
+      "drboChapters": 1,
+      "vulgateChapters": 1,
+      "firstChapterUrl": "https://www.drbo.org/chapter/36001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/36001.htm"
+    },
+    {
+      "code": "JON",
+      "douayRheimsNumber": 37,
+      "siteName": "Jonas (Jonah)",
+      "drboChapters": 4,
+      "vulgateChapters": 4,
+      "firstChapterUrl": "https://www.drbo.org/chapter/37001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/37004.htm"
+    },
+    {
+      "code": "MI",
+      "douayRheimsNumber": 38,
+      "siteName": "Micheas (Micah)",
+      "drboChapters": 7,
+      "vulgateChapters": 7,
+      "firstChapterUrl": "https://www.drbo.org/chapter/38001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/38007.htm"
+    },
+    {
+      "code": "NA",
+      "douayRheimsNumber": 39,
+      "siteName": "Nahum",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/39001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/39003.htm"
+    },
+    {
+      "code": "HB",
+      "douayRheimsNumber": 40,
+      "siteName": "Habacuc (Habakkuk)",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/40001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/40003.htm"
+    },
+    {
+      "code": "ZEP",
+      "douayRheimsNumber": 41,
+      "siteName": "Sophonias (Zephaniah)",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/41001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/41003.htm"
+    },
+    {
+      "code": "HG",
+      "douayRheimsNumber": 42,
+      "siteName": "Aggeus (Haggai)",
+      "drboChapters": 2,
+      "vulgateChapters": 2,
+      "firstChapterUrl": "https://www.drbo.org/chapter/42001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/42002.htm"
+    },
+    {
+      "code": "ZEC",
+      "douayRheimsNumber": 43,
+      "siteName": "Zacharias (Zechariah)",
+      "drboChapters": 14,
+      "vulgateChapters": 14,
+      "firstChapterUrl": "https://www.drbo.org/chapter/43001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/43014.htm"
+    },
+    {
+      "code": "MAL",
+      "douayRheimsNumber": 44,
+      "siteName": "Malachias (Malachi)",
+      "drboChapters": 4,
+      "vulgateChapters": 4,
+      "firstChapterUrl": "https://www.drbo.org/chapter/44001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/44004.htm"
+    },
+    {
+      "code": "MT",
+      "douayRheimsNumber": 47,
+      "siteName": "Matthew",
+      "drboChapters": 28,
+      "vulgateChapters": 28,
+      "firstChapterUrl": "https://www.drbo.org/chapter/47001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/47028.htm"
+    },
+    {
+      "code": "MK",
+      "douayRheimsNumber": 48,
+      "siteName": "Mark",
+      "drboChapters": 16,
+      "vulgateChapters": 16,
+      "firstChapterUrl": "https://www.drbo.org/chapter/48001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/48016.htm"
+    },
+    {
+      "code": "LK",
+      "douayRheimsNumber": 49,
+      "siteName": "Luke",
+      "drboChapters": 24,
+      "vulgateChapters": 24,
+      "firstChapterUrl": "https://www.drbo.org/chapter/49001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/49024.htm"
+    },
+    {
+      "code": "JN",
+      "douayRheimsNumber": 50,
+      "siteName": "John",
+      "drboChapters": 21,
+      "vulgateChapters": 21,
+      "firstChapterUrl": "https://www.drbo.org/chapter/50001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/50021.htm"
+    },
+    {
+      "code": "ACTS",
+      "douayRheimsNumber": 51,
+      "siteName": "Acts of Apostles",
+      "drboChapters": 28,
+      "vulgateChapters": 28,
+      "firstChapterUrl": "https://www.drbo.org/chapter/51001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/51028.htm"
+    },
+    {
+      "code": "ROM",
+      "douayRheimsNumber": 52,
+      "siteName": "Romans",
+      "drboChapters": 16,
+      "vulgateChapters": 16,
+      "firstChapterUrl": "https://www.drbo.org/chapter/52001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/52016.htm"
+    },
+    {
+      "code": "1COR",
+      "douayRheimsNumber": 53,
+      "siteName": "1 Corinthians",
+      "drboChapters": 16,
+      "vulgateChapters": 16,
+      "firstChapterUrl": "https://www.drbo.org/chapter/53001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/53016.htm"
+    },
+    {
+      "code": "2COR",
+      "douayRheimsNumber": 54,
+      "siteName": "2 Corinthians",
+      "drboChapters": 13,
+      "vulgateChapters": 13,
+      "firstChapterUrl": "https://www.drbo.org/chapter/54001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/54013.htm"
+    },
+    {
+      "code": "GAL",
+      "douayRheimsNumber": 55,
+      "siteName": "Galatians",
+      "drboChapters": 6,
+      "vulgateChapters": 6,
+      "firstChapterUrl": "https://www.drbo.org/chapter/55001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/55006.htm"
+    },
+    {
+      "code": "EPH",
+      "douayRheimsNumber": 56,
+      "siteName": "Ephesians",
+      "drboChapters": 6,
+      "vulgateChapters": 6,
+      "firstChapterUrl": "https://www.drbo.org/chapter/56001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/56006.htm"
+    },
+    {
+      "code": "PHIL",
+      "douayRheimsNumber": 57,
+      "siteName": "Philippians",
+      "drboChapters": 4,
+      "vulgateChapters": 4,
+      "firstChapterUrl": "https://www.drbo.org/chapter/57001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/57004.htm"
+    },
+    {
+      "code": "COL",
+      "douayRheimsNumber": 58,
+      "siteName": "Colossians",
+      "drboChapters": 4,
+      "vulgateChapters": 4,
+      "firstChapterUrl": "https://www.drbo.org/chapter/58001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/58004.htm"
+    },
+    {
+      "code": "1THES",
+      "douayRheimsNumber": 59,
+      "siteName": "1 Thessalonians",
+      "drboChapters": 5,
+      "vulgateChapters": 5,
+      "firstChapterUrl": "https://www.drbo.org/chapter/59001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/59005.htm"
+    },
+    {
+      "code": "2THES",
+      "douayRheimsNumber": 60,
+      "siteName": "2 Thessalonians",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/60001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/60003.htm"
+    },
+    {
+      "code": "1TM",
+      "douayRheimsNumber": 61,
+      "siteName": "1 Timothy",
+      "drboChapters": 6,
+      "vulgateChapters": 6,
+      "firstChapterUrl": "https://www.drbo.org/chapter/61001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/61006.htm"
+    },
+    {
+      "code": "2TM",
+      "douayRheimsNumber": 62,
+      "siteName": "2 Timothy",
+      "drboChapters": 4,
+      "vulgateChapters": 4,
+      "firstChapterUrl": "https://www.drbo.org/chapter/62001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/62004.htm"
+    },
+    {
+      "code": "TI",
+      "douayRheimsNumber": 63,
+      "siteName": "Titus",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/63001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/63003.htm"
+    },
+    {
+      "code": "PHLM",
+      "douayRheimsNumber": 64,
+      "siteName": "Philemon",
+      "drboChapters": 1,
+      "vulgateChapters": 1,
+      "firstChapterUrl": "https://www.drbo.org/chapter/64001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/64001.htm"
+    },
+    {
+      "code": "HEB",
+      "douayRheimsNumber": 65,
+      "siteName": "Hebrews",
+      "drboChapters": 13,
+      "vulgateChapters": 13,
+      "firstChapterUrl": "https://www.drbo.org/chapter/65001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/65013.htm"
+    },
+    {
+      "code": "JAS",
+      "douayRheimsNumber": 66,
+      "siteName": "James",
+      "drboChapters": 5,
+      "vulgateChapters": 5,
+      "firstChapterUrl": "https://www.drbo.org/chapter/66001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/66005.htm"
+    },
+    {
+      "code": "1PT",
+      "douayRheimsNumber": 67,
+      "siteName": "1 Peter",
+      "drboChapters": 5,
+      "vulgateChapters": 5,
+      "firstChapterUrl": "https://www.drbo.org/chapter/67001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/67005.htm"
+    },
+    {
+      "code": "2PT",
+      "douayRheimsNumber": 68,
+      "siteName": "2 Peter",
+      "drboChapters": 3,
+      "vulgateChapters": 3,
+      "firstChapterUrl": "https://www.drbo.org/chapter/68001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/68003.htm"
+    },
+    {
+      "code": "1JN",
+      "douayRheimsNumber": 69,
+      "siteName": "1 John",
+      "drboChapters": 5,
+      "vulgateChapters": 5,
+      "firstChapterUrl": "https://www.drbo.org/chapter/69001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/69005.htm"
+    },
+    {
+      "code": "2JN",
+      "douayRheimsNumber": 70,
+      "siteName": "2 John",
+      "drboChapters": 1,
+      "vulgateChapters": 1,
+      "firstChapterUrl": "https://www.drbo.org/chapter/70001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/70001.htm"
+    },
+    {
+      "code": "3JN",
+      "douayRheimsNumber": 71,
+      "siteName": "3 John",
+      "drboChapters": 1,
+      "vulgateChapters": 1,
+      "firstChapterUrl": "https://www.drbo.org/chapter/71001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/71001.htm"
+    },
+    {
+      "code": "JUDE",
+      "douayRheimsNumber": 72,
+      "siteName": "Jude",
+      "drboChapters": 1,
+      "vulgateChapters": 1,
+      "firstChapterUrl": "https://www.drbo.org/chapter/72001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/72001.htm"
+    },
+    {
+      "code": "RV",
+      "douayRheimsNumber": 73,
+      "siteName": "Apocalypse (Revelation)",
+      "drboChapters": 22,
+      "vulgateChapters": 22,
+      "firstChapterUrl": "https://www.drbo.org/chapter/73001.htm",
+      "lastChapterUrl": "https://www.drbo.org/chapter/73022.htm"
+    }
+  ]
+}
