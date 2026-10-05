@@ -556,13 +556,11 @@ describe('merge-rule job', () => {
   });
 
   it('renders the gates and the decision in one comment', () => {
-    const text = renderDecisionComment(
-      DETERMINISTIC_PASS,
-      { decision: 'needs-review', reasons: ['a\nb'] },
-      ['note'],
-      SHA_A,
-    );
+    const place = { results: DETERMINISTIC_PASS, head: SHA_A, base: SHA_B, changedFiles: [PASSAGE] };
+    const text = renderDecisionComment(place, { decision: 'needs-review', reasons: ['a\nb'] }, ['note']);
     expect(text).toMatch(/^<!-- lectio-gates -->\n## Lectio gates/);
+    expect(text).toContain('| Schema tests (`schema`) | Pass | no findings |');
+    expect(text).toContain(`Base \`${SHA_B}\` · head \`${SHA_A}\` · 1 changed file`);
     expect(text).toContain('### Merge rule: `needs-review` (waiting for human review)\n\n- a b\n- note\n');
   });
 
