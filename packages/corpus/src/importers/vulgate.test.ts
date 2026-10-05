@@ -3,9 +3,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 
-import { server } from '@lectio/shared/test-server';
 import { isBookCode } from '@lectio/refs';
-import { http, HttpResponse } from 'msw';
 import { c as createTar } from 'tar';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -17,7 +15,6 @@ import { listLicences } from '../licences.ts';
 import {
   CLEMENTINE_VULGATE,
   decodeCp1252,
-  fetchDownloader,
   importClementineVulgate,
   LICENCE_STATEMENT,
   parseVulgateBook,
@@ -373,38 +370,6 @@ describe('importClementineVulgate staging and swap', () => {
   });
 });
 
-describe('fetchDownloader', () => {
-  it('throws a CorpusError when reading the body fails', async () => {
-    const truncated = (async () => ({
-      ok: true,
-      status: 200,
-      arrayBuffer: () => Promise.reject(new Error('aborted')),
-    })) as unknown as typeof fetch;
-    await expect(fetchDownloader(truncated).fetchBytes(testUrl)).rejects.toThrow(
-      new CorpusError(`GET ${testUrl}: reading the body failed: aborted`),
-    );
-  });
-
-  it('returns the response bytes (global fetch by default)', async () => {
-    server.use(http.get(testUrl, () => HttpResponse.arrayBuffer(Uint8Array.from([1, 2, 3]).buffer)));
-    expect(await fetchDownloader().fetchBytes(testUrl)).toEqual(Uint8Array.from([1, 2, 3]));
-  });
-
-  it('throws a CorpusError on an HTTP error status', async () => {
-    server.use(http.get(testUrl, () => new HttpResponse(null, { status: 404 })));
-    await expect(fetchDownloader().fetchBytes(testUrl)).rejects.toThrow(new CorpusError(`GET ${testUrl}: HTTP 404`));
-  });
-
-  it('throws a CorpusError on a network error', async () => {
-    server.use(http.get(testUrl, () => HttpResponse.error()));
-    await expect(fetchDownloader().fetchBytes(testUrl)).rejects.toThrow(CorpusError);
-    const rejecting = (() => Promise.reject('offline')) as unknown as typeof fetch;
-    await expect(fetchDownloader(rejecting).fetchBytes(testUrl)).rejects.toThrow(
-      new CorpusError(`GET ${testUrl}: offline`),
-    );
-  });
-});
-
 describe('runImportVulgate', () => {
   it('imports and prints a summary, caching the archive in .cache/corpus next to the corpus root', async () => {
     const dir = await tempDir();
@@ -434,17 +399,26 @@ describe('runImportVulgate', () => {
     expect(out).toEqual([]);
     const broken: Downloader = {
       fetchBytes: async () => {
-        throw new TypeError('bug');
+        throw new TypeError('socket hang up');
       },
     };
-    await expect(runImportVulgate(join(dir, 'corpus'), io, { downloader: broken })).rejects.toThrow(TypeError);
+    expect(await runImportVulgate(join(dir, 'corpus'), io, { downloader: broken })).toBe(2);
+    expect(err.at(-1)).toBe(`GET ${CLEMENTINE_VULGATE.url}: socket hang up`);
+    const bytes = await fixtureArchive(dir);
+    const archive = { url: testUrl, sha256: sha256Hex(bytes), version: 'test-1' };
+    await writeFile(join(dir, 'not-a-dir'), 'file');
+    await expect(
+      runImportVulgate(join(dir, 'not-a-dir'), io, { downloader: fakeDownloader({ [testUrl]: bytes }), archive }),
+    ).rejects.toThrow(/EEXIST|ENOTDIR/);
   });
 
-  it('downloads the pinned archive with fetch by default', async () => {
+  it('downloads the pinned archive with the injected downloader', async () => {
     const dir = await tempDir();
-    server.use(http.get(CLEMENTINE_VULGATE.url, () => new HttpResponse(null, { status: 503 })));
+    const unavailable: Downloader = {
+      fetchBytes: (url) => Promise.reject(new Error(`GET ${url}: HTTP 503`)),
+    };
     const { err, io } = capture();
-    expect(await runImportVulgate(join(dir, 'corpus'), io)).toBe(2);
+    expect(await runImportVulgate(join(dir, 'corpus'), io, { downloader: unavailable })).toBe(2);
     expect(err).toEqual([`GET ${CLEMENTINE_VULGATE.url}: HTTP 503`]);
   });
 });

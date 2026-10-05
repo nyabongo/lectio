@@ -27,13 +27,21 @@ import type { SourceInfo, Token } from '../format.ts';
 import { downloadPinned } from '../import/download.ts';
 import type { Downloader, PinnedArchive } from '../import/download.ts';
 import { unpackTarball, writeChapter, writeEditionMetadata } from '../import/unpack.ts';
+import { corpusDownloader, replaceEdition } from './shared.ts';
 
 export const SBLGNT_EDITION = 'grc-sblgnt';
 
 /** The pinned upstream commit of https://github.com/morphgnt/sblgnt (merge of PR #68, 2024-01-21). */
 export const MORPHGNT_SBLGNT_COMMIT = 'aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d';
 
-/** GitHub's archive of the pinned commit and its sha256 (the archive unpacks to `sblgnt-<commit>/`). */
+/**
+ * GitHub's archive of the pinned commit and its sha256 (the archive unpacks to `sblgnt-<commit>/`). Upstream
+ * publishes no release assets (its tags have none), so the generated archive is the pin. GitHub does not promise that
+ * generated archives stay byte-identical: if it regenerates this one, the sha256 check refuses it and the import
+ * stops without touching the corpus. The fallback is then to check the new archive's tree against the pinned commit
+ * (`git archive` of a clone at that commit, or the per-file blob hashes of its tree) and, if it matches, record the
+ * new sha256 here.
+ */
 export const MORPHGNT_SBLGNT_ARCHIVE: PinnedArchive = {
   url: `https://github.com/morphgnt/sblgnt/archive/${MORPHGNT_SBLGNT_COMMIT}.tar.gz`,
   sha256: 'e760c941eebae0eb25665a4937cf3b29b04a842f952f4b46d4181601d0e91872',
@@ -222,8 +230,8 @@ export interface ImportTreeOptions {
 
 /**
  * Imports an unpacked upstream tree into `<root>/grc-sblgnt`. Everything is parsed and validated before anything is
- * written; the edition directory is then replaced as a whole, so re-running gives byte-identical files and leaves no
- * stale chapters behind.
+ * written; the edition is then built in a staging directory and swapped in as a whole (see `replaceEdition`), so a
+ * failure never leaves a partial edition, re-running gives byte-identical files, and no stale chapter survives.
  */
 export async function importMorphgntTree(
   sourceDir: string,
@@ -236,27 +244,28 @@ export async function importMorphgntTree(
     const text = await readFile(join(sourceDir, name), 'utf8');
     books.push([morphgntBookCode(book), parseMorphgntBook(text, book, name)]);
   }
-  await rm(join(root, SBLGNT_EDITION), { recursive: true, force: true });
-  await writeEditionMetadata(
-    root,
-    SBLGNT_EDITION,
-    sblgntSource(options.archive, options.commit, statements),
-    sblgntLicenceMarkdown(options.archive, options.commit, statements),
-  );
-  let chapters = 0;
-  let verses = 0;
-  let words = 0;
-  for (const [code, bookVerses] of books) {
-    for (const [chapter, chapterVerses] of bookVerses) {
-      await writeChapter(root, SBLGNT_EDITION, code, chapter, chapterVerses);
-      chapters += 1;
-      for (const tokens of Object.values(chapterVerses)) {
-        verses += 1;
-        words += tokens.length;
+  return replaceEdition(root, SBLGNT_EDITION, async (staging) => {
+    await writeEditionMetadata(
+      staging,
+      SBLGNT_EDITION,
+      sblgntSource(options.archive, options.commit, statements),
+      sblgntLicenceMarkdown(options.archive, options.commit, statements),
+    );
+    let chapters = 0;
+    let verses = 0;
+    let words = 0;
+    for (const [code, bookVerses] of books) {
+      for (const [chapter, chapterVerses] of bookVerses) {
+        await writeChapter(staging, SBLGNT_EDITION, code, chapter, chapterVerses);
+        chapters += 1;
+        for (const tokens of Object.values(chapterVerses)) {
+          verses += 1;
+          words += tokens.length;
+        }
       }
     }
-  }
-  return { books: books.length, chapters, verses, words };
+    return { books: books.length, chapters, verses, words };
+  });
 }
 
 export interface ImportSblgntOptions {
@@ -284,19 +293,9 @@ export async function importSblgnt(options: ImportSblgntOptions): Promise<Import
   }
 }
 
-/** A Downloader over the WHATWG fetch API (Node's global fetch by default). */
-export function fetchDownloader(fetchFn: typeof fetch = globalThis.fetch): Downloader {
-  return {
-    async fetchBytes(url) {
-      const response = await fetchFn(url);
-      if (!response.ok) throw new CorpusError(`GET ${url}: HTTP ${response.status}`);
-      return new Uint8Array(await response.arrayBuffer());
-    },
-  };
-}
-
 export interface RunImportGreekDeps {
-  readonly downloader?: Downloader;
+  /** The live downloader (`LiveDownloader` from `@lectio/provider-fetch`, injected by the script) or a fake. */
+  readonly downloader: Downloader;
   readonly archive?: PinnedArchive;
   readonly commit?: string;
 }
@@ -309,12 +308,12 @@ export async function runImportGreek(
   env: NodeJS.ProcessEnv,
   cwd: string,
   io: CliIo,
-  deps: RunImportGreekDeps = {},
+  deps: RunImportGreekDeps,
 ): Promise<number> {
   const root = resolveCorpusRoot(env, cwd);
   try {
     const stats = await importSblgnt({
-      downloader: deps.downloader ?? fetchDownloader(),
+      downloader: corpusDownloader(deps.downloader),
       root,
       cacheDir: join(dirname(root), '.cache', 'corpus'),
       ...(deps.archive === undefined ? {} : { archive: deps.archive }),

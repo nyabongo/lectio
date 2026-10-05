@@ -4,9 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { server } from '@lectio/shared/test-server';
 import { BOOKS } from '@lectio/refs';
-import { http, HttpResponse } from 'msw';
 import { c as createTar } from 'tar';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -17,7 +15,6 @@ import { sha256Hex } from '../import/download.ts';
 import type { Downloader, PinnedArchive } from '../import/download.ts';
 import {
   bookCodeForOsis,
-  fetchDownloader,
   importOshb,
   OSHB_ARCHIVE,
   OSHB_BOOK_IDS,
@@ -211,30 +208,6 @@ describe('oshbSource', () => {
   });
 });
 
-describe('fetchDownloader', () => {
-  const url = 'https://example.test/archive.tar.gz';
-
-  it('returns the response bytes (global fetch, answered by msw)', async () => {
-    server.use(http.get(url, () => HttpResponse.arrayBuffer(new Uint8Array([1, 2, 3]).buffer)));
-    expect(await fetchDownloader().fetchBytes(url)).toEqual(new Uint8Array([1, 2, 3]));
-  });
-
-  it('throws on a non-2xx response', async () => {
-    server.use(http.get(url, () => new HttpResponse(null, { status: 404 })));
-    await expect(fetchDownloader().fetchBytes(url)).rejects.toThrow(`GET ${url} failed: HTTP 404`);
-  });
-
-  it('uses an injected fetch', async () => {
-    const calls: string[] = [];
-    const fake = (async (input: string) => {
-      calls.push(input);
-      return new Response('ok');
-    }) as unknown as typeof fetch;
-    expect(new TextDecoder().decode(await fetchDownloader(fake).fetchBytes(url))).toBe('ok');
-    expect(calls).toEqual([url]);
-  });
-});
-
 describe('importOshb', () => {
   it('imports 39 books from the archive, verifiably and byte-identically on a re-run', async () => {
     const { archive, bytes } = await fixtureArchive();
@@ -256,6 +229,7 @@ describe('importOshb', () => {
     await writeFile(join(root, OSHB_EDITION, 'GN', '99.json'), '{}\n');
     await importOshb({ root, cacheDir, downloader, archive, version: 'test' });
     expect(await treeHash(join(root, OSHB_EDITION))).toBe(first);
+    expect(await readdir(root)).toEqual([OSHB_EDITION]);
     expect(downloader.requests).toEqual([archive.url]);
 
     const corpus = openCorpus(root);
@@ -308,11 +282,11 @@ describe('runImportHebrew', () => {
     expect((await stat(join(dir, '.cache', 'corpus', `morphhb-${archive.sha256}.tar.gz`))).isFile()).toBe(true);
   });
 
-  it('downloads the pinned archive with Node fetch by default and exits 1 when it does not verify', async () => {
+  it('downloads the pinned archive with the injected downloader and exits 1 when it does not verify', async () => {
     const dir = await tempDir();
-    server.use(http.get(OSHB_ARCHIVE.url, () => HttpResponse.text('not the archive')));
+    const downloader = fakeDownloader({ [OSHB_ARCHIVE.url]: new TextEncoder().encode('not the archive') });
     const { io, out, err } = capture();
-    expect(await runImportHebrew({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, io)).toBe(1);
+    expect(await runImportHebrew({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, io, { downloader })).toBe(1);
     expect(out).toEqual([`archive: ${OSHB_ARCHIVE.url}`]);
     expect(err[0]).toMatch(/^corpus:import:hebrew failed: sha256 mismatch/);
     await expect(stat(join(dir, 'corpus'))).rejects.toThrow(/ENOENT/);
@@ -323,7 +297,15 @@ describe('runImportHebrew', () => {
     const { io, err } = capture();
     const downloader: Downloader = { fetchBytes: () => Promise.reject('boom') };
     expect(await runImportHebrew({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, io, { downloader })).toBe(1);
-    expect(err).toEqual(['corpus:import:hebrew failed: boom']);
+    expect(err).toEqual([`corpus:import:hebrew failed: GET ${OSHB_ARCHIVE.url}: boom`]);
+    const throwing = {
+      out: () => {
+        throw 'log failed';
+      },
+      err: (line: string) => err.push(line),
+    };
+    expect(await runImportHebrew({ LECTIO_CORPUS_ROOT: join(dir, 'corpus') }, dir, throwing, { downloader })).toBe(1);
+    expect(err.at(-1)).toBe('corpus:import:hebrew failed: log failed');
   });
 });
 
