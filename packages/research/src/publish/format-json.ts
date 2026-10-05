@@ -21,7 +21,7 @@ export const PRINT_WIDTH = 120;
 export function textWidth(text: string): number {
   let width = 0;
   for (const char of text.replace(/\p{Extended_Pictographic}️?/gu, '  ')) {
-    const code = char.codePointAt(0) ?? 0;
+    const code = char.codePointAt(0) as number;
     if (code <= 0x1f || (code >= 0x7f && code <= 0x9f) || (code >= 0x300 && code <= 0x36f)) continue;
     width += isWide(code) ? 2 : 1;
   }
