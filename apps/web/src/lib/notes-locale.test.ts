@@ -92,7 +92,21 @@ describe('overlayTranslation', () => {
       source.claims.map((claim: PassageClaim) => claim.sourceIds),
     );
     expect(shown.sources).toEqual(source.sources);
-    expect(shown.review).toEqual(source.review);
+    // The review is the translation's: the date next to Kiswahili notes is when the Kiswahili was approved.
+    expect(shown.review).toEqual({
+      status: 'approved',
+      method: 'human',
+      reviewers: ['fixture-reviewer'],
+      approvedVia: 'label',
+      lastReviewedAt: '2026-10-05T09:00:00Z',
+    });
+    const undated = {
+      ...translation,
+      review: { status: 'approved' as const, method: 'human' as const, reviewers: ['r'], approvedVia: 'cli' as const },
+    };
+    expect(overlayTranslation(source, undated).review).not.toHaveProperty('lastReviewedAt');
+    const pending = { ...translation, review: { status: 'pending' as const, reviewers: [] } };
+    expect(overlayTranslation(source, pending).review).toEqual(source.review);
     expect(shown.key).toBe(source.key);
     expect(shown.ref).toBe(source.ref);
     // The English passage itself is untouched.

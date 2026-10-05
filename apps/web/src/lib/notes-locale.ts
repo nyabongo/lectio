@@ -9,8 +9,9 @@
  *
  * `localeRepo()` wraps a `ContentRepo` so that `passage()`, `resolveDay()` and `listDays()` return each approved
  * English passage with its translated prose laid over it: the summary, context, note anchors, glosses, summaries
- * and bodies, and claim texts. Everything else (keys, references, verses, original-language words, sources and the
- * review block) stays the English file's, so citations and permalinks are the same in every language. The view
+ * and bodies, claim texts, and the review block (the translation's own approval and date). Everything else (keys,
+ * references, verses, original-language words and sources) stays the English file's, so citations and permalinks
+ * are the same in every language. The view
  * models (`readingView`, `dayView`, the API documents, the share cards) need no other change.
  *
  * Reading text is never involved: translations hold commentary only.
@@ -48,7 +49,8 @@ export function translationStatus(
 
 /**
  * `english` with the prose of `translation` laid over it, and `locale` set to the translation's. Ids, references,
- * verses, original-language words, sources and the review block stay the English passage's. A note or claim the
+ * verses, original-language words and sources stay the English passage's; the review block is the translation's
+ * (`translationReview`). A note or claim the
  * translation lacks (only possible for a `mismatch`, which `passageInLocale` never lays over) keeps its English text,
  * and a note without a translated anchor keeps the English one.
  */
@@ -77,7 +79,25 @@ export function overlayTranslation(english: Passage, translation: TranslatedPass
       };
     }),
     claims: english.claims.map((claim: PassageClaim) => ({ ...claim, text: claims.get(claim.id) ?? claim.text })),
+    review: translationReview(english, translation),
   };
+}
+
+/**
+ * The review block the shown text carries: an approved translation's own review (always by a person: who, how and
+ * when the Kiswahili was approved), so the "last reviewed" date next to Kiswahili notes is the translation's. A
+ * translation that is not approved keeps the English review (it is never laid over a page; see `passageInLocale`).
+ */
+function translationReview(english: Passage, translation: TranslatedPassage): Passage['review'] {
+  const { status, reviewers, approvedVia, lastReviewedAt } = translation.review;
+  if (status !== 'approved') return english.review;
+  return {
+    status,
+    method: 'human',
+    reviewers: [...reviewers],
+    approvedVia: approvedVia as NonNullable<typeof approvedVia>,
+    ...(lastReviewedAt === undefined ? {} : { lastReviewedAt }),
+  } as Passage['review'];
 }
 
 /** A passage as a page in some locale shows it, and whether that is a translation. */
