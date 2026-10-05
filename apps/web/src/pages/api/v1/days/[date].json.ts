@@ -4,7 +4,8 @@ import type { APIContext } from 'astro';
 import { apiContext, dayStaticPaths, jsonResponse } from '../../../../lib/api.ts';
 
 export function getStaticPaths() {
-  return dayStaticPaths(apiContext().repo);
+  const { repo, audio } = apiContext();
+  return dayStaticPaths(repo, audio);
 }
 
 export function GET({ props }: APIContext<{ document: unknown }>): Response {

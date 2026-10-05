@@ -4,9 +4,10 @@
  * service worker read these files; there is no server.
  *
  * Only approved notes are exposed: every passage goes through `approvedOnly`/`isApproved` from `@lectio/content`,
- * and the provenance block (models, run ids, cost) never leaves the repository. Every `audio` field is `null`
- * until the narration pipeline (L-082) fills it. The shapes are `@lectio/schema/api`; the tests validate every
- * document built from the fixture content root against it.
+ * and the provenance block (models, run ids, cost) never leaves the repository. `audio` fields and each Mass's
+ * narration `segments` come from the audio manifest the deploy job's render step hands over (`./audio.ts`); without
+ * one every `audio` is `null`. The shapes are `@lectio/schema/api`; the tests validate every document built from the
+ * fixture content root against it.
  */
 import type { LectioConfig } from '@lectio/config';
 import { approvedOnly, isApproved } from '@lectio/content';
@@ -27,6 +28,8 @@ import type { Passage, PassageClaim, PassageSource, TranslationNote } from '@lec
 import { addDays } from '@lectio/shared';
 import type { IsoDate } from '@lectio/shared';
 
+import { loadSiteAudio, massSegments, passageAudio } from './audio.ts';
+import type { SiteAudio } from './audio.ts';
 import { siteContext, siteDate } from './site.ts';
 import { dayColour } from './theme.ts';
 
@@ -38,12 +41,18 @@ export interface ApiContext {
   readonly repo: ContentRepo;
   /** The date the build treats as today (`siteDate`: `$LECTIO_DATE`, else today in `config.site.timezone`). */
   readonly date: IsoDate;
+  /** The rendered narration (`$LECTIO_AUDIO_MANIFEST`); `null` or absent means every `audio` is `null`. */
+  readonly audio?: SiteAudio | null;
 }
 
-/** The build's API context: the shared site context and its date. The endpoints call this. */
+let cachedAudio: { readonly config: object; readonly audio: SiteAudio | null } | undefined;
+
+/** The build's API context: the shared site context, its date and its audio manifest. The endpoints call this. */
 export function apiContext(): ApiContext {
   const { config, repo } = siteContext();
-  return { config, repo, date: siteDate(config) };
+  // One manifest read per build: the site context (and so its config) is shared by every endpoint.
+  if (cachedAudio?.config !== config) cachedAudio = { config, audio: loadSiteAudio(config) };
+  return { config, repo, date: siteDate(config), audio: cachedAudio.audio };
 }
 
 /** Absolute URL of the API root, `<config.site.baseUrl>api/v1/`; endpoint templates resolve against it. */
@@ -62,21 +71,26 @@ export function apiPath(endpoint: keyof typeof API_ENDPOINTS, values: Readonly<R
 }
 
 /**
- * The reader-facing notes for an approved passage: the passage without provenance, with `audio: null` on the
- * context and each translation note and a review block that says how and when it was approved. `null` for a
- * missing or unapproved passage.
+ * The reader-facing notes for an approved passage: the passage without provenance, with the `audio` of the context
+ * and each translation note (`null` when not rendered) and a review block that says how and when it was approved.
+ * `null` for a missing or unapproved passage.
  */
-export function apiNotes(passage: Passage | null | undefined): ApiNotes | null {
+export function apiNotes(passage: Passage | null | undefined, audio: SiteAudio | null = null): ApiNotes | null {
   if (!isApproved(passage)) return null;
   const { key, ref, locale, summary, context, translationNotes, claims, sources, review } = passage;
   if (review.method === undefined) throw new Error(`Approved passage ${key} has no review method`);
+  const narration = passageAudio(audio, passage);
+  const audioOf = (id: string) => narration.get(id) ?? null;
   return {
     key,
     ref,
     locale,
     summary,
-    context: { title: context.title, paragraphs: [...context.paragraphs], audio: null },
-    translationNotes: translationNotes.map((note: TranslationNote) => ({ ...note, audio: null })),
+    context: { title: context.title, paragraphs: [...context.paragraphs], audio: audioOf(`${key}/context`) },
+    translationNotes: translationNotes.map((note: TranslationNote) => ({
+      ...note,
+      audio: audioOf(`${key}/note/${note.id}`),
+    })),
     claims: claims.map((claim: PassageClaim) => ({ ...claim, sourceIds: [...claim.sourceIds] })),
     sources: sources.map((source: PassageSource) => ({ ...source })),
     review: { status: 'approved', method: review.method, lastReviewedAt: review.lastReviewedAt ?? null },
@@ -106,15 +120,22 @@ function dayHeader(day: ResolvedDay) {
   };
 }
 
-/** `/api/v1/days/{date}.json`: the day, its Masses and readings, and each reading's approved notes inline. */
-export function apiDay(day: ResolvedDay): ApiDay {
+/**
+ * `/api/v1/days/{date}.json`: the day, its Masses and readings, each reading's approved notes inline, and each Mass's
+ * narration segments (the Listen queue).
+ */
+export function apiDay(day: ResolvedDay, audio: SiteAudio | null = null): ApiDay {
   return {
     apiVersion: API_VERSION,
     ...dayHeader(day),
-    masses: approvedOnly(day).masses.map(({ id, label, readings }) => ({
-      id,
-      label,
-      readings: readings.map((reading) => ({ ...calendarReading(reading), passage: apiNotes(reading.passage) })),
+    masses: approvedOnly(day).masses.map((mass) => ({
+      id: mass.id,
+      label: mass.label,
+      readings: mass.readings.map((reading) => ({
+        ...calendarReading(reading),
+        passage: apiNotes(reading.passage, audio),
+      })),
+      segments: massSegments(audio, mass),
     })),
   };
 }
@@ -140,8 +161,8 @@ function wholeYear(repo: ContentRepo, year: number): ResolvedDay[] {
 }
 
 /** Every day document, across every calendar year, in date order. */
-export function apiDays(repo: ContentRepo): ApiDay[] {
-  return repo.years().flatMap((year) => wholeYear(repo, year).map(apiDay));
+export function apiDays(repo: ContentRepo, audio: SiteAudio | null = null): ApiDay[] {
+  return repo.years().flatMap((year) => wholeYear(repo, year).map((day) => apiDay(day, audio)));
 }
 
 /** `/api/v1/calendar/{year}.json`, or `null` when the repository has no calendar for `year`. */
@@ -165,8 +186,8 @@ export function approvedPassages(repo: ContentRepo): Passage[] {
 }
 
 /** `/api/v1/passages/{key}.json`, or `null` when `key` has no approved notes. */
-export function apiPassage(repo: ContentRepo, key: string): ApiPassage | null {
-  const notes = apiNotes(repo.passage(key));
+export function apiPassage(repo: ContentRepo, key: string, audio: SiteAudio | null = null): ApiPassage | null {
+  const notes = apiNotes(repo.passage(key), audio);
   if (notes === null) return null;
   return { apiVersion: API_VERSION, passage: notes, dates: repo.datesForPassage(key) };
 }
@@ -226,14 +247,15 @@ export function apiIndex(context: ApiContext): ApiIndex {
 /** Every document the API publishes, by path relative to the API root (`days/2026-09-20.json` → document). */
 export function apiFiles(context: ApiContext): Map<string, unknown> {
   const { repo } = context;
+  const audio = context.audio ?? null;
   const files = new Map<string, unknown>();
   files.set(apiPath('index'), apiIndex(context));
   files.set(apiPath('upcoming'), apiUpcoming(context));
   files.set(apiPath('passages'), apiPassageIndex(repo));
   for (const year of repo.years()) files.set(apiPath('calendar', { year: String(year) }), apiCalendar(repo, year));
-  for (const day of apiDays(repo)) files.set(apiPath('day', { date: day.date }), day);
+  for (const day of apiDays(repo, audio)) files.set(apiPath('day', { date: day.date }), day);
   for (const passage of approvedPassages(repo)) {
-    files.set(apiPath('passage', { key: passage.key }), apiPassage(repo, passage.key));
+    files.set(apiPath('passage', { key: passage.key }), apiPassage(repo, passage.key, audio));
   }
   return files;
 }
@@ -245,13 +267,16 @@ export interface ApiStaticPath<P extends string> {
 }
 
 /** Static paths for `days/[date].json.ts`: one per calendar day. */
-export function dayStaticPaths(repo: ContentRepo): ApiStaticPath<'date'>[] {
-  return apiDays(repo).map((document) => ({ params: { date: document.date }, props: { document } }));
+export function dayStaticPaths(repo: ContentRepo, audio: SiteAudio | null = null): ApiStaticPath<'date'>[] {
+  return apiDays(repo, audio).map((document) => ({ params: { date: document.date }, props: { document } }));
 }
 
 /** Static paths for `passages/[key].json.ts`: one per approved passage. */
-export function passageStaticPaths(repo: ContentRepo): ApiStaticPath<'key'>[] {
-  return approvedPassages(repo).map(({ key }) => ({ params: { key }, props: { document: apiPassage(repo, key) } }));
+export function passageStaticPaths(repo: ContentRepo, audio: SiteAudio | null = null): ApiStaticPath<'key'>[] {
+  return approvedPassages(repo).map(({ key }) => ({
+    params: { key },
+    props: { document: apiPassage(repo, key, audio) },
+  }));
 }
 
 /** Static paths for `calendar/[year].json.ts`: one per calendar year. */
