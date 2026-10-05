@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -13,6 +13,7 @@ import {
   collectSourceFiles,
   COVERAGE_FLOOR,
   COVERAGE_IGNORE_ALLOWLIST,
+  COVERAGE_IGNORE_HINT,
   parseCoverageIgnoreAllowlist,
   readCoverageIgnoreInput,
   REPO_ROOT,
@@ -25,6 +26,8 @@ import {
 const hint = (tool: string, rest = 'next') => `/* ${tool} ignore ${rest} */`;
 /** The start of the problem reported for a hint by `tool` at `where` (`path:line`). */
 const notAllowed = (where: string, tool: string) => `${where}: '${tool} ignore' comments are not allowed`;
+/** Builds a Dart package:coverage comment, e.g. dart('line') for the ignore-line form. */
+const dart = (kind: string) => `// coverage:${'ignore'}-${kind}`;
 const clean = { sources: [], allowlistSource: undefined };
 
 const floor = { lines: 96, branches: 96, functions: 96, statements: 96 };
@@ -241,9 +244,49 @@ describe('checkCoverageIgnoreHints', () => {
     expect(checkCoverageIgnoreHints({ sources })).toHaveLength(2);
   });
 
+  it('matches the Node test runner hints (ignore, disable) and any other <word>:coverage prefix', () => {
+    const source = [
+      hint('node:coverage'),
+      `/* ${'node'}:coverage disable */`,
+      hint('acme-tool:coverage', 'start'),
+      hint('NODE:COVERAGE'),
+    ].join('\n');
+    expect(checkCoverageIgnoreHints({ sources: [file('packages/a/src/a.ts', source)] })).toEqual([
+      expect.stringContaining(notAllowed('packages/a/src/a.ts:1', 'node:coverage')),
+      expect.stringContaining(`packages/a/src/a.ts:2: 'node:coverage ${'disable'}' comments are not allowed`),
+      expect.stringContaining(notAllowed('packages/a/src/a.ts:3', 'acme-tool:coverage')),
+      expect.stringContaining(notAllowed('packages/a/src/a.ts:4', 'NODE:COVERAGE')),
+    ]);
+  });
+
+  it('matches the Dart package:coverage line, start, end and file hints', () => {
+    const source = [
+      'int f(int x) {',
+      `  if (x > 0) return 1; ${dart('line')}`,
+      `  ${dart('start')}`,
+      `  ${dart('end')}`,
+      '}',
+      dart('file'),
+    ].join('\n');
+    const problems = checkCoverageIgnoreHints({ sources: [file('apps/mobile/lib/main.dart', source)] });
+    expect(problems.map((problem) => problem.split(' comments')[0])).toEqual([
+      `apps/mobile/lib/main.dart:2: 'coverage:${'ignore'}'`,
+      `apps/mobile/lib/main.dart:3: 'coverage:${'ignore'}'`,
+      `apps/mobile/lib/main.dart:4: 'coverage:${'ignore'}'`,
+      `apps/mobile/lib/main.dart:6: 'coverage:${'ignore'}'`,
+    ]);
+  });
+
   it('does not match words that only contain the tool names', () => {
     expect(
-      checkCoverageIgnoreHints({ sources: [file('packages/a/src/a.ts', '// abc8 ignored; nov8 ignore')] }),
+      checkCoverageIgnoreHints({
+        sources: [
+          file(
+            'packages/a/src/a.ts',
+            '// abc8 ignored; nov8 ignore; coverage: ignored; coverage ignore; node:coverage ignored',
+          ),
+        ],
+      }),
     ).toEqual([]);
   });
 
@@ -268,6 +311,17 @@ describe('checkCoverageIgnoreHints', () => {
     expect(checkCoverageIgnoreHints({ sources: [], allowlistSource: '{' })[0]).toMatch(
       new RegExp(`^${COVERAGE_IGNORE_ALLOWLIST.replace(/\./g, '\\.')}: not valid JSON`),
     );
+  });
+});
+
+describe('COVERAGE_IGNORE_HINT', () => {
+  it('is identical to the copy in eslint.config.js', () => {
+    const eslintConfig = readFileSync(join(REPO_ROOT, 'eslint.config.js'), 'utf8');
+    const literal = /^const COVERAGE_IGNORE_HINT =\s*\/(.+)\/([a-z]*);$/m.exec(eslintConfig);
+    expect(literal).not.toBeNull();
+    const [, source, flags] = literal as RegExpExecArray;
+    expect(source).toBe(COVERAGE_IGNORE_HINT.source);
+    expect(flags).toBe(COVERAGE_IGNORE_HINT.flags.replace('g', ''));
   });
 });
 
@@ -330,6 +384,26 @@ describe('reading a checkout', () => {
       'packages/b/src/deep/x.test.ts',
     ]);
     expect(readCoverageIgnoreInput(root).allowlistSource).toBeUndefined();
+  });
+
+  it('collects Dart files under apps/*/lib, and nothing else there', () => {
+    root = mkdtempSync(join(tmpdir(), 'lectio-coverage-'));
+    write(root, 'apps/mobile/lib/src/widgets/home.dart', dart('file'));
+    write(root, 'apps/mobile/lib/main.dart', 'void main() {}');
+    write(root, 'apps/mobile/lib/assets/readme.md', dart('file'));
+    write(root, 'apps/mobile/lib/web.ts', hint('v8'));
+    write(root, 'apps/mobile/test/widget_test.dart', dart('file'));
+    write(root, 'packages/a/src/x.dart', dart('file'));
+    write(root, 'packages/a/lib/y.dart', dart('file'));
+    expect(collectSourceFiles(root).map((f) => f.path)).toEqual([
+      'apps/mobile/lib/main.dart',
+      'apps/mobile/lib/src/widgets/home.dart',
+    ]);
+    expect(checkCoverageIgnoreHints(readCoverageIgnoreInput(root))).toEqual([
+      expect.stringContaining(
+        `apps/mobile/lib/src/widgets/home.dart:1: 'coverage:${'ignore'}' comments are not allowed`,
+      ),
+    ]);
   });
 
   it('fails the floor when a test file in a package carries a v8 hint, until it is allowlisted', () => {

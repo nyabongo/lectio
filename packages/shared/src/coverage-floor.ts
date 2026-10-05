@@ -5,9 +5,10 @@
  * or rewrites one of the canonical `coverage.include` globs, adds anything to
  * `coverage.exclude` beyond the four allowed globs, or lowers the Dart threshold
  * in `apps/mobile/tool/check_coverage.dart`. It also fails on coverage-ignore
- * hints (the `v8`, `c8` and `istanbul` "ignore" comments) in any source file
- * under `packages/<name>/src` or `apps/<name>/src`, test files included, unless
- * the file is listed in `.github/coverage-ignore-allowlist.json`. The ESLint
+ * hints (see `COVERAGE_IGNORE_HINT`) in any source file under
+ * `packages/<name>/src` or `apps/<name>/src`, test files included, and in any
+ * Dart file under `apps/<name>/lib` (the Flutter app, L-100), unless the file
+ * is listed in `.github/coverage-ignore-allowlist.json`. The ESLint
  * rule `lectio/no-coverage-ignore` (eslint.config.js) reports the same comments
  * earlier, in `npm run lint`; this check is the one an inline eslint-disable
  * cannot silence.
@@ -48,15 +49,29 @@ const DART_THRESHOLD =
 export const COVERAGE_IGNORE_ALLOWLIST = '.github/coverage-ignore-allowlist.json';
 
 /**
- * A coverage-ignore hint: `v8`, `c8` or `istanbul`, then `ignore`, in any
- * comment style (`/* … *\/`, `/*! … *\/`, `//`, `{/* … *\/}`) and with any
- * suffix (`next`, `start`, `if`, `else`, `file`, `-- @preserve`). Matched on the
- * raw text, so a hint inside a string literal counts too.
+ * A coverage-ignore hint, as honoured by the coverage tools this repo can run:
+ * - `v8`, `c8` or `istanbul`, then `ignore` (ast-v8-to-istanbul, c8, nyc);
+ * - `node:coverage`, then `ignore` or `disable` (the Node test runner and
+ *   ast-v8-to-istanbul), and for safety any other `<word>:coverage` prefix;
+ * - Dart's `coverage:` + `ignore-line`/`-start`/`-end`/`-file` (package:coverage),
+ *   and any other `coverage:` + `ignore` form.
+ *
+ * Any comment style counts (`/* … *\/`, `/*! … *\/`, `//`, `{/* … *\/}`), with
+ * any suffix (`next`, `start`, `if`, `else`, `file`, `-- @preserve`), in any
+ * case. Matched on the raw text, so a hint inside a string literal counts too.
+ *
+ * eslint.config.js keeps an identical copy (without the `g` flag); a test in
+ * coverage-floor.test.ts fails if the two drift apart. (`(?:ignore)` keeps this
+ * file from matching its own pattern.)
  */
-export const COVERAGE_IGNORE_HINT = /\b(?:v8|c8|istanbul)\s+ignore\b/gi;
+export const COVERAGE_IGNORE_HINT =
+  /\b(?:(?:v8|c8|istanbul)\s+ignore|[\w-]+:coverage\s+(?:ignore|disable)|coverage:(?:ignore))\b/gi;
 
-/** Source extensions scanned for hints. */
+/** Source extensions scanned for hints under `packages/<name>/src` and `apps/<name>/src`. */
 const SCANNED_SOURCE = /\.(?:[cm]?[jt]sx?|astro|svelte|vue)$/;
+
+/** Flutter sources scanned for hints under `apps/<name>/lib`. */
+const SCANNED_DART = /\.dart$/;
 
 /** The repository root (this file is packages/shared/src/coverage-floor.ts). */
 export const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url));
@@ -223,24 +238,34 @@ export function checkCoverageIgnoreHints({ sources, allowlistSource }: CoverageI
   return problems;
 }
 
-function walk(dir: string, out: string[]): void {
+function walk(dir: string, scanned: RegExp, out: string[]): void {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === 'node_modules') continue;
     const path = join(dir, entry.name);
-    if (entry.isDirectory()) walk(path, out);
-    else if (entry.isFile() && SCANNED_SOURCE.test(entry.name)) out.push(path);
+    if (entry.isDirectory()) walk(path, scanned, out);
+    else if (entry.isFile() && scanned.test(entry.name)) out.push(path);
   }
 }
 
-/** Every scanned source file under `packages/<name>/src` and `apps/<name>/src` of `root`, sorted by path. */
+/** Where to look: `<group>/<name>/<dir>/**` for files matching `scanned`. */
+const SCAN_ROOTS: readonly { group: string; dir: string; scanned: RegExp }[] = [
+  { group: 'packages', dir: 'src', scanned: SCANNED_SOURCE },
+  { group: 'apps', dir: 'src', scanned: SCANNED_SOURCE },
+  { group: 'apps', dir: 'lib', scanned: SCANNED_DART },
+];
+
+/**
+ * Every scanned file of `root`, sorted by path: sources under `packages/<name>/src`
+ * and `apps/<name>/src`, and Dart files under `apps/<name>/lib`.
+ */
 export function collectSourceFiles(root: string): SourceFile[] {
   const files: string[] = [];
-  for (const group of ['packages', 'apps']) {
+  for (const { group, dir, scanned } of SCAN_ROOTS) {
     const base = join(root, group);
     if (!existsSync(base)) continue;
     for (const entry of readdirSync(base, { withFileTypes: true })) {
-      const src = join(base, entry.name, 'src');
-      if (entry.isDirectory() && existsSync(src)) walk(src, files);
+      const target = join(base, entry.name, dir);
+      if (entry.isDirectory() && existsSync(target)) walk(target, scanned, files);
     }
   }
   return files

@@ -14,7 +14,8 @@ import tseslint from 'typescript-eslint';
  * same pattern) is the authoritative check, which an eslint-disable comment
  * cannot silence. Exceptions go in the owner-reviewed allowlist below.
  */
-const COVERAGE_IGNORE_HINT = /\b(?:v8|c8|istanbul)\s+ignore\b/i;
+const COVERAGE_IGNORE_HINT =
+  /\b(?:(?:v8|c8|istanbul)\s+ignore|[\w-]+:coverage\s+(?:ignore|disable)|coverage:(?:ignore))\b/i;
 const ALLOWLIST = '.github/coverage-ignore-allowlist.json';
 
 /** Paths listed in the allowlist; a malformed file is left to coverage:floor to report. */
@@ -33,7 +34,7 @@ function allowlistedPaths() {
 const noCoverageIgnore = {
   meta: {
     type: 'problem',
-    docs: { description: 'Disallow v8/c8/istanbul coverage-ignore comments' },
+    docs: { description: 'Disallow v8, c8, istanbul and node:coverage coverage-ignore comments' },
     messages: {
       hint:
         "'{{hint}}' comments are not allowed; they hide code from the 96% coverage floor. " +
