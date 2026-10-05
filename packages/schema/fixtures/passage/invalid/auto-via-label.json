@@ -126,8 +126,14 @@
     "approvedVia": "label",
     "lastReviewedAt": "2026-09-02T06:15:00Z",
     "verifierSummary": {
-      "confirmer": "claude-opus-5-5",
-      "refuter": "gpt-6",
+      "confirmer": {
+        "model": "claude-opus-5-5",
+        "minSupport": 0.93
+      },
+      "refuter": {
+        "model": "gpt-6",
+        "minSupport": 0.91
+      },
       "minSupport": 0.91,
       "refutations": 0,
       "sensitive": 0

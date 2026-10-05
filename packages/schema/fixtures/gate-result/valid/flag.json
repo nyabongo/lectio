@@ -3,7 +3,7 @@
   "status": "flag",
   "items": [
     {
-      "ruleId": "verifiers.sensitive-claim",
+      "ruleId": "verifiers/sensitive-claim",
       "severity": "warning",
       "file": "passages/MT.20.1-16.json",
       "pointer": "/claims/4",

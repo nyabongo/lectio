@@ -20,8 +20,8 @@ import {
 export const GATE_STATUSES = ['pass', 'fail', 'flag', 'skipped'] as const;
 export const SEVERITIES = ['error', 'warning', 'info'] as const;
 
-/** A rule id: dotted kebab-case segments, e.g. `passage.no-reading-text` or `evidence.excerpt-found`. */
-export const RULE_ID_PATTERN = '^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)*$';
+/** A rule id, `<gate>/<rule>` in kebab-case: `schema/valid-passage`, `licence/quoted-english-run`. */
+export const RULE_ID_PATTERN = '^[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*$';
 
 /** An RFC 6901 JSON pointer; `""` points at the whole document. */
 export const JSON_POINTER_PATTERN = '^(/([^~/]|~[01])*)*$';
@@ -29,11 +29,14 @@ export const JSON_POINTER_PATTERN = '^(/([^~/]|~[01])*)*$';
 const itemSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['ruleId', 'severity', 'file', 'pointer', 'message'],
+  required: ['ruleId', 'severity', 'pointer', 'message'],
   properties: {
     ruleId: { type: 'string', pattern: RULE_ID_PATTERN },
     severity: { type: 'string', enum: SEVERITIES },
-    /** Repository-relative path with forward slashes, e.g. `passages/MT.20.1-16.json`. */
+    /**
+     * Repository-relative path with forward slashes, e.g. `passages/MT.20.1-16.json`. Omitted for
+     * findings about the whole pull request (e.g. a merge-rule decision); `pointer` is then `""`.
+     */
     file: { type: 'string', pattern: '^[^/\\\\].*$' },
     pointer: { type: 'string', pattern: JSON_POINTER_PATTERN },
     claimId: { type: 'string', pattern: CLAIM_ID_PATTERN },

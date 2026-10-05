@@ -130,10 +130,7 @@
         "model": "claude-opus-5-5",
         "minSupport": 0.93
       },
-      "refuter": {
-        "model": "gpt-6",
-        "minSupport": 0.91
-      },
+      "refuter": "gpt-6",
       "minSupport": 0.91,
       "refutations": 0,
       "sensitive": 0

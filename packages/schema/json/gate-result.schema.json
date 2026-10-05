@@ -14,9 +14,9 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["ruleId", "severity", "file", "pointer", "message"],
+        "required": ["ruleId", "severity", "pointer", "message"],
         "properties": {
-          "ruleId": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(\\.[a-z0-9]+(-[a-z0-9]+)*)*$" },
+          "ruleId": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*$" },
           "severity": { "type": "string", "enum": ["error", "warning", "info"] },
           "file": { "type": "string", "pattern": "^[^/\\\\].*$" },
           "pointer": { "type": "string", "pattern": "^(/([^~/]|~[01])*)*$" },

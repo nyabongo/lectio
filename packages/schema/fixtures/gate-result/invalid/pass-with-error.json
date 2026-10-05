@@ -3,7 +3,7 @@
   "status": "pass",
   "items": [
     {
-      "ruleId": "passage.no-reading-text",
+      "ruleId": "schema/no-reading-text",
       "severity": "error",
       "file": "passages/MT.20.1-16.json",
       "pointer": "/text",

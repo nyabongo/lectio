@@ -9,6 +9,7 @@ const EXPECTED_FAILURES: Record<string, [instancePath: string, keyword: string]>
   'absolute-file': ['/items/0/file', 'pattern'],
   'bad-pointer': ['/items/0/pointer', 'pattern'],
   'bad-rule-id': ['/items/0/ruleId', 'pattern'],
+  'dotted-rule-id': ['/items/0/ruleId', 'pattern'],
   'fail-without-error': ['/items', 'contains'],
   'flag-without-items': ['/items', 'minItems'],
   'missing-meta': ['', 'required'],
@@ -52,12 +53,16 @@ describe('patterns', () => {
   });
 
   it.each([
-    ['passage.no-reading-text', true],
-    ['schema', true],
-    ['evidence.excerpt-found.v2', true],
-    ['Passage.text', false],
-    ['passage..text', false],
-    ['passage.', false],
+    ['schema/valid-passage', true],
+    ['schema/sentence-cites-claim', true],
+    ['licence/quoted-english-run', true],
+    ['merge-rule/protected-path', true],
+    ['schema', false],
+    ['schema.valid-passage', false],
+    ['schema/valid/passage', false],
+    ['Schema/valid-passage', false],
+    ['schema/', false],
+    ['/valid-passage', false],
   ] as const)('rule id %j valid: %s', (ruleId, ok) => {
     expect(new RegExp(RULE_ID_PATTERN, 'u').test(ruleId)).toBe(ok);
   });
@@ -65,5 +70,6 @@ describe('patterns', () => {
   it('derives types from the schema', () => {
     expectTypeOf<GateResult['status']>().toEqualTypeOf<'pass' | 'fail' | 'flag' | 'skipped'>();
     expectTypeOf<GateResult['items'][number]['claimId']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<GateResult['items'][number]['file']>().toEqualTypeOf<string | undefined>();
   });
 });

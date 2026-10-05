@@ -45,8 +45,11 @@ export const ANCHOR_PATTERN = '^\\S+( \\S+){0,5}$';
 /** `chapter:verse` inside the passage (`20:15`); explicit chapters keep multi-chapter passages unambiguous. */
 export const NOTE_VERSE_PATTERN = '^[1-9][0-9]{0,2}:[1-9][0-9]{0,2}$';
 
-/** Original languages a translation note can quote: Koine Greek, Biblical Hebrew, Latin. */
-export const ORIGINAL_LANGUAGES = ['grc', 'hbo', 'lat'] as const;
+/** Original languages a translation note can quote: Koine Greek, Biblical Hebrew, Biblical Aramaic, Latin. */
+export const ORIGINAL_LANGUAGES = ['grc', 'hbo', 'arc', 'lat'] as const;
+
+/** A translation-note body: one line of prose with at least one claim marker, ending in a marker. */
+export const NOTE_BODY_PATTERN = CONTEXT_PARAGRAPH_PATTERN;
 
 export const SOURCE_TYPES = ['scripture', 'web', 'print'] as const;
 export const GENERATORS = ['research-cli', 'manual-seed', 'fake'] as const;
@@ -94,7 +97,7 @@ const translationNoteSchema = {
       },
     },
     summary: { ...nonEmptyStringSchema, maxLength: 200 },
-    body: nonEmptyStringSchema,
+    body: { type: 'string', pattern: NOTE_BODY_PATTERN },
   },
 } as const;
 
@@ -153,17 +156,32 @@ const provenanceSchema = {
   ],
 } as const;
 
-/** What the two-family verifiers (gate 4, L-027) concluded, recorded on an auto approval. */
+/** One verifier's verdict: its model id and the lowest per-claim support score it gave, 0–1. */
+const verifierVerdictSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['model', 'minSupport'],
+  properties: {
+    model: nonEmptyStringSchema,
+    minSupport: { type: 'number', minimum: 0, maximum: 1 },
+  },
+} as const;
+
+/**
+ * What the two-family verifiers (gate 4, L-027) concluded, recorded on an auto approval. Each
+ * verifier records its own lowest support score, so the merge rule (L-028) can show that both met
+ * the threshold.
+ */
 const verifierSummarySchema = {
   type: 'object',
   additionalProperties: false,
   required: ['confirmer', 'refuter', 'minSupport', 'refutations', 'sensitive'],
   properties: {
-    /** Model id of the confirming verifier. */
-    confirmer: nonEmptyStringSchema,
-    /** Model id of the refuting verifier (a different model family). */
-    refuter: nonEmptyStringSchema,
-    /** Lowest per-claim support score the confirmer gave, 0–1. */
+    /** The confirming verifier. */
+    confirmer: verifierVerdictSchema,
+    /** The refuting verifier (a different model family). */
+    refuter: verifierVerdictSchema,
+    /** Lowest per-claim support from either verifier: min(confirmer.minSupport, refuter.minSupport). */
     minSupport: { type: 'number', minimum: 0, maximum: 1 },
     /** Number of claims the refuter refuted. */
     refutations: { type: 'integer', minimum: 0 },

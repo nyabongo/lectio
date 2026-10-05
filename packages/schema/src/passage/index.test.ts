@@ -17,6 +17,8 @@ import type { Passage, PassageReview } from './index.ts';
 /** Every invalid fixture and the error (instance path, ajv keyword) that must be among the reported ones. */
 const EXPECTED_FAILURES: Record<string, [instancePath: string, keyword: string]> = {
   'anchor-too-long': ['/translationNotes/0/anchor', 'pattern'],
+  'note-body-without-marker': ['/translationNotes/0/body', 'pattern'],
+  'verifier-summary-flat': ['/review/verifierSummary/refuter', 'type'],
   'approved-without-approved-via': ['/review', 'required'],
   'approved-without-method': ['/review', 'required'],
   'auto-via-label': ['/review/approvedVia', 'const'],
@@ -99,7 +101,13 @@ describe('no reading text (ADR 0003)', () => {
 });
 
 describe('review block', () => {
-  const verifierSummary = { confirmer: 'a', refuter: 'b', minSupport: 0.9, refutations: 0, sensitive: 0 };
+  const verifierSummary = {
+    confirmer: { model: 'a', minSupport: 0.95 },
+    refuter: { model: 'b', minSupport: 0.9 },
+    minSupport: 0.9,
+    refutations: 0,
+    sensitive: 0,
+  };
 
   it('accepts pending with no method, and pending with a verifier summary from a flagged run', () => {
     expect(validatePassage(withReview({ status: 'pending', reviewers: [] }))).toBe(true);
@@ -140,6 +148,11 @@ describe('review block', () => {
     expect(
       errorsOf(withReview({ ...review, verifierSummary: { ...verifierSummary, refutations: -1 } })),
     ).toContainEqual(['/review/verifierSummary/refutations', 'minimum']);
+    const refuter = { model: 'b', minSupport: -0.1 };
+    expect(errorsOf(withReview({ ...review, verifierSummary: { ...verifierSummary, refuter } }))).toContainEqual([
+      '/review/verifierSummary/refuter/minSupport',
+      'minimum',
+    ]);
   });
 });
 
@@ -165,6 +178,12 @@ describe('fields', () => {
     expect(validatePassage({ ...pending, sources })).toBe(true);
   });
 
+  it('accepts Aramaic originals', () => {
+    const [note] = pending.translationNotes;
+    const original = { text: 'טַלְיְתָא קוּמִי', lang: 'arc', translit: 'talyeta qumi', gloss: 'little girl, arise' };
+    expect(validatePassage({ ...pending, translationNotes: [{ ...note, original }] })).toBe(true);
+  });
+
   it('pins the schema version', () => {
     expect(PASSAGE_SCHEMA_VERSION).toBe(1);
     expect(pending.schemaVersion).toBe(PASSAGE_SCHEMA_VERSION);
@@ -176,7 +195,9 @@ describe('types', () => {
     expectTypeOf<Passage['key']>().toEqualTypeOf<string>();
     expectTypeOf<Passage['schemaVersion']>().toEqualTypeOf<1>();
     expectTypeOf<PassageReview['status']>().toEqualTypeOf<'pending' | 'approved'>();
-    expectTypeOf<Passage['translationNotes'][number]['original']['lang']>().toEqualTypeOf<'grc' | 'hbo' | 'lat'>();
+    expectTypeOf<Passage['translationNotes'][number]['original']['lang']>().toEqualTypeOf<
+      'grc' | 'hbo' | 'arc' | 'lat'
+    >();
     expectTypeOf<Passage>().not.toHaveProperty('text');
   });
 });

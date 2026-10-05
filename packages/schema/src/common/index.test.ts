@@ -35,6 +35,11 @@ describe('passage keys (ADR 0004)', () => {
     '3JN.1.5-8',
     'ACTS.2.1',
     'GN.1.1-2.2',
+    'PS.23',
+    'IS.40-41',
+    'PS.23_24.1-3',
+    'JUDE.1.17_1.20-25',
+    '1THES.5.16-24',
   ])('accepts %s', (value) => {
     expect(key.test(value)).toBe(true);
     expect(check(passageKeySchema, value)).toBe(true);
@@ -44,7 +49,9 @@ describe('passage keys (ADR 0004)', () => {
     'Mt 20:1-16',
     'mt.20.1-16',
     'MT.20.1-16a',
-    'MT.20',
+    'MT.1-2.3',
+    'MT.1.1__1.2',
+    'PS.023',
     'MT.0.1',
     'MT.20.01',
     '4MACC.1.1',

@@ -32,35 +32,37 @@ calendar reading carries only `slot`, `ref`, `key` and `linkout`.
 
 ## Common fragments
 
-| Fragment          | Rule                                                                                                                 |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
-| ISO date          | `YYYY-MM-DD`, a real calendar day (`2026-02-30` fails).                                                              |
-| Timestamp         | RFC 3339 with an explicit offset (`2026-09-01T08:30:00Z`).                                                           |
-| URL               | absolute `http(s)` URL.                                                                                              |
-| Locale            | BCP 47 subset: `en`, `en-KE`, `sw`, `pt-BR`, `zh-Hant`, `es-419`.                                                    |
-| Passage key       | shape from [ADR 0004](adr/0004-passage-keys-and-book-codes.md): `MT.20.1-16`, `PHIL.1.20-24_1.27`, `ECCL.11.9-12.8`. |
-| Liturgical colour | `white`, `red`, `green`, `violet`, `rose`, `black`, `gold`.                                                          |
-| Reading slot      | `first-reading`, `psalm`, `second-reading`, `gospel`, `reading-1`…`reading-9`, `psalm-1`…`psalm-9`, `epistle`.       |
-| Slug              | lower-case kebab-case, at most 64 characters (`evil-eye`).                                                           |
+| Fragment          | Rule                                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ISO date          | `YYYY-MM-DD`, a real calendar day (`2026-02-30` fails).                                                                                                                         |
+| Timestamp         | RFC 3339 with an explicit offset (`2026-09-01T08:30:00Z`).                                                                                                                      |
+| URL               | absolute `http(s)` URL.                                                                                                                                                         |
+| Locale            | BCP 47 subset: `en`, `en-KE`, `sw`, `pt-BR`, `zh-Hant`, `es-419`.                                                                                                               |
+| Passage key       | shape from [ADR 0004](adr/0004-passage-keys-and-book-codes.md), as `toKey` writes it: `MT.20.1-16`, `PHIL.1.20-24_1.27`, `ECCL.11.9-12.8`, `PS.23`, `IS.40-41`, `PS.23_24.1-3`. |
+| Liturgical colour | `white`, `red`, `green`, `violet`, `rose`, `black`, `gold`.                                                                                                                     |
+| Reading slot      | `first-reading`, `psalm`, `second-reading`, `gospel`, `reading-1`…`reading-9`, `psalm-1`…`psalm-9`, `epistle`.                                                                  |
+| Slug              | lower-case kebab-case, at most 64 characters (`evil-eye`).                                                                                                                      |
 
-The passage-key pattern checks shape only. Whether the book code exists and the verses are real is the reference
-parser's job (`@lectio/refs`, L-005), applied by gate 1.
+The passage-key pattern checks shape only: the book code, then `_`-joined segments, each one of `c`, `c-c` (whole
+chapters), `c.v`, `c.v-v` or `c.v-c.v`. A range never mixes a whole chapter with a verse (`MT.1-2.3` fails). Whether
+the book code exists, the spelling is canonical and the verses are real is the reference parser's job
+(`@lectio/refs`, L-005), applied by gate 1.
 
 ## Passage (`passages/<key>.json`)
 
-| Field                | Rule                                                                                                                                                                                                             |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `key`                | canonical passage key; equals the file name.                                                                                                                                                                     |
-| `ref`                | lectionary-style reference with sub-verse letters kept (`Mt 20:1-16a`).                                                                                                                                          |
-| `locale`             | language of the commentary.                                                                                                                                                                                      |
-| `summary`            | one line, at most 140 characters.                                                                                                                                                                                |
-| `context`            | `title` and `paragraphs[]`. Every paragraph is prose followed by claim markers (`[c1]`, `[c2][c3]`) and ends in a marker; square brackets are reserved for markers.                                              |
-| `translationNotes[]` | `id` (stable slug), `verse` (`chapter:verse`, e.g. `20:15`), `anchor` (the English word or phrase, at most 6 words), `original` {`text`, `lang`: `grc`\|`hbo`\|`lat`, `translit`, `gloss`}, `summary`, `body`.   |
-| `claims[]`           | `id` (`c1`, `c2`, …), `text`, `sourceIds[]` (at least one), `sensitive` (set by the generator).                                                                                                                  |
-| `sources[]`          | `id` (slug), `type`: `scripture` (needs `ref`) \| `web` (needs `url` and `retrievedAt`) \| `print`; `citation`; optional `url`, `archivedUrl`, `ref`, `excerpt`, `excerptLang` (needs `excerpt`), `retrievedAt`. |
-| `provenance`         | `generator`: `research-cli` (needs at least one model) \| `manual-seed` \| `fake`; `runId`, `models[]`, `promptVersion`, `createdAt`, optional `costUsd`.                                                        |
-| `review`             | see [Review block](#review-block).                                                                                                                                                                               |
-| `schemaVersion`      | `1`.                                                                                                                                                                                                             |
+| Field                | Rule                                                                                                                                                                                                                                                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`                | canonical passage key; equals the file name.                                                                                                                                                                                                                                                                     |
+| `ref`                | lectionary-style reference with sub-verse letters kept (`Mt 20:1-16a`).                                                                                                                                                                                                                                          |
+| `locale`             | language of the commentary.                                                                                                                                                                                                                                                                                      |
+| `summary`            | one line, at most 140 characters.                                                                                                                                                                                                                                                                                |
+| `context`            | `title` and `paragraphs[]`. Every paragraph is prose followed by claim markers (`[c1]`, `[c2][c3]`) and ends in a marker; square brackets are reserved for markers.                                                                                                                                              |
+| `translationNotes[]` | `id` (stable slug), `verse` (`chapter:verse`, e.g. `20:15`), `anchor` (the English word or phrase, at most 6 words), `original` {`text`, `lang`: `grc`\|`hbo`\|`arc`\|`lat`, `translit`, `gloss`}, `summary`, `body` (one line, prose followed by `[cN]` markers, ending in a marker, like a context paragraph). |
+| `claims[]`           | `id` (`c1`, `c2`, …), `text`, `sourceIds[]` (at least one), `sensitive` (set by the generator).                                                                                                                                                                                                                  |
+| `sources[]`          | `id` (slug), `type`: `scripture` (needs `ref`) \| `web` (needs `url` and `retrievedAt`) \| `print`; `citation`; optional `url`, `archivedUrl`, `ref`, `excerpt`, `excerptLang` (needs `excerpt`), `retrievedAt`.                                                                                                 |
+| `provenance`         | `generator`: `research-cli` (needs at least one model) \| `manual-seed` \| `fake`; `runId`, `models[]`, `promptVersion`, `createdAt`, optional `costUsd`.                                                                                                                                                        |
+| `review`             | see [Review block](#review-block).                                                                                                                                                                                                                                                                               |
+| `schemaVersion`      | `1`.                                                                                                                                                                                                                                                                                                             |
 
 No other top-level field is allowed, and `text` and `verses` are banned by name.
 
@@ -180,8 +182,8 @@ Approved automatically by the merge rule:
   "approvedVia": "auto",
   "lastReviewedAt": "2026-09-02T06:15:00Z",
   "verifierSummary": {
-    "confirmer": "claude-opus-5-5",
-    "refuter": "gpt-6",
+    "confirmer": { "model": "claude-opus-5-5", "minSupport": 0.93 },
+    "refuter": { "model": "gpt-6", "minSupport": 0.91 },
     "minSupport": 0.91,
     "refutations": 0,
     "sensitive": 0
@@ -189,8 +191,9 @@ Approved automatically by the merge rule:
 }
 ```
 
-`verifierSummary`: `confirmer` and `refuter` are the model ids of the two verifiers (different families),
-`minSupport` is the lowest per-claim support score (0–1), `refutations` and `sensitive` are claim counts.
+`verifierSummary`: `confirmer` and `refuter` each record the verifier's model id (different families) and the
+lowest per-claim support score it gave (0–1), so the merge rule (L-028) can show both met the threshold. The top-level
+`minSupport` is the lower of the two; `refutations` and `sensitive` are claim counts.
 
 ## Calendar year (`calendar/<year>.json`)
 
@@ -215,13 +218,15 @@ readings[]:     { slot, ref, key, linkout }
 
 ```text
 { gate, status, items[], meta }
-items[]: { ruleId, severity, file, pointer, claimId?, message }
+items[]: { ruleId, severity, file?, pointer, claimId?, message }
 ```
 
 - `gate`: slug (`schema`, `evidence`, `licence`, `verifiers`, `merge-rule`); `status`: `pass` | `fail` | `flag` |
   `skipped`.
-- `ruleId`: dotted kebab-case (`passage.no-reading-text`); `severity`: `error` | `warning` | `info`; `file`:
-  repository-relative; `pointer`: RFC 6901 JSON pointer into that file; `claimId` when the finding is about one claim.
+- `ruleId`: `<gate>/<rule>` in kebab-case (`schema/valid-passage`, `licence/quoted-english-run`); `severity`:
+  `error` | `warning` | `info`; `file`: repository-relative, omitted for findings about the whole pull request (for
+  example a merge-rule decision, with `pointer` `""`); `pointer`: RFC 6901 JSON pointer into that file; `claimId`
+  when the finding is about one claim.
 - Status and items agree: `pass` has no `error` item, `fail` has at least one, `flag` has at least one item.
 - `meta` is a free-form object for gate-specific details (timings, models, costs).
 
