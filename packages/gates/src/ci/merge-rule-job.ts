@@ -91,6 +91,8 @@ export interface MergeRuleJobOutcome {
   readonly approvalArtifact?: string;
   readonly approvalCommitSha?: string;
   readonly dispatched: readonly string[];
+  /** The report to upload as `gates.json` (absent when nothing was decided). */
+  readonly report?: DecisionReport;
 }
 
 const HEADLINE: Readonly<Record<Decision, string>> = {
@@ -126,7 +128,37 @@ export function renderDecisionComment(
     results,
   };
   const gates = renderComment(report, { gates: GATES, rules: ruleBookFor(GATES) });
-  return `${gates.trimEnd()}\n\n${decisionSection(outcome, notes)}\n`;
+  // The head line lets readers of the comment (L-038 fix-up mode) tell a stale comment from a current one.
+  const headLine = `Checked head: \`${head}\` ${headMarker(head)}`;
+  return `${gates.trimEnd()}\n\n${decisionSection(outcome, notes)}\n\n${headLine}\n`;
+}
+
+/** The hidden marker naming the head a comment was written for. */
+export function headMarker(head: string): string {
+  return `<!-- lectio-gates-head: ${head} -->`;
+}
+
+/** The gate report the trusted run uploads as `gates.json`: every result it decided on, the head and the decision. */
+export interface DecisionReport extends GateReport {
+  readonly decision: DecideOutput;
+}
+
+export function decisionReport(
+  results: readonly GateResult[],
+  outcome: DecideOutput,
+  head: string,
+  base: string,
+  changedFiles: readonly string[],
+): DecisionReport {
+  return {
+    reportVersion: REPORT_VERSION,
+    status: overallStatus(results),
+    base,
+    head,
+    changedFiles,
+    results,
+    decision: outcome,
+  };
 }
 
 const done = (summary: string): MergeRuleJobOutcome => ({
@@ -179,6 +211,7 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
   for (const reason of outcome.reasons) log(`  - ${reason}`);
 
   const notes = input.note === undefined ? [] : [input.note];
+  const report = decisionReport(results, outcome, headSha, input.base, gathered.facts.files);
   const publish = async (exitCode: number, summary: string): Promise<void> => {
     const conclusion: CheckConclusion = exitCode === 0 ? 'success' : 'failure';
     await github.createCheckRun({
@@ -194,12 +227,12 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
     notes.push('fork PR: report only; a maintainer reviews and merges it by hand');
     const summary = renderDecisionComment(results, outcome, notes, headSha);
     await publish(1, summary);
-    return { decision: outcome.decision, manualMerge, exitCode: 1, summary, write: false, dispatched: [] };
+    return { decision: outcome.decision, manualMerge, exitCode: 1, summary, write: false, dispatched: [], report };
   }
 
   const label = labelFor(outcome.decision, manualMerge);
   let exitCode = GREEN_DECISIONS.has(outcome.decision) ? 0 : 1;
-  const base = { decision: outcome.decision, manualMerge, label };
+  const base = { decision: outcome.decision, manualMerge, label, report };
 
   if (input.phase === 'decide') {
     await github.removeLabels(

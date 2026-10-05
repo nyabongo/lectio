@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import type { FakeGitHubClient } from '@lectio/providers';
 
-import { APPROVAL_RECORD, CI_USAGE, runCiCli } from './cli.ts';
+import { APPROVAL_RECORD, CI_USAGE, REPORT_FILE, runCiCli } from './cli.ts';
 import type { CiCliOptions } from './cli.ts';
 import {
   AUTO_RESULTS,
@@ -216,6 +216,14 @@ describe('lectio-gates ci', () => {
         `decision=auto-merge\nmanual-merge=false\nwrite=true\napproval-artifact=${artifact}\napproval-commit=\n`,
       );
       expect(JSON.parse(read(APPROVAL_RECORD))).toEqual({ pr: number, head, run: '4242', decision: 'auto-merge' });
+      expect(JSON.parse(read(REPORT_FILE))).toMatchObject({
+        reportVersion: 1,
+        head,
+        base: 'main',
+        changedFiles: ['passages/MT.20.1-16.json'],
+        decision: { decision: 'auto-merge' },
+        results: AUTO_RESULTS,
+      });
       expect(bot.headOf('research/mt-20')).toBe(head);
 
       bot.addRunArtifact(4242, artifact);

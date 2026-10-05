@@ -304,6 +304,14 @@ jobs:
           --base "origin/$BASE_REF" --root pr-head
           --results out/deterministic/gates.json --results out/verifiers/gates.json
 
+      # The full report (every result, the head and the decision) for readers of a truncated comment.
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && hashFiles('out/report/gates.json') != '' }}
+        with:
+          name: gates-report
+          path: out/report/gates.json
+          retention-days: 90
+
   merge:
     needs: [resolve, merge-rule]
     if: ${{ needs.merge-rule.result == 'success' && needs.merge-rule.outputs.decision == 'approved-commit' && needs.merge-rule.outputs.manual-merge != 'true' && needs.resolve.outputs.fork != 'true' }}

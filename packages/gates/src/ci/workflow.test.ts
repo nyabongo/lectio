@@ -116,6 +116,7 @@ describe('content-gates.yml (trusted side)', () => {
     expect(upload).toBeGreaterThan(decide);
     expect(approve).toBeGreaterThan(upload);
     expect(mergeRule).toContain('ci skip --head-sha');
+    expect(mergeRule).toContain('name: gates-report');
   });
 
   it('merges only after approved-commit, never for a manual-merge or fork PR', () => {

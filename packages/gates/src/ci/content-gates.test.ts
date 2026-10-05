@@ -31,7 +31,7 @@ import {
 } from './fixtures/content-gates.ts';
 import { ACTIONS_BOT, CHECKS_WORKFLOW, approvalArtifactName } from './facts.ts';
 import { runMergeJob } from './merge-job.ts';
-import { DECISION_LABELS, MERGE_RULE_CHECK } from './merge-rule-job.ts';
+import { DECISION_LABELS, MERGE_RULE_CHECK, headMarker } from './merge-rule-job.ts';
 
 const BRANCH = 'research/mt-20';
 const APPROVED = 'approved';
@@ -74,6 +74,12 @@ describe('content gates: a pending passage reaches main approved', () => {
     const opened = await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
     expect(opened.mergeRule).toMatchObject({ decision: 'needs-review', exitCode: 1, label: 'needs-review' });
     expect(mergeRuleCheck(bot, opened.headSha)).toMatchObject({ conclusion: 'failure', title: 'needs-review' });
+    // The sticky comment keeps the lectio-gates marker first and names the head it was written for.
+    const [comment] = await bot.listComments(number);
+    expect(comment?.author).toBe(ACTIONS_BOT);
+    expect(comment?.body.startsWith('<!-- lectio-gates -->\n')).toBe(true);
+    expect(comment?.body).toContain(`Checked head: \`${opened.headSha}\` ${headMarker(opened.headSha)}`);
+    expect(opened.mergeRule.report).toMatchObject({ head: opened.headSha, decision: { decision: 'needs-review' } });
     expect(bot.dispatches).toEqual([]);
 
     await bot.as(REVIEWER).addLabels(number, [APPROVED]);

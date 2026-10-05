@@ -91,6 +91,9 @@ function sha(name: string, value: string): string {
 /** The record the approval artifact carries (`--phase decide`), relative to the working directory. */
 export const APPROVAL_RECORD = 'out/approval/approval.json';
 
+/** The full gate report of the trusted run (uploaded as the `gates-report` artifact, for `--report`). */
+export const REPORT_FILE = 'out/report/gates.json';
+
 function writeText(path: string, text: string): void {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, text, 'utf8');
@@ -263,6 +266,8 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
     log: options.log,
   });
   ctx.summary(outcome.summary);
+  if (outcome.report !== undefined)
+    (options.writeFile ?? writeText)(ctx.path(REPORT_FILE), `${JSON.stringify(outcome.report, null, 2)}\n`);
   if (outcome.approvalArtifact !== undefined) {
     // Uploaded by the next workflow step, from inside this run, before `--phase approve` commits.
     const record = { pr: number, head: headSha, run: runId, decision: outcome.decision };
