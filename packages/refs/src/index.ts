@@ -1,7 +1,7 @@
 /**
  * @lectio/refs: the book table, the lectionary reference parser, canonical
- * passage keys (ADR 0004), formatters and verse enumeration.
- * Versification and verse existence live in L-006; link-outs in L-007.
+ * passage keys (ADR 0004), formatters, verse enumeration, and versification
+ * (verse existence and cross-versification mapping, L-006). Link-outs live in L-007.
  */
 export const packageName = '@lectio/refs';
 
@@ -17,3 +17,28 @@ export { KEY_PATTERN, fromKey, isKey, toKey } from './key.ts';
 export { parseRef, tryParseRef } from './parse.ts';
 export type { Point, Ref, Segment } from './types.ts';
 export { checkRef } from './validate.ts';
+export {
+  GREEK_ADDITION_BOOKS,
+  IDENTITY_MAPPED_BOOKS,
+  SCHEMES,
+  VersificationError,
+  chapterCount,
+  chapterLength,
+  createVersification,
+  fromSourceVerse,
+  isRealVerse,
+  mapRef,
+  mapVerse,
+  notInOriginal,
+  toSourceVerse,
+  verseCounts,
+  versification,
+} from './versification/index.ts';
+export type {
+  Scheme,
+  SourceVerse,
+  VerseInput,
+  Versification,
+  VersificationData,
+  VersificationErrorCode,
+} from './versification/index.ts';

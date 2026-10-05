@@ -1,0 +1,32 @@
+/**
+ * Versification (L-006): verse counts for the `original`, `vulgate`, `lxx` and
+ * `english` schemes, verse existence, and mapping between schemes. The tables
+ * come from libpalaso's `.vrs` files (packages/refs/data/SOURCE.json).
+ */
+import { VRS_DATA } from './__generated__/vrs-data.ts';
+import { createVersification } from './engine.ts';
+import { SCHEME_DEFINITIONS } from './schemes.ts';
+
+export { coalesce, createVersification } from './engine.ts';
+export type { VersificationData, Versification, VerseInput } from './engine.ts';
+export { VersificationError } from './errors.ts';
+export type { VersificationErrorCode } from './errors.ts';
+export { GREEK_ADDITION_BOOKS, IDENTITY_MAPPED_BOOKS, SCHEMES, SCHEME_DEFINITIONS, chapters } from './schemes.ts';
+export type { Scheme, SchemeDefinition, Span } from './schemes.ts';
+export { parseVrs, sourceKey } from './vrs.ts';
+export type { SourceVerse, VrsFile, VrsMapping } from './vrs.ts';
+
+/** The versification built from the embedded libpalaso tables. */
+export const versification = createVersification({ texts: VRS_DATA, schemes: SCHEME_DEFINITIONS });
+
+export const {
+  chapterCount,
+  chapterLength,
+  verseCounts,
+  isRealVerse,
+  mapVerse,
+  mapRef,
+  notInOriginal,
+  toSourceVerse,
+  fromSourceVerse,
+} = versification;
