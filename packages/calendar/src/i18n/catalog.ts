@@ -3,7 +3,7 @@
  * colours and every celebration id in one language, each with a review status. Pure: the caller
  * reads the file, `parseNameCatalog` checks its shape.
  */
-import { SEASONS } from '@lectio/schema/calendar';
+import { NAME_STATUSES, SEASONS } from '@lectio/schema/calendar';
 import { LITURGICAL_COLOURS } from '@lectio/schema/common';
 import type { LiturgicalColour } from '@lectio/schema/common';
 
@@ -13,7 +13,7 @@ import type { Season } from '../map.ts';
  * `provisional`: drafted, waiting for a native speaker's review. `reviewed`: checked by a native
  * speaker. `fallback`: no name in this language yet (`name` is null); the English name is shown.
  */
-export const NAME_STATUSES = ['provisional', 'reviewed', 'fallback'] as const;
+export { NAME_STATUSES };
 export type NameStatus = (typeof NAME_STATUSES)[number];
 
 /** One name in a catalog. `name` is null exactly when `status` is `fallback`. */

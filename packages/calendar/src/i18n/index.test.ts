@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,12 +15,15 @@ import {
   CALENDAR_LOCALES,
   ENGLISH_COLOUR_NAMES,
   ENGLISH_SEASON_NAMES,
-  SWAHILI,
   celebrationName,
   celebrationNameIn,
   celebrationNames,
+  celebrationStatusIn,
   colourName,
+  loadNameCatalog,
+  nameCatalogPath,
   seasonName,
+  swahiliCatalog,
   unnamedCelebrations,
 } from './index.ts';
 
@@ -42,6 +46,7 @@ function committedCalendars(): CalendarYear[] {
     .map((name) => readJson(join(dir, name)) as CalendarYear);
 }
 
+const SWAHILI = loadNameCatalog(repoRoot);
 const knownIds = new Set([...Object.values(romcalIds as Record<string, string>), ...overrideIds()]);
 
 describe('calendar/i18n/sw.json', () => {
@@ -69,7 +74,7 @@ describe('calendar/i18n/sw.json', () => {
     for (const colour of LITURGICAL_COLOURS) expect(SWAHILI.colours[colour].name).toBeTruthy();
   });
 
-  it('matches the names written into the committed calendars', () => {
+  it('matches the names and review statuses written into the committed calendars', () => {
     for (const year of committedCalendars()) {
       for (const day of year.days) {
         for (const c of day.celebrations) expect(c.names).toEqual(celebrationNames(c.id, c.name));
@@ -86,6 +91,7 @@ const fake: NameCatalog = {
   colours: { ...SWAHILI.colours, gold: { name: null, status: 'fallback' } },
   celebrations: {
     'easter-sunday': { name: 'Pasaka', status: 'reviewed' },
+    'pentecost-sunday': { name: 'Pentekoste', status: 'provisional' },
     'saint-nobody': { name: null, status: 'fallback', note: 'no established name' },
   },
 };
@@ -106,11 +112,20 @@ describe('celebrationName and celebrationNames', () => {
   });
 
   it('pairs both languages', () => {
-    expect(celebrationNames('easter-sunday', 'Easter Sunday', fake)).toEqual({ en: 'Easter Sunday', sw: 'Pasaka' });
-    expect(celebrationNames('saint-nobody', 'Saint Nobody', fake)).toEqual({ en: 'Saint Nobody', sw: 'Saint Nobody' });
+    expect(celebrationNames('easter-sunday', 'Easter Sunday', fake)).toEqual({
+      en: 'Easter Sunday',
+      sw: 'Pasaka',
+      swStatus: 'reviewed',
+    });
+    expect(celebrationNames('saint-nobody', 'Saint Nobody', fake)).toEqual({
+      en: 'Saint Nobody',
+      sw: 'Saint Nobody',
+      swStatus: 'fallback',
+    });
     expect(celebrationNames('nativity-of-the-lord', 'The Nativity of the Lord (Christmas)')).toEqual({
       en: 'The Nativity of the Lord (Christmas)',
       sw: 'Kuzaliwa kwa Bwana (Noeli)',
+      swStatus: 'provisional',
     });
   });
 });
@@ -118,11 +133,67 @@ describe('celebrationName and celebrationNames', () => {
 describe('celebrationNameIn', () => {
   it('gives the translated name, or undefined so the caller keeps the calendar name', () => {
     expect(celebrationNameIn('sw', 'ordinary-time-25-sunday')).toBe('Dominika ya Ishirini na Tano ya Mwaka');
-    expect(celebrationNameIn('sw', 'easter-sunday', fake)).toBe('Pasaka');
-    expect(celebrationNameIn('en', 'easter-sunday', fake)).toBeUndefined();
-    expect(celebrationNameIn('sw', 'saint-nobody', fake)).toBeUndefined();
-    expect(celebrationNameIn('sw', 'unknown-id', fake)).toBeUndefined();
-    expect(celebrationNameIn('sw', 'constructor', fake)).toBeUndefined();
+    const catalog = fake;
+    expect(celebrationNameIn('sw', 'easter-sunday', { catalog })).toBe('Pasaka');
+    expect(celebrationNameIn('sw', 'pentecost-sunday', { catalog })).toBe('Pentekoste');
+    expect(celebrationNameIn('en', 'easter-sunday', { catalog })).toBeUndefined();
+    expect(celebrationNameIn('fr', 'easter-sunday', { catalog })).toBeUndefined();
+    expect(celebrationNameIn('sw', 'saint-nobody', { catalog })).toBeUndefined();
+    expect(celebrationNameIn('sw', 'unknown-id', { catalog })).toBeUndefined();
+    expect(celebrationNameIn('sw', 'constructor', { catalog })).toBeUndefined();
+  });
+
+  it('leaves out provisional names with includeProvisional: false', () => {
+    const options = { catalog: fake, includeProvisional: false };
+    expect(celebrationNameIn('sw', 'easter-sunday', options)).toBe('Pasaka');
+    expect(celebrationNameIn('sw', 'pentecost-sunday', options)).toBeUndefined();
+    expect(celebrationNameIn('sw', 'saint-nobody', options)).toBeUndefined();
+    expect(celebrationNameIn('sw', 'ordinary-time-25-sunday', { includeProvisional: false })).toBeUndefined();
+  });
+});
+
+describe('celebrationStatusIn', () => {
+  it('gives the review status of the name in a locale', () => {
+    expect(celebrationStatusIn('sw', 'easter-sunday', fake)).toBe('reviewed');
+    expect(celebrationStatusIn('sw', 'pentecost-sunday', fake)).toBe('provisional');
+    expect(celebrationStatusIn('sw', 'saint-nobody', fake)).toBe('fallback');
+    expect(celebrationStatusIn('sw', 'unknown-id', fake)).toBe('fallback');
+    expect(celebrationStatusIn('fr', 'easter-sunday', fake)).toBe('fallback');
+    expect(celebrationStatusIn('en', 'easter-sunday', fake)).toBeUndefined();
+    expect(celebrationStatusIn('sw', 'ordinary-time-25-sunday')).toBe('provisional');
+  });
+});
+
+describe('loadNameCatalog and swahiliCatalog', () => {
+  it('reads calendar/i18n/<locale>.json under the repository root once', () => {
+    expect(nameCatalogPath('/repo')).toBe('/repo/calendar/i18n/sw.json');
+    expect(nameCatalogPath('/repo', 'xx')).toBe('/repo/calendar/i18n/xx.json');
+    expect(loadNameCatalog(repoRoot)).toBe(SWAHILI);
+    expect(loadNameCatalog(repoRoot, 'sw')).toBe(SWAHILI);
+  });
+
+  it('finds the repository from a directory inside it, INIT_CWD or the working directory', () => {
+    expect(swahiliCatalog(join(repoRoot, 'apps', 'web'))).toBe(SWAHILI);
+    expect(swahiliCatalog()).toBe(SWAHILI);
+    const saved = process.env['INIT_CWD'];
+    try {
+      delete process.env['INIT_CWD'];
+      expect(swahiliCatalog()).toBe(SWAHILI);
+    } finally {
+      if (saved !== undefined) process.env['INIT_CWD'] = saved;
+    }
+  });
+
+  it('throws for a missing or invalid catalog', () => {
+    expect(() => loadNameCatalog(repoRoot, 'xx')).toThrow(/ENOENT/);
+    const dir = mkdtempSync(join(tmpdir(), 'lectio-names-'));
+    try {
+      mkdirSync(join(dir, 'calendar', 'i18n'), { recursive: true });
+      writeFileSync(join(dir, 'calendar', 'i18n', 'sw.json'), '{"locale": "sw"}');
+      expect(() => loadNameCatalog(dir)).toThrow(/^Invalid calendar\/i18n\/sw\.json:\n {2}language: /);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
@@ -163,7 +234,9 @@ describe('unnamedCelebrations', () => {
 
 describe('package exports', () => {
   it('exports the naming API from @lectio/calendar', () => {
-    expect(calendar.SWAHILI).toBe(SWAHILI);
+    expect(calendar.swahiliCatalog).toBe(swahiliCatalog);
+    expect(calendar.celebrationNameIn).toBe(celebrationNameIn);
+    expect(calendar.celebrationStatusIn).toBe(celebrationStatusIn);
     expect(calendar.celebrationNames).toBe(celebrationNames);
     expect(calendar.seasonName).toBe(seasonName);
     expect(calendar.colourName).toBe(colourName);

@@ -14,10 +14,11 @@ import { Lectionary, loadLectionary, refKey, resolveDay } from '@lectio/lectiona
 import type { ResolveOptions, ResolvedReading } from '@lectio/lectionary';
 import { VersificationError, linkoutUrl } from '@lectio/refs';
 import { validateCalendarYear } from '@lectio/schema/calendar';
-import type { CalendarDay, CalendarYear, Mass, Reading } from '@lectio/schema/calendar';
+import type { CalendarDay, CalendarYear, Celebration, Mass, Reading } from '@lectio/schema/calendar';
 
 import { romcalVersion } from '../generate.ts';
-import { unnamedCelebrations } from '../i18n/index.ts';
+import { celebrationNames, loadNameCatalog, unnamedCelebrations } from '../i18n/index.ts';
+import type { NameCatalog } from '../i18n/index.ts';
 import { toCalendarDay } from '../map.ts';
 import type { DetailedDay } from '../map.ts';
 import { generateRegionalDays, loadOverrides, overridesPath } from '../overrides/region.ts';
@@ -33,6 +34,8 @@ export interface AssembleInput {
   readonly days: readonly DetailedDay[];
   readonly lectionary: Lectionary;
   readonly linkout: LinkoutFor;
+  /** The Kiswahili name catalog (`calendar/i18n/sw.json`, L-111) for each celebration's `names`. */
+  readonly names: NameCatalog;
 }
 
 export interface BuildResult {
@@ -104,6 +107,7 @@ export function assembleDay(
   day: DetailedDay,
   lectionary: Lectionary,
   linkout: LinkoutFor,
+  names: NameCatalog,
   warnings: string[],
   options: ResolveOptions = {},
 ): CalendarDay {
@@ -114,7 +118,14 @@ export function assembleDay(
     if (mass.missingSlots.length > 0 || readings.length < mass.readings.length) incomplete = true;
     if (readings.length > 0) masses.push({ id: mass.id, label: mass.label, readings });
   }
-  return toCalendarDay({ ...day, masses, lectionaryMissing: masses.length === 0 || incomplete });
+  const calendarDay = toCalendarDay({ ...day, masses, lectionaryMissing: masses.length === 0 || incomplete });
+  return { ...calendarDay, celebrations: calendarDay.celebrations.map((c) => withNames(c, names)) };
+}
+
+/** A celebration with `names` (L-111) between `name` and `rank`, keeping the file's key order fixed. */
+function withNames(celebration: Celebration, catalog: NameCatalog): Celebration {
+  const { id, name, rank, colour } = celebration;
+  return { id, name, names: celebrationNames(id, name, catalog), rank, colour };
 }
 
 /** The date of the Epiphany among the days, if they include it. */
@@ -132,7 +143,7 @@ export function assembleYear(input: AssembleInput): BuildResult {
   const options: ResolveOptions = epiphany === undefined ? {} : { epiphany };
   const days = [...input.days]
     .sort((a, b) => a.date.localeCompare(b.date))
-    .map((day) => assembleDay(day, input.lectionary, input.linkout, warnings, options));
+    .map((day) => assembleDay(day, input.lectionary, input.linkout, input.names, warnings, options));
   return {
     calendar: { year: input.year, region: input.region, generatedBy: input.generatedBy, days },
     warnings,
@@ -180,9 +191,9 @@ export function calendarProblems(calendar: CalendarYear): string[] {
  * Celebrations with no entry in `calendar/i18n/sw.json` (L-111): every id needs a Kiswahili name or
  * an explicit `fallback` entry, so a missing name is a decision, not an accident.
  */
-export function namingProblems(calendar: CalendarYear): string[] {
+export function namingProblems(calendar: CalendarYear, catalog: NameCatalog): string[] {
   const ids = calendar.days.flatMap((day) => day.celebrations.map((c) => c.id));
-  return unnamedCelebrations(ids).map(
+  return unnamedCelebrations(ids, catalog).map(
     (id) => `${id}: no entry in calendar/i18n/sw.json (add a Kiswahili name, or a "fallback" entry with name null)`,
   );
 }
@@ -207,8 +218,9 @@ export interface BuildOptions {
 }
 
 /**
- * Builds one year from the repository: `calendar/overrides/<region>.json`, `calendar/lectionary/`
- * and the config's link-out provider. Throws when the lectionary data or the result is invalid.
+ * Builds one year from the repository: `calendar/overrides/<region>.json`, `calendar/lectionary/`,
+ * `calendar/i18n/sw.json` and the config's link-out provider. Throws when the lectionary data, the
+ * name catalog or the result is invalid, or when a celebration has no entry in the name catalog.
  */
 export async function buildYear(options: BuildOptions): Promise<BuildResult> {
   const { repoRoot, year, region } = options;
@@ -219,6 +231,7 @@ export async function buildYear(options: BuildOptions): Promise<BuildResult> {
       `calendar/lectionary has problems (run npm run lectionary:check):\n  ${loaded.problems.join('\n  ')}`,
     );
   }
+  const names = loadNameCatalog(repoRoot, 'sw');
   const { days } = await generateRegionalDays(year, overrides);
   const result = assembleYear({
     year,
@@ -227,8 +240,9 @@ export async function buildYear(options: BuildOptions): Promise<BuildResult> {
     days,
     lectionary: new Lectionary(loaded.files),
     linkout: configLinkout(options.config),
+    names,
   });
-  const problems = [...calendarProblems(result.calendar), ...namingProblems(result.calendar)];
+  const problems = [...calendarProblems(result.calendar), ...namingProblems(result.calendar, names)];
   if (problems.length > 0) throw new Error(`calendar ${String(year)} is invalid:\n  ${problems.join('\n  ')}`);
   return result;
 }

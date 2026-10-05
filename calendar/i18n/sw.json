@@ -1,7 +1,7 @@
 {
   "locale": "sw",
   "language": "Kiswahili",
-  "description": "Kiswahili names for the liturgical seasons, colours and every celebration id the calendar can produce (General Roman Calendar plus regional overrides). Read by @lectio/calendar (packages/calendar/src/i18n) and written into calendar/<year>.json as names.sw. Each entry has a status: \"provisional\" (drafted, waiting for review by a native speaker against the KCCB Kiswahili Ordo), \"reviewed\" (checked by a native speaker) or \"fallback\" (no Kiswahili name yet: \"name\" is null and the English name is shown instead).",
+  "description": "Kiswahili names for the liturgical seasons, colours and every celebration id the calendar can produce (General Roman Calendar plus regional overrides). Read by @lectio/calendar (packages/calendar/src/i18n) and written into calendar/<year>.json as names.sw, with the entry's status as names.swStatus. Each entry has a status: \"provisional\" (drafted, waiting for review by a native speaker against the KCCB Kiswahili Ordo), \"reviewed\" (checked by a native speaker) or \"fallback\" (no Kiswahili name yet: \"name\" is null and the English name is shown instead).",
   "sources": [
     {
       "title": "Common Kiswahili Catholic liturgical usage in Kenya and Tanzania",
@@ -922,7 +922,7 @@
       "status": "provisional"
     },
     "john-baptist-de-la-salle-priest": {
-      "name": "Mtakatifu Yohane Mbatizaji wa La Salle, Padre",
+      "name": "Mtakatifu Yohane Batista wa La Salle, Padre",
       "status": "provisional"
     },
     "john-bosco-priest": {

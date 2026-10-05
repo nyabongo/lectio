@@ -1,4 +1,4 @@
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +11,7 @@ import { validateCalendarYear } from '@lectio/schema/calendar';
 import type { CalendarYear } from '@lectio/schema/calendar';
 import { afterAll, describe, expect, it } from 'vitest';
 
+import { loadNameCatalog } from '../i18n/index.ts';
 import type { CelebrationDetail, DetailedDay } from '../map.ts';
 import {
   assembleDay,
@@ -29,6 +30,7 @@ import type { LinkoutFor } from './build-year.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url));
 const config = loadConfig(join(repoRoot, 'config', 'lectio.config.json'));
+const names = loadNameCatalog(repoRoot);
 
 function celebration(id: string, rank: CelebrationDetail['rank'], extra: Partial<CelebrationDetail> = {}) {
   return {
@@ -117,6 +119,7 @@ describe('assembleYear', () => {
     days: [wednesday, monday, sunday, tuesday],
     lectionary,
     linkout: drbo,
+    names,
   });
 
   it('sorts the days and keeps the header fields', () => {
@@ -139,7 +142,11 @@ describe('assembleYear', () => {
         {
           id: 'ordinary-time-25-sunday',
           name: 'Name of ordinary-time-25-sunday',
-          names: { en: 'Name of ordinary-time-25-sunday', sw: 'Dominika ya Ishirini na Tano ya Mwaka' },
+          names: {
+            en: 'Name of ordinary-time-25-sunday',
+            sw: 'Dominika ya Ishirini na Tano ya Mwaka',
+            swStatus: 'provisional',
+          },
           rank: 'sunday',
           colour: 'green',
         },
@@ -243,6 +250,7 @@ describe('assembleYear in the Christmas season', () => {
       days,
       lectionary: seasonal,
       linkout: drbo,
+      names,
     });
     return calendar.days[1]?.masses[0]?.readings.at(-1)?.ref;
   };
@@ -255,7 +263,13 @@ describe('assembleYear in the Christmas season', () => {
 
   it('shows the canonical ref for a printed citation with a dual psalm number, which does not parse', () => {
     const warnings: string[] = [];
-    const result = assembleDay(christmasDay('2026-01-01', 'mary-mother-of-god', 'solemnity'), seasonal, drbo, warnings);
+    const result = assembleDay(
+      christmasDay('2026-01-01', 'mary-mother-of-god', 'solemnity'),
+      seasonal,
+      drbo,
+      names,
+      warnings,
+    );
     expect(result.masses[0]?.readings[0]?.ref).toBe('Ps 67:2-3, 5, 6, 8');
     expect(warnings).toHaveLength(1);
   });
@@ -268,7 +282,7 @@ describe('assembleDay link-out failures', () => {
       if (key.startsWith('PS.')) throw new VersificationError('NO_COUNTERPART', 'no Vulgate counterpart');
       return `https://example.org/${key}`;
     };
-    const result = assembleDay(sunday, lectionary, linkout, warnings);
+    const result = assembleDay(sunday, lectionary, linkout, names, warnings);
     expect(result.masses[0]?.readings.map((r) => r.slot)).toEqual(['first-reading', 'second-reading', 'gospel']);
     expect(result.lectionaryMissing).toBe(true);
     expect(warnings).toEqual([
@@ -284,6 +298,7 @@ describe('assembleDay link-out failures', () => {
       () => {
         throw new VersificationError('UNKNOWN_VERSE', 'nope');
       },
+      names,
       warnings,
     );
     expect(result.masses).toEqual([]);
@@ -294,7 +309,7 @@ describe('assembleDay link-out failures', () => {
     const boom: LinkoutFor = () => {
       throw new Error('misconfigured provider');
     };
-    expect(() => assembleDay(sunday, lectionary, boom, [])).toThrow('misconfigured provider');
+    expect(() => assembleDay(sunday, lectionary, boom, names, [])).toThrow('misconfigured provider');
   });
 });
 
@@ -310,6 +325,7 @@ describe('calendarProblems', () => {
     days: [sunday, monday],
     lectionary,
     linkout: drbo,
+    names,
   }).calendar;
 
   it('accepts a valid calendar', () => {
@@ -393,8 +409,9 @@ describe('namingProblems', () => {
       days: [sunday, monday],
       lectionary,
       linkout: drbo,
+      names,
     });
-    expect(namingProblems(calendar)).toEqual([]);
+    expect(namingProblems(calendar, names)).toEqual([]);
   });
 
   it('reports each celebration id without an entry once', () => {
@@ -410,7 +427,7 @@ describe('namingProblems', () => {
       { ...day, celebrations: [celebration], masses: [], lectionaryMissing: true },
       { ...day, date: '2026-09-22', celebrations: [celebration], masses: [], lectionaryMissing: true },
     ]);
-    expect(namingProblems(calendar)).toEqual([
+    expect(namingProblems(calendar, names)).toEqual([
       'saint-nobody: no entry in calendar/i18n/sw.json (add a Kiswahili name, or a "fallback" entry with name null)',
     ]);
   });
@@ -433,6 +450,7 @@ describe('buildYear', { timeout: 60_000 }, () => {
     expect(sept20?.celebrations[0]?.names).toEqual({
       en: 'Twenty-fifth Sunday in Ordinary Time',
       sw: 'Dominika ya Ishirini na Tano ya Mwaka',
+      swStatus: 'provisional',
     });
     expect(sept20?.masses[0]?.readings.map((r) => [r.key, r.linkout])).toEqual([
       ['IS.55.6-9', 'https://www.drbo.org/chapter/27055.htm'],
@@ -456,6 +474,36 @@ describe('buildYear', { timeout: 60_000 }, () => {
     writeFileSync(join(root, 'calendar', 'lectionary', 'seed', 'broken.json'), '{');
     await expect(buildYear({ repoRoot: root, year: 2026, region: 'kenya', config })).rejects.toThrow(
       /^calendar\/lectionary has problems \(run npm run lectionary:check\):\n {2}seed\/broken\.json: /,
+    );
+  });
+
+  it('refuses a year with a celebration that has no entry in the name catalog', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'lectio-calendar-'));
+    temps.push(root);
+    for (const dir of ['overrides', 'lectionary']) {
+      cpSync(join(repoRoot, 'calendar', dir), join(root, 'calendar', dir), { recursive: true });
+    }
+    const catalog = JSON.parse(readFileSync(join(repoRoot, 'calendar', 'i18n', 'sw.json'), 'utf8')) as {
+      celebrations: Record<string, unknown>;
+    };
+    delete catalog.celebrations['ordinary-time-25-sunday'];
+    mkdirSync(join(root, 'calendar', 'i18n'));
+    writeFileSync(join(root, 'calendar', 'i18n', 'sw.json'), JSON.stringify(catalog));
+    await expect(buildYear({ repoRoot: root, year: 2026, region: 'kenya', config })).rejects.toThrow(
+      'calendar 2026 is invalid:\n  ordinary-time-25-sunday: no entry in calendar/i18n/sw.json',
+    );
+  });
+
+  it('refuses an invalid name catalog', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'lectio-calendar-'));
+    temps.push(root);
+    for (const dir of ['overrides', 'lectionary']) {
+      cpSync(join(repoRoot, 'calendar', dir), join(root, 'calendar', dir), { recursive: true });
+    }
+    mkdirSync(join(root, 'calendar', 'i18n'));
+    writeFileSync(join(root, 'calendar', 'i18n', 'sw.json'), '{"locale": "sw"}');
+    await expect(buildYear({ repoRoot: root, year: 2026, region: 'kenya', config })).rejects.toThrow(
+      /^Invalid calendar\/i18n\/sw\.json:\n {2}language: /,
     );
   });
 
