@@ -55,7 +55,10 @@ export function latestGatesComment(
 const FINDING = /^- \*\*(error|warning|info)\*\* · `([^`]*)` \((.*?)\)(?: at `([^`]*)`)?: (.*)$/u;
 const FILE_HEADING = /^#### `([^`]*)`$/u;
 const CLAIM_HEADING = /^\*\*Claim `([^`]*)`\*\*$/u;
-const HEAD = /· head `([^`]+)`/u;
+/** The hidden head marker of the content-gates comment (#209): `<!-- lectio-gates-head: <sha> -->`. */
+export const HEAD_MARKER = /<!-- lectio-gates-head: (\S+) -->/u;
+/** The visible head line of the same comment: ``Checked head: `<sha>` ``. */
+export const HEAD_LINE = /^Checked head: `([^`]+)`/u;
 
 const unescape = (text: string): string => text.replace(/&lt;/gu, '<').replace(/&gt;/gu, '>').replace(/&amp;/gu, '&');
 
@@ -63,7 +66,8 @@ const unescape = (text: string): string => text.replace(/&lt;/gu, '<').replace(/
 export function parseGatesComment(body: string): Omit<GateFindings, 'source'> {
   let file: string | undefined;
   let claimId: string | undefined;
-  let head: string | null = null;
+  let marker: string | undefined;
+  let visible: string | undefined;
   let truncated = false;
   const findings: GateResultItem[] = [];
   for (const line of body.split('\n')) {
@@ -91,8 +95,11 @@ export function parseGatesComment(body: string): Omit<GateFindings, 'source'> {
       continue;
     }
     if (line.includes('not shown (comment size limit)')) truncated = true;
-    head = HEAD.exec(line)?.[1] ?? head;
+    marker = HEAD_MARKER.exec(line)?.[1] ?? marker;
+    visible = HEAD_LINE.exec(line)?.[1] ?? visible;
   }
+  // Both name the head; when they disagree the comment does not say which head it is about.
+  const head = marker !== undefined && visible !== undefined && marker !== visible ? null : (marker ?? visible ?? null);
   return { head, findings, truncated };
 }
 
@@ -121,8 +128,14 @@ export function fixupFindings(findings: readonly GateResultItem[], path: string)
   return findings.filter((item) => FIXUP_RULES.includes(item.ruleId) && item.file === path && item.severity !== 'info');
 }
 
-/** True when the gates ran on `headSha` (or the output does not say; a short sha may match its prefix). */
-export function ranOnHead(head: string | null, headSha: string): boolean {
-  if (head === null || !/^[0-9a-f]{7,40}$/u.test(head)) return true;
-  return headSha.startsWith(head);
+/**
+ * Whether gate output is about the PR's current head: `current`, `stale` (another head), or
+ * `unknown` when the output names no head or something that is not a full commit sha. Fix-up treats
+ * `unknown` like `stale`: it fails closed.
+ */
+export type HeadCheck = 'current' | 'stale' | 'unknown';
+
+export function checkHead(head: string | null, headSha: string): HeadCheck {
+  if (head === null || !/^[0-9a-f]{40}$/u.test(head)) return 'unknown';
+  return head === headSha ? 'current' : 'stale';
 }

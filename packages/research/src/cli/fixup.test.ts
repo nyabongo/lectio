@@ -1,12 +1,12 @@
-import { COMMENT_MARKER, GATES, allRules, renderComment } from '@lectio/gates';
+import { COMMENT_MARKER } from '@lectio/gates';
 import type { GateReport, GateResultItem } from '@lectio/gates';
 import type { FakeLlmScriptEntry, PullRequest } from '@lectio/providers';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { APPROVAL_AUTHOR, APPROVAL_TRAILER } from '../publish/publish.ts';
-import { KEY, PATH, e2eWorld } from './fixtures/e2e.ts';
+import { KEY, PATH, e2eWorld, gatesCommentBody } from './fixtures/e2e.ts';
 import type { E2eWorld } from './fixtures/e2e.ts';
-import { FixupRefusedError, formatFixupReport, runFixup } from './fixup.ts';
+import { FixupRefusedError, baseReader, formatFixupReport, runFixup } from './fixup.ts';
 import type { FixupDeps, FixupInput } from './fixup.ts';
 import { GATES_BOT } from './gates-comment.ts';
 import { main } from './main.ts';
@@ -52,7 +52,7 @@ async function published(repair?: FakeLlmScriptEntry): Promise<{ w: E2eWorld; nu
 }
 
 async function comment(w: E2eWorld, number: number, items?: GateResultItem[], head?: string): Promise<void> {
-  const body = renderComment(report(head ?? w.github.headOf(BRANCH), items), { gates: GATES, rules: allRules() });
+  const body = gatesCommentBody(report(head ?? w.github.headOf(BRANCH), items));
   await w.github.as(GATES_BOT).upsertComment(number, COMMENT_MARKER, body);
 }
 
@@ -74,7 +74,12 @@ async function deps(w: E2eWorld, extra: Partial<FixupDeps> = {}): Promise<FixupD
   };
 }
 
-const input = (pr: number, extra: Partial<FixupInput> = {}): FixupInput => ({ pr, force: false, ...extra });
+const input = (pr: number, extra: Partial<FixupInput> = {}): FixupInput => ({
+  pr,
+  force: false,
+  allowStale: false,
+  ...extra,
+});
 
 describe('runFixup refusals', () => {
   it('refuses closed, fork and non-research PRs', async () => {
@@ -112,6 +117,7 @@ describe('runFixup refusals', () => {
     await expect(runFixup(input(number), d)).rejects.toThrow('is already approved; a fix-up commit would reset');
     const forced = await runFixup(input(number, { force: true }), d);
     expect(forced.status).toBe('pushed');
+    expect(forced.overrides).toEqual(['--force: the PR was already approved; a new commit resets that approval']);
 
     const again = await published();
     await again.w.github.as(APPROVAL_AUTHOR).pushCommit({
@@ -126,7 +132,7 @@ describe('runFixup refusals', () => {
 
   it('refuses without a gates comment from the bot, and ignores look-alikes', async () => {
     const { w, number } = await published();
-    const body = renderComment(report(w.github.headOf(BRANCH)), { gates: GATES, rules: allRules() });
+    const body = gatesCommentBody(report(w.github.headOf(BRANCH)));
     await w.github.as('mallory').postComment(number, body);
     await expect(runFixup(input(number), await deps(w))).rejects.toThrow(
       `PR #${String(number)} has no gates comment from ${GATES_BOT} yet`,
@@ -136,11 +142,21 @@ describe('runFixup refusals', () => {
     });
   });
 
-  it('refuses a stale comment unless forced', async () => {
+  it('refuses a stale comment, or one that names no full head sha, unless --allow-stale', async () => {
     const { w, number } = await published();
-    await comment(w, number, [REFUTED], '1234567890abc');
-    await expect(runFixup(input(number), await deps(w))).rejects.toThrow('is for head 1234567890abc');
-    expect((await runFixup(input(number, { force: true }), await deps(w))).status).toBe('pushed');
+    const stale = '1'.repeat(40);
+    await comment(w, number, [REFUTED], stale);
+    await expect(runFixup(input(number), await deps(w))).rejects.toThrow(`is for head ${stale}`);
+    // --force is about approval only; it does not let a stale comment through.
+    await expect(runFixup(input(number, { force: true }), await deps(w))).rejects.toThrow('pass --allow-stale');
+    await comment(w, number, [REFUTED], 'HEAD');
+    await expect(runFixup(input(number), await deps(w))).rejects.toThrow(
+      'does not name the full commit sha it checked',
+    );
+    const allowed = await runFixup(input(number, { allowStale: true }), await deps(w));
+    expect(allowed.status).toBe('pushed');
+    expect(allowed.overrides).toEqual([expect.stringContaining('--allow-stale: the gates comment')]);
+    expect(formatFixupReport(allowed)).toContain('Skipped check --allow-stale: the gates comment');
   });
 
   it('refuses a head without a valid passage file', async () => {
@@ -162,7 +178,42 @@ describe('runFixup refusals', () => {
   });
 });
 
+describe('baseReader', () => {
+  it('answers for its one file only', () => {
+    const read = baseReader(PATH, '{}');
+    expect(read(PATH)).toBe('{}');
+    expect(read('passages/OTHER.json')).toBeNull();
+  });
+});
+
 describe('runFixup outcomes', () => {
+  it('formats with Prettier by default, warns about a truncated comment, and handles a passage without a cost', async () => {
+    const { w, number } = await published();
+    const head = w.github.headOf(BRANCH);
+    const many = Array.from({ length: 30 }, (_, index) => ({ ...REFUTED, claimId: `c${String(index + 1)}` }));
+    const unclaimed: GateResultItem = { ...REFUTED, ruleId: 'verifiers/claim-supported', severity: 'warning' };
+    delete (unclaimed as { claimId?: string }).claimId;
+    await w.github
+      .as(GATES_BOT)
+      .upsertComment(number, COMMENT_MARKER, gatesCommentBody(report(head, [unclaimed, ...many]), 4000));
+    const d = await deps(w);
+    const { format: _format, ...unformatted } = d;
+    const text = w.github.fileAt(BRANCH, PATH) as string;
+    const passage = JSON.parse(text) as { provenance: { costUsd?: number } };
+    delete passage.provenance.costUsd;
+    const files: FixupDeps['files'] = {
+      head: () => Promise.resolve(JSON.stringify(passage)),
+      base: () => Promise.resolve(null),
+    };
+    const result = await runFixup(input(number), { ...unformatted, files });
+    expect(result.truncated).toBe(true);
+    expect(result.status).toBe('pushed');
+    const printed = formatFixupReport(result);
+    expect(printed).toContain('Warning: the gates comment left findings out for its size');
+    expect(printed).toContain('gh run download <run id> -n gates-report');
+    expect(printed).toContain('verifiers/claim-supported /claims/1: c2 refuted');
+  });
+
   it('reads a downloaded gates.json report instead of the comment', async () => {
     const { w, number } = await published();
     const head = w.github.headOf(BRANCH);

@@ -155,6 +155,12 @@ describe('composeProviders: live', () => {
     ).rejects.toThrow('gh could not tell who you are (gh: not logged in): run `gh auth login` and try again');
   });
 
+  it('uses the real provider constructors by default (checked before any of them runs)', async () => {
+    await expect(
+      composeProviders({ mode: 'live', config: DEFAULT_CONFIG, env: {}, ceilingUsd: 1, llm: true }),
+    ).rejects.toThrow('ANTHROPIC_API_KEY is not set');
+  });
+
   it('needs no API key for a command that never calls an LLM', async () => {
     const f = factories();
     const kit = await composeProviders({

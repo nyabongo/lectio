@@ -34,11 +34,11 @@ import { draftFromResult, formatValidationReport, preValidate } from '../validat
 import type { ValidationResult } from '../validate/validate.ts';
 import {
   GATES_BOT,
+  checkHead,
   fixupFindings,
   latestGatesComment,
   parseGatesComment,
   parseGatesReport,
-  ranOnHead,
 } from './gates-comment.ts';
 import type { GateFindings } from './gates-comment.ts';
 
@@ -55,7 +55,10 @@ export interface PrFiles {
 
 export interface FixupInput {
   readonly pr: number;
+  /** Fix up an approved PR (the new commit resets the approval). */
   readonly force: boolean;
+  /** Accept gate output for another head, or that names none. */
+  readonly allowStale: boolean;
   /** A downloaded `gates.json` artifact to read instead of the PR comment. */
   readonly report?: string;
 }
@@ -97,6 +100,10 @@ export interface FixupReport {
   readonly commit: GitCommit | null;
   readonly spentUsd: number;
   readonly ceilingUsd: number;
+  /** Checks an override flag skipped (`--force`, `--allow-stale`), in words. */
+  readonly overrides: readonly string[];
+  /** The gates comment left findings out for its size: the repair saw only part of them. */
+  readonly truncated: boolean;
 }
 
 const KEY_SHAPE = new RegExp(PASSAGE_KEY_PATTERN);
@@ -107,7 +114,11 @@ function isApprovalCommit(commit: GitCommit): boolean {
   );
 }
 
-async function checkPr(input: FixupInput, deps: FixupDeps): Promise<{ pr: PullRequest; key: string }> {
+async function checkPr(
+  input: FixupInput,
+  deps: FixupDeps,
+  overrides: string[],
+): Promise<{ pr: PullRequest; key: string }> {
   const pr = await deps.github.getPr(input.pr);
   const name = `PR #${String(pr.number)}`;
   if (pr.state !== 'open') throw new FixupRefusedError(`${name} is ${pr.state}; fix-up only works on open PRs`);
@@ -124,10 +135,13 @@ async function checkPr(input: FixupInput, deps: FixupDeps): Promise<{ pr: PullRe
     );
   }
   const approved = pr.labels.includes(deps.config.reviewer.approvalLabel) || isApprovalCommit(head);
-  if (approved && !input.force) {
-    throw new FixupRefusedError(
-      `${name} is already approved; a fix-up commit would reset that approval. Pass --force to do it anyway`,
-    );
+  if (approved) {
+    if (!input.force) {
+      throw new FixupRefusedError(
+        `${name} is already approved; a fix-up commit would reset that approval. Pass --force to do it anyway`,
+      );
+    }
+    overrides.push('--force: the PR was already approved; a new commit resets that approval');
   }
   return { pr, key };
 }
@@ -160,15 +174,26 @@ async function headPassage(pr: PullRequest, key: string, path: string, deps: Fix
   }
 }
 
+/** A `readBase` that knows one file's base-branch text (`null`: the file is new). */
+export function baseReader(path: string, text: string | null): (file: string) => string | null {
+  return (file) => (file === path ? text : null);
+}
+
 /** Runs one fix-up. Refusals throw {@link FixupRefusedError}. */
 export async function runFixup(input: FixupInput, deps: FixupDeps): Promise<FixupReport> {
-  const { pr, key } = await checkPr(input, deps);
+  const overrides: string[] = [];
+  const { pr, key } = await checkPr(input, deps, overrides);
   const gates = await gateFindings(pr, input, deps);
-  if (!ranOnHead(gates.head, pr.headSha) && !input.force) {
-    throw new FixupRefusedError(
-      `the ${gates.source} is for head ${String(gates.head)}, but PR #${String(pr.number)} is at ` +
-        `${pr.headSha.slice(0, 12)}; wait for the gates to re-run, or pass --force`,
-    );
+  const head = checkHead(gates.head, pr.headSha);
+  if (head !== 'current') {
+    const what =
+      head === 'stale'
+        ? `is for head ${String(gates.head)}, but PR #${String(pr.number)} is at ${pr.headSha}`
+        : `does not name the full commit sha it checked, so it may be about an older head of PR #${String(pr.number)}`;
+    if (!input.allowStale) {
+      throw new FixupRefusedError(`the ${gates.source} ${what}; wait for the gates to re-run, or pass --allow-stale`);
+    }
+    overrides.push(`--allow-stale: the ${gates.source} ${what}`);
   }
   const path = draftPath(deps.config, key);
   const passage = await headPassage(pr, key, path, deps);
@@ -198,7 +223,7 @@ export async function runFixup(input: FixupInput, deps: FixupDeps): Promise<Fixu
       providers: deps.providers,
       root: deps.repoRoot,
       repo: deps.repo,
-      readBase: (file) => (file === path ? baseText : null),
+      readBase: baseReader(path, baseText),
       ...(deps.format === undefined ? {} : { format: deps.format }),
     },
   );
@@ -211,6 +236,8 @@ export async function runFixup(input: FixupInput, deps: FixupDeps): Promise<Fixu
     validation,
     spentUsd: deps.meter.spentUsd(),
     ceilingUsd: deps.meter.ceilingUsd,
+    overrides,
+    truncated: gates.truncated,
   };
   if (validation.outcome === 'abandoned') return { ...base, status: 'abandoned', commit: null };
   if (findings.length === 0 && validation.repairs === 0 && validation.outcome === 'ready') {
@@ -241,6 +268,13 @@ const STATUS_TEXT: Readonly<Record<FixupStatus, string>> = {
 export function formatFixupReport(report: FixupReport): string {
   const lines = [
     `Fix-up of PR #${String(report.pr.number)} (${report.key}) from the ${report.source}:`,
+    ...report.overrides.map((text) => `Skipped check ${text}`),
+    ...(report.truncated
+      ? [
+          'Warning: the gates comment left findings out for its size, so the repair saw only part of them. ' +
+            "Download the run's gates-report artifact (gh run download <run id> -n gates-report) and pass --report gates.json.",
+        ]
+      : []),
     `${String(report.findings.length)} verifier finding(s) handed to the repair loop`,
     ...report.findings.map(
       (item) => `  ${item.ruleId} ${item.claimId ?? (item.pointer === '' ? 'file' : item.pointer)}: ${item.message}`,

@@ -12,6 +12,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { DEFAULT_CONFIG } from '@lectio/config';
+import { GATES, allRules, renderComment } from '@lectio/gates';
+import type { GateReport } from '@lectio/gates';
 import { openRepo } from '@lectio/content';
 import { openCorpus } from '@lectio/corpus';
 import {
@@ -58,6 +60,16 @@ export const CALENDAR = {
     },
   ],
 };
+
+/**
+ * The content-gates comment as #209 posts it: the rendered gates, then the head the run checked as
+ * visible text and as a hidden marker.
+ */
+export function gatesCommentBody(report: GateReport, maxLength?: number): string {
+  const options = { gates: GATES, rules: allRules() };
+  const gates = renderComment(report, maxLength === undefined ? options : { ...options, maxLength });
+  return `${gates.trimEnd()}\n\nChecked head: \`${report.head}\` <!-- lectio-gates-head: ${report.head} -->\n`;
+}
 
 /** The research output after the repair: claim c2 reworded. */
 export function revisedOutput(): Record<string, unknown> {

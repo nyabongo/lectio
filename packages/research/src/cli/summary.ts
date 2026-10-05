@@ -12,7 +12,7 @@ export function table(header: readonly string[], rows: readonly (readonly string
   );
   const line = (cells: readonly string[]): string =>
     cells
-      .map((cell, column) => cell.padEnd(widths[column] ?? 0))
+      .map((cell, column) => cell.padEnd(widths[column] as number))
       .join('  ')
       .trimEnd();
   return [line(header), line(widths.map((width) => '-'.repeat(width))), ...rows.map(line)].join('\n');

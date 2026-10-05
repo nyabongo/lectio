@@ -133,8 +133,9 @@ export async function closedKeys(
   return closed;
 }
 
-function publishNote(outcome: PublishOutcome | undefined, dryRun: boolean): { pr: string; problem: boolean } {
-  if (outcome === undefined) return { pr: dryRun ? 'dry run' : '-', problem: false };
+function publishNote(outcome: PublishOutcome | undefined): { pr: string; problem: boolean } {
+  // Only a dry run leaves a ready passage without a publish outcome.
+  if (outcome === undefined) return { pr: 'dry run', problem: false };
   if (outcome.ok) return { pr: outcome.pr.url, problem: false };
   return { pr: `not published: ${outcome.error.message}`, problem: !outcome.skipped };
 }
@@ -145,7 +146,6 @@ function rowsOf(
   research: ResearchRunResult,
   validation: ValidationRunReport,
   published: readonly PublishOutcome[],
-  dryRun: boolean,
 ): SummaryRow[] {
   return items.map((item): SummaryRow => {
     const skip = closed.find((entry) => entry.key === item.key);
@@ -172,10 +172,7 @@ function rowsOf(
         problem: true,
       };
     }
-    const note = publishNote(
-      published.find((entry) => entry.key === item.key),
-      dryRun,
-    );
+    const note = publishNote(published.find((entry) => entry.key === item.key));
     return { key: item.key, research: result.status, validation: checked.outcome, costUsd, ...note };
   });
 }
@@ -251,6 +248,6 @@ export async function runResearch(args: PlanArgs, deps: RunDeps): Promise<RunRep
     dryRun: deps.dryRun,
     ceilingUsd: deps.meter.ceilingUsd,
     spentUsd: deps.meter.spentUsd(),
-    rows: rowsOf(planned.items, closed, research, validation, published, deps.dryRun),
+    rows: rowsOf(planned.items, closed, research, validation, published),
   };
 }

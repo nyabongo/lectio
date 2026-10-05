@@ -11,10 +11,20 @@ import {
   latestGatesComment,
   parseGatesComment,
   parseGatesReport,
-  ranOnHead,
+  checkHead,
+  HEAD_LINE,
+  HEAD_MARKER,
 } from './gates-comment.ts';
 
 const PATH = 'passages/MT.20.1-16.json';
+const SHA = 'abcdef1234567890abcdef1234567890abcdef12';
+const OTHER = '1234567890abcdef1234567890abcdef12345678';
+
+/** The content-gates comment (#209): the rendered gates, then the head as visible text and a hidden marker. */
+function gatesComment(head = SHA, items: GateResultItem[] = ITEMS, marker = head): string {
+  const body = renderComment(report(items, head), { gates: GATES, rules: allRules() });
+  return `${body.trimEnd()}\n\nChecked head: \`${head}\` <!-- lectio-gates-head: ${marker} -->\n`;
+}
 
 const ITEMS: GateResultItem[] = [
   {
@@ -51,7 +61,7 @@ const ITEMS: GateResultItem[] = [
   { ruleId: 'merge-rule/needs-review', severity: 'info', pointer: '', message: 'waits for a person' },
 ];
 
-function report(items: GateResultItem[] = ITEMS, head = 'abcdef1234567'): GateReport {
+function report(items: GateResultItem[] = ITEMS, head = SHA): GateReport {
   const byGate = (gate: string): GateResultItem[] => items.filter((item) => item.ruleId.startsWith(`${gate}/`));
   return {
     reportVersion: 1,
@@ -84,6 +94,7 @@ describe('latestGatesComment', () => {
       comment(2, 'mallory', body, '2026-10-05T10:00:00Z'),
       comment(3, GATES_BOT, `quoted ${COMMENT_MARKER_LINE}`, '2026-10-05T11:00:00Z'),
       comment(4, GATES_BOT, body, '2026-10-05T09:00:00Z'),
+      comment(5, GATES_BOT, body, '2026-10-05T07:00:00Z'),
     ];
     expect(latestGatesComment(comments)?.id).toBe(4);
     expect(latestGatesComment(comments.slice(1, 3))).toBeUndefined();
@@ -93,8 +104,8 @@ describe('latestGatesComment', () => {
 
 describe('parseGatesComment', () => {
   it('reads every finding of a rendered comment back, with file, claim and head', () => {
-    const parsed = parseGatesComment(renderComment(report(), { gates: GATES, rules: allRules() }));
-    expect(parsed.head).toBe('abcdef1234567');
+    const parsed = parseGatesComment(gatesComment());
+    expect(parsed.head).toBe(SHA);
     expect(parsed.truncated).toBe(false);
     expect(parsed.findings).toHaveLength(ITEMS.length);
     for (const item of ITEMS) expect(parsed.findings).toContainEqual(item);
@@ -111,6 +122,16 @@ describe('parseGatesComment', () => {
     expect(parsed.findings.length).toBeLessThan(40);
   });
 
+  it('takes the head from the hidden marker or the visible line, and none when they disagree', () => {
+    expect(parseGatesComment(`<!-- lectio-gates-head: ${SHA} -->`).head).toBe(SHA);
+    expect(parseGatesComment(`Checked head: \`${SHA}\``).head).toBe(SHA);
+    expect(parseGatesComment(gatesComment(SHA, [], OTHER)).head).toBeNull();
+    // The renderer's own footer names the report head too, but only the #209 head line and marker count.
+    expect(parseGatesComment(renderComment(report(), { gates: GATES, rules: allRules() })).head).toBeNull();
+    expect(HEAD_MARKER.source).toContain('lectio-gates-head');
+    expect(HEAD_LINE.source).toContain('Checked head');
+  });
+
   it('finds nothing in text that is not a gates comment', () => {
     expect(parseGatesComment('hello\n- **error** without a rule')).toEqual({
       head: null,
@@ -123,7 +144,7 @@ describe('parseGatesComment', () => {
 describe('parseGatesReport', () => {
   it('reads the findings and the head of a gates.json artifact', () => {
     const parsed = parseGatesReport(JSON.stringify(report()), 'gates.json');
-    expect(parsed).toMatchObject({ head: 'abcdef1234567', truncated: false });
+    expect(parsed).toMatchObject({ head: SHA, truncated: false });
     expect(parsed.findings).toHaveLength(ITEMS.length);
     expect(parsed.findings).toEqual(expect.arrayContaining(ITEMS));
     const noHead = parseGatesReport(JSON.stringify({ results: [] }), 'gates.json');
@@ -148,11 +169,12 @@ describe('fixupFindings', () => {
   });
 });
 
-describe('ranOnHead', () => {
-  it('matches a sha or its prefix, and trusts output that names no sha', () => {
-    expect(ranOnHead('abcdef1', 'abcdef1234')).toBe(true);
-    expect(ranOnHead('1234567', 'abcdef1234')).toBe(false);
-    expect(ranOnHead(null, 'abcdef1234')).toBe(true);
-    expect(ranOnHead('HEAD', 'abcdef1234')).toBe(true);
+describe('checkHead', () => {
+  it('is current only for the full head sha, stale for another sha, and unknown otherwise', () => {
+    expect(checkHead(SHA, SHA)).toBe('current');
+    expect(checkHead(OTHER, SHA)).toBe('stale');
+    expect(checkHead(null, SHA)).toBe('unknown');
+    expect(checkHead('HEAD', SHA)).toBe('unknown');
+    expect(checkHead(SHA.slice(0, 12), SHA)).toBe('unknown');
   });
 });

@@ -62,6 +62,22 @@ describe('runResearch', () => {
     expect(report.spentUsd).toBeGreaterThan(0);
   });
 
+  it('passes --only and --max to the planner and writes drafts through the writer it is given', async () => {
+    world = e2eWorld();
+    const written: string[] = [];
+    const writeFile = (path: string): Promise<void> => {
+      written.push(path);
+      return Promise.resolve();
+    };
+    const report = await runResearch(
+      { ...WINDOW, only: KEY, max: 1 },
+      await deps(world, { writeFile, draftsDir: join(world.root, 'drafts'), dryRun: true }),
+    );
+    expect(report.plan.items.map((item) => item.key)).toEqual([KEY]);
+    expect(report.plan.limit).toBe(1);
+    expect(written).toEqual([join(world.root, 'drafts', 'passages', `${KEY}.json`)]);
+  });
+
   it('marks a dry run, and a failure with nothing to repair', async () => {
     world = e2eWorld();
     const dry = await runResearch(WINDOW, await deps(world, { dryRun: true }));

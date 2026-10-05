@@ -1,14 +1,14 @@
 // End to end on fakes only: plan → run → validate → publish → fix-up, through the CLI's `main`,
 // against a temporary git repository and the in-memory GitHub.
 import { DEFAULT_CONFIG } from '@lectio/config';
-import { COMMENT_MARKER, GATES, allRules, renderComment } from '@lectio/gates';
+import { COMMENT_MARKER } from '@lectio/gates';
 import type { GateReport } from '@lectio/gates';
 import type { Passage } from '@lectio/schema/passage';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { RESEARCH_TRAILER } from '../publish/body.ts';
 import { RESEARCH_LABEL } from '../publish/publish.ts';
-import { KEY, PATH, REVISED_C2, e2eWorld } from './fixtures/e2e.ts';
+import { KEY, PATH, REVISED_C2, e2eWorld, gatesCommentBody } from './fixtures/e2e.ts';
 import type { E2eWorld } from './fixtures/e2e.ts';
 import { GATES_BOT } from './gates-comment.ts';
 import { main } from './main.ts';
@@ -52,7 +52,7 @@ function gatesReport(head: string, message: string): GateReport {
   } as GateReport;
 }
 
-const render = (report: GateReport): string => renderComment(report, { gates: GATES, rules: allRules() });
+const render = gatesCommentBody;
 
 describe('research CLI end to end (fakes)', () => {
   let world: E2eWorld;
