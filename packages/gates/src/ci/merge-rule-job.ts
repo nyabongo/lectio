@@ -118,24 +118,22 @@ function decisionSection(outcome: DecideOutput, notes: readonly string[]): strin
   return lines.join('\n');
 }
 
+/** Where a decision was made: the head, the base it was diffed against and the changed files. */
+export type DecisionPlace = Pick<GateReport, 'results' | 'head' | 'base' | 'changedFiles'>;
+
 /** The sticky comment: the gates table and findings, then the decision and its reasons. */
-export function renderDecisionComment(
-  results: readonly GateResult[],
-  outcome: DecideOutput,
-  notes: readonly string[],
-  head: string,
-): string {
+export function renderDecisionComment(place: DecisionPlace, outcome: DecideOutput, notes: readonly string[]): string {
   const report: GateReport = {
     reportVersion: REPORT_VERSION,
-    status: overallStatus(results),
-    base: '',
-    head,
-    changedFiles: [],
-    results,
+    status: overallStatus(place.results),
+    base: place.base,
+    head: place.head,
+    changedFiles: place.changedFiles,
+    results: place.results,
   };
   const gates = renderComment(report, { gates: GATES, rules: ruleBookFor(GATES) });
   // The head line lets readers of the comment (L-038 fix-up mode) tell a stale comment from a current one.
-  const headLine = `Checked head: \`${head}\` ${headMarker(head)}`;
+  const headLine = `Checked head: \`${place.head}\` ${headMarker(place.head)}`;
   return `${gates.trimEnd()}\n\n${decisionSection(outcome, notes)}\n\n${headLine}\n`;
 }
 
@@ -281,7 +279,7 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
 
   if (pr.fork) {
     notes.push('fork PR: report only; a maintainer reviews and merges it by hand');
-    const summary = renderDecisionComment(results, outcome, notes, headSha);
+    const summary = renderDecisionComment(report, outcome, notes);
     await publish(1, summary);
     return { decision: outcome.decision, manualMerge, exitCode: 1, summary, write: false, dispatched: [], report };
   }
@@ -296,7 +294,7 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
       DECISION_LABELS.filter((other) => other !== label && pr.labels.includes(other)),
     );
     await github.addLabels(prNumber, [label]);
-    const summary = renderDecisionComment(results, outcome, notes, headSha);
+    const summary = renderDecisionComment(report, outcome, notes);
     await github.upsertComment(prNumber, COMMENT_MARKER, summary);
     if (writes) return { ...base, exitCode, summary, write: true, dispatched: [] };
     await publish(exitCode, summary);
@@ -305,12 +303,7 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
 
   // Phase approve: decide again on the same head and write only if the decision still calls for it.
   if (!writes) {
-    const summary = renderDecisionComment(
-      results,
-      outcome,
-      [...notes, 'no approval commit: the decision changed'],
-      headSha,
-    );
+    const summary = renderDecisionComment(report, outcome, [...notes, 'no approval commit: the decision changed']);
     await publish(1, summary);
     return { ...base, exitCode: 1, summary, write: false, dispatched: [] };
   }
@@ -333,7 +326,7 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
     });
     const what = reviewed.length > 0 ? ` reviews ${reviewed.join(', ')}` : ' records the approval';
     notes.push(`approval commit ${commit.sha}${what}; dispatching the required-check workflows on it`);
-    const summary = renderDecisionComment(results, outcome, notes, headSha);
+    const summary = renderDecisionComment(report, outcome, notes);
     await github.upsertComment(prNumber, COMMENT_MARKER, summary);
     // The workflow uploads this artifact, then runs phase dispatch, which reports the check.
     const approvalArtifact = approvalArtifactName(prNumber, commit.sha);
@@ -349,7 +342,7 @@ export async function runMergeRuleJob(input: MergeRuleJobInput): Promise<MergeRu
   } catch (error) {
     if (!(error instanceof ApprovalCommitError || error instanceof ProviderError)) throw error;
     notes.push(`no approval commit: ${error.message}`);
-    const summary = renderDecisionComment(results, outcome, notes, headSha);
+    const summary = renderDecisionComment(report, outcome, notes);
     await github.upsertComment(prNumber, COMMENT_MARKER, summary);
     await publish(1, summary);
     return { ...base, exitCode: 1, summary, write: false, dispatched: [] };

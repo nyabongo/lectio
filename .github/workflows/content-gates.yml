@@ -264,6 +264,7 @@ jobs:
           npm run --silent -w @lectio/gates gates -- ci skip --head-sha "$HEAD_SHA"
           --reason "Nothing relevant to the content gates changed (passages/, calendar/, corpus/, config/)."
       - name: Fetch the PR head as data (pr-head/)
+        id: fetch
         if: needs.resolve.outputs.relevant != 'false'
         env:
           PR: ${{ needs.resolve.outputs.pr }}
@@ -273,10 +274,21 @@ jobs:
           git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head" "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
           git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
           git worktree add --detach pr-head "$HEAD_SHA"
+          echo "base-sha=$(git rev-parse "refs/remotes/origin/${BASE_REF}")" >> "$GITHUB_OUTPUT"
+      # One artifact per gates job, each by name into out/<name>/: download-artifact unpacks a lone
+      # artifact straight into `path` when no name is given, so never rely on that layout.
       - uses: actions/download-artifact@v8
-        if: needs.resolve.outputs.relevant != 'false'
+        if: needs.resolve.outputs.relevant != 'false' && needs.gates-trusted.result != 'skipped'
+        continue-on-error: true
         with:
-          path: out
+          name: deterministic
+          path: out/deterministic
+      - uses: actions/download-artifact@v8
+        if: needs.resolve.outputs.relevant != 'false' && needs.verifiers.result != 'skipped'
+        continue-on-error: true
+        with:
+          name: verifiers
+          path: out/verifiers
       # Decides, labels and comments; reports the check unless an approval commit is due.
       - name: Merge rule (decide)
         id: decide
@@ -286,11 +298,14 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           PR: ${{ needs.resolve.outputs.pr }}
           HEAD_SHA: ${{ needs.resolve.outputs.head-sha }}
-          BASE_REF: ${{ needs.resolve.outputs.base-ref }}
+          BASE_SHA: ${{ steps.fetch.outputs.base-sha }}
+          GATES_RESULT: ${{ needs.gates-trusted.result }}
+          VERIFIERS_RESULT: ${{ needs.verifiers.result }}
         run: >-
           npm run --silent -w @lectio/gates gates -- ci merge-rule --phase decide --pr "$PR" --head-sha "$HEAD_SHA"
-          --base "origin/$BASE_REF" --root pr-head
-          --results out/deterministic/gates.json --results out/verifiers/gates.json
+          --base "$BASE_SHA" --root pr-head
+          --results out/deterministic/gates.json --job-result "out/deterministic/gates.json=$GATES_RESULT"
+          --results out/verifiers/gates.json --job-result "out/verifiers/gates.json=$VERIFIERS_RESULT"
       # Writes the review block and the approval commit.
       - name: Merge rule (approve)
         id: approve
@@ -300,11 +315,14 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           PR: ${{ needs.resolve.outputs.pr }}
           HEAD_SHA: ${{ needs.resolve.outputs.head-sha }}
-          BASE_REF: ${{ needs.resolve.outputs.base-ref }}
+          BASE_SHA: ${{ steps.fetch.outputs.base-sha }}
+          GATES_RESULT: ${{ needs.gates-trusted.result }}
+          VERIFIERS_RESULT: ${{ needs.verifiers.result }}
         run: >-
           npm run --silent -w @lectio/gates gates -- ci merge-rule --phase approve --pr "$PR" --head-sha "$HEAD_SHA"
-          --base "origin/$BASE_REF" --root pr-head
-          --results out/deterministic/gates.json --results out/verifiers/gates.json
+          --base "$BASE_SHA" --root pr-head
+          --results out/deterministic/gates.json --job-result "out/deterministic/gates.json=$GATES_RESULT"
+          --results out/verifiers/gates.json --job-result "out/verifiers/gates.json=$VERIFIERS_RESULT"
       # The evidence that this run wrote this exact approval commit for this PR, uploaded before
       # anything is dispatched on it.
       - uses: actions/upload-artifact@v7
@@ -321,11 +339,11 @@ jobs:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           PR: ${{ needs.resolve.outputs.pr }}
           HEAD_SHA: ${{ needs.resolve.outputs.head-sha }}
-          BASE_REF: ${{ needs.resolve.outputs.base-ref }}
+          BASE_SHA: ${{ steps.fetch.outputs.base-sha }}
           APPROVAL_COMMIT: ${{ steps.approve.outputs.approval-commit }}
         run: >-
           npm run --silent -w @lectio/gates gates -- ci merge-rule --phase dispatch --pr "$PR" --head-sha "$HEAD_SHA"
-          --base "origin/$BASE_REF" --root pr-head --approval-commit "$APPROVAL_COMMIT"
+          --base "$BASE_SHA" --root pr-head --approval-commit "$APPROVAL_COMMIT"
       # The full report (every result, the head and the decision) for readers of a truncated comment.
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() && hashFiles('out/report/gates.json') != '' }}
