@@ -8,7 +8,7 @@ import 'package:lectio/src/routing/app_route.dart';
 /// to Calendar and Settings, and a bottom bar for Today, Reading and Listen.
 class AppShell extends StatelessWidget {
   /// Creates the shell showing [child] for the tab [current].
-  const AppShell({required this.current, required this.child, super.key});
+  const new({required this.current, required this.child, super.key});
 
   /// The tab being shown.
   final AppRoute current;

@@ -76,7 +76,7 @@ List<String> dartFilesUnder(String root, String dir) {
 /// The result of checking `lib/` coverage against a threshold.
 class CoverageReport {
   /// Creates a report.
-  const CoverageReport({
+  const new({
     required this.found,
     required this.hit,
     required this.misses,

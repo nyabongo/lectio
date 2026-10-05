@@ -1,4 +1,4 @@
-import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 
 /// The liturgical colour of a celebration, as `calendar/<year>.json` names it.
 ///
@@ -28,7 +28,7 @@ enum LiturgicalColour {
   /// Solemnities, where gold may replace white.
   gold(light: Color(0xFF8A6100), dark: Color(0xFFF0C75E));
 
-  const LiturgicalColour({required this.light, required this.dark});
+  new({required this.light, required this.dark});
 
   /// Accent on light surfaces; white text on it is at least 4.5:1.
   final Color light;

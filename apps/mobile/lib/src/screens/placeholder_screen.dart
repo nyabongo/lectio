@@ -4,7 +4,7 @@ import 'package:lectio/src/routing/app_route.dart';
 /// Stand-in body for a route whose real screen is not built yet.
 class PlaceholderScreen extends StatelessWidget {
   /// Creates a placeholder for [route].
-  const PlaceholderScreen({required this.route, super.key});
+  const new({required this.route, super.key});
 
   /// The route this placeholder stands in for.
   final AppRoute route;

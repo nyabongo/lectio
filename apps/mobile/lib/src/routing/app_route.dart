@@ -20,7 +20,7 @@ enum AppRoute {
   /// Preferences.
   settings('/settings', 'Settings', Icons.settings_outlined);
 
-  const AppRoute(this.path, this.title, this.icon);
+  new(this.path, this.title, this.icon);
 
   /// The location go_router matches, e.g. `/today`.
   final String path;

@@ -50,7 +50,7 @@ GoRouter createRouter({String initialLocation = '/today'}) {
 /// Shown for a location that matches no route.
 class NotFoundScreen extends StatelessWidget {
   /// Creates the not-found page.
-  const NotFoundScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

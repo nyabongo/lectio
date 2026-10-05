@@ -8,7 +8,7 @@ import 'package:lectio/src/theme/liturgical_colour.dart';
 class LectioApp extends StatefulWidget {
   /// Creates the app with the accent for [colour], starting at
   /// [initialLocation].
-  const LectioApp({
+  const new({
     super.key,
     this.colour = LiturgicalColour.green,
     this.initialLocation = '/today',
