@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -137,10 +139,15 @@ class _LectioLocalizationsDelegate
   }
 
   @override
-  Future<LectioLocalizations> load(Locale locale) async {
+  Future<LectioLocalizations> load(Locale locale) {
     // Dates are written with intl in the UI language (`sw`: Jumapili …).
-    await initializeDateFormatting(locale.languageCode);
-    return LectioLocalizations.forLanguage(locale.languageCode);
+    // The local date data is set up before the call returns, so the strings
+    // load synchronously, as Flutter's own delegates do: the app's first
+    // frame (and a snack bar shown after it) never waits for them.
+    unawaited(initializeDateFormatting(locale.languageCode));
+    return SynchronousFuture(
+      LectioLocalizations.forLanguage(locale.languageCode),
+    );
   }
 
   @override
