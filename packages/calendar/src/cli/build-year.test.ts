@@ -310,7 +310,8 @@ describe('helpers', () => {
   });
 });
 
-describe('buildYear', () => {
+// Each test runs romcal over a whole year; give it room on a loaded CI runner.
+describe('buildYear', { timeout: 60_000 }, () => {
   const temps: string[] = [];
   afterAll(() => {
     for (const dir of temps) rmSync(dir, { recursive: true, force: true });

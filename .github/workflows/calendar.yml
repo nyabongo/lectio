@@ -36,7 +36,8 @@ jobs:
 
       # Relevant: the calendar files and data, the packages that compute them
       # (calendar, lectionary, refs for link-outs, schema, config), the config, the
-      # dependency manifests (romcal's version) and this workflow. On a pull request
+      # dependency manifests (romcal's version), the run-planned wrapper the npm
+      # scripts go through, and this workflow. On a pull request
       # the diff is against the PR base; on any other event it is against origin/main
       # (on a push to main, where HEAD is origin/main, against the previous commit).
       - name: Detect relevant changes
@@ -57,7 +58,7 @@ jobs:
           changed="$(git diff --name-only "$base"...HEAD)"
           echo "Changed files since ${base}:"
           echo "$changed"
-          if echo "$changed" | grep -Eq '^(calendar/|config/|packages/(calendar|lectionary|refs|schema|config|shared)/|package\.json$|package-lock\.json$|\.github/workflows/calendar\.yml$)'; then
+          if echo "$changed" | grep -Eq '^(calendar/|config/|packages/(calendar|lectionary|refs|schema|config|shared)/|package\.json$|package-lock\.json$|scripts/run-planned\.mjs$|\.github/workflows/calendar\.yml$)'; then
             echo "relevant=true" >> "$GITHUB_OUTPUT"
           else
             echo "relevant=false" >> "$GITHUB_OUTPUT"
