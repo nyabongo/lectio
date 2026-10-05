@@ -51,6 +51,38 @@ describe('calendar-year rules', () => {
     expect(validateCalendarYear(year)).toBe(true);
   });
 
+  describe('a day without any Mass (noMass)', () => {
+    const base = year.days.find((day) => !day.lectionaryMissing) as CalendarYear['days'][number];
+    const withDay = (day: object): CalendarYear => ({ ...year, days: [{ ...base, ...day }] });
+    const errors = (): [string, string][] =>
+      (validateCalendarYear.errors ?? []).map((error) => [error.instancePath, error.keyword]);
+
+    it('accepts an empty masses list when the data is not missing', () => {
+      expect(validateCalendarYear(withDay({ masses: [], lectionaryMissing: false, noMass: true }))).toBe(true);
+    });
+
+    it('still needs a Mass when noMass is false or absent', () => {
+      expect(validateCalendarYear(withDay({ masses: [], lectionaryMissing: false, noMass: false }))).toBe(false);
+      expect(errors()).toContainEqual(['/days/0/masses', 'minItems']);
+      expect(validateCalendarYear(withDay({ masses: [], lectionaryMissing: false }))).toBe(false);
+    });
+
+    it('rejects Masses on a day without any Mass', () => {
+      expect(validateCalendarYear(withDay({ noMass: true }))).toBe(false);
+      expect(errors()).toContainEqual(['/days/0/masses', 'maxItems']);
+    });
+
+    it('rejects lectionaryMissing on a day without any Mass', () => {
+      expect(validateCalendarYear(withDay({ masses: [], lectionaryMissing: true, noMass: true }))).toBe(false);
+      expect(errors()).toContainEqual(['/days/0/lectionaryMissing', 'const']);
+    });
+
+    it('rejects a noMass that is not a boolean', () => {
+      expect(validateCalendarYear(withDay({ noMass: 'yes' }))).toBe(false);
+      expect(errors()).toContainEqual(['/days/0/noMass', 'type']);
+    });
+  });
+
   it('uses the Easter Vigil numbered slots', () => {
     const slots = year.days[0]?.masses[0]?.readings.map((reading) => reading.slot);
     expect(slots).toEqual(['reading-1', 'psalm-1', 'epistle', 'gospel']);
