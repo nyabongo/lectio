@@ -8,7 +8,10 @@
  * the approval commit), have no trigger-level `paths:`/`paths-ignore:` (a
  * filtered required check never reports and blocks the merge forever), and
  * define every listed check: a job whose display name (`name:`, falling back to
- * the job id) equals the listed entry and that has no matrix.
+ * the job id) equals the listed entry and that has no matrix. No two jobs in a
+ * listed workflow may share a display name (branch protection could not tell
+ * their checks apart, so one could pass for the other), and a registry file may
+ * not list the same check twice.
  *
  * `npm run required-checks` (scripts/check-required-checks.mjs) is the thin CLI.
  */
@@ -51,6 +54,9 @@ export function parseRegistryFile({ file, source }: RegistryFile): RegistryEntry
   }
   if (!Array.isArray(jobs) || jobs.length === 0 || !jobs.every((job) => typeof job === 'string' && job !== '')) {
     problems.push(`${file}: "jobs" must be a non-empty array of check names (job name or id)`);
+  } else {
+    const duplicates = jobs.filter((job: string, index) => jobs.indexOf(job) !== index);
+    for (const job of new Set(duplicates)) problems.push(`${file}: "jobs" lists '${String(job)}' more than once`);
   }
   return problems.length > 0 ? problems : { workflow: workflow as string, jobs: jobs as string[] };
 }
@@ -95,6 +101,13 @@ export function checkWorkflow(workflow: string, source: string, jobs: string[]):
   for (const [id, job] of Object.entries(defined)) {
     const config = isRecord(job) ? job : {};
     const name = typeof config['name'] === 'string' ? config['name'] : id;
+    const clash = byCheckName.get(name);
+    if (clash !== undefined) {
+      problems.push(
+        `${workflow}: jobs '${clash.id}' and '${id}' both report a check named '${name}'; give each job a unique name: so branch protection can tell them apart`,
+      );
+      continue;
+    }
     byCheckName.set(name, { id, job: config });
   }
   for (const listed of jobs) {

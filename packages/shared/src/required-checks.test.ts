@@ -97,6 +97,23 @@ describe('check names', () => {
     expect(checkWorkflow('a.yml', noMatrix, ['test'])).toEqual([]);
   });
 
+  it('rejects two jobs that share a display name, listed or not', () => {
+    const source = workflow(
+      '  lint:\n    name: Check\n  test:\n    name: Check\n  build:\n  other:\n    name: build\n',
+    );
+    expect(checkWorkflow('a.yml', source, ['Check'])).toEqual([
+      "a.yml: jobs 'lint' and 'test' both report a check named 'Check'; give each job a unique name: so branch protection can tell them apart",
+      "a.yml: jobs 'build' and 'other' both report a check named 'build'; give each job a unique name: so branch protection can tell them apart",
+    ]);
+  });
+
+  it('fails validateRequiredChecks when display names collide', () => {
+    const source = `${GOOD_WORKFLOW}  e2e:\n    name: test\n    runs-on: ubuntu-latest\n`;
+    expect(validateRequiredChecks([registry(['lint', 'test'])], () => source)).toEqual([
+      "ci.yml: jobs 'test' and 'e2e' both report a check named 'test'; give each job a unique name: so branch protection can tell them apart",
+    ]);
+  });
+
   it('tolerates a job defined without a body', () => {
     expect(checkWorkflow('a.yml', workflow('  lint:\n'), ['lint'])).toEqual([]);
   });
@@ -120,6 +137,13 @@ describe('parseRegistryFile', () => {
     ]);
     expect(parseRegistryFile({ file: 'ci.json', source: '{"workflow":"ci.yml","jobs":["", 3]}' })).toEqual([
       'ci.json: "jobs" must be a non-empty array of check names (job name or id)',
+    ]);
+  });
+
+  it('rejects a check listed more than once', () => {
+    expect(parseRegistryFile(registry(['lint', 'test', 'lint', 'lint', 'test']))).toEqual([
+      `ci.json: "jobs" lists 'lint' more than once`,
+      `ci.json: "jobs" lists 'test' more than once`,
     ]);
   });
 });
