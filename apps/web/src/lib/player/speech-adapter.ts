@@ -12,6 +12,10 @@
  *   the engine sends them and at the end of every chunk. Seeking restarts reading at the word nearest that point.
  * - Pausing cancels and remembers the point, then resuming speaks from it: `speechSynthesis.pause()` is unreliable
  *   on Android and with network voices. Callbacks from a cancelled utterance are ignored.
+ * - A watchdog: some engines (no voices installed, or none for the language) accept `speak()` and then never start
+ *   or report anything. When an utterance gives no `start`, `boundary`, `end` or `error` within
+ *   `SPEECH_START_TIMEOUT`, reading stops and the adapter reports an error, so the queue skips the segment instead
+ *   of showing "playing" at 0:00 for ever.
  */
 import { speechSettings } from './locale.ts';
 import type { VoiceLike } from './locale.ts';
@@ -24,6 +28,7 @@ export interface UtteranceLike {
   lang: string;
   rate: number;
   voice: VoiceLike | null;
+  onstart: ((event: unknown) => void) | null;
   onend: ((event: unknown) => void) | null;
   onerror: ((event: { readonly error?: string }) => void) | null;
   onboundary: ((event: { readonly charIndex: number }) => void) | null;
@@ -40,7 +45,17 @@ export interface SpeechEnvironment {
   readonly synth: SpeechSynthesisLike;
   /** `new SpeechSynthesisUtterance(text)`. */
   readonly utterance: (text: string) => UtteranceLike;
+  /** `setTimeout` and `clearTimeout`, for the watchdog (the global ones by default). */
+  readonly timer?: { set(callback: () => void, ms: number): unknown; clear(handle: unknown): void };
 }
+
+/** How long an utterance may stay silent (no `start`, `boundary`, `end` or `error`) before it counts as failed. */
+export const SPEECH_START_TIMEOUT = 5000;
+
+const GLOBAL_TIMER = {
+  set: (callback: () => void, ms: number): unknown => setTimeout(callback, ms),
+  clear: (handle: unknown): void => clearTimeout(handle as ReturnType<typeof setTimeout>),
+};
 
 /** Chunks are cut at sentence ends and kept below this many characters where a sentence allows. */
 export const CHUNK_LENGTH = 220;
@@ -83,6 +98,8 @@ const CANCEL_ERRORS = new Set(['interrupted', 'canceled']);
 export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdapter | null {
   if (env === null) return null;
   const { synth, utterance: makeUtterance } = env;
+  const timer = env.timer ?? GLOBAL_TIMER;
+  let watchdog: unknown = null;
   let track: Track | null = null;
   let chunks: Chunk[] = [];
   let events: AdapterEvents | null = null;
@@ -96,6 +113,10 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
   /** Only called while a track is loaded (`track` and `events` are set and cleared together). */
   const bound = (): AdapterEvents => events as AdapterEvents;
   const report = (): void => bound().time(offset / SPEECH_CHARS_PER_SECOND, speechDuration((track as Track).script));
+  const calm = (): void => {
+    if (watchdog !== null) timer.clear(watchdog);
+    watchdog = null;
+  };
 
   /** Speaks from `offset` to the end, chunk after chunk. */
   function speakFrom(token: number): void {
@@ -115,27 +136,39 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
     utterance.lang = settings.lang;
     if (settings.voice !== null) utterance.voice = settings.voice;
     utterance.rate = rate;
+    utterance.onstart = () => {
+      if (token === generation) calm();
+    };
     utterance.onboundary = (event) => {
       if (token !== generation) return;
+      calm();
       offset = from + event.charIndex;
       report();
     };
     utterance.onend = () => {
       if (token !== generation) return;
+      calm();
       offset = chunk.start + chunk.text.length;
       report();
       speakFrom(token);
     };
     utterance.onerror = (event) => {
       if (token !== generation || CANCEL_ERRORS.has(event.error ?? '')) return;
-      speaking = false;
-      generation += 1;
+      halt();
       bound().error();
     };
+    calm();
+    watchdog = timer.set(() => {
+      // Cleared on every callback and every stop, so a firing watchdog is always the current utterance's.
+      watchdog = null;
+      halt();
+      bound().error();
+    }, SPEECH_START_TIMEOUT);
     synth.speak(utterance);
   }
 
   function halt(): void {
+    calm();
     generation += 1;
     if (speaking) synth.cancel();
     speaking = false;

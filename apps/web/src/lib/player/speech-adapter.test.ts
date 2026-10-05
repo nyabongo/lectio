@@ -1,9 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FakeSynth, FakeUtterance, track } from './fixtures/fakes.ts';
+import { FakeSynth, FakeTimer, FakeUtterance, track } from './fixtures/fakes.ts';
 import { SPEECH_CHARS_PER_SECOND } from './queue.ts';
 import type { AdapterEvents, Track } from './queue.ts';
-import { CHUNK_LENGTH, browserSpeech, chunkScript, createSpeechAdapter, wordStart } from './speech-adapter.ts';
+import {
+  CHUNK_LENGTH,
+  SPEECH_START_TIMEOUT,
+  browserSpeech,
+  chunkScript,
+  createSpeechAdapter,
+  wordStart,
+} from './speech-adapter.ts';
 
 const CPS = SPEECH_CHARS_PER_SECOND;
 
@@ -19,12 +26,69 @@ function events() {
 
 function setup(script = 'First sentence here. Second one follows.') {
   const synth = new FakeSynth();
-  const adapter = createSpeechAdapter({ synth, utterance: (text) => new FakeUtterance(text) });
+  const timer = new FakeTimer();
+  const adapter = createSpeechAdapter({ synth, utterance: (text) => new FakeUtterance(text), timer });
   if (adapter === null) throw new Error('no adapter');
   const on = events();
   const item: Track = { ...track('a', null, script), locale: 'en' };
-  return { synth, adapter, on, item };
+  return { synth, adapter, on, item, timer };
 }
+
+describe('the speech watchdog', () => {
+  it('gives up on an utterance the engine never starts, and reports an error once', () => {
+    const { synth, adapter, on, item, timer } = setup();
+    adapter.load(item, { rate: 1, position: 0 }, on);
+    adapter.play();
+    expect(timer.pending.size).toBe(1);
+    timer.fire();
+    expect(on.error).toHaveBeenCalledOnce();
+    expect(synth.cancels).toBe(1);
+    synth.last()?.onend?.({});
+    expect(synth.spoken).toHaveLength(1);
+  });
+
+  it('stands down once the engine starts, sends a boundary, ends, fails or is stopped', () => {
+    const { synth, adapter, on, item, timer } = setup(`${'A sentence of words. '.repeat(15)}End.`);
+    adapter.load(item, { rate: 1, position: 0 }, on);
+    adapter.play();
+    synth.last()?.onstart?.({});
+    expect(timer.pending.size).toBe(0);
+    synth.last()?.onend?.({});
+    expect(timer.pending.size).toBe(1);
+    synth.last()?.onboundary?.({ charIndex: 2 });
+    expect(timer.pending.size).toBe(0);
+    synth.last()?.onend?.({});
+    adapter.stop();
+    expect(timer.pending.size).toBe(0);
+    adapter.load(item, { rate: 1, position: 0 }, on);
+    adapter.play();
+    synth.last()?.onerror?.({ error: 'synthesis-failed' });
+    expect(timer.pending.size).toBe(0);
+    synth.last()?.onstart?.({});
+    expect(on.error).toHaveBeenCalledOnce();
+  });
+
+  it('uses the global timers by default', () => {
+    vi.useFakeTimers();
+    try {
+      const synth = new FakeSynth();
+      const adapter = createSpeechAdapter({ synth, utterance: (text) => new FakeUtterance(text) });
+      const on = events();
+      adapter?.load(track('a', null, 'Words here.'), { rate: 1, position: 0 }, on);
+      adapter?.play();
+      vi.advanceTimersByTime(SPEECH_START_TIMEOUT - 1);
+      expect(on.error).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(1);
+      expect(on.error).toHaveBeenCalledOnce();
+      adapter?.play();
+      adapter?.stop();
+      vi.advanceTimersByTime(SPEECH_START_TIMEOUT);
+      expect(on.error).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
 
 describe('chunkScript', () => {
   it('cuts at sentence ends into chunks that join back into the script', () => {

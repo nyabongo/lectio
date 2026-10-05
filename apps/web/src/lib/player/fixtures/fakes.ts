@@ -131,6 +131,7 @@ export class FakeUtterance implements UtteranceLike {
   lang = '';
   rate = 1;
   voice: VoiceLike | null = null;
+  onstart: ((event: unknown) => void) | null = null;
   onend: ((event: unknown) => void) | null = null;
   onerror: ((event: { readonly error?: string }) => void) | null = null;
   onboundary: ((event: { readonly charIndex: number }) => void) | null = null;
@@ -166,6 +167,29 @@ export class FakeSynth implements SpeechSynthesisLike {
 
   last(): FakeUtterance | undefined {
     return this.spoken.at(-1);
+  }
+}
+
+/** A timer the test fires by hand: `pending` holds the callbacks not cleared yet. */
+export class FakeTimer {
+  readonly pending = new Map<number, () => void>();
+  private next = 0;
+
+  set(callback: () => void): unknown {
+    this.next += 1;
+    this.pending.set(this.next, callback);
+    return this.next;
+  }
+
+  clear(handle: unknown): void {
+    this.pending.delete(handle as number);
+  }
+
+  /** Runs every pending callback. */
+  fire(): void {
+    const callbacks = [...this.pending.values()];
+    this.pending.clear();
+    for (const callback of callbacks) callback();
   }
 }
 

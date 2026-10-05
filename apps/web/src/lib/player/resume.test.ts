@@ -60,5 +60,27 @@ describe('resumeStart', () => {
     expect(resumeStart({ id: 'b', position: 7 }, ids)).toEqual({ index: 1, position: 7 });
     expect(resumeStart({ id: 'z', position: 7 }, ids)).toEqual({ index: 0, position: 0 });
     expect(resumeStart(null, ids)).toEqual({ index: 0, position: 0 });
+    expect(resumeStart({ id: 'c', position: 3, source: 'speech', duration: 30 }, ids)).toEqual({
+      index: 2,
+      position: 3,
+      source: 'speech',
+      duration: 30,
+    });
+  });
+});
+
+describe('resume point sources', () => {
+  it('keeps the source and its length with the point, and drops invalid ones', () => {
+    const storage = new MemoryStorage();
+    saveResume(storage, '2026-09-20', { id: 'a', position: 4, source: 'audio', duration: 61.5 });
+    expect(loadResume(storage, '2026-09-20')).toEqual({ id: 'a', position: 4, source: 'audio', duration: 61.5 });
+    saveResume(storage, '2026-09-20', { id: 'a', position: 4, source: 'speech', duration: null });
+    expect(loadResume(storage, '2026-09-20')).toEqual({ id: 'a', position: 4, source: 'speech', duration: null });
+    storage.setItem(
+      RESUME_KEY,
+      '{"2026-09-20":{"id":"a","position":4,"source":"radio","duration":3},"2026-09-21":{"id":"b","position":1,"source":"audio","duration":-2}}',
+    );
+    expect(loadResume(storage, '2026-09-20')).toEqual({ id: 'a', position: 4 });
+    expect(loadResume(storage, '2026-09-21')).toEqual({ id: 'b', position: 1, source: 'audio', duration: null });
   });
 });
