@@ -77,14 +77,8 @@ void main() {
       expect(find.text('Context'), findsOneWidget);
       expect(find.text('Original'), findsOneWidget);
       expect(find.text('Labourers in the vineyard'), findsOneWidget);
-      expect(
-        find.textContaining('placed between two sayings'),
-        findsOneWidget,
-      );
-      expect(
-        find.textContaining('first. [6]'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('placed between two sayings'), findsOneWidget);
+      expect(find.textContaining('first. [6]'), findsOneWidget);
       expect(find.text('Verified · 5 sources'), findsOneWidget);
       expect(find.text('Report an issue'), findsOneWidget);
       expect(find.textContaining('A study aid'), findsOneWidget);
@@ -341,9 +335,7 @@ void main() {
     expect(find.text('Labourers in the vineyard'), findsOneWidget);
   });
 
-  testWidgets('saved notes show offline when refreshing fails', (
-    tester,
-  ) async {
+  testWidgets('saved notes show offline when refreshing fails', (tester) async {
     await harness.cache.write(
       seedDayPath,
       CachedResponse(
@@ -461,9 +453,7 @@ void main() {
       expect(find.text('Labourers in the vineyard'), findsOneWidget);
     });
 
-    testWidgets('/reading with a malformed date fails to load', (
-      tester,
-    ) async {
+    testWidgets('/reading with a malformed date fails to load', (tester) async {
       await pumpRouter(tester, '/reading/someday/gospel');
       expect(find.textContaining('could not be loaded'), findsOneWidget);
     });
