@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
+import 'package:lectio/features/notifications/daily_reminder_scheduler.dart';
 import 'package:lectio/features/reading/reading_screen.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
@@ -180,6 +181,14 @@ class _TodayScreenState extends State<TodayScreen> {
     return done.future;
   }
 
+  /// Pull to refresh: refreshes the day, then the daily reminders (L-106),
+  /// so they use the celebration names known now.
+  Future<void> _refresh() async {
+    final reminders = DailyReminderScope.maybeOf(context);
+    await _listen(refresh: true);
+    if (reminders != null) unawaited(reminders.reschedule());
+  }
+
   Future<void> _pickDate() async {
     final current = DateTime.parse(_date);
     final now = _now();
@@ -253,7 +262,7 @@ class _TodayScreenState extends State<TodayScreen> {
       );
     }
     final content = RefreshIndicator(
-      onRefresh: () => _listen(refresh: true),
+      onRefresh: _refresh,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
