@@ -44,6 +44,8 @@ SettingsController _settingsWith({required bool reminder, String? time}) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('upcomingReminderTimes', () {
     test('starts today when the time is still ahead', () {
       final times = upcomingReminderTimes(
@@ -186,6 +188,8 @@ void main() {
       platform
         ..calls.clear()
         ..grantPermission = false;
+      final refusals = <void>[];
+      scheduler.permissionRefusals.listen(refusals.add);
 
       await settings.update(settings.settings.copyWith(dailyReminder: true));
       await scheduler.idle;
@@ -194,6 +198,89 @@ void main() {
       expect(settings.settings.dailyReminder, isFalse);
       expect(platform.calls, ['requestPermission', ..._cancelAll]);
       expect(platform.pending, isEmpty);
+      expect(refusals, hasLength(1));
+    });
+
+    test('a refusal after dispose still switches off, silently', () async {
+      final settings = _settingsWith(reminder: false);
+      final scheduler = schedulerFor(settings);
+      await scheduler.start();
+      var refused = false;
+      scheduler.permissionRefusals.listen((_) => refused = true);
+      platform
+        ..grantPermission = false
+        ..whileAsking = () async => scheduler.dispose();
+
+      await settings.update(settings.settings.copyWith(dailyReminder: true));
+      await scheduler.idle;
+
+      expect(settings.settings.dailyReminder, isFalse);
+      expect(refused, isFalse);
+    });
+
+    test('following the app, a resume reschedules', () async {
+      final settings = _settingsWith(reminder: true);
+      final scheduler = schedulerFor(settings);
+      await scheduler.start();
+      scheduler
+        ..followAppResume()
+        ..followAppResume();
+      platform.calls.clear();
+      now = DateTime(2026, 9, 22, 9);
+
+      final binding = TestWidgetsFlutterBinding.instance
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await scheduler.idle;
+      expect(platform.calls, _scheduleAll);
+      expect(platform.scheduled.first.date, '2026-09-23');
+
+      scheduler.dispose();
+      platform.calls.clear();
+      binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await scheduler.idle;
+      expect(platform.calls, isEmpty);
+    });
+
+    testWidgets('DailyReminderScope gives the scheduler to its subtree', (
+      tester,
+    ) async {
+      final scheduler = schedulerFor(_settingsWith(reminder: false));
+      DailyReminderScheduler? found;
+      DailyReminderScheduler? outside;
+      await tester.pumpWidget(
+        Builder(
+          builder: (context) {
+            outside = DailyReminderScope.maybeOf(context);
+            return DailyReminderScope(
+              scheduler: scheduler,
+              child: Builder(
+                builder: (context) {
+                  found = DailyReminderScope.maybeOf(context);
+                  return const SizedBox();
+                },
+              ),
+            );
+          },
+        ),
+      );
+      expect(found, same(scheduler));
+      expect(outside, isNull);
+
+      final other = schedulerFor(_settingsWith(reminder: false));
+      final scope = DailyReminderScope(
+        scheduler: scheduler,
+        child: const SizedBox(),
+      );
+      expect(
+        scope.updateShouldNotify(
+          DailyReminderScope(scheduler: other, child: const SizedBox()),
+        ),
+        isTrue,
+      );
+      expect(scope.updateShouldNotify(scope), isFalse);
     });
 
     test('a refusal after the reader switched off changes nothing', () async {

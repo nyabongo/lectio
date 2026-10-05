@@ -26,6 +26,11 @@ abstract final class ReminderStrings {
 
   /// The text under the title.
   static const String body = "Today's readings and notes are ready.";
+
+  /// Why the reminder switched itself off.
+  static const String permissionRefused =
+      'Notifications are not allowed for Lectio, so the daily reminder is '
+      'off. Allow them in your device settings, then turn it on again.';
 }
 
 /// The next [count] local date-times at [time] that are more than
@@ -63,6 +68,10 @@ List<DateTime> upcomingReminderTimes(
 /// from the [CelebrationSource]. Call [reschedule] after the days are
 /// refreshed, so new celebration names are used.
 ///
+/// When permission is refused, [permissionRefusals] emits so the app can
+/// say why the switch turned off. [followAppResume] reschedules each time
+/// the app comes back to the foreground, which moves the 7-day window on.
+///
 /// Work runs one task at a time, in order. A platform failure never stops
 /// the app: it is kept in [lastError] and the next task runs as usual.
 class DailyReminderScheduler {
@@ -82,6 +91,11 @@ class DailyReminderScheduler {
   late AppSettings _seen;
   Future<void> _queue = Future.value();
   bool _started = false;
+  AppLifecycleListener? _lifecycle;
+  final StreamController<void> _refusals = StreamController<void>.broadcast();
+
+  /// Emits each time a refused permission switched the reminder off.
+  Stream<void> get permissionRefusals => _refusals.stream;
 
   /// Completes when the work queued so far is done.
   Future<void> get idle => _queue;
@@ -103,9 +117,21 @@ class DailyReminderScheduler {
     });
   }
 
-  /// Stops following the settings. Scheduled reminders stay.
+  /// Reschedules each time the app resumes. Needs the widgets binding;
+  /// calling it again does nothing.
+  void followAppResume() {
+    _lifecycle ??= AppLifecycleListener(
+      onResume: () => unawaited(reschedule()),
+    );
+  }
+
+  /// Stops following the settings and the app's lifecycle. Scheduled
+  /// reminders stay.
   void dispose() {
     _settings.removeListener(_onSettingsChanged);
+    _lifecycle?.dispose();
+    _lifecycle = null;
+    unawaited(_refusals.close());
   }
 
   /// Replaces the pending reminders with the next [reminderDays] days',
@@ -137,6 +163,7 @@ class DailyReminderScheduler {
   Future<void> _switchOff() async {
     final settings = _settings.settings;
     if (!settings.dailyReminder) return;
+    if (!_refusals.isClosed) _refusals.add(null);
     await _settings.update(settings.copyWith(dailyReminder: false));
   }
 
@@ -185,7 +212,7 @@ class DailyReminderScheduler {
 /// [repository], on the device's notifications (or [platform]).
 ///
 /// Call it once at start-up, after the settings are loaded; it returns at
-/// once and never throws.
+/// once and never throws. It also reschedules whenever the app resumes.
 DailyReminderScheduler startDailyReminders({
   required SettingsController settings,
   required LectioRepository repository,
@@ -197,5 +224,28 @@ DailyReminderScheduler startDailyReminders({
     celebrations: RepositoryCelebrations(repository),
   );
   unawaited(scheduler.start());
-  return scheduler;
+  return scheduler..followAppResume();
+}
+
+/// Makes a [DailyReminderScheduler] available below it, so screens that
+/// refresh the days can call [DailyReminderScheduler.reschedule].
+class DailyReminderScope extends InheritedWidget {
+  /// Provides [scheduler] to [child].
+  const new({required this.scheduler, required super.child, super.key});
+
+  /// The app's scheduler.
+  final DailyReminderScheduler scheduler;
+
+  /// The scheduler of the nearest scope, or `null` when there is none (for
+  /// example a screen tested on its own). Does not rebuild [context].
+  static DailyReminderScheduler? maybeOf(BuildContext context) {
+    return context
+        .getInheritedWidgetOfExactType<DailyReminderScope>()
+        ?.scheduler;
+  }
+
+  @override
+  bool updateShouldNotify(DailyReminderScope oldWidget) {
+    return scheduler != oldWidget.scheduler;
+  }
 }
