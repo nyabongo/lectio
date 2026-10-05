@@ -390,7 +390,8 @@ export function metaContents(html: string): Map<string, string> {
   for (const [element] of html.matchAll(/<meta\b[^>]*>/gi)) {
     const attributes = new Map<string, string>();
     for (const match of element.matchAll(/([a-zA-Z:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
-      attributes.set((match[1] as string).toLowerCase(), unescapeAttribute(match[2] ?? match[3] ?? ''));
+      // One of the two value groups always matches.
+      attributes.set((match[1] as string).toLowerCase(), unescapeAttribute(match[2] ?? (match[3] as string)));
     }
     const key = attributes.get('property') ?? attributes.get('name');
     const content = attributes.get('content');
