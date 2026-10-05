@@ -6,6 +6,7 @@ import 'package:lectio/features/bookmarks/bookmarks_controller.dart';
 import 'package:lectio/features/notifications/daily_reminder_scheduler.dart';
 import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
+import 'package:lectio/features/share/deep_links.dart';
 import 'package:lectio/src/routing/router.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
@@ -14,8 +15,8 @@ import 'package:lectio/src/theme/liturgical_colour.dart';
 class LectioApp extends StatefulWidget {
   /// Creates the app with the accent for [colour], starting at
   /// [initialLocation]. [settings] and [bookmarks] default to controllers in
-  /// memory; `main` passes ones saved on the device, and the daily
-  /// [reminders] that follow [settings].
+  /// memory; `main` passes ones saved on the device, the daily
+  /// [reminders] that follow [settings], and the incoming [links].
   const new({
     super.key,
     this.colour = LiturgicalColour.green,
@@ -23,6 +24,7 @@ class LectioApp extends StatefulWidget {
     this.settings,
     this.bookmarks,
     this.reminders,
+    this.links,
   });
 
   /// The liturgical colour that tints the accent.
@@ -42,13 +44,18 @@ class LectioApp extends StatefulWidget {
   /// are not allowed, the app says why in a snack bar.
   final DailyReminderScheduler? reminders;
 
+  /// Site links and reminder taps (L-107): the app starts at the one that
+  /// launched it, instead of [initialLocation], and opens later ones.
+  final DeepLinks? links;
+
   @override
   State<LectioApp> createState() => _LectioAppState();
 }
 
 class _LectioAppState extends State<LectioApp> {
   late final GoRouter _router = createRouter(
-    initialLocation: widget.initialLocation,
+    initialLocation:
+        widget.links?.takeInitialLocation() ?? widget.initialLocation,
   );
 
   late final SettingsController _settings =
@@ -65,6 +72,7 @@ class _LectioAppState extends State<LectioApp> {
   @override
   void initState() {
     super.initState();
+    widget.links?.attach(_router);
     _refusals = widget.reminders?.permissionRefusals.listen(
       (_) => _messenger.currentState?.showSnackBar(
         const SnackBar(content: Text(ReminderStrings.permissionRefused)),
@@ -75,6 +83,7 @@ class _LectioAppState extends State<LectioApp> {
   @override
   void dispose() {
     unawaited(_refusals?.cancel());
+    widget.links?.detach(_router);
     _router.dispose();
     super.dispose();
   }

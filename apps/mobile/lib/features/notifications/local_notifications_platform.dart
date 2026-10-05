@@ -18,12 +18,18 @@ const AndroidNotificationDetails dailyReminderChannel =
 /// zone rules, so no time zone database or device zone lookup is needed.
 /// Android alarms are inexact (`inexactAllowWhileIdle`), which needs no
 /// exact-alarm permission; a reminder may arrive a few minutes late.
+///
+/// A tap on a reminder calls [onOpen] with its payload, the ISO date (L-107
+/// opens that day), whether the app was running or the tap launched it.
 class LocalNotificationsPlatform implements ReminderPlatform {
   /// Creates the platform on [plugin] (default: the plugin's instance).
-  new({FlutterLocalNotificationsPlugin? plugin})
+  new({FlutterLocalNotificationsPlugin? plugin, this.onOpen})
     : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   final FlutterLocalNotificationsPlugin _plugin;
+
+  /// Called with the payload of a tapped reminder, or `null` to ignore taps.
+  final void Function(String? payload)? onOpen;
 
   Future<void>? _initialized;
 
@@ -41,8 +47,17 @@ class LocalNotificationsPlatform implements ReminderPlatform {
           requestBadgePermission: false,
         ),
       ),
+      onDidReceiveNotificationResponse: onOpen == null ? null : _opened,
     );
+    if (onOpen == null) return;
+    final launch = await _plugin.getNotificationAppLaunchDetails();
+    final response = launch?.notificationResponse;
+    if (launch != null && launch.didNotificationLaunchApp && response != null) {
+      _opened(response);
+    }
   }
+
+  void _opened(NotificationResponse response) => onOpen?.call(response.payload);
 
   @override
   Future<bool> requestPermission() {

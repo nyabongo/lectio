@@ -55,7 +55,7 @@ file:
 | `lib/features/listen/listen_screen.dart`     | `ListenScreen`, `listenRoute()` (tab)   | L-104 |
 | `lib/features/settings/settings_screen.dart` | `SettingsScreen`, `settingsRoute()`     | L-105 |
 | `lib/features/calendar/calendar_screen.dart` | `CalendarScreen`, `calendarRoute()`     | —     |
-| `lib/features/share/deep_link_routes.dart`   | `deepLinkRoutes()` (empty list)         | L-107 |
+| `lib/features/share/deep_link_routes.dart`   | `deepLinkRoutes()` (site page paths)    | L-107 |
 
 Each route function keeps its path from `AppRoute` and may add sub-routes. Tab routes sit inside the shell (header and
 bottom bar); Calendar and Settings use `StandaloneScaffold`, which shows a back button, or a Today action when opened
@@ -82,3 +82,39 @@ commented with its issue:
 Later issues may **append** entries to the manifests and to `Info.plist` (for example L-104's `audio_service` service
 and L-107's app-link intent filters) without removing or reordering existing ones, even if those files are not in their
 Touches; say so in the PR.
+
+## Share and deep links (L-107)
+
+`lib/features/share/` holds sharing and incoming links:
+
+- `share_text.dart` is the Dart port of the site's `buildShareText` (apps/web/src/lib/share.ts). Its test runs every
+  vector in `packages/schema/fixtures/share-text.json`, so change both together. `share_sheet.dart` opens share_plus's
+  sheet (one share at a time: a second tap while it is open is `busy`); when sharing fails, `ShareButton` copies the
+  text and says so. Shared links point at the site root derived from `LECTIO_API_BASE_URL` (`site_links.dart`).
+- `site_links.dart` maps a site URL, a `lectio://` link or a reminder payload (the ISO date) to an app location;
+  `deep_links.dart` (`DeepLinks`) listens to app_links and reminder taps and opens it; the link that launched the app
+  becomes the router's initial location. `deepLinkRoutes()` lets `context.go('/2026-09-20/gospel/notes/<id>')` work
+  inside the app too.
+
+Native configuration:
+
+- Android (`android/app/src/main/AndroidManifest.xml`): Flutter's own deep linking is off
+  (`flutter_deeplinking_enabled`), a `lectio://` intent filter, and an App Links filter (`autoVerify`) whose host and
+  path prefix come from `lectioSiteUrl` in `android/gradle.properties`.
+- iOS (`ios/` is not committed yet; add with it): in `Info.plist`, `FlutterDeepLinkingEnabled` = `NO` and a
+  `CFBundleURLTypes` entry with the `lectio` scheme; for universal links, the Associated Domains entitlement
+  `applinks:<domain>` in `Runner.entitlements`.
+
+Verified links (open in the app without asking) need files at the **domain root**, which a GitHub Pages project site
+(`nyabongo.github.io/lectio/`) cannot serve. Once a custom domain is chosen (decision L-206), the owner:
+
+1. Sets `site.customDomain` and `site.baseUrl` in `config/lectio.config.json`, builds the app with
+   `--dart-define=LECTIO_API_BASE_URL=https://<domain>/api/v1/`, and sets `lectioSiteUrl=https://<domain>/` in
+   `android/gradle.properties`.
+2. Publishes `apps/web/public/.well-known/assetlinks.json` (package `io.github.nyabongo.lectio` and the SHA-256
+   fingerprint of the Play app-signing key) and `apps/web/public/.well-known/apple-app-site-association` (`applinks`
+   with `<TeamID>.io.github.nyabongo.lectio` and the paths `/*`), served as `application/json`.
+3. Adds `applinks:<domain>` to the iOS Associated Domains entitlement.
+
+Until then site links open in the browser (Android asks only if the reader allows the link under the app's "Open by
+default" settings), and `lectio://` links and reminder taps open the app.
