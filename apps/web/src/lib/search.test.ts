@@ -20,7 +20,14 @@ import {
   searchPageConfig,
   writeSearchIndex,
 } from './search.ts';
-import type { PagefindApi, PagefindIndexApi, SearchDocument, SearchLabels } from './search.ts';
+import type {
+  PagefindApi,
+  PagefindBundleFile,
+  PagefindIndexApi,
+  SearchDocument,
+  SearchLabels,
+  WriteBundleFile,
+} from './search.ts';
 
 const contentRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../test/fixtures/content');
 const repo = openRepo(contentRoot);
@@ -132,29 +139,39 @@ describe('searchDocumentHtml', () => {
   });
 });
 
+const bundleFiles: PagefindBundleFile[] = [
+  { path: 'pagefind.js', content: new Uint8Array([1]) },
+  { path: 'index/en_1.pf_index', content: new Uint8Array([2]) },
+];
+
 function fakeApi(overrides: {
   create?: { errors: string[]; index?: PagefindIndexApi };
   add?: string[];
-  write?: string[];
-}): PagefindApi & { added: { url: string; content: string }[]; written: string[]; close: ReturnType<typeof vi.fn> } {
+  files?: { errors: string[]; files?: PagefindBundleFile[] };
+}): PagefindApi & { added: { url: string; content: string }[]; close: ReturnType<typeof vi.fn> } {
   const added: { url: string; content: string }[] = [];
-  const written: string[] = [];
   const index: PagefindIndexApi = {
     addHTMLFile: (file) => {
       added.push(file);
       return Promise.resolve({ errors: overrides.add ?? [] });
     },
-    writeFiles: ({ outputPath }) => {
-      written.push(outputPath);
-      return Promise.resolve({ errors: overrides.write ?? [] });
-    },
+    getFiles: () => Promise.resolve(overrides.files ?? { errors: [], files: bundleFiles }),
   };
   return {
     added,
-    written,
     createIndex: vi.fn(() => Promise.resolve(overrides.create ?? { errors: [], index })),
     close: vi.fn(() => Promise.resolve(null)),
   };
+}
+
+/** A writer that records each file only once its (asynchronous) write has finished. */
+function fakeWriter(): WriteBundleFile & { written: string[] } {
+  const written: string[] = [];
+  const write = async ({ path }: PagefindBundleFile): Promise<void> => {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    written.push(path);
+  };
+  return Object.assign(write, { written });
 }
 
 describe('searchDocuments in Kiswahili (L-113)', () => {
@@ -177,36 +194,57 @@ describe('searchDocuments in Kiswahili (L-113)', () => {
 describe('writeSearchIndex', () => {
   it('indexes documents in several languages by their own lang', async () => {
     const api = fakeApi({});
-    await expect(writeSearchIndex(api, [doc, { ...doc, url: '/sw/x/', lang: 'sw' }], '/o', 'en')).resolves.toBe(2);
+    await expect(writeSearchIndex(api, [doc, { ...doc, url: '/sw/x/', lang: 'sw' }], fakeWriter(), 'en')).resolves.toBe(
+      2,
+    );
     expect(api.createIndex).toHaveBeenCalledWith({});
     expect(api.added[1]?.content).toContain('<html lang="sw">');
   });
 
-  it('indexes every document at its URL and writes the bundle', async () => {
+  it('indexes every document at its URL and resolves only once every bundle file is written', async () => {
     const api = fakeApi({});
-    await expect(writeSearchIndex(api, [doc], '/out/pagefind', 'en')).resolves.toBe(1);
+    const write = fakeWriter();
+    await expect(writeSearchIndex(api, [doc], write, 'en')).resolves.toBe(1);
     expect(api.createIndex).toHaveBeenCalledWith({ forceLanguage: 'en' });
     expect(api.added).toEqual([{ url: doc.url, content: searchDocumentHtml(doc) }]);
-    expect(api.written).toEqual(['/out/pagefind']);
+    expect(write.written.toSorted()).toEqual(['index/en_1.pf_index', 'pagefind.js']);
     expect(api.close).toHaveBeenCalledOnce();
   });
 
   it('fails on Pagefind errors and still closes the service', async () => {
+    const write = fakeWriter();
     const createFails = fakeApi({ create: { errors: ['boom'] } });
-    await expect(writeSearchIndex(createFails, [doc], '/o', 'en')).rejects.toThrow('Pagefind createIndex failed: boom');
+    await expect(writeSearchIndex(createFails, [doc], write, 'en')).rejects.toThrow(
+      'Pagefind createIndex failed: boom',
+    );
     expect(createFails.close).toHaveBeenCalledOnce();
 
     const noIndex = fakeApi({ create: { errors: [] } });
-    await expect(writeSearchIndex(noIndex, [doc], '/o', 'en')).rejects.toThrow('returned no index');
+    await expect(writeSearchIndex(noIndex, [doc], write, 'en')).rejects.toThrow('returned no index');
 
     const addFails = fakeApi({ add: ['bad html', 'worse'] });
-    await expect(writeSearchIndex(addFails, [doc], '/o', 'en')).rejects.toThrow(
+    await expect(writeSearchIndex(addFails, [doc], write, 'en')).rejects.toThrow(
       'Pagefind indexing /2026-09-20/gospel/ failed: bad html; worse',
     );
 
-    const writeFails = fakeApi({ write: ['disk full'] });
-    await expect(writeSearchIndex(writeFails, [doc], '/o', 'en')).rejects.toThrow('Pagefind writeFiles failed');
-    expect(writeFails.close).toHaveBeenCalledOnce();
+    const getFails = fakeApi({ files: { errors: ['out of memory'] } });
+    await expect(writeSearchIndex(getFails, [doc], write, 'en')).rejects.toThrow(
+      'Pagefind getFiles failed: out of memory',
+    );
+    expect(getFails.close).toHaveBeenCalledOnce();
+
+    for (const files of [{ errors: [] }, { errors: [], files: [] }])
+      await expect(writeSearchIndex(fakeApi({ files }), [doc], write, 'en')).rejects.toThrow(
+        'Pagefind getFiles returned no files',
+      );
+    expect(write.written).toEqual([]);
+  });
+
+  it('fails when a bundle file cannot be written, and still closes the service', async () => {
+    const api = fakeApi({});
+    const diskFull = (): Promise<void> => Promise.reject(new Error('disk full'));
+    await expect(writeSearchIndex(api, [doc], diskFull, 'en')).rejects.toThrow('disk full');
+    expect(api.close).toHaveBeenCalledOnce();
   });
 });
 
