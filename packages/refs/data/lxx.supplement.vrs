@@ -1,0 +1,7 @@
+# Lectio supplement to lxx.vrs (mapping lines only, same "THIS = ORIGINAL" format).
+# Lines here take precedence over lxx.vrs. Maintained by Lectio, not by SIL.
+#
+# lxx.vrs places the Prayer of Azariah and the Song of the Three inside Greek
+# Daniel (DAG 3:24-90) but maps nothing onto org.vrs, where that material is
+# the separate book S3Y. This is the same mapping vul.vrs gives for DAN.
+DAG 3:24-90 = S3Y 1:1-67

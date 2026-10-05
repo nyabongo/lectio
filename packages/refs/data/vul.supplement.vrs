@@ -1,0 +1,16 @@
+# Lectio supplement to vul.vrs (mapping and exclusion lines, same format as vul.vrs).
+# Lines here take precedence over vul.vrs. Maintained by Lectio, not by SIL.
+#
+# vul.vrs's chapter table gives Jonah 1:16 2:11, the Hebrew division that the
+# Stuttgart Vulgate and the Nova Vulgata both follow, but its mapping lines
+# (JON 1:17 = JON 2:1, JON 2:1-10 = JON 2:2-11) assume the English division.
+# Following the table, Jonah is the same as org.vrs.
+JON 2:1-11 = JON 2:1-11
+#
+# vul.vrs numbers Psalm 115 from verse 10 and Psalm 147 from verse 12 (its
+# mapping lines are PSA 115:10-19 = PSA 116:10-19 and PSA 147:12-20 =
+# PSA 147:12-20), as the Stuttgart Vulgate and Nova Vulgata do, yet its chapter
+# table gives the full counts 115:19 and 147:20. The verses below those numbers
+# do not exist in this numbering.
+-PSA 115:1-9
+-PSA 147:1-11
