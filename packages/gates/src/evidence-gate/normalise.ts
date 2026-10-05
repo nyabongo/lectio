@@ -121,11 +121,18 @@ export function excerptLongEnough(excerpt: string): boolean {
   return pieces.length > 0 && pieces.every((piece) => wordCount(piece) >= MIN_PIECE_WORDS);
 }
 
-/** Positions where `piece` occurs in `text` from `from` on, as whole words. */
-function* occurrences(text: string, piece: string, from: number): Generator<number> {
+/**
+ * Positions where `piece` occurs in `text` as whole words, starting at `from` or later and at
+ * `last` or earlier. Only that stretch of the text is searched (plus the piece's length and one
+ * boundary character), so a bounded search costs the size of the window, not of the page.
+ */
+function* occurrences(text: string, piece: string, from: number, last = Infinity): Generator<number> {
   const needsStart = WORD_CHAR.test(piece.charAt(0));
   const needsEnd = WORD_CHAR.test(piece.charAt(piece.length - 1));
-  for (let at = text.indexOf(piece, from); at >= 0; at = text.indexOf(piece, at + 1)) {
+  const window = text.slice(from, last + piece.length + 1);
+  for (let rel = window.indexOf(piece); rel >= 0; rel = window.indexOf(piece, rel + 1)) {
+    const at = from + rel;
+    if (at > last) return;
     const before = text.charAt(at - 1);
     const after = text.charAt(at + piece.length);
     if (needsStart && at > 0 && WORD_CHAR.test(before)) continue;
@@ -146,8 +153,7 @@ function restFollows(text: string, pieces: readonly string[], index: number, end
   if (piece === undefined) return true;
   const key = `${String(index)}:${String(end)}`;
   if (dead.has(key)) return false;
-  for (const at of occurrences(text, piece, end)) {
-    if (at - end > MAX_PIECE_GAP) break;
+  for (const at of occurrences(text, piece, end, end + MAX_PIECE_GAP)) {
     if (restFollows(text, pieces, index + 1, at + piece.length, dead)) return true;
   }
   dead.add(key);
