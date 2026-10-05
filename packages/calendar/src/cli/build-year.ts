@@ -103,7 +103,8 @@ function toReading(reading: ResolvedReading, date: string, linkout: LinkoutFor, 
 /**
  * One day with its Masses. `lectionaryMissing` is true when the lectionary has no data for the
  * day (`masses: []`), when a Mass lacks a slot it needs (L-070 reports those days) or when a
- * reading was left out for want of a link-out; Masses left without any reading are dropped.
+ * reading was left out for want of a link-out; Masses left without any reading are dropped. A day
+ * without any Mass (Holy Saturday) has `noMass: true`, no Masses and no missing data.
  * `options` carry what the resolver needs from the rest of the year (the Epiphany's date).
  */
 export function assembleDay(
@@ -116,12 +117,15 @@ export function assembleDay(
 ): CalendarDay {
   let incomplete = false;
   const masses: Mass[] = [];
-  for (const mass of resolveDay(day, lectionary, options).masses) {
+  const resolution = resolveDay(day, lectionary, options);
+  for (const mass of resolution.masses) {
     const readings = mass.readings.flatMap((reading) => toReading(reading, day.date, linkout, warnings));
     if (mass.missingSlots.length > 0 || readings.length < mass.readings.length) incomplete = true;
     if (readings.length > 0) masses.push({ id: mass.id, label: mass.label, readings });
   }
-  const calendarDay = toCalendarDay({ ...day, masses, lectionaryMissing: masses.length === 0 || incomplete });
+  const { noMass } = resolution;
+  const lectionaryMissing = !noMass && (masses.length === 0 || incomplete);
+  const calendarDay = toCalendarDay({ ...day, masses, lectionaryMissing, noMass });
   return { ...calendarDay, celebrations: calendarDay.celebrations.map((c) => withNames(c, names)) };
 }
 
