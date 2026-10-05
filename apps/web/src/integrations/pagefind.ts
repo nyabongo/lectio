@@ -10,7 +10,8 @@
  * their own URLs and `lang`, so the search page of each locale finds its own pages.
  */
 import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { openRepo } from '@lectio/content';
@@ -22,7 +23,7 @@ import type { DayEnv } from '../lib/day.ts';
 import { buildCatalogs, formatDate, translate } from '../lib/i18n.ts';
 import { bookNameIn, localeRepo } from '../lib/notes-locale.ts';
 import { PAGEFIND_DIR, searchDocuments, writeSearchIndex } from '../lib/search.ts';
-import type { PagefindApi, SearchLabels } from '../lib/search.ts';
+import type { PagefindApi, SearchLabels, WriteBundleFile } from '../lib/search.ts';
 import type { LectioIntegrationOptions } from './types.ts';
 
 const I18N_DIR = fileURLToPath(new URL('../i18n/', import.meta.url));
@@ -57,7 +58,19 @@ export function searchLabels(options: LectioIntegrationOptions, lang: string): S
   };
 }
 
-/** Builds the search index for the site in `outDir`; returns the number of pages indexed. */
+/** Writes bundle files under `dir`, creating subdirectories as needed. */
+function writeUnder(dir: string): WriteBundleFile {
+  return async ({ path, content }) => {
+    const file = join(dir, path);
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, content);
+  };
+}
+
+/**
+ * Builds the search index for the site in `outDir` into `<outDir>/pagefind`; resolves once every bundle file is
+ * written and returns the number of pages indexed.
+ */
 export async function buildSearchIndex(
   options: LectioIntegrationOptions,
   outDir: string,
@@ -73,7 +86,8 @@ export async function buildSearchIndex(
       lang === defaultLocale ? '' : `${lang}/`,
     ),
   );
-  return writeSearchIndex(api ?? (await import('pagefind')), docs, join(outDir, PAGEFIND_DIR), defaultLocale);
+  const bundleDir = join(outDir, PAGEFIND_DIR);
+  return writeSearchIndex(api ?? (await import('pagefind')), docs, writeUnder(bundleDir), defaultLocale);
 }
 
 export function pagefind(options: LectioIntegrationOptions): AstroIntegration {
