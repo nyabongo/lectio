@@ -26,6 +26,7 @@ architecture is in [docs/architecture.md](docs/architecture.md).
   `.github/required-checks/`; the changes step diffs against origin/main when the event is not a pull_request.
 - Pre-registered scripts (`tsx ../../scripts/run-planned.mjs L-NNN <target>`) start working when you create the
   target file at that exact path. Do not edit manifests to rename them.
+- npm is pinned (`packageManager` in package.json, npm 10.9.9); regenerate the lockfile only with that version.
 - Lockfile conflict: rebase, `git checkout origin/main -- package-lock.json`, `npm install`, commit.
 - Flutter: iterate through CI on a draft PR.
 

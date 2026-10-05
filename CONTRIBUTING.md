@@ -69,7 +69,10 @@ CI runs the same steps as separate required checks (`.github/workflows/ci.yml`).
 
 ## Lockfile conflicts
 
-`package-lock.json` should rarely change after L-001. When two PRs both change it and yours conflicts:
+`package-lock.json` should rarely change after L-001. The lockfile's shape depends on the npm version, so npm is
+pinned in the root `package.json` (`"packageManager": "npm@10.9.9"`, the npm bundled with Node 22). Run
+`npm --version` before touching the lockfile and, if it differs, use `npx npm@10.9.9 install` (or
+`npm install -g npm@10.9.9`). CI's `lockfile-sync` job installs exactly that version. When two PRs both change it and yours conflicts:
 
 ```sh
 git fetch origin

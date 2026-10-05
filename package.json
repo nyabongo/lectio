@@ -5,6 +5,7 @@
   "description": "A companion to the daily Mass readings: their history, their original words, and a voice.",
   "license": "UNLICENSED",
   "type": "module",
+  "packageManager": "npm@10.9.9",
   "engines": {
     "node": ">=22.12.0"
   },

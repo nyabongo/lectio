@@ -95,6 +95,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+      # Lockfile output depends on the npm version: use the one pinned in
+      # package.json "packageManager" so agents and CI resolve identically.
+      - name: Use the pinned npm
+        run: npm install -g "npm@$(node -p "require('./package.json').packageManager.replace(/^npm@/, '')")"
       # npm ci fails when package-lock.json does not satisfy the manifests.
       - run: npm ci
       # ...and re-resolving must not change the committed lockfile.
@@ -107,12 +111,15 @@ jobs:
     timeout-minutes: 10
     env:
       ACTIONLINT_VERSION: 1.7.12
+      # sha256 of actionlint_1.7.12_linux_amd64.tar.gz from the release's checksums file.
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
     steps:
       - uses: actions/checkout@v7
       - name: Install actionlint
         run: |
           curl -sSfL -o actionlint.tar.gz \
             "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  actionlint.tar.gz" | sha256sum -c -
           tar -xzf actionlint.tar.gz actionlint
       - run: ./actionlint -color
 
