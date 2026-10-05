@@ -5,6 +5,11 @@
   "model": "claude-sonnet-5-5",
   "content": [
     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "EpoBCkgIBxABGAIiQGpzb24tc2lnbmF0dXJl"
+    },
+    {
       "type": "text",
       "text": "{\"verdict\":\"supported\",\"support\":0.97,\"sensitive\":false,\"reasons\":[\"Pure water boils at 100 °C at a pressure of one standard atmosphere.\"]}",
       "citations": null
@@ -19,6 +24,9 @@
     "cache_creation_input_tokens": 0,
     "cache_read_input_tokens": 0,
     "server_tool_use": null,
-    "service_tier": "standard"
+    "service_tier": "standard",
+    "output_tokens_details": {
+      "thinking_tokens": 14
+    }
   }
 }

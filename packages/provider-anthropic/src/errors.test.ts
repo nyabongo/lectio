@@ -27,7 +27,7 @@ describe('toProviderError', () => {
       [403, 'permission_error', 'invalid-request', false],
       [404, 'not_found_error', 'not-found', false],
       [408, null, 'timeout', true],
-      [409, null, 'conflict', false],
+      [409, null, 'conflict', true],
       [413, 'request_too_large', 'invalid-request', false],
       [429, 'rate_limit_error', 'rate-limited', true],
       [500, 'api_error', 'unavailable', true],
