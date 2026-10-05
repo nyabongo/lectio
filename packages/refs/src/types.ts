@@ -1,0 +1,24 @@
+import type { BookCode } from './books.ts';
+
+/**
+ * A position in a book. `v` is absent for whole-chapter segments (`Ps 23`).
+ * `part` is a sub-verse letter as printed in the lectionary (`20c`, `16a`);
+ * keys drop it, formatters keep it.
+ */
+export interface Point {
+  readonly c: number;
+  readonly v?: number;
+  readonly part?: string;
+}
+
+/** An inclusive range; a single verse or chapter has `start` equal to `end`. */
+export interface Segment {
+  readonly start: Point;
+  readonly end: Point;
+}
+
+/** A parsed reference: one book, one or more segments in the order written. */
+export interface Ref {
+  readonly book: BookCode;
+  readonly segments: readonly Segment[];
+}
