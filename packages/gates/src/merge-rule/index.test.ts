@@ -227,6 +227,11 @@ describe('needs-review', () => {
       { file: PASSAGE, claimId: 'c2' },
     ];
     expect(run(greenResults(), {}, config(), expected).decision).toBe('auto-merge');
+    const dotted = greenResults([
+      claim('c1', { file: `./${PASSAGE}` }),
+      claim('c2', { file: PASSAGE.replace('/', '\\') }),
+    ]);
+    expect(run(dotted, {}, config(), expected).decision).toBe('auto-merge');
     expect(run(greenResults([claim('c1')]), {}, config(), expected).reasons).toEqual([
       `claim c2 (${PASSAGE}) has no verifier record`,
     ]);

@@ -327,9 +327,9 @@ function verifierConditions(input: DecideInput, results: readonly GateResult[]):
   if (read.claims.length === 0) return [{ rule: MERGE_RULES.verifiersRan, message: 'the verifiers checked no claims' }];
 
   const reasons: DecisionReason[] = [];
-  const recorded = new Set(read.claims.map((claim) => `${claim.file}\0${claim.claimId}`));
+  const recorded = new Set(read.claims.map((claim) => `${normalizePath(claim.file)}\0${claim.claimId}`));
   for (const expected of input.claims) {
-    if (!recorded.has(`${expected.file}\0${expected.claimId}`))
+    if (!recorded.has(`${normalizePath(expected.file)}\0${expected.claimId}`))
       reasons.push({
         rule: MERGE_RULES.everyClaimVerified,
         file: expected.file,

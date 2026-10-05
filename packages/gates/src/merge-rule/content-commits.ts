@@ -8,9 +8,15 @@
  */
 import { parseApprovalTrailer } from './approval.ts';
 
-/** One commit of the PR, as the pull request's commit list gives it (oldest first). */
+/**
+ * One commit of the PR, in any order. Containment is worked out from `parents` (never from list
+ * order or dates), so build the list with parent SHAs: `git rev-list --parents base..head`, or the
+ * API's commit records (`GitCommit.parents`).
+ */
 export interface PullRequestCommit {
   readonly sha: string;
+  /** Parent SHAs; parents outside the PR (the base) are ignored. */
+  readonly parents: readonly string[];
   readonly message: string;
   readonly authorIsBot: boolean;
   readonly signatureVerified: boolean;
@@ -61,14 +67,28 @@ interface Timed {
   readonly time: number;
 }
 
+/** The PR commits reachable from `head` through parent links (`head` included when it is one). */
+function ancestry(head: string, bySha: ReadonlyMap<string, PullRequestCommit>): Set<string> {
+  const reached = new Set<string>();
+  const stack = [head];
+  for (let sha = stack.pop(); sha !== undefined; sha = stack.pop()) {
+    const commit = bySha.get(sha);
+    if (commit === undefined || reached.has(sha)) continue;
+    reached.add(sha);
+    stack.push(...commit.parents);
+  }
+  return reached;
+}
+
 /**
  * The latest time a content commit (approval commits excluded) entered the PR head's history.
  *
- * An observed head contains a commit when the head is that commit or a later one of `commits`.
- * Observations are replayed in time order; a head that does not contain the commit (a force push
- * to other history, or an old head no longer in the list) takes it out again, so a commit that
- * comes back counts from its return. `null` when the PR has no content commit;
- * {@link UNSEEN_COMMIT_AT} when a content commit is not in the latest observed head.
+ * An observed head contains a commit when the commit is reachable from it through parent links;
+ * list order and dates are never used. Observations are replayed in time order; a head that does
+ * not contain the commit (a force push to other history, or an old head that is not a PR commit
+ * any more) takes it out again, so a commit that comes back counts from its return. `null` when
+ * the PR has no content commit; {@link UNSEEN_COMMIT_AT} when a content commit is not in the
+ * latest observed head.
  */
 export function lastContentCommitAt(
   commits: readonly PullRequestCommit[],
@@ -81,13 +101,14 @@ export function lastContentCommitAt(
       return { sha: observation.sha, at: observation.seenAt, time };
     })
     .sort((a, b) => a.time - b.time);
-  const position = new Map(commits.map((commit, index) => [commit.sha, index]));
+  const bySha = new Map(commits.map((commit) => [commit.sha, commit]));
+  const contents = new Map(replay.map((observation) => [observation.sha, ancestry(observation.sha, bySha)]));
   let latest: Timed | null = null;
-  for (const [index, commit] of commits.entries()) {
+  for (const commit of commits) {
     if (isApprovalCommit(commit)) continue;
     let entered: Timed | null = null;
     for (const observation of replay) {
-      if ((position.get(observation.sha) ?? -1) < index) entered = null;
+      if (!(contents.get(observation.sha) as Set<string>).has(commit.sha)) entered = null;
       else entered ??= observation;
     }
     if (entered === null) return UNSEEN_COMMIT_AT;

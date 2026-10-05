@@ -82,14 +82,16 @@ const seedRefs: readonly ClaimRef[] = seed.claims.map((claim) => ({ file: PASSAG
 const APPROVAL_SHA = 'd'.repeat(40);
 const EARLY_SHA = 'e'.repeat(40);
 const LATE_SHA = 'f'.repeat(40);
-const contentCommit = (sha: string, message = 'Edit MT.20.1-16'): PullRequestCommit => ({
+const contentCommit = (sha: string, parent?: string, message = 'Edit MT.20.1-16'): PullRequestCommit => ({
   sha,
+  parents: parent === undefined ? [] : [parent],
   message,
   authorIsBot: false,
   signatureVerified: false,
 });
-const approvalCommitOnList = (sha: string): PullRequestCommit => ({
+const approvalCommitOnList = (sha: string, parent: string): PullRequestCommit => ({
   sha,
+  parents: [parent],
   message: `Approve MT.20.1-16\n\nLectio-Approval: human run=${RUN_ID} head=${PARENT_SHA}`,
   authorIsBot: true,
   signatureVerified: true,
@@ -232,7 +234,7 @@ const TABLE: Record<string, Row> = {
       approval: label, // 10:05
       reviewEdits: [PASSAGE],
       lastContentCommitAt: lastContentCommitAt(
-        [contentCommit(PARENT_SHA), approvalCommitOnList(APPROVAL_SHA)],
+        [contentCommit(PARENT_SHA), approvalCommitOnList(APPROVAL_SHA, PARENT_SHA)],
         [seen(PARENT_SHA, CONTENT_COMMIT_AT), seen(APPROVAL_SHA, APPROVAL_COMMIT_AT)],
       ),
     },
@@ -244,8 +246,31 @@ const TABLE: Record<string, Row> = {
       approval: label, // 10:05
       // Git dates are not an input at all: only when GitHub saw each head counts.
       lastContentCommitAt: lastContentCommitAt(
-        [contentCommit(PARENT_SHA), contentCommit(LATE_SHA, 'backdated to 09:00')],
+        // Date-sorted list: the backdated commit sorts before its parent.
+        [contentCommit(LATE_SHA, PARENT_SHA, 'backdated to 09:00'), contentCommit(PARENT_SHA)],
         [seen(PARENT_SHA, CONTENT_COMMIT_AT), seen(LATE_SHA, LATER_CONTENT_COMMIT_AT)],
+      ),
+    },
+    decision: 'needs-review',
+    because: `not after the last content commit at ${LATER_CONTENT_COMMIT_AT}`,
+  },
+  'review repro: date-sorted list, backdated commit on an unmerged approval commit, re-approval → needs-review': {
+    results: [...DETERMINISTIC_PASS, skippedResult('verifiers')],
+    pr: {
+      approval: { ...label, at: '2026-10-05T09:40:00Z' }, // re-approval
+      // C1 content; X1 an approval commit on C1 seen by a labeled run at 09:35; C2 pushed on X1 at
+      // 10:10, committer date backdated to 09:00, so a date-sorted list is [C1, C2, X1].
+      lastContentCommitAt: lastContentCommitAt(
+        [
+          contentCommit(PARENT_SHA),
+          contentCommit(LATE_SHA, APPROVAL_SHA),
+          approvalCommitOnList(APPROVAL_SHA, PARENT_SHA),
+        ],
+        [
+          seen(PARENT_SHA, '2026-10-05T09:30:00Z'),
+          seen(APPROVAL_SHA, '2026-10-05T09:35:00Z'),
+          seen(LATE_SHA, LATER_CONTENT_COMMIT_AT),
+        ],
       ),
     },
     decision: 'needs-review',
@@ -257,7 +282,11 @@ const TABLE: Record<string, Row> = {
       approval: label, // 10:05
       // c2 was committed locally at 10:01 and pushed at 10:10 together with c3; c2 is never a head.
       lastContentCommitAt: lastContentCommitAt(
-        [contentCommit(PARENT_SHA), contentCommit(EARLY_SHA, 'committed 10:01'), contentCommit(LATE_SHA)],
+        [
+          contentCommit(PARENT_SHA),
+          contentCommit(EARLY_SHA, PARENT_SHA, 'committed 10:01'),
+          contentCommit(LATE_SHA, EARLY_SHA),
+        ],
         [seen(PARENT_SHA, CONTENT_COMMIT_AT), seen(LATE_SHA, LATER_CONTENT_COMMIT_AT)],
       ),
     },
@@ -269,7 +298,7 @@ const TABLE: Record<string, Row> = {
     pr: {
       approval: label,
       lastContentCommitAt: lastContentCommitAt(
-        [contentCommit(PARENT_SHA), contentCommit(LATE_SHA)],
+        [contentCommit(PARENT_SHA), contentCommit(LATE_SHA, PARENT_SHA)],
         [seen(PARENT_SHA, CONTENT_COMMIT_AT)],
       ),
     },
