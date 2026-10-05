@@ -6,7 +6,7 @@
   "context": {
     "title": "The way of God’s teaching",
     "paragraphs": [
-      "Psalm 119 is an alphabetic poem of twenty-two stanzas, one for each Hebrew letter, and every verse of a stanza begins with that letter. [c1] Only two verses lack a word for God’s teaching, which is named by near-synonyms such as law, precepts, judgments and commandments. [c2] The design may have served memory and the instruction of the young. [c3]",
+      "Psalm 119 is an alphabetic poem of twenty-two stanzas, one for each Hebrew letter, and every verse of a stanza begins with that letter. [c1] By the count of Jamieson, Fausset and Brown, only two verses lack a word for God’s teaching, which is named by near-synonyms such as law, precepts, judgments and commandments. [c2] The design may have served memory and the instruction of the young. [c3]",
       "Today’s response takes single verses from four stanzas: Aleph, Daleth, He and Vav. [c4] Three of them speak of the way: the blameless way, the way of the precepts and the way of faithfulness. [c5] The psalmist asks for insight, a prayer the psalm repeats, and calls the commandments his delight. [c6][c7]",
       "Verse 44 closes the selection with a vow to keep God’s teaching continually, for ever and ever. [c8] The Cambridge Bible asks whether the singer means only the rest of his own life, or merges himself with the nation and looks to the generations to come. [c8]"
     ]
@@ -23,7 +23,7 @@
         "gloss": "whole ones of way"
       },
       "summary": "Tamim means whole or complete: integrity of life more than spotless purity.",
-      "body": "Tamim properly means perfect or sincere, a life that is whole, and Barnes compares the description of Job. [c9] The Cambridge Bible explains it as single-hearted devotion to God joined to integrity in dealing with other people. [c10] The older English rendering undefiled follows the Greek and Latin translations, which speak of freedom from stain. [c11]"
+      "body": "Tamim properly means perfect or sincere, a life that is whole, and Barnes compares the description of Job. [c9] The Cambridge Bible explains it as single-hearted devotion to God joined to integrity in dealing with other people. [c10] The older English rendering undefiled matches the Greek and Latin translations, which speak of freedom from stain. [c11]"
     },
     {
       "id": "piqqudim",
@@ -74,7 +74,7 @@
     },
     {
       "id": "c2",
-      "text": "Only two verses of Psalm 119 (122 and 132) contain no term for God’s word, which is called by many names such as law, statutes, precepts, judgments and commandments.",
+      "text": "By the count of Jamieson, Fausset and Brown, only two verses of Psalm 119 (122 and 132) contain no term for God’s word, which is called by many names such as law, statutes, precepts, judgments and commandments.",
       "sourceIds": ["jfb-ps-119-1-two-verses", "poole-ps-119-1"],
       "sensitive": false
     },
@@ -141,7 +141,7 @@
     {
       "id": "c13",
       "text": "פִּקּוּד occurs twenty-four times, all in the Psalms, twenty-one of them in Psalm 119.",
-      "sourceIds": ["biblehub-6490-psalms", "biblehub-6490-ps-119"],
+      "sourceIds": ["bdb-6490-count", "bdb-6490-psalms", "biblehub-6490-ps-119"],
       "sensitive": false
     },
     {
@@ -503,13 +503,22 @@
       "retrievedAt": "2026-10-05T09:14:00Z"
     },
     {
-      "id": "biblehub-6490-psalms",
+      "id": "bdb-6490-count",
       "type": "web",
-      "citation": "Bible Hub, Topical Lexicon, Hebrew 6490 פִּקּוּד",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. פִּקּוּד (Bible Hub, Strong's 6490)",
       "url": "https://biblehub.com/hebrew/6490.htm",
-      "excerpt": "Piqqud occurs twenty-four times, all in the Psalms.",
+      "excerpt": "24 noun masculine Psalm 19:9 precept",
       "excerptLang": "en",
-      "retrievedAt": "2026-10-05T09:14:00Z"
+      "retrievedAt": "2026-10-05T12:40:00Z"
+    },
+    {
+      "id": "bdb-6490-psalms",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. פִּקּוּד (Bible Hub, Strong's 6490)",
+      "url": "https://biblehub.com/hebrew/6490.htm",
+      "excerpt": "in Psalms (compare Syriac",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:40:00Z"
     },
     {
       "id": "biblehub-6490-ps-119",

@@ -6,16 +6,16 @@
   "context": {
     "title": "Mother and brothers",
     "paragraphs": [
-      "Matthew and Mark tell the same scene but place it before the parables, while Luke places it after them. [c1] Luke follows Mark in a shortened form. [c2] He leaves out the motive Mark gives earlier, that the family set out to take hold of Jesus because people said he was beside himself. [c3]",
+      "Matthew and Mark tell a similar scene before the parables; Luke places it after them. [c1] Farrar doubts it is the same incident, though he allows that Luke may have moved it; Meyer reads Luke as following Mark in a shortened form. [c20][c2] Luke leaves out the motive Mark gives, that the family set out to take hold of Jesus because it was said he was beside himself. [c3]",
       "In Luke the visit closes the teaching on the sower. [c4] The seed is the word of God, the good soil are those who hear the word and hold it fast, and the next saying warns hearers to take care how they hear. [c5] The family’s arrival gives Jesus the occasion to name who the good soil are. [c4]",
-      "The saying does not set Mary aside. [c6] Luke has already shown her accepting the angel’s word and keeping these things in her heart, and Bengel remarks that she herself kept the word. [c6] The Pulpit Commentary draws the lesson that something is more solemn even than family ties, holy as they are. [c7]"
+      "The saying does not set Mary aside. [c6] Luke has already shown her accepting the angel’s word and keeping these things in her heart, and Bengel, on the parallel saying in 11:28, remarks that she herself kept the word. [c6] The Pulpit Commentary draws the lesson that there is something “more solemn even than family ties”, holy as they are. [c7]"
     ]
   },
   "translationNotes": [
     {
       "id": "adelphoi",
       "verse": "8:19",
-      "anchor": "brothers",
+      "anchor": "brethren",
       "original": {
         "text": "ἀδελφοὶ",
         "lang": "grc",
@@ -23,7 +23,7 @@
         "gloss": "brothers, kinsmen"
       },
       "summary": "Adelphoi means brothers, but biblical usage stretches the word to near kin; how these were related is disputed.",
-      "body": "Adelphos means brother, but like Hebrew ach it can cover any kinsman, as when Lot is called Abraham’s brother. [c8] Three old readings exist: cousins, the Latin view since Jerome; sons of Joseph by a first marriage, held by many Greek Fathers; and sons of Joseph and Mary, the view of Helvidius. [c9] Catholic tradition, holding Mary’s perpetual virginity, rejects the last; Thayer argues for it. [c10] The word alone does not settle the question. [c11]"
+      "body": "Adelphos means brother, but like Hebrew ach it can cover any kinsman, as when Lot is called Abraham’s brother. [c8] Three old readings exist: cousins, the Latin view since Jerome; sons of Joseph by a first marriage, held by many Greek Fathers; and sons of Joseph and Mary, the view of Helvidius. [c9] Catholic tradition, which holds Mary’s perpetual virginity, rejects the last; Thayer argues for it. [c10] The word alone does not settle the question. [c11]"
     },
     {
       "id": "paregeneto",
@@ -62,13 +62,13 @@
         "gloss": "doing"
       },
       "summary": "Hearing has to issue in doing: Luke pairs the two verbs here and in 6:47.",
-      "body": "Luke pairs hearing with doing here, as he does in 6:47 at the close of the Sermon on the Plain. [c17] In 11:28 Jesus likewise calls blessed those who hear the word of God and keep it. [c18] The Cambridge Bible puts the point sharply: hearing without obedience was more than valueless. [c19] The Pulpit Commentary adds that this greater blessedness is open to all who will. [c18]"
+      "body": "Luke pairs hearing with doing here, as he does in 6:47 at the close of the Sermon on the Plain. [c17] In 11:28 Jesus likewise calls blessed those who hear the word of God and keep it. [c18] The Cambridge Bible puts the point sharply: “hearing without obedience was more than valueless”. [c19] The Pulpit Commentary adds that this greater blessedness is open to all who will. [c18]"
     }
   ],
   "claims": [
     {
       "id": "c1",
-      "text": "Matthew 12:46-50 and Mark 3:31-35 report the same incident as Luke 8:19-21, but Luke places it after the teaching in parables and the other two Gospels before.",
+      "text": "Matthew 12:46-50 and Mark 3:31-35 report a similar scene to Luke 8:19-21, but Luke places it after the teaching in parables and the other two Gospels before.",
       "sourceIds": ["mt-12-46-50", "mk-3-31-35", "ellicott-lk-8-19"],
       "sensitive": false
     },
@@ -80,7 +80,7 @@
     },
     {
       "id": "c3",
-      "text": "Mark 3:21 gives the fullest account of the family’s motive, that they went out to seize him because they said he was beside himself; Luke’s shortened account does not include it.",
+      "text": "Mark 3:21 gives the fullest account of the family’s motive, that they went out to seize him because it was said he was beside himself; Luke’s shortened account does not include it.",
       "sourceIds": ["mk-3-21", "cambridge-lk-8-19", "meyer-lk-8-19"],
       "sensitive": false
     },
@@ -98,7 +98,7 @@
     },
     {
       "id": "c6",
-      "text": "Luke presents Mary as accepting the angel’s word (1:38) and keeping these things in her heart (2:19); Bengel remarks that she herself kept the word and was blessed for it, so the saying does not set her aside.",
+      "text": "Luke presents Mary as accepting the angel’s word (1:38) and keeping these things in her heart (2:19); Bengel, commenting on the parallel saying in Luke 11:28, remarks that she herself kept the word and was blessed for it, so the saying does not set her aside.",
       "sourceIds": ["lk-1-38", "lk-2-19", "bengel-lk-11-28"],
       "sensitive": true
     },
@@ -127,8 +127,8 @@
     },
     {
       "id": "c10",
-      "text": "Catholic tradition, citing the ancient belief in Mary’s perpetual virginity, holds that the brethren were not sons of Joseph and Mary, while Thayer’s lexicon argues that they were own brothers born after Jesus.",
-      "sourceIds": ["catholic-enc-brethren-virginity", "thayer-adelphos-own"],
+      "text": "Catholic tradition, which holds Mary’s perpetual virginity, holds that the brethren were not sons of Joseph and Mary, while Thayer’s lexicon argues that they were own brothers born after Jesus.",
+      "sourceIds": ["catholic-enc-brethren-not-sons", "catholic-enc-brethren-virginity", "thayer-adelphos-own"],
       "sensitive": true
     },
     {
@@ -183,6 +183,12 @@
       "id": "c19",
       "text": "The Cambridge Bible comments that hearing without obedience was more than valueless.",
       "sourceIds": ["cambridge-lk-11-28-obedience"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Farrar in the Cambridge Bible says the incident can hardly be the same as Mark 3:31-35 and Matthew 12:46-50, though he allows that Luke may have misplaced it.",
+      "sourceIds": ["cambridge-lk-8-19-same", "cambridge-lk-8-19-misplaced"],
       "sensitive": false
     }
   ],
@@ -341,6 +347,24 @@
       "retrievedAt": "2026-10-05T09:04:00Z"
     },
     {
+      "id": "cambridge-lk-8-19-same",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 8:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "This incident can hardly be the same as those in",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:40:00Z"
+    },
+    {
+      "id": "cambridge-lk-8-19-misplaced",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 8:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/8-19.htm",
+      "excerpt": "St Luke may however have misplaced this incident",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:40:00Z"
+    },
+    {
       "id": "expositors-lk-8-19",
       "type": "web",
       "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 8:19-21 (Bible Hub)",
@@ -483,6 +507,15 @@
       "excerpt": "The Latins, on the contrary, with few exceptions",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:16:00Z"
+    },
+    {
+      "id": "catholic-enc-brethren-not-sons",
+      "type": "web",
+      "citation": "Florentine Bechtel, “The Brethren of the Lord”, The Catholic Encyclopedia, vol. 2 (1907) (New Advent)",
+      "url": "https://www.newadvent.org/cathen/02767a.htm",
+      "excerpt": "That they were not the sons of Joseph and Mary",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:40:00Z"
     },
     {
       "id": "catholic-enc-brethren-virginity",
