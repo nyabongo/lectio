@@ -1,4 +1,5 @@
 import type { Book } from './books.ts';
+import { chapterLabel } from './greek-esther.ts';
 import type { Point, Ref, Segment } from './types.ts';
 import { checkRef } from './validate.ts';
 
@@ -26,14 +27,15 @@ function showsChapter(book: Book, segment: Segment, previous: Segment | undefine
   return previous?.end.v === undefined || previous.end.c !== segment.start.c;
 }
 
-function verseText(point: Point, withChapter: boolean): string {
-  return `${withChapter ? `${point.c}:` : ''}${point.v}${point.part ?? ''}`;
+function verseText(book: Book, point: Point, withChapter: boolean): string {
+  return `${withChapter ? `${chapterLabel(book.code, point.c)}:` : ''}${point.v}${point.part ?? ''}`;
 }
 
-function writtenSegment({ start, end }: Segment, withChapter: boolean): string {
-  if (start.v === undefined) return start.c === end.c ? `${start.c}` : `${start.c}${DASH}${end.c}`;
-  const head = verseText(start, withChapter);
-  return samePoint(start, end) ? head : `${head}${DASH}${verseText(end, end.c !== start.c)}`;
+function writtenSegment(book: Book, { start, end }: Segment, withChapter: boolean): string {
+  const label = (c: number): string => chapterLabel(book.code, c);
+  if (start.v === undefined) return start.c === end.c ? label(start.c) : `${label(start.c)}${DASH}${label(end.c)}`;
+  const head = verseText(book, start, withChapter);
+  return samePoint(start, end) ? head : `${head}${DASH}${verseText(book, end, end.c !== start.c)}`;
 }
 
 function written(book: Book, name: string, segments: readonly Segment[]): string {
@@ -41,7 +43,7 @@ function written(book: Book, name: string, segments: readonly Segment[]): string
   segments.forEach((segment, i) => {
     const withChapter = showsChapter(book, segment, segments[i - 1]);
     const separator = i === 0 ? '' : withChapter ? '; ' : ', ';
-    text += separator + writtenSegment(segment, withChapter);
+    text += separator + writtenSegment(book, segment, withChapter);
   });
   return `${name} ${text}`;
 }
@@ -52,12 +54,15 @@ function list(items: readonly string[]): string {
 
 function spoken(book: Book, segments: readonly Segment[]): string {
   const psalm = book.code === 'PS';
-  const chapter = (c: number): string => (psalm ? `Psalm ${c}` : `chapter ${c}`);
+  const chapter = (c: number): string => (psalm ? `Psalm ${c}` : `chapter ${chapterLabel(book.code, c)}`);
   const groups: { header: string; items: string[]; plural: boolean }[] = [];
   segments.forEach((segment, i) => {
     const { start, end } = segment;
     if (start.v === undefined) {
-      const header = start.c === end.c ? chapter(start.c) : `${psalm ? 'Psalms' : 'chapters'} ${start.c} to ${end.c}`;
+      const header =
+        start.c === end.c
+          ? chapter(start.c)
+          : `${psalm ? 'Psalms' : 'chapters'} ${chapterLabel(book.code, start.c)} to ${chapterLabel(book.code, end.c)}`;
       groups.push({ header, items: [], plural: false });
       return;
     }

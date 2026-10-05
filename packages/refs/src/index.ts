@@ -1,7 +1,8 @@
 /**
  * @lectio/refs: the book table, the lectionary reference parser, canonical
  * passage keys (ADR 0004), formatters, verse enumeration, and versification
- * (verse existence and cross-versification mapping, L-006), and link-out URLs (L-007).
+ * (verse existence and cross-versification mapping, L-006), link-out URLs (L-007) and
+ * Greek Esther's lettered chapters (L-049).
  */
 export const packageName = '@lectio/refs';
 
@@ -12,6 +13,15 @@ export type { VerseCountLookup, VerseId } from './enumerate.ts';
 export { RefError } from './errors.ts';
 export type { RefErrorCode } from './errors.ts';
 export { formatRef } from './format.ts';
+export {
+  GREEK_ESTHER_LETTERS,
+  chapterLabel,
+  chapterLetter,
+  isLetteredChapter,
+  letteredChapter,
+  readChapter,
+} from './greek-esther.ts';
+export type { GreekEstherLetter } from './greek-esther.ts';
 export type { FormatOptions, RefStyle } from './format.ts';
 export { KEY_PATTERN, fromKey, isKey, toKey } from './key.ts';
 export { parseRef, tryParseRef } from './parse.ts';

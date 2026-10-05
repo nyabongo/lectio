@@ -12,6 +12,11 @@ describe('toKey', () => {
     ['Eccl 11:9—12:8', 'ECCL.11.9-12.8'],
     ['Ps 23', 'PS.23'],
     ['Is 40-41', 'IS.40-41'],
+    ['Est C:12, 14-16, 23-25', 'EST.C.12_C.14-16_C.23-25'],
+    ['Est C:30-D:2', 'EST.C.30-D.2'],
+    ['Est A-B', 'EST.A-B'],
+    ['Est F', 'EST.F'],
+    ['Est 4:17; C:1', 'EST.4.17_C.1'],
   ])('keys %s as %s', (input, key) => {
     const result = toKey(parseRef(input));
     expect(result).toBe(key);
@@ -45,6 +50,12 @@ describe('fromKey', () => {
     expect(fromKey('IS.40-41').segments).toEqual([{ start: { c: 40 }, end: { c: 41 } }]);
     expect(fromKey('PS.23').segments).toEqual([{ start: { c: 23 }, end: { c: 23 } }]);
     expect(fromKey('JUDE.1.17_1.20-25').book).toBe('JUDE');
+    expect(fromKey('EST.C.12_C.14-16').segments).toEqual([
+      { start: { c: 103, v: 12 }, end: { c: 103, v: 12 } },
+      { start: { c: 103, v: 14 }, end: { c: 103, v: 16 } },
+    ]);
+    expect(fromKey('EST.C.30-D.2').segments).toEqual([{ start: { c: 103, v: 30 }, end: { c: 104, v: 2 } }]);
+    expect(fromKey('EST.A-B').segments).toEqual([{ start: { c: 101 }, end: { c: 102 } }]);
   });
 
   it.each([
@@ -64,6 +75,12 @@ describe('fromKey', () => {
     ['MT.1-2.3', 'both ends must be whole chapters or both verses'],
     ['JUDE.2.1', 'single chapter'],
     ['JUDE.1', 'single chapter'],
+    ['EST.103.12', 'the canonical spelling is "EST.C.12"'],
+    ['GN.C.12', 'cannot read segment "C.12"'],
+    ['GN.1-C', 'cannot read segment "1-C"'],
+    ['EST.G.1', 'cannot read segment "G.1"'],
+    ['EST.C.12-D', 'the canonical spelling is "EST.C.12-104"'],
+    ['EST.4.17-C.2', 'cited separately'],
   ])('rejects %s', (key, reason) => {
     expect(isKey(key)).toBe(false);
     expect(() => fromKey(key)).toThrow(reason);
