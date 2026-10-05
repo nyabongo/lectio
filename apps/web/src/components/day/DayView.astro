@@ -2,7 +2,8 @@
 /**
  * The body of a day page (`/[date]/`) and of the Today page (`/`): the date, the celebration(s) with rank and
  * colour, season and week, the Listen button (only when `features.listen` is on), the readings of each Mass and
- * links to the previous and next days. Everything it shows comes from `dayView` in src/lib/day.ts.
+ * links to the previous and next days. Everything it shows comes from `dayView` in src/lib/day.ts. The `actions` slot
+ * ends the header (the day page puts its Share button there).
  */
 import { t } from '../../i18n/index.ts';
 import type { DayView } from '../../lib/day.ts';
@@ -55,6 +56,7 @@ const showMassLabels = view.masses.length > 1;
         </ul>
       )
     }
+    <slot name="actions" />
   </header>
 
   {
@@ -121,6 +123,10 @@ const showMassLabels = view.masses.length > 1;
 
   .day__header {
     margin-bottom: var(--space-m);
+  }
+
+  .day__header > :global(.share) {
+    margin-top: var(--space-xs);
   }
 
   .day__header .eyebrow {

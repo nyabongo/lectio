@@ -5,9 +5,11 @@
  */
 import DayView from '../../components/day/DayView.astro';
 import Seo from '../../components/seo/Seo.astro';
+import ShareButton from '../../components/share/ShareButton.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { dayPagePaths, dayPageView, dayPath } from '../../lib/day.ts';
+import { dayShareInsight } from '../../lib/share.ts';
 import type { DayEnv } from '../../lib/day.ts';
 import { siteContext, withBase } from '../../lib/site.ts';
 
@@ -36,5 +38,14 @@ if (view === null) throw new Error(`No calendar day for ${date}`);
   lang={lang}
 >
   <Seo slot="head" title={view.pageTitle} description={view.description} lang={lang} path={dayPath(view.date)} />
-  <DayView view={view} />
+  <DayView view={view}>
+    <ShareButton
+      slot="actions"
+      title={view.pageTitle}
+      shareRef={view.pageTitle}
+      insight={dayShareInsight(view)}
+      path={dayPath(view.date)}
+      lang={lang}
+    />
+  </DayView>
 </BaseLayout>

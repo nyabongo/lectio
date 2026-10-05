@@ -1,0 +1,230 @@
+---
+/**
+ * The Share button of a day, reading or insight page. With Web Share (`navigator.share`) a tap opens the native
+ * share sheet with the page title, the reference and one-line insight as `text`, and the link as `url`. Without it
+ * (or when the sheet fails) the button opens a small popover: Copy link (copies the reference, insight and link),
+ * WhatsApp (`https://wa.me/?text=`) and Email, plus the link itself in a read-only field.
+ *
+ * Without JavaScript the popover is a plain `<details>` disclosure with the WhatsApp and Email links and the field;
+ * Copy link appears once the script runs. The text is built by `shareConfig()` in src/lib/share.ts; links carry no
+ * tracking parameters. Strings live in src/i18n/<lang>/share.json.
+ */
+import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import { absoluteUrl } from '../../lib/seo.ts';
+import { mailtoUrl, shareConfig, whatsappUrl } from '../../lib/share.ts';
+
+export interface Props {
+  /** The page title (the native share sheet's title and the email subject). */
+  title: string;
+  /** The reference line: a day's title and date, a reading's reference or an insight's heading. */
+  shareRef: string;
+  /** The one-line insight, or `null` when there is none yet. */
+  insight: string | null;
+  /** The page path relative to the base path (`insightPath(...)`, a reading's or a day's path). */
+  path: string;
+  lang?: string;
+}
+
+const { title, shareRef, insight, path, lang = DEFAULT_LOCALE } = Astro.props;
+const url = absoluteUrl(Astro.site ?? Astro.url, import.meta.env.BASE_URL, localePath(lang, path));
+const config = shareConfig({ title, ref: shareRef, insight, url });
+const messages = { copied: t(lang, 'share.copied'), copyFailed: t(lang, 'share.copyFailed') };
+const id = `share-${path.replace(/[^\w-]+/g, '-').replace(/^-+|-+$/g, '')}`;
+---
+
+<details class="share" data-share={JSON.stringify(config)} data-messages={JSON.stringify(messages)}>
+  <summary class="share__button" aria-label={t(lang, 'share.buttonLabel', { what: shareRef })}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+      <path
+        d="M12 3v12M12 3 7.5 7.5M12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+    {t(lang, 'share.button')}
+  </summary>
+  <div class="share__popover" role="group" aria-label={t(lang, 'share.options')}>
+    <div class="share__options">
+      <button type="button" class="share__option" data-share-copy hidden>{t(lang, 'share.copy')}</button>
+      <a
+        class="share__option"
+        href={whatsappUrl(config.text)}
+        target="_blank"
+        rel="noopener noreferrer external"
+        aria-label={t(lang, 'share.whatsappLabel')}
+        data-share-whatsapp>{t(lang, 'share.whatsapp')}</a
+      >
+      <a class="share__option" href={mailtoUrl(config.payload.title, config.text)} data-share-email
+        >{t(lang, 'share.email')}</a
+      >
+    </div>
+    <label class="share__url-label" for={`${id}-url`}>{t(lang, 'share.link')}</label>
+    <input class="share__url" id={`${id}-url`} type="url" readonly value={config.payload.url} data-share-url />
+    <p class="share__status" role="status" data-share-status></p>
+  </div>
+</details>
+
+<script>
+  import { copyText, nativeShare, parseShareConfig } from '../../lib/share.ts';
+  import type { ShareNavigator } from '../../lib/share.ts';
+
+  /** `document.execCommand('copy')` on a temporary field: the copy path for browsers without the Clipboard API. */
+  function legacyCopy(text: string): boolean {
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.append(field);
+    field.select();
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- the only copy path without the Clipboard API.
+      return document.execCommand('copy');
+    } finally {
+      field.remove();
+    }
+  }
+
+  for (const root of document.querySelectorAll<HTMLDetailsElement>('details[data-share]')) {
+    const config = parseShareConfig(root.dataset.share);
+    const summary = root.querySelector<HTMLElement>('summary');
+    const copy = root.querySelector<HTMLButtonElement>('[data-share-copy]');
+    const status = root.querySelector<HTMLElement>('[data-share-status]');
+    if (config === null || summary === null || copy === null || status === null) continue;
+    const messages = JSON.parse(root.dataset.messages ?? '{}') as Record<string, string>;
+    const nav = navigator as unknown as ShareNavigator;
+
+    summary.addEventListener('click', (event) => {
+      // An open popover closes as usual; a closed one tries the native sheet first.
+      if (root.open || typeof nav.share !== 'function') return;
+      event.preventDefault();
+      void nativeShare(nav, config.payload).then((outcome) => {
+        if (outcome === 'fallback') root.open = true;
+      });
+    });
+
+    copy.hidden = false;
+    copy.addEventListener('click', () => {
+      status.textContent = '';
+      void copyText({ clipboard: navigator.clipboard, legacyCopy }, config.text).then((copied) => {
+        status.textContent = messages[copied ? 'copied' : 'copyFailed'] ?? '';
+        if (!copied) root.querySelector<HTMLInputElement>('[data-share-url]')?.select();
+      });
+    });
+
+    root.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !root.open) return;
+      root.open = false;
+      summary.focus();
+    });
+    document.addEventListener('click', (event) => {
+      if (root.open && event.target instanceof Node && !root.contains(event.target)) root.open = false;
+    });
+    root.addEventListener('toggle', () => {
+      if (!root.open) status.textContent = '';
+    });
+    root.dataset.ready = '';
+  }
+</script>
+
+<style>
+  .share {
+    position: relative;
+    display: inline-block;
+  }
+
+  .share__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    padding: var(--space-3xs) var(--space-s);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: 999px;
+    background: var(--colour-surface);
+    color: var(--colour-ink);
+    font-weight: var(--weight-strong);
+    cursor: pointer;
+    list-style: none;
+    transition: border-color var(--duration-quick) var(--ease-out);
+  }
+
+  .share__button::-webkit-details-marker {
+    display: none;
+  }
+
+  .share__button:hover,
+  .share[open] .share__button {
+    border-color: var(--colour-accent);
+  }
+
+  .share__popover {
+    position: absolute;
+    z-index: 5;
+    inset-inline-start: 0;
+    top: calc(100% + var(--space-3xs));
+    display: grid;
+    gap: var(--space-2xs);
+    width: min(20rem, calc(100vw - 2 * var(--gutter)));
+    padding: var(--space-xs);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+    background: var(--colour-surface);
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.12);
+  }
+
+  .share__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+
+  .share__option {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: var(--space-3xs) var(--space-xs);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: var(--colour-wash);
+    color: var(--colour-ink);
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .share__option[hidden] {
+    display: none;
+  }
+
+  .share__option:hover {
+    background: var(--colour-accent-wash);
+  }
+
+  .share__url-label {
+    font-size: var(--step--2);
+    color: var(--colour-muted);
+  }
+
+  .share__url {
+    width: 100%;
+    min-height: var(--tap-target);
+    padding: var(--space-3xs) var(--space-2xs);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-s);
+    background: var(--colour-bg);
+    color: var(--colour-ink);
+    font: inherit;
+    font-size: var(--step--1);
+  }
+
+  .share__status {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+</style>
