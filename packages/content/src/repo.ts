@@ -57,7 +57,7 @@ export interface ContentRepo {
   years(): number[];
   /** The validated passage for `key`, or `null` when `passages/<key>.json` does not exist. */
   passage(key: string): Passage | null;
-  /** Keys of every passage file, sorted. */
+  /** Keys of every passage file, sorted; files whose names are not passage keys are skipped. */
   passageKeys(): string[];
   /** The day for `date` with its readings resolved, or `null` when the calendar has no such day. */
   resolveDay(date: IsoDate): ResolvedDay | null;
@@ -161,6 +161,7 @@ export function openRepo(root: string, options: OpenRepoOptions = {}): ContentRe
       listDir(PASSAGES_DIR)
         .filter((name) => name.endsWith('.json'))
         .map((name) => name.slice(0, -'.json'.length))
+        .filter((key) => KEY_SHAPE.test(key))
         .sort(),
     resolveDay(date) {
       requireDate(date, 'date');
@@ -206,9 +207,13 @@ export function isApproved(passage: Passage | null | undefined): passage is Pass
 
 /**
  * What a reader may see: the same day with every unapproved passage replaced by `null`.
- * The site and the API publish only approved notes.
+ * The site and the API publish only approved notes. `null` (no such day) passes through, so
+ * `approvedOnly(repo.resolveDay(date))` works directly.
  */
-export function approvedOnly(day: ResolvedDay): ResolvedDay {
+export function approvedOnly(day: ResolvedDay): ResolvedDay;
+export function approvedOnly(day: ResolvedDay | null): ResolvedDay | null;
+export function approvedOnly(day: ResolvedDay | null): ResolvedDay | null {
+  if (day === null) return null;
   return {
     ...day,
     masses: day.masses.map((mass) => ({

@@ -58,12 +58,23 @@ export function checkPassage(value: unknown, file: string, expectedKey?: string)
   return value;
 }
 
-/** Validates a calendar year against its schema and, when given, the year its file name promises. */
+/**
+ * Validates a calendar year against its schema and, when given, the year its file name promises.
+ * Every day must fall inside `year`, so `resolveDay`, `listDays` and `datesForPassage` agree.
+ */
 export function checkCalendarYear(value: unknown, file: string, expectedYear?: number): CalendarYear {
   if (!validateCalendarYear(value)) return fail(file, issuesFromAjv(validateCalendarYear.errors));
   if (expectedYear !== undefined && value.year !== expectedYear) {
     fail(file, [{ pointer: '/year', message: `must equal the file name year ${String(expectedYear)}` }]);
   }
+  const prefix = `${String(value.year)}-`;
+  const outside = value.days.flatMap((day, index) =>
+    day.date.startsWith(prefix)
+      ? []
+      : [{ pointer: `/days/${String(index)}/date`, message: `must fall in ${String(value.year)}` }],
+  );
+  const [first, ...rest] = outside;
+  if (first !== undefined) fail(file, [first, ...rest]);
   return value;
 }
 

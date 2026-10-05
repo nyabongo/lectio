@@ -117,7 +117,7 @@ describe('openRepo: lazy, cached loading', () => {
     const repo = openRepo(REPO, {
       fs: overlayFs(REPO, {
         calendar: '2030.json\n2026.json\nREADME.md\n2027-draft.json',
-        passages: 'MT.20.1-16.json\n.gitkeep',
+        passages: 'MT.20.1-16.json\n.gitkeep\nnotes.json\nmt.20.1-16.json\n..json',
       }),
     });
     expect(repo.years()).toEqual([2026, 2030]);
@@ -179,7 +179,9 @@ describe('openRepo: invalid files', () => {
 
   it('rejects a passage that stores reading text', () => {
     const error = contentError(() => repo.passage('PHIL.1.20-24_1.27'));
-    expect(error.issues).toContainEqual({ pointer: '/text', message: 'field name is not allowed' });
+    expect(error.issues.filter((issue) => issue.pointer === '/text')).toEqual([
+      { pointer: '/text', message: 'field name is not allowed' },
+    ]);
   });
 
   it('reports an invalid calendar year with its file and JSON pointer', () => {
@@ -189,6 +191,19 @@ describe('openRepo: invalid files', () => {
     expect(contentError(() => repo.calendarYear(2024)).pointer).toBe('/year');
     expect(contentError(() => repo.datesForPassage('MT.20.1-16')).file).toBe('calendar/2024.json');
     expect(contentError(() => repo.listDays('2025-01-01', '2025-12-31')).file).toBe('calendar/2025.json');
+  });
+
+  it('rejects a day whose date falls outside its file year, everywhere the year is read', () => {
+    const calendar = JSON.parse(nodeFs.readFile(join(REPO, 'calendar/2026.json'))) as { days: { date: string }[] };
+    const [first] = calendar.days;
+    if (first === undefined) throw new Error('fixture day missing');
+    first.date = '2027-09-19';
+    const stray = openRepo(REPO, { fs: overlayFs(REPO, { 'calendar/2026.json': JSON.stringify(calendar) }) });
+    const error = contentError(() => stray.resolveDay('2026-09-20'));
+    expect(error).toMatchObject({ file: 'calendar/2026.json', pointer: '/days/0/date' });
+    expect(error.message).toBe('calendar/2026.json#/days/0/date: must fall in 2026');
+    expect(contentError(() => stray.listDays('2026-01-01', '2027-12-31')).pointer).toBe('/days/0/date');
+    expect(contentError(() => stray.datesForPassage('MT.20.1-16')).pointer).toBe('/days/0/date');
   });
 
   it('reports malformed JSON and unreadable files against the whole file', () => {
@@ -222,6 +237,12 @@ describe('isApproved and approvedOnly', () => {
     expect(isApproved(repo.passage('IS.55.6-9'))).toBe(false);
     expect(isApproved(null)).toBe(false);
     expect(isApproved(undefined)).toBe(false);
+  });
+
+  it('passes null through, so a missing day needs no check first', () => {
+    expect(approvedOnly(repo.resolveDay('2026-09-22'))).toBeNull();
+    const visible: ResolvedDay | null = approvedOnly(repo.resolveDay('2026-09-20'));
+    expect(visible?.masses[0]?.readings[0]?.passage).toBeNull();
   });
 
   it('hides unapproved passages without changing the original day', () => {
