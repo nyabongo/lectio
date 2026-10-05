@@ -7,7 +7,7 @@
 import Seo from '../../../components/seo/Seo.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
-import { colourDotCss, passagePath, passageStaticPaths, passageView } from '../../../lib/calendar-view.ts';
+import { colourDotCss, colourLabels, passagePath, passageStaticPaths, passageView } from '../../../lib/calendar-view.ts';
 import { siteContext, siteDate, withBase } from '../../../lib/site.ts';
 
 export function getStaticPaths() {
@@ -23,15 +23,7 @@ const found = passageView(repo, key, siteDate(config));
 if (found === null) throw new Error(`passages/${key}: no approved notes`);
 const view = found;
 const description = t(lang, 'calendar.passage.description', { ref: view.ref, summary: view.summary });
-const colourLabel: Record<string, string> = {
-  green: t(lang, 'calendar.colour.green'),
-  violet: t(lang, 'calendar.colour.violet'),
-  white: t(lang, 'calendar.colour.white'),
-  gold: t(lang, 'calendar.colour.gold'),
-  red: t(lang, 'calendar.colour.red'),
-  rose: t(lang, 'calendar.colour.rose'),
-  black: t(lang, 'calendar.colour.black'),
-};
+const colourLabel: Readonly<Record<string, string>> = colourLabels(lang);
 ---
 
 <BaseLayout title={view.ref} description={description} lang={lang}>
@@ -70,7 +62,7 @@ const colourLabel: Record<string, string> = {
             <span class="kind">{t(lang, 'calendar.passage.verse', { verse: note.verse })}</span>
             <span class="title">
               “{note.anchor}”
-              <span class="original" lang={note.original.lang}>
+              <span class="original" lang={note.original.lang} dir={note.original.dir}>
                 {note.original.text}
               </span>
               <span class="translit">{note.original.translit}</span>

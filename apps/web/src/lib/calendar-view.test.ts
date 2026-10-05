@@ -12,6 +12,7 @@ import {
   DEFAULT_WEEK_START,
   calendarIndex,
   calendarMonths,
+  colourLabels,
   colourDotCss,
   currentMonth,
   dayPath,
@@ -27,6 +28,7 @@ import {
   passageStaticPaths,
   passageView,
   readingPath,
+  textDirection,
   weekday,
 } from './calendar-view.ts';
 import type { CalendarCell } from './calendar-view.ts';
@@ -294,6 +296,27 @@ describe('monthView', () => {
   });
 });
 
+describe('colour labels and text direction', () => {
+  it('names every liturgical colour', () => {
+    expect(colourLabels('en')).toEqual({
+      green: 'Green',
+      violet: 'Violet',
+      white: 'White',
+      gold: 'Gold',
+      red: 'Red',
+      rose: 'Rose',
+      black: 'Black',
+    });
+  });
+
+  it('writes Hebrew and Aramaic right to left', () => {
+    expect(textDirection('hbo')).toBe('rtl');
+    expect(textDirection('arc')).toBe('rtl');
+    expect(textDirection('grc')).toBe('ltr');
+    expect(textDirection('lat')).toBe('ltr');
+  });
+});
+
 describe('colourDotCss', () => {
   it('styles a dot for every colour in light, dark and forced-dark schemes', () => {
     const css = colourDotCss();
@@ -395,7 +418,12 @@ describe('passageView', () => {
         id: note.id,
         verse: note.verse,
         anchor: note.anchor,
-        original: { text: note.original.text, lang: note.original.lang, translit: note.original.translit },
+        original: {
+          text: note.original.text,
+          lang: note.original.lang,
+          dir: 'ltr',
+          translit: note.original.translit,
+        },
       })),
     );
     const serialised = JSON.stringify(view);

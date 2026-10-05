@@ -8,7 +8,7 @@
 import Seo from '../../../../components/seo/Seo.astro';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../../i18n/index.ts';
-import { colourDotCss, monthPath, monthStaticPaths, monthView } from '../../../../lib/calendar-view.ts';
+import { colourDotCss, colourLabels, monthPath, monthStaticPaths, monthView } from '../../../../lib/calendar-view.ts';
 import type { MonthId } from '../../../../lib/calendar-view.ts';
 import { siteContext, siteDate, withBase } from '../../../../lib/site.ts';
 
@@ -29,15 +29,7 @@ const view = monthView(repo, id, { today: siteDate(config) });
 const monthName = (date: string) => formatDate(lang, date, { month: 'long', year: 'numeric' });
 const title = monthName(view.date);
 const description = t(lang, 'calendar.month.description', { month: title });
-const colourLabel: Record<string, string> = {
-  green: t(lang, 'calendar.colour.green'),
-  violet: t(lang, 'calendar.colour.violet'),
-  white: t(lang, 'calendar.colour.white'),
-  gold: t(lang, 'calendar.colour.gold'),
-  red: t(lang, 'calendar.colour.red'),
-  rose: t(lang, 'calendar.colour.rose'),
-  black: t(lang, 'calendar.colour.black'),
-};
+const colourLabel: Readonly<Record<string, string>> = colourLabels(lang);
 const colourName = (colour: string | null) => (colour === null ? '' : (colourLabel[colour] ?? colour));
 const dayLabel = (date: string, celebration: string | null, colour: string | null) =>
   t(lang, 'calendar.month.dayLabel', {
@@ -278,7 +270,7 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
     display: inline-flex;
     align-items: center;
     gap: var(--space-3xs);
-    font-size: var(--step--2);
+    font-size: 0.8125rem;
     color: var(--colour-muted);
   }
 
@@ -303,7 +295,7 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
     margin-top: auto;
     align-self: flex-start;
     padding: 0 var(--space-3xs);
-    font-size: var(--step--2);
+    font-size: 0.8125rem;
     font-weight: var(--weight-strong);
     background: var(--colour-accent);
     color: var(--colour-on-accent);
@@ -357,7 +349,7 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
     }
 
     .grid td {
-      height: 4rem;
+      height: 5.5rem;
     }
 
     .cell {
@@ -374,13 +366,18 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
       gap: 2px;
     }
 
-    .colour-name {
-      font-size: 0.625rem;
+    .colour {
+      font-size: 0.75rem;
     }
 
-    .celebration,
-    .today-tag {
+    .celebration {
       display: none;
+    }
+
+    .today-tag {
+      align-self: center;
+      padding: 0 2px;
+      font-size: 0.75rem;
     }
 
     .celebrations a {

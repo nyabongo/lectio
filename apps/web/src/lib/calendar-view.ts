@@ -20,6 +20,7 @@ import type { Passage, TranslationNote } from '@lectio/schema/passage';
 import { addDays } from '@lectio/shared';
 import type { IsoDate } from '@lectio/shared';
 
+import { t } from '../i18n/index.ts';
 import { ACCENTS, SCHEMES, dayColour } from './theme.ts';
 import type { Scheme } from './theme.ts';
 
@@ -235,6 +236,19 @@ export function monthView(repo: ContentRepo, id: MonthId, options: MonthViewOpti
   };
 }
 
+/** The name of each liturgical colour in `lang`, printed next to every colour dot. */
+export function colourLabels(lang: string): Readonly<Record<LiturgicalColour, string>> {
+  return {
+    green: t(lang, 'calendar.colour.green'),
+    violet: t(lang, 'calendar.colour.violet'),
+    white: t(lang, 'calendar.colour.white'),
+    gold: t(lang, 'calendar.colour.gold'),
+    red: t(lang, 'calendar.colour.red'),
+    rose: t(lang, 'calendar.colour.rose'),
+    black: t(lang, 'calendar.colour.black'),
+  };
+}
+
 /** Static paths for `calendar/[yyyy]/[mm]/index.astro`: one per month of every calendar year. */
 export function monthStaticPaths(
   repo: ContentRepo,
@@ -354,13 +368,26 @@ export function passageLibrary(repo: ContentRepo): LibraryView {
   };
 }
 
+/** Languages written right to left among the original languages a note can quote. */
+export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['hbo', 'he', 'arc']);
+
+/** The `dir` for text in `lang`: `rtl` for Hebrew and Aramaic, `ltr` otherwise. */
+export function textDirection(lang: string): 'ltr' | 'rtl' {
+  return RTL_LANGUAGES.has(lang) ? 'rtl' : 'ltr';
+}
+
 /** A translation note's title: where it is and the English word it is about (never its body). */
 export interface NoteTitle {
   readonly id: string;
   readonly verse: string;
   readonly anchor: string;
-  /** The original-language word or phrase, with its BCP 47 tag. */
-  readonly original: { readonly text: string; readonly lang: string; readonly translit: string };
+  /** The original-language word or phrase, with its BCP 47 tag and writing direction (Hebrew and Aramaic: rtl). */
+  readonly original: {
+    readonly text: string;
+    readonly lang: string;
+    readonly dir: 'ltr' | 'rtl';
+    readonly translit: string;
+  };
 }
 
 /** A date the passage is read on. */
@@ -425,7 +452,12 @@ export function passageView(repo: ContentRepo, key: string, today?: IsoDate): Pa
       id,
       verse,
       anchor,
-      original: { text: original.text, lang: original.lang, translit: original.translit },
+      original: {
+        text: original.text,
+        lang: original.lang,
+        dir: textDirection(original.lang),
+        translit: original.translit,
+      },
     })),
     noteCount: noteCount(passage),
     lastReviewedAt: passage.review.lastReviewedAt ?? null,
