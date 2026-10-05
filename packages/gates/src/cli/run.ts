@@ -12,7 +12,7 @@
  * `--base`). `run` reads files from the working tree at `--root`, so `--head` must be the commit checked out
  * there (it is refused otherwise). `--pr` is a JSON file of `PullRequestFacts` (core/pull-request.ts);
  * without it the facts come from the git diff (renames and review blocks set to approved included),
- * with PR number `--pr-number` (0: no PR, a local run). `decide` reads the changed passages from
+ * with PR number `--pr-number`, a positive integer (omitted: PR 0, a local run). `decide` reads the changed passages from
  * the working tree, so `--head` must be checked out there too.
  *
  * `--fetch live` injects the live source fetcher (`@lectio/provider-fetch`, SSRF guard on); the
@@ -245,14 +245,24 @@ function readPullRequestFacts(text: string, file: string): PullRequestFacts {
   }
 }
 
+/** `--pr-number`: a positive integer, as in a facts file (omit it for a local run, PR 0). */
+function parsePrNumber(text: string): number {
+  const value = Number(text);
+  if (!/^[1-9][0-9]*$/.test(text) || !Number.isSafeInteger(value)) {
+    throw new UsageError(`--pr-number must be a positive integer, got "${text}"`);
+  }
+  return value;
+}
+
 async function decideCommand(args: readonly string[], options: GatesCliOptions): Promise<number> {
   const { values } = parse(args, {
     ...COMMON,
     results: { type: 'string' },
     pr: { type: 'string' },
-    'pr-number': { type: 'string', default: '0' },
+    'pr-number': { type: 'string' },
   });
   if (values.results === undefined) throw new UsageError('decide needs --results <gates.json>');
+  const prNumber = values['pr-number'] === undefined ? 0 : parsePrNumber(values['pr-number']);
   const { root, exec, git, config, read, write, path } = setup(options, values);
   const results = readResults(read(path(values.results)), values.results);
   // The merge rule reads the changed passages (claims, review blocks) from the working tree.
@@ -265,7 +275,7 @@ async function decideCommand(args: readonly string[], options: GatesCliOptions):
   if (values.pr === undefined) {
     changedFiles = git.changedFiles(values.base, values.head);
     const view = { changedFiles, readFile, readBase: (file: string) => git.show(values.base, file) };
-    pr = factsFromChanges(view, Number(values['pr-number']));
+    pr = factsFromChanges(view, prNumber);
   } else {
     pr = readPullRequestFacts(read(path(values.pr)), values.pr);
     changedFiles = pr.files.map((file): ChangedFile => ({ path: file, status: 'modified' }));

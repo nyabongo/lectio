@@ -294,6 +294,15 @@ describe('lectio-gates decide', () => {
       ['--results', 'gates.json', '--pr', 'gates.json'],
       'gates.json: not valid pull request facts: number: missing or of the wrong type',
     ],
+    [['--results', 'gates.json', '--pr-number', 'abc'], '--pr-number must be a positive integer, got "abc"'],
+    [['--results', 'gates.json', '--pr-number', '0'], '--pr-number must be a positive integer, got "0"'],
+    [['--results', 'gates.json', '--pr-number=-3'], '--pr-number must be a positive integer, got "-3"'],
+    [['--results', 'gates.json', '--pr-number', '4.5'], '--pr-number must be a positive integer, got "4.5"'],
+    [['--results', 'gates.json', '--pr-number', '1e3'], '--pr-number must be a positive integer, got "1e3"'],
+    [
+      ['--results', 'gates.json', '--pr-number', '99999999999999999999'],
+      '--pr-number must be a positive integer, got "99999999999999999999"',
+    ],
   ])('rejects bad input %j without a stack trace', async (args, message) => {
     await writeReport();
     writeFileSync(join(dir, 'bad.json'), '{');
