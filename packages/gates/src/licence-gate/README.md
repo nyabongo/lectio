@@ -4,7 +4,7 @@ No long verbatim run from an English Bible translation or from a cited commentar
 the reading text ([ADR 0003](../../../../docs/adr/0003-never-store-reading-text.md)): readers open the text at a
 licensed source.
 
-The gate checks every passage file the pull request adds or changes. The prose it reads is the summary, the context
+The gate checks every passage file the pull request adds or changes, and every translation (see below). The prose it reads is the summary, the context
 title and paragraphs, translation-note summaries, bodies and glosses, and claim texts. Claim markers (`[c1]`) are
 ignored. Words are counted with the textguard tokeniser, so case, accents and punctuation do not matter, and
 number-only tokens such as verse numbers are not words.
@@ -29,6 +29,29 @@ is itself a whole HTML document (`<!doctype html` or `<html`) is reduced here, a
 become U+FFFD. Commentary overlap is exact: it finds the longest run of words shared with the page, in order. The page
 is indexed as a suffix automaton over its words, so the work is linear in the page and in each note field, whatever
 the words.
+
+## Translations
+
+Translations (`passages/i18n/<locale>/<key>.json`) are scanned too, with the checks that mean something for them:
+
+| Rule                           | On a translation                                                                                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `licence/pd-bible-overlap`     | runs: it catches English public-domain Bible wording pasted into a translation (the translation's `gloss` is read too)                                              |
+| `licence/commentary-overlap`   | runs against the `web` sources of the English passage, both the one the file name names and the one `translationOf` names (a translation has no sources of its own) |
+| `licence/commentary-unchecked` | as for a passage; the finding sits on the translation and names the English file that cites the source                                                              |
+| `licence/excerpt-length`       | runs, though a valid translation has no excerpts (gate 1 rejects a `sources` field)                                                                                 |
+| `licence/quoted-english-run`   | does not run: gate 1 applies the same limit as `schema/translation-quoted-run`, so it is not reported twice                                                         |
+
+Paths are matched in any letter case, and every file in a subdirectory of `passages/` counts as a translation here, so
+a misplaced file (`passages/I18N/sw/…`, `passages/i18n/sw/nested/…`, `passages/other/…`) is still scanned. Gate 1
+rejects such paths (`schema/translation-path`) and the merge rule holds them for a person.
+
+What this does **not** cover: the public-domain index holds English Bibles only (WEB, Douay-Rheims). A modern Bible
+translation in another language, such as a Kiswahili Bible, pasted without quotation marks is caught by nothing
+automated. For translations the real safeguard is the mandatory human review: `merge-rule/translation-needs-person`
+and `schema/translation-needs-review`. Every run that scans a translation says so (`TRANSLATION_LIMITATION`, an `info`
+item and `meta.translationLimitation`). A hash-only shingle index of an openly licensed Kiswahili Bible would close
+part of the gap; none is built yet.
 
 ## Limitation
 
