@@ -4,6 +4,7 @@ import 'package:lectio/main.dart' as app;
 import 'package:lectio/src/app.dart';
 import 'package:lectio/src/screens/placeholder_screen.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The header title [title], if shown.
 Finder headerTitle(String title) =>
@@ -15,7 +16,8 @@ int selectedTab(WidgetTester tester) =>
 
 void main() {
   testWidgets('main() starts on Today', (tester) async {
-    app.main();
+    SharedPreferences.setMockInitialValues({});
+    await app.main();
     await tester.pumpAndSettle();
 
     expect(headerTitle('Today'), findsOneWidget);
