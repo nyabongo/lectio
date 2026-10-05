@@ -1,0 +1,26 @@
+# Lectio supplement to eng.vrs (mapping lines only, same "THIS = ORIGINAL" format).
+# Lines here take precedence over eng.vrs. Maintained by Lectio, not by SIL.
+#
+# Lectio's "english" scheme cites Daniel as Catholic English Bibles do (RSV-CE,
+# RSV-2CE): eng.vrs's DAG, with the Greek additions inside chapter 3 and Susanna
+# and Bel as chapters 13 and 14. eng.vrs maps only DAG 13-14, so the rest is
+# given here. The lines combine eng.vrs's own DAN mapping (Aramaic 3:31-4:34 and
+# 5:31-6:28 shifts) with vul.vrs's mapping of the additions onto S3Y.
+DAG 1:1-21 = DAN 1:1-21
+DAG 2:1-49 = DAN 2:1-49
+DAG 3:1-23 = DAN 3:1-23
+DAG 3:24-90 = S3Y 1:1-67
+DAG 3:91-97 = DAN 3:24-30
+DAG 4:1-3 = DAN 3:31-33
+DAG 4:4-37 = DAN 4:1-34
+DAG 5:1-30 = DAN 5:1-30
+DAG 5:31 = DAN 6:1
+DAG 6:1-28 = DAN 6:2-29
+DAG 7:1-28 = DAN 7:1-28
+DAG 8:1-27 = DAN 8:1-27
+DAG 9:1-27 = DAN 9:1-27
+DAG 10:1-21 = DAN 10:1-21
+DAG 11:1-45 = DAN 11:1-45
+DAG 12:1-13 = DAN 12:1-13
+DAG 13:1-64 = SUS 1:1-64
+DAG 14:1-42 = BEL 1:1-42

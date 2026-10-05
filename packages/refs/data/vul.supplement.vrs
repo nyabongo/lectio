@@ -1,0 +1,8 @@
+# Lectio supplement to vul.vrs (mapping lines only, same "THIS = ORIGINAL" format).
+# Lines here take precedence over vul.vrs. Maintained by Lectio, not by SIL.
+#
+# vul.vrs's chapter table gives Jonah 1:16 2:11, the Hebrew division that the
+# Stuttgart Vulgate and the Nova Vulgata both follow, but its mapping lines
+# (JON 1:17 = JON 2:1, JON 2:1-10 = JON 2:2-11) assume the English division.
+# Following the table, Jonah is the same as org.vrs.
+JON 2:1-11 = JON 2:1-11

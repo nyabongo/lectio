@@ -1,0 +1,71 @@
+{
+  "description": "Versification tables behind @lectio/refs (L-006): chapter and verse counts and cross-versification mappings. Numbers only; no Bible text.",
+  "sources": [
+    {
+      "id": "libpalaso",
+      "name": "SIL libpalaso versification files (Paratext standard versifications)",
+      "url": "https://github.com/sillsdev/libpalaso",
+      "commit": "447567887764011207c14db28f1ab3bda48ded88",
+      "retrieved": "2026-10-05",
+      "licence": "MIT",
+      "copyright": "Copyright (c) 2007-2025 SIL Global",
+      "licenceFile": "LICENSE.libpalaso.txt",
+      "files": [
+        {
+          "path": "org.vrs",
+          "upstream": "SIL.Scripture/Resources/org.vrs.txt",
+          "scheme": "original",
+          "notes": "BHS for the Old Testament, UBS GNT / Nestle-Aland for the New; Greek-only material in separate books (S3Y, SUS, BEL, LJE, ESG).",
+          "sha256": "1caee506dc4cc2947e45861c7d2ba5b5eeca9063ee263a37f2ca08f240e457ca"
+        },
+        {
+          "path": "vul.vrs",
+          "upstream": "SIL.Scripture/Resources/vul.vrs.txt",
+          "scheme": "vulgate",
+          "notes": "Stuttgart Vulgate (VUL83) and Nova Vulgata (NVL98). Upstream gives no mapping for Tobit, Judith, Sirach or Esther.",
+          "sha256": "f3312f4f0ffcbf48a43a20f88212a64b070b100b2764d912481c5e481a015c51"
+        },
+        {
+          "path": "lxx.vrs",
+          "upstream": "SIL.Scripture/Resources/lxx.vrs.txt",
+          "scheme": "lxx",
+          "notes": "Rahlfs Septuagint: Greek Daniel (DAG), Greek Esther (ESG), Ezra-Nehemiah as one book (EZR 1-23).",
+          "sha256": "f7c7bd6e0e5a536b6ec924bfb5f19596bc21af5bee268f97dd51d0845328cc1f"
+        },
+        {
+          "path": "eng.vrs",
+          "upstream": "SIL.Scripture/Resources/eng.vrs.txt",
+          "scheme": "english",
+          "notes": "English Bibles (KJV/RSV tradition): psalm titles not counted as verses, Joel 2:28-32, Malachi 4.",
+          "sha256": "003981c7f43c69b73b60d40a3f35f72e7ee017a686a6fb206f19a1b721157541"
+        }
+      ]
+    },
+    {
+      "id": "lectio-supplement",
+      "name": "Lectio supplements to the libpalaso mappings",
+      "url": "https://github.com/nyabongo/lectio/tree/main/packages/refs/data",
+      "licence": "Same as the Lectio repository",
+      "files": [
+        {
+          "path": "vul.supplement.vrs",
+          "scheme": "vulgate",
+          "notes": "Jonah follows vul.vrs's own chapter table (Hebrew division, 1:16 2:11) instead of its mapping lines, which assume the English division.",
+          "sha256": "4a72827a25c9fec62f655adeeeaa271c98abc46486ddf013c6c6d1b9f94f694a"
+        },
+        {
+          "path": "lxx.supplement.vrs",
+          "scheme": "lxx",
+          "notes": "Maps the Greek additions in DAG 3:24-90 onto S3Y, as vul.vrs does for DAN.",
+          "sha256": "e93031a44fb814ac53b55bf5e16fc8da878a926e5de7c8d3490634f35f963a2c"
+        },
+        {
+          "path": "eng.supplement.vrs",
+          "scheme": "english",
+          "notes": "Maps Catholic English Daniel (eng.vrs DAG, 14 chapters) onto org.vrs, combining eng.vrs's DAN shifts with vul.vrs's mapping of the additions.",
+          "sha256": "49f4c27ffa5aec29298f74840320dbe2a523ab1ee35a28a282dd85c504c1dd13"
+        }
+      ]
+    }
+  ]
+}
