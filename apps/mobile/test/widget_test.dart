@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lectio/data/data.dart';
+import 'package:lectio/features/today/today_repository.dart';
+import 'package:lectio/features/today/today_screen.dart';
 import 'package:lectio/main.dart' as app;
 import 'package:lectio/src/app.dart';
-import 'package:lectio/src/screens/placeholder_screen.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'data/fake_api.dart';
 
 /// The header title [title], if shown.
 Finder headerTitle(String title) =>
@@ -15,13 +19,22 @@ int selectedTab(WidgetTester tester) =>
     tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex;
 
 void main() {
+  // Today reads a fake API that publishes no days, so tests stay offline.
+  setUp(() {
+    todayRepository = LectioRepository(
+      client: ApiClient(httpClient: FakeApi().client, baseUrl: FakeApi.baseUrl),
+      cache: MemoryApiCache(),
+    );
+  });
+  tearDown(() => todayRepository = null);
+
   testWidgets('main() starts on Today', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await app.main();
     await tester.pumpAndSettle();
 
     expect(headerTitle('Today'), findsOneWidget);
-    expect(find.text('Coming soon'), findsOneWidget);
+    expect(find.byType(TodayScreen), findsOneWidget);
     expect(selectedTab(tester), 0);
   });
 
@@ -102,7 +115,7 @@ void main() {
     await tester.pumpWidget(const LectioApp(colour: LiturgicalColour.violet));
     await tester.pumpAndSettle();
 
-    final context = tester.element(find.byType(PlaceholderScreen));
+    final context = tester.element(find.byType(NavigationBar));
     final scheme = Theme.of(context).colorScheme;
     expect(scheme.primary, LiturgicalColour.violet.light);
     expect(scheme.onPrimary, const Color(0xFFFFFFFF));
