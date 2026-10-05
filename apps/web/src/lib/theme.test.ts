@@ -76,8 +76,8 @@ describe('palette', () => {
     const describePair = (p: ContrastPair) =>
       `${p.scheme}/${p.colour}: ${p.name} ${p.fg} on ${p.bg} = ${p.ratio.toFixed(2)} (< ${String(p.min)})`;
     expect(contrastFailures(pairs).map(describePair)).toEqual([]);
-    // 2 schemes × (3 grounds × 4 base pairs + 7 colours × (3 + 3 grounds × 2)).
-    expect(pairs).toHaveLength(2 * (3 * 4 + 7 * (3 + 3 * 2)));
+    // 2 schemes × (3 grounds × 4 base pairs + 7 colours × (5 on accentWash + 1 on accent + 3 grounds × 2)).
+    expect(pairs).toHaveLength(2 * (3 * 4 + 7 * (6 + 3 * 2)));
     expect(pairs.some((p) => p.min === MIN_TEXT_CONTRAST)).toBe(true);
     expect(pairs.some((p) => p.min === MIN_UI_CONTRAST)).toBe(true);
   });

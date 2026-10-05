@@ -7,7 +7,7 @@
  * `src/styles/tokens.css`; this module only owns colour.
  *
  * Pages set the day's colour with `data-colour="<colour>"` on `<html>` (see `colourAttribute`). The scheme follows
- * `prefers-color-scheme` unless `data-theme="light" | "dark"` overrides it (the settings page, L-054, sets it).
+ * `prefers-color-scheme` unless `data-theme="light" | "dark"` overrides it (the settings page, L-057, sets it).
  */
 import { LITURGICAL_COLOURS } from '@lectio/schema/common';
 import type { LiturgicalColour } from '@lectio/schema/common';
@@ -179,6 +179,9 @@ export function contrastPairs(): ContrastPair[] {
       const accent = ACCENTS[scheme][colour];
       pairs.push(pair(scheme, colour, 'onAccent on accent', accent.onAccent, accent.accent, MIN_TEXT_CONTRAST));
       pairs.push(pair(scheme, colour, 'ink on accentWash', base.ink, accent.accentWash, MIN_TEXT_CONTRAST));
+      pairs.push(pair(scheme, colour, 'muted on accentWash', base.muted, accent.accentWash, MIN_TEXT_CONTRAST));
+      pairs.push(pair(scheme, colour, 'link on accentWash', base.link, accent.accentWash, MIN_TEXT_CONTRAST));
+      pairs.push(pair(scheme, colour, 'focus on accentWash', base.focus, accent.accentWash, MIN_UI_CONTRAST));
       pairs.push(
         pair(scheme, colour, 'accentInk on accentWash', accent.accentInk, accent.accentWash, MIN_TEXT_CONTRAST),
       );
