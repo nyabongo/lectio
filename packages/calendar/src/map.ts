@@ -130,9 +130,13 @@ function daySeason(day: RomcalDayInput): Season {
   return mapSeason(last);
 }
 
-/** Corrections to romcal's English names, keyed by romcal id. */
+/**
+ * Corrections to romcal's English names, keyed by romcal id. romcal calls Holy Saturday "Holy
+ * Saturday/Easter Vigil", but the day has no Mass and the Vigil belongs to Easter Sunday (L-048b).
+ */
 export const NAME_CORRECTIONS: Readonly<Record<string, string>> = Object.freeze({
   commemoration_of_all_the_faithful_departed: 'The Commemoration of All the Faithful Departed (All Souls’ Day)',
+  holy_saturday: 'Holy Saturday',
 });
 
 function displayName(day: RomcalDayInput): string {

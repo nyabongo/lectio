@@ -5423,10 +5423,10 @@
       "celebrations": [
         {
           "id": "holy-saturday",
-          "name": "Holy Saturday/Easter Vigil",
+          "name": "Holy Saturday",
           "names": {
-            "en": "Holy Saturday/Easter Vigil",
-            "sw": "Jumamosi Kuu / Kesha la Pasaka",
+            "en": "Holy Saturday",
+            "sw": "Jumamosi Kuu",
             "swStatus": "provisional"
           },
           "rank": "weekday",

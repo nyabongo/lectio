@@ -131,6 +131,10 @@ describe('dayPageView with the fixture content root', () => {
       noMass:
         'There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
         'readings are listed there.',
+      pageTitle: 'Holy Saturday, Saturday 4 April 2026',
+      description:
+        'Saturday 4 April 2026: Holy Saturday. Paschal Triduum. There is no Mass on Holy Saturday; the Easter Vigil ' +
+        'belongs to Easter Sunday.',
     });
   });
 

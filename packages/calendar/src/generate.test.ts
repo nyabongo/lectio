@@ -124,6 +124,10 @@ describe('generateDays: the whole year', () => {
     );
   });
 
+  it('names Holy Saturday without the Easter Vigil, which belongs to Easter Sunday', () => {
+    expect(day('2026-04-04').celebrations.map((c) => [c.id, c.name])).toEqual([['holy-saturday', 'Holy Saturday']]);
+  });
+
   it('uses week 0 throughout Christmas Time', () => {
     expect(days2026.filter((d) => d.season === 'christmas').every((d) => d.seasonWeek === 0)).toBe(true);
   });
