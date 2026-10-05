@@ -4,7 +4,9 @@
  * the Liturgical Year and the Calendar (UNLY 59–60) and GIRM 355:
  *
  * - A **solemnity** impeded by a day of equal or higher precedence moves to the nearest
- *   following day that is not in levels 1–8 of the Table of Liturgical Days.
+ *   following day that is not in levels 1–8 of the Table of Liturgical Days. The engine sees
+ *   one civil year: a solemnity with no such day left before 31 December throws, because the
+ *   transfer would fall in the next year's file (no real calendar has needed this).
  * - A **feast** impeded by a day of equal or higher precedence (a Sunday, a solemnity) is
  *   omitted that year.
  * - A **memorial** or optional memorial is omitted on a day of levels 1–8, becomes a
@@ -12,7 +14,12 @@
  *   17–24 December, the Christmas octave), and an optional memorial yields to an obligatory one.
  * - Two **obligatory memorials** on one day both become optional memorials and the weekday is
  *   the celebration of the day (ADR 0007); removing one of them restores the other.
- * - A celebration that takes the day drops the memorials and options already there.
+ * - A celebration that takes the day drops the memorials and options already there; when it is
+ *   removed or moved away, the celebrations romcal suppressed under it (`suppressed`) are
+ *   placed again.
+ * - A `move` or `rank` target that romcal left out of the year (impeded on its own date, e.g.
+ *   St Pius V when 30 April is a Sunday) is rebuilt from romcal's definition (`definition`) or
+ *   the entry's `fallback`, then placed by the same rules.
  *
  * Entries that take a celebration away (remove, move, rank) run first, in file order; then the
  * celebrations to place (added, moved, re-ranked) are placed from the highest precedence down,
@@ -21,7 +28,7 @@
  */
 import type { CelebrationDetail, DetailedDay } from '../map.ts';
 import { precedenceLevel } from '../map.ts';
-import type { MoveEntry, OverrideEntry, OverrideRank, RankEntry, RegionalOverrides } from './schema.ts';
+import type { MoveEntry, OverrideEntry, OverrideRank, RankEntry, RegionalOverrides, RemoveEntry } from './schema.ts';
 
 /** romcal precedence given to a celebration a region adds or re-ranks (UNLY 59: proper celebrations). */
 export const PROPER_PRECEDENCE: Readonly<Record<OverrideRank, string>> = Object.freeze({
@@ -44,6 +51,21 @@ const NO_CELEBRATION_LEVEL = 14;
  */
 export type BaseDayLookup = (date: string) => CelebrationDetail | undefined;
 
+/** A romcal celebration and its own date (`YYYY-MM-DD`) in the year being computed. */
+export interface DatedCelebration {
+  readonly celebration: CelebrationDetail;
+  readonly date: string;
+}
+
+/** What the engine may ask about romcal beyond the year's output. */
+export interface ApplyContext {
+  readonly baseDay: BaseDayLookup;
+  /** A romcal celebration by Lectio id, with its own date that year, even when romcal omitted it. */
+  readonly definition?: (id: string) => DatedCelebration | undefined;
+  /** Celebrations romcal left out of `date` because the celebration of that day impeded them. */
+  readonly suppressed?: (date: string) => readonly CelebrationDetail[];
+}
+
 export type OverrideOutcome =
   | 'added'
   | 'transferred'
@@ -53,6 +75,8 @@ export type OverrideOutcome =
   | 'removed'
   | 'displaced'
   | 'restored'
+  | 'rebuilt'
+  | 'absent'
   | 'not-found'
   | 'skipped';
 
@@ -70,16 +94,14 @@ export interface ApplyResult {
 
 const level = (celebration: CelebrationDetail): number => precedenceLevel(celebration.precedence);
 
-/** An optional memorial that is an obligatory memorial demoted by the coinciding-memorials rule. */
-const isDemoted = (c: CelebrationDetail): boolean => c.rank === 'optional-memorial' && level(c) <= 11;
-const isObligatoryMemorial = (c: CelebrationDetail): boolean => (c.rank === 'memorial' && !c.optional) || isDemoted(c);
 const isProperOfTimeDay = (c: CelebrationDetail): boolean => c.rank === 'weekday' || c.rank === 'sunday';
 
-/** The rank a celebration has before romcal or the coinciding rule reduced it. */
-function intrinsicRank(c: CelebrationDetail): OverrideRank {
-  if (c.rank === 'commemoration' || isDemoted(c)) return level(c) <= 11 ? 'memorial' : 'optional-memorial';
-  return c.rank as OverrideRank;
-}
+/**
+ * Obligatory memorials that `mapDay` demoted by the coinciding-memorials rule: the only optional
+ * memorials it leaves with a memorial's precedence (level 10 or 11). The engine tracks the ones
+ * it demotes itself by id, not by this signal.
+ */
+const demotedByMapping = (c: CelebrationDetail): boolean => c.rank === 'optional-memorial' && level(c) <= 11;
 
 function withoutWeekday(c: CelebrationDetail): CelebrationDetail {
   const { weekdayId: _weekdayId, ...rest } = c;
@@ -138,9 +160,21 @@ interface Pending {
 export function applyOverrides(
   days: readonly DetailedDay[],
   overrides: RegionalOverrides,
-  baseDay: BaseDayLookup,
+  context: ApplyContext,
 ): ApplyResult {
+  const { baseDay } = context;
   const events: OverrideEvent[] = [];
+  const pending: Pending[] = [];
+  /** Ids of obligatory memorials currently demoted by the coinciding-memorials rule. */
+  const demoted = new Set(days.flatMap((day) => day.celebrations.filter(demotedByMapping).map((c) => c.id)));
+  const isDemoted = (c: CelebrationDetail): boolean => demoted.has(c.id);
+  const isObligatoryMemorial = (c: CelebrationDetail): boolean =>
+    (c.rank === 'memorial' && !c.optional) || isDemoted(c);
+  /** The rank a celebration has before romcal or the coinciding rule reduced it. */
+  const intrinsicRank = (c: CelebrationDetail): OverrideRank => {
+    if (c.rank === 'commemoration') return level(c) <= 11 ? 'memorial' : 'optional-memorial';
+    return isDemoted(c) ? 'memorial' : (c.rank as OverrideRank);
+  };
   const dates = days.map((day) => day.date);
   const position = new Map(dates.map((date, index) => [date, index]));
   const state = new Map(days.map((day) => [day.date, [...day.celebrations]]));
@@ -171,12 +205,21 @@ export function applyOverrides(
         throw new Error(`${id} on ${date} is a day of the Proper of Time; overrides change celebrations only`);
       }
       const wasPrimary = list.findIndex((c) => !c.optional) === index;
+      const intrinsic = { ...celebration, rank: intrinsicRank(celebration) };
+      demoted.delete(id);
       let rest = list.filter((_, i) => i !== index);
-      if (wasPrimary && !rest.some((c) => !c.optional)) rest.unshift(requireBase(date, id));
-      const demoted = rest.filter(isDemoted);
+      if (wasPrimary && !rest.some((c) => !c.optional)) {
+        rest.unshift(requireBase(date, id));
+        // What this celebration impeded can be celebrated again (placed with the others).
+        for (const s of context.suppressed?.(date) ?? []) {
+          if (!rest.some((c) => c.id === s.id)) pending.push({ celebration: withoutWeekday(s), date });
+        }
+      }
+      const lonely = rest.filter(isDemoted);
       const primary = rest.find((c) => !c.optional);
-      if (demoted.length === 1 && primary?.rank === 'weekday') {
-        const lone = demoted[0] as CelebrationDetail;
+      if (lonely.length === 1 && primary?.rank === 'weekday') {
+        const lone = lonely[0] as CelebrationDetail;
+        demoted.delete(lone.id);
         rest = [
           { ...lone, rank: 'memorial', optional: false, weekdayId: primary.id },
           ...rest.filter((c) => c !== lone && c !== primary),
@@ -184,9 +227,32 @@ export function applyOverrides(
         events.push({ id: lone.id, outcome: 'restored', date });
       }
       set(date, rest);
-      return { celebration: withoutWeekday(celebration), date };
+      return { celebration: withoutWeekday(intrinsic), date };
     }
     return undefined;
+  }
+
+  /** A `move` or `rank` target romcal left out of the year: romcal's definition, else the entry's fallback. */
+  function rebuild(entry: MoveEntry | RankEntry | RemoveEntry): Pending | undefined {
+    const known = context.definition?.(entry.id);
+    if (known) return { celebration: withoutWeekday(known.celebration), date: known.date };
+    if (entry.action === 'remove' || entry.fallback === undefined) return undefined;
+    const { fallback } = entry;
+    return {
+      date: `${year}-${fallback.date}`,
+      celebration: {
+        id: entry.id,
+        name: fallback.name,
+        rank: fallback.rank,
+        colour: fallback.colours[0] as CelebrationDetail['colour'],
+        romcalId: '',
+        colours: fallback.colours,
+        precedence: PROPER_PRECEDENCE[fallback.rank],
+        optional: fallback.rank === 'optional-memorial',
+        holyDayOfObligation: false,
+        properCycle: 'proper-of-saints',
+      },
+    };
   }
 
   /** The nearest following date that is not in levels 1–8 (UNLY 60). */
@@ -218,10 +284,16 @@ export function applyOverrides(
 
     if (celebration.rank === 'solemnity' || celebration.rank === 'feast') {
       if (dayLevel > own) return takeDay(date, celebration);
-      const next = celebration.rank === 'solemnity' ? nextFreeDate(date) : undefined;
-      if (next === undefined) {
+      if (celebration.rank === 'feast') {
         events.push({ id, outcome: 'impeded', date });
         return;
+      }
+      const next = nextFreeDate(date);
+      if (next === undefined) {
+        throw new Error(
+          `${id}: the solemnity impeded on ${date} has no free day left in ${year}; ` +
+            'transfers into the next year are not supported',
+        );
       }
       events.push({ id, outcome: 'transferred', date: next });
       return place(next, celebration);
@@ -273,7 +345,10 @@ export function applyOverrides(
       demote(celebration),
       ...list.filter((c) => c !== base && !obligatory.includes(c)),
     ]);
-    for (const c of [...obligatory, celebration]) events.push({ id: c.id, outcome: 'demoted', date });
+    for (const c of [...obligatory, celebration]) {
+      demoted.add(c.id);
+      events.push({ id: c.id, outcome: 'demoted', date });
+    }
   }
 
   function toPlace(entry: MoveEntry | RankEntry, found: Pending): Pending {
@@ -284,23 +359,26 @@ export function applyOverrides(
         celebration: withRank(celebration, entry.rank, PROPER_PRECEDENCE[entry.rank], entry.colours),
       };
     }
-    const rank = intrinsicRank(celebration);
     return {
       date: `${year}-${entry.date}`,
-      celebration: withRank(celebration, rank, celebration.precedence, entry.colours),
+      celebration: withRank(celebration, celebration.rank as OverrideRank, celebration.precedence, entry.colours),
     };
   }
 
-  const pending: Pending[] = [];
   for (const entry of overrides.entries) {
     if (entry.action === 'add') continue;
-    const found = extract(entry.id);
+    const extracted = extract(entry.id);
+    const found = extracted ?? rebuild(entry);
     if (!found) {
       events.push({ id: entry.id, outcome: 'not-found' });
-      continue;
+    } else if (entry.action === 'remove') {
+      events.push(
+        extracted ? { id: entry.id, outcome: 'removed', date: found.date } : { id: entry.id, outcome: 'absent' },
+      );
+    } else {
+      if (!extracted) events.push({ id: entry.id, outcome: 'rebuilt', date: found.date });
+      pending.push(toPlace(entry, found));
     }
-    if (entry.action === 'remove') events.push({ id: entry.id, outcome: 'removed', date: found.date });
-    else pending.push(toPlace(entry, found));
   }
   for (const entry of overrides.entries) {
     if (entry.action === 'add') pending.push({ date: `${year}-${entry.date}`, celebration: addedCelebration(entry) });

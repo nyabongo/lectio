@@ -73,6 +73,17 @@ export interface RemoveEntry extends Cited {
   readonly id: string;
 }
 
+/**
+ * The celebration as the general calendar has it, used only when romcal knows no definition for
+ * the id (romcal's own definition is preferred): name, general rank, colours and general date.
+ */
+export interface CelebrationFallback {
+  readonly name: string;
+  readonly rank: OverrideRank;
+  readonly colours: readonly LiturgicalColour[];
+  readonly date: string;
+}
+
 /** Give a romcal celebration another rank in the region. */
 export interface RankEntry extends Cited {
   readonly action: 'rank';
@@ -80,6 +91,7 @@ export interface RankEntry extends Cited {
   readonly rank: OverrideRank;
   /** Colours to use instead of the celebration's own (needed if romcal reports it as a commemoration). */
   readonly colours?: readonly LiturgicalColour[];
+  readonly fallback?: CelebrationFallback;
 }
 
 /** Celebrate a romcal celebration on another fixed date (`MM-DD`). */
@@ -88,6 +100,7 @@ export interface MoveEntry extends Cited {
   readonly id: string;
   readonly date: string;
   readonly colours?: readonly LiturgicalColour[];
+  readonly fallback?: CelebrationFallback;
 }
 
 export type OverrideEntry = AddEntry | RemoveEntry | RankEntry | MoveEntry;
@@ -127,6 +140,12 @@ const coloursSchema = {
   items: { type: 'string', enum: LITURGICAL_COLOURS },
 } as const;
 const rankSchema = { type: 'string', enum: OVERRIDE_RANKS } as const;
+const fallbackSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['name', 'rank', 'colours', 'date'],
+  properties: { name: nonEmptyStringSchema, rank: rankSchema, colours: coloursSchema, date: monthDaySchema },
+} as const;
 
 const entrySchema = {
   type: 'object',
@@ -157,13 +176,27 @@ const entrySchema = {
       type: 'object',
       additionalProperties: false,
       required: ['rank'],
-      properties: { action: { const: 'rank' }, id: slugSchema, rank: rankSchema, colours: coloursSchema, ...cited },
+      properties: {
+        action: { const: 'rank' },
+        id: slugSchema,
+        rank: rankSchema,
+        colours: coloursSchema,
+        fallback: fallbackSchema,
+        ...cited,
+      },
     },
     {
       type: 'object',
       additionalProperties: false,
       required: ['date'],
-      properties: { action: { const: 'move' }, id: slugSchema, date: monthDaySchema, colours: coloursSchema, ...cited },
+      properties: {
+        action: { const: 'move' },
+        id: slugSchema,
+        date: monthDaySchema,
+        colours: coloursSchema,
+        fallback: fallbackSchema,
+        ...cited,
+      },
     },
   ],
 } as const;
@@ -215,28 +248,50 @@ export function isMonthDay(value: string): boolean {
   return isIsoDate(`2000-${value}`);
 }
 
+export interface ParseOptions {
+  /**
+   * Lectio ids of every romcal celebration (`romcalLectioIds()`). When given, an `add` must use
+   * a new id and the other actions must name a romcal celebration.
+   */
+  readonly knownIds?: ReadonlySet<string>;
+}
+
 /**
- * Checks that the schema cannot express: each date exists, and each celebration id is the
- * subject of at most one entry (two entries for one id would depend on their order).
+ * Checks that the schema cannot express: each date exists, each celebration id is the subject
+ * of at most one entry (two entries for one id would depend on their order), and, with
+ * `knownIds`, ids are new for `add` and known for the other actions.
  */
-function semanticProblems(overrides: RegionalOverrides): string[] {
+function semanticProblems(overrides: RegionalOverrides, { knownIds }: ParseOptions): string[] {
   const problems: string[] = [];
   const seen = new Set<string>();
   overrides.entries.forEach((entry, index) => {
-    if (seen.has(entry.id)) problems.push(`/entries/${String(index)} more than one entry for ${entry.id}`);
+    const at = `/entries/${String(index)}`;
+    if (seen.has(entry.id)) problems.push(`${at} more than one entry for ${entry.id}`);
     seen.add(entry.id);
-    if ((entry.action === 'add' || entry.action === 'move') && !isMonthDay(entry.date)) {
-      problems.push(`/entries/${String(index)}/date ${entry.date} is not a day of the year`);
+    const dates: [string, string][] = [];
+    if (entry.action === 'add' || entry.action === 'move') dates.push(['date', entry.date]);
+    if ((entry.action === 'move' || entry.action === 'rank') && entry.fallback) {
+      dates.push(['fallback/date', entry.fallback.date]);
+    }
+    for (const [field, date] of dates) {
+      if (!isMonthDay(date)) problems.push(`${at}/${field} ${date} is not a day of the year`);
+    }
+    if (knownIds && entry.action === 'add' && knownIds.has(entry.id)) {
+      problems.push(`${at}/id ${entry.id} is already a romcal celebration; use rank or move`);
+    }
+    const hasFallback = (entry.action === 'move' || entry.action === 'rank') && entry.fallback !== undefined;
+    if (knownIds && entry.action !== 'add' && !hasFallback && !knownIds.has(entry.id)) {
+      problems.push(`${at}/id ${entry.id} is not a romcal celebration (give a fallback)`);
     }
   });
   return problems;
 }
 
 /** Validate parsed JSON as regional overrides; throws `OverridesError` listing every problem. */
-export function parseOverrides(value: unknown): RegionalOverrides {
+export function parseOverrides(value: unknown, options: ParseOptions = {}): RegionalOverrides {
   if (!validate(value)) throw new OverridesError(formatErrors(validate.errors));
   const overrides = value as unknown as RegionalOverrides;
-  const problems = semanticProblems(overrides);
+  const problems = semanticProblems(overrides, options);
   if (problems.length > 0) throw new OverridesError(problems);
   return overrides;
 }

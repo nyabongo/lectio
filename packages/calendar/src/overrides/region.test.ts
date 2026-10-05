@@ -8,7 +8,15 @@ import romcalIds from '../fixtures/romcal-ids.json' with { type: 'json' };
 import { toCalendarDay } from '../map.ts';
 import type { DetailedDay, RomcalDayInput } from '../map.ts';
 import type { ApplyResult } from './apply.ts';
-import { baseDays, generateRegionalDays, loadOverrides, overridesPath, transferOptions } from './region.ts';
+import {
+  baseDays,
+  datedCelebration,
+  generateRegionalDays,
+  loadOverrides,
+  overridesPath,
+  romcalLectioIds,
+  transferOptions,
+} from './region.ts';
 import { pendingSignOff } from './schema.ts';
 import type { RegionalOverrides } from './schema.ts';
 
@@ -17,7 +25,7 @@ const kenyaPath = overridesPath(repoRoot, 'kenya');
 const kenya = await loadOverrides(kenyaPath);
 
 const years = new Map<number, ApplyResult>();
-for (const year of [2025, 2026, 2027]) years.set(year, await generateRegionalDays(year, kenya));
+for (const year of [2025, 2026, 2027, 2028]) years.set(year, await generateRegionalDays(year, kenya));
 
 function day(date: string): DetailedDay {
   const found = years.get(Number(date.slice(0, 4)))?.days.find((d) => d.date === date);
@@ -154,7 +162,7 @@ describe('generateRegionalDays', () => {
 
   it('produces days that validate against the calendar schema', () => {
     for (const [year, result] of years) {
-      expect(result.days).toHaveLength(365);
+      expect(result.days).toHaveLength(year === 2028 ? 366 : 365);
       const file = { year, region: 'kenya', generatedBy: 'test', days: result.days.map(toCalendarDay) };
       expect(validateCalendarYear(file), JSON.stringify(validateCalendarYear.errors)).toBe(true);
     }
@@ -235,5 +243,89 @@ describe('Kenya calendar (matches GCatholic.org, 2025-2027)', () => {
       date: '2026-02-26',
     });
     expect(events.some((e) => e.outcome === 'not-found')).toBe(false);
+  });
+});
+
+describe('celebrations romcal left out of the year (real romcal)', () => {
+  const source = kenya.entries[0]!.source;
+  const custom = (entries: RegionalOverrides['entries']): RegionalOverrides => ({ ...kenya, entries });
+
+  it('Kenya 2028: St Pius V (30 April is a Sunday) is still moved to 28 April', () => {
+    expect(ids('2028-04-30')).toEqual(['easter-time-3-sunday']);
+    expect(day('2028-04-28').celebrations.map((c) => [c.id, c.rank, c.weekdayId])).toContainEqual([
+      'pius-v-pope',
+      'optional-memorial',
+      'easter-time-2-friday',
+    ]);
+    expect(years.get(2028)?.events).toContainEqual({ id: 'pius-v-pope', outcome: 'rebuilt', date: '2028-04-30' });
+  });
+
+  it('Charles Lwanga raised to a solemnity on Corpus Christi 2029 moves to Monday 4 June', async () => {
+    const { days } = await generateRegionalDays(
+      2029,
+      custom([
+        {
+          action: 'rank',
+          id: 'charles-lwanga-and-companions-martyrs',
+          rank: 'solemnity',
+          source,
+          confidence: 'uncertain',
+        },
+      ]),
+    );
+    const on = (date: string) => days.find((d) => d.date === date)?.celebrations.map((c) => [c.id, c.rank, c.colour]);
+    expect(on('2029-06-03')).toEqual([['most-holy-body-and-blood-of-christ', 'solemnity', 'white']]);
+    expect(on('2029-06-04')).toEqual([['charles-lwanga-and-companions-martyrs', 'solemnity', 'red']]);
+  });
+
+  it('removing the Immaculate Heart in 2029 restores St Ephrem, which it suppressed', async () => {
+    const plain = await generateRegionalDays(2029, custom([]));
+    expect(plain.days.find((d) => d.date === '2029-06-09')?.celebrations.map((c) => c.id)).toEqual([
+      'immaculate-heart-of-mary',
+    ]);
+    const { days } = await generateRegionalDays(
+      2029,
+      custom([{ action: 'remove', id: 'immaculate-heart-of-mary', source, confidence: 'uncertain' }]),
+    );
+    expect(days.find((d) => d.date === '2029-06-09')?.celebrations.map((c) => [c.id, c.rank])).toEqual([
+      ['ordinary-time-9-saturday', 'weekday'],
+      ['ephrem-the-syrian-deacon', 'optional-memorial'],
+    ]);
+  });
+});
+
+describe('fallbacks with real romcal', () => {
+  it('places a fallback for an id romcal does not define', async () => {
+    const source = kenya.entries[0]!.source;
+    const { days, events } = await generateRegionalDays(2026, {
+      ...kenya,
+      entries: [
+        {
+          action: 'move',
+          id: 'local-saint',
+          date: '06-04',
+          fallback: { name: 'Saint Local', rank: 'optional-memorial', colours: ['white'], date: '06-03' },
+          source,
+          confidence: 'uncertain',
+        },
+      ],
+    });
+    expect(days.find((d) => d.date === '2026-06-04')?.celebrations.map((c) => c.id)).toContain('local-saint');
+    expect(events[0]).toEqual({ id: 'local-saint', outcome: 'rebuilt', date: '2026-06-03' });
+  });
+});
+
+describe('romcalLectioIds and datedCelebration', () => {
+  it('lists every romcal celebration by Lectio id', async () => {
+    const known = await romcalLectioIds();
+    expect(known.has('pius-v-pope')).toBe(true);
+    expect(known.has('our-lady-mother-of-africa')).toBe(false);
+  });
+
+  it('returns nothing for a missing romcal day or a date outside the year', () => {
+    const days = new Map<string, DetailedDay>();
+    expect(datedCelebration(undefined, days)).toBeUndefined();
+    expect(datedCelebration(null, days)).toBeUndefined();
+    expect(datedCelebration({ date: '2030-01-01' } as unknown as RomcalDayInput, days)).toBeUndefined();
   });
 });

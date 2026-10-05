@@ -109,6 +109,42 @@ describe('parseOverrides', () => {
   });
 });
 
+describe('parseOverrides with romcal ids', () => {
+  const knownIds = new Set(['some-memorial', 'charles-lwanga', 'pius-v-pope', 'existing-saint']);
+
+  it('accepts new ids for add and known ids for the other actions', () => {
+    expect(problems(valid())).toEqual([]);
+    expect(() => parseOverrides(valid(), { knownIds })).not.toThrow();
+  });
+
+  it('rejects an add that reuses a romcal id and a change to an unknown id without fallback', () => {
+    const value = valid();
+    const entries = value['entries'] as Record<string, unknown>[];
+    entries[0]!['id'] = 'existing-saint';
+    entries[1]!['id'] = 'unknown-saint';
+    entries[3]!['id'] = 'unknown-moved';
+    entries[3]!['fallback'] = { name: 'Saint Unknown', rank: 'memorial', colours: ['white'], date: '04-31' };
+    expect(() => parseOverrides(value, { knownIds })).toThrow(OverridesError);
+    try {
+      parseOverrides(value, { knownIds });
+    } catch (error) {
+      expect((error as OverridesError).problems).toEqual([
+        '/entries/0/id existing-saint is already a romcal celebration; use rank or move',
+        '/entries/1/id unknown-saint is not a romcal celebration (give a fallback)',
+        '/entries/3/fallback/date 04-31 is not a day of the year',
+      ]);
+    }
+  });
+
+  it('accepts a fallback on rank entries', () => {
+    const value = valid();
+    const entries = value['entries'] as Record<string, unknown>[];
+    entries[2]!['id'] = 'local-saint';
+    entries[2]!['fallback'] = { name: 'Saint Local', rank: 'memorial', colours: ['red'], date: '06-03' };
+    expect(() => parseOverrides(value, { knownIds })).not.toThrow();
+  });
+});
+
 describe('isMonthDay', () => {
   it('accepts real days, including 29 February', () => {
     expect(isMonthDay('02-29')).toBe(true);
@@ -141,6 +177,8 @@ describe('overrides index', () => {
         'addedCelebration',
         'applyOverrides',
         'baseDays',
+        'datedCelebration',
+        'romcalLectioIds',
         'generateRegionalDays',
         'isMonthDay',
         'loadOverrides',

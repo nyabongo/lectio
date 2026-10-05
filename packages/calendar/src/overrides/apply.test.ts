@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { CelebrationDetail, DetailedDay } from '../map.ts';
 import { PROPER_PRECEDENCE, addedCelebration, applyOverrides } from './apply.ts';
-import type { ApplyResult } from './apply.ts';
+import type { ApplyContext, ApplyResult } from './apply.ts';
 import type { OverrideEntry, RegionalOverrides } from './schema.ts';
 
 const source = { title: 'Test source', url: 'https://example.org/ordo', accessed: '2026-10-05' };
@@ -57,7 +57,8 @@ function setup(spec: Record<string, CelebrationDetail[]>, bases: Record<string, 
     const own = day.celebrations.find((c) => c.rank === 'weekday' || c.rank === 'sunday');
     if (own && !baseMap.has(day.date)) baseMap.set(day.date, own);
   }
-  return { days, base: (date: string) => baseMap.get(date) };
+  const base: ApplyContext = { baseDay: (date: string) => baseMap.get(date) };
+  return { days, base };
 }
 
 function overrides(...entries: OverrideEntry[]): RegionalOverrides {
@@ -121,7 +122,9 @@ describe('applyOverrides: add', () => {
 
   it('adds an optional memorial next to others, without a weekday id when there is no base day', () => {
     const { days } = setup({ '2026-07-28': [option('other')] });
-    const result = applyOverrides(days, overrides(add('victor', '07-28', 'optional-memorial')), () => undefined);
+    const result = applyOverrides(days, overrides(add('victor', '07-28', 'optional-memorial')), {
+      baseDay: () => undefined,
+    });
     expect(ids(result, '2026-07-28')).toEqual([
       ['other', 'optional-memorial', true],
       ['victor', 'optional-memorial', true],
@@ -192,7 +195,7 @@ describe('applyOverrides: add', () => {
 
   it('throws when a memorial must be demoted but the day has no Proper of Time day', () => {
     const { days } = setup({ '2026-06-03': [memorial('lwanga')] });
-    expect(() => applyOverrides(days, overrides(add('x', '06-03', 'memorial')), () => undefined)).toThrow(
+    expect(() => applyOverrides(days, overrides(add('x', '06-03', 'memorial')), { baseDay: () => undefined })).toThrow(
       'No Proper of Time day under x on 2026-06-03',
     );
   });
@@ -294,13 +297,14 @@ describe('applyOverrides: add', () => {
     ]);
   });
 
-  it('a solemnity with no free day left in the year is omitted', () => {
+  it('fails loudly when a solemnity has no free day left in the year', () => {
     const { days, base } = setup({
       '2026-12-30': [cel('solemnity-a', 'solemnity', 'GENERAL_SOLEMNITY_3')],
       '2026-12-31': [cel('solemnity-b', 'solemnity', 'GENERAL_SOLEMNITY_3')],
     });
-    const result = applyOverrides(days, overrides(add('patron', '12-30', 'solemnity')), base);
-    expect(result.events).toEqual([{ id: 'patron', outcome: 'impeded', date: '2026-12-30' }]);
+    expect(() => applyOverrides(days, overrides(add('patron', '12-30', 'solemnity')), base)).toThrow(
+      'patron: the solemnity impeded on 2026-12-30 has no free day left in 2026; transfers into the next year are not supported',
+    );
   });
 
   it('places higher-ranked celebrations first, so a memorial meets the feast added the same day', () => {
@@ -328,7 +332,7 @@ describe('applyOverrides: add', () => {
 
   it('takes a day without a weekday id when there is no base day', () => {
     const { days } = setup({ '2026-05-06': [option('o')] });
-    const result = applyOverrides(days, overrides(add('m', '05-06', 'memorial')), () => undefined);
+    const result = applyOverrides(days, overrides(add('m', '05-06', 'memorial')), { baseDay: () => undefined });
     expect(celebration(result, '2026-05-06', 'm').weekdayId).toBeUndefined();
   });
 });
@@ -403,7 +407,7 @@ describe('applyOverrides: remove', () => {
 
   it('throws when the removed celebration leaves the day empty and there is no base day', () => {
     const { days } = setup({ '2026-06-03': [memorial('lwanga')] });
-    expect(() => applyOverrides(days, overrides(remove('lwanga')), () => undefined)).toThrow(
+    expect(() => applyOverrides(days, overrides(remove('lwanga')), { baseDay: () => undefined })).toThrow(
       'No Proper of Time day under lwanga on 2026-06-03',
     );
   });
@@ -559,9 +563,141 @@ describe('applyOverrides: general', () => {
   });
 
   it('accepts an empty year', () => {
-    expect(applyOverrides([], overrides(add('x', '06-03', 'memorial')), () => undefined)).toEqual({
+    expect(applyOverrides([], overrides(add('x', '06-03', 'memorial')), { baseDay: () => undefined })).toEqual({
       days: [],
       events: [{ id: 'x', outcome: 'skipped', date: '-06-03' }],
     });
+  });
+});
+
+describe('applyOverrides: celebrations romcal left out of the year', () => {
+  const lwangaDefinition = {
+    celebration: cel('lwanga', 'memorial', 'GENERAL_MEMORIAL_10', { colours: ['red'] }),
+    date: '2029-06-03',
+  };
+  const piusDefinition = { celebration: option('pius-v'), date: '2028-04-30' };
+  const definition = (id: string) =>
+    ({ lwanga: lwangaDefinition, 'pius-v': piusDefinition })[id as 'lwanga' | 'pius-v'];
+
+  it("moves an impeded optional memorial using romcal's definition", () => {
+    const { days, base } = setup({
+      '2028-04-28': [weekday('easter-3-fri', 'white')],
+      '2028-04-30': [cel('easter-3-sun', 'sunday', 'PRIVILEGED_SUNDAY_2')],
+    });
+    const move: OverrideEntry = { action: 'move', id: 'pius-v', date: '04-28', source, confidence: 'probable' };
+    const result = applyOverrides(days, overrides(move), { ...base, definition });
+    expect(ids(result, '2028-04-28')).toEqual([
+      ['easter-3-fri', 'weekday', false],
+      ['pius-v', 'optional-memorial', true],
+    ]);
+    expect(result.events).toEqual([
+      { id: 'pius-v', outcome: 'rebuilt', date: '2028-04-30' },
+      { id: 'pius-v', outcome: 'added', date: '2028-04-28' },
+    ]);
+  });
+
+  it('a memorial raised to a solemnity on a Sunday solemnity moves to Monday (UNLY 60)', () => {
+    const { days, base } = setup({
+      '2029-06-03': [cel('corpus-christi', 'solemnity', 'GENERAL_SOLEMNITY_3')],
+      '2029-06-04': [weekday('ot-9-mon')],
+    });
+    const rank: OverrideEntry = { action: 'rank', id: 'lwanga', rank: 'solemnity', source, confidence: 'probable' };
+    const result = applyOverrides(days, overrides(rank), { ...base, definition });
+    expect(ids(result, '2029-06-03')).toEqual([['corpus-christi', 'solemnity', false]]);
+    expect(ids(result, '2029-06-04')).toEqual([['lwanga', 'solemnity', false]]);
+    expect(celebration(result, '2029-06-04', 'lwanga')).toMatchObject({ colour: 'red', weekdayId: 'ot-9-mon' });
+    expect(result.events.map((e) => [e.outcome, e.date])).toEqual([
+      ['rebuilt', '2029-06-03'],
+      ['transferred', '2029-06-04'],
+      ['added', '2029-06-04'],
+    ]);
+  });
+
+  it('uses the entry fallback when romcal has no definition', () => {
+    const { days, base } = setup({
+      '2026-06-03': [otSunday('ot-9-sun')],
+      '2026-06-04': [weekday('ot-9-mon')],
+    });
+    const rank: OverrideEntry = {
+      action: 'rank',
+      id: 'local-saint',
+      rank: 'solemnity',
+      fallback: { name: 'Saint Local', rank: 'memorial', colours: ['red'], date: '06-03' },
+      source,
+      confidence: 'probable',
+    };
+    const result = applyOverrides(days, overrides(rank), base);
+    expect(ids(result, '2026-06-03')).toEqual([['local-saint', 'solemnity', false]]);
+    expect(celebration(result, '2026-06-03', 'local-saint')).toMatchObject({
+      name: 'Saint Local',
+      colour: 'red',
+      romcalId: '',
+      precedence: 'PROPER_SOLEMNITY__PRINCIPAL_PATRON_4A',
+    });
+  });
+
+  it('a moved fallback keeps its general rank', () => {
+    const { days, base } = setup({ '2026-06-04': [weekday('ot-9-mon')] });
+    const move: OverrideEntry = {
+      action: 'move',
+      id: 'local-saint',
+      date: '06-04',
+      fallback: { name: 'Saint Local', rank: 'optional-memorial', colours: ['white'], date: '06-03' },
+      source,
+      confidence: 'probable',
+    };
+    const result = applyOverrides(days, overrides(move), base);
+    expect(ids(result, '2026-06-04')).toEqual([
+      ['ot-9-mon', 'weekday', false],
+      ['local-saint', 'optional-memorial', true],
+    ]);
+    expect(celebration(result, '2026-06-04', 'local-saint').precedence).toBe('OPTIONAL_MEMORIAL_12');
+  });
+
+  it('removing a celebration romcal left out is reported as absent', () => {
+    const { days, base } = setup({ '2029-06-04': [weekday('w')] });
+    const remove: OverrideEntry = { action: 'remove', id: 'lwanga', source, confidence: 'probable' };
+    const result = applyOverrides(days, overrides(remove), { ...base, definition });
+    expect(result.events).toEqual([{ id: 'lwanga', outcome: 'absent' }]);
+  });
+
+  it('removing an obligatory memorial restores the optional memorials romcal suppressed under it', () => {
+    const { days, base } = setup(
+      { '2029-06-09': [memorial('immaculate-heart', 'ot-9-sat')] },
+      { '2029-06-09': weekday('ot-9-sat') },
+    );
+    const remove: OverrideEntry = { action: 'remove', id: 'immaculate-heart', source, confidence: 'probable' };
+    const suppressed = (date: string) =>
+      date === '2029-06-09' ? [option('ephrem', 'stale'), weekday('ot-9-sat')] : [];
+    const result = applyOverrides(days, overrides(remove), { ...base, suppressed });
+    expect(ids(result, '2029-06-09')).toEqual([
+      ['ot-9-sat', 'weekday', false],
+      ['ephrem', 'optional-memorial', true],
+    ]);
+    expect(celebration(result, '2029-06-09', 'ephrem').weekdayId).toBe('ot-9-sat');
+  });
+
+  it('moves run before additions, so an added memorial meets the day the move left', () => {
+    const { days, base } = setup(
+      {
+        '2026-06-03': [memorial('lwanga', 'ot-9-wed')],
+        '2026-06-04': [weekday('ot-9-thu')],
+      },
+      { '2026-06-03': weekday('ot-9-wed') },
+    );
+    const result = applyOverrides(
+      days,
+      overrides(add('x', '06-03', 'memorial'), {
+        action: 'move',
+        id: 'lwanga',
+        date: '06-04',
+        source,
+        confidence: 'probable',
+      }),
+      base,
+    );
+    // The move runs first, so x meets an empty day and takes it.
+    expect(ids(result, '2026-06-03')).toEqual([['x', 'memorial', false]]);
+    expect(ids(result, '2026-06-04')).toEqual([['lwanga', 'memorial', false]]);
   });
 });
