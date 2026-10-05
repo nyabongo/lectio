@@ -1,0 +1,71 @@
+{
+  "$comment": "LitCal leaves imported into the seasonal-weekdays block, dated weekdays keyed by Lectio celebration id (L-068). Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts seasonal-weekdays-dated. Left out and filled from OLM 1981 instead: ChristmasWeekdayDec30, Dec31, Jan2 and Jan4 (empty), Jan5 (holds the readings of the Monday after Epiphany), Jan6, Jan7 and DayAfterEpiphany* (psalms without verses, some in Vulgate numbering).",
+  "target": "seasonal-weekdays/celebrations.json",
+  "kind": "celebrations",
+  "imports": [
+    {
+      "key": "advent-december-17",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec17"
+    },
+    {
+      "key": "advent-december-18",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec18"
+    },
+    {
+      "key": "advent-december-19",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec19"
+    },
+    {
+      "key": "advent-december-20",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec20"
+    },
+    {
+      "key": "advent-december-21",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec21"
+    },
+    {
+      "key": "advent-december-22",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec22"
+    },
+    {
+      "key": "advent-december-23",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec23"
+    },
+    {
+      "key": "advent-december-24",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekdayDec24"
+    },
+    {
+      "key": "christmas-octave-day-5",
+      "locator": "feriale_tempus_nativitatis/en.json#ChristmasWeekdayDec29"
+    },
+    {
+      "key": "christmas-time-january-3",
+      "locator": "feriale_tempus_nativitatis/en.json#ChristmasWeekdayJan3"
+    },
+    {
+      "key": "easter-monday",
+      "locator": "feriale_tempus_paschatis/en.json#MonOctaveEaster"
+    },
+    {
+      "key": "easter-tuesday",
+      "locator": "feriale_tempus_paschatis/en.json#TueOctaveEaster"
+    },
+    {
+      "key": "easter-wednesday",
+      "locator": "feriale_tempus_paschatis/en.json#WedOctaveEaster"
+    },
+    {
+      "key": "easter-thursday",
+      "locator": "feriale_tempus_paschatis/en.json#ThuOctaveEaster"
+    },
+    {
+      "key": "easter-friday",
+      "locator": "feriale_tempus_paschatis/en.json#FriOctaveEaster"
+    },
+    {
+      "key": "easter-saturday",
+      "locator": "feriale_tempus_paschatis/en.json#SatOctaveEaster"
+    }
+  ]
+}

@@ -1,0 +1,2804 @@
+{
+  "$comment": "Seasonal weekdays (L-068), proper of time: Advent weeks 1-3, Ash Wednesday to Wednesday of Holy Week (Ash Wednesday and the days after it are week 0; Holy Week is week 6), Easter weeks 2-7. Imported from LitCal (import/litcal/seasonal-weekdays.json); Thursday of Lent week 1 and Monday of Lent week 3 are filled from the OLM 1981 structure because their LitCal strings do not parse (Greek Esther lettered chapter; two psalms in one string). Greek Esther cannot be keyed yet, so that first reading's ref is Est 4:17 and the OLM verses are kept in \"printed\". Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "kind": "proper-of-time",
+  "entries": [
+    {
+      "key": "advent-weekday-1-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 4:2-6",
+              "printed": "Isaiah 4:2-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 122:1-2, 3-4, 4-5, 6-7, 8-9",
+              "printed": "Psalm 122:1-2, 3-4b, 4cd-5, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 8:5-11",
+              "printed": "Matthew 8:5-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-1-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 11:1-10",
+              "printed": "Isaiah 11:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 7-8, 12-13, 17",
+              "printed": "Psalm 72:1-2, 7-8, 12-13, 17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 10:21-24",
+              "printed": "Luke 10:21-24",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-1-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 25:6-10",
+              "printed": "Isaiah 25:6-10a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 3-4, 5, 6",
+              "printed": "Psalm 23:1-3a, 3b-4, 5, 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 15:29-37",
+              "printed": "Matthew 15:29-37",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-1-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 26:1-6",
+              "printed": "Isaiah 26:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 118:1, 8-9, 19-21, 25-27",
+              "printed": "Psalm 118:1, 8-9, 19-21, 25-27a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 7:21, 24-27",
+              "printed": "Matthew 7:21, 24-27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-1-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 29:17-24",
+              "printed": "Isaiah 29:17-24",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 27:1, 4, 13-14",
+              "printed": "Psalm 27:1, 4, 13-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 9:27-31",
+              "printed": "Matthew 9:27-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-1-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 30:19-21, 23-26",
+              "printed": "Isaiah 30:19-21, 23-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 147:1-2, 3-4, 5-6",
+              "printed": "Psalm 147:1-2, 3-4, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 9:35-38; 10:1, 5, 6-8",
+              "printed": "Matthew 9:35-38;10:1, 5a, 6-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-2-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 35:1-10",
+              "printed": "Isaiah 35:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 85:9, 10, 11-12, 13-14",
+              "printed": "Psalm 85:9ab, 10, 11-12, 13-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 5:17-26",
+              "printed": "Luke 5:17-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-2-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 40:1-11",
+              "printed": "Isaiah 40:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 3, 10, 11-12, 13",
+              "printed": "Psalm 96:1-2, 3, 10ac, 11-12, 13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 18:12-14",
+              "printed": "Matthew 18:12-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-2-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 40:25-31",
+              "printed": "Isaiah 40:25-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 103:1-2, 3-4, 8, 10",
+              "printed": "Psalm 103:1-2, 3-4, 8, 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 11:28-30",
+              "printed": "Matthew 11:28-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-2-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 41:13-20",
+              "printed": "Isaiah 41:13-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:1, 9, 10-11, 12-13",
+              "printed": "Psalm 145:1, 9, 10-11, 12-13ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 11:11-15",
+              "printed": "Matthew 11:11-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-2-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 48:17-19",
+              "printed": "Isaiah 48:17-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 1:1-2, 3, 4, 6",
+              "printed": "Psalm 1:1-2, 3, 4, 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 11:16-19",
+              "printed": "Matthew 11:16-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-2-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Sir 48:1-4, 9-11",
+              "printed": "Sirach 48:1-4, 9-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 80:2, 3, 15-16, 18-19",
+              "printed": "Psalm 80:2ac, 3b, 15-16, 18-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 17:9, 10-13",
+              "printed": "Matthew 17:9a, 10-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday2Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-3-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 24:2-7, 15-17",
+              "printed": "Numbers 24:2-7, 15-17a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 25:4-5, 6, 7, 8-9",
+              "printed": "Psalm 25:4-5ab, 6, 7bc, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 21:23-27",
+              "printed": "Matthew 21:23-27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-3-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Zep 3:1-2, 9-13",
+              "printed": "Zephaniah 3:1-2, 9-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:2-3, 6-7, 17-18, 19, 23",
+              "printed": "Psalm 34:2-3, 6-7, 17-18, 19, 23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 21:28-32",
+              "printed": "Matthew 21:28-32",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-3-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 45:6-8, 18, 21-25",
+              "printed": "Isaiah 45:6c-8, 18, 21c-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 85:9, 10, 11-12, 13-14",
+              "printed": "Psalm 85:9ab, 10, 11-12, 13-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 7:18-23",
+              "printed": "Luke 7:18b-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-3-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 54:1-10",
+              "printed": "Isaiah 54:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 30:2, 4, 5-6, 11-12, 13",
+              "printed": "Psalm 30:2, 4, 5-6, 11-12a, 13b",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 7:24-30",
+              "printed": "Luke 7:24-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-weekday-3-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 56:1-3, 6-8",
+              "printed": "Isaiah 56:1-3a, 6-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 67:2-3, 5, 7-8",
+              "printed": "Psalm 67:2-3, 5, 7-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 5:33-36",
+              "printed": "John 5:33-36",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday3Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-0-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jl 2:12-18",
+              "printed": "Joel 2:12-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#AshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 51:3-4, 5-6, 12-13, 14, 17",
+              "printed": "Psalm 51:3-4, 5-6ab, 12-13, 14 and 17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#AshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "2 Cor 5:20-6:2",
+              "printed": "2 Corinthians 5:20-6:2",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#AshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 6:1-6, 16-18",
+              "printed": "Matthew 6:1-6, 16-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#AshWednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-0-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dt 30:15-20",
+              "printed": "Deuteronomy 30:15-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#ThursdayAfterAshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 1:1-2, 3, 4, 6",
+              "printed": "Psalm 1:1-2, 3, 4 and 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#ThursdayAfterAshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 9:22-25",
+              "printed": "Luke 9:22-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#ThursdayAfterAshWednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-0-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 58:1-9",
+              "printed": "Isaiah 58:1-9a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#FridayAfterAshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 51:3-4, 5-6, 18-19",
+              "printed": "Psalm 51:3-4, 5-6ab, 18-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#FridayAfterAshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 9:14-15",
+              "printed": "Matthew 9:14-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#FridayAfterAshWednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-0-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 58:9-14",
+              "printed": "Isaiah 58:9b-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#SaturdayAfterAshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 86:1-2, 3-4, 5-6",
+              "printed": "Psalm 86:1-2, 3-4, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#SaturdayAfterAshWednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 5:27-32",
+              "printed": "Luke 5:27-32",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#SaturdayAfterAshWednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-1-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Lv 19:1-2, 11-18",
+              "printed": "Leviticus 19:1-2, 11-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:8, 9, 10, 15",
+              "printed": "Psalm 19:8, 9, 10, 15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 25:31-46",
+              "printed": "Matthew 25:31-46",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-1-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 55:10-11",
+              "printed": "Isaiah 55:10-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:4-5, 6-7, 16-17, 18-19",
+              "printed": "Psalm 34:4-5, 6-7, 16-17, 18-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 6:7-15",
+              "printed": "Matthew 6:7-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-1-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jon 3:1-10",
+              "printed": "Jonah 3:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 51:3-4, 12-13, 18-19",
+              "printed": "Psalm 51:3-4, 12-13, 18-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 11:29-32",
+              "printed": "Luke 11:29-32",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-1-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Est 4:17",
+              "printed": "Est 4:17n, p-r, aa-bb, gg-hh",
+              "source": "olm-1981 p?#227",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 138:1-2, 2-3, 7-8",
+              "source": "olm-1981 p?#227",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 7:7-12",
+              "source": "olm-1981 p?#227",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-1-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ez 18:21-28",
+              "printed": "Ezekiel 18:21-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 130:1-2, 3-4, 5-7, 7-8",
+              "printed": "Psalm 130:1-2, 3-4, 5-7a, 7bc-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 5:20-26",
+              "printed": "Matthew 5:20-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-1-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dt 26:16-19",
+              "printed": "Deuteronomy 26:16-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 119:1-2, 4-5, 7-8",
+              "printed": "Psalm 119:1-2, 4-5, 7-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 5:43-48",
+              "printed": "Matthew 5:43-48",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-2-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 9:4-10",
+              "printed": "Daniel 9:4b-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 79:8, 9, 11, 13",
+              "printed": "Psalm 79:8, 9, 11 and 13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 6:36-38",
+              "printed": "Luke 6:36-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-2-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 1:10, 16-20",
+              "printed": "Isaiah 1:10, 16-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 50:8-9, 16-17, 21, 23",
+              "printed": "Psalm 50:8-9, 16bc-17, 21 and 23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 23:1-12",
+              "printed": "Matthew 23:1-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-2-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 18:18-20",
+              "printed": "Jeremiah 18:18-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 31:5-6, 14, 15-16",
+              "printed": "Psalm 31:5-6, 14, 15-16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:17-28",
+              "printed": "Matthew 20:17-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-2-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 17:5-10",
+              "printed": "Jeremiah 17:5-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 1:1-2, 3, 4, 6",
+              "printed": "Psalm 1:1-2, 3, 4 and 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 16:19-31",
+              "printed": "Luke 16:19-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-2-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 37:3-4, 12-13, 17-28",
+              "printed": "Genesis 37:3-4, 12-13a, 17b-28a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 105:16-17, 18-19, 20-21",
+              "printed": "Psalm 105:16-17, 18-19, 20-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 21:33-43, 45-46",
+              "printed": "Matthew 21:33-43, 45-46",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-2-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Mi 7:14-15, 18-20",
+              "printed": "Micah 7:14-15, 18-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 103:1-2, 3-4, 9-10, 11-12",
+              "printed": "Psalm 103:1-2, 3-4, 9-10, 11-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 15:1-3, 11-32",
+              "printed": "Luke 15:1-3, 11-32",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday2Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-3-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Kgs 5:1-15",
+              "source": "olm-1981 p?#237",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 42:2, 3; 43:3, 4",
+              "source": "olm-1981 p?#237",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 4:24-30",
+              "source": "olm-1981 p?#237",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-3-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 3:25, 34-43",
+              "printed": "Daniel 3:25, 34-43",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 25:4-5, 6, 7, 8-9",
+              "printed": "Psalm 25:4-5ab, 6 and 7bc, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 18:21-35",
+              "printed": "Matthew 18:21-35",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-3-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dt 4:1, 5-9",
+              "printed": "Deuteronomy 4:1, 5-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 147:12-13, 15-16, 19-20",
+              "printed": "Psalm 147:12-13, 15-16, 19-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 5:17-19",
+              "printed": "Matthew 5:17-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-3-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 7:23-28",
+              "printed": "Jeremiah 7:23-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 95:1-2, 6-7, 8-9",
+              "printed": "Psalm 95:1-2, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 11:14-23",
+              "printed": "Luke 11:14-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-3-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Hos 14:2-10",
+              "printed": "Hosea 14:2-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 81:6-8, 8-9, 10-11, 14, 17",
+              "printed": "Psalm 81:6c-8a, 8bc-9, 10-11ab, 14 and 17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 12:28-34",
+              "printed": "Mark 12:28-34",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-3-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Hos 6:1-6",
+              "printed": "Hosea 6:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 51:3-4, 18-19, 20-21",
+              "printed": "Psalm 51:3-4, 18-19, 20-21ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 18:9-14",
+              "printed": "Luke 18:9-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday3Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-4-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 65:17-21",
+              "printed": "Isaiah 65:17-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 30:2, 4, 5-6, 11-12, 13",
+              "printed": "Psalm 30:2 and 4, 5-6, 11-12a and 13b",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 4:43-54",
+              "printed": "John 4:43-54",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-4-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ez 47:1-9, 12",
+              "printed": "Ezekiel 47:1-9, 12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 46:2-3, 5-6, 8-9",
+              "printed": "Psalm 46:2-3, 5-6, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 5:1-16",
+              "printed": "John 5:1-16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-4-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 49:8-15",
+              "printed": "Isaiah 49:8-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:8-9, 13-14, 17-18",
+              "printed": "Psalm 145:8-9, 13cd-14, 17-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 5:17-30",
+              "printed": "John 5:17-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-4-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ex 32:7-14",
+              "printed": "Exodus 32:7-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 106:19-20, 21-22, 23",
+              "printed": "Psalm 106:19-20, 21-22, 23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 5:31-47",
+              "printed": "John 5:31-47",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-4-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Wis 2:1, 12-22",
+              "printed": "Wisdom 2:1a, 12-22",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:17-18, 19-20, 21, 23",
+              "printed": "Psalm 34:17-18, 19-20, 21 and 23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 7:1-2, 10, 25-30",
+              "printed": "John 7:1-2, 10, 25-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-4-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 11:18-20",
+              "printed": "Jeremiah 11:18-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 7:2-3, 9-10, 11-12",
+              "printed": "Psalm 7:2-3, 9bc-10, 11-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 7:40-53",
+              "printed": "John 7:40-53",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday4Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-5-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 13:1-9, 15-17, 19-30, 33-62",
+              "printed": "Daniel 13:1-9, 15-17, 19-30, 33-62",
+              "alternatives": [
+                {
+                  "ref": "Dn 13:41-62",
+                  "printed": "Daniel 13:41c-62"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 3-4, 5, 6",
+              "printed": "Psalm 23:1-3a, 3b-4, 5, 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 8:1-11",
+              "printed": "John 8:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-5-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 21:4-9",
+              "printed": "Numbers 21:4-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 102:2-3, 16-18, 19-21",
+              "printed": "Psalm 102:2-3, 16-18, 19-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 8:21-30",
+              "printed": "John 8:21-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-5-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 3:14-20, 91-92, 95",
+              "printed": "Daniel 3:14-20, 91-92, 95",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Dn 3:52, 53, 54, 55, 56",
+              "printed": "Daniel 3:52, 53, 54, 55, 56",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 8:31-42",
+              "printed": "John 8:31-42",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-5-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 17:3-9",
+              "printed": "Genesis 17:3-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 105:4-5, 6-7, 8-9",
+              "printed": "Psalm 105:4-5, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 8:51-59",
+              "printed": "John 8:51-59",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-5-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 20:10-13",
+              "printed": "Jeremiah 20:10-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 18:2-3, 3-4, 5-6, 7",
+              "printed": "Psalm 18:2-3a, 3bc-4, 5-6, 7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 10:31-42",
+              "printed": "John 10:31-42",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-5-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ez 37:21-28",
+              "printed": "Ezekiel 37:21-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Jer 31:10, 11-12, 13",
+              "printed": "Jeremiah 31:10, 11-12abcd, 13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 11:45-56",
+              "printed": "John 11:45-56",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-6-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 42:1-7",
+              "printed": "Isaiah 42:1-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#MonHolyWeek",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 27:1, 2, 3, 13-14",
+              "printed": "Psalm 27:1, 2, 3, 13-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#MonHolyWeek",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 12:1-11",
+              "printed": "John 12:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#MonHolyWeek",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-6-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 49:1-6",
+              "printed": "Isaiah 49:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#TueHolyWeek",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 71:1-2, 3-4, 5-6, 15, 17",
+              "printed": "Psalm 71:1-2, 3-4a, 5ab-6ab, 15 and 17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#TueHolyWeek",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 13:21-33, 36-38",
+              "printed": "John 13:21-33, 36-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#TueHolyWeek",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lent-weekday-6-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 50:4-9",
+              "printed": "Isaiah 50:4-9a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#WedHolyWeek",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 69:8-10, 21-22, 31, 33-34",
+              "printed": "Psalm 69:8-10, 21-22, 31 and 33-34",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#WedHolyWeek",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 26:14-25",
+              "printed": "Matthew 26:14-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#WedHolyWeek",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-2-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 4:23-31",
+              "printed": "Acts 4:23-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 2:1-3, 4-7, 7-9",
+              "printed": "Psalm 2:1-3, 4-7a, 7b-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:1-8",
+              "printed": "John 3:1-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-2-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 4:32-37",
+              "printed": "Acts 4:32-37",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 93:1, 1-2, 5",
+              "printed": "Psalm 93:1ab, 1cd-2, 5",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:7-15",
+              "printed": "John 3:7b-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-2-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 5:17-26",
+              "printed": "Acts 5:17-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:2-3, 4-5, 6-7, 8-9",
+              "printed": "Psalm 34:2-3, 4-5, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:16-21",
+              "printed": "John 3:16-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-2-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 5:27-33",
+              "printed": "Acts 5:27-33",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:2, 9, 17-18, 19-20",
+              "printed": "Psalm 34:2 and 9, 17-18, 19-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:31-36",
+              "printed": "John 3:31-36",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-2-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 5:34-42",
+              "printed": "Acts 5:34-42",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 27:1, 4, 13-14",
+              "printed": "Psalm 27:1, 4, 13-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:1-15",
+              "printed": "John 6:1-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-2-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 6:1-7",
+              "printed": "Acts 6:1-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 33:1-2, 4-5, 18-19",
+              "printed": "Psalm 33:1-2, 4-5, 18-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:16-21",
+              "printed": "John 6:16-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday2Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-3-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 6:8-15",
+              "printed": "Acts 6:8-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 119:23-24, 26-27, 29-30",
+              "printed": "Psalm 119:23-24, 26-27, 29-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:22-29",
+              "printed": "John 6:22-29",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-3-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 7:51-8:1",
+              "printed": "Acts 7:51—8:1a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 31:3-4, 6, 7, 8, 17, 21",
+              "printed": "Psalm 31:3cd-4, 6 and 7b and 8a, 17 and 21ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:30-35",
+              "printed": "John 6:30-35",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-3-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 8:1-8",
+              "printed": "Acts 8:1b-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 66:1-3, 4-5, 6-7",
+              "printed": "Psalm 66:1-3a, 4-5, 6-7a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:35-40",
+              "printed": "John 6:35-40",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-3-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 8:26-40",
+              "printed": "Acts 8:26-40",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 66:8-9, 16-17, 20",
+              "printed": "Psalm 66:8-9, 16-17, 20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:44-51",
+              "printed": "John 6:44-51",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-3-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 9:1-20",
+              "printed": "Acts 9:1-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 117:1, 2",
+              "printed": "Psalm 117:1bc, 2",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:52-59",
+              "printed": "John 6:52-59",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-3-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 9:31-42",
+              "printed": "Acts 9:31-42",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 116:12-13, 14-15, 16-17",
+              "printed": "Psalm 116:12-13, 14-15, 16-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:60-69",
+              "printed": "John 6:60-69",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday3Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-4-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 11:1-18",
+              "printed": "Acts 11:1-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 42:2-3; 43:3, 4",
+              "printed": "Psalm 42:2-3; 43:3, 4",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 10:11-18",
+              "printed": "John 10:11-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-4-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 11:19-26",
+              "printed": "Acts 11:19-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 87:1-3, 4-5, 6-7",
+              "printed": "Psalm 87:1b-3, 4-5, 6-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 10:22-30",
+              "printed": "John 10:22-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-4-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 12:24-13:5",
+              "printed": "Acts 12:24-13:5a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 67:2-3, 5, 6, 8",
+              "printed": "Psalm 67:2-3, 5, 6 and 8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 12:44-50",
+              "printed": "John 12:44-50",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-4-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 13:13-25",
+              "printed": "Acts 13:13-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 89:2-3, 21-22, 25, 27",
+              "printed": "Psalm 89:2-3, 21-22, 25 and 27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 13:16-20",
+              "printed": "John 13:16-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-4-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 13:26-33",
+              "printed": "Acts 13:26-33",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 2:6-7, 8-9, 10-11",
+              "printed": "Psalm 2:6-7, 8-9, 10-11ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 14:1-6",
+              "printed": "John 14:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-4-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 13:44-52",
+              "printed": "Acts 13:44-52",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4",
+              "printed": "Psalm 98:1, 2-3ab, 3cd-4",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 14:7-14",
+              "printed": "John 14:7-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-5-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 14:5-18",
+              "printed": "Acts 14:5-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 115:1-2, 3-4, 15-16",
+              "printed": "Psalm 115:1-2, 3-4, 15-16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 14:21-26",
+              "printed": "John 14:21-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-5-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 14:19-28",
+              "printed": "Acts 14:19-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:10-11, 12-13, 21",
+              "printed": "Psalm 145:10-11, 12-13ab, 21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 14:27-31",
+              "printed": "John 14:27-31a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-5-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 15:1-6",
+              "printed": "Acts 15:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 122:1-2, 3-4, 4-5",
+              "printed": "Psalm 122:1-2, 3-4ab, 4cd-5",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:1-8",
+              "printed": "John 15:1-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-5-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 15:7-21",
+              "printed": "Acts 15:7-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 2-3, 10",
+              "printed": "Psalm 96:1-2a, 2b-3, 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:9-11",
+              "printed": "John 15:9-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-5-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 15:22-31",
+              "printed": "Acts 15:22-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 57:8-9, 10, 12",
+              "printed": "Psalm 57:8-9, 10 and 12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:12-17",
+              "printed": "John 15:12-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-5-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 16:1-10",
+              "printed": "Acts 16:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 100:1-2, 3, 5",
+              "printed": "Psalm 100:1b-2, 3, 5",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:18-21",
+              "printed": "John 15:18-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday5Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-6-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 16:11-15",
+              "printed": "Acts 16:11-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 149:1-2, 3-4, 5-6, 9",
+              "printed": "Psalm 149:1b-2, 3-4, 5-6a and 9b",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:26-16:4",
+              "printed": "John 15:26-16:4a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-6-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 16:22-34",
+              "printed": "Acts 16:22-34",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 138:1-2, 2-3, 7-8",
+              "printed": "Psalm 138:1-2ab, 2cde-3, 7c-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 16:5-11",
+              "printed": "John 16:5-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-6-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 17:15, 22-18:1",
+              "printed": "Acts 17:15, 22-18:1",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 148:1-2, 11-12, 13, 14",
+              "printed": "Psalm 148:1-2, 11-12, 13, 14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 16:12-15",
+              "printed": "John 16:12-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-6-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 18:1-8",
+              "printed": "Acts 18:1-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4",
+              "printed": "Psalm 98:1, 2-3ab, 3cd-4",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 16:16-20",
+              "printed": "John 16:16-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-6-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 18:9-18",
+              "printed": "Acts 18:9-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 47:2-3, 4-5, 6-7",
+              "printed": "Psalm 47:2-3, 4-5, 6-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 16:20-23",
+              "printed": "John 16:20-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-6-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 18:23-28",
+              "printed": "Acts 18:23-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 47:2-3, 8-9, 10",
+              "printed": "Psalm 47:2-3, 8-9, 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 16:23-28",
+              "printed": "John 16:23b-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday6Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-7-mon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 19:1-8",
+              "printed": "Acts 19:1-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 68:2-3, 4-5, 6-7",
+              "printed": "Psalm 68:2-3ab, 4-5acd, 6-7ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Monday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 16:29-33",
+              "printed": "John 16:29-33",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Monday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-7-tue",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 20:17-27",
+              "printed": "Acts 20:17-27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 68:10-11, 20-21",
+              "printed": "Psalm 68:10-11, 20-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Tuesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 17:1-11",
+              "printed": "John 17:1-11a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Tuesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-7-wed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 20:28-38",
+              "printed": "Acts 20:28-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 68:29-30, 33-35, 35-36",
+              "printed": "Psalm 68:29-30, 33-35a, 35bc-36ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Wednesday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 17:11-19",
+              "printed": "John 17:11b-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Wednesday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-7-thu",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 22:30; 23:6-11",
+              "printed": "Acts 22:30; 23:6-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 16:1-2, 5, 7-8, 9-10, 11",
+              "printed": "Psalm 16:1-2a and 5, 7-8, 9-10, 11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Thursday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 17:20-26",
+              "printed": "John 17:20-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Thursday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-7-fri",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 25:13-21",
+              "printed": "Acts 25:13b-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 103:1-2, 11-12, 19-20",
+              "printed": "Psalm 103:1-2, 11-12, 19-20ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Friday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:15-19",
+              "printed": "John 21:15-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Friday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-weekday-7-sat",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 28:16-20, 30-31",
+              "printed": "Acts 28:16-20, 30-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 11:4, 5, 7",
+              "printed": "Psalm 11:4, 5 and 7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Saturday",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:20-25",
+              "printed": "John 21:20-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday7Saturday",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

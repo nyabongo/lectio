@@ -1,0 +1,359 @@
+{
+  "$comment": "LitCal leaves imported into the seasonal-weekdays block, proper of time (L-068). Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts seasonal-weekdays. Left out because their strings do not parse, and filled from OLM 1981 instead: LentWeekday1Thursday (Greek Esther lettered chapter) and LentWeekday3Monday (two psalms in one string).",
+  "target": "seasonal-weekdays/proper-of-time.json",
+  "kind": "proper-of-time",
+  "imports": [
+    {
+      "key": "advent-weekday-1-mon",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday1Monday"
+    },
+    {
+      "key": "advent-weekday-1-tue",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday1Tuesday"
+    },
+    {
+      "key": "advent-weekday-1-wed",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday1Wednesday"
+    },
+    {
+      "key": "advent-weekday-1-thu",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday1Thursday"
+    },
+    {
+      "key": "advent-weekday-1-fri",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday1Friday"
+    },
+    {
+      "key": "advent-weekday-1-sat",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday1Saturday"
+    },
+    {
+      "key": "advent-weekday-2-mon",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday2Monday"
+    },
+    {
+      "key": "advent-weekday-2-tue",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday2Tuesday"
+    },
+    {
+      "key": "advent-weekday-2-wed",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday2Wednesday"
+    },
+    {
+      "key": "advent-weekday-2-thu",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday2Thursday"
+    },
+    {
+      "key": "advent-weekday-2-fri",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday2Friday"
+    },
+    {
+      "key": "advent-weekday-2-sat",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday2Saturday"
+    },
+    {
+      "key": "advent-weekday-3-mon",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday3Monday"
+    },
+    {
+      "key": "advent-weekday-3-tue",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday3Tuesday"
+    },
+    {
+      "key": "advent-weekday-3-wed",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday3Wednesday"
+    },
+    {
+      "key": "advent-weekday-3-thu",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday3Thursday"
+    },
+    {
+      "key": "advent-weekday-3-fri",
+      "locator": "feriale_tempus_adventus/en.json#AdventWeekday3Friday"
+    },
+    {
+      "key": "lent-weekday-0-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#AshWednesday"
+    },
+    {
+      "key": "lent-weekday-0-thu",
+      "locator": "feriale_tempus_quadragesimae/en.json#ThursdayAfterAshWednesday"
+    },
+    {
+      "key": "lent-weekday-0-fri",
+      "locator": "feriale_tempus_quadragesimae/en.json#FridayAfterAshWednesday"
+    },
+    {
+      "key": "lent-weekday-0-sat",
+      "locator": "feriale_tempus_quadragesimae/en.json#SaturdayAfterAshWednesday"
+    },
+    {
+      "key": "lent-weekday-1-mon",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday1Monday"
+    },
+    {
+      "key": "lent-weekday-1-tue",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday1Tuesday"
+    },
+    {
+      "key": "lent-weekday-1-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday1Wednesday"
+    },
+    {
+      "key": "lent-weekday-1-fri",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday1Friday"
+    },
+    {
+      "key": "lent-weekday-1-sat",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday1Saturday"
+    },
+    {
+      "key": "lent-weekday-2-mon",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday2Monday"
+    },
+    {
+      "key": "lent-weekday-2-tue",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday2Tuesday"
+    },
+    {
+      "key": "lent-weekday-2-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday2Wednesday"
+    },
+    {
+      "key": "lent-weekday-2-thu",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday2Thursday"
+    },
+    {
+      "key": "lent-weekday-2-fri",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday2Friday"
+    },
+    {
+      "key": "lent-weekday-2-sat",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday2Saturday"
+    },
+    {
+      "key": "lent-weekday-3-tue",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday3Tuesday"
+    },
+    {
+      "key": "lent-weekday-3-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday3Wednesday"
+    },
+    {
+      "key": "lent-weekday-3-thu",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday3Thursday"
+    },
+    {
+      "key": "lent-weekday-3-fri",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday3Friday"
+    },
+    {
+      "key": "lent-weekday-3-sat",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday3Saturday"
+    },
+    {
+      "key": "lent-weekday-4-mon",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday4Monday"
+    },
+    {
+      "key": "lent-weekday-4-tue",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday4Tuesday"
+    },
+    {
+      "key": "lent-weekday-4-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday4Wednesday"
+    },
+    {
+      "key": "lent-weekday-4-thu",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday4Thursday"
+    },
+    {
+      "key": "lent-weekday-4-fri",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday4Friday"
+    },
+    {
+      "key": "lent-weekday-4-sat",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday4Saturday"
+    },
+    {
+      "key": "lent-weekday-5-mon",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday5Monday"
+    },
+    {
+      "key": "lent-weekday-5-tue",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday5Tuesday"
+    },
+    {
+      "key": "lent-weekday-5-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday5Wednesday"
+    },
+    {
+      "key": "lent-weekday-5-thu",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday5Thursday"
+    },
+    {
+      "key": "lent-weekday-5-fri",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday5Friday"
+    },
+    {
+      "key": "lent-weekday-5-sat",
+      "locator": "feriale_tempus_quadragesimae/en.json#LentWeekday5Saturday"
+    },
+    {
+      "key": "lent-weekday-6-mon",
+      "locator": "feriale_tempus_quadragesimae/en.json#MonHolyWeek"
+    },
+    {
+      "key": "lent-weekday-6-tue",
+      "locator": "feriale_tempus_quadragesimae/en.json#TueHolyWeek"
+    },
+    {
+      "key": "lent-weekday-6-wed",
+      "locator": "feriale_tempus_quadragesimae/en.json#WedHolyWeek"
+    },
+    {
+      "key": "easter-weekday-2-mon",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday2Monday"
+    },
+    {
+      "key": "easter-weekday-2-tue",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday2Tuesday"
+    },
+    {
+      "key": "easter-weekday-2-wed",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday2Wednesday"
+    },
+    {
+      "key": "easter-weekday-2-thu",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday2Thursday"
+    },
+    {
+      "key": "easter-weekday-2-fri",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday2Friday"
+    },
+    {
+      "key": "easter-weekday-2-sat",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday2Saturday"
+    },
+    {
+      "key": "easter-weekday-3-mon",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday3Monday"
+    },
+    {
+      "key": "easter-weekday-3-tue",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday3Tuesday"
+    },
+    {
+      "key": "easter-weekday-3-wed",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday3Wednesday"
+    },
+    {
+      "key": "easter-weekday-3-thu",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday3Thursday"
+    },
+    {
+      "key": "easter-weekday-3-fri",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday3Friday"
+    },
+    {
+      "key": "easter-weekday-3-sat",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday3Saturday"
+    },
+    {
+      "key": "easter-weekday-4-mon",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday4Monday"
+    },
+    {
+      "key": "easter-weekday-4-tue",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday4Tuesday"
+    },
+    {
+      "key": "easter-weekday-4-wed",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday4Wednesday"
+    },
+    {
+      "key": "easter-weekday-4-thu",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday4Thursday"
+    },
+    {
+      "key": "easter-weekday-4-fri",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday4Friday"
+    },
+    {
+      "key": "easter-weekday-4-sat",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday4Saturday"
+    },
+    {
+      "key": "easter-weekday-5-mon",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday5Monday"
+    },
+    {
+      "key": "easter-weekday-5-tue",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday5Tuesday"
+    },
+    {
+      "key": "easter-weekday-5-wed",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday5Wednesday"
+    },
+    {
+      "key": "easter-weekday-5-thu",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday5Thursday"
+    },
+    {
+      "key": "easter-weekday-5-fri",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday5Friday"
+    },
+    {
+      "key": "easter-weekday-5-sat",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday5Saturday"
+    },
+    {
+      "key": "easter-weekday-6-mon",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday6Monday"
+    },
+    {
+      "key": "easter-weekday-6-tue",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday6Tuesday"
+    },
+    {
+      "key": "easter-weekday-6-wed",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday6Wednesday"
+    },
+    {
+      "key": "easter-weekday-6-thu",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday6Thursday"
+    },
+    {
+      "key": "easter-weekday-6-fri",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday6Friday"
+    },
+    {
+      "key": "easter-weekday-6-sat",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday6Saturday"
+    },
+    {
+      "key": "easter-weekday-7-mon",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday7Monday"
+    },
+    {
+      "key": "easter-weekday-7-tue",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday7Tuesday"
+    },
+    {
+      "key": "easter-weekday-7-wed",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday7Wednesday"
+    },
+    {
+      "key": "easter-weekday-7-thu",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday7Thursday"
+    },
+    {
+      "key": "easter-weekday-7-fri",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday7Friday"
+    },
+    {
+      "key": "easter-weekday-7-sat",
+      "locator": "feriale_tempus_paschatis/en.json#EasterWeekday7Saturday"
+    }
+  ]
+}
