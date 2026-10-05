@@ -75,6 +75,26 @@ describe('word counts', () => {
   it('counts only Latin-script words as English', () => {
     expect(englishWordCount('ὀφθαλμός σου πονηρός, your eye evil')).toBe(3);
   });
+
+  // Psalm 1:1 from the committed OSHB corpus (corpus/hbo-oshb/PS/1.json), morpheme slashes removed: 15 words.
+  const PSALM_1_1 =
+    'אַ֥שְֽׁרֵי הָאִ֗ישׁ אֲשֶׁ֤ר לֹ֥א הָלַךְ֮ בַּעֲצַ֪ת רְשָׁ֫עִ֥ים וּבְדֶ֣רֶךְ חַ֭טָּאִים לֹ֥א עָמָ֑ד וּבְמוֹשַׁ֥ב לֵ֝צִ֗ים לֹ֣א יָשָֽׁב';
+  const JOHN_1_1 = 'Ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν';
+
+  it('counts a pointed Hebrew word as one word, not one per run of letters between marks', () => {
+    expect(wordCount(PSALM_1_1)).toBe(15);
+    expect(wordCount('אַ֥שְֽׁרֵי הָאִ֗ישׁ אֲשֶׁ֤ר לֹ֥א הָלַךְ֮')).toBe(5);
+  });
+
+  it('counts NFC and NFD polytonic Greek alike', () => {
+    expect(wordCount(JOHN_1_1)).toBe(12);
+    expect(wordCount(JOHN_1_1.normalize('NFD'))).toBe(12);
+  });
+
+  it('counts no English words in pointed Hebrew or decomposed Greek, and NFD English once per word', () => {
+    expect(englishWordCount(`${PSALM_1_1} ${JOHN_1_1.normalize('NFD')}`)).toBe(0);
+    expect(englishWordCount('a naïve café'.normalize('NFD'))).toBe(3);
+  });
 });
 
 describe('quotedSpans', () => {
@@ -89,6 +109,11 @@ describe('quotedSpans', () => {
   it('runs an unclosed double quote to the end of the text', () => {
     const text = 'He said “go into the vineyard';
     expect(quotedSpans(text)).toEqual([{ start: 9, end: text.length, unterminated: true }]);
+  });
+
+  it('does not close a quotation at a mark followed by a combining mark (it is inside a word)', () => {
+    // U+0331 COMBINING MACRON BELOW on the apostrophe, as some transliterations write it.
+    expect(inner("He wrote 'ba'\u0331al ha-bayit' here.")).toEqual(["ba'\u0331al ha-bayit"]);
   });
 
   it('runs an unclosed guillemet to the end of the text', () => {
