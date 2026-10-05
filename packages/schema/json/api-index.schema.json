@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nyabongo/lectio/schema/api-index.schema.json",
+  "title": "Lectio API v1 index",
+  "description": "Entry point of the static JSON API (/api/v1/index.json): build date, the dates and years available, and the endpoint templates relative to the API root.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "buildDate",
+    "timezone",
+    "defaultLocale",
+    "locales",
+    "apiRoot",
+    "years",
+    "dates",
+    "passageCount",
+    "endpoints"
+  ],
+  "properties": {
+    "apiVersion": { "const": 1 },
+    "buildDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "format": "date" },
+    "timezone": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+    "defaultLocale": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$" },
+    "locales": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$" }
+    },
+    "apiRoot": { "type": "string", "format": "uri", "pattern": "^https?://" },
+    "years": { "type": "array", "uniqueItems": true, "items": { "type": "integer", "minimum": 1970, "maximum": 9999 } },
+    "dates": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["first", "last"],
+          "properties": {
+            "first": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "format": "date" },
+            "last": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "format": "date" }
+          }
+        }
+      ]
+    },
+    "passageCount": { "type": "integer", "minimum": 0 },
+    "endpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "day", "passages", "passage", "calendar", "upcoming"],
+      "properties": {
+        "index": { "const": "index.json" },
+        "day": { "const": "days/{date}.json" },
+        "passages": { "const": "passages/index.json" },
+        "passage": { "const": "passages/{key}.json" },
+        "calendar": { "const": "calendar/{year}.json" },
+        "upcoming": { "const": "upcoming.json" }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "apiVersion": 1,
+  "buildDate": "2026-09-20",
+  "timezone": "Africa/Nairobi",
+  "defaultLocale": "en",
+  "locales": ["en"],
+  "apiRoot": "https://nyabongo.github.io/lectio/api/v1/",
+  "years": [2026],
+  "dates": {
+    "first": "2026-09-19",
+    "last": "2026-09-21"
+  },
+  "passageCount": 1,
+  "endpoints": {
+    "index": "index.json",
+    "day": "day/{date}.json",
+    "passages": "passages/index.json",
+    "passage": "passages/{key}.json",
+    "calendar": "calendar/{year}.json",
+    "upcoming": "upcoming.json"
+  }
+}
