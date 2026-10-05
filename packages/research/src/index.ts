@@ -10,13 +10,14 @@ export const packageName = '@lectio/research';
 export { PLAN_USAGE, UsageError, parsePlanArgs } from './plan/args.ts';
 export type { ParsePlanArgsOptions, PlanArgs } from './plan/args.ts';
 export { formatPlan } from './plan/format.ts';
-export { NEEDS_REVIEW_LABEL, RESEARCH_BRANCH_PREFIX, plan, researchBranch } from './plan/plan.ts';
+export { NEEDS_REVIEW_LABEL, RESEARCH_BRANCH_PREFIX, WEEK_MS, plan, researchBranch } from './plan/plan.ts';
 export type {
   LimitReason,
   Plan,
   PlanBudget,
   PlanCapacity,
   PlanInput,
+  PlanWeekly,
   SkipReason,
   SkippedItem,
   WorkItem,

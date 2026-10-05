@@ -1,13 +1,14 @@
 /**
  * The research planner (steps 1–2 of a run): list the passages the calendar needs in a date
  * window, drop the ones the repository already has or that already have an open research PR,
- * and cap what is left by reviewer capacity, the per-run budget and `--max`.
+ * and cap what is left by reviewer capacity (open review queue and weekly intake), the run
+ * budget and `--max`.
  *
  * It reads the content repository and lists PRs; it never writes anything or calls an LLM.
  */
 import type { LectioConfig } from '@lectio/config';
 import type { ContentRepo } from '@lectio/content';
-import type { GitHubClient } from '@lectio/providers';
+import type { GitHubClient, PullRequest } from '@lectio/providers';
 import type { CalendarDay } from '@lectio/schema/calendar';
 import { PASSAGE_KEY_PATTERN } from '@lectio/schema/common';
 import { addDays, dateRange, isIsoDate } from '@lectio/shared';
@@ -16,7 +17,10 @@ import type { IsoDate } from '@lectio/shared';
 /** Branch prefix of research PRs: one branch (and PR) per passage, `research/<key>`. */
 export const RESEARCH_BRANCH_PREFIX = 'research/';
 
-/** Label the merge rule puts on a PR that waits for a person; these PRs use reviewer capacity. */
+/**
+ * Label the merge rule puts on a PR that waits for a person. Open PRs with this label, together
+ * with open research PRs whose gates have not finished yet, use reviewer capacity.
+ */
 export const NEEDS_REVIEW_LABEL = 'needs-review';
 
 /** The research branch for a passage key. */
@@ -41,7 +45,10 @@ export interface WorkItem {
 export type SkipReason = 'exists' | 'open-pr' | LimitReason;
 
 /** The cap that limits how many passages one run plans. */
-export type LimitReason = 'capacity' | 'budget' | 'max';
+export type LimitReason = 'capacity' | 'weekly' | 'budget' | 'max';
+
+/** Days counted by `reviewer.weeklyCapacity`. */
+export const WEEK_MS = 7 * 86_400_000;
 
 export interface SkippedItem extends WorkItem {
   readonly reason: SkipReason;
@@ -50,16 +57,28 @@ export interface SkippedItem extends WorkItem {
 }
 
 export interface PlanCapacity {
-  /** Open PRs labelled `needs-review`. */
+  /**
+   * Open PRs that are or may become review work: those labelled `needs-review` plus open
+   * non-fork PRs on `research/*` (their gates may still be running), each PR counted once.
+   */
   readonly openReviewPrs: number;
   readonly maxOpenReviewPrs: number;
   /** How many more PRs reviewers can take: `maxOpenReviewPrs - openReviewPrs`, at least 0. */
   readonly available: number;
 }
 
+export interface PlanWeekly {
+  /** Non-fork PRs on `research/*` (any state) created in the 7 days before `now`. */
+  readonly openedLast7Days: number;
+  readonly weeklyCapacity: number;
+  /** `weeklyCapacity - openedLast7Days`, at least 0. */
+  readonly available: number;
+}
+
 export interface PlanBudget {
   /** The up-front estimate per passage (`research.budget.perPassageUsd` unless overridden). */
   readonly perPassageUsd: number;
+  /** The run ceiling (`research.budget.perRunUsd` unless overridden). */
   readonly perRunUsd: number;
   /** Passages the run budget covers at the estimate; `null` when the estimate is 0 (no limit). */
   readonly affordable: number | null;
@@ -83,8 +102,9 @@ export interface Plan {
   /** Window dates whose calendar day says the lectionary data is missing. */
   readonly lectionaryMissingDates: readonly IsoDate[];
   readonly capacity: PlanCapacity;
+  readonly weekly: PlanWeekly;
   readonly budget: PlanBudget;
-  /** The most items this run may plan: the tightest of capacity, budget and `max`. */
+  /** The most items this run may plan: the tightest of capacity, weekly intake, budget and `max`. */
   readonly limit: number;
   /** The cap that cut off at least one passage, or `null` when every candidate fit. */
   readonly limitedBy: LimitReason | null;
@@ -97,12 +117,16 @@ export interface PlanInput {
   readonly repo: Pick<ContentRepo, 'calendarYear' | 'passageKeys' | 'datesForPassage'>;
   readonly github: Pick<GitHubClient, 'listPrs'>;
   readonly config: Pick<LectioConfig, 'reviewer' | 'research'>;
+  /** "Now", for the 7-day window of `reviewer.weeklyCapacity`. */
+  readonly now: Date;
   /** Plan this passage key only. Outside the window, its calendar dates from `from` on are used. */
   readonly only?: string;
   /** Plan at most this many passages (at least 1). */
   readonly max?: number;
   /** Override the per-passage estimate (for example a measured average); default `research.budget.perPassageUsd`. */
   readonly perPassageUsd?: number;
+  /** Override the run ceiling (for example back-fill's `backfillTotalUsd`); default `research.budget.perRunUsd`. */
+  readonly perRunUsd?: number;
 }
 
 const KEY_SHAPE = new RegExp(PASSAGE_KEY_PATTERN);
@@ -146,6 +170,10 @@ function assertInput(input: PlanInput): void {
   if (input.perPassageUsd !== undefined && !(input.perPassageUsd >= 0)) {
     throw new RangeError(`perPassageUsd must be a non-negative number, got ${input.perPassageUsd}`);
   }
+  if (input.perRunUsd !== undefined && !(input.perRunUsd >= 0)) {
+    throw new RangeError(`perRunUsd must be a non-negative number, got ${input.perRunUsd}`);
+  }
+  if (Number.isNaN(input.now.getTime())) throw new RangeError('now must be a valid Date');
 }
 
 const roundCents = (usd: number): number => Math.round(usd * 100) / 100;
@@ -171,20 +199,27 @@ export async function plan(input: PlanInput): Promise<Plan> {
   }
 
   const existing = new Set(repo.passageKeys());
-  const openPrs = await github.listPrs({ state: 'open' });
-  const prByBranch = new Map(openPrs.map((pr) => [pr.head, pr.number]));
-  const openReviewPrs = openPrs.filter((pr) => pr.labels.includes(NEEDS_REVIEW_LABEL)).length;
+  const prs = await github.listPrs({ state: 'all' });
+  const isResearch = (pr: PullRequest): boolean => !pr.fork && pr.head.startsWith(RESEARCH_BRANCH_PREFIX);
+  const openPrs = prs.filter((pr) => pr.state === 'open');
+  // Fork PRs never block a key: anyone can name a fork branch `research/<key>`.
+  const prByBranch = new Map(openPrs.filter((pr) => !pr.fork).map((pr) => [pr.head, pr.number]));
+  const openReviewPrs = openPrs.filter((pr) => pr.labels.includes(NEEDS_REVIEW_LABEL) || isResearch(pr)).length;
+  const weekStart = input.now.getTime() - WEEK_MS;
+  const openedLast7Days = prs.filter((pr) => isResearch(pr) && Date.parse(pr.createdAt) > weekStart).length;
 
-  const { maxOpenReviewPrs } = config.reviewer;
+  const { maxOpenReviewPrs, weeklyCapacity } = config.reviewer;
   const available = Math.max(0, maxOpenReviewPrs - openReviewPrs);
+  const weeklyAvailable = Math.max(0, weeklyCapacity - openedLast7Days);
   const perPassageUsd = input.perPassageUsd ?? config.research.budget.perPassageUsd;
-  const { perRunUsd } = config.research.budget;
+  const perRunUsd = input.perRunUsd ?? config.research.budget.perRunUsd;
   // A small epsilon so 25 / 1.25 counts as 20 despite floating point.
   const affordable = perPassageUsd === 0 ? null : Math.floor(perRunUsd / perPassageUsd + 1e-9);
 
-  // The tightest cap wins; on a tie the earlier one (capacity, budget, max) is reported.
+  // The tightest cap wins; on a tie the earlier one (capacity, weekly, budget, max) is reported.
   let limit = available;
   let limitReason: LimitReason = 'capacity';
+  if (weeklyAvailable < limit) [limit, limitReason] = [weeklyAvailable, 'weekly'];
   if (affordable !== null && affordable < limit) [limit, limitReason] = [affordable, 'budget'];
   if (max !== undefined && max < limit) [limit, limitReason] = [max, 'max'];
 
@@ -211,6 +246,7 @@ export async function plan(input: PlanInput): Promise<Plan> {
     missingDates,
     lectionaryMissingDates,
     capacity: { openReviewPrs, maxOpenReviewPrs, available },
+    weekly: { openedLast7Days, weeklyCapacity, available: weeklyAvailable },
     budget: { perPassageUsd, perRunUsd, affordable, estimatedUsd: roundCents(items.length * perPassageUsd) },
     limit,
     limitedBy,

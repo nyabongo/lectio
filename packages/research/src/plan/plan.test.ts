@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
 import { openRepo } from '@lectio/content';
-import { FakeGitHubClient } from '@lectio/providers';
+import { FakeClock, FakeGitHubClient } from '@lectio/providers';
 import { describe, expect, it } from 'vitest';
 
 import { NEEDS_REVIEW_LABEL, plan, researchBranch } from './plan.ts';
@@ -28,6 +28,7 @@ const MISSING = WINDOW_KEYS.filter((key) => key !== 'IS.55.6-9');
 
 interface Options {
   readonly maxOpenReviewPrs?: number;
+  readonly weeklyCapacity?: number;
   readonly perRunUsd?: number;
   readonly perPassageUsd?: number;
 }
@@ -35,7 +36,11 @@ interface Options {
 function configWith(options: Options = {}): LectioConfig {
   return {
     ...DEFAULT_CONFIG,
-    reviewer: { ...DEFAULT_CONFIG.reviewer, maxOpenReviewPrs: options.maxOpenReviewPrs ?? 15 },
+    reviewer: {
+      ...DEFAULT_CONFIG.reviewer,
+      maxOpenReviewPrs: options.maxOpenReviewPrs ?? 15,
+      weeklyCapacity: options.weeklyCapacity ?? 15,
+    },
     research: {
       ...DEFAULT_CONFIG.research,
       budget: {
@@ -59,11 +64,21 @@ async function openPr(github: FakeGitHubClient, head: string, labels: readonly s
 }
 
 function setup(options: Options = {}) {
-  const github = new FakeGitHubClient();
+  // The fake stamps every mutation from this clock; `run` plans "now" on the same clock.
+  const clock = new FakeClock({ start: '2026-09-28T00:00:00Z' });
+  const github = new FakeGitHubClient({ clock });
   const repo = openRepo(FIXTURE_REPO);
   const run = (overrides: Partial<PlanInput> = {}) =>
-    plan({ from: '2026-10-01', days: 7, repo, github, config: configWith(options), ...overrides });
-  return { github, repo, run };
+    plan({
+      from: '2026-10-01',
+      days: 7,
+      repo,
+      github,
+      config: configWith(options),
+      now: new Date(clock.now().getTime() + 60_000),
+      ...overrides,
+    });
+  return { clock, github, repo, run };
 }
 
 const keys = (items: readonly { key: string }[]) => items.map((item) => item.key);
@@ -149,6 +164,17 @@ describe('plan: skips', () => {
     expect(keys((await run()).items)).toContain('PS.139.1-3');
   });
 
+  it('ignores fork PRs on a research/<key> branch name', async () => {
+    const { github, run } = setup();
+    await github.createBranch({ name: researchBranch('PS.139.1-3') });
+    await github
+      .as('contributor')
+      .openForkPr({ head: researchBranch('PS.139.1-3'), headRepo: 'contributor/lectio', title: 'x', body: '' });
+    const result = await run();
+    expect(keys(result.items)).toEqual(MISSING);
+    expect(result.weekly.openedLast7Days).toBe(0);
+  });
+
   it('reports an existing file before an open PR for the same key', async () => {
     const { github, run } = setup();
     await openPr(github, researchBranch('IS.55.6-9'));
@@ -157,17 +183,39 @@ describe('plan: skips', () => {
 });
 
 describe('plan: caps', () => {
-  it('caps by reviewer capacity: maxOpenReviewPrs minus open needs-review PRs', async () => {
+  it('caps by reviewer capacity: open needs-review PRs and open research PRs, each counted once', async () => {
+    const { github, run } = setup({ maxOpenReviewPrs: 4 });
+    await openPr(github, 'research/OLD.1.1', ['research', NEEDS_REVIEW_LABEL]);
+    await openPr(github, 'research/OTHER.1.1', ['research']);
+    await openPr(github, 'fix/typo', [NEEDS_REVIEW_LABEL]);
+    const result = await run();
+    expect(result.capacity).toEqual({ openReviewPrs: 3, maxOpenReviewPrs: 4, available: 1 });
+    expect(result.limit).toBe(1);
+    expect(result.limitedBy).toBe('capacity');
+    expect(keys(result.items)).toEqual(MISSING.slice(0, 1));
+    const capped = result.skipped.filter((item) => item.reason === 'capacity');
+    expect(keys(capped)).toEqual(MISSING.slice(1));
+  });
+
+  it('counts an unlabelled research PR (gates still running) but not an unlabelled other PR', async () => {
     const { github, run } = setup({ maxOpenReviewPrs: 3 });
     await openPr(github, 'research/OLD.1.1', ['research', NEEDS_REVIEW_LABEL]);
     await openPr(github, 'research/OTHER.1.1', ['research']);
+    await openPr(github, 'feature/x', []);
     const result = await run();
-    expect(result.capacity).toEqual({ openReviewPrs: 1, maxOpenReviewPrs: 3, available: 2 });
-    expect(result.limit).toBe(2);
-    expect(result.limitedBy).toBe('capacity');
-    expect(keys(result.items)).toEqual(MISSING.slice(0, 2));
-    const capped = result.skipped.filter((item) => item.reason === 'capacity');
-    expect(keys(capped)).toEqual(MISSING.slice(2));
+    expect(result.capacity).toEqual({ openReviewPrs: 2, maxOpenReviewPrs: 3, available: 1 });
+  });
+
+  it('does not count merged research PRs or fork PRs without the label against the review queue', async () => {
+    const { github, run } = setup({ maxOpenReviewPrs: 3 });
+    const merged = await openPr(github, 'research/DONE.1.1');
+    await github.mergePr(merged.number, { matchHeadSha: merged.headSha });
+    await github.createBranch({ name: 'research/FORK.1.1' });
+    await github
+      .as('contributor')
+      .openForkPr({ head: 'research/FORK.1.1', headRepo: 'contributor/lectio', title: 'fork', body: '' });
+    const result = await run();
+    expect(result.capacity.openReviewPrs).toBe(0);
   });
 
   it('plans nothing when the review queue is already over capacity', async () => {
@@ -202,6 +250,42 @@ describe('plan: caps', () => {
     expect(keys(free.items)).toEqual(MISSING);
   });
 
+  it('overrides the run ceiling', async () => {
+    const { run } = setup();
+    const result = await run({ perRunUsd: 3 });
+    expect(result.budget).toMatchObject({ perRunUsd: 3, affordable: 2, estimatedUsd: 3 });
+    expect(result.limitedBy).toBe('budget');
+    const none = await run({ perRunUsd: 0 });
+    expect(none.items).toEqual([]);
+    expect(none.limitedBy).toBe('budget');
+  });
+
+  it('caps by weekly capacity: research PRs created in the last 7 days, in any state', async () => {
+    const { clock, github, run } = setup({ weeklyCapacity: 4 });
+    await openPr(github, 'research/OLD.1.1'); // falls out of the window below
+    clock.advance(8 * 86_400_000);
+    const merged = await openPr(github, 'research/A.1.1');
+    await github.mergePr(merged.number, { matchHeadSha: merged.headSha });
+    await openPr(github, 'research/B.1.1');
+    await openPr(github, 'feature/not-research');
+    const result = await run();
+    expect(result.weekly).toEqual({ openedLast7Days: 2, weeklyCapacity: 4, available: 2 });
+    expect(result.limit).toBe(2);
+    expect(result.limitedBy).toBe('weekly');
+    expect(keys(result.items)).toEqual(MISSING.slice(0, 2));
+    expect(keys(result.skipped.filter((item) => item.reason === 'weekly'))).toEqual(MISSING.slice(2));
+  });
+
+  it('plans nothing once the weekly capacity is used', async () => {
+    const { github, run } = setup({ weeklyCapacity: 1 });
+    const merged = await openPr(github, 'research/A.1.1');
+    await github.mergePr(merged.number, { matchHeadSha: merged.headSha });
+    const result = await run();
+    expect(result.weekly.available).toBe(0);
+    expect(result.items).toEqual([]);
+    expect(result.limitedBy).toBe('weekly');
+  });
+
   it('caps by --max', async () => {
     const { run } = setup();
     const result = await run({ max: 1 });
@@ -224,7 +308,7 @@ describe('plan: caps', () => {
   });
 
   it('does not spend capacity on skipped passages', async () => {
-    const { github, run } = setup({ maxOpenReviewPrs: 2 });
+    const { github, run } = setup({ maxOpenReviewPrs: 3 });
     await openPr(github, researchBranch('JOB.19.21-27'));
     const result = await run();
     expect(keys(result.items)).toEqual(['PS.27.7-9_27.13-14', 'LK.10.1-12']);
@@ -273,6 +357,8 @@ describe('plan: input validation', () => {
     [{ only: 'not a key' }, /only must be a passage key/],
     [{ perPassageUsd: -1 }, /perPassageUsd must be a non-negative number/],
     [{ perPassageUsd: Number.NaN }, /perPassageUsd must be a non-negative number/],
+    [{ perRunUsd: -0.5 }, /perRunUsd must be a non-negative number/],
+    [{ now: new Date('nope') }, /now must be a valid Date/],
   ] as const)('rejects %o', async (overrides, message) => {
     const { run } = setup();
     await expect(run(overrides)).rejects.toThrow(message);

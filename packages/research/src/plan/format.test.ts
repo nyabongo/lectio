@@ -15,6 +15,7 @@ const base: Plan = {
   missingDates: [],
   lectionaryMissingDates: [],
   capacity: { openReviewPrs: 2, maxOpenReviewPrs: 15, available: 13 },
+  weekly: { openedLast7Days: 5, weeklyCapacity: 15, available: 10 },
   budget: { perPassageUsd: 1.5, perRunUsd: 25, affordable: 16, estimatedUsd: 1.5 },
   limit: 13,
   limitedBy: null,
@@ -25,7 +26,8 @@ describe('formatPlan', () => {
     expect(formatPlan(base)).toBe(
       [
         'Research plan 2026-10-01 to 2026-10-14 (14 days)',
-        'Reviewer capacity: 2 of 15 review PRs open, room for 13',
+        'Reviewer capacity: 2 of 15 review or research PRs open, room for 13',
+        'Weekly capacity: 5 of 15 research PRs opened in the last 7 days, room for 10',
         'Budget: $1.50 per passage, $25.00 per run, room for 16',
         '',
         'To research (1, estimated $1.50):',
@@ -40,6 +42,7 @@ describe('formatPlan', () => {
       { ...item('IS.55.6-9', '2026-10-02'), reason: 'exists' },
       { ...item('PS.139.1-3', '2026-10-02'), reason: 'open-pr', pr: 7 },
       { ...item('GN.2.18-24', '2026-10-04'), reason: 'capacity' },
+      { ...item('HEB.2.9-11', '2026-10-04'), reason: 'weekly' },
       { ...item('MK.10.2-16', '2026-10-04'), reason: 'budget' },
       { ...item('GAL.1.13-24', '2026-10-06'), reason: 'max' },
     ];
@@ -58,10 +61,11 @@ describe('formatPlan', () => {
     expect(text).toContain('To research (0, estimated $0.00):\n  (none)\n');
     expect(text).toContain(
       [
-        'Skipped (5):',
+        'Skipped (6):',
         '  2026-10-02  IS.55.6-9  passage file exists',
         '  2026-10-02  PS.139.1-3  open PR #7',
         '  2026-10-04  GN.2.18-24  reviewer capacity reached',
+        '  2026-10-04  HEB.2.9-11  weekly review capacity reached',
         '  2026-10-04  MK.10.2-16  run budget reached',
         '  2026-10-06  GAL.1.13-24  --max reached',
       ].join('\n'),

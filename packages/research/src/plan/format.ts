@@ -9,6 +9,8 @@ function skipNote(item: SkippedItem): string {
       return `open PR #${String(item.pr)}`;
     case 'capacity':
       return 'reviewer capacity reached';
+    case 'weekly':
+      return 'weekly review capacity reached';
     case 'budget':
       return 'run budget reached';
     case 'max':
@@ -21,10 +23,11 @@ function dateList(dates: readonly string[]): string {
 }
 
 export function formatPlan(plan: Plan): string {
-  const { capacity, budget } = plan;
+  const { capacity, weekly, budget } = plan;
   const lines = [
     `Research plan ${plan.from} to ${plan.to} (${String(plan.days)} days)`,
-    `Reviewer capacity: ${String(capacity.openReviewPrs)} of ${String(capacity.maxOpenReviewPrs)} review PRs open, room for ${String(capacity.available)}`,
+    `Reviewer capacity: ${String(capacity.openReviewPrs)} of ${String(capacity.maxOpenReviewPrs)} review or research PRs open, room for ${String(capacity.available)}`,
+    `Weekly capacity: ${String(weekly.openedLast7Days)} of ${String(weekly.weeklyCapacity)} research PRs opened in the last 7 days, room for ${String(weekly.available)}`,
     `Budget: $${budget.perPassageUsd.toFixed(2)} per passage, $${budget.perRunUsd.toFixed(2)} per run` +
       (budget.affordable === null ? '' : `, room for ${String(budget.affordable)}`),
     '',
