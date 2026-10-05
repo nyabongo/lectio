@@ -66,6 +66,10 @@ interface BookTable {
 
 interface SchemeTable {
   readonly file: VrsFile;
+  /** The scheme's Lectio supplement (mapping and exclusion lines only). */
+  readonly supplement: VrsFile;
+  /** Verses the file or the supplement excludes. */
+  readonly excluded: ReadonlySet<string>;
   readonly books: Map<BookCode, BookTable>;
   /** `BOOK c` of a source chapter → the Lectio book and spans that use it. */
   reverse?: Map<string, { book: BookCode; c: number; span: ResolvedSpan }[]>;
@@ -94,7 +98,9 @@ export function createVersification(data: VersificationData): Versification {
     const def = definition(scheme);
     let table = tables.get(scheme);
     if (!table) {
-      table = { file: parseVrs(text(def.file)), books: new Map() };
+      const file = parseVrs(text(def.file));
+      const supplement = parseVrs(def.supplement === undefined ? '' : text(def.supplement));
+      table = { file, supplement, excluded: new Set([...file.excluded, ...supplement.excluded]), books: new Map() };
       tables.set(scheme, table);
     }
     return table;
@@ -143,7 +149,7 @@ export function createVersification(data: VersificationData): Versification {
     const span = spanOf(verse, scheme);
     if (!span) return undefined;
     const source = { book: span.book, c: span.sc, v: verse.v + span.shift };
-    return schemeTable(scheme).file.excluded.has(sourceKey(source)) ? undefined : source;
+    return schemeTable(scheme).excluded.has(sourceKey(source)) ? undefined : source;
   };
 
   const verseExists = (verse: VerseId, scheme: Scheme): boolean =>
@@ -178,8 +184,7 @@ export function createVersification(data: VersificationData): Versification {
   ): { toOriginal: Map<string, SourceVerse>; fromOriginal: Map<string, SourceVerse> } => {
     const table = schemeTable(scheme);
     if (!table.toOriginal || !table.fromOriginal) {
-      const supplement = definition(scheme).supplement;
-      const pairs = [...(supplement === undefined ? [] : parseVrs(text(supplement)).mappings), ...table.file.mappings];
+      const pairs = [...table.supplement.mappings, ...table.file.mappings];
       const toOriginal = new Map<string, SourceVerse>();
       const fromOriginal = new Map<string, SourceVerse>();
       for (const { from, to } of pairs) {
@@ -198,8 +203,13 @@ export function createVersification(data: VersificationData): Versification {
   const toCanonical = (verse: VerseId, scheme: Scheme): VerseId | undefined => {
     if (scheme === 'original') return verse;
     const source = sourceOf(verse, scheme) as SourceVerse;
-    const original = mappings(scheme).toOriginal.get(sourceKey(source)) ?? source;
-    return fromSourceVerse(original, 'original');
+    const { toOriginal, fromOriginal } = mappings(scheme);
+    const mapped = toOriginal.get(sourceKey(source));
+    if (mapped) return fromSourceVerse(mapped, 'original');
+    // Same number, unless that original verse is mapped from another verse of the scheme.
+    const claimed = fromOriginal.get(sourceKey(source));
+    if (claimed && sourceKey(claimed) !== sourceKey(source)) return undefined;
+    return fromSourceVerse(source, 'original');
   };
 
   /** `original` verse → scheme verse. */
@@ -229,6 +239,8 @@ export function createVersification(data: VersificationData): Versification {
       : new VersificationError(code, `${where} ${detail}`);
 
   const tryMapVerse = (verse: VerseId, from: Scheme, to: Scheme): VerseId | undefined => {
+    // Same scheme: no detour through `original`, where a many-to-one mapping could move the verse.
+    if (from === to) return { book: verse.book, c: verse.c, v: verse.v };
     const canonical = toCanonical(verse, from);
     return canonical && fromCanonical(canonical, to);
   };

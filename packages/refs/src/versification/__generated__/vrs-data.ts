@@ -1778,6 +1778,8 @@ S3Y 1:38-68 = DAG 3:60-90
 `,
   vulSupplement: `
 JON 2:1-11 = JON 2:1-11
+-PSA 115:1-9
+-PSA 147:1-11
 `,
   lxxSupplement: `
 DAG 3:24-90 = S3Y 1:1-67

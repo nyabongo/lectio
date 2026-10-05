@@ -22,7 +22,7 @@
           "path": "vul.vrs",
           "upstream": "SIL.Scripture/Resources/vul.vrs.txt",
           "scheme": "vulgate",
-          "notes": "Stuttgart Vulgate (VUL83) and Nova Vulgata (NVL98). Upstream gives no mapping for Tobit, Judith, Sirach or Esther.",
+          "notes": "Stuttgart Vulgate numbering, with Clementine / Douay-Rheims chapter divisions (Joel 3 chapters, Malachi 4). Not the Nova Vulgata, which follows the Hebrew chapter divisions outside the Psalms. Psalms 115 and 147 are numbered from verses 10 and 12. Upstream gives no mapping for Tobit, Judith, Sirach or Esther.",
           "sha256": "f3312f4f0ffcbf48a43a20f88212a64b070b100b2764d912481c5e481a015c51"
         },
         {
@@ -50,8 +50,8 @@
         {
           "path": "vul.supplement.vrs",
           "scheme": "vulgate",
-          "notes": "Jonah follows vul.vrs's own chapter table (Hebrew division, 1:16 2:11) instead of its mapping lines, which assume the English division.",
-          "sha256": "4a72827a25c9fec62f655adeeeaa271c98abc46486ddf013c6c6d1b9f94f694a"
+          "notes": "Jonah follows vul.vrs's own chapter table (Hebrew division, 1:16 2:11) instead of its mapping lines, which assume the English division. Psalms 115:1-9 and 147:1-11 are excluded, because vul.vrs numbers those psalms from verses 10 and 12.",
+          "sha256": "cfbc0e2e13be511d7a9bd9b7356e50f3d7a2625b8c58770748c4d318cefe6064"
         },
         {
           "path": "lxx.supplement.vrs",

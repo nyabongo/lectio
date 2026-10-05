@@ -20,6 +20,9 @@ import {
   verseCounts,
 } from './index.ts';
 import type { Scheme, VersificationError } from './index.ts';
+import { SCHEME_DEFINITIONS, parseVrs, sourceKey } from './index.ts';
+import { VRS_DATA } from './__generated__/vrs-data.ts';
+import type { VrsName } from './embed.ts';
 
 const v = (book: BookCode, c: number, verse: number): VerseId => ({ book, c, v: verse });
 const at = (verse: VerseId): string => `${verse.book} ${verse.c}:${verse.v}`;
@@ -291,25 +294,96 @@ describe('source verses', () => {
   });
 });
 
-describe('round trips over every canonical verse', () => {
-  it.each(['vulgate', 'lxx', 'english'] as const)('original → %s → original returns the verse or a merge', (scheme) => {
-    let exact = 0;
-    for (const book of BOOKS) {
-      for (let c = 1; c <= chapterCount(book.code); c++) {
-        for (let n = 1; n <= (chapterLength(book.code, c) ?? 0); n++) {
-          let there: VerseId;
-          try {
-            there = mapVerse(v(book.code, c, n), 'original', scheme);
-          } catch (error) {
-            expect((error as VersificationError).code).toMatch(/NO_COUNTERPART|UNSUPPORTED_GREEK_ESTHER/);
-            continue;
-          }
-          expect(isRealVerse(there, scheme)).toBe(true);
-          const back = mapVerse(there, scheme, 'original');
-          if (back.c === c && back.v === n) exact++;
-        }
+/** Scheme verses that a mapping line names explicitly (as opposed to passing through by number). */
+const listed = (scheme: Exclude<Scheme, 'original'>): Set<string> => {
+  const { file, supplement } = SCHEME_DEFINITIONS[scheme];
+  const texts = [VRS_DATA[file as VrsName], supplement === undefined ? '' : VRS_DATA[supplement as VrsName]];
+  return new Set(texts.flatMap((text) => parseVrs(text).mappings.map(({ from }) => sourceKey(from))));
+};
+
+/** Every verse of `scheme`, in order. */
+function* verses(scheme: Scheme): Generator<VerseId> {
+  for (const book of BOOKS) {
+    for (let c = 1; c <= chapterCount(book.code, scheme); c++) {
+      for (let n = 1; n <= (chapterLength(book.code, c, scheme) ?? 0); n++) {
+        const verse = v(book.code, c, n);
+        if (isRealVerse(verse, scheme)) yield verse;
       }
     }
+  }
+}
+
+/**
+ * A round trip may come back to a different verse only through a many-to-one
+ * mapping line that names the scheme verse; a verse that passes through by
+ * number must come back unchanged. This catches phantom verses such as
+ * Vulgate Ps 115:1-9 (the Stuttgart numbering starts that psalm at verse 10).
+ */
+describe.each(['vulgate', 'lxx', 'english'] as const)('round trips through %s', (scheme) => {
+  const names = listed(scheme);
+
+  it('original → scheme → original', () => {
+    let exact = 0;
+    for (const verse of verses('original')) {
+      let there: VerseId;
+      try {
+        there = mapVerse(verse, 'original', scheme);
+      } catch (error) {
+        expect((error as VersificationError).code).toMatch(/NO_COUNTERPART|UNSUPPORTED_GREEK_ESTHER/);
+        continue;
+      }
+      expect(isRealVerse(there, scheme)).toBe(true);
+      const back = mapVerse(there, scheme, 'original');
+      if (at(back) === at(verse)) exact++;
+      else expect(names.has(sourceKey(toSourceVerse(there, scheme))), `${at(verse)} → ${at(there)}`).toBe(true);
+    }
     expect(exact).toBeGreaterThan(35_000);
+  });
+
+  it('scheme → original → scheme', () => {
+    let exact = 0;
+    for (const verse of verses(scheme)) {
+      let canonical: VerseId;
+      try {
+        canonical = mapVerse(verse, scheme, 'original');
+      } catch (error) {
+        expect((error as VersificationError).code).toMatch(/NO_COUNTERPART|UNSUPPORTED_GREEK_ESTHER/);
+        continue;
+      }
+      const back = mapVerse(canonical, 'original', scheme);
+      if (at(back) === at(verse)) exact++;
+      else expect(names.has(sourceKey(toSourceVerse(verse, scheme))), `${at(verse)} → ${at(canonical)}`).toBe(true);
+    }
+    expect(exact).toBeGreaterThan(35_000);
+  });
+});
+
+describe('known losses', () => {
+  it('rejects the Vulgate psalm verses that the Stuttgart numbering skips', () => {
+    for (const verse of [v('PS', 115, 1), v('PS', 115, 9), v('PS', 147, 1), v('PS', 147, 11)]) {
+      expect(isRealVerse(verse, 'vulgate')).toBe(false);
+      expect(code(() => mapVerse(verse, 'vulgate', 'original'))).toBe('UNKNOWN_VERSE');
+    }
+    expect(chapterLength('PS', 115, 'vulgate')).toBe(19);
+    expect(map('PS', 115, 10, 'vulgate', 'original')).toBe('PS 116:10');
+    expect(map('PS', 147, 12, 'vulgate', 'original')).toBe('PS 147:12');
+    expect(map('PS', 147, 1, 'original', 'vulgate')).toBe('PS 146:1');
+    expect(map('PS', 115, 1, 'original', 'vulgate')).toBe('PS 113:9');
+    expect(mapText('Ps 115-116', 'vulgate', 'original')).toBe('Ps 116:10–117:2');
+    expect(mapText('Ps 115:10-19', 'vulgate', 'original')).toBe('Ps 116:10–19');
+  });
+
+  it('loses 70 Hebrew Exodus verses in the LXX, whose chapters 35-40 are shorter and reordered', () => {
+    const lost = [...verses('original')].filter(
+      (verse) => verse.book === 'EX' && code(() => mapVerse(verse, 'original', 'lxx')) === 'NO_COUNTERPART',
+    );
+    expect(lost).toHaveLength(70);
+    expect(lost.map(at)).toContain('EX 25:6');
+  });
+
+  it('keeps the verse when converting within one scheme, even where a mapping merges verses', () => {
+    expect(map('NM', 20, 29, 'vulgate', 'vulgate')).toBe('NM 20:29');
+    expect(map('NM', 20, 29, 'vulgate', 'original')).toBe('NM 20:28');
+    expect(mapText('Nm 20:28-29', 'vulgate', 'vulgate')).toBe('Nm 20:28–29');
   });
 });
