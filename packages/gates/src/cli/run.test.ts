@@ -158,8 +158,8 @@ describe('lectio-gates decide', () => {
       options(),
     );
     expect(code).toBe(1);
-    expect(logs[0]).toBe('decision: needs-review');
-    expect(JSON.parse(read('out/decision.json'))).toMatchObject({ decision: 'needs-review' });
+    expect(logs[0]).toBe('decision: blocked');
+    expect(JSON.parse(read('out/decision.json'))).toMatchObject({ decision: 'blocked' });
   });
 
   it('builds the PR facts from git when --pr is missing', async () => {
@@ -171,7 +171,7 @@ describe('lectio-gates decide', () => {
     };
     expect(await runGatesCli(['decide', '--results', 'gates.json', '--base', 'main'], options({ gitExec }))).toBe(1);
     expect(seen).toEqual([['diff', '--name-status', '-z', 'main...HEAD']]);
-    expect(logs).toEqual(['decision: needs-review', '  - not implemented (L-028)']);
+    expect(logs).toEqual(['decision: blocked', '  - the dummy gate failed']);
   });
 
   it('exits 0 for a green decision and passes --pr-number into the facts', async () => {
