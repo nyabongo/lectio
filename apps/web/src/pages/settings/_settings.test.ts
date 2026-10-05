@@ -29,9 +29,9 @@ describe('settings page', () => {
     expect(html).toContain('coming soon');
   });
 
-  it('inlines the head script that applies the saved theme and size before paint', () => {
+  it('gets the head script from the base layout, once, and its SEO tags', () => {
     const head = html.slice(0, html.indexOf('</head>'));
-    expect(head).toContain(headScript());
+    expect(head.split(headScript())).toHaveLength(2);
     expect(head).toContain('<link rel="canonical"');
   });
 });
