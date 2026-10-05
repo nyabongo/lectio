@@ -1,0 +1,1739 @@
+{
+  "$comment": "Saints block (L-069): the Proper of Saints of the General Roman Calendar, keyed by Lectio celebration id. It holds every solemnity and feast of the sanctoral (St Matthew is in the seed block) and the memorials and optional memorials with readings of their own: readings that tell of the saint or mystery, or that a decree assigned to a celebration added after 1981. Memorials whose readings come from a Common have no entry, so the resolver keeps the weekday readings (Lectionary Introduction 83); there is no commons file yet. Imported from LitCal where its leaf parses (import/litcal/saints.json); Faustina Kowalska and Mary, Mother of the Church are converted by hand from the same pinned LitCal decree leaves, which the importer cannot read (\"Psalm 103 (102)\", and \"Psalm 87: 1-2, 3; 5, 6-7\" whose ';' separates verses). Everything else is filled from the OLM 1981 structure, cited by lectionary number (the numbering used for St Matthew, #643). Kenya-proper celebrations (calendar/overrides/kenya.json) have no entry: none of the open sources covers them, and their readings need the Kenyan Daily Missal (011 Q5). Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "kind": "celebrations",
+  "entries": [
+    {
+      "key": "all-saints",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rv 7:2-4, 9-14",
+              "source": "olm-1981 p?#667",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 24:1-2, 3-4, 5-6",
+              "source": "olm-1981 p?#667",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Jn 3:1-3",
+              "source": "olm-1981 p?#667",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 5:1-12",
+              "source": "olm-1981 p?#667",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "andrew-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rom 10:9-18",
+              "source": "olm-1981 p?#684",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:8, 9, 10, 11",
+              "source": "olm-1981 p?#684",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 4:18-22",
+              "source": "olm-1981 p?#684",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "annunciation-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 7:10-14; 8:10",
+              "source": "olm-1981 p?#545",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 40:7-8, 8-9, 10, 11",
+              "source": "olm-1981 p?#545",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 10:4-10",
+              "source": "olm-1981 p?#545",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:26-38",
+              "source": "olm-1981 p?#545",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "assumption-of-the-blessed-virgin-mary",
+      "masses": [
+        {
+          "id": "vigil",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Chr 15:3-4, 15-16; 16:1-2",
+              "printed": "1 Chronicles 15:3-4, 15-16; 16:1-2",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 132:6-7, 9-10, 13-14",
+              "printed": "Psalm 132:6-7, 9-10, 13-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Cor 15:54-57",
+              "printed": "1 Corinthians 15:54b-57",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 11:27-28",
+              "printed": "Luke 11:27-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.vigil",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rv 11:19; 12:1-6, 10",
+              "printed": "Revelation 11:19a; 12:1-6a, 10ab",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 45:10, 11, 12, 16",
+              "printed": "Psalm 45:10, 11, 12, 16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Cor 15:20-27",
+              "printed": "1 Corinthians 15:20-27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:39-56",
+              "printed": "Luke 1:39-56",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#Assumption.day",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "barnabas-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 11:21-26; 13:1-3",
+              "source": "olm-1981 p?#580",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4, 5-6",
+              "source": "olm-1981 p?#580",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 10:7-13",
+              "source": "olm-1981 p?#580",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bartholomew-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rv 21:9-14",
+              "source": "olm-1981 p?#629",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:10-11, 12-13, 17-18",
+              "source": "olm-1981 p?#629",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:45-51",
+              "source": "olm-1981 p?#629",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "chair-of-saint-peter-the-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Pt 5:1-4",
+              "source": "olm-1981 p?#535",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 4, 5, 6",
+              "source": "olm-1981 p?#535",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 16:13-19",
+              "source": "olm-1981 p?#535",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "commemoration-of-all-the-faithful-departed",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Wis 3:1-9",
+              "source": "olm-1981 p?#668",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 3-4, 5, 6",
+              "source": "olm-1981 p?#668",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Rom 5:5-11",
+              "alternatives": [
+                {
+                  "ref": "Rom 6:3-9"
+                }
+              ],
+              "source": "olm-1981 p?#668",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:37-40",
+              "source": "olm-1981 p?#668",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "conversion-of-saint-paul-the-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 22:3-16",
+              "alternatives": [
+                {
+                  "ref": "Acts 9:1-22"
+                }
+              ],
+              "source": "olm-1981 p?#519",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 117:1, 2",
+              "source": "olm-1981 p?#519",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 16:15-18",
+              "source": "olm-1981 p?#519",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dedication-of-the-basilicas-of-saints-peter-and-paul-apostles",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 28:11-16, 30-31",
+              "source": "olm-1981 p?#679",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4, 5-6",
+              "source": "olm-1981 p?#679",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 14:22-33",
+              "source": "olm-1981 p?#679",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "dedication-of-the-lateran-basilica",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ez 47:1-2, 8-9, 12",
+              "source": "olm-1981 p?#671",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 46:2-3, 5-6, 8-9",
+              "source": "olm-1981 p?#671",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Cor 3:9-11, 16-17",
+              "source": "olm-1981 p?#671",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 2:13-22",
+              "source": "olm-1981 p?#671",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "exaltation-of-the-holy-cross",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 21:4-9",
+              "source": "olm-1981 p?#638",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 78:1-2, 34-35, 36-37, 38",
+              "source": "olm-1981 p?#638",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Phil 2:6-11",
+              "source": "olm-1981 p?#638",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:13-17",
+              "source": "olm-1981 p?#638",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "faustina-kowalska-virgin",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 3:14-19",
+              "printed": "Ephesians 3: 14-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StFaustinaKowalska",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 103:1-2, 3-4, 8-9, 13-14, 17-18",
+              "printed": "Psalm 103 (102): 1-2, 3-4, 8-9, 13-14, 17-18a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StFaustinaKowalska",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 11:25-30",
+              "printed": "Matthew 11: 25-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StFaustinaKowalska",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "gregory-of-narek-abbot",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Wis 7:7-10, 15-16",
+              "printed": "Wisdom 7: 7-10, 15-16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StGregoryNarek",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 37:3-4, 5-6, 30-31",
+              "printed": "Psalm 37: 3-4, 5-6, 30-31",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StGregoryNarek",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 7:21-29",
+              "printed": "Matthew 7: 21-29",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StGregoryNarek",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hildegard-of-bingen-abbess",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Sg 8:6-7",
+              "printed": "Song of Songs 8: 6-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StHildegardBingen",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 45:11-12, 14-15, 16-17",
+              "printed": "Psalm 45: 11-12, 14-15, 16-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StHildegardBingen",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 25:1-13",
+              "printed": "Matthew 25: 1-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StHildegardBingen",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "holy-guardian-angels",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ex 23:20-23",
+              "source": "olm-1981 p?#650",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 91:1-2, 3-4, 5-6, 10-11",
+              "source": "olm-1981 p?#650",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 18:1-5, 10",
+              "source": "olm-1981 p?#650",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "holy-innocents-martyrs",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 1:5-10; 2:1-2",
+              "printed": "1 John 1:5-10; 2:1-2",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#HolyInnocents",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 124:2-3, 4-5, 7-8",
+              "printed": "Psalm 124:2-3, 4-5, 7cd-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#HolyInnocents",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 2:13-18",
+              "printed": "Matthew 2:13-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#HolyInnocents",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "immaculate-conception-of-the-blessed-virgin-mary",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 3:9-15, 20",
+              "printed": "Genesis 3:9-15, 20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#ImmaculateConception",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4",
+              "printed": "Psalm 98:1, 2-3ab, 3cd-4",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#ImmaculateConception",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Eph 1:3-6, 11-12",
+              "printed": "Ephesians 1:3-6, 11-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#ImmaculateConception",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:26-38",
+              "printed": "Luke 1:26-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#ImmaculateConception",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "immaculate-heart-of-mary",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 61:9-11",
+              "source": "olm-1981 p?#573",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "1 Sm 2:1, 4-5, 6-7, 8",
+              "source": "olm-1981 p?#573",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:41-51",
+              "source": "olm-1981 p?#573",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "james-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Cor 4:7-15",
+              "source": "olm-1981 p?#605",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 126:1-2, 2-3, 4-5, 6",
+              "source": "olm-1981 p?#605",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:20-28",
+              "source": "olm-1981 p?#605",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "john-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 1:1-4",
+              "printed": "1 John 1:1-4",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StJohnEvangelist",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 97:1-2, 5-6, 11-12",
+              "printed": "Psalm 97:1-2, 5-6, 11-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StJohnEvangelist",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 20:1, 2-8",
+              "printed": "John 20:1a, 2-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StJohnEvangelist",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "john-of-avila-priest",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 13:46-49",
+              "printed": "Acts 13: 46-49",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnAvila",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 4, 5, 6",
+              "printed": "Psalm 23: 1-3a, 4, 5, 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnAvila",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 5:13-19",
+              "printed": "Matthew 5: 13-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnAvila",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "john-paul-ii-pope",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 52:7-10",
+              "printed": "Isaiah 52: 7-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnPaulII",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 2-3, 7-8, 10",
+              "printed": "Psalm 96: 1-2a, 2b-3, 7-8a, 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnPaulII",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:15-17",
+              "printed": "John 21: 15-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnPaulII",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "john-xxiii-pope",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ez 34:11-16",
+              "printed": "Ezekiel 34: 11-16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnXXIII",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 4, 5, 6",
+              "printed": "Psalm 23: 1-3a, 4, 5, 6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnXXIII",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:15-17",
+              "printed": "John 21: 15-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StJohnXXIII",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "joseph-spouse-of-mary",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Sm 7:4-5, 12-14, 16",
+              "source": "olm-1981 p?#543",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 89:2-3, 4-5, 27, 29",
+              "source": "olm-1981 p?#543",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Rom 4:13, 16-18, 22",
+              "source": "olm-1981 p?#543",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:16, 18-21, 24",
+              "alternatives": [
+                {
+                  "ref": "Lk 2:41-51"
+                }
+              ],
+              "source": "olm-1981 p?#543",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "joseph-the-worker",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 1:26-2:3",
+              "alternatives": [
+                {
+                  "ref": "Col 3:14-15, 17, 23-24"
+                }
+              ],
+              "source": "olm-1981 p?#559",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 90:2, 3-4, 12-13, 14, 16",
+              "source": "olm-1981 p?#559",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 13:54-58",
+              "source": "olm-1981 p?#559",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lawrence-of-rome-deacon",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Cor 9:6-10",
+              "source": "olm-1981 p?#618",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 112:1-2, 5-6, 7-8, 9",
+              "source": "olm-1981 p?#618",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 12:24-26",
+              "source": "olm-1981 p?#618",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "luke-evangelist",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Tm 4:10-17",
+              "source": "olm-1981 p?#661",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:10-11, 12-13, 17-18",
+              "source": "olm-1981 p?#661",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 10:1-9",
+              "source": "olm-1981 p?#661",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mark-evangelist",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Pt 5:5-14",
+              "source": "olm-1981 p?#555",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 89:2-3, 6-7, 16-17",
+              "source": "olm-1981 p?#555",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 16:15-20",
+              "source": "olm-1981 p?#555",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "martha-of-bethany-mary-of-bethany-and-lazarus-of-bethany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 4:7-16",
+              "source": "olm-1981 p?#607",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:2-3, 4-5, 6-7, 8-9, 10-11",
+              "source": "olm-1981 p?#607",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 11:19-27",
+              "alternatives": [
+                {
+                  "ref": "Lk 10:38-42"
+                }
+              ],
+              "source": "olm-1981 p?#607",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mary-magdalene",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Sg 3:1-4",
+              "alternatives": [
+                {
+                  "ref": "2 Cor 5:14-17"
+                }
+              ],
+              "source": "olm-1981 p?#603",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 63:2, 3-4, 5-6, 8-9",
+              "source": "olm-1981 p?#603",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 20:1-2, 11-18",
+              "source": "olm-1981 p?#603",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mary-mother-of-the-church",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 3:9-15, 20",
+              "printed": "Genesis 3: 9-15, 20",
+              "alternatives": [
+                {
+                  "ref": "Acts 1:12-14",
+                  "printed": "Acts 1: 12-14"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#MaryMotherChurch",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 87:1-2, 3, 5, 6-7",
+              "printed": "Psalm 87: 1-2, 3; 5, 6-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#MaryMotherChurch",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 19:25-34",
+              "printed": "John 19: 25-34",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#MaryMotherChurch",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "matthias-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 1:15-17, 20-26",
+              "source": "olm-1981 p?#564",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 113:1-2, 3-4, 5-6, 7-8",
+              "source": "olm-1981 p?#564",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:9-17",
+              "source": "olm-1981 p?#564",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "michael-gabriel-and-raphael-archangels",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 7:9-10, 13-14",
+              "alternatives": [
+                {
+                  "ref": "Rv 12:7-12"
+                }
+              ],
+              "source": "olm-1981 p?#647",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 138:1-2, 2-3, 4-5",
+              "source": "olm-1981 p?#647",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:47-51",
+              "source": "olm-1981 p?#647",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "most-holy-name-of-jesus",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Phil 2:1-11",
+              "printed": "Philippians 2:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#NameJesus",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 8:4-5, 6-7, 8-9",
+              "printed": "Psalm 8:4-5, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#NameJesus",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:21-24",
+              "printed": "Luke 2:21-24",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#NameJesus",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nativity-of-john-the-baptist",
+      "masses": [
+        {
+          "id": "vigil",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 1:4-10",
+              "source": "olm-1981 p?#586",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 71:1-2, 3-4, 5-6, 15, 17",
+              "source": "olm-1981 p?#586",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Pt 1:8-12",
+              "source": "olm-1981 p?#586",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:5-17",
+              "source": "olm-1981 p?#586",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 49:1-6",
+              "source": "olm-1981 p?#587",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 139:1-3, 13-14, 14-15",
+              "source": "olm-1981 p?#587",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Acts 13:22-26",
+              "source": "olm-1981 p?#587",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:57-66, 80",
+              "source": "olm-1981 p?#587",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nativity-of-the-blessed-virgin-mary",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Mi 5:1-4",
+              "alternatives": [
+                {
+                  "ref": "Rom 8:28-30"
+                }
+              ],
+              "source": "olm-1981 p?#636",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 13:6, 6",
+              "source": "olm-1981 p?#636",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:1-16, 18-23",
+              "alternatives": [
+                {
+                  "ref": "Mt 1:18-23"
+                }
+              ],
+              "source": "olm-1981 p?#636",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "our-lady-of-loreto",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 7:10-14; 8:10",
+              "printed": "Isaiah 7: 10-14; 8: 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#OurLadyOfLoreto",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Lk 1:46-47, 48-49, 50-51, 52-53, 54-55",
+              "printed": "Luke 1: 46-47, 48-49, 50-51, 52-53, 54-55",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#OurLadyOfLoreto",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:26-38",
+              "printed": "Luke 1: 26-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#OurLadyOfLoreto",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "our-lady-of-sorrows",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Heb 5:7-9",
+              "source": "olm-1981 p?#639",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 31:2-3, 3-4, 5-6, 15-16, 20",
+              "source": "olm-1981 p?#639",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 19:25-27",
+              "alternatives": [
+                {
+                  "ref": "Lk 2:33-35"
+                }
+              ],
+              "source": "olm-1981 p?#639",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "passion-of-saint-john-the-baptist",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 1:17-19",
+              "source": "olm-1981 p?#634",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 71:1-2, 3-4, 5-6, 15, 17",
+              "source": "olm-1981 p?#634",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 6:17-29",
+              "source": "olm-1981 p?#634",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "paul-vi-pope",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Cor 9:16-19, 22-23",
+              "printed": "1 Corinthians 9: 16-19, 22-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StPaulVI",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 2-3, 7-8, 10",
+              "printed": "Psalm 96: 1-2a, 2b-3, 7-8a, 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StPaulVI",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 16:13-19",
+              "printed": "Matthew 16: 13-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StPaulVI",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "peter-and-paul-apostles",
+      "masses": [
+        {
+          "id": "vigil",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 3:1-10",
+              "source": "olm-1981 p?#590",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "source": "olm-1981 p?#590",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Gal 1:11-20",
+              "source": "olm-1981 p?#590",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:15-19",
+              "source": "olm-1981 p?#590",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 12:1-11",
+              "source": "olm-1981 p?#591",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:2-3, 4-5, 6-7, 8-9",
+              "source": "olm-1981 p?#591",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "2 Tm 4:6-8, 17-18",
+              "source": "olm-1981 p?#591",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 16:13-19",
+              "source": "olm-1981 p?#591",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "philip-and-james-apostles",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Cor 15:1-8",
+              "source": "olm-1981 p?#561",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "source": "olm-1981 p?#561",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 14:6-14",
+              "source": "olm-1981 p?#561",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "presentation-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Mal 3:1-4",
+              "source": "olm-1981 p?#524",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 24:7, 8, 9, 10",
+              "source": "olm-1981 p?#524",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 2:14-18",
+              "source": "olm-1981 p?#524",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:22-40",
+              "alternatives": [
+                {
+                  "ref": "Lk 2:22-32"
+                }
+              ],
+              "source": "olm-1981 p?#524",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "simon-and-jude-apostles",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 2:19-22",
+              "source": "olm-1981 p?#666",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "source": "olm-1981 p?#666",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 6:12-16",
+              "source": "olm-1981 p?#666",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "stephen-the-first-martyr",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 6:8-10; 7:54-59",
+              "printed": "Acts 6:8-10; 7:54-59",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StStephenProtomartyr",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 31:3-4, 6, 8, 16, 17",
+              "printed": "Psalm 31:3cd-4, 6, 8ab, 16bc, 17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StStephenProtomartyr",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 10:17-22",
+              "printed": "Matthew 10:17-22",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 sanctorum/en.json#StStephenProtomartyr",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "teresa-of-calcutta-virgin",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 58:6-11",
+              "printed": "Isaiah 58: 6-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StMotherTeresa",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 33:2-3, 4-5, 6-7, 8-9, 10-11",
+              "printed": "Psalm 33: 2-3, 4-5, 6-7, 8-9, 10-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StMotherTeresa",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 25:31-46",
+              "printed": "Matthew 25: 31-46",
+              "alternatives": [
+                {
+                  "ref": "Mt 25:31-40",
+                  "printed": "Matthew 25: 31-40"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StMotherTeresa",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thomas-apostle",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 2:19-22",
+              "source": "olm-1981 p?#593",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 117:1, 2",
+              "source": "olm-1981 p?#593",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 20:24-29",
+              "source": "olm-1981 p?#593",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "timothy-of-ephesus-and-titus-of-crete-bishops",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Tm 1:1-8",
+              "alternatives": [
+                {
+                  "ref": "Ti 1:1-5"
+                }
+              ],
+              "source": "olm-1981 p?#520",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 2-3, 7-8, 10",
+              "source": "olm-1981 p?#520",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 10:1-9",
+              "source": "olm-1981 p?#520",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "transfiguration-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 7:9-10, 13-14",
+              "source": "olm-1981 p?#614",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 97:1-2, 5-6, 9",
+              "source": "olm-1981 p?#614",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "2 Pt 1:16-19",
+              "source": "olm-1981 p?#614",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 17:1-9",
+              "source": "olm-1981 p?#614",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 9:2-10",
+              "source": "olm-1981 p?#614",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 9:28-36",
+              "source": "olm-1981 p?#614",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "visitation-of-mary",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Zep 3:14-18",
+              "alternatives": [
+                {
+                  "ref": "Rom 12:9-16"
+                }
+              ],
+              "source": "olm-1981 p?#572",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Is 12:2-3, 4, 5-6",
+              "source": "olm-1981 p?#572",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:39-56",
+              "source": "olm-1981 p?#572",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
