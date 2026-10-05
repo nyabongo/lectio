@@ -170,7 +170,7 @@
     },
     {
       "id": "c18",
-      "text": "The Pulpit Commentary paraphrases Psalm 119:34 as: if I fail now, it is from lack of wisdom, not of will.",
+      "text": "The Pulpit Commentary reads Psalm 119:34 as saying that any failure now would come from a want of wisdom rather than of will.",
       "sourceIds": ["pulpit-ps-119-34"],
       "sensitive": false
     },
@@ -505,9 +505,9 @@
     {
       "id": "bdb-6490-count",
       "type": "web",
-      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. פִּקּוּד (Bible Hub, Strong's 6490)",
+      "citation": "Englishman's Hebrew Concordance (Wigram), 6490 פִּקּוּד (Bible Hub)",
       "url": "https://biblehub.com/hebrew/6490.htm",
-      "excerpt": "24 noun masculine Psalm 19:9 precept",
+      "excerpt": "24 Occurrences Strong's Hebrew 6490",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T12:40:00Z"
     },

@@ -86,7 +86,7 @@
     },
     {
       "id": "c4",
-      "text": "Each day and each night hands on the message to its successor in an unbroken tradition.",
+      "text": "Day after day and night after night, each passes the message on to the next in an unbroken line.",
       "sourceIds": ["cambridge-ps-19-2-tradition"],
       "sensitive": false
     },
@@ -110,7 +110,7 @@
     },
     {
       "id": "c8",
-      "text": "Paul’s use compares the universality of the proclamation of the Gospel with the universality of the proclamation of God’s glory in nature.",
+      "text": "Paul’s use sets the worldwide reach of the Gospel’s proclamation beside the worldwide reach of the glory of God proclaimed in nature.",
       "sourceIds": ["cambridge-ps-19-4-paul"],
       "sensitive": true
     },
@@ -287,7 +287,7 @@
       "type": "web",
       "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 19:1 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
-      "excerpt": "(Heb.: 19:2-4)",
+      "excerpt": "(Heb.: 19:2-4) The heavens",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
@@ -503,7 +503,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
       "url": "https://biblehub.com/hebrew/7549.htm",
-      "excerpt": "extended surface , (solid) expanse (as if beaten out",
+      "excerpt": "extended surface, (solid) expanse (as if beaten out",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
@@ -512,7 +512,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
       "url": "https://biblehub.com/hebrew/7549.htm",
-      "excerpt": "ᵐ5 στερέωμα , ᵑ9 firmamentum",
+      "excerpt": "ᵐ5 στερέωμα, ᵑ9 firmamentum",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
@@ -521,7 +521,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
       "url": "https://biblehub.com/hebrew/7549.htm",
-      "excerpt": "the vault of heaven , or 'firmament,'",
+      "excerpt": "the vault of heaven, or 'firmament,'",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
@@ -539,7 +539,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. נָבַע (Bible Hub, Strong's 5042)",
       "url": "https://biblehub.com/hebrew/5042.htm",
-      "excerpt": "figurative, usually of speech , pour forth",
+      "excerpt": "figurative, usually of speech, pour forth",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
@@ -548,7 +548,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. קַו (Bible Hub, Strong's 6957)",
       "url": "https://biblehub.com/hebrew/6957.htm",
-      "excerpt": "measuring- line",
+      "excerpt": "measuring-line (מִדָּה ׳ק Jeremiah 31:39)",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
