@@ -1,0 +1,78 @@
+# Calendar check (L-017). Rebuilds every committed calendar/<year>.json in memory
+# from romcal, the regional overrides, the lectionary data and the link-out config,
+# and fails when a committed file is stale (`npm run calendar:check`). Offline: no
+# secrets; romcal computes the calendar locally.
+#
+# Built like a required check, so it can be registered in .github/required-checks/
+# without changes: no trigger-level `paths:` filter (a `changes` step decides
+# whether there is anything to check and otherwise exits green), and
+# `workflow_dispatch` lets the merge-rule job (L-031) re-run it.
+name: Calendar
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: calendar-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  calendar-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Relevant: the calendar files and data, the packages that compute them
+      # (calendar, lectionary, refs for link-outs, schema, config), the config, the
+      # dependency manifests (romcal's version) and this workflow. On a pull request
+      # the diff is against the PR base; on any other event it is against origin/main
+      # (on a push to main, where HEAD is origin/main, against the previous commit).
+      - name: Detect relevant changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+          else
+            git fetch --no-tags origin main
+            base="$(git rev-parse origin/main)"
+            if [ "$base" = "$(git rev-parse HEAD)" ]; then
+              base="$(git rev-parse HEAD~1 2>/dev/null || echo "$base")"
+            fi
+          fi
+          changed="$(git diff --name-only "$base"...HEAD)"
+          echo "Changed files since ${base}:"
+          echo "$changed"
+          if echo "$changed" | grep -Eq '^(calendar/|config/|packages/(calendar|lectionary|refs|schema|config|shared)/|package\.json$|package-lock\.json$|\.github/workflows/calendar\.yml$)'; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing relevant to the calendar changed; skipping." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.changes.outputs.relevant == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - if: steps.changes.outputs.relevant == 'true'
+        run: npm ci
+
+      - name: Committed calendar files are current
+        if: steps.changes.outputs.relevant == 'true'
+        run: npm run calendar:check
