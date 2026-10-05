@@ -388,16 +388,13 @@ void main() {
     expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
   });
 
-  testWidgets('openExternally hands the link to the platform', (
-    tester,
-  ) async {
+  testWidgets('openExternally hands the link to the platform', (tester) async {
     // No url_launcher implementation is registered in widget tests, so the
     // platform call fails or never answers: nothing opens.
     final result = await tester.runAsync(() async {
       try {
-        return await openExternally(
-          Uri.parse('https://www.drbo.org/'),
-        ).timeout(const Duration(seconds: 1), onTimeout: () => false);
+        return await openExternally(Uri.parse('https://www.drbo.org/'))
+            .timeout(const Duration(seconds: 1), onTimeout: () => false);
       } on Object {
         return false;
       }
