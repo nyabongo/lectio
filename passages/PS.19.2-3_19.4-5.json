@@ -23,7 +23,7 @@
         "gloss": "are recounting"
       },
       "summary": "A participle: the heavens “are recounting” God’s glory, an ongoing act rather than a single declaration.",
-      "body": "In the Piel the verb sāpar means to recount, rehearse or declare, and BDB lists this verse among its uses for rehearsing the praise of God. [c10] The form is a participle, and Keil and Delitzsch find in it the idea of perpetuity: the telling never stops. [c11] For this reason Ellicott prefers the English “the heavens are telling” to a simple present tense. [c12]"
+      "body": "In the Piel the verb sāpar means to recount, rehearse or declare, and BDB lists this verse among its uses for rehearsing the praise of God. [c10] The form is a participle, and Keil and Delitzsch find in it the idea of perpetuity: the telling never stops. [c11] Ellicott prefers the English “the heavens are telling” to a simple present tense. [c12]"
     },
     {
       "id": "raqia",
@@ -36,7 +36,7 @@
         "gloss": "the expanse"
       },
       "summary": "Rāqîaʿ is “the expanse”, the vault of heaven pictured as something beaten out and spread over the earth.",
-      "body": "BDB defines rāqîaʿ as an extended surface or expanse, as if beaten out, and lists this verse under the vault of heaven. [c13] The same word names the expanse made on the second day in Gen 1:6. [c14] The English “firmament” comes through the Greek stereōma of the Septuagint, which reflects the idea of the sky as a solid vault. [c15]"
+      "body": "BDB defines rāqîaʿ as an extended surface or expanse, as if beaten out, and lists this verse under the vault of heaven. [c13] The same word names the expanse made on the second day in Gen 1:6. [c14] The English “firmament” comes from the Latin firmamentum, which renders the Septuagint’s stereōma: both reflect the idea of the sky as a solid vault. [c15]"
     },
     {
       "id": "yabbia",
@@ -152,8 +152,8 @@
     },
     {
       "id": "c15",
-      "text": "The English word firmament comes from the Septuagint’s στερέωμα, from the idea that the heavens are a solid concave.",
-      "sourceIds": ["barnes-ps-19-1-septuagint", "barnes-ps-19-1-solid"],
+      "text": "The English word firmament comes from the Vulgate’s firmamentum, which renders the Septuagint’s στερέωμα; both reflect the idea that the heavens are a solid concave.",
+      "sourceIds": ["bdb-raqia-versions", "barnes-ps-19-1-septuagint", "barnes-ps-19-1-solid"],
       "sensitive": false
     },
     {
@@ -504,6 +504,15 @@
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
       "url": "https://biblehub.com/hebrew/7549.htm",
       "excerpt": "extended surface , (solid) expanse (as if beaten out",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-raqia-versions",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
+      "url": "https://biblehub.com/hebrew/7549.htm",
+      "excerpt": "ᵐ5 στερέωμα , ᵑ9 firmamentum",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },

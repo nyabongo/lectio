@@ -7,16 +7,16 @@
     "title": "The call of Matthew",
     "paragraphs": [
       "Mark and Luke tell the same call but name the man Levi, and commentators generally take Levi and Matthew to be one person. [c1] The name Matthew is usually explained as “gift of God”. [c2] In its list of the Twelve, this Gospel calls him “Matthew the tax collector”, keeping his old trade in view. [c3]",
-      "Matthew sat at a toll-house, probably the customs post at Capernaum by the lake, where duty was levied on goods passing through. [c4] Tax-farming lent itself to extortion, and Jewish collectors working for Rome were widely despised. [c5] Rabbinic law reflects this reputation: a tax-gatherer could serve neither as a judge nor as a witness. [c6]",
+      "Matthew sat at a toll-house, probably the customs post at Capernaum by the lake, where duty was levied on goods passing through. [c4] Tax-farming lent itself to extortion, and Jewish collectors under Roman rule were widely despised. [c5] Rabbinic law reflects this reputation: a tax-gatherer could serve neither as a judge nor as a witness. [c6]",
       "Luke says that the meal was a great feast that Levi gave in his own house. [c7] The objectors were Pharisees, whose members pledged themselves to Levitical purity and kept the purity of the Temple even at their daily meals, avoiding close contact with the careless. [c8] On table fellowship with publicans and sinners, Jesus differed sharply from them. [c9]",
-      "The Jewish Encyclopedia adds that on the main doctrine Jesus fully agreed with the Pharisees, so the dispute here is about practice within Israel. [c10] Jesus answers from Israel’s own prophet, quoting Hosea 6:6, and only Matthew includes the citation in this scene. [c11] He quotes the same line again in Mt 12:7, in a dispute about the Sabbath. [c12]"
+      "The Jewish Encyclopedia adds that Jesus fully agreed with the Pharisees on the main doctrine, citing the greatest commandment scene in Mark 12:28-34, so the dispute here is about practice within Israel. [c9][c10] Jesus answers from Israel’s own prophet, quoting Hosea 6:6, and only Matthew includes the citation in this scene. [c11] He quotes the same line again in Mt 12:7, in a dispute about the Sabbath. [c12]"
     ]
   },
   "translationNotes": [
     {
       "id": "telonion",
       "verse": "9:9",
-      "anchor": "tax booth",
+      "anchor": "tax office",
       "original": {
         "text": "τελώνιον",
         "lang": "grc",
@@ -37,12 +37,12 @@
         "gloss": "toll-collectors and sinners"
       },
       "summary": "A fixed pairing in the Gospels: “sinners” here are people known for definite wrongdoing, not everyone.",
-      "body": "Thayer distinguishes two uses of hamartōlos: anyone not free from sin, and people marked by definite vices, such as tax-gatherers. [c16] He files the pairing in this verse under the second use, but places the sinners of verse 13 under the first, where all are sinners. [c17] Ellicott adds that the word may have included Gentiles here, though it does not have to mean them. [c18]"
+      "body": "Thayer distinguishes, among other uses of hamartōlos, anyone not free from sin and people marked by definite vices, such as tax-gatherers. [c16] He files the pairing in this verse under the latter, but places the sinners of verse 13 under the former, where all are sinners. [c17] Ellicott adds that the word may have included Gentiles here, though it does not have to mean them. [c18]"
     },
     {
       "id": "ischyontes",
       "verse": "9:12",
-      "anchor": "the healthy",
+      "anchor": "those who are well",
       "original": {
         "text": "ἰσχύοντες",
         "lang": "grc",
@@ -63,7 +63,7 @@
         "gloss": "mercy I want and not sacrifice"
       },
       "summary": "Eleos stands for Hosea’s ḥesed, steadfast kindness; “and not” is a Hebrew way of saying “rather than”.",
-      "body": "In Hosea 6:6 the Hebrew word is ḥesed, which BDB defines as goodness or kindness, though it suggests piety toward God in this verse. [c22] Thayer files the Greek eleos here under the readiness of people to help those in trouble. [c23] The form “mercy and not sacrifice” is a Hebrew way of stating a preference, not a rejection of sacrifice, which God had himself commanded. [c24]"
+      "body": "In Hosea 6:6 the Hebrew word is ḥesed, which BDB defines as goodness or kindness, though in this verse it is possibly piety toward God. [c22] Thayer files the Greek eleos here under the readiness of people to help those in trouble. [c23] The form “mercy and not sacrifice” is a Hebrew way of stating a preference, not a rejection of sacrifice, which God had himself commanded. [c24]"
     }
   ],
   "claims": [
@@ -123,8 +123,8 @@
     },
     {
       "id": "c10",
-      "text": "According to the Jewish Encyclopedia, Jesus fully agreed with the Pharisees on the main doctrine.",
-      "sourceIds": ["je-pharisees-jesus-agree"],
+      "text": "According to the Jewish Encyclopedia, Jesus fully agreed with the Pharisees on the main doctrine, as Mark 12:28-34, the question of the first commandment, still shows.",
+      "sourceIds": ["je-pharisees-jesus-agree", "je-pharisees-mark-12", "mk-12-28"],
       "sensitive": true
     },
     {
@@ -189,8 +189,13 @@
     },
     {
       "id": "c21",
-      "text": "There is irony in the saying: “the whole” are those who think themselves whole.",
-      "sourceIds": ["cambridge-mt-9-12-irony", "cambridge-mt-9-12-think"],
+      "text": "There is irony in the saying, spoken from the standpoint of those addressed: “the whole” are those who think themselves whole.",
+      "sourceIds": [
+        "cambridge-mt-9-12-irony",
+        "cambridge-mt-9-12-think",
+        "ellicott-mt-9-12-irony",
+        "ellicott-mt-9-12-standpoint"
+      ],
       "sensitive": false
     },
     {
@@ -219,6 +224,14 @@
       "citation": "Mark 2:14",
       "ref": "Mk 2:14",
       "excerpt": "Λευὶν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-12-28",
+      "type": "scripture",
+      "citation": "Mark 12:28",
+      "ref": "Mk 12:28",
+      "excerpt": "ἐντολὴ πρώτη πάντων",
       "excerptLang": "grc"
     },
     {
@@ -430,6 +443,15 @@
       "retrievedAt": "2026-10-05T10:22:00Z"
     },
     {
+      "id": "je-pharisees-mark-12",
+      "type": "web",
+      "citation": "Kaufmann Kohler, “Pharisees”, The Jewish Encyclopedia (1906)",
+      "url": "https://www.jewishencyclopedia.com/articles/12087-pharisees",
+      "excerpt": "as the old version (Mark xii. 28-34) still has it",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:22:00Z"
+    },
+    {
       "id": "pulpit-mt-9-10-hosea",
       "type": "web",
       "citation": "The Pulpit Commentary (1880-1897), on Matthew 9:10 (Bible Hub)",
@@ -498,6 +520,24 @@
       "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:12 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
       "excerpt": "Literally, They that are strong",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-12-irony",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "in another than our Lord we might term grave irony",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-9-12-standpoint",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 9:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/9-12.htm",
+      "excerpt": "speaking from the thoughts and standpoint of those addressed",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },

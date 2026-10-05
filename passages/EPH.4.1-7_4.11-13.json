@@ -6,9 +6,9 @@
   "context": {
     "title": "One body, many gifts",
     "paragraphs": [
-      "Chapter 4 opens the second, practical part of Ephesians: the “therefore” turns from what God has done to how believers should live. [c1] Paul writes as a prisoner, as he did at 3:1. [c2] The church he addressed was made up of Jews and Gentiles, so the call to keep unity answered a real danger of division. [c3]",
+      "Chapter 4 opens the second, practical part of Ephesians: the “therefore” turns from what God has done to how believers should live. [c1] Paul writes as a prisoner, as he did at 3:1. [c2] The church he addressed was made up of Jews and Gentiles, so the call to keep unity answered a possible danger of division. [c3]",
       "Verses 4-6 name seven things that are one: body, Spirit, hope, Lord, faith, baptism, and God the Father of all. [c4] Ellicott calls these verses the final summary of the letter’s teaching on the unity of the Church. [c5] Verse 7 then turns to the other side of that unity, the diversity of gifts given to each believer. [c6]",
-      "The reading leaves out verses 8-10, where Paul quotes a psalm about gifts given from on high, and resumes with the gifts themselves. [c7] They are people: apostles, prophets, evangelists, and pastors who are also teachers. [c8] Later Christian usage gave the name evangelist to the writers of the four Gospels, Matthew among them. [c9]"
+      "The reading leaves out verses 8-10, where Paul adapts Ps 68:19, about God ascending on high and receiving gifts, so that Christ gives them. [c7] They are people: apostles, prophets, evangelists, and pastors who are also teachers. [c8] Later Christian usage gave the name evangelist to the writers of the four Gospels, Matthew among them. [c9]"
     ]
   },
   "translationNotes": [
@@ -28,7 +28,7 @@
     {
       "id": "axios",
       "verse": "4:1",
-      "anchor": "live in a manner worthy",
+      "anchor": "lead a life worthy",
       "original": {
         "text": "ἀξίως περιπατῆσαι",
         "lang": "grc",
@@ -49,7 +49,7 @@
         "gloss": "the oneness of the Spirit"
       },
       "summary": "Commentators differ on whether this is a oneness of spirit among believers or the unity the Holy Spirit creates.",
-      "body": "Barnes reads the phrase as oneness of spirit, a unity of affection, and not a direct reference to the Holy Spirit. [c16] The Cambridge Bible and Vincent instead take it as the unity which the Holy Spirit effects. [c17] On either reading the verb is to keep: the unity already exists and is to be guarded with eager diligence, which is the force of spoudazontes. [c18][c19]"
+      "body": "Barnes reads the phrase as oneness of spirit, a unity of affection, and not a direct reference to the Holy Spirit. [c16] The Cambridge Bible and Vincent instead take it as the unity which the Holy Spirit effects. [c17] The verb is to keep, which implies, as the Pulpit Commentary says, that the unity already exists; it is to be guarded with eager diligence, the force of spoudazontes. [c18][c19]"
     },
     {
       "id": "evangelists",
@@ -67,14 +67,14 @@
     {
       "id": "katartismos",
       "verse": "4:12",
-      "anchor": "to equip the holy ones",
+      "anchor": "equipment of the saints",
       "original": {
         "text": "πρὸς τὸν καταρτισμὸν τῶν ἁγίων",
         "lang": "grc",
         "translit": "pros ton katartismon tōn hagiōn",
         "gloss": "for the fitting out of the saints"
       },
-      "summary": "Katartismos is a word for fitting out or setting right, used of ships, bones and mended nets.",
+      "summary": "Katartismos means fitting out or setting right; it was used of refitting ships and setting bones, and its verb of mending nets.",
       "body": "The noun appears only here in the New Testament, and in classical Greek it was used of refitting a ship or setting a bone. [c23] The related verb describes James and John mending their nets in Mt 4:21. [c24] Readers divide on what follows: the Cambridge Bible has the saints equipped for their own work of service, while Barnes assigns the work of ministry to the appointed ministers. [c25]"
     }
   ],
@@ -93,7 +93,7 @@
     },
     {
       "id": "c3",
-      "text": "The Ephesian church was composed of Jews and Gentiles, and there was danger of division.",
+      "text": "The Ephesian church was composed of Jews and Gentiles, and there might be danger of division.",
       "sourceIds": ["barnes-eph-4-3-jews-gentiles"],
       "sensitive": false
     },
@@ -117,8 +117,8 @@
     },
     {
       "id": "c7",
-      "text": "Eph 4:8, omitted in this reading, quotes a psalm about ascending on high and giving gifts.",
-      "sourceIds": ["eph-4-8", "bengel-eph-4-7-psalm"],
+      "text": "Eph 4:8, omitted in this reading, adapts Ps 68:19, where God ascends on high and receives gifts; Paul has him give gifts.",
+      "sourceIds": ["eph-4-8", "bengel-eph-4-7-psalm", "vincent-eph-4-8-received"],
       "sensitive": false
     },
     {
@@ -467,6 +467,15 @@
       "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Ephesians 4:7 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/ephesians/4-7.htm",
       "excerpt": "This is taken from the psalm in the following verse",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-eph-4-8-received",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Ephesians 4:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-8.htm",
+      "excerpt": "In the Hebrew and Septuagint, received or took",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T10:15:00Z"
     },
