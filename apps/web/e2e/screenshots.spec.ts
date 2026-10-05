@@ -16,6 +16,7 @@ const pageTypes = [
   { name: 'day', path: `${BUILD_DATE}/` },
   { name: 'reading-context', path: `${BUILD_DATE}/gospel/` },
   { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
+  { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
   { name: 'calendar', path: 'calendar/' },
   { name: 'calendar-month', path: 'calendar/2026/09/' },
   { name: 'passages', path: 'passages/' },
