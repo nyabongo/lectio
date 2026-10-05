@@ -8,7 +8,7 @@
     "defaultLocale": "en",
     "locales": ["en", "sw"],
     "features": {
-      "listen": false
+      "listen": true
     }
   },
   "content": {

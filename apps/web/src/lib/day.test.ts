@@ -152,7 +152,8 @@ describe('dayPageView with the fixture content root', () => {
       massOptions: null,
       missing: null,
       noMass: null,
-      listen: null,
+      // The fixture build turns Listen on (L-085).
+      listen: { href: '/base/2026-09-20/listen/', label: 'Listen to the notes' },
       pageTitle: 'Twenty-fifth Sunday in Ordinary Time, Sunday 20 September 2026',
     });
     expect(view.celebrations).toEqual([

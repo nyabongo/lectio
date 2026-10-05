@@ -407,6 +407,100 @@
       "verse": {}
     }
   },
+  "listen_pageTitle": "Listen · {date}",
+  "@listen_pageTitle": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "listen_description": "Listen to the context and original-language notes for the readings of {date}, one after another.",
+  "@listen_description": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "listen_heading": "Listen",
+  "listen_intro": "The context and translation notes for this day's readings, played as one queue.",
+  "listen_backToDay": "All readings for {date}",
+  "@listen_backToDay": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "listen_nowPlaying": "Now playing",
+  "listen_upNext": "Up next",
+  "listen_noteCount": "{count, plural, one{{count} note} other{{count} notes}}",
+  "@listen_noteCount": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "listen_group": "{slot} · {ref}",
+  "@listen_group": {
+    "placeholders": {
+      "ref": {},
+      "slot": {}
+    }
+  },
+  "listen_controls_label": "Player",
+  "listen_controls_play": "Play",
+  "listen_controls_pause": "Pause",
+  "listen_controls_previous": "Previous note",
+  "listen_controls_next": "Next note",
+  "listen_controls_back": "Back {seconds} seconds",
+  "@listen_controls_back": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "listen_controls_forward": "Forward {seconds} seconds",
+  "@listen_controls_forward": {
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "listen_controls_seek": "Position in this note",
+  "listen_controls_position": "{position} of {duration}",
+  "@listen_controls_position": {
+    "placeholders": {
+      "duration": {},
+      "position": {}
+    }
+  },
+  "listen_controls_speed": "Speed",
+  "listen_controls_speedOption": "{speed}×",
+  "@listen_controls_speedOption": {
+    "placeholders": {
+      "speed": {}
+    }
+  },
+  "listen_source_audio": "Recorded narration",
+  "listen_source_speech": "Read by your device's voice",
+  "listen_source_fallback": "The recording could not be played, so your device's voice reads this note.",
+  "listen_status_playing": "Now playing: {title}",
+  "@listen_status_playing": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "listen_status_paused": "Paused: {title}",
+  "@listen_status_paused": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "listen_status_finished": "You have heard every note for this day. Play starts again from the top.",
+  "listen_status_unavailable": "This browser cannot play the notes aloud. Each reading's page has them to read.",
+  "listen_empty": "There are no notes to listen to for this day yet. Notes are added once they have been checked against their sources and approved.",
+  "listen_noscript": "The player needs JavaScript. The notes are also on each reading's page.",
+  "listen_shortcuts_heading": "Keyboard shortcuts",
+  "listen_shortcuts_toggle": "Play or pause",
+  "listen_shortcuts_next": "Next note",
+  "listen_shortcuts_previous": "Previous note (or the start of this one)",
+  "listen_shortcuts_slower": "Slower",
+  "listen_shortcuts_faster": "Faster",
   "og_insightCaption": "What the {language} of today’s {slot} really says — {ref}",
   "@og_insightCaption": {
     "placeholders": {

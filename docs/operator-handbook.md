@@ -124,8 +124,34 @@ S3 API. To turn it on:
 1. Create the Azure Speech resource, the R2 bucket (public read, with a public URL) and an R2 API token.
 2. Add the secrets in the table above.
 3. In a config PR: set `tts.storage.publicBaseUrl` to the bucket's public URL, check `tts.voices` and
-   `tts.monthlyCharBudget`, and set `site.features.listen: true` to show the Listen button.
-4. After the next deploy, read the "Render narration" job summary.
+   `tts.monthlyCharBudget`. (`site.features.listen` is already on since L-085: without audio files the Listen page
+   reads each note with the device's own voice.)
+4. Allow the site to fetch from the bucket (CORS, below).
+5. After the next deploy, read the "Render narration" job summary.
+
+**Bucket CORS.** The Listen page (L-085) plays each file through an `<audio>` element, which needs no CORS, and also
+fetches it once with `fetch(url, { mode: 'cors' })` to keep an offline copy in the `lectio-data-audio` cache. That
+fetch only succeeds when the bucket answers with `Access-Control-Allow-Origin` for the site's origin. Allow the origin
+of `site.baseUrl` (`https://nyabongo.github.io` today; the custom domain once there is one, and
+`http://localhost:4321` if you want offline copies in local previews), the methods `GET` and `HEAD`, and the request
+header `Range`; expose `Content-Length`, `Content-Range` and `Accept-Ranges`. Without the rule, playback still works
+but the browser refuses the fetch, nothing is kept for offline listening, and nothing is logged on the site. In R2
+(bucket → Settings → CORS policy) the rule is:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://nyabongo.github.io"],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedHeaders": ["Range"],
+    "ExposeHeaders": ["Content-Length", "Content-Range", "Accept-Ranges"],
+    "MaxAgeSeconds": 86400
+  }
+]
+```
+
+Check it with `curl -sI -H 'Origin: https://nyabongo.github.io' <an audio URL>`: the answer must include
+`access-control-allow-origin`.
 
 To try the pipeline locally without any account: `npm run audio:render -- --provider fake --storage fs:.audio-out
 --dry-run`.
