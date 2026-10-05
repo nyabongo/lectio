@@ -7,3 +7,7 @@ source "https://rubygems.org"
 ruby ">= 3.1"
 
 gem "fastlane", "2.240.1"
+# The version ios/Podfile.lock was written with. setup-ruby replaces the
+# runner's Ruby, and with it the preinstalled CocoaPods, so `flutter build ipa`
+# (run inside `bundle exec fastlane`) uses this one.
+gem "cocoapods", "1.17.0"
