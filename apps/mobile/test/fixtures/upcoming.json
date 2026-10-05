@@ -1,0 +1,114 @@
+{
+  "apiVersion": 1,
+  "timezone": "Africa/Nairobi",
+  "from": "2026-09-20",
+  "to": "2026-10-03",
+  "days": [
+    {
+      "date": "2026-09-20",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "colour": "green",
+      "celebrations": [
+        {
+          "id": "ordinary-time-25-sunday",
+          "name": "Twenty-fifth Sunday in Ordinary Time",
+          "rank": "sunday",
+          "colour": "green"
+        }
+      ],
+      "lectionaryMissing": false,
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 55:6-9",
+              "key": "IS.55.6-9",
+              "linkout": "https://www.drbo.org/chapter/27055.htm",
+              "hasNotes": false,
+              "summary": null
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:2-3, 8-9, 17-18",
+              "key": "PS.145.2-3_145.8-9_145.17-18",
+              "linkout": "https://www.drbo.org/chapter/21144.htm",
+              "hasNotes": false,
+              "summary": null
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Phil 1:20c-24, 27a",
+              "key": "PHIL.1.20-24_1.27",
+              "linkout": "https://www.drbo.org/chapter/57001.htm",
+              "hasNotes": false,
+              "summary": null
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:1-16a",
+              "key": "MT.20.1-16",
+              "linkout": "https://www.drbo.org/chapter/47020.htm",
+              "hasNotes": true,
+              "summary": "A landowner pays the last hired the same as the first, and asks whether his goodness is a cause for resentment."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-09-21",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "colour": "red",
+      "celebrations": [
+        {
+          "id": "matthew-apostle",
+          "name": "Saint Matthew, Apostle and Evangelist",
+          "rank": "feast",
+          "colour": "red"
+        }
+      ],
+      "lectionaryMissing": false,
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 4:1-7, 11-13",
+              "key": "EPH.4.1-7_4.11-13",
+              "linkout": "https://www.drbo.org/chapter/56004.htm",
+              "hasNotes": false,
+              "summary": null
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-5",
+              "key": "PS.19.2-5",
+              "linkout": "https://www.drbo.org/chapter/21018.htm",
+              "hasNotes": false,
+              "summary": null
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 9:9-13",
+              "key": "MT.9.9-13",
+              "linkout": "https://www.drbo.org/chapter/47009.htm",
+              "hasNotes": false,
+              "summary": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
