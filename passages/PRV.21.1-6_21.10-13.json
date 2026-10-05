@@ -1,0 +1,609 @@
+{
+  "key": "PRV.21.1-6_21.10-13",
+  "ref": "Prv 21:1-6, 10-13",
+  "locale": "en",
+  "summary": "Sayings on God’s hold over every heart, justice ranked above sacrifice, and the fate of one deaf to the poor.",
+  "context": {
+    "title": "Sayings on the heart and the neighbour",
+    "paragraphs": [
+      "Chapters 10:1 to 22:16 form a collection of separate sayings under a fresh heading, the proverbs of Solomon. [c1] Each saying is complete in itself, though the collector sometimes sets sayings on one subject side by side. [c2] Almost all are two-line couplets, the second line either contrasting with the first or carrying it further. [c3]",
+      "First comes God’s hand on the heart: the king’s heart in verse 1, every heart weighed in verse 2, a near repeat of 16:2. [c4] Verse 3 ranks doing justice above sacrifice, as Samuel, Hosea and Micah do. [c5] This is a ranking, not a rejection of worship: Barnes notes it comes from the king who built the temple. [c6]",
+      "Verses 10-13 turn to the neighbour: the wicked person craves evil and shows a neighbour no favour. [c7] The last saying warns that whoever ignores the cry of the poor will cry out and go unheard. [c8] The poor man, the dal, is one without support or means of living. [c9] Keil and Delitzsch draw the moral: only the merciful find mercy. [c10]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "palgei-mayim",
+      "verse": "21:1",
+      "anchor": "stream of water",
+      "original": {
+        "text": "פַּלְגֵי מַיִם",
+        "lang": "hbo",
+        "translit": "palgê mayim",
+        "gloss": "channels of water"
+      },
+      "summary": "Peleg is an irrigation channel: the picture is water steered by hand, not a river in flood.",
+      "body": "Peleg is a channel or canal, often a small cut made for irrigation. [c11] The comparison comes from watering a garden, where the gardener opens one little channel and closes another. [c12] Perowne notes that the irrigator alone decides where the water flows. [c13] So the king, who seems to answer to no one, is steered by God as easily as water in a ditch. [c14]"
+    },
+    {
+      "id": "tokhen-libbot",
+      "verse": "21:2",
+      "anchor": "weighs the heart",
+      "original": {
+        "text": "תֹכֵן לִבּוֹת",
+        "lang": "hbo",
+        "translit": "tōkēn libbôt",
+        "gloss": "a weigher of hearts"
+      },
+      "summary": "Hebrew calls the LORD a “weigher of hearts”, using a verb for measuring and weighing.",
+      "body": "Tokhen is a participle of takan, to measure, weigh or estimate. [c15] The same title is used with spirits in 16:2 and with hearts in 24:12, so God is pictured as the one who weighs. [c15][c16] Set against the first line, where a person’s own way looks right to him, the saying warns against self-deception. [c17]"
+    },
+    {
+      "id": "nir-ner",
+      "verse": "21:4",
+      "anchor": "lamp",
+      "original": {
+        "text": "נִר",
+        "lang": "hbo",
+        "translit": "nir",
+        "gloss": "broken ground, or lamp"
+      },
+      "summary": "One Hebrew word, two readings: the ploughed field of the wicked, or their lamp of prosperity.",
+      "body": "With a change of vowels the word can be read as freshly broken ground or as lamp. [c18] The Greek and Latin versions read lamp, and the Cambridge Bible prefers it. [c19] A lamp burning in the house stood for prosperity, so the shining success of the wicked is itself called sin. [c20] Keil and Delitzsch keep the field: all the husbandry of the godless is sin. [c21]"
+    },
+    {
+      "id": "hevel-niddaf",
+      "verse": "21:6",
+      "anchor": "fleeting vapor",
+      "original": {
+        "text": "הֶבֶל נִדָּף",
+        "lang": "hbo",
+        "translit": "hebel niddāp",
+        "gloss": "a breath driven away"
+      },
+      "summary": "Hevel, the breath or vapour of Ecclesiastes, pictures wealth won by lies drifting away.",
+      "body": "Hevel is vapour or breath, and figuratively vanity; Ecclesiastes uses it nearly forty times. [c22] Read literally, the line runs “a vapour dispersed; seekers of death”. [c23] By the change of one letter, the Greek and Latin versions read snares of death instead. [c24] Either way, wealth gained by lying is as unstable as breath and ends in death. [c25]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Proverbs 10:1 to 22:16 is a collection of separate sayings marked by a new heading, the proverbs of Solomon.",
+      "sourceIds": ["prv-10-1", "ellicott-prv-10-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Each verse of the collection is complete in itself, though the collector seems to have grouped sayings on the same subject.",
+      "sourceIds": ["ellicott-prv-10-1-distinct", "ellicott-prv-10-1-collector"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The collection consists of two-line sayings (distichs), mostly antithetic in Proverbs 10-15 and synthetic in Proverbs 16:1-22:16.",
+      "sourceIds": ["jfb-prv-10-1", "kd-prv-10-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Proverbs 21:2 repeats Proverbs 16:2 almost exactly.",
+      "sourceIds": ["prv-16-2", "cambridge-prv-21-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Proverbs 21:3 gives doing justice and right pre-eminence over sacrifice, a theme shared with 1 Samuel 15:22, Hosea 6:6 and Micah 6:6-8.",
+      "sourceIds": ["prv-21-3", "1sm-15-22", "hos-6-6", "cambridge-prv-21-3", "kd-prv-21-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Proverbs 21:3 ranks justice above sacrifice rather than rejecting worship; Barnes notes that it comes from the king who built the temple and offered sacrifices beyond counting (1 Kgs 8:5).",
+      "sourceIds": ["kd-prv-21-3", "barnes-prv-21-3", "1kgs-8-5"],
+      "sensitive": true
+    },
+    {
+      "id": "c7",
+      "text": "Proverbs 21:10 says the soul of the wicked desires evil and his neighbour finds no favour in his eyes.",
+      "sourceIds": ["prv-21-10"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Proverbs 21:13 warns that one who stops his ear at the cry of the poor will himself cry and not be answered, a retribution on the unmerciful.",
+      "sourceIds": ["prv-21-13", "pulpit-prv-21-13"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "The דַּל of Proverbs 21:13 is one without support and means of subsistence.",
+      "sourceIds": ["kd-prv-21-13-dal"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Keil and Delitzsch comment on Proverbs 21:13 that only the merciful find mercy, citing Matthew 5:7.",
+      "sourceIds": ["kd-prv-21-13"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Hebrew פֶּלֶג means a channel or canal, a small channel of water as in irrigation.",
+      "sourceIds": ["strongs-6388", "bdb-6388"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "The comparison in Proverbs 21:1 is drawn from irrigation, with little channels under the gardener’s control.",
+      "sourceIds": ["cambridge-prv-21-1", "pulpit-prv-21-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "The irrigator has complete control over the water supply.",
+      "sourceIds": ["cambridge-prv-21-1-control"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "The heart of the king, who might seem to have no superior, is directed by God.",
+      "sourceIds": ["pulpit-prv-21-1-king"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The verb תָּכַן means to regulate, measure or estimate; its participle is used of the LORD weighing spirits in Proverbs 16:2 and hearts in Proverbs 21:2 and 24:12.",
+      "sourceIds": ["bdb-8505", "prv-16-2", "prv-24-12"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "In Proverbs 21:2 God is called a weigher of hearts.",
+      "sourceIds": ["kd-prv-21-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Proverbs 21:2 sets a person’s own view of his way against God’s weighing and warns against self-deception.",
+      "sourceIds": ["prv-21-2", "pulpit-prv-21-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "With a change in its vowel points, the Hebrew word in Proverbs 21:4 can mean either the fallow or broken-up field (tillage) or a lamp.",
+      "sourceIds": ["barnes-prv-21-4", "pulpit-prv-21-4"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "The Septuagint and the Vulgate read lamp in Proverbs 21:4, and the Cambridge Bible prefers that rendering.",
+      "sourceIds": ["cambridge-prv-21-4"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "A lamp burning in the house is a symbol of the prosperity of an individual.",
+      "sourceIds": ["cambridge-prv-21-4-lamp", "prv-13-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Keil and Delitzsch read the word as the field, so that the whole husbandry of the godless is sin.",
+      "sourceIds": ["kd-prv-21-4"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "Hebrew הֶבֶל means vapour or breath, figuratively vanity, and Ecclesiastes uses it nearly forty times.",
+      "sourceIds": ["bdb-1892", "biblehub-1892-ecclesiastes"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Proverbs 21:6b reads literally “a vapour dispersed; seekers of death”.",
+      "sourceIds": ["prv-21-6", "cambridge-prv-21-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "By the change of a letter in the Hebrew, the Septuagint and Vulgate read snares of death in Proverbs 21:6.",
+      "sourceIds": ["cambridge-prv-21-6-snares"],
+      "sensitive": false
+    },
+    {
+      "id": "c25",
+      "text": "Wealth obtained by a lying tongue is as evanescent and unstable as breath and ends in death.",
+      "sourceIds": ["pulpit-prv-21-6"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "prv-10-1",
+      "type": "scripture",
+      "citation": "Proverbs 10:1",
+      "ref": "Prv 10:1",
+      "excerpt": "מִשְׁלֵי שְׁלֹמֹה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-16-2",
+      "type": "scripture",
+      "citation": "Proverbs 16:2",
+      "ref": "Prv 16:2",
+      "excerpt": "וְתֹכֵן רוּחוֹת יְהוָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-24-12",
+      "type": "scripture",
+      "citation": "Proverbs 24:12",
+      "ref": "Prv 24:12",
+      "excerpt": "תֹכֵן לִבּוֹת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-21-2",
+      "type": "scripture",
+      "citation": "Proverbs 21:2",
+      "ref": "Prv 21:2",
+      "excerpt": "יָשָׁר בְּעֵינָיו",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-21-3",
+      "type": "scripture",
+      "citation": "Proverbs 21:3",
+      "ref": "Prv 21:3",
+      "excerpt": "צְדָקָה וּמִשְׁפָּט",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "1sm-15-22",
+      "type": "scripture",
+      "citation": "1 Samuel 15:22",
+      "ref": "1 Sm 15:22",
+      "excerpt": "שְׁמֹעַ מִזֶּבַח טוֹב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "hos-6-6",
+      "type": "scripture",
+      "citation": "Hosea 6:6",
+      "ref": "Hos 6:6",
+      "excerpt": "חֶסֶד חָפַצְתִּי וְלֹא זָבַח",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "1kgs-8-5",
+      "type": "scripture",
+      "citation": "1 Kings 8:5",
+      "ref": "1 Kgs 8:5",
+      "excerpt": "לֹא יִסָּפְרוּ וְלֹא יִמָּנוּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-13-9",
+      "type": "scripture",
+      "citation": "Proverbs 13:9",
+      "ref": "Prv 13:9",
+      "excerpt": "וְנֵר רְשָׁעִים יִדְעָךְ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-21-6",
+      "type": "scripture",
+      "citation": "Proverbs 21:6",
+      "ref": "Prv 21:6",
+      "excerpt": "הֶבֶל נִדָּף מְבַקְשֵׁי מָוֶת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-21-10",
+      "type": "scripture",
+      "citation": "Proverbs 21:10",
+      "ref": "Prv 21:10",
+      "excerpt": "לֹא יֻחַן בְּעֵינָיו רֵעֵהוּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-21-13",
+      "type": "scripture",
+      "citation": "Proverbs 21:13",
+      "ref": "Prv 21:13",
+      "excerpt": "מִזַּעֲקַת דָּל",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ellicott-prv-10-1",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 10:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/10-1.htm",
+      "excerpt": "A COLLECTION OF 375 SEPARATE VERSES ON VARIOUS SUBJECTS",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "ellicott-prv-10-1-distinct",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 10:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/10-1.htm",
+      "excerpt": "Each verse is distinct and complete in itself",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "ellicott-prv-10-1-collector",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 10:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/10-1.htm",
+      "excerpt": "the collector appears to have endeavoured to throw together",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "jfb-prv-10-1",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Proverbs 10:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/10-1.htm",
+      "excerpt": "The parallelisms of Pr 10:1-15:33 are mostly antithetic",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "kd-prv-10-1",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1872), on Proverbs 10:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/10-1.htm",
+      "excerpt": "consists of pure distichs, for the most part antithetical",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:10:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-1",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-1.htm",
+      "excerpt": "The comparison is drawn from artificial irrigation.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-1-control",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-1.htm",
+      "excerpt": "The irrigator has complete control over the water supply.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "pulpit-prv-21-1",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 21:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-1.htm",
+      "excerpt": "We are to think of the little channels used for irrigation.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "pulpit-prv-21-1-king",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 21:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-1.htm",
+      "excerpt": "the heart of the king, who might seem to have no superior",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-2",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-2.htm",
+      "excerpt": "Repeated almost exactly from Proverbs 16:2.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "kd-prv-21-2",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1872), on Proverbs 21:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-2.htm",
+      "excerpt": "as He is here called a weigher",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "pulpit-prv-21-2",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 21:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-2.htm",
+      "excerpt": "See here a warning against self-deception",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-3",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-3.htm",
+      "excerpt": "Comp. 1 Samuel 15:22; Hosea 6:6; Micah 6:6-8.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "kd-prv-21-3",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1872), on Proverbs 21:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-3.htm",
+      "excerpt": "Hath with Jahve the pre-eminence above sacrifice",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "barnes-prv-21-3",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Proverbs 21:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-3.htm",
+      "excerpt": "coming from the king who had built the temple",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "barnes-prv-21-4",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Proverbs 21:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-4.htm",
+      "excerpt": "with a change in its vowel points, may signify either",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "pulpit-prv-21-4",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 21:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-4.htm",
+      "excerpt": "another pointing gives a different and very appropriate",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-4",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-4.htm",
+      "excerpt": "But it is better to render lamp, instead of plowing or tillage",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-4-lamp",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-4.htm",
+      "excerpt": "is the symbol of the prosperity of an individual",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "kd-prv-21-4",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1872), on Proverbs 21:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-4.htm",
+      "excerpt": "the whole husbandry of the godless, or the whole of the field",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-6",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-6.htm",
+      "excerpt": "Lit. a vapour dispersed; seekers of death.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "cambridge-prv-21-6-snares",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 21:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-6.htm",
+      "excerpt": "By the change of a letter in the Heb. word",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "pulpit-prv-21-6",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 21:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-6.htm",
+      "excerpt": "as evanescent and unstable as the very breath, and ends in death",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "pulpit-prv-21-13",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 21:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-13.htm",
+      "excerpt": "A twofold retribution is threatened on the unmerciful man.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "kd-prv-21-13",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1872), on Proverbs 21:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-13.htm",
+      "excerpt": "Only the merciful find mercy, Matthew 5:7",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "kd-prv-21-13-dal",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1872), on Proverbs 21:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/21-13.htm",
+      "excerpt": "of him who is without support and means of subsistence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:02:00Z"
+    },
+    {
+      "id": "strongs-6388",
+      "type": "web",
+      "citation": "James Strong, Exhaustive Concordance (1890), Hebrew 6388 פֶּלֶג (Bible Hub)",
+      "url": "https://biblehub.com/hebrew/6388.htm",
+      "excerpt": "a rill (i.e. small channel of water, as in irrigation)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-6388",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. פֶּלֶג (Bible Hub, Strong's 6388)",
+      "url": "https://biblehub.com/hebrew/6388.htm",
+      "excerpt": "(cleft) channel, (artificial) canal",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-8505",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. תָּכַן (Bible Hub, Strong's 8505)",
+      "url": "https://biblehub.com/hebrew/8505.htm",
+      "excerpt": "verb regulate, measure, estimate",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-1892",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "noun masculine vapour, breath",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "biblehub-1892-ecclesiastes",
+      "type": "web",
+      "citation": "Bible Hub, Topical Lexicon, Hebrew 1892 הֶבֶל",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "Ecclesiastes employs hebel nearly forty times.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021b-prv-21-1-6-10-13",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:40:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

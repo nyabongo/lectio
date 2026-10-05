@@ -4,14 +4,13 @@ Written by `npm run lectionary:crosscheck -- --block saints`. Do not edit by han
 `calendar/lectionary/crosscheck/saints.json` and run it again.
 
 - Readings compared with a second source: 66
-- Agreements: 64
-- Disagreements: 2
+- Agreements: 66
+- Disagreements: 0
 - Single-source readings: 113
 
 ## Disagreements
 
-- `celebrations:holy-innocents-martyrs day first-reading`: ours `1 Jn 1:5-10; 2:1-2`, second source `1 Jn 1:5-2:2`. passage differs: ours 1JN.1.5-10_2.1-2, theirs 1JN.1.5-2.2.
-- `celebrations:visitation-of-mary day psalm`: ours `Is 12:2-3, 4, 5-6`, second source `Isaiah 12:2-6`. passage differs: ours IS.12.2-3_12.4_12.5-6, theirs IS.12.2-6.
+None.
 
 ## Single-source readings
 

@@ -1,0 +1,583 @@
+{
+  "key": "LK.9.18-22",
+  "ref": "Lk 9:18-22",
+  "locale": "en",
+  "summary": "After praying alone, Jesus asks who he is; Peter answers “the Christ of God”, and Jesus speaks of the suffering that must come.",
+  "context": {
+    "title": "The Christ of God",
+    "paragraphs": [
+      "Luke sets this scene straight after the feeding of the five thousand, passing over everything Mark recounts between that miracle and Peter’s confession. [c1] He gives no place name, and Caesarea Philippi, named by Matthew and Mark, does not appear. [c2] Only Luke says that Jesus was praying, a detail he stresses at other turning points such as the baptism. [c3]",
+      "The crowd’s answers, John the Baptist, Elijah or one of the ancient prophets, repeat the rumours that had reached Herod the tetrarch in 9:7-8. [c4] The Pulpit Commentary links them to a popular hope that great figures of Israel’s past would reappear before the Messiah. [c5] The Cambridge Bible sees Peter’s reply as the first open confession of Jesus as the Christ. [c6]",
+      "Jesus then orders silence and, for the first time, speaks explicitly of his coming death. [c7] The elders, chief priests and scribes he names were the three groups that made up the Sanhedrin, the council of the nation, so the prediction concerns the nation’s leadership. [c8]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "christ-of-god",
+      "verse": "9:20",
+      "anchor": "The Christ of God",
+      "original": {
+        "text": "τὸν χριστὸν τοῦ θεοῦ",
+        "lang": "grc",
+        "translit": "ton christon tou theou",
+        "gloss": "the anointed of God"
+      },
+      "summary": "Only Luke has “the Christ of God”; christos means “anointed”, the Greek rendering of Messiah.",
+      "body": "Christos means anointed and stands in the Septuagint for the Hebrew mashiach, Messiah. [c9] Each Gospel words Peter’s answer differently, and this exact form is Luke’s own. [c10] It echoes Luke 2:26, where Simeon is promised that he will see the Lord’s Christ. [c11] A. B. Bruce thinks the wording reflects the language of the apostolic age, while Mark’s shorter form sounds more original. [c12]"
+    },
+    {
+      "id": "epitimao",
+      "verse": "9:21",
+      "anchor": "charged",
+      "original": {
+        "text": "ἐπιτιμήσας",
+        "lang": "grc",
+        "translit": "epitimēsas",
+        "gloss": "having charged sternly"
+      },
+      "summary": "Epitimao often means “rebuke”, but here it is a stern charge to keep silent, not a reproof of Peter’s answer.",
+      "body": "Epitimao commonly means to rebuke or censure, but Thayer files this verse under a milder sense, to admonish or charge sharply. [c13] Vincent traces the word to laying a penalty on someone, hence a solemn charge under penalty. [c14] Meyer reads the order as restraining the disciples’ ardour, so that their confession would not run ahead of the suffering that God’s plan still required. [c15]"
+    },
+    {
+      "id": "dei",
+      "verse": "9:22",
+      "anchor": "must",
+      "original": {
+        "text": "Δεῖ",
+        "lang": "grc",
+        "translit": "dei",
+        "gloss": "it is necessary"
+      },
+      "summary": "Dei, “it is necessary”, frames the suffering of the Son of Man as part of God’s purpose.",
+      "body": "Dei is an impersonal verb meaning it is necessary, and Thayer lists a sense of necessity established by the counsel and decree of God. [c16] Meyer reads it that way here and points to Luke 24:26. [c17] There the risen Jesus uses the same verb when he asks whether the Christ did not have to suffer these things. [c18]"
+    },
+    {
+      "id": "apodokimazo",
+      "verse": "9:22",
+      "anchor": "rejected",
+      "original": {
+        "text": "ἀποδοκιμασθῆναι",
+        "lang": "grc",
+        "translit": "apodokimasthēnai",
+        "gloss": "to be rejected after testing"
+      },
+      "summary": "Apodokimazo means to reject after scrutiny, the verb used for the builders’ rejected stone in Psalm 118.",
+      "body": "Apodokimazo means to disapprove or reject, and Vincent stresses rejection on scrutiny or trial, a deliberate verdict. [c19] Luke uses the same verb in 20:17, where Jesus cites Psalm 118:22 about the stone the builders rejected. [c20] John Gill reads the prediction as fulfilling Psalm 118:22, where the stone the builders rejected becomes the head of the corner. [c21]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Luke moves directly from the feeding of the five thousand to Peter’s confession, passing over the material of Mark 6:45-8:26.",
+      "sourceIds": ["meyer-lk-9-18", "expositors-lk-9-18-gap"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Luke does not mention Caesarea Philippi, which Matthew and Mark name as the setting of Peter’s confession.",
+      "sourceIds": ["expositors-lk-9-18-caesarea", "mt-16-13", "mk-8-27"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Only Luke records that Jesus was praying before asking the question, and Luke stresses Jesus’ prayer at other moments such as his baptism (Lk 3:21).",
+      "sourceIds": ["lk-9-18", "vincent-lk-9-18", "ellicott-lk-9-18", "lk-3-21"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "The answers in Luke 9:19 (John the Baptist, Elijah, one of the ancient prophets) match the reports that perplexed Herod the tetrarch in Luke 9:7-8.",
+      "sourceIds": ["lk-9-7-8", "lk-9-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "The Pulpit Commentary relates the crowd’s answers to a popular expectation that certain great national figures would reappear before the Messiah.",
+      "sourceIds": ["pulpit-lk-9-19"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "The Cambridge Bible regards Peter’s answer as the first time that Jesus’ identity as the Christ was openly recognised and confessed.",
+      "sourceIds": ["cambridge-lk-9-20"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Luke 9:22 is Jesus’ first explicit announcement of his approaching death.",
+      "sourceIds": ["jfb-lk-9-18"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The elders, chief priests and scribes named in Luke 9:22 were the three sections that formed the Sanhedrin, the great council of the nation.",
+      "sourceIds": ["lk-9-22-elders", "cambridge-lk-9-22", "pulpit-lk-9-22"],
+      "sensitive": true
+    },
+    {
+      "id": "c9",
+      "text": "Χριστός means anointed, and in the Septuagint it renders the Hebrew מָשִׁיחַ (mashiach).",
+      "sourceIds": ["thayer-christos", "barnes-lk-9-20"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Each evangelist gives Peter’s confession differently, and the form “the Christ of God” is peculiar to Luke.",
+      "sourceIds": ["vincent-lk-9-20", "ellicott-lk-9-20", "mt-16-16", "mk-8-29"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Luke 2:26 says Simeon would not die before seeing τὸν χριστὸν κυρίου, the Lord’s Christ, an expression akin to “the Christ of God”.",
+      "sourceIds": ["lk-2-26", "ellicott-lk-9-20-simeon"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "A. B. Bruce, in the Expositor’s Greek Testament, holds that Luke’s form of the confession reflects the language of the apostolic age and that Mark’s form is original by comparison.",
+      "sourceIds": ["expositors-lk-9-20", "expositors-lk-9-20-mark"],
+      "sensitive": true
+    },
+    {
+      "id": "c13",
+      "text": "Thayer gives ἐπιτιμάω the senses rebuke or censure, but lists Luke 9:21 under a milder sense, to admonish or charge sharply.",
+      "sourceIds": ["thayer-epitimao", "thayer-epitimao-milder"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Vincent explains ἐπιτιμήσας as an emphatic, solemn charge, from the sense of laying a penalty on someone.",
+      "sourceIds": ["vincent-lk-9-21", "vincent-lk-9-21-penalty"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Meyer understands the command to silence as quenching the ardour of the confession so that it would not interfere with the divine appointment of the Messiah’s sufferings.",
+      "sourceIds": ["meyer-lk-9-21", "meyer-lk-9-21-appointment"],
+      "sensitive": true
+    },
+    {
+      "id": "c16",
+      "text": "Δεῖ is an impersonal verb meaning it is necessary, and Thayer lists a sense of necessity established by the counsel and decree of God, used especially of Christ’s sufferings.",
+      "sourceIds": ["thayer-dei", "thayer-dei-decree"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Meyer reads the δεῖ of Luke 9:22 as the appointment of God, citing Luke 24:26.",
+      "sourceIds": ["meyer-lk-9-22"],
+      "sensitive": true
+    },
+    {
+      "id": "c18",
+      "text": "In Luke 24:26 the risen Jesus uses the same verb (ἔδει) in asking whether the Christ had to suffer.",
+      "sourceIds": ["lk-24-26"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Ἀποδοκιμάζω means to disapprove or reject, and Vincent explains it as rejection on scrutiny or trial, implying deliberate rejection.",
+      "sourceIds": ["thayer-apodokimazo", "vincent-lk-9-22"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Luke 20:17 uses the same verb (ἀπεδοκίμασαν) in quoting Psalm 118:22 about the stone the builders rejected.",
+      "sourceIds": ["lk-20-17", "ps-118-22", "thayer-apodokimazo"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "John Gill reads the rejection foretold in Luke 9:22 as fulfilling Psalm 118:22, where the stone the builders rejected becomes the head of the corner.",
+      "sourceIds": ["gill-lk-9-22", "ps-118-22-corner"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "lk-9-18",
+      "type": "scripture",
+      "citation": "Luke 9:18",
+      "ref": "Lk 9:18",
+      "excerpt": "προσευχόμενον κατὰ μόνας",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-3-21",
+      "type": "scripture",
+      "citation": "Luke 3:21",
+      "ref": "Lk 3:21",
+      "excerpt": "προσευχομένου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-7-8",
+      "type": "scripture",
+      "citation": "Luke 9:7-8",
+      "ref": "Lk 9:7-8",
+      "excerpt": "Ἠλίας ἐφάνη",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-19",
+      "type": "scripture",
+      "citation": "Luke 9:19",
+      "ref": "Lk 9:19",
+      "excerpt": "προφήτης τις τῶν ἀρχαίων ἀνέστη",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-22-elders",
+      "type": "scripture",
+      "citation": "Luke 9:22",
+      "ref": "Lk 9:22",
+      "excerpt": "ἀπὸ τῶν πρεσβυτέρων καὶ ἀρχιερέων καὶ γραμματέων",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-16-13",
+      "type": "scripture",
+      "citation": "Matthew 16:13",
+      "ref": "Mt 16:13",
+      "excerpt": "Καισαρείας τῆς Φιλίππου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-8-27",
+      "type": "scripture",
+      "citation": "Mark 8:27",
+      "ref": "Mk 8:27",
+      "excerpt": "Καισαρείας τῆς Φιλίππου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-16-16",
+      "type": "scripture",
+      "citation": "Matthew 16:16",
+      "ref": "Mt 16:16",
+      "excerpt": "ὁ χριστὸς ὁ υἱὸς τοῦ θεοῦ τοῦ ζῶντος",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-8-29",
+      "type": "scripture",
+      "citation": "Mark 8:29",
+      "ref": "Mk 8:29",
+      "excerpt": "Σὺ εἶ ὁ χριστός",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-2-26",
+      "type": "scripture",
+      "citation": "Luke 2:26",
+      "ref": "Lk 2:26",
+      "excerpt": "τὸν χριστὸν κυρίου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-24-26",
+      "type": "scripture",
+      "citation": "Luke 24:26",
+      "ref": "Lk 24:26",
+      "excerpt": "ἔδει παθεῖν τὸν χριστὸν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-20-17",
+      "type": "scripture",
+      "citation": "Luke 20:17",
+      "ref": "Lk 20:17",
+      "excerpt": "Λίθον ὃν ἀπεδοκίμασαν οἱ οἰκοδομοῦντες",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "ps-118-22",
+      "type": "scripture",
+      "citation": "Psalm 118:22",
+      "ref": "Ps 118:22",
+      "excerpt": "אֶבֶן מָאֲסוּ הַבּוֹנִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-118-22-corner",
+      "type": "scripture",
+      "citation": "Psalm 118:22",
+      "ref": "Ps 118:22",
+      "excerpt": "הָיְתָה לְרֹאשׁ פִּנָּה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "meyer-lk-9-18",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1880), on Luke 9:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-18.htm",
+      "excerpt": "entirely passing over everything that occurs in",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "expositors-lk-9-18-gap",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-18.htm",
+      "excerpt": "At this point occurs a great gap in Lk.’s narrative",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "expositors-lk-9-18-caesarea",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-18.htm",
+      "excerpt": "No trace in this Gospel of Caesarea Philippi",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "vincent-lk-9-18",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-18.htm",
+      "excerpt": "As he was praying Peculiar to Luke",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-18",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-18.htm",
+      "excerpt": "something characteristic in the stress which St. Luke lays on the fact",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "jfb-lk-9-18",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Luke 9:18-27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-18.htm",
+      "excerpt": "Our Lord's First Explicit Announcement of His Approaching Death",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-19",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:19 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-19.htm",
+      "excerpt": "certain of the great national heroes were to reappear again",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-20",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "now for the first time the revealed mystery was openly recognised",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "vincent-lk-9-20",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "Each evangelist gives Peter's confession differently",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-20",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "This precise form of expression is peculiar to St. Luke",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "ellicott-lk-9-20-simeon",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "of the song of Simeon",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "expositors-lk-9-20",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "Peter speaks the language of the apostolic age",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "expositors-lk-9-20-mark",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "is original by comparison",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "vincent-lk-9-21",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-21.htm",
+      "excerpt": "The word implies an emphatic, solemn charge",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "vincent-lk-9-21-penalty",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-21.htm",
+      "excerpt": "to lay a penalty upon one, and thence, to charge under penalty",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "meyer-lk-9-21",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1880), on Luke 9:21-22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-21.htm",
+      "excerpt": "the Lord quenches the ardour of that confession",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "meyer-lk-9-21-appointment",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1880), on Luke 9:21-22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-21.htm",
+      "excerpt": "that onward movement of the divine appointment",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "meyer-lk-9-22",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1880), on Luke 9:21-22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-21.htm",
+      "excerpt": "since it is the appointment of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-22",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-22.htm",
+      "excerpt": "by each of the three great sections which formed the Jewish Sanhedrin",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "pulpit-lk-9-22",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Luke 9:22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-22.htm",
+      "excerpt": "a popular way of describing the great council of the Jewish nation",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "vincent-lk-9-22",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Luke 9:22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-22.htm",
+      "excerpt": "to reject on scrutiny or trial, and therefore implies deliberate rejection",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "gill-lk-9-22",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Luke 9:22 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-22.htm",
+      "excerpt": "they should reject the head stone of the corner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
+    },
+    {
+      "id": "thayer-christos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. χριστός (Bible Hub, Strong's 5547)",
+      "url": "https://biblehub.com/greek/5547.htm",
+      "excerpt": "the Sept. for מָשִׁיחַ",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "barnes-lk-9-20",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Luke 9:20 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-20.htm",
+      "excerpt": "The \"Anointed\" of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "thayer-epitimao",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἐπιτιμάω (Bible Hub, Strong's 2008)",
+      "url": "https://biblehub.com/greek/2008.htm",
+      "excerpt": "to tax with fault, rate, chide, rebuke, reprove, censure severely",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "thayer-epitimao-milder",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἐπιτιμάω (Bible Hub, Strong's 2008)",
+      "url": "https://biblehub.com/greek/2008.htm",
+      "excerpt": "Elsewhere in a milder sense, to admonish or charge sharply",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "thayer-dei",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δεῖ (Bible Hub, Strong's 1163)",
+      "url": "https://biblehub.com/greek/1163.htm",
+      "excerpt": "it is necessary, there is need of, it behooves",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "thayer-dei-decree",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δεῖ (Bible Hub, Strong's 1163)",
+      "url": "https://biblehub.com/greek/1163.htm",
+      "excerpt": "necessity established by the counsel and decree of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    },
+    {
+      "id": "thayer-apodokimazo",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀποδοκιμάζω (Bible Hub, Strong's 593)",
+      "url": "https://biblehub.com/greek/593.htm",
+      "excerpt": "to disapprove, reject, repudiate",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:25:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021e-lk-9-18-22",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T10:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

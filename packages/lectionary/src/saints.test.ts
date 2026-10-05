@@ -214,11 +214,8 @@ describe('saints block', () => {
     expect(
       result.disagreements.filter((d) => !/^(passage|alternatives) differ/.test(d.reason)).map((d) => d.id),
     ).toEqual([]);
-    // Same verses, cited differently; left for the owner.
-    expect(result.disagreements.map((d) => d.id)).toEqual([
-      'celebrations:holy-innocents-martyrs day first-reading',
-      'celebrations:visitation-of-mary day psalm',
-    ]);
+    // Same verses cited differently (1 Jn 1:5-10; 2:1-2 = 1 Jn 1:5-2:2) agree: verses are compared, not segments.
+    expect(result.disagreements).toEqual([]);
   });
 
   it('keeps disputes/saints.md in step with the data and the cross-check file', async () => {
