@@ -18,6 +18,8 @@ import { findRepoRoot } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
 import type { ResolvedMass } from '@lectio/content';
 import type { ApiAudio, ApiSegment } from '@lectio/schema/api';
+import type { Reading } from '@lectio/schema/calendar';
+import type { ReadingSlot } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
 
 /** Environment variable naming the audio manifest file (relative paths start at the repository root). */
@@ -79,7 +81,7 @@ export function apiAudio(audio: SiteAudio | null, segment: Pick<NarrationSegment
  * The narration segments of one passage, in order (context, then each translation note), or none when it is not
  * approved or its locale has no narration strings. The slot only labels the queue.
  */
-function passageSegments(passage: Passage, slot: ResolvedMass['readings'][number]['slot']): NarrationSegment[] {
+function passageSegments(passage: Passage, slot: ReadingSlot): NarrationSegment[] {
   const day = { masses: [{ id: 'mass', readings: [{ slot, key: passage.key }] }] };
   try {
     return buildSegments(day, [passage], passage.locale);
@@ -102,7 +104,11 @@ export function passageAudio(audio: SiteAudio | null, passage: Passage): Readonl
 export function massSegments(audio: SiteAudio | null, mass: Pick<ResolvedMass, 'readings'>): ApiSegment[] {
   const seen = new Set<string>();
   const segments: ApiSegment[] = [];
-  for (const { slot, passage } of mass.readings) {
+  for (const reading of mass.readings) {
+    // Read the slot through `Reading` itself: `astro check` sees the schema types as `any` and so loses the members
+    // `ResolvedReading` inherits from it (see `readingSummaries` in site.ts).
+    const { slot }: Reading = reading;
+    const { passage } = reading;
     if (passage === null || seen.has(passage.key)) continue;
     seen.add(passage.key);
     for (const segment of passageSegments(passage, slot)) {

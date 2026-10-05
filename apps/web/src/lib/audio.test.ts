@@ -6,7 +6,7 @@ import { MANIFEST_VERSION, buildSegments, manifestKeyFor } from '@lectio/audio';
 import type { AudioManifest, ManifestEntry } from '@lectio/audio';
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { ResolvedMass } from '@lectio/content';
-import type { Passage } from '@lectio/schema/passage';
+import type { Passage, TranslationNote } from '@lectio/schema/passage';
 import { describe, expect, it } from 'vitest';
 
 import { AUDIO_MANIFEST_ENV, apiAudio, audioManifestPath, loadSiteAudio, massSegments, passageAudio } from './audio.ts';
@@ -149,7 +149,7 @@ describe('passageAudio', () => {
     const byId = passageAudio(fixtureAudio(), passage);
     expect([...byId.keys()]).toEqual([
       `${APPROVED}/context`,
-      ...passage.translationNotes.map((note) => `${APPROVED}/note/${note.id}`),
+      ...passage.translationNotes.map((note: TranslationNote) => `${APPROVED}/note/${note.id}`),
     ]);
     expect([...byId.values()].every((audio) => audio?.url.startsWith('https://audio.lectio.test/audio/en/'))).toBe(
       true,
@@ -173,7 +173,7 @@ describe('massSegments', () => {
     const segments = massSegments(fixtureAudio(), mass());
     expect(segments.map((segment) => segment.id)).toEqual([
       `${APPROVED}/context`,
-      ...passage.translationNotes.map((note) => `${APPROVED}/note/${note.id}`),
+      ...passage.translationNotes.map((note: TranslationNote) => `${APPROVED}/note/${note.id}`),
     ]);
     const expected = segmentsOf(passage);
     segments.forEach((segment, i) => {

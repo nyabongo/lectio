@@ -20,6 +20,7 @@ import type {
   ApiPassageIndex,
   ApiPassageIndexEntry,
   ApiReadingSummary,
+  ApiSegment,
 } from '@lectio/schema/api';
 import { formatErrors } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
@@ -169,15 +170,17 @@ describe('API built from the fixture content root', () => {
   it('lists the narration segments of each Mass, with null audio when nothing is rendered', () => {
     const day = files.get('days/2026-09-20.json') as ApiDay;
     const segments = day.masses[0]?.segments ?? [];
-    expect(segments.map((segment) => segment.id)).toEqual([
+    expect(segments.map((segment: ApiSegment) => segment.id)).toEqual([
       `${APPROVED}/context`,
       `${APPROVED}/note/v15-evil-eye`,
       `${APPROVED}/note/v15-agathos`,
     ]);
-    expect(segments.every((segment) => segment.audio === null && segment.script.length > 0)).toBe(true);
-    expect((files.get('days/2026-09-19.json') as ApiDay).masses.every((mass) => mass.segments?.length === 0)).toBe(
-      true,
-    );
+    expect(segments.every((segment: ApiSegment) => segment.audio === null && segment.script.length > 0)).toBe(true);
+    expect(
+      (files.get('days/2026-09-19.json') as ApiDay).masses.every(
+        (mass: ApiDay['masses'][number]) => mass.segments?.length === 0,
+      ),
+    ).toBe(true);
   });
 
   it('lists the dates each approved passage is read on', () => {
@@ -228,9 +231,12 @@ describe('API built with the fixture audio manifest', () => {
     const day = files.get('days/2026-09-20.json') as ApiDay;
     const notes = readingOf(day, APPROVED)?.passage as ApiNotes;
     const segments = day.masses[0]?.segments ?? [];
-    const noteAudio = [notes.context.audio, ...notes.translationNotes.map((note) => note.audio)];
+    const noteAudio = [
+      notes.context.audio,
+      ...notes.translationNotes.map((note: ApiNotes['translationNotes'][number]) => note.audio),
+    ];
     expect(noteAudio.every((audio) => audio?.url.startsWith('https://audio.lectio.test/audio/en/'))).toBe(true);
-    expect(segments.map((segment) => segment.audio)).toEqual(noteAudio);
+    expect(segments.map((segment: ApiSegment) => segment.audio)).toEqual(noteAudio);
     const passage = files.get(`passages/${APPROVED}.json`) as ReturnType<typeof apiPassage>;
     expect(passage?.passage).toEqual(notes);
   });
