@@ -56,10 +56,9 @@ void main() {
       expect(reminders, hasLength(reminderDays));
       expect(reminders.first.title, 'Dominika ya 25 ya Mwaka');
       expect(reminders[1].title, 'Lectio');
-      expect(
-        reminders.map((reminder) => reminder.body).toSet(),
-        {'Masomo na madokezo ya leo yako tayari.'},
-      );
+      expect(reminders.map((reminder) => reminder.body).toSet(), {
+        'Masomo na madokezo ya leo yako tayari.',
+      });
       expect(celebrations.languages.toSet(), {'sw'});
     });
 

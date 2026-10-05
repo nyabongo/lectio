@@ -102,9 +102,7 @@ void main() {
     expect(markedEnglish(), findsNWidgets(2));
   });
 
-  testWidgets('switching the language reads the other locale', (
-    tester,
-  ) async {
+  testWidgets('switching the language reads the other locale', (tester) async {
     api
       ..serve('sw/days/$seedDate.json', dayWithNames())
       ..serve('days/$seedDate.json', dayWithNames());

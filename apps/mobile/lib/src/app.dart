@@ -71,9 +71,8 @@ class _LectioAppState extends State<LectioApp> {
       (_) => _messenger.currentState?.showSnackBar(
         SnackBar(
           content: Text(
-            ReminderStrings.forLanguage(
-              _settings.settings.language,
-            ).permissionRefused,
+            ReminderStrings.forLanguage(_settings.settings.language)
+                .permissionRefused,
           ),
         ),
       ),

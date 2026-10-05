@@ -105,9 +105,8 @@ class _ReadingScreenState extends State<ReadingScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final language = LectioLocalizations.of(context).languageCode;
-    final repository = ReadingScope.repositoryOf(
-      context,
-    ).forLocale(apiLocaleFor(language));
+    final repository = ReadingScope.repositoryOf(context)
+        .forLocale(apiLocaleFor(language));
     if (!identical(repository, _repository)) {
       _repository = repository;
       _day = _watch();

@@ -35,12 +35,8 @@ Map<String, Object?> validTree() => {
     'title': 'Leo',
     'count': {'one': 'siku {count}', 'other': 'siku {count}'},
   },
-  'app/en/app.json': {
-    'retry': 'Try {what} again',
-  },
-  'app/sw/app.json': {
-    'retry': 'Jaribu {what} tena',
-  },
+  'app/en/app.json': {'retry': 'Try {what} again'},
+  'app/sw/app.json': {'retry': 'Jaribu {what} tena'},
 };
 
 const List<String> testDirs = ['web', 'app'];
@@ -152,14 +148,11 @@ void main() {
     });
 
     test('reports missing, extra and mismatched keys', () {
-      expect(
-        parityProblems(catalogs({'a': 'A', 'c': 'C'})),
-        [
-          'sw: "a" is "text", en is "text x"',
-          'sw: missing "b"',
-          'sw: "c" is not in en',
-        ],
-      );
+      expect(parityProblems(catalogs({'a': 'A', 'c': 'C'})), [
+        'sw: "a" is "text", en is "text x"',
+        'sw: missing "b"',
+        'sw: "c" is not in en',
+      ]);
       expect(parityProblems(catalogs({'a': 'A {x}', 'b': 'B {count}'})), [
         'sw: "b" is "text count", en is "plural count"',
       ]);
@@ -247,10 +240,7 @@ void main() {
         'web/sw/catalog.test.ts': 'export {};',
       });
       Directory('${root.path}/web/en/nested').createSync();
-      expect(
-        readCatalogs(root.path, dirs: testDirs)['sw']!.keys,
-        hasLength(3),
-      );
+      expect(readCatalogs(root.path, dirs: testDirs)['sw']!.keys, hasLength(3));
     });
 
     test('rejects a feature defined twice', () {
@@ -271,7 +261,9 @@ void main() {
     });
 
     test('rejects a locale without catalogs', () {
-      final root = catalogTree({'web/en/day.json': {'title': 'Today'}});
+      final root = catalogTree({
+        'web/en/day.json': {'title': 'Today'},
+      });
       expect(
         () => readCatalogs(root.path, dirs: testDirs),
         throwsA(

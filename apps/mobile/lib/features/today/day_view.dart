@@ -134,9 +134,8 @@ class _Rank extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          TodayStrings.of(
-            context,
-          ).rankAndColourLabel(celebration.rank, celebration.colour),
+          TodayStrings.of(context)
+              .rankAndColourLabel(celebration.rank, celebration.colour),
           style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
         ),
       ],
@@ -193,10 +192,7 @@ class DayDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (refreshError is ApiNetworkException)
-          TodayNotice(
-            icon: Icons.cloud_off_outlined,
-            text: strings.offline,
-          )
+          TodayNotice(icon: Icons.cloud_off_outlined, text: strings.offline)
         else if (refreshError != null)
           TodayNotice(
             icon: Icons.sync_problem_outlined,

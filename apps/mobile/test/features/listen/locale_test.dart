@@ -102,10 +102,9 @@ void main() {
         'v15-evil-eye',
         'v15-agathos',
       ]);
-      expect(
-        segments.map((segment) => segment.locale).toSet(),
-        {NarrationLocale.sw},
-      );
+      expect(segments.map((segment) => segment.locale).toSet(), {
+        NarrationLocale.sw,
+      });
       expect(segments.every((segment) => segment.usesTextToSpeech), isTrue);
     });
 
@@ -119,7 +118,10 @@ void main() {
     test('plays rendered audio when there is some', () {
       final context = narrationSegments(passageIn('en', withAudio: true)).first;
       expect(context.usesTextToSpeech, isFalse);
-      expect(context.audio!.url, Uri.parse('https://audio.example/context.mp3'));
+      expect(
+        context.audio!.url,
+        Uri.parse('https://audio.example/context.mp3'),
+      );
       expect(context.locale, NarrationLocale.en);
     });
   });
