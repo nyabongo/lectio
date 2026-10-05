@@ -44,8 +44,12 @@ export interface PullRequest {
   readonly url: string;
   readonly title: string;
   readonly body: string;
-  /** Head branch name. */
+  /** Head branch name (in `headRepo`). */
   readonly head: string;
+  /** `owner/name` of the repository the head branch lives in. */
+  readonly headRepo: string;
+  /** True when the head branch is in another repository (a fork PR: no secrets, never auto-merged). */
+  readonly fork: boolean;
   readonly base: string;
   readonly headSha: string;
   readonly state: PrState;
@@ -76,8 +80,11 @@ export interface ListPrsFilter {
 }
 
 export interface PrFile {
+  /** Path after the change (the new path of a rename). */
   readonly path: string;
-  readonly status: 'added' | 'modified' | 'removed';
+  readonly status: 'added' | 'modified' | 'removed' | 'renamed';
+  /** For `renamed`: the old path, which matters when a file moves out of a protected directory. */
+  readonly previousPath?: string;
 }
 
 export interface IssueComment {
@@ -134,6 +141,11 @@ export interface WorkflowRun {
   readonly event: string;
   readonly headSha: string;
   readonly headBranch: string;
+  /**
+   * PRs the run belongs to. Real GitHub fills this only for `pull_request`-style events; it is
+   * empty for `issue_comment` and `workflow_dispatch` runs, so a "run belongs to PR n" check
+   * must use the run's head branch or inputs for those.
+   */
   readonly prNumbers: readonly number[];
   readonly status: 'queued' | 'in_progress' | 'completed';
   readonly conclusion: CheckConclusion | null;
@@ -164,10 +176,14 @@ export interface GitHubClient {
   viewer(): Promise<string>;
   /** Rejects with `conflict` when the branch exists. */
   createBranch(input: CreateBranchInput): Promise<{ readonly name: string; readonly sha: string }>;
-  /** One commit with all the changes on top of the branch head. */
+  /**
+   * One commit with all the changes on top of the branch head, created through the Git Data
+   * API so GitHub signs it (`verified: true`); never a local `git push`. The approval commit
+   * (L-031) relies on this.
+   */
   commitFiles(input: CommitFilesInput): Promise<GitCommit>;
   getCommit(sha: string): Promise<GitCommit>;
-  /** Opens a PR for `head`, or updates the open one. */
+  /** Opens a PR for `head`, or updates the open one (title, body, draft, labels and a changed `base`). */
   openOrUpdatePr(input: OpenOrUpdatePrInput): Promise<{ readonly pr: PullRequest; readonly created: boolean }>;
   getPr(number: number): Promise<PullRequest>;
   /** Sorted by number. */
@@ -192,7 +208,10 @@ export interface GitHubClient {
   /** Timeline events with actors, oldest first. */
   listIssueEvents(number: number): Promise<readonly IssueEvent[]>;
   enableAutoMerge(number: number, options?: { readonly method?: 'squash' | 'merge' | 'rebase' }): Promise<void>;
-  /** Merges only if the head is still `matchHeadSha` (otherwise `conflict`). Returns the merge commit sha. */
+  /**
+   * Merges only if the PR is open, not a draft and its head is still `matchHeadSha`
+   * (otherwise `conflict`). Returns the merge commit sha.
+   */
   mergePr(
     number: number,
     options: { readonly matchHeadSha: string; readonly method?: 'squash' | 'merge' | 'rebase' },

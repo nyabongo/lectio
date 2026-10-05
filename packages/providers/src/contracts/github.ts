@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { ProviderError } from '../errors.ts';
-import type { GitHubClient } from '../github.ts';
+import type { GitHubClient, WorkflowRun } from '../github.ts';
 import { markerComment } from '../github.ts';
 
 export interface GitHubContractSubject {
@@ -12,6 +12,8 @@ export interface GitHubContractSubject {
   readonly workflowFile: string;
   /** Prefix for branch names and markers, unique per run so live runs do not collide. */
   readonly prefix: string;
+  /** A workflow run that exists, with the fields `getWorkflowRun` must return for it. */
+  readonly knownRun: Pick<WorkflowRun, 'id' | 'workflowFile' | 'event' | 'headSha' | 'headBranch'>;
 }
 
 export interface GitHubContractOptions {
@@ -67,6 +69,8 @@ export function describeGitHubContract(
         expectedHeadSha: created.sha,
       });
       expect(commit.parents).toEqual([created.sha]);
+      // Created through the API, so GitHub signs it: the approval commit depends on this.
+      expect(commit.verified).toBe(true);
       expect(await client.getCommit(commit.sha)).toEqual(commit);
       expect((await rejection(client.createBranch({ name: branch }))).code).toBe('conflict');
       const stale = client.commitFiles({
@@ -83,7 +87,14 @@ export function describeGitHubContract(
       const { client } = subject;
       const { branch, commit, pr, created } = await openPr(subject, 'open-update');
       expect(created).toBe(true);
-      expect(pr).toMatchObject({ head: branch, base: subject.defaultBranch, state: 'open', headSha: commit.sha });
+      expect(pr).toMatchObject({
+        head: branch,
+        base: subject.defaultBranch,
+        state: 'open',
+        headSha: commit.sha,
+        fork: false,
+      });
+      expect(pr.headRepo).toMatch(/^[^/\s]+\/[^/\s]+$/);
       const again = await client.openOrUpdatePr({
         head: branch,
         title: 'Renamed',
@@ -98,6 +109,40 @@ export function describeGitHubContract(
       expect((await client.listPrs({ label: 'research' })).map((p) => p.number)).toContain(pr.number);
       expect(await client.getPrFiles(pr.number)).toEqual([{ path: 'passages/open-update.json', status: 'added' }]);
       expect((await rejection(client.getPr(987654321))).code).toBe('not-found');
+    });
+
+    it('retargets an open PR to a new base', { timeout }, async () => {
+      const subject = await factory();
+      const { client, prefix } = subject;
+      const { branch, pr } = await openPr(subject, 'retarget');
+      const base = `${prefix}retarget-base`;
+      await client.createBranch({ name: base });
+      const moved = await client.openOrUpdatePr({ head: branch, base, title: pr.title, body: pr.body });
+      expect(moved.created).toBe(false);
+      expect(moved.pr.base).toBe(base);
+      expect((await client.getPr(pr.number)).base).toBe(base);
+      expect(await client.getPrFiles(pr.number)).toEqual([{ path: 'passages/retarget.json', status: 'added' }]);
+    });
+
+    it('reports a moved file as one rename with its previous path', { timeout }, async () => {
+      const subject = await factory();
+      const { client, prefix } = subject;
+      const { pr, commit } = await openPr(subject, 'rename-seed');
+      await client.mergePr(pr.number, { matchHeadSha: commit.sha });
+      const branch = `${prefix}rename`;
+      await client.createBranch({ name: branch });
+      await client.commitFiles({
+        branch,
+        message: 'Move a file',
+        files: [
+          { path: 'passages/rename-seed.json', content: null },
+          { path: 'archive/rename-seed.json', content: '{"status":"pending"}\n' },
+        ],
+      });
+      const moved = await client.openOrUpdatePr({ head: branch, title: 'Move', body: '' });
+      expect(await client.getPrFiles(moved.pr.number)).toEqual([
+        { path: 'archive/rename-seed.json', status: 'renamed', previousPath: 'passages/rename-seed.json' },
+      ]);
     });
 
     it('adds and removes labels idempotently and records who did it', { timeout }, async () => {
@@ -158,6 +203,11 @@ export function describeGitHubContract(
       const { pr, commit } = await openPr(subject, 'merge');
       await client.enableAutoMerge(pr.number, { method: 'squash' });
       expect((await client.getPr(pr.number)).autoMerge).toBe(true);
+      const draft = await openPr(subject, 'draft');
+      await client.openOrUpdatePr({ head: draft.branch, title: 'Draft', body: '', draft: true });
+      expect((await rejection(client.mergePr(draft.pr.number, { matchHeadSha: draft.commit.sha }))).code).toBe(
+        'conflict',
+      );
       const wrong = client.mergePr(pr.number, { matchHeadSha: '0'.repeat(40) });
       expect((await rejection(wrong)).code).toBe('conflict');
       const merged = await client.mergePr(pr.number, { matchHeadSha: commit.sha, method: 'squash' });
@@ -173,6 +223,14 @@ export function describeGitHubContract(
       await client.dispatchWorkflow(workflowFile, defaultBranch, { reason: 'contract' });
       expect((await rejection(client.dispatchWorkflow('no-such-workflow.yml', defaultBranch))).code).toBe('not-found');
       expect((await rejection(client.getWorkflowRun(1))).code).toBe('not-found');
+    });
+
+    it('reads a known workflow run', { timeout }, async () => {
+      const { client, knownRun } = await factory();
+      const run = await client.getWorkflowRun(knownRun.id);
+      expect(run).toMatchObject(knownRun);
+      expect(Array.isArray(run.prNumbers)).toBe(true);
+      expect(typeof run.actor).toBe('string');
     });
 
     it('reports required checks on a sha', { timeout }, async () => {

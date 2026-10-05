@@ -133,7 +133,8 @@ describe('FakeGitHubClient repository', () => {
       files: [
         { path: 'README.md', content: 'changed\n' },
         { path: 'passages/old.json', content: null },
-        { path: 'passages/new.json', content: '{}\n' },
+        { path: 'passages/new.json', content: '{"new":true}\n' },
+        { path: 'docs/README.md', content: 'hello\n' },
       ],
     });
     // main moves on independently
@@ -142,6 +143,7 @@ describe('FakeGitHubClient repository', () => {
     expect(pr.draft).toBe(true);
     expect(await bot.getPrFiles(pr.number)).toEqual([
       { path: 'README.md', status: 'modified' },
+      { path: 'docs/README.md', status: 'added' },
       { path: 'passages/new.json', status: 'added' },
       { path: 'passages/old.json', status: 'removed' },
     ]);
@@ -152,7 +154,7 @@ describe('FakeGitHubClient repository', () => {
     expect(bot.fileAt('main', 'README.md')).toBe('changed\n');
     expect(bot.fileAt('main', 'passages/old.json')).toBeUndefined();
     expect(bot.fileAt('main', 'docs/a.md')).toBe('a\n');
-    expect(bot.fileAt(sha, 'passages/new.json')).toBe('{}\n');
+    expect(bot.fileAt(sha, 'passages/new.json')).toBe('{"new":true}\n');
     expect((await bot.getCommit(sha)).message).toBe('Edit (#1)');
     expect(bot.merges).toEqual([
       {
@@ -167,9 +169,77 @@ describe('FakeGitHubClient repository', () => {
     // A merged PR keeps its files and head even if the branch moves on.
     await bot.commitFiles({ branch: 'edit', message: 'Later', files: [{ path: 'x', content: 'x' }] });
     expect((await bot.getPr(pr.number)).headSha).toBe(pr.headSha);
-    expect(await bot.getPrFiles(pr.number)).toHaveLength(3);
+    expect(await bot.getPrFiles(pr.number)).toHaveLength(4);
     // A new PR can be opened for the same branch once the old one is merged.
     expect((await bot.openOrUpdatePr({ head: 'edit', title: 'Again', body: '' })).created).toBe(true);
+  });
+
+  it('opens fork PRs that report their head repository', async () => {
+    const { bot } = setup();
+    await bot.createBranch({ name: 'patch' });
+    await bot.commitFiles({ branch: 'patch', message: 'Fix', files: [{ path: 'passages/x.json', content: '{}' }] });
+    const fork = await bot
+      .as('contributor')
+      .openForkPr({ head: 'patch', headRepo: 'contributor/lectio', title: 'Fix', body: '' });
+    expect(fork).toMatchObject({ fork: true, headRepo: 'contributor/lectio', author: 'contributor' });
+    // A same-repo PR for the same branch name is a different PR.
+    const own = await bot.openOrUpdatePr({ head: 'patch', title: 'Own', body: '' });
+    expect(own.created).toBe(true);
+    expect(own.pr).toMatchObject({ fork: false, headRepo: 'nyabongo/lectio' });
+    await expect(
+      bot.openForkPr({ head: 'patch', headRepo: 'nyabongo/lectio', title: 't', body: '' }),
+    ).rejects.toMatchObject({
+      code: 'invalid-request',
+    });
+  });
+
+  it('retargets a PR to a new base and diffs against it', async () => {
+    const { bot } = setup();
+    await bot.createBranch({ name: 'release' });
+    await bot.commitFiles({ branch: 'release', message: 'Release notes', files: [{ path: 'NOTES.md', content: 'n' }] });
+    await bot.createBranch({ name: 'feature', from: 'release' });
+    await bot.commitFiles({ branch: 'feature', message: 'Feature', files: [{ path: 'f.md', content: 'f' }] });
+    const { pr } = await bot.openOrUpdatePr({ head: 'feature', title: 'Feature', body: '' });
+    expect((await bot.getPrFiles(pr.number)).map((f) => f.path)).toEqual(['NOTES.md', 'f.md']);
+    const moved = await bot.openOrUpdatePr({ head: 'feature', base: 'release', title: 'Feature', body: '' });
+    expect(moved.pr.base).toBe('release');
+    expect((await bot.getPrFiles(pr.number)).map((f) => f.path)).toEqual(['f.md']);
+    // Omitting base on a later update keeps the current one.
+    expect((await bot.openOrUpdatePr({ head: 'feature', title: 'Again', body: '' })).pr.base).toBe('release');
+    await expect(bot.openOrUpdatePr({ head: 'feature', base: 'feature', title: 't', body: '' })).rejects.toMatchObject({
+      code: 'invalid-request',
+    });
+  });
+
+  it('finds the merge base across merge commits', async () => {
+    const { bot } = setup();
+    const first = await researchPr(bot, 'one');
+    await bot.mergePr(first.pr.number, { matchHeadSha: first.commit.sha, method: 'merge' });
+    const second = await researchPr(bot, 'two');
+    expect(await bot.getPrFiles(second.pr.number)).toEqual([{ path: 'passages/two.json', status: 'added' }]);
+    expect((await bot.listIssueEvents(second.pr.number)).filter((e) => e.event === 'committed')).toHaveLength(1);
+  });
+
+  it('merges a rename and refuses drafts', async () => {
+    const { bot } = setup();
+    await bot.createBranch({ name: 'move' });
+    const commit = await bot.commitFiles({
+      branch: 'move',
+      message: 'Move',
+      files: [
+        { path: 'passages/old.json', content: null },
+        { path: 'archive/old.json', content: '{}\n' },
+      ],
+    });
+    const { pr } = await bot.openOrUpdatePr({ head: 'move', title: 'Move', body: '', draft: true });
+    expect(await bot.getPrFiles(pr.number)).toEqual([
+      { path: 'archive/old.json', status: 'renamed', previousPath: 'passages/old.json' },
+    ]);
+    await expect(bot.mergePr(pr.number, { matchHeadSha: commit.sha })).rejects.toThrow(`#${pr.number} is a draft`);
+    await bot.openOrUpdatePr({ head: 'move', title: 'Move', body: '', draft: false });
+    await bot.mergePr(pr.number, { matchHeadSha: commit.sha });
+    expect(bot.fileAt('main', 'passages/old.json')).toBeUndefined();
+    expect(bot.fileAt('main', 'archive/old.json')).toBe('{}\n');
   });
 
   it('records a two-parent commit for merge-method merges', async () => {

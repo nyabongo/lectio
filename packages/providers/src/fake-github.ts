@@ -42,8 +42,11 @@ interface ThreadRecord {
   readonly createdAt: string;
   // PR only
   readonly head: string;
-  readonly base: string;
-  readonly forkSha: string;
+  /** `owner/name` of the head repository; differs from the repo for fork PRs. */
+  readonly headRepo: string;
+  base: string;
+  /** Merge base of head and base when the PR was opened or retargeted. */
+  forkSha: string;
   draft: boolean;
   autoMerge: boolean;
   mergeCommitSha: string | null;
@@ -115,7 +118,7 @@ class FakeRepo {
   readonly workflows: Readonly<Record<string, FakeWorkflow>>;
   readonly clock: Clock;
   readonly commits = new Map<string, CommitRecord>();
-  readonly branches = new Map<string, { head: string; forkSha: string }>();
+  readonly branches = new Map<string, { head: string }>();
   readonly threads = new Map<number, ThreadRecord>();
   readonly events: EventRecord[] = [];
   readonly comments: CommentRecord[] = [];
@@ -136,7 +139,7 @@ class FakeRepo {
     this.workflows = options.workflows ?? {};
     this.clock = options.clock ?? new FakeClock();
     const root = this.commit([], new Map(Object.entries(options.files ?? {})), 'Initial commit', 'lectio-owner', true);
-    this.branches.set(this.defaultBranch, { head: root.sha, forkSha: root.sha });
+    this.branches.set(this.defaultBranch, { head: root.sha });
   }
 
   /** The next sequence number and a timestamp strictly after the previous one. */
@@ -169,7 +172,7 @@ class FakeRepo {
     return commit;
   }
 
-  branch(name: string): { head: string; forkSha: string } {
+  branch(name: string): { head: string } {
     const branch = this.branches.get(name);
     if (!branch) throw new ProviderError('not-found', `no branch ${name}`);
     return branch;
@@ -195,6 +198,8 @@ class FakeRepo {
       title: thread.title,
       body: thread.body,
       head: thread.head,
+      headRepo: thread.headRepo,
+      fork: thread.headRepo !== this.repo,
       base: thread.base,
       headSha: this.headOf(thread),
       state: thread.state,
@@ -225,6 +230,21 @@ class FakeRepo {
     return merge?.headSha ?? this.branch(thread.head).head;
   }
 
+  /** The newest first-parent ancestor of `head` that `base` also contains. */
+  mergeBase(head: string, base: string): string {
+    const ancestors = new Set<string>();
+    for (const pending = [base]; pending.length > 0;) {
+      const sha = pending.pop() as string;
+      if (ancestors.has(sha)) continue;
+      ancestors.add(sha);
+      pending.push(...this.getCommit(sha).parents);
+    }
+    let commit = this.getCommit(head);
+    // Every branch descends from the root commit, which both sides contain.
+    while (!ancestors.has(commit.sha)) commit = this.getCommit(commit.parents[0] as string);
+    return commit.sha;
+  }
+
   setCheck(run: CheckRun): void {
     const bySha = this.checks.get(run.headSha) ?? new Map<string, CheckRun>();
     bySha.set(run.name, run);
@@ -243,14 +263,27 @@ function toComment(record: CommentRecord): IssueComment {
 }
 
 function diff(base: Tree, head: Tree): PrFile[] {
-  const changes = new Map<string, PrFile['status']>();
+  const changes = new Map<string, PrFile>();
+  const added: string[] = [];
+  const removed: string[] = [];
   for (const [path, content] of head) {
     const before = base.get(path);
-    if (before === undefined) changes.set(path, 'added');
-    else if (before !== content) changes.set(path, 'modified');
+    if (before === undefined) added.push(path);
+    else if (before !== content) changes.set(path, { path, status: 'modified' });
   }
-  for (const path of base.keys()) if (!head.has(path)) changes.set(path, 'removed');
-  return [...changes.keys()].sort().map((path) => ({ path, status: changes.get(path) as PrFile['status'] }));
+  for (const path of base.keys()) if (!head.has(path)) removed.push(path);
+  removed.sort();
+  // Like GitHub, a removed file whose exact content reappears elsewhere is one rename.
+  for (const path of added.sort()) {
+    const index = removed.findIndex((old) => base.get(old) === head.get(path));
+    const previousPath = index === -1 ? undefined : removed.splice(index, 1)[0];
+    changes.set(
+      path,
+      previousPath === undefined ? { path, status: 'added' } : { path, status: 'renamed', previousPath },
+    );
+  }
+  for (const path of removed) changes.set(path, { path, status: 'removed' });
+  return [...changes.keys()].sort().map((path) => changes.get(path) as PrFile);
 }
 
 const PASSING: ReadonlySet<CheckConclusion | null> = new Set(['success', 'neutral', 'skipped']);
@@ -351,7 +384,7 @@ export class FakeGitHubClient implements GitHubClient {
     if (repo.branches.has(input.name)) throw new ProviderError('conflict', `branch ${input.name} already exists`);
     const from = input.from ?? repo.defaultBranch;
     const sha = repo.branches.get(from)?.head ?? repo.getCommit(from).sha;
-    repo.branches.set(input.name, { head: sha, forkSha: sha });
+    repo.branches.set(input.name, { head: sha });
     return { name: input.name, sha };
   }
 
@@ -382,18 +415,32 @@ export class FakeGitHubClient implements GitHubClient {
   }
 
   async openOrUpdatePr(input: OpenOrUpdatePrInput): Promise<{ pr: PullRequest; created: boolean }> {
+    return this.#openPr(input, this.#repo.repo);
+  }
+
+  /** Opens a PR whose head branch lives in another repository (`headRepo`, for example `someone/lectio`). */
+  async openForkPr(input: OpenOrUpdatePrInput & { readonly headRepo: string }): Promise<PullRequest> {
+    if (input.headRepo === this.#repo.repo) throw new ProviderError('invalid-request', 'a fork PR needs another repo');
+    return (await this.#openPr(input, input.headRepo)).pr;
+  }
+
+  async #openPr(input: OpenOrUpdatePrInput, headRepo: string): Promise<{ pr: PullRequest; created: boolean }> {
     const repo = this.#repo;
-    const branch = repo.branch(input.head);
-    const base = input.base ?? repo.defaultBranch;
-    repo.branch(base);
-    if (base === input.head) throw new ProviderError('invalid-request', 'head and base are the same branch');
+    const headSha = repo.branch(input.head).head;
     const existing = [...repo.threads.values()].find(
-      (t) => t.kind === 'pr' && t.state === 'open' && t.head === input.head,
+      (t) => t.kind === 'pr' && t.state === 'open' && t.head === input.head && t.headRepo === headRepo,
     );
+    const base = input.base ?? existing?.base ?? repo.defaultBranch;
+    const baseSha = repo.branch(base).head;
+    if (base === input.head) throw new ProviderError('invalid-request', 'head and base are the same branch');
     if (existing) {
       existing.title = input.title;
       existing.body = input.body;
       if (input.draft !== undefined) existing.draft = input.draft;
+      if (base !== existing.base) {
+        existing.base = base;
+        existing.forkSha = repo.mergeBase(headSha, baseSha);
+      }
       if (input.labels) await this.addLabels(existing.number, input.labels);
       return { pr: repo.toPr(existing), created: false };
     }
@@ -408,8 +455,9 @@ export class FakeGitHubClient implements GitHubClient {
       author: this.actor,
       createdAt: at,
       head: input.head,
+      headRepo,
       base,
-      forkSha: branch.forkSha,
+      forkSha: repo.mergeBase(headSha, baseSha),
       draft: input.draft ?? false,
       autoMerge: false,
       mergeCommitSha: null,
@@ -523,6 +571,7 @@ export class FakeGitHubClient implements GitHubClient {
     const repo = this.#repo;
     const thread = repo.thread(number, 'pr');
     if (thread.state !== 'open') throw new ProviderError('conflict', `#${number} is not open`);
+    if (thread.draft) throw new ProviderError('conflict', `#${number} is a draft`);
     const headSha = repo.branch(thread.head).head;
     if (headSha !== options.matchHeadSha) {
       throw new ProviderError('conflict', `#${number} head is ${headSha}, not ${options.matchHeadSha}`);
@@ -531,6 +580,7 @@ export class FakeGitHubClient implements GitHubClient {
     const tree = new Map(repo.getCommit(base.head).tree);
     const headTree = repo.getCommit(headSha).tree;
     for (const file of diff(repo.getCommit(thread.forkSha).tree, headTree)) {
+      if (file.previousPath !== undefined) tree.delete(file.previousPath);
       if (file.status === 'removed') tree.delete(file.path);
       else tree.set(file.path, headTree.get(file.path) as string);
     }
@@ -612,6 +662,7 @@ export class FakeGitHubClient implements GitHubClient {
         author: this.actor,
         createdAt: at,
         head: '',
+        headRepo: '',
         base: '',
         forkSha: '',
         draft: false,
