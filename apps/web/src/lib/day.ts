@@ -12,8 +12,8 @@
  * the notes are in preparation. Every reading keeps its reference and its link-out either way.
  */
 import type { LectioConfig } from '@lectio/config';
-import { isApproved } from '@lectio/content';
-import type { ContentRepo, ResolvedDay, ResolvedMass, ResolvedReading } from '@lectio/content';
+import { approvedOnly, isApproved } from '@lectio/content';
+import type { ContentRepo, ResolvedDay, ResolvedReading } from '@lectio/content';
 import { formatRef, tryParseRef } from '@lectio/refs';
 import type { CalendarDay, Celebration, Reading } from '@lectio/schema/calendar';
 import { addDays } from '@lectio/shared';
@@ -221,7 +221,7 @@ export function colourLabel(env: DayEnv, colour: string): string {
 
 const NUMBERED_SLOT = /^(reading|psalm)-(\d)$/;
 
-/** The label of a reading slot: `First reading`, `Psalm`, `Gospel`, `Reading 3`, `Psalm 2`, `Epistle`. */
+/** The label of a reading slot: `First reading`, `Psalm`, `Gospel`, `Reading 3`, `Psalm 2`, `Epistle`; else `Reading`. */
 export function slotLabel(env: DayEnv, slot: string): string {
   const { t } = env.messages;
   const { lang } = env;
@@ -239,8 +239,10 @@ export function slotLabel(env: DayEnv, slot: string): string {
       return t(lang, 'day.slot.secondReading');
     case 'epistle':
       return t(lang, 'day.slot.epistle');
-    default:
+    case 'gospel':
       return t(lang, 'day.slot.gospel');
+    default:
+      return t(lang, 'day.slot.other');
   }
 }
 
@@ -256,15 +258,29 @@ export function linkoutLabel(config: Pick<LectioConfig, 'linkout'>): string {
   return providers[provider]?.label ?? provider;
 }
 
+/** The id of the principal Mass, which owns a slot's Reading page when several Masses use that slot. */
+export const PRINCIPAL_MASS_ID = 'day';
+
 /**
- * The slots that have a Reading page, per Mass: the Reading page route is `/[date]/[slot]/`, so a slot belongs to
- * the first Mass that uses it. A later Mass (an alternative set of readings) reusing that slot has no page of its
- * own for it.
+ * Which Mass owns each slot's Reading page. The route is `/[date]/[slot]/`, so each slot gets one page: from the Mass
+ * with id `day` (`PRINCIPAL_MASS_ID`) when it uses the slot, otherwise from the first Mass that does. This keeps the
+ * Mass during the Day, not the Vigil, on the page for Easter, Christmas, Pentecost and other days with a vigil. Any
+ * other Mass reusing the slot has no Reading-page link for it.
  */
-function slotOwners(masses: readonly ResolvedMass[]): Map<string, string> {
+/** The parts of a Mass `slotOwners` reads (spelled out: `astro check` cannot resolve the schema types). */
+export interface SlotMass {
+  readonly id: string;
+  readonly readings: readonly { readonly slot: string }[];
+}
+
+export function slotOwners(masses: readonly SlotMass[]): Map<string, string> {
+  const ordered = [
+    ...masses.filter((mass) => mass.id === PRINCIPAL_MASS_ID),
+    ...masses.filter((mass) => mass.id !== PRINCIPAL_MASS_ID),
+  ];
   const owners = new Map<string, string>();
-  for (const mass of masses) {
-    for (const { slot } of mass.readings as readonly Reading[]) if (!owners.has(slot)) owners.set(slot, mass.id);
+  for (const mass of ordered) {
+    for (const { slot } of mass.readings) if (!owners.has(slot)) owners.set(slot, mass.id);
   }
   return owners;
 }
@@ -321,14 +337,23 @@ export interface DayViewOptions {
   readonly next?: IsoDate | null;
 }
 
-/** The view model of a day page. */
-export function dayView(env: DayEnv, day: ResolvedDay, options: DayViewOptions): DayView {
+/**
+ * The view model of a day page. The day goes through `approvedOnly` first, so an unapproved passage can never reach
+ * the page even if a caller passes the raw repository day.
+ */
+export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOptions): DayView {
+  const day = approvedOnly(resolved);
   const { t, formatDate } = env.messages;
   const { lang } = env;
   const { date } = day;
   const { season, seasonWeek, sundayCycle, weekdayCycle, celebrations, lectionaryMissing }: CalendarDay = day.day;
   const source = linkoutLabel(options.config);
-  const owners = slotOwners(day.masses);
+  const owners = slotOwners(
+    day.masses.map((mass) => ({
+      id: mass.id,
+      readings: (mass.readings as readonly Reading[]).map(({ slot }) => ({ slot })),
+    })),
+  );
   const masses: MassView[] = day.masses.map((mass) => ({
     id: mass.id,
     label: mass.label,

@@ -77,10 +77,10 @@ const showMassLabels = view.masses.length > 1;
     {
       view.masses.map((mass) => (
         <div class="mass">
-          {showMassLabels && <h2 class="mass__label">{mass.label}</h2>}
+          {showMassLabels && <h3 class="mass__label">{mass.label}</h3>}
           <ul class="readings">
             {mass.readings.map((reading) => (
-              <ReadingCard reading={reading} />
+              <ReadingCard reading={reading} level={showMassLabels ? 4 : 3} />
             ))}
           </ul>
         </div>

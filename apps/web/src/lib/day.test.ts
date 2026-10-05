@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { formatDate, t } from '../i18n/index.ts';
 import {
+  PRINCIPAL_MASS_ID,
   TODAY_DAYS_AHEAD,
   TODAY_DAYS_BEFORE,
   UPCOMING_LIST_DAYS,
@@ -25,6 +26,7 @@ import {
   refLabel,
   seasonLabel,
   slotLabel,
+  slotOwners,
   todaySwitch,
   todaySwitchScript,
   todayWindowDates,
@@ -111,6 +113,7 @@ describe('labels', () => {
       'Reading 3',
       'Psalm 2',
     ]);
+    expect(slotLabel(env, 'responsory')).toBe('Reading');
   });
 
   it('writes references in full and keeps one that does not parse', () => {
@@ -236,7 +239,7 @@ function day(overrides: Partial<ResolvedDay['day']>, masses: ResolvedDay['masses
 }
 
 describe('dayView edge cases', () => {
-  it('lists every Mass when there is more than one; a slot has a Reading page only in the first Mass using it', () => {
+  it("lists every Mass; with a Vigil and a Day Mass, the Day Mass owns the shared slot's Reading page", () => {
     const resolved = day(
       {
         celebrations: [
@@ -256,8 +259,9 @@ describe('dayView edge cases', () => {
     const view = dayView(env, resolved, { config: DEFAULT_CONFIG });
     expect(view.massOptions).toBe('This day has 2 Masses to choose from.');
     expect(view.masses.map((mass) => mass.label)).toEqual(['Vigil Mass', 'Mass during the Day']);
-    expect(view.masses[0]?.readings[0]).toMatchObject({ slotLabel: 'Reading 1', href: '/base/2027-04-03/reading-1/' });
-    expect(view.masses[1]?.readings[0]).toMatchObject({ href: null, summary: 'An approved summary.', pending: null });
+    expect(view.masses[0]?.readings[0]).toMatchObject({ slotLabel: 'Reading 1', href: null, pending: null });
+    expect(view.masses[0]?.readings[0]?.summary).toBe('An approved summary.');
+    expect(view.masses[1]?.readings[0]).toMatchObject({ href: '/base/2027-04-03/reading-1/' });
     expect(view.masses[1]?.readings[1]).toMatchObject({ slotLabel: 'Epistle', href: '/base/2027-04-03/epistle/' });
     expect(view.celebrations.map((c) => `${c.name} ${c.rank} ${c.colourLabel}`)).toEqual([
       'Saint A Memorial Red',
@@ -266,6 +270,30 @@ describe('dayView edge cases', () => {
     expect(view.season).toBe('Paschal Triduum');
     expect(view.previous).toBeNull();
     expect(view.next).toBeNull();
+  });
+
+  it('gives each slot to the Day Mass when it uses it, otherwise to the first Mass that does', () => {
+    const mass = (id: string, slots: string[]) => ({ id, readings: slots.map((slot) => ({ slot })) });
+    const owners = slotOwners([
+      mass('vigil', ['first-reading', 'psalm', 'gospel', 'epistle']),
+      mass('night', ['first-reading', 'second-reading']),
+      mass('day', ['first-reading', 'gospel']),
+    ]);
+    expect(Object.fromEntries(owners)).toEqual({
+      'first-reading': 'day',
+      gospel: 'day',
+      psalm: 'vigil',
+      epistle: 'vigil',
+      'second-reading': 'night',
+    });
+    expect(Object.fromEntries(slotOwners([mass('a', ['gospel']), mass('b', ['gospel'])]))).toEqual({ gospel: 'a' });
+    expect(PRINCIPAL_MASS_ID).toBe('day');
+  });
+
+  it('drops an unapproved passage even when the reading claims to have one', () => {
+    const sneaky = { ...reading('gospel', 'Mt 1:1', true), approved: false } as ResolvedReading;
+    const view = dayView(env, day({}, [{ id: 'day', label: 'Mass', readings: [sneaky] }]), { config: DEFAULT_CONFIG });
+    expect(view.masses[0]?.readings[0]).toMatchObject({ href: null, summary: null, pending: 'Notes in preparation' });
   });
 
   it('says the readings are not listed yet when the lectionary data is missing', () => {

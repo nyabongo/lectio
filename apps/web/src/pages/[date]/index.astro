@@ -27,7 +27,14 @@ const view = dayPageView(env, siteContext(), date);
 if (view === null) throw new Error(`No calendar day for ${date}`);
 ---
 
-<BaseLayout title={view.pageTitle} description={view.description} colour={view.colour} lang={lang}>
+<BaseLayout
+  title={view.pageTitle}
+  description={view.description}
+  date={view.date}
+  celebration={view.title}
+  colour={view.colour}
+  lang={lang}
+>
   <Seo slot="head" title={view.pageTitle} description={view.description} lang={lang} path={dayPath(view.date)} />
   <DayView view={view} />
 </BaseLayout>

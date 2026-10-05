@@ -36,7 +36,7 @@ function view(date: string, listen = false): DayViewModel {
 /** The markup without scoped-style and dev-source attributes, one tag per line, so the snapshot reads as HTML. */
 function clean(html: string): string {
   return html
-    .replace(/ data-astro-cid-[a-z0-9]+/g, '')
+    .replace(/ data-astro-cid-[a-z0-9]+(?:="[^"]*")?/g, '')
     .replace(/ data-astro-source-(?:file|loc)="[^"]*"/g, '')
     .replace(/<style[\s\S]*?<\/style>/g, '')
     .replaceAll('><', '>\n<');
@@ -94,7 +94,9 @@ describe('DayView', () => {
       next: null,
     };
     const html = await container.renderToString(DayView, { props: { view: many } });
-    expect(html).toContain('Vigil Mass');
+    expect(html).toMatch(/<h3 class="mass__label"[^>]*>Vigil Mass<\/h3>/);
+    expect(html).toMatch(/<h4 class="reading__ref"[^>]*>/);
+    expect(html).not.toMatch(/<h3 class="reading__ref"/);
     expect(html).toContain('This day has 2 Masses to choose from.');
     expect(html).toMatch(/Saint B[\s\S]*Optional memorial · White/);
     expect(html).not.toContain('day-nav');

@@ -28,7 +28,14 @@ const script = todaySwitchScript(todaySwitch(env, context.repo, date));
 const siteName = t(lang, 'common.site.name');
 ---
 
-<BaseLayout title={siteName} description={view?.description} colour={view?.colour} lang={lang}>
+<BaseLayout
+  title={siteName}
+  description={view?.description}
+  date={view?.date}
+  celebration={view?.title}
+  colour={view?.colour}
+  lang={lang}
+>
   <Seo slot="head" title={siteName} description={view?.description} lang={lang} path="" />
   <script is:inline set:html={script} slot="head" />
   {

@@ -9,16 +9,19 @@ import type { ReadingView } from '../../lib/day.ts';
 
 export interface Props {
   reading: ReadingView;
+  /** Heading level of the reference: 3 under the Readings heading, 4 under a Mass label. */
+  level?: 3 | 4;
 }
 
-const { reading } = Astro.props;
+const { reading, level = 3 } = Astro.props;
+const Heading = level === 4 ? 'h4' : 'h3';
 ---
 
 <li class:list={['reading', { 'reading--linked': reading.href !== null }]}>
   <p class="reading__slot">{reading.slotLabel}</p>
-  <h3 class="reading__ref">
+  <Heading class="reading__ref">
     {reading.href === null ? reading.refLabel : <a href={reading.href}>{reading.refLabel}</a>}
-  </h3>
+  </Heading>
   {reading.summary !== null && <p class="reading__summary">{reading.summary}</p>}
   {reading.pending !== null && <p class="reading__pending">{reading.pending}</p>}
   <a class="reading__text" href={reading.linkout.href} target="_blank" rel="noopener noreferrer">
