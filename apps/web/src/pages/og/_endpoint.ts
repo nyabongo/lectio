@@ -3,7 +3,7 @@
  * card context the pages use (messages, base-aware paths, the site URL and the content) and the render-and-respond
  * step, which goes through the build cache the integration set up (src/integrations/og.ts).
  */
-import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../i18n/index.ts';
+import { DEFAULT_LOCALE, LOCALES, formatDate, localePath, t } from '../../i18n/index.ts';
 import { ogCard, ogEnvOptions, pngResponse, renderOgImage } from '../../lib/og.ts';
 import type { OgContext, OgTarget } from '../../lib/og.ts';
 import { siteRepo } from '../../lib/notes-locale.ts';
@@ -34,4 +34,15 @@ export async function ogImageResponse(target: OgTarget, site: URL | undefined, l
   const card = ogCard(ogContext(site, lang), target);
   if (card === null) throw new Error(`no share card for ${JSON.stringify(target)}`);
   return pngResponse(await renderOgImage(card, ogEnvOptions()));
+}
+
+/** The locale of the card endpoints under `sw/`; they are built only when `config.site.locales` has it. */
+export const SW = 'sw';
+
+/**
+ * The static paths of a locale's card endpoints (`og/sw/…`, L-113): `paths` when the site config lists `locale` as
+ * one of its other locales (`config.site.locales`), else none, so a site without that locale renders no cards for it.
+ */
+export function localeCardPaths<T>(locale: string, paths: readonly T[]): T[] {
+  return locale !== DEFAULT_LOCALE && LOCALES.includes(locale) ? [...paths] : [];
 }

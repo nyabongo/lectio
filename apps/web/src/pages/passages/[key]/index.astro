@@ -4,6 +4,7 @@
  * page. No note bodies here (the Reading pages carry them, so search engines see each note once). View model:
  * `passageView` in src/lib/calendar-view.ts.
  */
+import NotesLanguage from '../../../components/notes/NotesLanguage.astro';
 import Seo from '../../../components/seo/Seo.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { formatDate, localeOf, localePath, t } from '../../../i18n/index.ts';
@@ -28,7 +29,8 @@ if (found === null) throw new Error(`passages/${key}: no approved notes`);
 const view = found;
 const description = t(lang, 'calendar.passage.description', { ref: view.ref, summary: view.summary });
 const colourLabel: Readonly<Record<string, string>> = colourLabels(lang);
-// Notes stay in their own language (English) on other locales' pages: mark them (WCAG 3.1.2).
+// Notes without a reviewed translation stay in English on other locales' pages: mark them (WCAG 3.1.2) and badge
+// them (L-113).
 const notesLang = partLang(view.lang, lang);
 ---
 
@@ -43,6 +45,7 @@ const notesLang = partLang(view.lang, lang);
   <style slot="head" is:inline set:html={colourDotCss()} />
   <p class="eyebrow"><a href={href('passages/')}>{t(lang, 'calendar.passage.eyebrow')}</a></p>
   <h1>{view.ref}</h1>
+  <NotesLanguage contentLang={notesLang} lang={lang} />
   <p class="summary" lang={notesLang}>{view.summary}</p>
   {
     view.lastReviewedAt !== null && (

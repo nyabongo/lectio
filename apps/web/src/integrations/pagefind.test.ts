@@ -124,7 +124,7 @@ describe('Pagefind in Kiswahili (L-113)', () => {
     expect(results.length).toBeGreaterThan(0);
     const first = await results[0]?.data();
     expect(first?.url).toBe(`${base}sw/2026-09-20/gospel/`);
-    expect(first?.filters).toEqual({ book: ['Mathayo'], season: [expect.any(String) as string] });
+    expect(first?.filters).toEqual({ book: ['Mathayo'], season: ['Kipindi cha Kawaida'] });
     expect(first?.meta.date).toBe('Jumapili 20 Septemba 2026');
   });
 

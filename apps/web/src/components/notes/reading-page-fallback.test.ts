@@ -27,6 +27,7 @@ type Renderable = Parameters<AstroContainer['renderToString']>[0];
 let container: AstroContainer;
 let ReadingPage: Renderable;
 let InsightPage: Renderable;
+let PassagePage: Renderable;
 
 beforeAll(async () => {
   vi.stubEnv('LECTIO_CONFIG', 'apps/web/test/lectio.config.fixture.json');
@@ -35,6 +36,7 @@ beforeAll(async () => {
   container = await AstroContainer.create();
   ReadingPage = (await import('../../pages/[date]/[slot]/index.astro')).default as unknown as Renderable;
   InsightPage = (await import('../../pages/[date]/[slot]/notes/[noteId]/index.astro')).default as unknown as Renderable;
+  PassagePage = (await import('../../pages/passages/[key]/index.astro')).default as unknown as Renderable;
 });
 
 afterAll(() => {
@@ -64,6 +66,15 @@ describe('/sw/ pages without a reviewed translation', () => {
     expect(html).toContain('Kiingereza pekee');
     expect(html).toMatch(/class="insight__summary"[^>]*lang="en"/);
     expect(html).not.toContain('wivu');
+  });
+
+  it('shows the badge on the passage page too', async () => {
+    const html = await container.renderToString(PassagePage, {
+      params: { key: 'MT.20.1-16' },
+      request: new Request('https://example.org/sw/passages/MT.20.1-16/'),
+    });
+    expect(html).toContain('Kiingereza pekee');
+    expect(html).toMatch(/<p class="summary"[^>]*lang="en"/);
   });
 
   it('never shows the badge on an English page', async () => {
