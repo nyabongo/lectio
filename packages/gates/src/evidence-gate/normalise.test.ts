@@ -37,6 +37,10 @@ describe('stripTags', () => {
     expect(stripTags('<blockquote>a</blockquote><article>b</article>')).toBe(' a  b ');
   });
 
+  it('spaces inline tags instead when asked', () => {
+    expect(stripTags('<sup>1</sup>The <i>kingdom</i>', false)).toBe(' 1 The  kingdom ');
+  });
+
   it('keeps a lone less-than sign that is not a tag', () => {
     expect(stripTags('1 < 2')).toBe('1 < 2');
   });
@@ -87,6 +91,30 @@ describe('whole-word, windowed matching', () => {
     expect(excerptOccurs('the start … were paid', text)).toBe(false);
     const three = `a b c d e f ${'x '.repeat(150)}d e f ${'y '.repeat(75)}g h i`;
     expect(excerptOccurs('a b c … d e f … g h i', three)).toBe(true);
+  });
+
+  it('stays fast on many repeated pieces over long repetitive text (no exponential backtracking)', () => {
+    const page = 'The owner of the house went out at the third hour and saw the others standing in the market. '.repeat(
+      200,
+    );
+    const start = performance.now();
+    expect(excerptOccurs(`${'the … '.repeat(12)}unicorn`, page)).toBe(false);
+    expect(excerptOccurs(`${'the … '.repeat(12)}market`, page)).toBe(true);
+    expect(performance.now() - start).toBeLessThan(500);
+  });
+
+  it('matches with inline tags glued or spaced, whichever the page needs', () => {
+    for (const page of [
+      '<p><sup>1</sup>The kingdom of heaven is like a householder.</p>',
+      '<p><span class="reftext">1</span>The kingdom of heaven is like a householder.</p>',
+      '<p><a href="/matthew/20-1.htm">Mt 20:1</a>The kingdom of heaven is like a householder.</p>',
+    ]) {
+      expect(excerptOccurs('The kingdom of heaven', page)).toBe(true);
+    }
+    expect(excerptOccurs('The word Ἑταῖρε is used', '<p>The word <a href="/g">Ἑ<i>ταῖρε</i></a> is used</p>')).toBe(
+      true,
+    );
+    expect(excerptOccurs('1The kingdom of', '<p><sup>1</sup> The kingdom of</p>')).toBe(false);
   });
 
   it('drops pieces with no letter or digit', () => {

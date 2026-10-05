@@ -71,7 +71,7 @@ export const EVIDENCE_RULES = {
   ),
   scriptureSourceReal: defineRule(
     'evidence/scripture-source-real',
-    'Every scripture source cites real verses, and its Greek, Hebrew, Aramaic or Latin excerpt occurs in those verses of the corpus.',
+    'Every scripture source cites real verses, and its Greek, Hebrew, Aramaic or Latin excerpt occurs in those verses of the corpus. An excerpt containing Greek or Hebrew script is checked as Greek or Hebrew whatever its excerptLang says (even `en`), and must be tagged grc, hbo or arc.',
     'Correct the source’s ref to the verse it quotes, or copy the excerpt from that verse of the original text.',
   ),
   originalWordInVerse: defineRule(
@@ -222,8 +222,9 @@ async function checkScriptureSource(check: FileCheck, source: PassageSource, ind
   const { excerpt, excerptLang: tag } = source;
   if (excerpt === undefined) return;
   const script = scriptLanguage(excerpt);
+  const tagFits = script === undefined || tag === script || (script === 'hbo' && tag === 'arc');
   let lang: CorpusLanguage;
-  if (isCorpusLanguage(tag)) {
+  if (isCorpusLanguage(tag) && tagFits) {
     lang = tag;
   } else if (script !== undefined) {
     // Greek or Hebrew script is checked whatever the tag says; a wrong or missing tag is itself an error.
@@ -265,11 +266,23 @@ async function checkScriptureSource(check: FileCheck, source: PassageSource, ind
     reportSource(check, rule, index, 'excerpt', 'warning', `could not be checked: ${lookup.reason}`);
     return;
   }
+  const occurs = (tokens: readonly Token[]): boolean => phraseInTokens(lookup.language, tokens, excerpt);
   if (lookup.missing.length === target.verses.length) {
-    reportSource(check, rule, index, 'ref', 'error', `cites ${ref}, which is not in ${lookup.edition}`);
+    const near = nearbyMatch(lookup, occurs);
+    if (near === undefined) {
+      reportSource(check, rule, index, 'ref', 'error', `cites ${ref}, which is not in ${lookup.edition}`);
+    } else {
+      reportSource(
+        check,
+        rule,
+        index,
+        'ref',
+        'warning',
+        `cites ${ref}, which ${lookup.edition} does not number; the excerpt is in ${near}: its verse boundaries can differ from the cited numbering, so a reviewer must check the ref`,
+      );
+    }
     return;
   }
-  const occurs = (tokens: readonly Token[]): boolean => phraseInTokens(lookup.language, tokens, excerpt);
   if (occurs(lookup.tokens)) return;
   const near = nearbyMatch(lookup, occurs);
   if (near !== undefined) {
@@ -344,8 +357,18 @@ async function checkNote(check: FileCheck, index: number): Promise<void> {
     report('original/text', 'warning', `could not be checked: ${lookup.reason}`);
     return;
   }
+  const allIn = (tokens: readonly Token[]): boolean =>
+    wordsNotInTokens(lookup.language, tokens, note.original.text).length === 0;
   if (lookup.missing.length > 0) {
-    report('verse', 'error', `is on ${where}, which is not in ${lookup.edition}`);
+    const near = nearbyMatch(lookup, allIn);
+    if (near === undefined) report('verse', 'error', `is on ${where}, which is not in ${lookup.edition}`);
+    else {
+      report(
+        'verse',
+        'warning',
+        `is on ${where}, which ${lookup.edition} does not number; its words are in ${near}: its verse boundaries can differ from the cited numbering, so a reviewer must check the verse`,
+      );
+    }
     return;
   }
   const missing = wordsNotInTokens(lookup.language, lookup.tokens, note.original.text);

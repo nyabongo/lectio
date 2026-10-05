@@ -293,6 +293,8 @@ describe('evidenceGate', () => {
         expect((await withExcerpt(excerpt, html)).items).toEqual([]);
         expect((await withExcerpt('and of Judas. Next paragraph.', html)).items).toEqual([]);
         expect((await withExcerpt('of Judas.Next paragraph', html)).status).toBe('fail');
+        const numbered = '<p><sup>1</sup>The kingdom of heaven is like a householder.</p>';
+        expect((await withExcerpt('The kingdom of heaven', numbered)).items).toEqual([]);
       });
 
       it('fails pieces that lie far apart on the page', async () => {
@@ -380,6 +382,13 @@ describe('evidenceGate', () => {
       expect(untagged.items[0]?.message).toContain(
         'quotes Greek script, but its excerpt has no excerptLang; tag it "grc"',
       );
+      // Even an `en` or `lat` tag: Greek script is checked as Greek, and the tag is an error.
+      for (const tag of ['en', 'lat']) {
+        const mistagged = await withSource({ ref: 'Mt 19:27', excerpt: 'Πέτρος', excerptLang: tag });
+        expect(summary(mistagged.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/excerptLang']);
+      }
+      const aramaic = await withSource({ ref: 'Dn 3:91', excerpt: 'נְבוּכַדְנֶצַּר', excerptLang: 'arc' });
+      expect(aramaic.items).toEqual([]);
       const hebrew = await withSource({ ref: 'Dt 15:9', excerpt: 'וְרָעָה עֵינְךָ', excerptLang: 'he' });
       expect(summary(hebrew.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/excerptLang']);
       expect(hebrew.items[0]?.message).toContain('is tagged "he"; tag it "hbo" (or "arc" for Aramaic)');
@@ -404,6 +413,14 @@ describe('evidenceGate', () => {
       expect(maccabees.items[0]?.message).toContain('grc-lxx has only when 2 Mc 4:19 is included');
       const both = await withSource({ ref: '2 Mc 4:19', excerpt: 'βασιλέως παρόντος … τριηρέων', excerptLang: 'grc' });
       expect(both.items[0]?.message).toContain('only when 2 Mc 4:18 and 2 Mc 4:20 are included');
+      // Swete's text has no Sir 3:25: text from a neighbouring verse is a boundary warning.
+      const unnumbered = await withSource({ ref: 'Sir 3:25', excerpt: 'ὑπόνοια πονηρὰ', excerptLang: 'grc' });
+      expect(summary(unnumbered.items)).toEqual(['evidence/scripture-source-real warning c1 /sources/0/ref']);
+      expect(unnumbered.items[0]?.message).toContain(
+        'cites Sir 3:25, which grc-lxx does not number; the excerpt is in Sir 3:24',
+      );
+      const nowhere = await withSource({ ref: 'Sir 3:25', excerpt: 'ἐδάκρυσεν', excerptLang: 'grc' });
+      expect(summary(nowhere.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/ref']);
       const absent = await withSource({ ref: 'Sir 3:26', excerpt: 'ἐδάκρυσεν', excerptLang: 'grc' });
       expect(summary(absent.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/excerpt']);
       // The tolerance is for the Septuagint only.
@@ -504,6 +521,20 @@ describe('evidenceGate', () => {
         'evidence/original-word-in-verse error c1 /translationNotes/1/original/text',
       ]);
       expect(noteItems[0]?.message).toContain('“πόνοις” grc-lxx has only in Sir 3:27');
+      notes[0] = {
+        ...(notes[0] as Json),
+        verse: '3:25',
+        original: { text: 'ὑπόνοια', lang: 'grc', translit: 'x', gloss: 'x' },
+      };
+      notes[1] = { ...(notes[1] as Json), verse: '3:25' };
+      const unnumbered = (await run(passage)).items.filter((item) => item.pointer.startsWith('/translationNotes'));
+      expect(summary(unnumbered)).toEqual([
+        'evidence/original-word-in-verse warning c2 /translationNotes/0/verse',
+        'evidence/original-word-in-verse error c1 /translationNotes/1/verse',
+      ]);
+      expect(unnumbered[0]?.message).toContain(
+        'is on SIR 3:25, which grc-lxx does not number; its words are in Sir 3:24',
+      );
     });
 
     it('fails a verse that does not exist in the book', async () => {

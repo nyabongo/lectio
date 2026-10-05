@@ -59,13 +59,18 @@ const INLINE_TAG = /<\/?(?:a|abbr|b|cite|em|i|small|span|strong|sub|sup|u)\b[^>]
 const TAG = /<\/?[A-Za-z][^>]*>/gu;
 
 /**
- * Removes HTML markup, keeping the text. Inline tags (links, emphasis, spans) are dropped without
- * a space, so a word or sentence they interrupt stays whole (Bible Hub links verse references
- * mid-sentence); any other tag (paragraphs, line breaks, cells) becomes a space so words on either
- * side stay apart.
+ * Removes HTML markup, keeping the text. Block tags (paragraphs, line breaks, cells) always become
+ * a space so words on either side stay apart. Inline tags (links, emphasis, spans, superscripts)
+ * are dropped without a space when `glueInline` is true, so a word they split stays whole
+ * (`Ἑ<i>ταῖρε</i>`), and become a space otherwise, so a verse number or link set against the next
+ * word (`<sup>1</sup>The`) does not join it. Neither reading is right for every page, so
+ * {@link excerptOccurs} tries both.
  */
-export function stripTags(text: string): string {
-  return text.replace(HIDDEN_BLOCKS, ' ').replace(INLINE_TAG, '').replace(TAG, ' ');
+export function stripTags(text: string, glueInline = true): string {
+  return text
+    .replace(HIDDEN_BLOCKS, ' ')
+    .replace(INLINE_TAG, glueInline ? '' : ' ')
+    .replace(TAG, ' ');
 }
 
 const SINGLE_QUOTES = /[‘’‚‛′`´ʼ]/gu;
@@ -76,8 +81,8 @@ const INVISIBLE = /[\u00AD\u200B-\u200D\u2060\uFEFF]/gu;
 const SPACES = /\s+/gu;
 
 /** The comparison form of a page or an excerpt. */
-export function normaliseText(text: string): string {
-  return decodeEntities(stripTags(text))
+export function normaliseText(text: string, glueInline = true): string {
+  return decodeEntities(stripTags(text, glueInline))
     .normalize('NFKC')
     .replace(INVISIBLE, '')
     .replace(SINGLE_QUOTES, "'")
@@ -129,14 +134,23 @@ function* occurrences(text: string, piece: string, from: number): Generator<numb
   }
 }
 
-/** Whether `pieces[index…]` follow on from `end`, each starting within {@link MAX_PIECE_GAP} of the last. */
-function restFollows(text: string, pieces: readonly string[], index: number, end: number): boolean {
+/**
+ * Whether `pieces[index…]` follow on from `end`, each starting within {@link MAX_PIECE_GAP} of the
+ * last. `dead` remembers the `(index, end)` pairs already known to fail, so each pair is explored
+ * once: the work is bounded by pieces × occurrences, not exponential in the number of pieces.
+ * (Taking the earliest occurrence of each piece greedily is not enough: a later occurrence moves
+ * the window for the next piece and can be the only one that reaches it.)
+ */
+function restFollows(text: string, pieces: readonly string[], index: number, end: number, dead: Set<string>): boolean {
   const piece = pieces[index];
   if (piece === undefined) return true;
+  const key = `${String(index)}:${String(end)}`;
+  if (dead.has(key)) return false;
   for (const at of occurrences(text, piece, end)) {
-    if (at - end > MAX_PIECE_GAP) return false;
-    if (restFollows(text, pieces, index + 1, at + piece.length)) return true;
+    if (at - end > MAX_PIECE_GAP) break;
+    if (restFollows(text, pieces, index + 1, at + piece.length, dead)) return true;
   }
+  dead.add(key);
   return false;
 }
 
@@ -144,14 +158,20 @@ function restFollows(text: string, pieces: readonly string[], index: number, end
  * Whether `excerpt` occurs in `page`: every piece as whole words (`he` does not match inside
  * "the", `vine` not inside "vineyard"), pieces in order and each within {@link MAX_PIECE_GAP}
  * characters of the one before. An excerpt with no words never matches.
+ *
+ * The page is read twice, with inline tags glued (`Ἑ<i>ταῖρε</i>` → `Ἑταῖρε`) and spaced
+ * (`<sup>1</sup>The` → `1 The`); the excerpt matches if it occurs in either reading.
  */
 export function excerptOccurs(excerpt: string, page: string): boolean {
   const pieces = excerptPieces(excerpt);
   const [first] = pieces;
   if (first === undefined) return false;
-  const text = normaliseText(page);
-  for (const at of occurrences(text, first, 0)) {
-    if (restFollows(text, pieces, 1, at + first.length)) return true;
-  }
-  return false;
+  return [true, false].some((glue) => {
+    const text = normaliseText(page, glue);
+    const dead = new Set<string>();
+    for (const at of occurrences(text, first, 0)) {
+      if (restFollows(text, pieces, 1, at + first.length, dead)) return true;
+    }
+    return false;
+  });
 }
