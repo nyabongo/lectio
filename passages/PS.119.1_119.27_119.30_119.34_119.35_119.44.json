@@ -1,0 +1,536 @@
+{
+  "key": "PS.119.1_119.27_119.30_119.34_119.35_119.44",
+  "ref": "Ps 119:1, 27, 30, 34, 35, 44",
+  "locale": "en",
+  "summary": "Verses from four stanzas of the alphabetic psalm of the Torah: the blameless way, a prayer for insight, a vow to keep it.",
+  "context": {
+    "title": "The way of God’s teaching",
+    "paragraphs": [
+      "Psalm 119 is an alphabetic poem of twenty-two stanzas, one for each Hebrew letter, and every verse of a stanza begins with that letter. [c1] Only two verses lack a word for God’s teaching, which is named by near-synonyms such as law, precepts, judgments and commandments. [c2] The design may have served memory and the instruction of the young. [c3]",
+      "Today’s response takes single verses from four stanzas: Aleph, Daleth, He and Vav. [c4] Three of them speak of the way: the blameless way, the way of the precepts and the way of faithfulness. [c5] The psalmist asks for insight, a prayer the psalm repeats, and calls the commandments his delight. [c6][c7]",
+      "Verse 44 closes the selection with a vow to keep God’s teaching continually, for ever and ever. [c8] The Cambridge Bible asks whether the singer means only the rest of his own life, or merges himself with the nation and looks to the generations to come. [c8]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "temimei-derekh",
+      "verse": "119:1",
+      "anchor": "blameless",
+      "original": {
+        "text": "תְמִימֵי דָרֶךְ",
+        "lang": "hbo",
+        "translit": "tĕmîmê dārek",
+        "gloss": "whole ones of way"
+      },
+      "summary": "Tamim means whole or complete: integrity of life more than spotless purity.",
+      "body": "Tamim properly means perfect or sincere, a life that is whole, and Barnes compares the description of Job. [c9] The Cambridge Bible explains it as single-hearted devotion to God joined to integrity in dealing with other people. [c10] The older English rendering undefiled follows the Greek and Latin translations, which speak of freedom from stain. [c11]"
+    },
+    {
+      "id": "piqqudim",
+      "verse": "119:27",
+      "anchor": "precepts",
+      "original": {
+        "text": "פִּקּוּדֶיךָ",
+        "lang": "hbo",
+        "translit": "piqqûdêkā",
+        "gloss": "your charges"
+      },
+      "summary": "Piqqudim are things appointed, charges given by God; the word is found only in the Psalms.",
+      "body": "Piqqud comes from paqad and properly means something appointed, a mandate; it occurs only in the plural. [c12] All twenty-four occurrences are in the Psalms, twenty-one of them in this psalm. [c13] To understand the way of the precepts can mean grasping their full meaning, or learning how to walk by them in daily life. [c14]"
+    },
+    {
+      "id": "havineni",
+      "verse": "119:34",
+      "anchor": "Give me understanding",
+      "original": {
+        "text": "הֲבִינֵנִי",
+        "lang": "hbo",
+        "translit": "hăbînēnî",
+        "gloss": "make me discern"
+      },
+      "summary": "A causative verb, “make me understand”, and a request the psalm makes again and again.",
+      "body": "Havineni is a causative form of bin, to discern: make me understand. [c15] The same verb stands in verse 27, and the request occurs six times in the psalm. [c15][c16] Barnes notes that the psalmist asks not for intelligence in general but for right views of the law. [c17] The Pulpit Commentary paraphrases: if I fail, it is from lack of wisdom, not of will. [c18]"
+    },
+    {
+      "id": "torah",
+      "verse": "119:44",
+      "anchor": "law",
+      "original": {
+        "text": "תוֹרָתְךָ",
+        "lang": "hbo",
+        "translit": "tôrātĕkā",
+        "gloss": "your instruction"
+      },
+      "summary": "Torah means instruction or teaching before it means a legal code.",
+      "body": "Torah has a much wider range than law: direction or instruction, human or divine, as when Prov 1:8 speaks of a mother’s torah. [c19] In this psalm it takes in all divine revelation as the guide of life. [c20] Keil and Delitzsch call it living instruction rather than a rigid, fixed teaching. [c21] Rendered simply as law, it can sound like a legal code alone. [c19]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Psalm 119 is divided into twenty-two stanzas named by the letters of the Hebrew alphabet; each stanza has eight verses, each beginning with that letter.",
+      "sourceIds": ["jfb-ps-119-1", "jfb-ps-119-1-stanza"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Only two verses of Psalm 119 (122 and 132) contain no term for God’s word, which is called by many names such as law, statutes, precepts, judgments and commandments.",
+      "sourceIds": ["jfb-ps-119-1-two-verses", "poole-ps-119-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Psalm 119 seems intended as a manual of pious thoughts, especially for instructing the young, with a structure that aids memory.",
+      "sourceIds": ["jfb-ps-119-1-manual"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "The verses of the responsorial psalm come from four stanzas: Aleph (v. 1), Daleth (vv. 27, 30), He (vv. 34, 35) and Vav (v. 44).",
+      "sourceIds": ["kd-ps-119-1", "kd-ps-119-27", "kd-ps-119-34", "kd-ps-119-44"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "The word דֶּרֶךְ (way) occurs in Psalm 119:1, 27 and 30.",
+      "sourceIds": ["ps-119-1", "ps-119-27", "ps-119-30"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "The prayer for deeper insight in Psalm 119:27 recurs in 119:34 and elsewhere in the psalm.",
+      "sourceIds": ["cambridge-ps-119-27"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "In Psalm 119:35 the psalmist says he delights in the path of God’s commandments.",
+      "sourceIds": ["ps-119-35", "barnes-ps-119-35"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Psalm 119:44 vows to keep God’s law continually, for ever and ever; the Cambridge Bible asks whether the psalmist means his own lifetime or merges his personality in the nation and its generations to come.",
+      "sourceIds": ["ps-119-44", "cambridge-ps-119-44"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "תָּמִים properly means perfect or sincere, and Barnes compares the word used of Job in Job 1:1.",
+      "sourceIds": ["benson-ps-119-1", "barnes-ps-119-1-job"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "The perfect in way are those whose course of life is governed by single-hearted devotion to God and integrity in dealing with others.",
+      "sourceIds": ["cambridge-ps-119-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "The Greek translation of Psalm 119:1 renders the word undefiled, and the Latin immaculati.",
+      "sourceIds": ["barnes-ps-119-1-greek"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "פִּקּוּד comes from פָּקַד and properly means a thing appointed, a mandate; it is used only in the plural.",
+      "sourceIds": ["strongs-6490", "bdb-6490"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "פִּקּוּד occurs twenty-four times, all in the Psalms, twenty-one of them in Psalm 119.",
+      "sourceIds": ["biblehub-6490-psalms", "biblehub-6490-ps-119"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Understanding the way of the precepts may mean grasping their full meaning or knowing how to walk according to them.",
+      "sourceIds": ["poole-ps-119-27-meaning", "poole-ps-119-27-walk"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "In the petition “give me understanding”, which occurs six times in Psalm 119, the verb is causative.",
+      "sourceIds": ["kd-ps-119-34-six", "kd-ps-119-34-causative"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "The verb in Psalm 119:34 is the same as in Psalm 119:27.",
+      "sourceIds": ["ps-119-27-havineni", "barnes-ps-119-34-same"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Psalm 119:34 is not a prayer for the faculty of intelligence but for right views of the law.",
+      "sourceIds": ["barnes-ps-119-34"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The Pulpit Commentary paraphrases Psalm 119:34 as: if I fail now, it is from lack of wisdom, not of will.",
+      "sourceIds": ["pulpit-ps-119-34"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Torah has a much wider range of meaning than law: direction or instruction, human (Prov 1:8) or divine, a body of teaching, a code, the Pentateuch.",
+      "sourceIds": ["cambridge-ps-119-1-torah", "prv-1-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "In Psalm 119, as in Psalms 1 and 19, torah includes all divine revelation as the guide of life.",
+      "sourceIds": ["cambridge-ps-119-1-revelation"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "In Psalm 119 torah has not the rigid notion of a fixed teaching but of living instruction.",
+      "sourceIds": ["kd-ps-119-30-torah"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "ps-119-1",
+      "type": "scripture",
+      "citation": "Psalm 119:1",
+      "ref": "Ps 119:1",
+      "excerpt": "תְמִימֵי דָרֶךְ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-27",
+      "type": "scripture",
+      "citation": "Psalm 119:27",
+      "ref": "Ps 119:27",
+      "excerpt": "דֶּרֶךְ פִּקּוּדֶיךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-27-havineni",
+      "type": "scripture",
+      "citation": "Psalm 119:27",
+      "ref": "Ps 119:27",
+      "excerpt": "הֲבִינֵנִי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-30",
+      "type": "scripture",
+      "citation": "Psalm 119:30",
+      "ref": "Ps 119:30",
+      "excerpt": "דֶּרֶךְ אֱמוּנָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-35",
+      "type": "scripture",
+      "citation": "Psalm 119:35",
+      "ref": "Ps 119:35",
+      "excerpt": "כִּי בוֹ חָפָצְתִּי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-44",
+      "type": "scripture",
+      "citation": "Psalm 119:44",
+      "ref": "Ps 119:44",
+      "excerpt": "תָמִיד לְעוֹלָם וָעֶד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-1-8",
+      "type": "scripture",
+      "citation": "Proverbs 1:8",
+      "ref": "Prv 1:8",
+      "excerpt": "תּוֹרַת אִמֶּךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jfb-ps-119-1",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "It is divided into twenty-two parts or stanzas",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-stanza",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "Each stanza contains eight verses, and the first letter",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-two-verses",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "There are but two verses (Ps 119:122, 132) which do not",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-manual",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "intended as a manual of pious thoughts, especially for instructing the young",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "poole-ps-119-1",
+      "type": "web",
+      "citation": "Matthew Poole, English Annotations on the Holy Bible (1683-1685), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "the word of God is here diversely called by the names",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "benson-ps-119-1",
+      "type": "web",
+      "citation": "Joseph Benson, Commentary on the Old and New Testaments (1857), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "the perfect, or sincere, as the word properly and most frequently signifies",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "barnes-ps-119-1-job",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "The word is the same as in Job 1:1",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "barnes-ps-119-1-greek",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "The Greek translation is undefiled",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-1",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "single-hearted devotion to Jehovah, and integrity in dealing with their fellow men",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-1-torah",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "It denotes (a) direction or instruction, whether human (Proverbs 1:8) or Divine",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-1-revelation",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "to include all Divine revelation as the guide of life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "kd-ps-119-1",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "The eightfold Aleph.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "kd-ps-119-27",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-27.htm",
+      "excerpt": "The eightfold Daleth.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "kd-ps-119-30-torah",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:30 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-30.htm",
+      "excerpt": "rigid notion of a fixed teaching, but of living empirical instruction",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:14:00Z"
+    },
+    {
+      "id": "kd-ps-119-34",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:34 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-34.htm",
+      "excerpt": "The eightfold He.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "kd-ps-119-34-six",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:34 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-34.htm",
+      "excerpt": "which occurs six times in this Psalm",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "kd-ps-119-34-causative",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:34 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-34.htm",
+      "excerpt": "is causative, as in Job 32:8",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "kd-ps-119-44",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 119:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-44.htm",
+      "excerpt": "The eightfold Vav.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-27",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-27.htm",
+      "excerpt": "This prayer for deeper insight recurs in Psalm 119:34",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "poole-ps-119-27-meaning",
+      "type": "web",
+      "citation": "Matthew Poole, English Annotations on the Holy Bible (1683-1685), on Psalm 119:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-27.htm",
+      "excerpt": "The full mind and meaning of thy precepts",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "poole-ps-119-27-walk",
+      "type": "web",
+      "citation": "Matthew Poole, English Annotations on the Holy Bible (1683-1685), on Psalm 119:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-27.htm",
+      "excerpt": "The way wherein I may walk according to thy precepts",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "barnes-ps-119-34",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 119:34 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-34.htm",
+      "excerpt": "It is not a prayer that God would give him the faculty",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "barnes-ps-119-34-same",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 119:34 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-34.htm",
+      "excerpt": "The word is the same as in Psalm 119:27",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "pulpit-ps-119-34",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 119:34 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-34.htm",
+      "excerpt": "it is from lack of wisdom, not of will",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "barnes-ps-119-35",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 119:35 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-35.htm",
+      "excerpt": "Real delight in the law of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:14:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-44",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:44 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-44.htm",
+      "excerpt": "does he merge his own personality in that of the nation",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:03:00Z"
+    },
+    {
+      "id": "strongs-6490",
+      "type": "web",
+      "citation": "James Strong, Exhaustive Concordance (1890), Hebrew 6490 פִּקּוּד (Bible Hub)",
+      "url": "https://biblehub.com/hebrew/6490.htm",
+      "excerpt": "properly, appointed, i.e. A mandate (of God; plural only",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:14:00Z"
+    },
+    {
+      "id": "bdb-6490",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. פִּקּוּד (Bible Hub, Strong's 6490)",
+      "url": "https://biblehub.com/hebrew/6490.htm",
+      "excerpt": "properly thing appointed, charge",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:14:00Z"
+    },
+    {
+      "id": "biblehub-6490-psalms",
+      "type": "web",
+      "citation": "Bible Hub, Topical Lexicon, Hebrew 6490 פִּקּוּד",
+      "url": "https://biblehub.com/hebrew/6490.htm",
+      "excerpt": "Piqqud occurs twenty-four times, all in the Psalms.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:14:00Z"
+    },
+    {
+      "id": "biblehub-6490-ps-119",
+      "type": "web",
+      "citation": "Bible Hub, Topical Lexicon, Hebrew 6490 פִּקּוּד",
+      "url": "https://biblehub.com/hebrew/6490.htm",
+      "excerpt": "set the tone for twenty-one further uses in Psalm 119",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:14:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021b-ps-119-selection",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:50:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
