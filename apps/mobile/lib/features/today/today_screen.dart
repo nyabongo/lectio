@@ -23,8 +23,8 @@ bool isSafeLinkout(Uri url) => url.scheme == 'https';
 /// Opens [url] in the browser or the app that handles it, through [launch]
 /// (default: `launchUrl`); `false` without launching when it is not
 /// [isSafeLinkout].
-Future<bool> openExternally(Uri url, {UrlLauncher launch = launchUrl}) async {
-  if (!isSafeLinkout(url)) return false;
+Future<bool> openExternally(Uri url, {UrlLauncher launch = launchUrl}) {
+  if (!isSafeLinkout(url)) return Future.value(false);
   return launch(url, mode: LaunchMode.externalApplication);
 }
 
