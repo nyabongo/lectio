@@ -1,5 +1,14 @@
 /**
- * Placeholder created by L-001 so typecheck and coverage pass from day one.
- * L-029 replaces this file with the real package entry point.
+ * @lectio/provider-gh: the `GitHubClient` (L-008) on the gh CLI. Consumers construct it
+ * and inject it; it is not registered in `createProviders`.
+ *
+ * ```ts
+ * const github = new GhGitHubClient({ repo: 'nyabongo/lectio' });
+ * ```
  */
 export const packageName = '@lectio/provider-gh';
+
+export { GhGitHubClient, ISSUE_FIELDS, PR_FIELDS } from './client.ts';
+export type { GhGitHubClientOptions } from './client.ts';
+export { createGitRunner, createProcessExec, parseGitHubRemote } from './exec.ts';
+export type { Exec, ExecOptions, ExecResult, GitRunner } from './exec.ts';
