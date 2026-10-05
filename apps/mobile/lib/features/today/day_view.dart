@@ -126,9 +126,12 @@ class _Rank extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(
-          rankAndColourLabel(celebration.rank, celebration.colour),
-          style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
+        // Wraps instead of overflowing at 200% text on a narrow phone.
+        Flexible(
+          child: Text(
+            rankAndColourLabel(celebration.rank, celebration.colour),
+            style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
+          ),
         ),
       ],
     );
