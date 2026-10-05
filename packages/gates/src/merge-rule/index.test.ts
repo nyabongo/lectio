@@ -316,6 +316,24 @@ describe('needs-review', () => {
     expect(run(results).reasons).toEqual(['the verifiers gate flagged 2 findings']);
   });
 
+  it('never auto-merges a translation, whatever autoMerge.flagsRequireReview says', () => {
+    const translation = 'passages/i18n/sw/MT.20.1-16.json';
+    const files = { files: [PASSAGE, translation] };
+    const off = config({ flagsRequireReview: false });
+    expect(run(greenResults(), files, off)).toEqual({
+      decision: 'needs-review',
+      reasons: [`${translation} is a translation (never auto-merged)`],
+    });
+    const outcome = assess({ results: greenResults(), config: off, pr: prFacts(files), claims: [] });
+    expect(outcome.reasons.map((reason) => reason.rule.id)).toEqual([MERGE_RULES.translationNeedsPerson.id]);
+    const nested = config({ flagsRequireReview: false }, 'content');
+    expect(run(greenResults(), { files: ['content/passages/i18n/sw/MT.20.1-16.json'] }, nested).decision).toBe(
+      'needs-review',
+    );
+    // A configured reviewer's approval still merges it.
+    expect(run(greenResults(), { ...files, approval: human }, off).decision).toBe('human-approved');
+  });
+
   it('resolves passages/ under the configured content root', () => {
     const nested = config({}, './content/');
     expect(run(greenResults(), {}, nested).reasons).toEqual([`${PASSAGE} is outside content/passages/`]);
@@ -435,6 +453,32 @@ describe('mergeRuleGate', () => {
     expect(validateGateResult(result)).toBe(true);
     expect(result.status).toBe('fail');
     expect(result.items.map((item) => item.ruleId)).toEqual(['merge-rule/review-block-approved']);
+  });
+
+  it('blocks a self-approved translation riding along with a verified English passage', () => {
+    const translation = 'passages/i18n/sw/MT.20.1-16.json';
+    const view = contextFor(
+      [
+        { path: PASSAGE, status: 'modified' },
+        { path: translation, status: 'added' },
+      ],
+      { [PASSAGE]: { review: { status: 'pending', reviewers: [] } }, [translation]: { review: approvedReview } },
+      { [PASSAGE]: { review: { status: 'pending', reviewers: [] } } },
+    );
+    const facts = factsFromChanges(view, 42);
+    expect(facts.reviewEdits).toEqual([translation]);
+    // Even with every review condition except the translation hold switched off.
+    const lax = config({ flagsRequireReview: false, passagesOnly: false, sensitiveClaimsRequireReview: false });
+    const outcome = decide({
+      results: greenResults(),
+      config: lax,
+      pr: { ...facts, lastContentCommitAt: CONTENT_COMMIT_AT },
+      claims: [],
+    });
+    expect(outcome.decision).toBe('blocked');
+    expect(outcome.reasons[0]).toBe(
+      `${translation} sets its review block to approved without a verified approval or a valid approval commit`,
+    );
   });
 
   it('builds the facts it can see from the context', () => {
