@@ -108,7 +108,10 @@ async function treeHash(dir: string): Promise<string> {
       if (entry.isDirectory()) {
         await walk(child);
       } else {
-        hash.update(child.slice(dir.length)).update('\0').update(await readFile(child));
+        hash
+          .update(child.slice(dir.length))
+          .update('\0')
+          .update(await readFile(child));
       }
     }
   };
@@ -146,7 +149,7 @@ describe('parseOsisBook', () => {
 
   it('keeps large letters inside words and drops punctuation segments and notes', async () => {
     const { chapters } = parseOsisBook(await readFile(join(fixtures, 'Deut.xml'), 'utf8'), 'Deut');
-    expect(chapters.get(6)?.["4"]?.map(([surface]) => surface.normalize("NFC"))).toEqual([
+    expect(chapters.get(6)?.['4']?.map(([surface]) => surface.normalize('NFC'))).toEqual([
       'שְׁמַ֖ע',
       'יִשְׂרָאֵ֑ל',
       'יְהוָ֥ה',
@@ -158,7 +161,7 @@ describe('parseOsisBook', () => {
 
   it('follows a ketiv with its qere, reads a qere without ketiv, and skips alternative and exegesis notes', async () => {
     const { chapters } = parseOsisBook(await readFile(join(fixtures, 'Deut.xml'), 'utf8'), 'Deut');
-    expect(chapters.get(15)?.["10"]?.map(nfc)).toEqual([
+    expect(chapters.get(15)?.['10']?.map(nfc)).toEqual([
       ['הוצא', '3318', 'HVhv2ms'],
       ['הַיְצֵ֣א', '3318', 'HVhv2ms'],
       ['הַ/נָּ֞ס', 'd/5127', 'HTd/Vqrmsa'],

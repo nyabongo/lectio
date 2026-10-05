@@ -14,6 +14,5 @@ How to cite
 
 Tauber, J. K., ed. (2017) _MorphGNT: SBLGNT Edition_. Version 6.12 [Data set]. https://github.com/morphgnt/sblgnt DOI: 10.5281/zenodo.376200
 
-
 Columns
 -------

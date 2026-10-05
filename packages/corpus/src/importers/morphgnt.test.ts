@@ -83,7 +83,9 @@ function fakeDownloader(files: Record<string, Uint8Array>): Downloader & { reque
 async function snapshot(dir: string): Promise<Record<string, string>> {
   const entries = await readdir(dir, { recursive: true, withFileTypes: true });
   const files = entries.filter((entry) => entry.isFile()).map((entry) => join(entry.parentPath, entry.name));
-  const contents = await Promise.all(files.map(async (file) => [file.slice(dir.length + 1), await readFile(file, 'utf8')]));
+  const contents = await Promise.all(
+    files.map(async (file) => [file.slice(dir.length + 1), await readFile(file, 'utf8')]),
+  );
   return Object.fromEntries(contents);
 }
 
@@ -167,7 +169,9 @@ describe('upstream statements', () => {
   });
 
   it('fails when the upstream README no longer has them', () => {
-    expect(() => readUpstreamStatements('Tauber, J. K.')).toThrow('upstream README.md: the licence statement not found');
+    expect(() => readUpstreamStatements('Tauber, J. K.')).toThrow(
+      'upstream README.md: the licence statement not found',
+    );
     expect(() => readUpstreamStatements('The SBLGNT text itself')).toThrow('the "How to cite" text not found');
   });
 
@@ -266,7 +270,9 @@ describe('importMorphgntTree', () => {
 
 describe('fetchDownloader', () => {
   it('returns the response bytes through global fetch', async () => {
-    server.use(http.get('https://example.test/a.tar.gz', () => HttpResponse.arrayBuffer(new Uint8Array([1, 2, 3]).buffer)));
+    server.use(
+      http.get('https://example.test/a.tar.gz', () => HttpResponse.arrayBuffer(new Uint8Array([1, 2, 3]).buffer)),
+    );
     expect(await fetchDownloader().fetchBytes('https://example.test/a.tar.gz')).toEqual(new Uint8Array([1, 2, 3]));
   });
 
@@ -314,9 +320,9 @@ describe('runImportGreek', () => {
     const downloader: Downloader = {
       fetchBytes: () => Promise.reject(new TypeError('network down')),
     };
-    await expect(runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'c') }, dir, capture().io, { downloader })).rejects.toThrow(
-      'network down',
-    );
+    await expect(
+      runImportGreek({ LECTIO_CORPUS_ROOT: join(dir, 'c') }, dir, capture().io, { downloader }),
+    ).rejects.toThrow('network down');
   });
 });
 
@@ -329,7 +335,9 @@ describe('the committed corpus/grc-sblgnt', () => {
     const entries = await readdir(join(root, SBLGNT_EDITION), { withFileTypes: true });
     const books = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
     expect(books.sort()).toEqual([...MORPHGNT_BOOK_CODES].sort());
-    const chapters = await Promise.all(books.map(async (book) => (await readdir(join(root, SBLGNT_EDITION, book))).length));
+    const chapters = await Promise.all(
+      books.map(async (book) => (await readdir(join(root, SBLGNT_EDITION, book))).length),
+    );
     expect(chapters.reduce((sum, n) => sum + n, 0)).toBe(260);
   });
 
