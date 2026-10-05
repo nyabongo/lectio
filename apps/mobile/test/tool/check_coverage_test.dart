@@ -40,14 +40,18 @@ void main() {
   group('parseLcov', () {
     test('reads line hits per file', () {
       final lcov = parseLcov(record('lib/a.dart', {1: 2, 2: 0}));
-      expect(lcov, {'lib/a.dart': {1: 2, 2: 0}});
+      expect(lcov, {
+        'lib/a.dart': {1: 2, 2: 0},
+      });
     });
 
     test('merges repeated records, keeping the higher count', () {
       final first = record('/r/lib/a.dart', {1: 0, 2: 1});
       final second = record('/r/lib/a.dart', {1: 3, 2: 0, 3: 0});
       final merged = parseLcov(first + second, root: '/r');
-      expect(merged, {'lib/a.dart': {1: 3, 2: 1, 3: 0}});
+      expect(merged, {
+        'lib/a.dart': {1: 3, 2: 1, 3: 0},
+      });
     });
 
     test('ignores malformed and orphan DA lines', () {
@@ -61,7 +65,9 @@ void main() {
         'end_of_record',
         'DA:5,1',
       ].join('\n');
-      expect(parseLcov(source), {'lib/a.dart': {4: 1}});
+      expect(parseLcov(source), {
+        'lib/a.dart': {4: 1},
+      });
     });
   });
 
@@ -76,14 +82,18 @@ void main() {
       expect(report.found, 25);
       expect(report.hit, 24);
       expect(report.percent, 96);
-      expect(report.misses, {'lib/a.dart': [25]});
+      expect(report.misses, {
+        'lib/a.dart': [25],
+      });
       expect(report.passed, isTrue);
       expect(report.problems, isEmpty);
     });
 
     test('fails below the threshold', () {
       final report = checkCoverage(
-        lcov: {'lib/a.dart': {1: 1, 2: 0}},
+        lcov: {
+          'lib/a.dart': {1: 1, 2: 0},
+        },
         libFiles: ['lib/a.dart'],
       );
       expect(report.percent, 50);
@@ -93,7 +103,9 @@ void main() {
 
     test('honours a custom threshold', () {
       final report = checkCoverage(
-        lcov: {'lib/a.dart': {1: 1, 2: 0}},
+        lcov: {
+          'lib/a.dart': {1: 1, 2: 0},
+        },
         libFiles: ['lib/a.dart'],
         threshold: 50,
       );
@@ -102,7 +114,9 @@ void main() {
 
     test('fails when a lib/ file is loaded by no test', () {
       final report = checkCoverage(
-        lcov: {'lib/a.dart': {1: 1}},
+        lcov: {
+          'lib/a.dart': {1: 1},
+        },
         libFiles: ['lib/a.dart', 'lib/b.dart', 'lib/b.g.dart'],
       );
       expect(report.percent, 100);

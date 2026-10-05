@@ -22,10 +22,8 @@ GoRouter createRouter({String initialLocation = '/today'}) {
     routes: [
       GoRoute(path: '/', redirect: (context, state) => AppRoute.today.path),
       ShellRoute(
-        builder: (context, state, child) => AppShell(
-          current: tabForPath(state.uri.path),
-          child: child,
-        ),
+        builder: (context, state, child) =>
+            AppShell(current: tabForPath(state.uri.path), child: child),
         routes: [
           for (final tab in AppRoute.tabs)
             GoRoute(
