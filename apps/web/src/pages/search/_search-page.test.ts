@@ -2,7 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import strings from '../../i18n/en/search.json' with { type: 'json' };
-import { parseSearchPageConfig } from '../../lib/search.ts';
+import { SEARCH_INPUT_ID, parseSearchPageConfig } from '../../lib/search.ts';
 import Search from './index.astro';
 
 let html: string;
@@ -43,6 +43,12 @@ describe('Search page', () => {
         filters_label: strings.ui.filtersLabel,
       }) as Record<string, string>,
     });
+  });
+
+  it("has a visually hidden label for Pagefind's search input", () => {
+    expect(html).toMatch(
+      new RegExp(`<label class="visually-hidden" for="${SEARCH_INPUT_ID}"[^>]*>${strings.ui.searchLabel}</label>`),
+    );
   });
 
   it('does not load Pagefind up front and says what to do without JavaScript', () => {

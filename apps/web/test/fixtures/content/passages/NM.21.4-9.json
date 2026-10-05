@@ -1,0 +1,83 @@
+{
+  "key": "NM.21.4-9",
+  "ref": "Nm 21:4b-9",
+  "locale": "en",
+  "summary": "Bitten by serpents in the wilderness, the people are healed by looking at a bronze serpent Moses sets on a pole.",
+  "context": {
+    "title": "The bronze serpent",
+    "paragraphs": [
+      "The episode closes the stories of Israel complaining in the wilderness, and the remedy comes through the very thing that wounds. [c1] The Gospel of John takes up the lifted serpent as an image of the Son of Man lifted up. [c2]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "v9-bronze-serpent",
+      "verse": "21:9",
+      "anchor": "bronze serpent",
+      "original": {
+        "text": "נְחַשׁ נְחֹשֶׁת",
+        "lang": "hbo",
+        "translit": "nəḥaš nəḥōšeṯ",
+        "gloss": "serpent of bronze"
+      },
+      "summary": "Hebrew names the bronze serpent with two words that sound alike, nəḥaš nəḥōšeṯ.",
+      "body": "The noun for serpent and the noun for bronze share their consonants, so the healing image echoes the danger it answers. English keeps the sense and loses the sound. [c3]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Numbers 21:4-9 is one of the wilderness stories of the people complaining against God and Moses.",
+      "sourceIds": ["nm-11-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "John 3:14 compares the lifting up of the Son of Man with Moses lifting up the serpent.",
+      "sourceIds": ["jn-3-14"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The Hebrew words nachash (serpent) and nechoshet (bronze) are a play on sound.",
+      "sourceIds": ["bdb-nechoshet"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "nm-11-1",
+      "type": "scripture",
+      "citation": "Numbers 11:1",
+      "ref": "Nm 11:1"
+    },
+    {
+      "id": "jn-3-14",
+      "type": "scripture",
+      "citation": "John 3:14",
+      "ref": "Jn 3:14"
+    },
+    {
+      "id": "bdb-nechoshet",
+      "type": "print",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament, s.v. נְחֹשֶׁת",
+      "excerpt": "נְחֹשֶׁת",
+      "excerptLang": "hbo"
+    }
+  ],
+  "provenance": {
+    "generator": "fake",
+    "runId": "fixture-nm-21-4-9",
+    "models": [],
+    "promptVersion": "fixture",
+    "createdAt": "2026-09-01T08:00:00Z"
+  },
+  "review": {
+    "status": "approved",
+    "method": "human",
+    "reviewers": ["fixture-reviewer"],
+    "approvedVia": "label",
+    "lastReviewedAt": "2026-09-03T17:05:00Z"
+  },
+  "schemaVersion": 1
+}

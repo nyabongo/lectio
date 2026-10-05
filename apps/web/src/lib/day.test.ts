@@ -384,6 +384,7 @@ describe('calendar dates and static paths', () => {
   it('builds a static path for each fixture day', () => {
     expect(dayPagePaths(context.repo).map((path) => path.params.date)).toEqual([
       '2026-04-04',
+      '2026-09-14',
       '2026-09-19',
       '2026-09-20',
       '2026-09-21',

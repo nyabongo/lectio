@@ -158,11 +158,15 @@ const notesLang = partLang(view.lang, lang);
     margin: var(--space-xs) 0 0;
     padding: 0;
     display: grid;
+    /* One column no wider than the page, so note titles wrap at large text sizes. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-xs);
   }
 
   .notes li {
+    overflow-wrap: break-word;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-3xs);
     padding: var(--space-s);
     background: var(--colour-surface);

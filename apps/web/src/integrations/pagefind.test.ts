@@ -86,7 +86,7 @@ describe('Pagefind on the fixture build', () => {
   it('writes the index and the Pagefind UI into <outDir>/pagefind', () => {
     for (const file of ['pagefind.js', 'pagefind-entry.json', 'pagefind-ui.js', 'pagefind-ui.css'])
       expect(existsSync(join(outDir, PAGEFIND_DIR, file)), file).toBe(true);
-    expect(logged).toEqual(['Pagefind indexed 2 reading pages']);
+    expect(logged).toEqual(['Pagefind indexed 4 reading pages']);
   });
 
   it("finds the 2026-09-20 Gospel page for 'evil eye'", async () => {
@@ -108,7 +108,7 @@ describe('Pagefind on the fixture build', () => {
   });
 
   it('offers the book and season filters', async () => {
-    expect(await pagefindJs.filters()).toEqual({ book: { Matthew: 1 }, season: { 'Ordinary Time': 1 } });
+    expect(await pagefindJs.filters()).toEqual({ book: { Matthew: 1, Numbers: 1 }, season: { 'Ordinary Time': 2 } });
   });
 
   it('indexes note content only: page chrome and pending passages are not searchable', async () => {
@@ -155,7 +155,7 @@ describe('buildSearchIndex', () => {
     };
     const site = await mkdtemp(join(tmpdir(), 'lectio-pagefind-fake-'));
     try {
-      await expect(buildSearchIndex(options, site, api)).resolves.toBe(2);
+      await expect(buildSearchIndex(options, site, api)).resolves.toBe(4);
       expect(await readFile(join(site, PAGEFIND_DIR, 'pagefind.js'), 'utf8')).toBe('js');
       expect([...(await readFile(join(site, PAGEFIND_DIR, 'fragment/en_1.pf_fragment')))]).toEqual([31, 139, 8]);
     } finally {

@@ -19,6 +19,8 @@ const { view, eyebrow } = Astro.props;
 const { lang } = view;
 const [principal, ...others] = view.celebrations;
 const showMassLabels = view.masses.length > 1;
+/** The mark between rank and colour (`Feast · Red`). */
+const separator = t(lang, 'day.separator');
 ---
 
 <article class="day" aria-labelledby="day-title">
@@ -34,7 +36,10 @@ const showMassLabels = view.masses.length > 1;
           <span class="day__rank">
             <span class="swatch" aria-hidden="true" />
             <span>
-              {principal.rank} <span aria-hidden="true">· {principal.colourLabel}</span>
+              {principal.rank}{' '}
+              <span aria-hidden="true">
+                {separator} {principal.colourLabel}
+              </span>
               <span class="visually-hidden">{t(lang, 'day.colourLabel', { colour: principal.colourLabel })}</span>
             </span>
           </span>
@@ -50,7 +55,7 @@ const showMassLabels = view.masses.length > 1;
             <li>
               <span lang={celebration.nameLang}>{celebration.name}</span>{' '}
               <span class="day__other-rank">
-                · {celebration.rank} · {celebration.colourLabel}
+                {separator} {celebration.rank} {separator} {celebration.colourLabel}
               </span>
             </li>
           ))}
@@ -237,9 +242,10 @@ const showMassLabels = view.masses.length > 1;
     gap: var(--space-xs);
   }
 
+  /* Side by side while both fit; stacked when the text is large (200% text on a phone), so nothing runs off the edge. */
   .day-nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-xs);
     margin-top: var(--space-xl);
     padding-top: var(--space-m);
@@ -247,6 +253,9 @@ const showMassLabels = view.masses.length > 1;
   }
 
   .day-nav__link {
+    flex: 1 1 10rem;
+    min-width: 0;
+    overflow-wrap: break-word;
     display: flex;
     flex-direction: column;
     gap: var(--space-3xs);
@@ -262,7 +271,7 @@ const showMassLabels = view.masses.length > 1;
   }
 
   .day-nav__link--next {
-    grid-column: 2;
+    margin-inline-start: auto;
     text-align: end;
   }
 

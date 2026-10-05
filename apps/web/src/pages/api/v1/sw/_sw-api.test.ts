@@ -103,7 +103,7 @@ describe('/api/v1/sw/', () => {
 
   it('passages/{key}.json and passages/index.json exist only for approved passages, in Kiswahili', async () => {
     const paths = passages.getStaticPaths?.() ?? [];
-    expect(paths.map(({ params }) => params.key)).toEqual(['MT.20.1-16']);
+    expect(paths.map(({ params }) => params.key)).toEqual(['MT.20.1-16', 'NM.21.4-9']);
     const passage = (await body(passages, paths[0]?.props)) as PassageDoc;
     valid(validateApiPassage, passage);
     expect(passage.passage.locale).toBe('sw');
@@ -111,6 +111,8 @@ describe('/api/v1/sw/', () => {
     valid(validateApiPassageIndex, index);
     expect(index.passages.map(({ key, summary }) => [key, summary.slice(0, 12)])).toEqual([
       ['MT.20.1-16', 'Mwenye shamb'],
+      // No Kiswahili translation yet: the English notes.
+      ['NM.21.4-9', 'Bitten by se'],
     ]);
   });
 
