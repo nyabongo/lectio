@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, relative } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 
 import { server } from '@lectio/shared/test-server';
 import { isBookCode } from '@lectio/refs';
@@ -68,7 +68,10 @@ async function fixtureArchive(
   edit(files);
   const top = join(dir, 'src', 'clementinetextproject-text-test');
   await mkdir(top, { recursive: true });
-  for (const [name, bytes] of files) await writeFile(join(top, name), bytes);
+  for (const [name, bytes] of files) {
+    await mkdir(dirname(join(top, name)), { recursive: true });
+    await writeFile(join(top, name), bytes);
+  }
   const archive = join(dir, 'upstream.tar.gz');
   await createTar({ gzip: true, file: archive, cwd: join(dir, 'src'), portable: true }, [
     'clementinetextproject-text-test',
@@ -213,6 +216,7 @@ describe('importClementineVulgate', () => {
       ['Apc.', ''],
     ]);
     expect((await corpus.editions()).length).toBe(1);
+    expect(await readdir(corpusRoot)).toEqual([VULGATE_EDITION]);
 
     expect(await listLicences(corpusRoot)).toEqual([
       { edition: VULGATE_EDITION, ...vulgateSource(archive) },
@@ -279,7 +283,89 @@ describe('importClementineVulgate', () => {
   });
 });
 
+describe('importClementineVulgate staging and swap', () => {
+  async function setup(edit?: (files: Map<string, Uint8Array>) => void) {
+    const dir = await tempDir();
+    const bytes = await fixtureArchive(dir, edit);
+    const archive = { url: testUrl, sha256: sha256Hex(bytes), version: 'test-1' };
+    const corpusRoot = join(dir, 'corpus');
+    const base = { corpusRoot, cacheDir: join(dir, 'cache'), archive, downloader: fakeDownloader({ [testUrl]: bytes }) };
+    return { corpusRoot, base };
+  }
+  async function oldEdition(corpusRoot: string): Promise<void> {
+    await mkdir(join(corpusRoot, VULGATE_EDITION), { recursive: true });
+    await writeFile(join(corpusRoot, VULGATE_EDITION, 'old.txt'), 'old');
+  }
+  const failing = (failOn: number, code = 'EXDEV') => {
+    let calls = 0;
+    return async (from: string, to: string) => {
+      calls += 1;
+      if (calls === failOn) throw Object.assign(new Error(`rename failed (${code})`), { code });
+      const { rename } = await import('node:fs/promises');
+      await rename(from, to);
+    };
+  };
+
+  it('replaces an existing edition and leaves no staging directory', async () => {
+    const { corpusRoot, base } = await setup();
+    await oldEdition(corpusRoot);
+    await importClementineVulgate(base);
+    await expect(stat(join(corpusRoot, VULGATE_EDITION, 'old.txt'))).rejects.toThrow(/ENOENT/);
+    expect(await readdir(corpusRoot)).toEqual([VULGATE_EDITION]);
+  });
+
+  it('restores the previous edition when the swap fails', async () => {
+    const { corpusRoot, base } = await setup();
+    await oldEdition(corpusRoot);
+    await expect(importClementineVulgate({ ...base, renameDir: failing(2) })).rejects.toThrow('rename failed');
+    expect(await readFile(join(corpusRoot, VULGATE_EDITION, 'old.txt'), 'utf8')).toBe('old');
+    expect(await readdir(corpusRoot)).toEqual([VULGATE_EDITION]);
+  });
+
+  it('keeps the previous edition when moving it aside fails', async () => {
+    const { corpusRoot, base } = await setup();
+    await oldEdition(corpusRoot);
+    await expect(importClementineVulgate({ ...base, renameDir: failing(1, 'EACCES') })).rejects.toThrow(
+      'rename failed',
+    );
+    expect(await readFile(join(corpusRoot, VULGATE_EDITION, 'old.txt'), 'utf8')).toBe('old');
+    expect(await readdir(corpusRoot)).toEqual([VULGATE_EDITION]);
+  });
+
+  it('leaves nothing behind when the swap fails without a previous edition', async () => {
+    const { corpusRoot, base } = await setup();
+    await expect(importClementineVulgate({ ...base, renameDir: failing(2) })).rejects.toThrow('rename failed');
+    expect(await readdir(corpusRoot)).toEqual([]);
+  });
+
+  it('refuses an archive without a README.md as a corpus error', async () => {
+    const { corpusRoot, base } = await setup((files) => files.delete('README.md'));
+    await oldEdition(corpusRoot);
+    await expect(importClementineVulgate(base)).rejects.toThrow(new CorpusError('upstream archive has no README.md'));
+    expect(await readFile(join(corpusRoot, VULGATE_EDITION, 'old.txt'), 'utf8')).toBe('old');
+  });
+
+  it('rethrows other README read errors', async () => {
+    const { base } = await setup((files) => {
+      files.delete('README.md');
+      files.set('README.md/inner', new Uint8Array());
+    });
+    await expect(importClementineVulgate(base)).rejects.toThrow(/EISDIR/);
+  });
+});
+
 describe('fetchDownloader', () => {
+  it('throws a CorpusError when reading the body fails', async () => {
+    const truncated = (async () => ({
+      ok: true,
+      status: 200,
+      arrayBuffer: () => Promise.reject(new Error('aborted')),
+    })) as unknown as typeof fetch;
+    await expect(fetchDownloader(truncated).fetchBytes(testUrl)).rejects.toThrow(
+      new CorpusError(`GET ${testUrl}: reading the body failed: aborted`),
+    );
+  });
+
   it('returns the response bytes (global fetch by default)', async () => {
     server.use(http.get(testUrl, () => HttpResponse.arrayBuffer(Uint8Array.from([1, 2, 3]).buffer)));
     expect(await fetchDownloader().fetchBytes(testUrl)).toEqual(Uint8Array.from([1, 2, 3]));

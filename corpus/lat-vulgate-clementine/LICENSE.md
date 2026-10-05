@@ -11,9 +11,11 @@ https://bitbucket.org/clementinetextproject/website ("Copyright and licensing"):
 
 ## Modifications
 
-Lectio removed the markup (paragraph, poetry and line-break marks) and the speaker labels and headings in
-angle brackets, split each verse into words, and stored the prologues of Lamentations and Sirach as verse
-"prologue" of chapter 1. The words themselves are unchanged.
+Lectio removed the markup (paragraph, poetry and line-break marks), split each verse into words, and stored the
+prologues of Lamentations and Sirach as verse "prologue" of chapter 1. The speaker labels and headings in angle
+brackets were dropped with their words (for example `<Sponsa>` in the Song of Songs, the Hebrew letter names in
+Lamentations, and the titles before Lamentations 5 and Baruch 6), so they are not in this edition. Every other
+word is unchanged.
 
 ## Upstream README.md (commit edc85da058be630183d26e4deb6714ade80e600c)
 

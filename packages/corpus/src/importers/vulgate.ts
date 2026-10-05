@@ -12,7 +12,7 @@
  * ADR 0004. Markup and speaker labels are dropped; each word keeps its attached punctuation as its surface form and
  * has an empty lemma (the source is not lemmatised). A prologue is stored as verse `prologue` of chapter 1.
  */
-import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rename, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -190,7 +190,7 @@ export function vulgateSource(archive: PinnedArchive & { readonly version: strin
     attribution:
       'Latin text of the Clementine Vulgate from the Clementine Vulgate Project (https://vulsearch.sourceforge.net/, ' +
       'source https://bitbucket.org/clementinetextproject/text), released into the public domain. Modified for ' +
-      'Lectio: markup and speaker labels removed and the text split into words; the prologues of Lamentations and ' +
+      'Lectio: markup, speaker labels and headings removed and the text split into words; the prologues of Lamentations and ' +
       'Sirach are stored as verse "prologue" of chapter 1.',
     versification: 'vulgate',
   };
@@ -211,9 +211,11 @@ function licenceText(archive: PinnedArchive & { readonly version: string }, read
     '',
     '## Modifications',
     '',
-    'Lectio removed the markup (paragraph, poetry and line-break marks) and the speaker labels and headings in',
-    'angle brackets, split each verse into words, and stored the prologues of Lamentations and Sirach as verse',
-    '"prologue" of chapter 1. The words themselves are unchanged.',
+    'Lectio removed the markup (paragraph, poetry and line-break marks), split each verse into words, and stored the',
+    'prologues of Lamentations and Sirach as verse "prologue" of chapter 1. The speaker labels and headings in angle',
+    'brackets were dropped with their words (for example `<Sponsa>` in the Song of Songs, the Hebrew letter names in',
+    'Lamentations, and the titles before Lamentations 5 and Baruch 6), so they are not in this edition. Every other',
+    'word is unchanged.',
     '',
     `## Upstream README.md (commit ${archive.version})`,
     '',
@@ -230,6 +232,8 @@ export interface ImportVulgateOptions {
   readonly cacheDir: string;
   /** The upstream archive. Defaults to the pinned CLEMENTINE_VULGATE; tests pass a fixture archive. */
   readonly archive?: PinnedArchive & { readonly version: string };
+  /** Renames a directory. Defaults to node:fs `rename`; injectable so tests can make the final swap fail. */
+  readonly renameDir?: (from: string, to: string) => Promise<void>;
 }
 
 export interface ImportSummary {
@@ -242,7 +246,7 @@ export interface ImportSummary {
 async function readBooks(dir: string): Promise<Map<string, VulgateBook>> {
   const names = (await readdir(dir)).filter((name) => name.endsWith('.lat')).sort();
   const stems = names.map((name) => name.slice(0, -'.lat'.length));
-  const unknown = stems.filter((stem) => !(stem in VULGATE_BOOKS));
+  const unknown = stems.filter((stem) => !Object.hasOwn(VULGATE_BOOKS, stem));
   if (unknown.length > 0) throw new CorpusError(`unexpected upstream book file(s): ${unknown.join(', ')}`);
   const missing = Object.keys(VULGATE_BOOKS).filter((stem) => !stems.includes(stem));
   if (missing.length > 0) throw new CorpusError(`missing upstream book file(s): ${missing.join(', ')}`);
@@ -254,9 +258,48 @@ async function readBooks(dir: string): Promise<Map<string, VulgateBook>> {
   return books;
 }
 
+function isNotFound(error: unknown): boolean {
+  return error instanceof Error && 'code' in error && error.code === 'ENOENT';
+}
+
+async function readReadme(dir: string): Promise<string> {
+  try {
+    return await readFile(join(dir, 'README.md'), 'utf8');
+  } catch (error) {
+    if (isNotFound(error)) throw new CorpusError('upstream archive has no README.md');
+    throw error;
+  }
+}
+
 /**
- * Downloads (or reuses) the pinned archive, verifies its sha256, and rewrites `corpus/lat-vulgate-clementine` from
- * scratch, so a re-run produces byte-identical files.
+ * Moves the staged edition to `target`. An existing edition is first moved to `backup` and moved back if the swap
+ * fails, so the corpus always holds either the old or the new edition, never a partial one.
+ */
+async function swapIn(
+  staged: string,
+  target: string,
+  backup: string,
+  renameDir: (from: string, to: string) => Promise<void>,
+): Promise<void> {
+  let hadOld = true;
+  try {
+    await renameDir(target, backup);
+  } catch (error) {
+    if (!isNotFound(error)) throw error;
+    hadOld = false;
+  }
+  try {
+    await renameDir(staged, target);
+  } catch (error) {
+    if (hadOld) await renameDir(backup, target);
+    throw error;
+  }
+}
+
+/**
+ * Downloads (or reuses) the pinned archive, verifies its sha256, and rebuilds `corpus/lat-vulgate-clementine` from
+ * scratch, so a re-run produces byte-identical files. The edition is written to a staging directory under the corpus
+ * root and swapped in only once every file is written; a failure leaves the previous edition in place.
  */
 export async function importClementineVulgate(options: ImportVulgateOptions): Promise<ImportSummary> {
   const archive = options.archive ?? CLEMENTINE_VULGATE;
@@ -266,22 +309,37 @@ export async function importClementineVulgate(options: ImportVulgateOptions): Pr
   try {
     await unpackTarball(cached, work, { strip: 1 });
     const books = await readBooks(work);
-    const readme = await readFile(join(work, 'README.md'), 'utf8');
-    await rm(join(options.corpusRoot, VULGATE_EDITION), { recursive: true, force: true });
-    let chapters = 0;
-    let verses = 0;
-    for (const [book, content] of books) {
-      for (const [chapter, chapterVerses] of content) {
-        await writeChapter(options.corpusRoot, VULGATE_EDITION, book, chapter, chapterVerses);
-        chapters += 1;
-        verses += Object.keys(chapterVerses).filter((key) => key !== PROLOGUE_VERSE).length;
+    const readme = await readReadme(work);
+    await mkdir(options.corpusRoot, { recursive: true });
+    const staging = await mkdtemp(join(options.corpusRoot, '.staging-vulgate-'));
+    try {
+      let chapters = 0;
+      let verses = 0;
+      for (const [book, content] of books) {
+        for (const [chapter, chapterVerses] of content) {
+          await writeChapter(staging, VULGATE_EDITION, book, chapter, chapterVerses);
+          chapters += 1;
+          verses += Object.keys(chapterVerses).filter((key) => key !== PROLOGUE_VERSE).length;
+        }
       }
+      await writeEditionMetadata(staging, VULGATE_EDITION, vulgateSource(archive), licenceText(archive, readme));
+      await swapIn(
+        join(staging, VULGATE_EDITION),
+        join(options.corpusRoot, VULGATE_EDITION),
+        join(staging, 'previous'),
+        options.renameDir ?? rename,
+      );
+      return { edition: VULGATE_EDITION, books: books.size, chapters, verses };
+    } finally {
+      await rm(staging, { recursive: true, force: true });
     }
-    await writeEditionMetadata(options.corpusRoot, VULGATE_EDITION, vulgateSource(archive), licenceText(archive, readme));
-    return { edition: VULGATE_EDITION, books: books.size, chapters, verses };
   } finally {
     await rm(work, { recursive: true, force: true });
   }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 /** A Downloader over the Fetch API (Node's global fetch by default). Throws on a non-2xx response. */
@@ -292,10 +350,14 @@ export function fetchDownloader(fetchImpl: typeof fetch = globalThis.fetch): Dow
       try {
         response = await fetchImpl(url);
       } catch (error) {
-        throw new CorpusError(`GET ${url}: ${error instanceof Error ? error.message : String(error)}`);
+        throw new CorpusError(`GET ${url}: ${errorMessage(error)}`);
       }
       if (!response.ok) throw new CorpusError(`GET ${url}: HTTP ${response.status}`);
-      return new Uint8Array(await response.arrayBuffer());
+      try {
+        return new Uint8Array(await response.arrayBuffer());
+      } catch (error) {
+        throw new CorpusError(`GET ${url}: reading the body failed: ${errorMessage(error)}`);
+      }
     },
   };
 }
