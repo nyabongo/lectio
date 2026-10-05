@@ -5,9 +5,10 @@
  * celebration's name shows in the cell on wide screens and in the list under the grid. Prev/next month links.
  * View model: `monthView` in src/lib/calendar-view.ts.
  */
+import Seo from '../../../../components/seo/Seo.astro';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../../i18n/index.ts';
-import { colourDotCss, monthStaticPaths, monthView } from '../../../../lib/calendar-view.ts';
+import { colourDotCss, monthPath, monthStaticPaths, monthView } from '../../../../lib/calendar-view.ts';
 import type { MonthId } from '../../../../lib/calendar-view.ts';
 import { siteContext, siteDate, withBase } from '../../../../lib/site.ts';
 
@@ -27,6 +28,7 @@ const { config, repo } = siteContext();
 const view = monthView(repo, id, { today: siteDate(config) });
 const monthName = (date: string) => formatDate(lang, date, { month: 'long', year: 'numeric' });
 const title = monthName(view.date);
+const description = t(lang, 'calendar.month.description', { month: title });
 const colourLabel: Record<string, string> = {
   green: t(lang, 'calendar.colour.green'),
   violet: t(lang, 'calendar.colour.violet'),
@@ -45,7 +47,8 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
   });
 ---
 
-<BaseLayout title={title} description={t(lang, 'calendar.month.description', { month: title })} lang={lang}>
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path={localePath(lang, monthPath(id)).slice(1)} />
   <style slot="head" is:inline set:html={colourDotCss()} />
   <p class="eyebrow"><a href={href('calendar/')}>{t(lang, 'calendar.month.eyebrow')}</a></p>
   <h1>{title}</h1>

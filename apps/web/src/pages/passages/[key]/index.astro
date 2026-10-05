@@ -4,9 +4,10 @@
  * page. No note bodies here (the Reading pages carry them, so search engines see each note once). View model:
  * `passageView` in src/lib/calendar-view.ts.
  */
+import Seo from '../../../components/seo/Seo.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
-import { colourDotCss, passageStaticPaths, passageView } from '../../../lib/calendar-view.ts';
+import { colourDotCss, passagePath, passageStaticPaths, passageView } from '../../../lib/calendar-view.ts';
 import { siteContext, siteDate, withBase } from '../../../lib/site.ts';
 
 export function getStaticPaths() {
@@ -21,6 +22,7 @@ const { config, repo } = siteContext();
 const found = passageView(repo, key, siteDate(config));
 if (found === null) throw new Error(`passages/${key}: no approved notes`);
 const view = found;
+const description = t(lang, 'calendar.passage.description', { ref: view.ref, summary: view.summary });
 const colourLabel: Record<string, string> = {
   green: t(lang, 'calendar.colour.green'),
   violet: t(lang, 'calendar.colour.violet'),
@@ -32,11 +34,14 @@ const colourLabel: Record<string, string> = {
 };
 ---
 
-<BaseLayout
-  title={view.ref}
-  description={t(lang, 'calendar.passage.description', { ref: view.ref, summary: view.summary })}
-  lang={lang}
->
+<BaseLayout title={view.ref} description={description} lang={lang}>
+  <Seo
+    slot="head"
+    title={view.ref}
+    description={description}
+    lang={lang}
+    path={localePath(lang, passagePath(view.key)).slice(1)}
+  />
   <style slot="head" is:inline set:html={colourDotCss()} />
   <p class="eyebrow"><a href={href('passages/')}>{t(lang, 'calendar.passage.eyebrow')}</a></p>
   <h1>{view.ref}</h1>
