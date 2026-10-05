@@ -18,6 +18,7 @@ import { formatDate, localeOf, localePath, t } from '../../../i18n/index.ts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { dayPath, slotLabel } from '../../../lib/day.ts';
 import { insightPath } from '../../../lib/insight.ts';
+import { partLang } from '../../../lib/locales.ts';
 import { linkoutSource, readingPage, readingStaticPaths } from '../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../lib/site.ts';
 
@@ -33,6 +34,8 @@ if (view === null) throw new Error(`no reading for ${date}/${slot}`);
 
 const base = import.meta.env.BASE_URL;
 const { notes } = view;
+// Notes stay in their own language (English) on other locales' pages: mark them (WCAG 3.1.2).
+const notesLang = partLang(notes?.lang, lang);
 // Slot names are shared with the day pages (`day.slot.*`), so both say the same thing.
 const dayEnv = { lang, messages: { t, formatDate }, paths: (path: string) => withBase(base, localePath(lang, path)) };
 const slotText = slotLabel(dayEnv, view.slot);
@@ -48,6 +51,7 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
   description={description}
   date={view.date}
   celebration={view.celebration ?? undefined}
+  celebrationLang={view.celebrationLang}
   colour={view.colour ?? undefined}
   lang={lang}
 >
@@ -60,7 +64,7 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
     <header class="reading__header">
       <p class="eyebrow">{slotText}</p>
       <h1 class="reading__ref">{view.ref}</h1>
-      {notes !== null && <p class="reading__summary">{notes.summary}</p>}
+      {notes !== null && <p class="reading__summary" lang={notesLang}>{notes.summary}</p>}
       <ShareButton title={title} shareRef={view.ref} insight={notes?.summary ?? null} path={view.path} lang={lang} />
     </header>
 
@@ -88,10 +92,12 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
           <p class="pending">{t(lang, 'reading.pending')}</p>
         ) : (
           <div class="context">
-            <h3 class="context__title">{notes.context.title}</h3>
+            <h3 class="context__title" lang={notesLang}>
+              {notes.context.title}
+            </h3>
             {notes.context.paragraphs.map((paragraph) => (
-              <p>
-                <MarkedText segments={paragraph} lang={lang} />
+              <p lang={notesLang}>
+                <MarkedText segments={paragraph} lang={lang} contentLang={notesLang} />
               </p>
             ))}
             <Verification
@@ -121,6 +127,7 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
                 method={notes.method}
                 lastReviewedAt={notes.lastReviewedAt}
                 lang={lang}
+                contentLang={notesLang}
                 permalink={withBase(base, localePath(lang, insightPath(view.date, view.slot, note.id)))}
               />
             ))}

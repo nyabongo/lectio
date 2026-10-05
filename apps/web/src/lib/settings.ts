@@ -131,20 +131,6 @@ export function loadSettings(storage: SettingsStorage | null): Settings {
   }
 }
 
-/**
- * The language the reader chose and saved (with the language switcher or on the settings page), or `null` when no
- * valid language is stored: unlike `loadSettings`, the default does not count as a choice.
- */
-export function savedLanguage(storage: SettingsStorage | null): LanguageCode | null {
-  if (storage === null) return null;
-  try {
-    const stored = JSON.parse(storage.getItem(STORAGE_KEY) ?? 'null') as unknown;
-    return isRecord(stored) && isLanguage(stored.language) ? stored.language : null;
-  } catch {
-    return null;
-  }
-}
-
 /** Saves `settings`; false when there is no storage or the write fails (quota, private mode). */
 export function saveSettings(storage: SettingsStorage | null, settings: Settings): boolean {
   if (storage === null) return false;

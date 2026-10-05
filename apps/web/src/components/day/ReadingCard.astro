@@ -22,7 +22,7 @@ const Heading = level === 4 ? 'h4' : 'h3';
   <Heading class="reading__ref">
     {reading.href === null ? reading.refLabel : <a href={reading.href}>{reading.refLabel}</a>}
   </Heading>
-  {reading.summary !== null && <p class="reading__summary">{reading.summary}</p>}
+  {reading.summary !== null && <p class="reading__summary" lang={reading.summaryLang}>{reading.summary}</p>}
   {reading.pending !== null && <p class="reading__pending">{reading.pending}</p>}
   <a class="reading__text" href={reading.linkout.href} target="_blank" rel="noopener noreferrer">
     {reading.linkout.text}<span aria-hidden="true">↗</span><span class="visually-hidden">, {reading.linkout.detail}</span>

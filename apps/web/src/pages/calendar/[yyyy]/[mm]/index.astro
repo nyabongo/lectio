@@ -111,7 +111,11 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
                         <span class="colour-dot" data-colour={cell.colour} aria-hidden="true" />
                         <span class="colour-name">{colourName(cell.colour)}</span>
                       </span>
-                      {cell.listed && <span class="celebration">{cell.celebration}</span>}
+                      {cell.listed && (
+                        <span class="celebration" lang={cell.celebrationLang}>
+                          {cell.celebration}
+                        </span>
+                      )}
                       {cell.today && <span class="today-tag">{t(lang, 'calendar.month.today')}</span>}
                     </a>
                   )}
@@ -135,7 +139,7 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
                 <time datetime={item.date}>
                   {shortWeekday(lang, item.date)} {formatDate(lang, item.date, { day: 'numeric' })}
                 </time>
-                <span class="name">{item.name}</span>
+                <span class="name" lang={item.nameLang}>{item.name}</span>
                 <span class="colour">
                   <span class="colour-dot" data-colour={item.colour} aria-hidden="true" />
                   <span class="colour-name">{colourName(item.colour)}</span>

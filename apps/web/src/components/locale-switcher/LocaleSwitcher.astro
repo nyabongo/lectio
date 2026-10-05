@@ -2,15 +2,15 @@
 /**
  * The language switcher (L-110), in the header of every page: a link to the same page in each other site locale
  * (`config.site.locales`), named in its own language. Following one saves the choice in the reader's settings
- * (`language`, src/lib/settings.ts), and the default locale's Today page then sends a reader who chose another
- * language to that language's Today page (`preferredHome`). Deep links are never redirected, so a shared link
- * opens in the language it was shared in.
+ * (`language`, src/lib/settings.ts); the Today pages' inline script (`todaySwitchScript` in src/lib/day.ts) then
+ * sends the reader to the chosen language's Today. Deep links are never redirected, so a shared link opens in the
+ * language it was shared in.
  *
  * Renders nothing when the site has a single locale, and on the not-found and offline pages. Paths come from
  * `localeLinks()` in src/lib/locales.ts.
  */
 import { DEFAULT_LOCALE, LOCALES, t } from '../../i18n/index.ts';
-import { localeLinks, pathInLocale } from '../../lib/locales.ts';
+import { localeLinks } from '../../lib/locales.ts';
 import { stripBase } from '../../lib/seo.ts';
 import { withBase } from '../../lib/site.ts';
 
@@ -33,23 +33,11 @@ const nameIn = (locale: string): string => {
   };
   return names[locale] ?? locale;
 };
-// The default locale's Today page carries the saved-language redirect.
-const isDefaultHome = lang === DEFAULT_LOCALE && links.some((link) => link.current && link.path === '');
-const homes = isDefaultHome
-  ? JSON.stringify(
-      Object.fromEntries(
-        LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => [
-          locale,
-          withBase(base, pathInLocale(locale, '', DEFAULT_LOCALE)),
-        ]),
-      ),
-    )
-  : undefined;
 ---
 
 {
   others.length > 0 && (
-    <span class="locale-switcher" data-locale-switcher data-lang={lang} data-homes={homes}>
+    <span class="locale-switcher" data-locale-switcher>
       <span class="visually-hidden">{t(lang, 'settings.language.legend')}:</span>
       {others.map((link) => (
         <a href={withBase(base, link.path)} hreflang={link.locale} lang={link.locale} data-locale={link.locale}>
@@ -61,16 +49,10 @@ const homes = isDefaultHome
 }
 
 <script>
-  import { preferredHome } from '../../lib/locales.ts';
-  import { browserStorage, savedLanguage, updateSettings } from '../../lib/settings.ts';
+  import { browserStorage, updateSettings } from '../../lib/settings.ts';
 
   const switcher = document.querySelector<HTMLElement>('[data-locale-switcher]');
   if (switcher !== null) {
-    const { lang = '', homes } = switcher.dataset;
-    if (homes !== undefined) {
-      const target = preferredHome(savedLanguage(browserStorage()), lang, JSON.parse(homes) as Record<string, string>);
-      if (target !== null) window.location.replace(target);
-    }
     for (const link of switcher.querySelectorAll<HTMLAnchorElement>('a[data-locale]'))
       link.addEventListener('click', () => {
         updateSettings(browserStorage(), { language: link.dataset.locale });

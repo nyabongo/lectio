@@ -34,6 +34,24 @@ test.describe('Kiswahili pages', () => {
   });
 });
 
+test.describe('Language of parts', () => {
+  test('English notes and celebration names on Kiswahili pages carry lang="en"', async ({ page }) => {
+    await page.goto(`sw/${BUILD_DATE}/gospel/`);
+    await expect(page.locator('.site-header .celebration')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('.reading__summary')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('.context__title')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('.note__summary').first()).toHaveAttribute('lang', 'en');
+    await page.goto(`sw/${BUILD_DATE}/`);
+    await expect(page.locator('.day__title')).toHaveAttribute('lang', 'en');
+  });
+
+  test('English pages add no lang to their own parts', async ({ page }) => {
+    await page.goto(`${BUILD_DATE}/gospel/`);
+    await expect(page.locator('.reading__summary')).not.toHaveAttribute('lang', /./);
+    await expect(page.locator('.site-header .celebration')).not.toHaveAttribute('lang', /./);
+  });
+});
+
 test.describe('Language switcher', () => {
   test('switches the page and remembers the choice on the Today page', async ({ page }) => {
     await page.goto('calendar/');
@@ -51,6 +69,17 @@ test.describe('Language switcher', () => {
     await expect(page).toHaveURL(/\/lectio\/$/);
     await page.goto('');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  });
+
+  test('a saved language wins over the device-date switch on the Today page', async ({ page }) => {
+    await page.goto('calendar/');
+    await page.getByRole('link', { name: 'Kiswahili' }).click();
+    await expect(page).toHaveURL(/\/lectio\/sw\/calendar\/$/);
+    // The device is a day ahead of the build: the reader lands on that day, in Kiswahili.
+    await page.clock.setFixedTime(new Date('2026-09-21T08:00:00+03:00'));
+    await page.goto('');
+    await expect(page).toHaveURL(/\/lectio\/sw\/2026-09-21\/$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'sw');
   });
 
   test('the settings page changes the language', async ({ page }) => {

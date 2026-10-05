@@ -1,6 +1,5 @@
 /**
- * Locale paths for the site (L-110): the hreflang alternates of a page, the language switcher's links and the
- * saved-language redirect of the Today page.
+ * Locale paths for the site (L-110): the hreflang alternates of a page and the language switcher's links.
  *
  * The default locale (`config.site.defaultLocale`) lives at the root (`/calendar/`); every other locale in
  * `config.site.locales` mirrors every page type under `/<locale>/` (`/sw/calendar/`); the routes are injected by
@@ -68,14 +67,9 @@ export function localeLinks(path: string, locales: readonly string[], defaultLoc
 }
 
 /**
- * Where the Today page sends a reader whose saved language is `saved`: the Today page of that locale when it is
- * one of the site's locales and not the page's own, else `null` (stay). `homes` maps each locale to its Today URL.
+ * The `lang` attribute for a part of a page whose text is in `content` (WCAG 3.1.2): `content` when it differs from
+ * the page locale, else `undefined` so the part inherits `<html lang>`. English notes on a Kiswahili page get `en`.
  */
-export function preferredHome(
-  saved: unknown,
-  pageLocale: string,
-  homes: Readonly<Record<string, string>>,
-): string | null {
-  if (typeof saved !== 'string' || saved === pageLocale || !Object.hasOwn(homes, saved)) return null;
-  return homes[saved] as string;
+export function partLang(content: string | null | undefined, page: string): string | undefined {
+  return content === null || content === undefined || content === page ? undefined : content;
 }

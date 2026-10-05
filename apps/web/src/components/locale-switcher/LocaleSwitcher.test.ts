@@ -24,19 +24,12 @@ describe('LocaleSwitcher', () => {
       new RegExp(`<a href="${base}sw/calendar/2026/09/" hreflang="sw" lang="sw" data-locale="sw"[^>]*>\\s*Kiswahili`),
     );
     expect(html).toContain('Language:');
-    expect(html).not.toContain('data-homes');
   });
 
   it('links a Kiswahili page back to English', async () => {
     const html = await render('sw', 'sw/2026-09-20/gospel/');
     expect(html).toMatch(new RegExp(`<a href="${base}2026-09-20/gospel/" hreflang="en" lang="en"[^>]*>\\s*English`));
     expect(html).toContain('Lugha:');
-  });
-
-  it('carries the other Today pages on the default Today page, for the saved-language redirect', async () => {
-    const html = await render('en', '');
-    expect(html).toContain(`data-homes="{&quot;sw&quot;:&quot;${base}sw/&quot;}"`);
-    expect(await render('sw', 'sw/')).not.toContain('data-homes');
   });
 
   it('renders nothing on the not-found and offline pages', async () => {

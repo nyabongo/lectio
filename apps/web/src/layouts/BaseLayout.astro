@@ -32,13 +32,15 @@ export interface Props {
   date?: string;
   /** The day's celebration, shown under the date title. */
   celebration?: string;
+  /** The celebration name's language when it is not the page's (an untranslated English name). */
+  celebrationLang?: string | undefined;
   /** Liturgical colour of the day (`green`, `violet`, `white`, `gold`, `red`, `rose`, `black`). */
   colour?: string;
   /** Page language (a locale with catalogs in `src/i18n/`); defaults to `en`. */
   lang?: string;
 }
 
-const { title, description, date, celebration, colour, lang = DEFAULT_LOCALE } = Astro.props;
+const { title, description, date, celebration, celebrationLang, colour, lang = DEFAULT_LOCALE } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const siteName = t(lang, 'common.site.name');
 const fullTitle = title === siteName ? title : t(lang, 'common.site.pageTitle', { title });
@@ -81,7 +83,7 @@ const links = {
           dateTitle !== undefined && (
             <p class="date-title">
               <time datetime={date}>{dateTitle}</time>
-              {celebration !== undefined && <span class="celebration">{celebration}</span>}
+              {celebration !== undefined && <span class="celebration" lang={celebrationLang}>{celebration}</span>}
             </p>
           )
         }

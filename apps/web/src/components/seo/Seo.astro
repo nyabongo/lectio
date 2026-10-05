@@ -14,7 +14,8 @@
  * in src/lib/og.ts, rendered by src/pages/og/), else to the static brand card beside this file. The canonical URL is
  * `path` in the page's own locale (a page may pass its default-locale path), and `alternates` default to the same
  * page in every site locale plus `x-default` (`localeAlternates()` in src/lib/locales.ts, L-110); noindex pages
- * have none. Share cards are per page, not per locale, so a Kiswahili page shows the same card.
+ * have none. Share cards are per page, not per locale: a Kiswahili page shows the same English card with the same
+ * English alt text (until the cards are localised).
  */
 import { DEFAULT_LOCALE, LOCALES, formatDate, localePath, t } from '../../i18n/index.ts';
 import { localeAlternates, pathInLocale, splitLocalePath } from '../../lib/locales.ts';
@@ -63,7 +64,12 @@ const pageImage =
   Astro.props.image === undefined && pageOgTarget(neutralPath) !== null
     ? ogImageForPage(
         {
-          env: { lang, messages: { t, formatDate }, paths: (page: string) => withBase(base, localePath(lang, page)) },
+          // The card is rendered once, in the default locale, so its alt text describes it in that language.
+          env: {
+            lang: DEFAULT_LOCALE,
+            messages: { t, formatDate },
+            paths: (page: string) => withBase(base, localePath(DEFAULT_LOCALE, page)),
+          },
           site,
           base,
           config: siteContext().config,

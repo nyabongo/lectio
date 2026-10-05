@@ -5,7 +5,7 @@
  */
 import { readFile, writeFile } from 'node:fs/promises';
 
-import type { SitemapOptions } from '@astrojs/sitemap';
+import type { SitemapItem, SitemapOptions } from '@astrojs/sitemap';
 import type { LectioConfig } from '@lectio/config';
 
 import { absoluteUrl } from './seo.ts';
@@ -36,13 +36,28 @@ export function isSitemapPage(url: string): boolean {
   return !last.includes('.') || last.endsWith('.html');
 }
 
-/** The `@astrojs/sitemap` options for `config`: the page filter and, once there are several locales, hreflang. */
+/**
+ * Adds an `x-default` alternate pointing at the default locale's URL to an entry that has hreflang alternates, as
+ * the page heads do (`localeAlternates()` in src/lib/locales.ts). Entries without alternates are returned as they are.
+ */
+export function withXDefault(item: SitemapItem, defaultLocale: string): SitemapItem {
+  const fallback = item.links?.find((link) => link.lang === defaultLocale);
+  if (item.links === undefined || fallback === undefined || item.links.some((link) => link.lang === 'x-default'))
+    return item;
+  return { ...item, links: [...item.links, { lang: 'x-default', url: fallback.url }] };
+}
+
+/**
+ * The `@astrojs/sitemap` options for `config`: the page filter and, once there are several locales, hreflang with
+ * `x-default`.
+ */
 export function sitemapOptions(config: Pick<LectioConfig, 'site'>): NonNullable<SitemapOptions> {
   const { locales, defaultLocale } = config.site;
   if (locales.length < 2) return { filter: isSitemapPage };
   return {
     filter: isSitemapPage,
     i18n: { defaultLocale, locales: Object.fromEntries(locales.map((locale) => [locale, locale])) },
+    serialize: (item) => withXDefault(item, defaultLocale),
   };
 }
 

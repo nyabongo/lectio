@@ -111,7 +111,14 @@ describe('locales (L-110)', () => {
     expect(html).not.toContain('hreflang');
   });
 
-  it('gives a Kiswahili day page the same share card', async () => {
+  it('gives a Kiswahili page the same share card and alt text as the English page', async () => {
+    const alt = (html: string) => /<meta property="og:image:alt" content="([^"]*)">/.exec(html)?.[1];
+    for (const path of ['2026-09-20/', '2026-09-20/gospel/']) {
+      const en = await render({ path });
+      const sw = await render({ path: `sw/${path}`, lang: 'sw' });
+      expect(alt(sw)).toBe(alt(en));
+      expect(alt(sw)).toMatch(/^Lectio card for Sunday 20 September 2026/);
+    }
     const html = await render({ title: 'Jumapili', path: 'sw/2026-09-20/', lang: 'sw' });
     expect(html).toMatch(new RegExp(`<meta property="og:image" content="${href('og/2026-09-20\\.png')}">`));
   });

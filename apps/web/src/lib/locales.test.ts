@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { localeAlternates, localeLinks, pathInLocale, preferredHome, splitLocalePath } from './locales.ts';
+import { localeAlternates, localeLinks, partLang, pathInLocale, splitLocalePath } from './locales.ts';
 
 const locales = ['en', 'sw'] as const;
 
@@ -58,18 +58,11 @@ describe('localeLinks', () => {
   });
 });
 
-describe('preferredHome', () => {
-  const homes = { sw: '/lectio/sw/' };
-
-  it('sends a reader who chose another site locale to its Today page', () => {
-    expect(preferredHome('sw', 'en', homes)).toBe('/lectio/sw/');
-  });
-
-  it('stays without a choice, on the chosen locale, or for a locale the site lacks', () => {
-    expect(preferredHome(null, 'en', homes)).toBeNull();
-    expect(preferredHome('en', 'en', homes)).toBeNull();
-    expect(preferredHome('fr', 'en', homes)).toBeNull();
-    expect(preferredHome('toString', 'en', homes)).toBeNull();
-    expect(preferredHome(5, 'en', homes)).toBeNull();
+describe('partLang', () => {
+  it('marks a part only when its language differs from the page', () => {
+    expect(partLang('en', 'sw')).toBe('en');
+    expect(partLang('en', 'en')).toBeUndefined();
+    expect(partLang(undefined, 'sw')).toBeUndefined();
+    expect(partLang(null, 'sw')).toBeUndefined();
   });
 });

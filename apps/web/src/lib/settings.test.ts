@@ -24,7 +24,6 @@ import {
   parseSettings,
   sanitizeSettings,
   saveSettings,
-  savedLanguage,
   serializeSettings,
   updateSettings,
 } from './settings.ts';
@@ -310,26 +309,5 @@ describe('createSettingsSession', () => {
     const session = createSettingsSession(throwingStorage);
     expect(session.change('theme', 'neon').settings).toEqual(DEFAULT_SETTINGS);
     expect(session.change('unknown', 'x').settings).toEqual(DEFAULT_SETTINGS);
-  });
-});
-
-describe('savedLanguage', () => {
-  it('returns only a language the reader stored, never the default', () => {
-    const storage = new FakeStorage();
-    expect(savedLanguage(storage)).toBeNull();
-    storage.setItem(STORAGE_KEY, JSON.stringify({ theme: 'dark' }));
-    expect(savedLanguage(storage)).toBeNull();
-    storage.setItem(STORAGE_KEY, JSON.stringify({ language: 'fr' }));
-    expect(savedLanguage(storage)).toBeNull();
-    updateSettings(storage, { language: 'sw' });
-    expect(savedLanguage(storage)).toBe('sw');
-  });
-
-  it('is null without storage, with malformed JSON or a throwing accessor', () => {
-    expect(savedLanguage(null)).toBeNull();
-    const storage = new FakeStorage();
-    storage.setItem(STORAGE_KEY, '{not json');
-    expect(savedLanguage(storage)).toBeNull();
-    expect(savedLanguage(throwingStorage)).toBeNull();
   });
 });

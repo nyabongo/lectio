@@ -7,6 +7,7 @@ import Seo from '../../components/seo/Seo.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { localeOf, localePath, t } from '../../i18n/index.ts';
 import { passageLibrary } from '../../lib/calendar-view.ts';
+import { partLang } from '../../lib/locales.ts';
 import { siteContext, withBase } from '../../lib/site.ts';
 
 const lang = localeOf(Astro.url);
@@ -52,7 +53,7 @@ const testaments = [
                     <li>
                       <a href={href(passage.path)}>
                         <span class="ref">{passage.ref}</span>
-                        <span class="title">{passage.contextTitle}</span>
+                        <span class="title" lang={partLang(passage.lang, lang)}>{passage.contextTitle}</span>
                         <span class="meta">
                           {t(lang, 'calendar.library.notes', { count: passage.noteCount })} ·{' '}
                           {t(lang, 'calendar.library.dates', { count: passage.dateCount })}
