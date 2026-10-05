@@ -44,6 +44,18 @@ void main() {
         null,
       ),
     );
+    // Site links (L-107) come through app_links.
+    const links = EventChannel('com.llfbandit.app_links/events');
+    tester.binding.defaultBinaryMessenger.setMockStreamHandler(
+      links,
+      MockStreamHandler.inline(onListen: (arguments, events) {}),
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockStreamHandler(
+        links,
+        null,
+      ),
+    );
     await app.main();
     await tester.pumpAndSettle();
 

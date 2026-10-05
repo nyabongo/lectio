@@ -56,6 +56,56 @@ void main() {
       expect(argumentsOf(calls.single)['defaultIcon'], '@mipmap/ic_launcher');
     });
 
+    test('a tap on a reminder opens its date (L-107)', () async {
+      final opened = <String?>[];
+      final platform = LocalNotificationsPlatform(onOpen: opened.add);
+      await platform.initialize();
+      expect(calls.map((call) => call.method), [
+        'initialize',
+        'getNotificationAppLaunchDetails',
+      ]);
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            _channel.name,
+            _channel.codec.encodeMethodCall(
+              const MethodCall('didReceiveNotificationResponse', {
+                'notificationId': 1060,
+                'notificationResponseType': 0,
+                'payload': '2026-09-20',
+              }),
+            ),
+            (_) {},
+          );
+      expect(opened, ['2026-09-20']);
+    });
+
+    test('a reminder that launched the app opens its date', () async {
+      final opened = <String?>[];
+      answer = (call) => switch (call.method) {
+        'initialize' => true,
+        'getNotificationAppLaunchDetails' => {
+          'notificationLaunchedApp': true,
+          'notificationResponse': {
+            'notificationId': 1061,
+            'notificationResponseType': 0,
+            'payload': '2026-09-21',
+          },
+        },
+        _ => null,
+      };
+      await LocalNotificationsPlatform(onOpen: opened.add).initialize();
+      expect(opened, ['2026-09-21']);
+
+      // Launched some other way: nothing to open.
+      answer = (call) => switch (call.method) {
+        'initialize' => true,
+        'getNotificationAppLaunchDetails' => {'notificationLaunchedApp': false},
+        _ => null,
+      };
+      await LocalNotificationsPlatform(onOpen: opened.add).initialize();
+      expect(opened, ['2026-09-21']);
+    });
+
     test('asks for the notification permission', () async {
       final platform = LocalNotificationsPlatform();
       answer = (_) => true;
