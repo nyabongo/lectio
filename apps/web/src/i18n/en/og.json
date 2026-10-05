@@ -1,0 +1,12 @@
+{
+  "insightCaption": "What the {language} of today’s {slot} really says — {ref}",
+  "language": {
+    "grc": "Greek",
+    "hbo": "Hebrew",
+    "arc": "Aramaic",
+    "la": "Latin"
+  },
+  "alt": {
+    "cardFor": "Lectio card for {date}"
+  }
+}

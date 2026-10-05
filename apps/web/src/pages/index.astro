@@ -11,6 +11,7 @@ import { DEFAULT_LOCALE, LOCALES, formatDate, localeOf, localePath, t } from '..
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { dayPageView, todaySwitch, todaySwitchScript, upcomingDays } from '../lib/day.ts';
 import type { DayEnv } from '../lib/day.ts';
+import { siteRepo } from '../lib/notes-locale.ts';
 import { STORAGE_KEY } from '../lib/settings.ts';
 import { siteContext, siteDate, withBase } from '../lib/site.ts';
 
@@ -23,8 +24,10 @@ const env: DayEnv = {
   messages: { t, formatDate: (locale, day) => formatDate(locale, day) },
   paths: (path) => withBase(base, localePath(lang, path)),
 };
-const view = dayPageView(env, context, date);
-const upcoming = upcomingDays(env, context.repo, date);
+// Reading summaries come from approved, up-to-date translations in the page's language, else English (L-113).
+const repo = siteRepo(lang);
+const view = dayPageView(env, { config: context.config, repo }, date);
+const upcoming = upcomingDays(env, repo, date);
 // On `/`, a reader who saved another language goes to that language's Today (L-110), in the same script as the date
 // switch; `/sw/` never redirects, so a shared Kiswahili link is always respected.
 const script = todaySwitchScript(

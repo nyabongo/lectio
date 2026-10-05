@@ -9,6 +9,7 @@ import {
   API_SCHEMAS,
   API_VERSION,
   UPCOMING_DAYS,
+  localisedEndpoints,
   validateApiCalendar,
   validateApiDay,
   validateApiIndex,
@@ -143,5 +144,34 @@ describe('api schemas', () => {
     expectTypeOf<ApiAudio>().toEqualTypeOf<{ url: string; durationSeconds: number | null } | null>();
     expectTypeOf<ApiSegment['kind']>().toEqualTypeOf<'context' | 'translation-note'>();
     expectTypeOf<ApiNotes['review']['status']>().toEqualTypeOf<'approved'>();
+  });
+});
+
+describe('locale mirror endpoints (L-113)', () => {
+  const index = loadFixture('api', 'valid', 'index') as { endpoints: Record<string, unknown> };
+
+  it('lists every endpoint but index.json under the locale', () => {
+    expect(localisedEndpoints('sw')).toEqual({
+      day: 'sw/days/{date}.json',
+      passages: 'sw/passages/index.json',
+      passage: 'sw/passages/{key}.json',
+      calendar: 'sw/calendar/{year}.json',
+      upcoming: 'sw/upcoming.json',
+    });
+  });
+
+  it('accepts the mirrors in index.json and rejects malformed ones', () => {
+    const withMirror = { ...index, endpoints: { ...index.endpoints, locales: { sw: localisedEndpoints('sw') } } };
+    expect(validateApiIndex(withMirror), formatErrors(validateApiIndex.errors).join('\n')).toBe(true);
+    const wrong = {
+      ...index,
+      endpoints: { ...index.endpoints, locales: { sw: { ...localisedEndpoints('sw'), day: 'x' } } },
+    };
+    expect(validateApiIndex(wrong)).toBe(false);
+    const badLocale = {
+      ...index,
+      endpoints: { ...index.endpoints, locales: { 'not a locale': localisedEndpoints('sw') } },
+    };
+    expect(validateApiIndex(badLocale)).toBe(false);
   });
 });

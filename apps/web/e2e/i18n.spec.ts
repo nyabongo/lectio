@@ -35,14 +35,22 @@ test.describe('Kiswahili pages', () => {
 });
 
 test.describe('Language of parts', () => {
-  test('English notes and celebration names on Kiswahili pages carry lang="en"', async ({ page }) => {
+  test('English celebration names on Kiswahili pages carry lang="en"', async ({ page }) => {
     await page.goto(`sw/${BUILD_DATE}/gospel/`);
     await expect(page.locator('.site-header .celebration')).toHaveAttribute('lang', 'en');
-    await expect(page.locator('.reading__summary')).toHaveAttribute('lang', 'en');
-    await expect(page.locator('.context__title')).toHaveAttribute('lang', 'en');
-    await expect(page.locator('.note__summary').first()).toHaveAttribute('lang', 'en');
     await page.goto(`sw/${BUILD_DATE}/`);
     await expect(page.locator('.day__title')).toHaveAttribute('lang', 'en');
+  });
+
+  test('reviewed Kiswahili notes are in the page language, with no English-only badge (L-113)', async ({ page }) => {
+    await page.goto(`sw/${BUILD_DATE}/gospel/`);
+    await expect(page.locator('.reading__summary')).toHaveText(/^Mwenye shamba anawalipa/);
+    await expect(page.locator('.reading__summary')).not.toHaveAttribute('lang', /./);
+    await expect(page.locator('.context__title')).toHaveText('Wafanyakazi katika shamba la mizabibu');
+    await expect(page.locator('.note__summary').first()).not.toHaveAttribute('lang', /./);
+    await expect(page.locator('.notes-lang')).toHaveCount(0);
+    await page.goto(`sw/${BUILD_DATE}/gospel/notes/v15-evil-eye/`);
+    await expect(page.locator('.insight__anchor')).toHaveText('“wivu”');
   });
 
   test('English pages add no lang to their own parts', async ({ page }) => {
@@ -102,5 +110,22 @@ test.describe('Language switcher', () => {
     await expect(page).toHaveURL(/\/lectio\/sw\/settings\/$/);
     await expect(page.getByRole('radio', { name: 'Kiswahili' })).toBeChecked();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mipangilio');
+  });
+});
+
+test.describe('Kiswahili API mirror (L-113)', () => {
+  test('/api/v1/sw/ serves the reviewed Kiswahili notes', async ({ request }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'the API does not depend on the viewport');
+    const day = (await (await request.get(`api/v1/sw/days/${BUILD_DATE}.json`)).json()) as {
+      masses: { readings: { slot: string; passage: { locale: string } | null }[] }[];
+    };
+    const gospel = day.masses[0]?.readings.find((reading) => reading.slot === 'gospel');
+    expect(gospel?.passage?.locale).toBe('sw');
+    const passage = (await (await request.get('api/v1/sw/passages/MT.20.1-16.json')).json()) as {
+      passage: { locale: string };
+    };
+    expect(passage.passage.locale).toBe('sw');
+    for (const path of ['api/v1/sw/upcoming.json', 'api/v1/sw/passages/index.json', 'api/v1/sw/calendar/2026.json'])
+      expect((await request.get(path)).ok(), path).toBe(true);
   });
 });

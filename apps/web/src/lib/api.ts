@@ -12,7 +12,7 @@
 import type { LectioConfig } from '@lectio/config';
 import { approvedOnly, isApproved } from '@lectio/content';
 import type { ContentRepo, ResolvedDay, ResolvedReading } from '@lectio/content';
-import { API_ENDPOINTS, API_VERSION, UPCOMING_DAYS } from '@lectio/schema/api';
+import { API_ENDPOINTS, API_MIRROR_LOCALES, API_VERSION, UPCOMING_DAYS, localisedEndpoints } from '@lectio/schema/api';
 import type {
   ApiCalendar,
   ApiDay,
@@ -223,6 +223,19 @@ export function apiUpcoming(context: ApiContext): ApiUpcoming {
   };
 }
 
+/** The mirrors' endpoint templates (`{ locales: { sw: { day: 'sw/days/{date}.json', … } } }`), when the site has one. */
+export function mirrorEndpoints(config: Pick<LectioConfig, 'site'>): {
+  locales?: Record<string, ReturnType<typeof localisedEndpoints>>;
+} {
+  const { locales, defaultLocale } = config.site;
+  const mirrored = (API_MIRROR_LOCALES as readonly string[]).filter(
+    (locale) => locale !== defaultLocale && locales.includes(locale),
+  );
+  return mirrored.length === 0
+    ? {}
+    : { locales: Object.fromEntries(mirrored.map((locale) => [locale, localisedEndpoints(locale)])) };
+}
+
 /** `/api/v1/index.json`: the build date, what exists, and the endpoint templates. */
 export function apiIndex(context: ApiContext): ApiIndex {
   const { config, repo, date } = context;
@@ -240,7 +253,7 @@ export function apiIndex(context: ApiContext): ApiIndex {
     years,
     dates: first === undefined || last === undefined ? null : { first, last },
     passageCount: approvedPassages(repo).length,
-    endpoints: { ...API_ENDPOINTS },
+    endpoints: { ...API_ENDPOINTS, ...mirrorEndpoints(config) },
   };
 }
 

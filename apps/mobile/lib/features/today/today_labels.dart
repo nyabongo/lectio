@@ -138,6 +138,10 @@ String massOptionsLabel(int count) {
   return 'This day has $count Masses to choose from.';
 }
 
+/// What a screen reader says for a reading's Notes button, which names the
+/// reading, since every card has one.
+String notesSemantics(String ref) => 'Notes on $ref';
+
 /// What a screen reader says for a reading's link-out: the reference, the
 /// site it opens and that it leaves the app.
 String linkoutSemantics(String ref, Uri linkout) {

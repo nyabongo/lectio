@@ -51,6 +51,21 @@ export const API_ENDPOINTS = {
   upcoming: 'upcoming.json',
 } as const;
 
+/** The endpoints mirrored per locale under `<locale>/` (L-113): every one but `index.json`. */
+export const LOCALISED_ENDPOINTS = ['day', 'passages', 'passage', 'calendar', 'upcoming'] as const;
+export type LocalisedEndpoint = (typeof LOCALISED_ENDPOINTS)[number];
+
+/** The locales the site publishes an API mirror for (`/api/v1/sw/…`, L-113), when the site has them. */
+export const API_MIRROR_LOCALES = ['sw'] as const;
+
+/** The endpoint templates of the `<locale>/` mirror: `{ day: 'sw/days/{date}.json', … }`. */
+export function localisedEndpoints(locale: string): Record<LocalisedEndpoint, string> {
+  return Object.fromEntries(LOCALISED_ENDPOINTS.map((name) => [name, `${locale}/${API_ENDPOINTS[name]}`])) as Record<
+    LocalisedEndpoint,
+    string
+  >;
+}
+
 const apiVersionSchema = { const: API_VERSION } as const;
 
 /**
@@ -282,6 +297,26 @@ export const apiIndexSchema = {
         passage: { const: API_ENDPOINTS.passage },
         calendar: { const: API_ENDPOINTS.calendar },
         upcoming: { const: API_ENDPOINTS.upcoming },
+        /**
+         * Optional (L-113): the endpoint templates of each locale mirror, by locale, e.g.
+         * `{ "sw": { "day": "sw/days/{date}.json", … } }`. Present when the site publishes one.
+         */
+        locales: {
+          type: 'object',
+          propertyNames: localeSchema,
+          additionalProperties: {
+            type: 'object',
+            additionalProperties: false,
+            required: [...LOCALISED_ENDPOINTS],
+            properties: {
+              day: { type: 'string', pattern: '^[A-Za-z0-9-]+/days/\\{date\\}\\.json$' },
+              passages: { type: 'string', pattern: '^[A-Za-z0-9-]+/passages/index\\.json$' },
+              passage: { type: 'string', pattern: '^[A-Za-z0-9-]+/passages/\\{key\\}\\.json$' },
+              calendar: { type: 'string', pattern: '^[A-Za-z0-9-]+/calendar/\\{year\\}\\.json$' },
+              upcoming: { type: 'string', pattern: '^[A-Za-z0-9-]+/upcoming\\.json$' },
+            },
+          },
+        },
       },
     },
   },

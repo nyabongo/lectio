@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { openRepo } from '@lectio/content';
 import { describe, expect, it, vi } from 'vitest';
 
+import { localeRepo } from './notes-locale.ts';
 import {
   PAGEFIND_DIR,
   SEARCH_FILTERS,
@@ -156,7 +157,31 @@ function fakeApi(overrides: {
   };
 }
 
+describe('searchDocuments in Kiswahili (L-113)', () => {
+  it('indexes the /sw/ Reading page with the reviewed Kiswahili notes, in sw', () => {
+    const [gospel, ...rest] = searchDocuments(localeRepo(repo, 'sw'), 'sw', labels, 'sw/');
+    expect(rest).toEqual([]);
+    expect(gospel).toMatchObject({ url: '/sw/2026-09-20/gospel/', lang: 'sw', ref: 'Mt 20:1-16a' });
+    expect(gospel?.summary).toMatch(/^Mwenye shamba/);
+    expect(gospel?.sections[0]?.heading).toBe('Wafanyakazi katika shamba la mizabibu');
+    expect(gospel?.sections[1]?.heading).toBe('wivu: ophthalmos sou ponēros (jicho lako ovu)');
+  });
+
+  it('indexes the English notes on a /sw/ page without a reviewed translation', () => {
+    const [gospel] = searchDocuments(localeRepo(repo, 'sw', { translations: () => null }), 'sw', labels, 'sw/');
+    expect(gospel).toMatchObject({ url: '/sw/2026-09-20/gospel/', lang: 'sw' });
+    expect(gospel?.summary).toContain('landowner');
+  });
+});
+
 describe('writeSearchIndex', () => {
+  it('indexes documents in several languages by their own lang', async () => {
+    const api = fakeApi({});
+    await expect(writeSearchIndex(api, [doc, { ...doc, url: '/sw/x/', lang: 'sw' }], '/o', 'en')).resolves.toBe(2);
+    expect(api.createIndex).toHaveBeenCalledWith({});
+    expect(api.added[1]?.content).toContain('<html lang="sw">');
+  });
+
   it('indexes every document at its URL and writes the bundle', async () => {
     const api = fakeApi({});
     await expect(writeSearchIndex(api, [doc], '/out/pagefind', 'en')).resolves.toBe(1);

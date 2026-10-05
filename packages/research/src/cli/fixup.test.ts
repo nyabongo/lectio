@@ -1,19 +1,34 @@
+// Each test gets fresh fakes (GitHub, clock, LLM) around one temporary checkout shared by the file,
+// which nothing here writes to. The research PR is set up by publishing a passage pre-validated once
+// in beforeAll, not by a full `research run` per test: the run is covered by run.test.ts and
+// e2e.test.ts, and repeating it (plus a git init per test) made these tests time out under load.
+// The base branch never has the passage, so the git-backed base reader is replaced by one that says
+// so. Prettier is mocked: its real formatting is tested in agent/research.test.ts; here it only
+// matters that fix-up falls back to it. The one-time cost left (schema compilation) sits in beforeAll.
 import { COMMENT_MARKER } from '@lectio/gates';
 import type { GateReport, GateResultItem } from '@lectio/gates';
+import { createCostMeter } from '@lectio/providers';
 import type { FakeLlmScriptEntry, PullRequest } from '@lectio/providers';
-import { afterEach, describe, expect, it } from 'vitest';
+import type { Passage } from '@lectio/schema/passage';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { APPROVAL_AUTHOR, APPROVAL_TRAILER } from '../publish/publish.ts';
-import { KEY, PATH, e2eWorld, gatesCommentBody } from './fixtures/e2e.ts';
-import type { E2eWorld } from './fixtures/e2e.ts';
+import { APPROVAL_AUTHOR, APPROVAL_TRAILER, publishPassage } from '../publish/publish.ts';
+import { VALID_OUTPUT, draftOf } from '../validate/fixtures/draft.ts';
+import { preValidate } from '../validate/validate.ts';
+import { KEY, PATH, e2eCheckout, e2eWorld, gatesCommentBody } from './fixtures/e2e.ts';
+import type { E2eCheckout, E2eWorld } from './fixtures/e2e.ts';
 import { FixupRefusedError, baseReader, formatFixupReport, runFixup } from './fixup.ts';
 import type { FixupDeps, FixupInput } from './fixup.ts';
 import { GATES_BOT } from './gates-comment.ts';
-import { main } from './main.ts';
 import type { ComposeOptions } from './providers.ts';
 
+const prettier = vi.hoisted(() => ({
+  format: vi.fn((json: string) => Promise.resolve(json)),
+  resolveConfig: vi.fn(() => Promise.resolve(null)),
+}));
+vi.mock('prettier', () => prettier);
+
 const BRANCH = `research/${KEY}`;
-const quiet = { out: () => undefined, err: () => undefined };
 
 const REFUTED: GateResultItem = {
   ruleId: 'verifiers/claim-not-refuted',
@@ -35,20 +50,57 @@ function report(head: string, items: GateResultItem[] = [REFUTED]): GateReport {
   } as GateReport;
 }
 
-let world: E2eWorld | undefined;
+/**
+ * The first gate run in a worker compiles the passage and research JSON schemas (ajv code
+ * generation): about 0.15 s plain, 0.8 s under v8 coverage, several seconds on a loaded machine. It
+ * happens once, here, so the tests after it only reuse the compiled validators.
+ */
+const SETUP_TIMEOUT = 30_000;
 
-afterEach(() => {
-  world?.cleanUp();
-  world = undefined;
+let checkout: E2eCheckout;
+/** The passage a `research run` would publish: the fixture output, pre-validated. */
+let passage: Passage;
+
+function toolkit(w: E2eWorld): ReturnType<NonNullable<typeof w.context.compose>> {
+  const compose = w.context.compose as (options: ComposeOptions) => ReturnType<NonNullable<typeof w.context.compose>>;
+  return compose({ mode: 'live', config: w.context.config, env: {}, ceilingUsd: 10, llm: true });
+}
+
+beforeAll(async () => {
+  checkout = e2eCheckout();
+  const w = e2eWorld({ checkout });
+  const { llm, providers } = await toolkit(w);
+  const meter = createCostMeter({ pricing: w.context.config.pricing, ceilingUsd: 10, label: 'setup' });
+  const validation = await preValidate(draftOf(VALID_OUTPUT), {
+    llm: llm(meter),
+    meter,
+    config: w.context.config,
+    providers,
+    root: checkout.root,
+    repo: w.context.repo as FixupDeps['repo'],
+    readBase: () => null,
+    format: (json) => Promise.resolve(json),
+  });
+  if (validation.outcome !== 'ready') throw new Error(`the fixture draft is ${validation.outcome}`);
+  passage = validation.passage;
+}, SETUP_TIMEOUT);
+
+afterAll(() => {
+  checkout.cleanUp();
 });
 
-/** A world with one published research PR; returns its number. */
+afterEach(() => {
+  vi.clearAllMocks();
+});
+
+/** Fresh fakes with one published research PR; returns its number. */
 async function published(repair?: FakeLlmScriptEntry): Promise<{ w: E2eWorld; number: number; pr: PullRequest }> {
-  const w = e2eWorld(repair === undefined ? {} : { repair });
-  world = w;
-  expect(await main(['run', '--from', '2026-10-05', '--budget', '10'], w.context, quiet)).toBe(0);
-  const [pr] = await w.github.listPrs();
-  return { w, number: (pr as PullRequest).number, pr: pr as PullRequest };
+  const w = e2eWorld(repair === undefined ? { checkout } : { checkout, repair });
+  const { pr } = await publishPassage(
+    { passage: structuredClone(passage), dates: ['2026-10-11'] },
+    { github: w.github, config: w.context.config },
+  );
+  return { w, number: pr.number, pr };
 }
 
 async function comment(w: E2eWorld, number: number, items?: GateResultItem[], head?: string): Promise<void> {
@@ -56,16 +108,17 @@ async function comment(w: E2eWorld, number: number, items?: GateResultItem[], he
   await w.github.as(GATES_BOT).upsertComment(number, COMMENT_MARKER, body);
 }
 
+/** The base branch never has the passage (`research run` publishes new files only). */
 async function deps(w: E2eWorld, extra: Partial<FixupDeps> = {}): Promise<FixupDeps> {
-  const compose = w.context.compose as (options: ComposeOptions) => ReturnType<NonNullable<typeof w.context.compose>>;
-  const kit = await compose({ mode: 'live', config: w.context.config, env: {}, ceilingUsd: 10, llm: true });
+  const kit = await toolkit(w);
+  const files = w.context.files as FixupDeps['files'];
   return {
     ...kit,
     config: w.context.config,
     repoRoot: w.root,
     repo: w.context.repo as FixupDeps['repo'],
     dryRun: false,
-    files: w.context.files as FixupDeps['files'],
+    files: { head: files.head.bind(files), base: () => Promise.resolve(null) },
     readReport: () => {
       throw new Error('no report');
     },
@@ -199,13 +252,17 @@ describe('runFixup outcomes', () => {
     const d = await deps(w);
     const { format: _format, ...unformatted } = d;
     const text = w.github.fileAt(BRANCH, PATH) as string;
-    const passage = JSON.parse(text) as { provenance: { costUsd?: number } };
-    delete passage.provenance.costUsd;
+    const costless = JSON.parse(text) as { provenance: { costUsd?: number } };
+    delete costless.provenance.costUsd;
     const files: FixupDeps['files'] = {
-      head: () => Promise.resolve(JSON.stringify(passage)),
+      head: () => Promise.resolve(JSON.stringify(costless)),
       base: () => Promise.resolve(null),
     };
     const result = await runFixup(input(number), { ...unformatted, files });
+    expect(prettier.format).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ filepath: expect.stringContaining(PATH) }),
+    );
     expect(result.truncated).toBe(true);
     expect(result.status).toBe('pushed');
     const printed = formatFixupReport(result);
@@ -250,7 +307,6 @@ describe('runFixup outcomes', () => {
   });
 
   it('reports unchanged when the repaired file is what the PR has', async () => {
-    const { VALID_OUTPUT } = await import('../validate/fixtures/draft.ts');
     const { w, number } = await published({ output: VALID_OUTPUT, usage: { inputTokens: 0, outputTokens: 0 } });
     await comment(w, number);
     const before = w.github.fileAt(BRANCH, PATH);

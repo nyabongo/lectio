@@ -28,7 +28,10 @@ const pageTypes = [
   // Kiswahili mirrors (L-110).
   { name: 'sw-today', path: 'sw/' },
   { name: 'sw-day', path: `sw/${BUILD_DATE}/` },
+  // Kiswahili notes from the fixture's reviewed translation (L-113).
+  { name: 'sw-reading-context', path: `sw/${BUILD_DATE}/gospel/` },
   { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },
+  { name: 'sw-insight', path: `sw/${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
   { name: 'sw-calendar-month', path: 'sw/calendar/2026/09/' },
   { name: 'sw-passage', path: 'sw/passages/MT.20.1-16/' },
   { name: 'sw-settings', path: 'sw/settings/' },

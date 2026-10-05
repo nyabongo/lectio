@@ -44,6 +44,7 @@ import {
   calendarStaticPaths,
   dayStaticPaths,
   jsonResponse,
+  mirrorEndpoints,
   passageStaticPaths,
   upcomingWindow,
 } from './api.ts';
@@ -213,8 +214,26 @@ describe('API built from the fixture content root', () => {
       years: [2026],
       dates: { first: '2026-09-19', last: '2026-09-21' },
       passageCount: 1,
-      endpoints: API_ENDPOINTS,
+      endpoints: {
+        ...API_ENDPOINTS,
+        locales: {
+          sw: {
+            day: 'sw/days/{date}.json',
+            passages: 'sw/passages/index.json',
+            passage: 'sw/passages/{key}.json',
+            calendar: 'sw/calendar/{year}.json',
+            upcoming: 'sw/upcoming.json',
+          },
+        },
+      },
     });
+  });
+
+  it('lists a locale mirror only when the site has that locale (L-113)', () => {
+    const site = fixtureContext().config.site;
+    expect(mirrorEndpoints({ site: { ...site, locales: ['en'] } })).toEqual({});
+    expect(mirrorEndpoints({ site: { ...site, locales: ['sw'], defaultLocale: 'sw' } })).toEqual({});
+    expect(mirrorEndpoints({ site }).locales?.sw?.day).toBe('sw/days/{date}.json');
   });
 });
 
