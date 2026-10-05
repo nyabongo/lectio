@@ -23,7 +23,8 @@ void main() {
 
   setUp(() {
     calls = [];
-    answer = (_) => null;
+    // The plugin's initialize completes with whether it worked.
+    answer = (call) => call.method == 'initialize' ? true : null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_channel, (call) async {
           calls.add(call);
