@@ -62,15 +62,15 @@ export function assertBookCode(book: string): void {
   if (!BOOK_CODE.test(book)) throw new CorpusError(`invalid book code: ${JSON.stringify(book)}`);
 }
 
-/**
- * Chapter and verse numbers may be numbers or strings of letters and digits (e.g. Greek Esther "A"). Leading zeros
- * are rejected rather than silently finding nothing.
- */
 /** Throws a CorpusError unless `sha256` is 64 lower-case hex digits (the form SOURCE.json records). */
 export function assertSha256(sha256: string, where: string): void {
   if (!SHA256.test(sha256)) throw new CorpusError(`${where}: "sha256" must be 64 lower-case hex digits`);
 }
 
+/**
+ * Chapter and verse numbers may be numbers or strings of letters and digits (e.g. Greek Esther "A"). Leading zeros
+ * are rejected rather than silently finding nothing.
+ */
 export function segment(kind: 'chapter' | 'verse', value: number | string): string {
   const text = String(value);
   if (!SEGMENT.test(text)) throw new CorpusError(`invalid ${kind}: ${JSON.stringify(value)}`);
