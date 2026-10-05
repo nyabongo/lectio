@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/data/api_cache.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'reading_harness.dart';
 
@@ -114,6 +115,18 @@ void main() {
     expect(scope.updateShouldNotify(otherLauncher), isTrue);
   });
 
+  test('launchExternally opens the link outside the app', () async {
+    final calls = <(Uri, LaunchMode)>[];
+    Future<bool> fake(Uri url, {LaunchMode mode = LaunchMode.platformDefault}) {
+      calls.add((url, mode));
+      return Future.value(true);
+    }
+
+    final url = Uri.parse('https://example.org/');
+    expect(await launchExternally(url, launch: fake), isTrue);
+    expect(calls, [(url, LaunchMode.externalApplication)]);
+  });
+
   group('openLink', () {
     Future<BuildContext> pumpScope(
       WidgetTester tester,
@@ -159,6 +172,22 @@ void main() {
       await tester.pump();
       expect(find.text('The link could not be opened.'), findsOneWidget);
     });
+
+    for (final link in [
+      'http://example.org/',
+      'intent://scan#Intent;scheme=zxing;end',
+      'javascript:alert(1)',
+      'tel:+254700000000',
+    ]) {
+      testWidgets('refuses $link', (tester) async {
+        final harness = ReadingHarness();
+        final context = await pumpScope(tester, harness);
+        await openLink(context, Uri.parse(link));
+        await tester.pump();
+        expect(harness.launched, isEmpty);
+        expect(find.text('The link could not be opened.'), findsOneWidget);
+      });
+    }
 
     testWidgets('without a messenger, a failure is silent', (tester) async {
       final harness = ReadingHarness()..launchResult = false;

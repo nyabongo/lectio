@@ -42,9 +42,19 @@ Map<String, DayReading> readingsBySlot(ApiDay day) {
 
 /// The reading of [day] to show for [slot], or `null` when there is none.
 ///
-/// Without a [slot], the Gospel, else the first reading with notes, else the
-/// first reading.
-DayReading? pickReading(ApiDay day, String? slot) {
+/// With a [mass] id (from a Today link to a Vigil, Night or Dawn Mass), the
+/// reading in [slot] of that Mass, when it has one. Otherwise the slot as
+/// [readingsBySlot] resolves it, and without a [slot], the Gospel, else the
+/// first reading with notes, else the first reading.
+DayReading? pickReading(ApiDay day, String? slot, {String? mass}) {
+  if (mass != null && slot != null) {
+    for (final candidate in day.masses.where((item) => item.id == mass)) {
+      final reading = candidate.readings
+          .where((item) => item.slot == slot)
+          .firstOrNull;
+      if (reading != null) return reading;
+    }
+  }
   final bySlot = readingsBySlot(day);
   if (slot != null) return bySlot[slot];
   final readings = bySlot.values;

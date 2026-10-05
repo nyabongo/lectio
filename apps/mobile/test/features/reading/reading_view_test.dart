@@ -59,6 +59,22 @@ void main() {
       expect(pickReading(day, 'epistle'), isNull);
     });
 
+    test('prefers the named Mass, falling back when it lacks the slot', () {
+      final json = seedDay();
+      (json['masses']! as List<Object?>).insert(0, {
+        'id': 'vigil',
+        'label': 'Vigil Mass',
+        'readings': [reading('gospel', ref: 'Vigil gospel')],
+      });
+      final day = dayFrom(json);
+      expect(pickReading(day, 'gospel', mass: 'vigil')!.ref, 'Vigil gospel');
+      expect(pickReading(day, 'gospel', mass: 'day')!.ref, 'Mt 20:1-16a');
+      expect(pickReading(day, 'gospel')!.ref, 'Mt 20:1-16a');
+      expect(pickReading(day, 'psalm', mass: 'vigil')!.slot, 'psalm');
+      expect(pickReading(day, 'gospel', mass: 'dawn')!.ref, 'Mt 20:1-16a');
+      expect(pickReading(day, null, mass: 'vigil')!.ref, 'Mt 20:1-16a');
+    });
+
     test('defaults to the Gospel', () {
       expect(pickReading(dayFrom(seedDay()), null)!.slot, 'gospel');
     });

@@ -10,9 +10,13 @@ import 'package:url_launcher/url_launcher.dart';
 /// Opens [url] outside the app; `false` when nothing can open it.
 typedef LinkLauncher = Future<bool> Function(Uri url);
 
-/// Opens [url] in the browser or the app that handles it.
-Future<bool> launchExternally(Uri url) {
-  return launchUrl(url, mode: LaunchMode.externalApplication);
+/// Launches a URL in a mode, as `url_launcher`'s `launchUrl` does.
+typedef UrlLauncher = Future<bool> Function(Uri url, {LaunchMode mode});
+
+/// Opens [url] in the browser or the app that handles it, through [launch]
+/// (default: `launchUrl`).
+Future<bool> launchExternally(Uri url, {UrlLauncher launch = launchUrl}) {
+  return launch(url, mode: LaunchMode.externalApplication);
 }
 
 /// An [ApiCache] opened on first use, for a cache that is created
@@ -91,14 +95,20 @@ class ReadingScope extends InheritedWidget {
 }
 
 /// Opens [url] with the scope's launcher, telling the reader when it cannot.
+///
+/// Only `https` links are opened (decision 001): links come from network or
+/// cached JSON, so anything else (`http:`, `intent:`, `tel:`, `file:` …) is
+/// refused like a link nothing can open.
 Future<void> openLink(BuildContext context, Uri url) async {
   final launch = ReadingScope.launcherOf(context);
   final messenger = ScaffoldMessenger.maybeOf(context);
-  bool opened;
-  try {
-    opened = await launch(url);
-  } on Exception {
-    opened = false;
+  var opened = false;
+  if (url.scheme == 'https') {
+    try {
+      opened = await launch(url);
+    } on Exception {
+      opened = false;
+    }
   }
   if (!opened) {
     messenger?.showSnackBar(

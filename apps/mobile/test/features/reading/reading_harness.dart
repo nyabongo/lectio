@@ -53,7 +53,7 @@ Map<String, Object?> hebrewDay() {
       'gloss': 'covenant loyalty',
     },
     'summary': 'A test note on a Hebrew word.',
-    'body': 'The word recalls the Deuteronomy idiom. [c3]',
+    'body': 'The idiom echoes $hebrewWord [c3]',
     'audio': null,
   });
   final sources = passage['sources']! as List<Object?>;
@@ -65,6 +65,29 @@ Map<String, Object?> hebrewDay() {
         ..['excerptLang'] = 'hbo';
     }
   }
+  return day;
+}
+
+/// The reference of the Vigil Gospel in [vigilDay].
+const String vigilGospelRef = 'Mt 1:1-25';
+
+/// The seed day with a Vigil Mass before the Mass of the day that has only a
+/// Gospel, as on Easter or Christmas.
+Map<String, Object?> vigilDay() {
+  final day = seedDay();
+  (day['masses']! as List<Object?>).insert(0, {
+    'id': 'vigil',
+    'label': 'Vigil Mass',
+    'readings': [
+      {
+        'slot': 'gospel',
+        'ref': vigilGospelRef,
+        'key': 'MT.1.1-25',
+        'linkout': 'https://www.drbo.org/chapter/47001.htm',
+        'passage': null,
+      },
+    ],
+  });
   return day;
 }
 

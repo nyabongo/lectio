@@ -9,6 +9,9 @@ import 'package:lectio/features/reading/reading_view.dart';
 
 const ReadingStrings _strings = ReadingStrings.en;
 
+/// U+200E LEFT-TO-RIGHT MARK.
+const String leftToRightMark = '\u200E';
+
 /// [time] as the review date readers see, for example `3 September 2026`.
 String formatReviewDate(DateTime time) {
   return DateFormat('d MMMM y', 'en_US').format(time.toUtc());
@@ -18,19 +21,22 @@ String formatReviewDate(DateTime time) {
 /// left for Hebrew and Aramaic.
 class OriginalWords extends StatelessWidget {
   /// Creates the words [text] in the language [lang].
-  const new({required this.text, required this.lang, this.style, super.key});
+  const new({required this.text, this.lang, this.style, super.key});
 
   /// The words in the original script.
   final String text;
 
-  /// The language tag, for example `grc` or `hbo`.
-  final String lang;
+  /// The language tag, for example `grc` or `hbo`, or `null` when unknown:
+  /// the words then keep the surrounding direction and no locale.
+  final String? lang;
 
   /// The text style.
   final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
+    final lang = this.lang;
+    if (lang == null) return Text(text, style: style);
     return Directionality(
       textDirection: textDirectionFor(lang),
       child: Text(text, locale: localeFor(lang), style: style),
@@ -74,9 +80,12 @@ class MarkedText extends StatelessWidget {
     }
   }
 
+  /// The citation after a marker run. It starts with a left-to-right mark
+  /// (U+200E), so a Hebrew word just before it cannot pull the brackets and
+  /// numbers into its right-to-left run.
   static String _citeLabel(List<NumberedSource> sources) {
     if (sources.isEmpty) return '';
-    return ' [${sources.map((source) => source.number).join(', ')}]';
+    return '$leftToRightMark [${sources.map((s) => s.number).join(', ')}]';
   }
 }
 
@@ -151,7 +160,7 @@ class _SourceEntry extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 4),
                     child: OriginalWords(
                       text: excerpt,
-                      lang: source.excerptLang ?? 'und',
+                      lang: source.excerptLang,
                       style: theme.textTheme.bodyLarge,
                     ),
                   ),

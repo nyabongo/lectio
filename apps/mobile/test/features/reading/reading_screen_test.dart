@@ -78,7 +78,7 @@ void main() {
       expect(find.text('Original'), findsOneWidget);
       expect(find.text('Labourers in the vineyard'), findsOneWidget);
       expect(find.textContaining('placed between two sayings'), findsOneWidget);
-      expect(find.textContaining('first. [6]'), findsOneWidget);
+      expect(find.textContaining('first.\u200E [6]'), findsOneWidget);
       expect(find.text('Verified · 5 sources'), findsOneWidget);
       expect(find.text('Report an issue'), findsOneWidget);
       expect(find.textContaining('A study aid'), findsOneWidget);
@@ -234,6 +234,35 @@ void main() {
       directionOf(tester, 'excerpt without a language'),
       TextDirection.ltr,
     );
+    final excerpt = tester.widget<Text>(
+      find.text('excerpt without a language'),
+    );
+    expect(excerpt.locale, isNull);
+  });
+
+  testWidgets('a citation after inline Hebrew stays left to right', (
+    tester,
+  ) async {
+    harness.serveDay(hebrewDay());
+    await pumpReading(tester, harness);
+
+    await tapAndSettle(tester, find.text('Original'));
+    expect(
+      find.textContaining('echoes $hebrewWord\u200E [4, 5]'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('a link-out that is not https is never opened', (tester) async {
+    final day = seedDay();
+    (readingsOf(day).last! as Map<String, Object?>)['linkout'] =
+        'http://www.drbo.org/chapter/47020.htm';
+    harness.serveDay(day);
+    await pumpReading(tester, harness);
+
+    await tapAndSettle(tester, find.text('Text'));
+    expect(harness.launched, isEmpty);
+    expect(find.text('The link could not be opened.'), findsOneWidget);
   });
 
   testWidgets('notes that are not approved are never shown', (tester) async {
@@ -422,11 +451,15 @@ void main() {
 
     test('readingLocation builds the path and the tab', () {
       expect(
-        readingLocation(seedDate, 'gospel'),
+        readingLocation(seedDate, null, 'gospel'),
         '/reading?date=2026-09-20&slot=gospel',
       );
       expect(
-        readingLocation(seedDate, 'gospel', tab: ReadingTab.original),
+        readingLocation(seedDate, 'vigil', 'gospel'),
+        '/reading?date=2026-09-20&mass=vigil&slot=gospel',
+      );
+      expect(
+        readingLocation(seedDate, null, 'gospel', tab: ReadingTab.original),
         '/reading?date=2026-09-20&slot=gospel&tab=original',
       );
     });
@@ -442,7 +475,7 @@ void main() {
       harness.serveSeedDay();
       await pumpRouter(
         tester,
-        readingLocation(seedDate, 'gospel', tab: ReadingTab.original),
+        readingLocation(seedDate, null, 'gospel', tab: ReadingTab.original),
       );
       expect(find.text('VERSE 15 · “envious”'), findsOneWidget);
     });
@@ -451,9 +484,43 @@ void main() {
       tester,
     ) async {
       harness.serveSeedDay();
-      await pumpRouter(tester, readingLocation(seedDate, 'first-reading'));
+      await pumpRouter(
+        tester,
+        readingLocation(seedDate, null, 'first-reading'),
+      );
       expect(find.text('Is 55:6-9'), findsOneWidget);
       expect(find.textContaining('in preparation'), findsOneWidget);
+    });
+
+    testWidgets('/reading?mass opens that Mass, keeping it across chips', (
+      tester,
+    ) async {
+      harness.serveDay(vigilDay());
+      await pumpRouter(tester, readingLocation(seedDate, 'vigil', 'gospel'));
+      expect(find.text(vigilGospelRef), findsOneWidget);
+      expect(find.textContaining('in preparation'), findsOneWidget);
+
+      // The Vigil has no Psalm: the principal Mass's one shows.
+      await tapAndSettle(tester, find.widgetWithText(ChoiceChip, 'Psalm'));
+      expect(find.text('Ps 145:2-3, 8-9, 17-18'), findsOneWidget);
+
+      await tapAndSettle(tester, find.widgetWithText(ChoiceChip, 'Gospel'));
+      expect(find.text(vigilGospelRef), findsOneWidget);
+    });
+
+    testWidgets('/reading without a mass opens the Mass of the day', (
+      tester,
+    ) async {
+      harness.serveDay(vigilDay());
+      await pumpRouter(tester, readingLocation(seedDate, null, 'gospel'));
+      expect(find.text('Mt 20:1-16a'), findsOneWidget);
+      expect(find.text('Labourers in the vineyard'), findsOneWidget);
+    });
+
+    testWidgets('/reading with an unknown mass falls back', (tester) async {
+      harness.serveDay(vigilDay());
+      await pumpRouter(tester, readingLocation(seedDate, 'dawn', 'gospel'));
+      expect(find.text('Mt 20:1-16a'), findsOneWidget);
     });
 
     testWidgets('/reading opens today on the Context tab', (tester) async {

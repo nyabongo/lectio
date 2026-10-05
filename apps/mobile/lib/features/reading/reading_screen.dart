@@ -35,12 +35,14 @@ enum ReadingTab {
   }
 }
 
-/// The location of the Reading tab for the reading in [slot] on the ISO
-/// [date], for example `/reading?date=2026-09-20&slot=gospel&tab=original`.
+/// The location of the Reading tab for the reading in [slot] of the Mass
+/// [mass] (or the principal one when `null`) on the ISO [date], for example
+/// `/reading?date=2026-04-04&mass=vigil&slot=gospel&tab=original`.
 ///
-/// The same shape as the Today screen's links (L-102).
+/// The same shape and parameter order as the Today screen's links (L-102).
 String readingLocation(
   String date,
+  String? mass,
   String slot, {
   ReadingTab tab = ReadingTab.context,
 }) {
@@ -48,6 +50,7 @@ String readingLocation(
     path: AppRoute.reading.path,
     queryParameters: {
       'date': date,
+      'mass': ?mass,
       'slot': slot,
       if (tab != ReadingTab.context) 'tab': tab.name,
     },
@@ -65,12 +68,17 @@ class ReadingScreen extends StatefulWidget {
   const new({
     super.key,
     this.date,
+    this.mass,
     this.slot,
     this.initialTab = ReadingTab.context,
   });
 
   /// The ISO date of the day, or `null` for today.
   final String? date;
+
+  /// The id of the Mass whose reading to prefer, or `null` for the
+  /// principal one.
+  final String? mass;
 
   /// The reading slot, for example `gospel`, or `null` for the default.
   final String? slot;
@@ -106,7 +114,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
   @override
   void didUpdateWidget(ReadingScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.date != oldWidget.date || widget.slot != oldWidget.slot) {
+    if (widget.date != oldWidget.date ||
+        widget.mass != oldWidget.mass ||
+        widget.slot != oldWidget.slot) {
       _slot = widget.slot;
       _day = _watch();
     }
@@ -136,6 +146,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
         if (data != null) {
           return ReadingDayView(
             day: data.value,
+            mass: widget.mass,
             slot: _slot,
             initialTab: widget.initialTab,
             offline: data.refreshError != null,
@@ -182,6 +193,7 @@ class ReadingDayView extends StatelessWidget {
   const new({
     required this.day,
     required this.onSlotSelected,
+    this.mass,
     this.slot,
     this.initialTab = ReadingTab.context,
     this.offline = false,
@@ -190,6 +202,12 @@ class ReadingDayView extends StatelessWidget {
 
   /// The day document.
   final ApiDay day;
+
+  /// The id of the Mass whose readings are preferred, or `null`.
+  ///
+  /// Kept when the reader picks another slot: that Mass's reading in the slot
+  /// wins when it has one.
+  final String? mass;
 
   /// The chosen slot, or `null` for the default reading.
   final String? slot;
@@ -208,7 +226,7 @@ class ReadingDayView extends StatelessWidget {
     final base = Theme.of(context);
     final theme = buildLectioTheme(day.liturgicalColour, base.brightness);
     final bySlot = readingsBySlot(day);
-    final reading = pickReading(day, slot);
+    final reading = pickReading(day, slot, mass: mass);
     final celebration = day.celebrations.firstOrNull?.name;
     final date = _dayFormat.format(DateTime.parse(day.date));
     final muted = theme.textTheme.bodySmall?.copyWith(
@@ -221,7 +239,7 @@ class ReadingDayView extends StatelessWidget {
       body = _Message(_strings.noSuchReading(slot!));
     } else {
       body = ReadingNotesView(
-        key: ValueKey('${day.date}/${reading.slot}'),
+        key: ValueKey('${day.date}/$mass/${reading.slot}'),
         date: day.date,
         reading: reading,
         initialTab: initialTab,
@@ -389,7 +407,7 @@ class ReadingNotesView extends StatelessWidget {
 }
 
 /// The Reading route inside the tab shell: `/reading` shows today's Gospel;
-/// `?date=2026-09-20&slot=gospel` picks the day and reading, and
+/// `?date=2026-09-20&mass=day&slot=gospel` picks the day and reading, and
 /// `&tab=original` opens the Original tab (see [readingLocation]).
 GoRoute readingRoute() {
   return GoRoute(
@@ -399,6 +417,7 @@ GoRoute readingRoute() {
       final query = state.uri.queryParameters;
       return ReadingScreen(
         date: query['date'],
+        mass: query['mass'],
         slot: query['slot'],
         initialTab: ReadingTab.parse(query['tab']),
       );
