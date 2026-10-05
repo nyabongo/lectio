@@ -1,0 +1,139 @@
+{
+  "year": 2026,
+  "region": "kenya",
+  "generatedBy": "@lectio/calendar 0.0.0 (apps/web fixture)",
+  "days": [
+    {
+      "date": "2026-09-19",
+      "season": "ordinary-time",
+      "seasonWeek": 24,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "ordinary-time-24-saturday",
+          "name": "Saturday of the Twenty-fourth Week in Ordinary Time",
+          "rank": "weekday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Cor 15:35-37, 42-49",
+              "key": "1COR.15.35-37_15.42-49",
+              "linkout": "https://www.drbo.org/chapter/53015.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 56:10-14",
+              "key": "PS.56.10-14",
+              "linkout": "https://www.drbo.org/chapter/21055.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 8:4-15",
+              "key": "LK.8.4-15",
+              "linkout": "https://www.drbo.org/chapter/49008.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-09-20",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "ordinary-time-25-sunday",
+          "name": "Twenty-fifth Sunday in Ordinary Time",
+          "rank": "sunday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 55:6-9",
+              "key": "IS.55.6-9",
+              "linkout": "https://www.drbo.org/chapter/27055.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:2-3, 8-9, 17-18",
+              "key": "PS.145.2-3_145.8-9_145.17-18",
+              "linkout": "https://www.drbo.org/chapter/21144.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Phil 1:20c-24, 27a",
+              "key": "PHIL.1.20-24_1.27",
+              "linkout": "https://www.drbo.org/chapter/57001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:1-16a",
+              "key": "MT.20.1-16",
+              "linkout": "https://www.drbo.org/chapter/47020.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-09-21",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "matthew-apostle",
+          "name": "Saint Matthew, Apostle and Evangelist",
+          "rank": "feast",
+          "colour": "red"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 4:1-7, 11-13",
+              "key": "EPH.4.1-7_4.11-13",
+              "linkout": "https://www.drbo.org/chapter/56004.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-5",
+              "key": "PS.19.2-5",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 9:9-13",
+              "key": "MT.9.9-13",
+              "linkout": "https://www.drbo.org/chapter/47009.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "workflow": "web.yml",
+  "jobs": ["web-build"]
+}
