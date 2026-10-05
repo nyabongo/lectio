@@ -14,6 +14,9 @@ import 'lectio_harness.dart';
 /// uploads the diffs as `flutter-golden-failures`.
 void main() {
   setUpAll(loadGoldenFonts);
+  // No DEBUG ribbon over the app bar actions.
+  setUp(() => WidgetsApp.debugAllowBannerOverride = false);
+  tearDown(() => WidgetsApp.debugAllowBannerOverride = true);
 
   const screens = [Screen.today, Screen.reading, Screen.settings];
   for (final screen in screens) {
