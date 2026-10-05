@@ -1,0 +1,586 @@
+{
+  "key": "LK.9.1-6",
+  "ref": "Lk 9:1-6",
+  "locale": "en",
+  "summary": "Jesus gives the Twelve power and authority, sends them out with nothing for the road, and they go village by village.",
+  "context": {
+    "title": "The mission of the Twelve",
+    "paragraphs": [
+      "Luke follows Mark’s account here, while Matthew gives a much fuller version of the instructions. [c1] The Twelve were chosen in Luke 6:13-16; now Jesus sends them out to do his own work. [c2] Luke later tells of a second, larger mission of seventy in chapter 10, with several of the same instructions. [c3]",
+      "Jesus gives them both power and authority, the same pair the crowd used of his own word in Luke 4:36. [c4] The mission has two sides, proclaiming God’s kingdom and healing, and verse 6 shows them doing both. [c5] Mark adds that they were sent out two by two, which the Cambridge Bible takes as being for mutual support. [c6]",
+      "They travel without bag, bread or silver, and Luke, unlike Mark, forbids even a staff. [c7] The Cambridge Bible reads this as a call to go in the simplest manner and in perfect faith, relying on the open hospitality of the East. [c8] In each place they are to stay in one house rather than move from house to house. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "dynamis-exousia",
+      "verse": "9:1",
+      "anchor": "power and authority",
+      "original": {
+        "text": "δύναμιν καὶ ἐξουσίαν",
+        "lang": "grc",
+        "translit": "dynamin kai exousian",
+        "gloss": "power and authority"
+      },
+      "summary": "Two Greek words: dynamis is the ability to act, exousia the right to act.",
+      "body": "Dynamis is strength or ability, the power residing in someone by nature. [c10] Exousia comes from a verb meaning it is permitted, and its first sense is leave or permission. [c11] The Cambridge Bible puts the difference simply: the first is the capacity to act, the second the right to act. [c12] Jamieson, Fausset and Brown sum it up: Jesus both qualified and authorized them. [c13]"
+    },
+    {
+      "id": "apesteilen",
+      "verse": "9:2",
+      "anchor": "sent",
+      "original": {
+        "text": "ἀπέστειλεν",
+        "lang": "grc",
+        "translit": "apesteilen",
+        "gloss": "he sent out"
+      },
+      "summary": "The verb of sending gives the Twelve their title: apostles are those sent on a commission.",
+      "body": "Apostellō means to send off, and Thayer uses it of persons sent with commissions. [c14] Luke has already named the Twelve apostoloi, the noun from this verb, when Jesus chose them in 6:13. [c15] The Cambridge Bible compares the Hebrew šĕlûḥîm, emissaries, and sees this mission as an important step in the training of the Twelve. [c16]"
+    },
+    {
+      "id": "pera",
+      "verse": "9:3",
+      "anchor": "sack",
+      "original": {
+        "text": "πήραν",
+        "lang": "grc",
+        "translit": "pēran",
+        "gloss": "traveller’s bag"
+      },
+      "summary": "The pēra was a leather bag for provisions; going without one meant depending on hosts for food.",
+      "body": "Thayer defines the pēra as a leather sack in which travellers and shepherds carried their provisions. [c17] The Cambridge Bible pictures a bag slung over the shoulder holding a few dates or other necessaries. [c18] Without bag, bread or silver, the Twelve would eat what was given them wherever they came. [c19] At the Last Supper Jesus recalls this rule and then tells them to take a bag. [c20]"
+    },
+    {
+      "id": "shake-dust",
+      "verse": "9:5",
+      "anchor": "shake the dust",
+      "original": {
+        "text": "τὸν κονιορτὸν ἀπὸ τῶν ποδῶν ὑμῶν ἀποτινάσσετε",
+        "lang": "grc",
+        "translit": "ton koniorton apo tōn podōn hymōn apotinassete",
+        "gloss": "the dust from your feet shake off"
+      },
+      "summary": "A gesture of separation: the messengers leave even a town’s dust behind as a witness.",
+      "body": "Koniortos is properly dust raised in the air, the dust of the road that clings to a traveller. [c21] Jewish purity teaching held that the very dust of a Gentile land carried defilement, which gave the gesture its weight. [c22] By it the messengers freed themselves of responsibility for a town’s refusal of their message. [c23] Paul and Barnabas make the same gesture at Pisidian Antioch in Acts 13:51. [c24]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Luke’s account of the mission of the Twelve follows Mark, while Matthew 10:5-15 gives a much fuller account of the instructions.",
+      "sourceIds": ["meyer-lk-9-1", "cambridge-lk-9-3-fuller"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The Twelve were chosen in Lk 6:13-16 and are sent out in Lk 9:1-6.",
+      "sourceIds": ["lk-6-13", "poole-lk-9-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Some of the instructions to the Twelve are given again to the Seventy in Luke 10:1-16.",
+      "sourceIds": ["lk-10-1", "cambridge-lk-9-3-seventy"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "In Lk 4:36 the crowd speaks of Jesus’ word acting with authority and power, the same pair of words as in Lk 9:1.",
+      "sourceIds": ["lk-4-36", "meyer-lk-9-1-power"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Lk 9:2 states the two objects of the mission, preaching the kingdom of God and healing, and Lk 9:6 reports both.",
+      "sourceIds": ["lk-9-2", "lk-9-6", "expositors-lk-9-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Mark 6:7 says Jesus sent them two by two, which the Cambridge Bible explains as for their mutual comfort.",
+      "sourceIds": ["mk-6-7", "cambridge-lk-9-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Lk 9:3 forbids a staff, bag, bread and silver, whereas Mark 6:8 allows a staff only.",
+      "sourceIds": ["lk-9-3", "mk-6-8", "expositors-lk-9-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The Cambridge Bible reads the instructions as a call to go out in the simplest, humblest manner, with the Twelve’s small needs met by the open hospitality of the East.",
+      "sourceIds": ["cambridge-lk-9-3-simplest", "cambridge-lk-9-3-hospitality"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Lk 9:4 directs them to stay in the same house the whole time they are in a place.",
+      "sourceIds": ["expositors-lk-9-4", "cambridge-lk-9-4"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "δύναμις means strength, ability, power, in general the inherent power residing in a person or thing.",
+      "sourceIds": ["thayer-dynamis", "thayer-dynamis-inherent"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "ἐξουσία derives from ἔξεστι (it is permitted) and first means power of choice, leave or permission.",
+      "sourceIds": ["thayer-exousia-from", "thayer-exousia"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "The Cambridge Bible distinguishes power (dunamis) as the capacity and authority (exousia) as the right to act.",
+      "sourceIds": ["cambridge-lk-9-1-power"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Jamieson, Fausset and Brown say that by giving power and authority Jesus both qualified and authorized the Twelve.",
+      "sourceIds": ["jfb-lk-9-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "ἀποστέλλω means to send off, and is used of persons sent with commissions.",
+      "sourceIds": ["thayer-apostello", "thayer-apostello-commissions"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "In Lk 6:13 Jesus names the Twelve ἀπόστολοι.",
+      "sourceIds": ["lk-6-13-apostles"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "The Cambridge Bible says the Twelve became, as their name implied, emissaries (sheloochim), and calls the mission an important step in their training.",
+      "sourceIds": ["cambridge-lk-9-1-emissaries", "cambridge-lk-9-1-training"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "A πήρα was a leather sack in which travellers and shepherds carried their provisions.",
+      "sourceIds": ["thayer-pera"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The Cambridge Bible describes the bag as carried over the shoulder to hold a few dates or other common necessaries.",
+      "sourceIds": ["cambridge-lk-9-3-scrip"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Without bread or money the Twelve were to receive their food wherever they came.",
+      "sourceIds": ["gill-lk-9-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "In Lk 22:35-36 Jesus recalls sending them without a bag and then tells them to take one.",
+      "sourceIds": ["lk-22-35-36"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "κονιορτός properly means raised or flying dust, and generally dust.",
+      "sourceIds": ["thayer-koniortos"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "A Jewish maxim held that even the dust of a Gentile land brought defilement, which added to the significance of the gesture.",
+      "sourceIds": ["ellicott-mt-10-14", "benson-mt-10-14"],
+      "sensitive": true
+    },
+    {
+      "id": "c23",
+      "text": "By shaking off the dust the messengers shook themselves free of all responsibility for the guilt of rejecting them and their message.",
+      "sourceIds": ["jfb-mt-10-14"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "Paul and Barnabas shake the dust from their feet at Pisidian Antioch in Acts 13:51.",
+      "sourceIds": ["acts-13-51", "ellicott-mt-10-14-paul"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "lk-6-13",
+      "type": "scripture",
+      "citation": "Luke 6:13",
+      "ref": "Lk 6:13",
+      "excerpt": "ἐκλεξάμενος ἀπ’ αὐτῶν δώδεκα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-6-13-apostles",
+      "type": "scripture",
+      "citation": "Luke 6:13",
+      "ref": "Lk 6:13",
+      "excerpt": "ἀποστόλους ὠνόμασεν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-10-1",
+      "type": "scripture",
+      "citation": "Luke 10:1",
+      "ref": "Lk 10:1",
+      "excerpt": "ἀπέστειλεν αὐτοὺς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-4-36",
+      "type": "scripture",
+      "citation": "Luke 4:36",
+      "ref": "Lk 4:36",
+      "excerpt": "ἐν ἐξουσίᾳ καὶ δυνάμει",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-2",
+      "type": "scripture",
+      "citation": "Luke 9:2",
+      "ref": "Lk 9:2",
+      "excerpt": "κηρύσσειν τὴν βασιλείαν τοῦ θεοῦ καὶ ἰᾶσθαι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-3",
+      "type": "scripture",
+      "citation": "Luke 9:3",
+      "ref": "Lk 9:3",
+      "excerpt": "μήτε ῥάβδον μήτε πήραν μήτε ἄρτον μήτε ἀργύριον",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-9-6",
+      "type": "scripture",
+      "citation": "Luke 9:6",
+      "ref": "Lk 9:6",
+      "excerpt": "εὐαγγελιζόμενοι καὶ θεραπεύοντες",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-6-7",
+      "type": "scripture",
+      "citation": "Mark 6:7",
+      "ref": "Mk 6:7",
+      "excerpt": "δύο δύο",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mk-6-8",
+      "type": "scripture",
+      "citation": "Mark 6:8",
+      "ref": "Mk 6:8",
+      "excerpt": "εἰ μὴ ῥάβδον μόνον",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "lk-22-35-36",
+      "type": "scripture",
+      "citation": "Luke 22:35-36",
+      "ref": "Lk 22:35-36",
+      "excerpt": "πήρας",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "acts-13-51",
+      "type": "scripture",
+      "citation": "Acts 13:51",
+      "ref": "Acts 13:51",
+      "excerpt": "τὸν κονιορτὸν τῶν ποδῶν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "meyer-lk-9-1",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:1-6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "Luke follows Mark",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "meyer-lk-9-1-power",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospels of Mark and Luke (English translation, 1884), on Luke 9:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "power and authority, Luke 4:36",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "poole-lk-9-1",
+      "type": "web",
+      "citation": "Matthew Poole, Annotations upon the Holy Bible (1683-1685), on Luke 9:1-6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "We have heard of the choosing of these twelve disciples",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-1-power",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "is the capacity, and authority (exousia), the right to act",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-1-emissaries",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "as their name implied, emissaries (sheloochim)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-1-training",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "this was an important step in their training",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-lk-9-1",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Luke 9:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-1.htm",
+      "excerpt": "He both qualified and authorized them.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "expositors-lk-9-2",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-2.htm",
+      "excerpt": "this verse is another way of stating the objects of the mission",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-2",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-2.htm",
+      "excerpt": "Two and two for their mutual comfort.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "expositors-lk-9-3",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "Not a staff (Mk. except a staff only)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-3-fuller",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "For a much fuller account of the instructions given to the Twelve",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-3-seventy",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "recorded by St Luke as given also to the Seventy",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-3-simplest",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "Go forth in the simplest, humblest manner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-3-hospitality",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "secured by the open hospitality of the East",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-3-scrip",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "a bag carried over the shoulder to contain a few dates",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "gill-lk-9-3",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Luke 9:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-3.htm",
+      "excerpt": "because they were to have it, wherever they came, given them",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "expositors-lk-9-4",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Luke 9:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-4.htm",
+      "excerpt": "stay in the same house all the time",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-lk-9-4",
+      "type": "web",
+      "citation": "F. W. Farrar, The Gospel According to St Luke, Cambridge Bible for Schools and Colleges (1880), on Luke 9:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/luke/9-4.htm",
+      "excerpt": "meant to exclude fastidious and restless changes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-dynamis",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δύναμις (Bible Hub, Strong's 1411)",
+      "url": "https://biblehub.com/greek/1411.htm",
+      "excerpt": "strength, ability, power",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-dynamis-inherent",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δύναμις (Bible Hub, Strong's 1411)",
+      "url": "https://biblehub.com/greek/1411.htm",
+      "excerpt": "power residing in a thing by virtue of its nature",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-exousia-from",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἐξουσία (Bible Hub, Strong's 1849)",
+      "url": "https://biblehub.com/greek/1849.htm",
+      "excerpt": "from ἔξεστι, ἐξόν, which see",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-exousia",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἐξουσία (Bible Hub, Strong's 1849)",
+      "url": "https://biblehub.com/greek/1849.htm",
+      "excerpt": "power of choice, liberty of doing as one pleases; leave or permission",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-apostello",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀποστέλλω (Bible Hub, Strong's 649)",
+      "url": "https://biblehub.com/greek/649.htm",
+      "excerpt": "properly, to send off, send away",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-apostello-commissions",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀποστέλλω (Bible Hub, Strong's 649)",
+      "url": "https://biblehub.com/greek/649.htm",
+      "excerpt": "either persons sent with commissions",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-pera",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. πήρα (Bible Hub, Strong's 4082)",
+      "url": "https://biblehub.com/greek/4082.htm",
+      "excerpt": "a leather sack, in which travellers and shepherds carried their provisions",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "thayer-koniortos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. κονιορτός (Bible Hub, Strong's 2868)",
+      "url": "https://biblehub.com/greek/2868.htm",
+      "excerpt": "properly, raised dust, flying dust",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-10-14",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 10:14 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/10-14.htm",
+      "excerpt": "even the very dust of a heathen land brought defilement with it",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-mt-10-14-paul",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 10:14 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/10-14.htm",
+      "excerpt": "at Antioch in Pisidia",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "benson-mt-10-14",
+      "type": "web",
+      "citation": "Joseph Benson, Commentary of the Old and New Testaments (1857), on Matthew 10:14-15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/10-14.htm",
+      "excerpt": "The Jews thought the land of Israel so peculiarly holy",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-mt-10-14",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Matthew 10:14 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/10-14.htm",
+      "excerpt": "all responsibility for the guilt of rejecting them and their message",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021c-lk-9-1-6",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T13:10:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
