@@ -5,12 +5,13 @@ Lectio's content is plain JSON files in this repository, keyed by passage
 as TypeScript `as const` objects (JSON Schema 2020-12). Types are derived with `json-schema-to-ts`, and every schema
 ships an ajv validator.
 
-| File                      | Schema        | Import                                                                | Emitted JSON Schema                             |
-| ------------------------- | ------------- | --------------------------------------------------------------------- | ----------------------------------------------- |
-| `passages/<key>.json`     | passage       | `import { validatePassage } from '@lectio/schema/passage'`            | `@lectio/schema/json/passage.schema.json`       |
-| `calendar/<year>.json`    | calendar year | `import { validateCalendarYear } from '@lectio/schema/calendar'`      | `@lectio/schema/json/calendar-year.schema.json` |
-| gate output (L-023–L-031) | gate result   | `import { validateGateResult } from '@lectio/schema/gate-result'`     | `@lectio/schema/json/gate-result.schema.json`   |
-| shared fragments          | common        | `import { passageKeySchema, createAjv } from '@lectio/schema/common'` | (embedded in each file above)                   |
+| File                                | Schema             | Import                                                                          | Emitted JSON Schema                                  |
+| ----------------------------------- | ------------------ | ------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `passages/<key>.json`               | passage            | `import { validatePassage } from '@lectio/schema/passage'`                      | `@lectio/schema/json/passage.schema.json`            |
+| `passages/i18n/<locale>/<key>.json` | translated passage | `import { validateTranslatedPassage } from '@lectio/schema/translated-passage'` | `@lectio/schema/json/translated-passage.schema.json` |
+| `calendar/<year>.json`              | calendar year      | `import { validateCalendarYear } from '@lectio/schema/calendar'`                | `@lectio/schema/json/calendar-year.schema.json`      |
+| gate output (L-023–L-031)           | gate result        | `import { validateGateResult } from '@lectio/schema/gate-result'`               | `@lectio/schema/json/gate-result.schema.json`        |
+| shared fragments                    | common             | `import { passageKeySchema, createAjv } from '@lectio/schema/common'`           | (embedded in each file above)                        |
 
 **The reading text is never stored** ([ADR 0003](adr/0003-never-store-reading-text.md)): only references, link-outs,
 commentary, claims and sources. The passage schema rejects a passage-level `text` or `verses` field by name, and a
@@ -194,6 +195,87 @@ Approved automatically by the merge rule:
 `verifierSummary`: `confirmer` and `refuter` each record the verifier's model id (different families) and the
 lowest per-claim support score it gave (0–1), so the merge rule (L-028) can show both met the threshold. The top-level
 `minSupport` is the lower of the two; `refutations` and `sensitive` are claim counts.
+
+## Translated passage (`passages/i18n/<locale>/<key>.json`)
+
+A translation is the commentary of one English passage file in another language (L-112). Adding a language means
+adding files under `passages/i18n/<locale>/`; nothing else changes. `npm run research -- translate --locale <tag>`
+writes them, and `npm run content:validate` and gate 1 check them.
+
+| Field                | Rule                                                                                                                                         |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `translationOf`      | key of the English passage `passages/<key>.json`; equals the file name.                                                                      |
+| `locale`             | language of the translation; equals the directory name; never English (`en`, `en-*`).                                                        |
+| `sourceSha256`       | `translatableSha256` of the English file the translation was made from (see below).                                                          |
+| `summary`            | one line, at most 200 characters.                                                                                                            |
+| `context`            | `title` and `paragraphs[]`: the same number of paragraphs as the English file, each with the same `[cN]` markers.                            |
+| `translationNotes[]` | `id` (the English note's id), `gloss`, `summary`, `body` (the same `[cN]` markers as the English body), optional `anchor` (at most 6 words). |
+| `claims[]`           | `id` (the English claim's id) and `text`. Every English note and claim is translated exactly once.                                           |
+| `provenance`         | as in a passage.                                                                                                                             |
+| `review`             | human only: `pending`, or `approved` with `method: human`, `approvedVia` `cli`, `label` or `comment`, and at least one reviewer.             |
+| `schemaVersion`      | `1`.                                                                                                                                         |
+
+**Sources stay in the English file.** A translation has no `sources`, no `sourceIds`, no verse, reference or
+original-language words: readers and renderers (L-113) take them from the English file by note and claim id, so a
+translated sentence is cited by the same claims and sources as the English one. Like a passage, a translation never
+contains reading text in any language, and `text` and `verses` are banned by name.
+
+**What `sourceSha256` hashes.** The sha256 (hex) of the UTF-8 bytes of `JSON.stringify` of the English file's
+translatable fields, in this fixed order: `summary`, `context` {`title`, `paragraphs`}, `translationNotes`
+[{`id`, `anchor`, `gloss` (from `original.gloss`), `summary`, `body`}], `claims` [{`id`, `text`}]. Every string is
+first normalised: Unicode NFC, each run of whitespace collapsed to one space, and trimmed. So whitespace-only and
+NFC/NFD edits keep translations fresh; a changed word, id or claim marker, or a reordered paragraph, note or claim,
+makes them stale. Sources, references, original-language words other than the gloss, provenance and the review
+block do not count.
+
+**Staleness.** Gate 1 reports `schema/translation-not-stale` as a warning (the gate flags, it does not fail) when a
+translation's `sourceSha256` differs from the English file now: on the translation itself, and on every untouched
+translation of an English passage a pull request changes. A translation of a deleted English passage is an error
+(`schema/translation-of-exists`). Re-run `translate` to refresh a stale translation; renderers show a translation
+only when it is approved and fresh, and fall back to English otherwise.
+
+**Review.** Translations never auto-merge. Gate 1 flags every pending translation (`schema/translation-needs-review`),
+and the merge rule always asks for a person when a pull request touches `passages/i18n/**`
+(`merge-rule/translation-needs-person`, not configurable). A pull request that sets a translation's review block to
+approved without a counted approval is blocked (`merge-rule/review-block-approved`). A configured reviewer approves
+with the label, `/approve` or `npm run review:approve -- passages/i18n/<locale>/<key>.json --reviewer <handle>`;
+there is no auto approval.
+
+A trimmed Swahili example for the passage example above:
+
+```json translated-passage
+{
+  "translationOf": "MT.20.1-16",
+  "locale": "sw",
+  "sourceSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "summary": "Mwenye shamba anawalipa walioajiriwa mwisho sawa na wa kwanza.",
+  "context": {
+    "title": "Wafanyakazi katika shamba la mizabibu",
+    "paragraphs": ["Mathayo peke yake anaandika mfano huu. [c1] Swali la mwisho linatumia nahau ya jicho ovu. [c2]"]
+  },
+  "translationNotes": [
+    {
+      "id": "evil-eye",
+      "gloss": "jicho lako ovu",
+      "summary": "Kigiriki kinauliza “je, jicho lako ni ovu?”.",
+      "body": "Jicho ovu lilikuwa picha ya ubahili (Kum 15:9). [c2] Tafsiri inapoteza picha hiyo. [c2]"
+    }
+  ],
+  "claims": [
+    { "id": "c1", "text": "Mfano huu unapatikana katika Mathayo peke yake." },
+    { "id": "c2", "text": "“Jicho ovu” ilikuwa nahau ya Kiyahudi ya ubahili." }
+  ],
+  "provenance": {
+    "generator": "research-cli",
+    "runId": "translate-20261005T075000Z",
+    "models": ["claude-opus-5-5"],
+    "promptVersion": "translate-v1",
+    "createdAt": "2026-10-05T07:50:00Z"
+  },
+  "review": { "status": "pending", "reviewers": [] },
+  "schemaVersion": 1
+}
+```
 
 ## Calendar year (`calendar/<year>.json`)
 

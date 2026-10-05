@@ -14,12 +14,14 @@ import { API_SCHEMAS } from '../api/index.ts';
 import { calendarYearSchema } from '../calendar/index.ts';
 import { gateResultSchema } from '../gate-result/index.ts';
 import { passageSchema } from '../passage/index.ts';
+import { translatedPassageSchema } from '../translated-passage/index.ts';
 
 /** Every emitted schema, by file stem. A new schema directory adds one line here. */
 export const SCHEMAS = {
   passage: passageSchema,
   'calendar-year': calendarYearSchema,
   'gate-result': gateResultSchema,
+  'translated-passage': translatedPassageSchema,
   ...API_SCHEMAS,
 } as const;
 

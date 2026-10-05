@@ -12,10 +12,13 @@ export type { ContentIssue } from './errors.ts';
 export {
   CALENDAR_DIR,
   PASSAGES_DIR,
+  TRANSLATIONS_DIR,
   checkCalendarYear,
   checkContentText,
   checkPassage,
+  checkTranslatedPassage,
   contentKindOf,
+  translationPlaceOf,
   nodeFs,
   parseJson,
   yearOfFileName,
