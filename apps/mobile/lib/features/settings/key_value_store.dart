@@ -38,9 +38,9 @@ class MemoryKeyValueStore implements KeyValueStore {
 }
 
 /// A [KeyValueStore] on the platform's preferences (`SharedPreferences` on
-/// Android, `NSUserDefaults` on iOS), cached in memory after [open].
+/// Android, `NSUserDefaults` on iOS), cached in memory once loaded.
 class SharedPreferencesStore implements KeyValueStore {
-  /// Creates a store over [preferences].
+  /// Creates a store over the loaded preferences.
   new(this._preferences);
 
   final SharedPreferences _preferences;

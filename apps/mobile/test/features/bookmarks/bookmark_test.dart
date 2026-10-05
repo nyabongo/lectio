@@ -47,15 +47,18 @@ void main() {
     test('rejects malformed targets', () {
       expect(() => BookmarkTarget.fromJson('day'), throwsFormatException);
       expect(
-        () => BookmarkTarget.fromJson({'date': '20 September'}),
+        () => BookmarkTarget.fromJson(const {'date': '20 September'}),
         throwsFormatException,
       );
       expect(
-        () => BookmarkTarget.fromJson({'date': '2026-09-20', 'insight': 'x'}),
+        () => BookmarkTarget.fromJson(const {
+          'date': '2026-09-20',
+          'insight': 'x',
+        }),
         throwsFormatException,
       );
       expect(
-        () => BookmarkTarget.fromJson({'date': '2026-09-20', 'slot': 3}),
+        () => BookmarkTarget.fromJson(const {'date': '2026-09-20', 'slot': 3}),
         throwsFormatException,
       );
     });

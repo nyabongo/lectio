@@ -40,7 +40,7 @@ void main() {
     });
 
     test('falls back to the default field by field', () {
-      final settings = AppSettings.fromJson({
+      final settings = AppSettings.fromJson(const {
         'textSize': 'huge',
         'theme': 'dark',
         'playbackSpeed': 3,
@@ -52,16 +52,22 @@ void main() {
     });
 
     test('accepts an integer speed from JSON', () {
-      expect(AppSettings.fromJson({'playbackSpeed': 2}).playbackSpeed, 2.0);
+      expect(
+        AppSettings.fromJson(const {'playbackSpeed': 2}).playbackSpeed,
+        2.0,
+      );
     });
 
     test('does not pick a language that is not available yet', () {
-      expect(AppSettings.fromJson({'language': 'sw'}).language, AppLanguage.en);
+      expect(
+        AppSettings.fromJson(const {'language': 'sw'}).language,
+        AppLanguage.en,
+      );
     });
 
     test('reads anything that is not an object as the defaults', () {
       expect(AppSettings.fromJson(null), const AppSettings());
-      expect(AppSettings.fromJson([1, 2]), const AppSettings());
+      expect(AppSettings.fromJson(const [1, 2]), const AppSettings());
       expect(AppSettings.parse(null), const AppSettings());
       expect(AppSettings.parse(''), const AppSettings());
       expect(AppSettings.parse('{not json'), const AppSettings());
