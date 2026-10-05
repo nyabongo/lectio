@@ -274,7 +274,13 @@ function splitAt(words: readonly string[], isBoundary: (piece: LxxPiece, index: 
  * Where one upstream verse of `part` goes, in the `lxx` scheme: Esther's additions to their lettered chapters, Sirach
  * and Daniel into the scheme's order, one-chapter books into their chapter. Parts without words are left out.
  */
-export function placeVerse(part: LxxBookPart, c: number, v: number, words: readonly string[], where: string): Placement[] {
+export function placeVerse(
+  part: LxxBookPart,
+  c: number,
+  v: number,
+  words: readonly string[],
+  where: string,
+): Placement[] {
   if (part.chapter !== undefined) {
     if (c !== 1) throw new CorpusError(`${where}: expected a one-chapter book`);
     return [placed(part.chapter, v, verseTokens(words))];
@@ -291,7 +297,11 @@ export function placeVerse(part: LxxBookPart, c: number, v: number, words: reado
   }
   if (part.upstream === 'Sir' && c === 36 && v === 16) {
     // "Κἀγὼ ἔσχατος ἠγρύπνησα," is 33:16a; the rest is 36:16b.
-    const [first, second] = splitAt(words, (_piece, index) => index > 0 && (words[index - 1] as string).endsWith(','), where);
+    const [first, second] = splitAt(
+      words,
+      (_piece, index) => index > 0 && (words[index - 1] as string).endsWith(','),
+      where,
+    );
     return [placed(33, 16, first), placed(36, 16, second)];
   }
   const table = part.upstream === 'Sir' ? SIRACH_ORDER : part.upstream === 'Dat' ? DANIEL_ORDER : [];
@@ -344,7 +354,6 @@ export function buildLxxBooks(verses: readonly LxxVerseStart[], words: readonly 
   return books;
 }
 
-
 /** Eliran Wong's statement of where the text comes from, verbatim from the upstream README.md. */
 export const PROVENANCE_STATEMENT =
   "Source of Swete's text: supplied by Pasquale Amicarelli, prevously copmiled by Pasquale Amicarelli as a " +
@@ -380,7 +389,7 @@ function licenceText(archive: PinnedArchive & { readonly version: string }, read
     '## Licence statement',
     '',
     'The repository https://github.com/eliranwong/LXX-Swete-1930 is published under the GNU General Public License',
-    'version 3; its LICENSE file is reproduced verbatim below. Swete\'s edition itself (1907-1912) is in the public',
+    "version 3; its LICENSE file is reproduced verbatim below. Swete's edition itself (1907-1912) is in the public",
     'domain. The upstream README.md says where the digitised text comes from:',
     '',
     `> ${PROVENANCE_STATEMENT}`,
@@ -393,7 +402,7 @@ function licenceText(archive: PinnedArchive & { readonly version: string }, read
     "Letter of Jeremiah and Theodotion's Daniel, Susanna and Bel; stored the Letter of Jeremiah as Baruch 6 and",
     'Susanna and Bel as Daniel 13 and 14; split each verse into words; removed the text-critical signs (⸂ ⸃ ⸆) and the',
     "bracketed verse numbers; and stored Greek Esther's additions as chapters A-F, numbered by those brackets. Sirach",
-    '30:25-36:16, in the Greek manuscripts\' order upstream, is stored in the Latin chapter order Swete prints, with his',
+    "30:25-36:16, in the Greek manuscripts' order upstream, is stored in the Latin chapter order Swete prints, with his",
     "verse numbers; Theodotion's Daniel 3:98-6:28 is renumbered to Rahlfs' chapters (3:98 is 4:1, 4:1 is 4:4, 5:31 is",
     '6:1, 6:1 is 6:2). Verses the upstream leaves empty are not stored. Every other word is unchanged (normalised to',
     'Unicode NFC).',

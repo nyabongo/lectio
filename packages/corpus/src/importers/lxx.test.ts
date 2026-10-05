@@ -134,7 +134,11 @@ async function treeHash(dir: string): Promise<string> {
     for (const entry of entries) {
       const path = join(current, entry.name);
       if (entry.isDirectory()) await walk(path);
-      else hash.update(relative(dir, path)).update('\0').update(await readFile(path));
+      else
+        hash
+          .update(relative(dir, path))
+          .update('\0')
+          .update(await readFile(path));
     }
   }
   await walk(dir);
@@ -278,19 +282,68 @@ describe('buildLxxBooks', () => {
     expect([...books.keys()]).toEqual(['TB', 'JDT', 'EST', '1MC', '2MC', 'WIS', 'SIR', 'BAR', 'DN']);
     expect([...(books.get('TB')?.keys() ?? [])]).toEqual(['1']);
     const est = books.get('EST');
-    expect(est?.get('A')).toEqual({ '1': [['ἀρχὴ', ''], ['ὁράσεως,', '']], '2': [['δεύτερος', ''], ['λόγος.', '']] });
-    expect(est?.get('1')).toEqual({ '1': [['Καὶ', ''], ['ἐγένετο.', '']] });
-    expect(est?.get('B')).toEqual({ '1': [['ἐπιστολή.', '']] });
-    expect(est?.get('F')).toEqual({ '1': [['καὶ', ''], ['εἶπεν.', '']] });
-    const sir = books.get('SIR');
-    expect(sir?.get('30')).toEqual({ '24': [['ζῆλος', ''], ['πολύς.', '']], '25': [['λαμπρὰ', ''], ['καρδία.', '']] });
-    expect(sir?.get('33')).toEqual({
-      '16': [['Κἀγὼ', ''], ['ἔσχατος,', '']],
-      '25': [['καλαμώμενος', ''], ['ὀπίσω.', '']],
+    expect(est?.get('A')).toEqual({
+      '1': [
+        ['ἀρχὴ', ''],
+        ['ὁράσεως,', ''],
+      ],
+      '2': [
+        ['δεύτερος', ''],
+        ['λόγος.', ''],
+      ],
     });
-    expect(sir?.get('31')).toEqual({ '1': [['ἀγρυπνία', ''], ['πλούτου.', '']] });
-    expect(sir?.get('36')).toEqual({ '16': [['καὶ', ''], ['κληρονομήσεις.', '']] });
-    expect(books.get('BAR')?.get('6')).toEqual({ '1': [['ἀντίγραφον', ''], ['ἐπιστολῆς.', '']] });
+    expect(est?.get('1')).toEqual({
+      '1': [
+        ['Καὶ', ''],
+        ['ἐγένετο.', ''],
+      ],
+    });
+    expect(est?.get('B')).toEqual({ '1': [['ἐπιστολή.', '']] });
+    expect(est?.get('F')).toEqual({
+      '1': [
+        ['καὶ', ''],
+        ['εἶπεν.', ''],
+      ],
+    });
+    const sir = books.get('SIR');
+    expect(sir?.get('30')).toEqual({
+      '24': [
+        ['ζῆλος', ''],
+        ['πολύς.', ''],
+      ],
+      '25': [
+        ['λαμπρὰ', ''],
+        ['καρδία.', ''],
+      ],
+    });
+    expect(sir?.get('33')).toEqual({
+      '16': [
+        ['Κἀγὼ', ''],
+        ['ἔσχατος,', ''],
+      ],
+      '25': [
+        ['καλαμώμενος', ''],
+        ['ὀπίσω.', ''],
+      ],
+    });
+    expect(sir?.get('31')).toEqual({
+      '1': [
+        ['ἀγρυπνία', ''],
+        ['πλούτου.', ''],
+      ],
+    });
+    expect(sir?.get('36')).toEqual({
+      '16': [
+        ['καὶ', ''],
+        ['κληρονομήσεις.', ''],
+      ],
+    });
+    expect(books.get('BAR')?.get('6')).toEqual({
+      '1': [
+        ['ἀντίγραφον', ''],
+        ['ἐπιστολῆς.', ''],
+      ],
+    });
     expect([...(books.get('DN')?.keys() ?? [])]).toEqual(['1', '4', '13', '14']);
     expect(books.get('WIS')?.get('17')).toHaveProperty('21');
   });
