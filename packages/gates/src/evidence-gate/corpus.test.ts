@@ -7,6 +7,8 @@ import type { Token } from '@lectio/corpus';
 
 import {
   EDITIONS,
+  adjacentVerse,
+  scriptLanguage,
   editionFor,
   editionVerse,
   isCorpusLanguage,
@@ -45,6 +47,11 @@ describe('editionVerse', () => {
 
   it('keeps the Lectio numbering when the .vrs file moves the verse to another book', () => {
     expect(editionVerse({ book: 'DN', c: 13, v: 1 }, 'lxx')).toEqual({ c: 13, v: 1 });
+  });
+
+  it('reads Greek Esther’s lettered chapters under their letter in an lxx edition', () => {
+    expect(editionVerse({ book: 'EST', c: 103, v: 12 }, 'lxx')).toEqual({ c: 'C', v: 12 });
+    expect(editionVerse({ book: 'EST', c: 1, v: 1 }, 'lxx')).toEqual({ c: 1, v: 1 });
   });
 
   it('reads an unknown scheme name as original, and has no answer for a verse without a counterpart', () => {
@@ -90,6 +97,69 @@ describe('lookupVerses', () => {
     expect(await lookupVerses(lxx, 'grc', 'EX', [{ book: 'EX', c: 35, v: 8 }])).toMatchObject({
       missing: [{ book: 'EX', c: 35, v: 8 }],
     });
+  });
+});
+
+describe('Septuagint lookups (grc-lxx, real corpus)', () => {
+  const corpus = openEvidenceCorpus(CORPUS_ROOT);
+  const words = (tokens: readonly Token[] | undefined) => (tokens ?? []).map(([surface]) => surface).join(' ');
+
+  it('reads Sirach and 2 Maccabees with their neighbouring verses', async () => {
+    const sirach = await lookupVerses(corpus, 'grc', 'SIR', [{ book: 'SIR', c: 3, v: 26 }]);
+    expect(sirach).toMatchObject({ kind: 'ok', edition: 'grc-lxx', missing: [] });
+    if (sirach.kind !== 'ok') throw new Error('unreachable');
+    // Swete has no Sir 3:25, so there is no verse before; 3:27 begins where Rahlfs's 3:26 ends.
+    expect(sirach.before).toBeUndefined();
+    expect(sirach.after?.verse).toEqual({ book: 'SIR', c: 3, v: 27 });
+    expect(words(sirach.after?.tokens)).toContain('πόνοις');
+    const maccabees = await lookupVerses(corpus, 'grc', '2MC', [{ book: '2MC', c: 4, v: 20 }]);
+    if (maccabees.kind !== 'ok') throw new Error('unreachable');
+    expect(maccabees.before?.verse).toEqual({ book: '2MC', c: 4, v: 19 });
+    expect(words(maccabees.before?.tokens)).toContain('θυσίαν');
+  });
+
+  it('reads Greek Esther C:12 from C.json and Susanna as Daniel 13', async () => {
+    const esther = await lookupVerses(corpus, 'grc', 'EST', [{ book: 'EST', c: 103, v: 12 }]);
+    if (esther.kind !== 'ok') throw new Error('unreachable');
+    expect(words(esther.tokens)).toContain('Ἐσθὴρ ἡ βασίλισσα');
+    expect(esther.before?.verse).toEqual({ book: 'EST', c: 103, v: 11 });
+    const susanna = await lookupVerses(corpus, 'grc', 'DN', [{ book: 'DN', c: 13, v: 1 }]);
+    if (susanna.kind !== 'ok') throw new Error('unreachable');
+    expect(words(susanna.tokens)).toContain('Ἰωακείμ');
+    expect(susanna.before?.verse).toEqual({ book: 'DN', c: 12, v: 13 });
+  });
+
+  it('has no verse before the first verse of a book', async () => {
+    const opening = await lookupVerses(corpus, 'grc', 'SIR', [{ book: 'SIR', c: 1, v: 1 }]);
+    expect(opening).not.toHaveProperty('before');
+    expect(opening).toHaveProperty('after');
+  });
+
+  it('gives no neighbours for editions with exact boundaries', async () => {
+    const gospel = await lookupVerses(corpus, 'grc', 'MT', [{ book: 'MT', c: 20, v: 15 }]);
+    expect(gospel).not.toHaveProperty('before');
+    expect(gospel).not.toHaveProperty('after');
+  });
+});
+
+describe('adjacentVerse', () => {
+  it('steps within a chapter and across chapter boundaries', () => {
+    expect(adjacentVerse({ book: 'SIR', c: 3, v: 26 }, 1)).toEqual({ book: 'SIR', c: 3, v: 27 });
+    expect(adjacentVerse({ book: 'SIR', c: 4, v: 1 }, -1)).toEqual({ book: 'SIR', c: 3, v: 31 });
+    expect(adjacentVerse({ book: 'SIR', c: 3, v: 31 }, 1)).toEqual({ book: 'SIR', c: 4, v: 1 });
+  });
+
+  it('stops at the edges of a book and of a lettered chapter', () => {
+    expect(adjacentVerse({ book: 'GN', c: 1, v: 1 }, -1)).toBeUndefined();
+    expect(adjacentVerse({ book: 'EST', c: 103, v: 1 }, -1)).toBeUndefined();
+  });
+});
+
+describe('scriptLanguage', () => {
+  it('detects Greek and Hebrew script', () => {
+    expect(scriptLanguage('ὁ λόγος')).toBe('grc');
+    expect(scriptLanguage('בְּרֵאשִׁית')).toBe('hbo');
+    expect(scriptLanguage('in principio')).toBeUndefined();
   });
 });
 

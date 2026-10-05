@@ -5,17 +5,25 @@
  * For every passage file the PR adds or changes:
  *
  * - `evidence/web-excerpt-found`: each web source's page is fetched through the `SourceFetcher`
- *   provider (falling back to `archivedUrl`) and its excerpt must occur in the page text, after
- *   HTML-entity decoding and with whitespace, quotes, dashes and case normalised. A page that
+ *   provider (falling back to `archivedUrl`) and its excerpt must occur in the page text as whole
+ *   words, after HTML-entity decoding and with whitespace, quotes, dashes and case normalised.
+ *   Ellipsis-joined pieces must appear in order, close together. An excerpt found on the page but
+ *   with fewer than three words in a piece is too short to verify and is flagged. A page that
  *   cannot be fetched (network error, HTTP error, a PDF or other unsupported body, no text) or a
  *   web source without an excerpt is flagged for review, not failed.
  * - `evidence/scripture-source-real`: each scripture source's `ref` parses to real verses, and an
- *   excerpt in Greek, Hebrew, Aramaic or Latin occurs in those verses of the corpus edition.
+ *   excerpt in Greek, Hebrew, Aramaic or Latin occurs in those verses of the corpus edition. An
+ *   excerpt written in Greek or Hebrew script is checked whatever `excerptLang` says, and a missing
+ *   or non-corpus tag on it is an error; any other excerpt the corpus cannot check is flagged.
  * - `evidence/original-word-in-verse`: every word of each translation note's `original.text`
  *   occurs (surface form or lemma) at the note's verse in the edition for its language, through
- *   the versification mapping.
+ *   the versification mapping (Greek Esther's lettered chapters read `EST/A.json`…`F.json`).
  * - `evidence/print-source-flag`: claims resting on print sources cannot be checked automatically
  *   and are flagged for review.
+ *
+ * Swete's Septuagint (grc-lxx) draws some verse boundaries a few words away from Rahlfs's
+ * numbering (Sir 3:26, 2 Mc 4:20): text found only by adding the verse before or after is a
+ * warning that names that verse, not a failure.
  *
  * Findings about a source are reported once per claim that cites it, so the PR comment names the
  * claim and the source. Files that fail the passage schema are left to the schema gate.
@@ -27,10 +35,11 @@
 import { join } from 'node:path';
 
 import type { SourceFetcher } from '@lectio/providers';
-import { enumerateVerses, fromKey, isRealVerse, tryParseRef, verseCounts } from '@lectio/refs';
+import { chapterLabel, enumerateVerses, fromKey, getBook, isRealVerse, tryParseRef, verseCounts } from '@lectio/refs';
 import type { BookCode, VerseId } from '@lectio/refs';
 import { validatePassage } from '@lectio/schema/passage';
 import type { Passage, PassageSource } from '@lectio/schema/passage';
+import type { Token } from '@lectio/corpus';
 
 import type { Gate, GateContext } from '../core/gate.ts';
 import { finding, resultFromFindings } from '../core/result.ts';
@@ -43,10 +52,12 @@ import {
   lookupVerses,
   openEvidenceCorpus,
   phraseInTokens,
+  phrasePieces,
+  scriptLanguage,
   wordsNotInTokens,
 } from './corpus.ts';
-import type { CorpusLanguage, EvidenceCorpus } from './corpus.ts';
-import { excerptOccurs, excerptPieces } from './normalise.ts';
+import type { CorpusLanguage, EvidenceCorpus, Neighbour, VerseLookup } from './corpus.ts';
+import { MIN_PIECE_WORDS, excerptLongEnough, excerptOccurs, excerptPieces } from './normalise.ts';
 
 export { EDITIONS, editionFor, editionVerse, openEvidenceCorpus } from './corpus.ts';
 export type { EvidenceCorpus } from './corpus.ts';
@@ -157,7 +168,39 @@ async function checkWebSource(check: FileCheck, source: PassageSource, index: nu
       'error',
       `quotes ${quote(source.excerpt)}, which is not on ${outcome.note}`,
     );
+  } else if (!excerptLongEnough(source.excerpt)) {
+    reportSource(
+      check,
+      rule,
+      index,
+      'excerpt',
+      'warning',
+      `quotes ${quote(source.excerpt)}, which is too short to verify: quote at least ${String(MIN_PIECE_WORDS)} words (in each piece between ellipses)`,
+    );
   }
+}
+
+type FoundLookup = Extract<VerseLookup, { kind: 'ok' }>;
+
+function verseLabel({ book, c, v }: Neighbour['verse']): string {
+  return `${getBook(book).abbrev} ${chapterLabel(book, c)}:${String(v)}`;
+}
+
+/**
+ * For editions with loose verse boundaries (grc-lxx): the neighbouring verse(s) that make `test`
+ * pass when added to the cited ones, named for the message; undefined when none does.
+ */
+function nearbyMatch(lookup: FoundLookup, test: (tokens: readonly Token[]) => boolean): string | undefined {
+  const { before, after } = lookup;
+  const tries: { readonly b?: Neighbour; readonly a?: Neighbour }[] = [];
+  if (after !== undefined) tries.push({ a: after });
+  if (before !== undefined) tries.push({ b: before });
+  if (before !== undefined && after !== undefined) tries.push({ b: before, a: after });
+  for (const { b, a } of tries) {
+    const tokens = [...(b?.tokens ?? []), ...lookup.tokens, ...(a?.tokens ?? [])];
+    if (test(tokens)) return [b, a].flatMap((n) => (n === undefined ? [] : [verseLabel(n.verse)])).join(' and ');
+  }
+  return undefined;
 }
 
 /** The canonical verses a scripture ref covers, or why it does not name real verses. */
@@ -176,8 +219,36 @@ async function checkScriptureSource(check: FileCheck, source: PassageSource, ind
     reportSource(check, rule, index, 'ref', 'error', target.problem);
     return;
   }
-  const lang = source.excerptLang;
-  if (source.excerpt === undefined || !isCorpusLanguage(lang)) return;
+  const { excerpt, excerptLang: tag } = source;
+  if (excerpt === undefined) return;
+  const script = scriptLanguage(excerpt);
+  let lang: CorpusLanguage;
+  if (isCorpusLanguage(tag)) {
+    lang = tag;
+  } else if (script !== undefined) {
+    // Greek or Hebrew script is checked whatever the tag says; a wrong or missing tag is itself an error.
+    const tagged = tag === undefined ? 'has no excerptLang' : `is tagged "${tag}"`;
+    reportSource(
+      check,
+      rule,
+      index,
+      'excerptLang',
+      'error',
+      `quotes ${languageName(script)} script, but its excerpt ${tagged}; tag it "${script}"${script === 'hbo' ? ' (or "arc" for Aramaic)' : ''}`,
+    );
+    lang = script;
+  } else {
+    const tagged = tag === undefined ? '' : ` (tagged "${tag}")`;
+    reportSource(
+      check,
+      rule,
+      index,
+      'excerpt',
+      'warning',
+      `has an excerpt${tagged} that is not Greek, Hebrew, Aramaic or Latin, so it cannot be checked against the corpus`,
+    );
+    return;
+  }
   const lookup = await lookupVerses(check.corpus, lang, target.book, target.verses);
   if (lookup.kind === 'no-original') {
     reportSource(
@@ -198,16 +269,28 @@ async function checkScriptureSource(check: FileCheck, source: PassageSource, ind
     reportSource(check, rule, index, 'ref', 'error', `cites ${ref}, which is not in ${lookup.edition}`);
     return;
   }
-  if (!phraseInTokens(lookup.language, lookup.tokens, source.excerpt)) {
+  const occurs = (tokens: readonly Token[]): boolean => phraseInTokens(lookup.language, tokens, excerpt);
+  if (occurs(lookup.tokens)) return;
+  const near = nearbyMatch(lookup, occurs);
+  if (near !== undefined) {
     reportSource(
       check,
       rule,
       index,
       'excerpt',
-      'error',
-      `quotes ${quote(source.excerpt)}, which does not occur in ${ref} (${lookup.edition})`,
+      'warning',
+      `quotes ${quote(excerpt)}, which ${lookup.edition} has only when ${near} ${near.includes(' and ') ? 'are' : 'is'} included: its verse boundaries can differ from the cited numbering, so a reviewer must check the ref`,
     );
+    return;
   }
+  reportSource(
+    check,
+    rule,
+    index,
+    'excerpt',
+    'error',
+    `quotes ${quote(excerpt)}, which does not occur in ${ref} (${lookup.edition})`,
+  );
 }
 
 function checkPrintSource(check: FileCheck, source: PassageSource, index: number): void {
@@ -248,6 +331,10 @@ async function checkNote(check: FileCheck, index: number): Promise<void> {
     return;
   }
   const lang = note.original.lang as CorpusLanguage;
+  if (phrasePieces(lang, note.original.text).length === 0) {
+    report('original/text', 'error', `quotes ${quote(note.original.text)}, which has no words to check`);
+    return;
+  }
   const lookup = await lookupVerses(check.corpus, lang, book, [verse]);
   if (lookup.kind === 'no-original') {
     report('original/lang', 'error', `quotes ${languageName(lang)}, but ${lookup.reason}`);
@@ -262,13 +349,22 @@ async function checkNote(check: FileCheck, index: number): Promise<void> {
     return;
   }
   const missing = wordsNotInTokens(lookup.language, lookup.tokens, note.original.text);
-  if (missing.length > 0) {
+  if (missing.length === 0) return;
+  const words = missing.join(' ');
+  const near = nearbyMatch(lookup, (tokens) => wordsNotInTokens(lookup.language, tokens, words).length === 0);
+  if (near !== undefined) {
     report(
       'original/text',
-      'error',
-      `quotes ${quote(note.original.text)}, but ${missing.map((word) => `“${word}”`).join(', ')} ${missing.length === 1 ? 'does' : 'do'} not occur in ${where} (${lookup.edition})`,
+      'warning',
+      `quotes ${quote(note.original.text)}; ${missing.map((word) => `“${word}”`).join(', ')} ${lookup.edition} has only in ${near}: its verse boundaries can differ from the cited numbering, so a reviewer must check the verse`,
     );
+    return;
   }
+  report(
+    'original/text',
+    'error',
+    `quotes ${quote(note.original.text)}, but ${missing.map((word) => `“${word}”`).join(', ')} ${missing.length === 1 ? 'does' : 'do'} not occur in ${where} (${lookup.edition})`,
+  );
 }
 
 async function checkFile(check: FileCheck): Promise<void> {

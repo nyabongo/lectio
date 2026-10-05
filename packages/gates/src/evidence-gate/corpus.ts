@@ -10,7 +10,16 @@ import { join } from 'node:path';
 
 import { lemmaKey, openCorpus, phraseWords, tokenForms } from '@lectio/corpus';
 import type { Language, Token } from '@lectio/corpus';
-import { SCHEMES, getBook, mapVerse, toSourceVerse } from '@lectio/refs';
+import {
+  SCHEMES,
+  chapterLabel,
+  chapterLength,
+  getBook,
+  isLetteredChapter,
+  isRealVerse,
+  mapVerse,
+  toSourceVerse,
+} from '@lectio/refs';
 import type { BookCode, Scheme, VerseId } from '@lectio/refs';
 
 export const EDITIONS = {
@@ -27,7 +36,12 @@ export interface EvidenceCorpus {
   /** Whether the edition has any chapter of the book. */
   hasBook(edition: string, book: string): Promise<boolean>;
   /** The verse's tokens (in the edition's own numbering), or undefined when it is not there. */
-  getVerse(edition: string, book: string, chapter: number, verse: number): Promise<readonly Token[] | undefined>;
+  getVerse(
+    edition: string,
+    book: string,
+    chapter: number | string,
+    verse: number,
+  ): Promise<readonly Token[] | undefined>;
 }
 
 /** The corpus under `root` (normally `<repo>/corpus`). */
@@ -87,9 +101,17 @@ function schemeOf(versification: string): Scheme {
  * `versification`: mapped to the edition's scheme, then to the `.vrs` numbering the corpus files
  * use when that stays in the same book (OSHB stores Lectio's Daniel 3:91 as 3:24). Undefined when
  * the scheme has no counterpart.
+ *
+ * Greek Esther's lettered chapters (`Est C:12`, chapter 103 in a parsed ref) have no `lxx` verse
+ * numbers: Rahlfs prints them as sub-verses (`greekEstherLxx` gives 4:17k). The `grc-lxx` corpus
+ * stores them under their letters instead (`EST/C.json`, verse 12), so an `lxx` edition is read
+ * at `chapterLabel` (the letter) and the NABRE verse.
  */
-export function editionVerse(verse: VerseId, versification: string): { c: number; v: number } | undefined {
+export function editionVerse(verse: VerseId, versification: string): { c: number | string; v: number } | undefined {
   const scheme = schemeOf(versification);
+  if (scheme === 'lxx' && isLetteredChapter(verse.book, verse.c)) {
+    return { c: chapterLabel(verse.book, verse.c), v: verse.v };
+  }
   let mapped: VerseId;
   try {
     mapped = scheme === 'original' ? verse : mapVerse(verse, 'original', scheme);
@@ -101,6 +123,19 @@ export function editionVerse(verse: VerseId, versification: string): { c: number
   return { c: mapped.c, v: mapped.v };
 }
 
+/** A verse next to the cited ones and its tokens. */
+export interface Neighbour {
+  readonly verse: VerseId;
+  readonly tokens: readonly Token[];
+}
+
+/**
+ * Editions whose verse boundaries may differ from the cited numbering by a few words: Swete's
+ * Septuagint (grc-lxx) against Rahlfs (`lxx` scheme), for example at Sir 3:26 and 2 Mc 4:20.
+ * Text found only by reaching into the verse before or after is a warning, not a failure.
+ */
+export const LOOSE_BOUNDARY_EDITIONS: ReadonlySet<string> = new Set([EDITIONS.greekOt]);
+
 export type VerseLookup =
   | {
       readonly kind: 'ok';
@@ -110,6 +145,9 @@ export type VerseLookup =
       readonly tokens: readonly Token[];
       /** Canonical verses the edition lacks. */
       readonly missing: readonly VerseId[];
+      /** For {@link LOOSE_BOUNDARY_EDITIONS}: the verses just before and after the cited ones, when the edition has them. */
+      readonly before?: Neighbour;
+      readonly after?: Neighbour;
     }
   /** The text cannot be checked (no such edition or book in the corpus yet): needs review, not a failure. */
   | { readonly kind: 'unavailable'; readonly reason: string }
@@ -133,15 +171,42 @@ export async function lookupVerses(
   if (!(await corpus.hasBook(edition, book))) {
     return { kind: 'unavailable', reason: `${edition} has no ${getBook(book).name}` };
   }
+  const read = async (verse: VerseId): Promise<readonly Token[] | undefined> => {
+    const at = editionVerse(verse, info.versification);
+    return at === undefined ? undefined : corpus.getVerse(edition, book, at.c, at.v);
+  };
   const tokens: Token[] = [];
   const missing: VerseId[] = [];
   for (const verse of verses) {
-    const at = editionVerse(verse, info.versification);
-    const found = at === undefined ? undefined : await corpus.getVerse(edition, book, at.c, at.v);
+    const found = await read(verse);
     if (found === undefined) missing.push(verse);
     else tokens.push(...found);
   }
-  return { kind: 'ok', edition, language: info.language, tokens, missing };
+  const lookup = { kind: 'ok' as const, edition, language: info.language, tokens, missing };
+  if (!LOOSE_BOUNDARY_EDITIONS.has(edition)) return lookup;
+  const neighbour = async (verse: VerseId | undefined): Promise<Neighbour | undefined> => {
+    if (verse === undefined) return undefined;
+    const found = await read(verse);
+    return found === undefined ? undefined : { verse, tokens: found };
+  };
+  const before = await neighbour(adjacentVerse(verses[0] as VerseId, -1));
+  const after = await neighbour(adjacentVerse(verses.at(-1) as VerseId, 1));
+  return { ...lookup, ...(before === undefined ? {} : { before }), ...(after === undefined ? {} : { after }) };
+}
+
+/**
+ * The canonical verse before (`-1`) or after (`1`) `verse`, crossing into the neighbouring
+ * chapter when the scheme has it; undefined at the edge of a book or lettered chapter.
+ */
+export function adjacentVerse(verse: VerseId, step: -1 | 1): VerseId | undefined {
+  const { book, c, v } = verse;
+  const candidates: VerseId[] = [{ book, c, v: v + step }];
+  if (!isLetteredChapter(book, c)) {
+    const chapter = c + step;
+    const last = chapterLength(book, chapter);
+    if (last !== undefined) candidates.push({ book, c: chapter, v: step === 1 ? 1 : last });
+  }
+  return candidates.find((candidate) => isRealVerse(candidate));
 }
 
 /** Splits text at ellipses (`…`, `...`) into the runs of words it quotes. */
@@ -182,6 +247,13 @@ export function phraseInTokens(language: Language, tokens: readonly Token[], tex
     from = found + words.length;
   }
   return true;
+}
+
+/** The corpus language a text's script implies (Greek script → grc, Hebrew script → hbo), if any. */
+export function scriptLanguage(text: string): 'grc' | 'hbo' | undefined {
+  if (/\p{Script=Greek}/u.test(text)) return 'grc';
+  if (/\p{Script=Hebrew}/u.test(text)) return 'hbo';
+  return undefined;
 }
 
 /**

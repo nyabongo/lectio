@@ -235,7 +235,7 @@ describe('evidenceGate', () => {
       (sources[3] as Json)['archivedUrl'] = 'https://web.archive.org/web/2026/https://commentary.example.org/mt/20-15';
       const fetcher = new MemorySourceFetcher({
         'https://web.archive.org/web/2026/https://commentary.example.org/mt/20-15': {
-          text: 'an evil eye meant a grudging spirit',
+          text: 'an evil eye meant a grudging spirit; a good eye meant a generous one',
         },
         'https://commentary.example.org/mt/20-2': { text: 'unrelated' },
       });
@@ -253,6 +253,43 @@ describe('evidenceGate', () => {
       (passage['sources'] as Json[])[2] = { ...(passage['sources'] as Json[])[2], excerpt: 'word '.repeat(30).trim() };
       const result = await run(passage);
       expect(result.items[0]?.message).toContain(`quotes “${'word '.repeat(15)}wo…”, which is not on`);
+    });
+
+    describe('stitched or fragmentary excerpts', () => {
+      const page = 'The labourers went into the vineyard at dawn and were paid by the owner at evening.';
+      const withExcerpt = (excerpt: string, text: string = page) => {
+        const passage = fixture('valid');
+        (passage['sources'] as Json[])[2] = { ...(passage['sources'] as Json[])[2], excerpt };
+        const fetcher = new MemorySourceFetcher({
+          'https://commentary.example.org/mt/20-2': { text },
+          'https://commentary.example.org/mt/20-15': {
+            text: 'an evil eye meant much; a good eye meant a generous one',
+          },
+        });
+        return run(passage, { providers: providersWith(fetcher) });
+      };
+
+      it('fails a bare substring or fragments that are not whole words of the page', async () => {
+        for (const excerpt of ['he', 'The ... vine ... paid ... a']) {
+          const result = await withExcerpt(excerpt);
+          expect(summary(result.items)).toEqual(['evidence/web-excerpt-found error c1 /sources/2/excerpt']);
+        }
+      });
+
+      it('flags an excerpt on the page that is too short to verify', async () => {
+        for (const excerpt of ['vineyard', 'The labourers went … at evening']) {
+          const result = await withExcerpt(excerpt);
+          expect(summary(result.items)).toEqual(['evidence/web-excerpt-found warning c1 /sources/2/excerpt']);
+          expect(result.items[0]?.message).toContain('is too short to verify: quote at least 3 words');
+        }
+        expect((await withExcerpt('The labourers went … were paid by')).items).toEqual([]);
+      });
+
+      it('fails pieces that lie far apart on the page', async () => {
+        const far = `${page} ${'filler words here. '.repeat(40)} The owner spoke kindly to them.`;
+        expect((await withExcerpt('The labourers went … owner spoke kindly', far)).status).toBe('fail');
+        expect((await withExcerpt('were paid by … The owner spoke', far)).status).toBe('fail');
+      });
     });
 
     it('flags a web source without an excerpt, or with only an ellipsis', async () => {
@@ -303,9 +340,65 @@ describe('evidenceGate', () => {
       expect(unreal.items[0]?.message).toContain('cites “Mt 20:35”, which is not a real verse');
     });
 
-    it('accepts a ref without an excerpt, or an excerpt in a language the corpus does not hold', async () => {
+    it('accepts a ref without an excerpt, and flags an excerpt the corpus cannot check', async () => {
       expect((await withSource({ ref: 'Mt 20:9-10' })).items).toEqual([]);
-      expect((await withSource({ ref: 'Mt 20:2', excerpt: 'a denarius', excerptLang: 'en' })).items).toEqual([]);
+      const english = await withSource({ ref: 'Mt 20:2', excerpt: 'a denarius', excerptLang: 'en' });
+      expect(summary(english.items)).toEqual(['evidence/scripture-source-real warning c1 /sources/0/excerpt']);
+      expect(english.items[0]?.message).toContain(
+        'has an excerpt (tagged "en") that is not Greek, Hebrew, Aramaic or Latin, so it cannot be checked',
+      );
+      const untagged = await withSource({ ref: 'Mt 20:2', excerpt: 'denarius' });
+      expect(untagged.items[0]?.message).toContain('has an excerpt that is not Greek');
+    });
+
+    it('checks Greek or Hebrew script whatever excerptLang says, and fails the missing or wrong tag', async () => {
+      // A fabricated excerpt: these words are not in Mt 19:27.
+      for (const tag of [undefined, 'el']) {
+        const result = await withSource({
+          ref: 'Mt 19:27',
+          excerpt: 'ὁ Ἰησοῦς ἐδάκρυσεν',
+          ...(tag === undefined ? {} : { excerptLang: tag }),
+        });
+        expect(summary(result.items)).toEqual([
+          'evidence/scripture-source-real error c1 /sources/0/excerptLang',
+          'evidence/scripture-source-real error c1 /sources/0/excerpt',
+        ]);
+        expect(result.items[1]?.message).toContain('does not occur in Mt 19:27 (grc-sblgnt)');
+      }
+      const untagged = await withSource({ ref: 'Mt 19:27', excerpt: 'Πέτρος' });
+      expect(summary(untagged.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/excerptLang']);
+      expect(untagged.items[0]?.message).toContain(
+        'quotes Greek script, but its excerpt has no excerptLang; tag it "grc"',
+      );
+      const hebrew = await withSource({ ref: 'Dt 15:9', excerpt: 'וְרָעָה עֵינְךָ', excerptLang: 'he' });
+      expect(summary(hebrew.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/excerptLang']);
+      expect(hebrew.items[0]?.message).toContain('is tagged "he"; tag it "hbo" (or "arc" for Aramaic)');
+    });
+
+    it('reads Greek Esther’s lettered chapters from the Septuagint', async () => {
+      expect((await withSource({ ref: 'Est C:12', excerpt: 'Ἐσθὴρ ἡ βασίλισσα', excerptLang: 'grc' })).items).toEqual(
+        [],
+      );
+      const wrong = await withSource({ ref: 'Est C:13', excerpt: 'Ἐσθὴρ ἡ βασίλισσα', excerptLang: 'grc' });
+      expect(wrong.items[0]?.severity).toBe('warning'); // found in the adjacent verse C:12
+      expect(wrong.items[0]?.message).toContain('grc-lxx has only when Est C:12 is included');
+    });
+
+    it('flags, not fails, Septuagint text found only across a neighbouring verse boundary', async () => {
+      const sirach = await withSource({ ref: 'Sir 3:26', excerpt: 'βαρυνθήσεται πόνοις', excerptLang: 'grc' });
+      expect(summary(sirach.items)).toEqual(['evidence/scripture-source-real warning c1 /sources/0/excerpt']);
+      expect(sirach.items[0]?.message).toBe(
+        'claim c1 cites source "mt-20-2", which quotes “βαρυνθήσεται πόνοις”, which grc-lxx has only when Sir 3:27 is included: its verse boundaries can differ from the cited numbering, so a reviewer must check the ref',
+      );
+      const maccabees = await withSource({ ref: '2 Mc 4:20', excerpt: 'θυσίαν', excerptLang: 'grc' });
+      expect(maccabees.items[0]?.message).toContain('grc-lxx has only when 2 Mc 4:19 is included');
+      const both = await withSource({ ref: '2 Mc 4:19', excerpt: 'βασιλέως παρόντος … τριηρέων', excerptLang: 'grc' });
+      expect(both.items[0]?.message).toContain('only when 2 Mc 4:18 and 2 Mc 4:20 are included');
+      const absent = await withSource({ ref: 'Sir 3:26', excerpt: 'ἐδάκρυσεν', excerptLang: 'grc' });
+      expect(summary(absent.items)).toEqual(['evidence/scripture-source-real error c1 /sources/0/excerpt']);
+      // The tolerance is for the Septuagint only.
+      const gospel = await withSource({ ref: 'Mt 20:14', excerpt: 'ὀφθαλμός σου πονηρός', excerptLang: 'grc' });
+      expect(gospel.items[0]?.severity).toBe('error');
     });
 
     it('matches an excerpt across the verses of a range and pieces around an ellipsis', async () => {
@@ -371,6 +464,36 @@ describe('evidenceGate', () => {
       expect(
         (await withNote({ original: { text: 'ὀφθαλμός … ἀγαθός', lang: 'grc', translit: 'x', gloss: 'x' } })).items,
       ).toEqual([]);
+    });
+
+    it('fails a note whose original text has no words', async () => {
+      const result = await withNote({ original: { text: '·', lang: 'grc', translit: 'x', gloss: 'x' } });
+      expect(summary(result.items)).toEqual([
+        'evidence/original-word-in-verse error c2 /translationNotes/0/original/text',
+      ]);
+      expect(result.items[0]?.message).toContain('quotes “·”, which has no words to check');
+    });
+
+    it('flags, not fails, a Septuagint word found in the neighbouring verse', async () => {
+      const passage: Json = { ...fixture('valid'), key: 'SIR.3.17-29', ref: 'Sir 3:17-29' };
+      const notes = passage['translationNotes'] as Json[];
+      notes[0] = {
+        ...(notes[0] as Json),
+        verse: '3:26',
+        original: { text: 'βαρυνθήσεται πόνοις', lang: 'grc', translit: 'x', gloss: 'x' },
+      };
+      notes[1] = {
+        ...(notes[1] as Json),
+        verse: '3:26',
+        original: { text: 'ἐδάκρυσεν', lang: 'grc', translit: 'x', gloss: 'x' },
+      };
+      const result = await run(passage);
+      const noteItems = result.items.filter((item) => item.pointer.startsWith('/translationNotes'));
+      expect(summary(noteItems)).toEqual([
+        'evidence/original-word-in-verse warning c2 /translationNotes/0/original/text',
+        'evidence/original-word-in-verse error c1 /translationNotes/1/original/text',
+      ]);
+      expect(noteItems[0]?.message).toContain('“πόνοις” grc-lxx has only in Sir 3:27');
     });
 
     it('fails a verse that does not exist in the book', async () => {

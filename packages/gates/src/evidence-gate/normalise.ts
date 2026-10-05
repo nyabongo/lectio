@@ -1,8 +1,14 @@
 /**
  * Text normalisation for `evidence/web-excerpt-found`: a cited excerpt matches a fetched page when
  * both agree after HTML-entity decoding, tag stripping, Unicode compatibility folding and
- * collapsing whitespace, with typographic quotes, dashes and case ignored. An ellipsis in the
- * excerpt (`…` or `...`) stands for omitted words: each piece must occur, in order.
+ * collapsing whitespace, with typographic quotes, dashes and case ignored, and only as whole words.
+ * An ellipsis in the excerpt (`…` or `...`) stands for omitted words: each piece must occur, in
+ * order, close to the one before, and quote at least three words, so an excerpt cannot be
+ * stitched together from scattered fragments.
+ *
+ * Markup is stripped with regular expressions, not parsed: text in hidden elements (`hidden`,
+ * `display: none`) still counts as page text. The live fetcher (L-030) already reduces pages to
+ * their main text.
  */
 
 const NAMED_ENTITIES: Readonly<Record<string, string>> = {
@@ -76,24 +82,69 @@ export function normaliseText(text: string): string {
     .toLowerCase();
 }
 
-/** The normalised pieces of an excerpt between ellipses (empty pieces dropped). */
+const WORD_CHAR = /[\p{L}\p{N}\p{M}]/u;
+
+/** The normalised pieces of an excerpt between ellipses; pieces without a letter or digit are dropped. */
 export function excerptPieces(excerpt: string): string[] {
   return normaliseText(excerpt)
     .split(/\.{3,}/u)
     .map((piece) => piece.trim())
-    .filter((piece) => piece !== '');
+    .filter((piece) => WORD_CHAR.test(piece));
 }
 
-/** Whether every piece of `excerpt` occurs in `page`, in order. An excerpt with no text never matches. */
+/** Pieces of an ellipsis-joined excerpt must each quote at least this many words. */
+export const MIN_PIECE_WORDS = 3;
+
+/** Consecutive pieces of an excerpt must lie within this many characters of each other on the page. */
+export const MAX_PIECE_GAP = 400;
+
+/** The number of words in a normalised piece. */
+export function wordCount(piece: string): number {
+  return piece.split(' ').filter((word) => WORD_CHAR.test(word)).length;
+}
+
+/** Whether every piece quotes at least {@link MIN_PIECE_WORDS} words. */
+export function excerptLongEnough(excerpt: string): boolean {
+  const pieces = excerptPieces(excerpt);
+  return pieces.length > 0 && pieces.every((piece) => wordCount(piece) >= MIN_PIECE_WORDS);
+}
+
+/** Positions where `piece` occurs in `text` from `from` on, as whole words. */
+function* occurrences(text: string, piece: string, from: number): Generator<number> {
+  const needsStart = WORD_CHAR.test(piece.charAt(0));
+  const needsEnd = WORD_CHAR.test(piece.charAt(piece.length - 1));
+  for (let at = text.indexOf(piece, from); at >= 0; at = text.indexOf(piece, at + 1)) {
+    const before = text.charAt(at - 1);
+    const after = text.charAt(at + piece.length);
+    if (needsStart && at > 0 && WORD_CHAR.test(before)) continue;
+    if (needsEnd && WORD_CHAR.test(after)) continue;
+    yield at;
+  }
+}
+
+/** Whether `pieces[index…]` follow on from `end`, each starting within {@link MAX_PIECE_GAP} of the last. */
+function restFollows(text: string, pieces: readonly string[], index: number, end: number): boolean {
+  const piece = pieces[index];
+  if (piece === undefined) return true;
+  for (const at of occurrences(text, piece, end)) {
+    if (at - end > MAX_PIECE_GAP) return false;
+    if (restFollows(text, pieces, index + 1, at + piece.length)) return true;
+  }
+  return false;
+}
+
+/**
+ * Whether `excerpt` occurs in `page`: every piece as whole words (`he` does not match inside
+ * "the", `vine` not inside "vineyard"), pieces in order and each within {@link MAX_PIECE_GAP}
+ * characters of the one before. An excerpt with no words never matches.
+ */
 export function excerptOccurs(excerpt: string, page: string): boolean {
   const pieces = excerptPieces(excerpt);
-  if (pieces.length === 0) return false;
+  const [first] = pieces;
+  if (first === undefined) return false;
   const text = normaliseText(page);
-  let from = 0;
-  for (const piece of pieces) {
-    const at = text.indexOf(piece, from);
-    if (at < 0) return false;
-    from = at + piece.length;
+  for (const at of occurrences(text, first, 0)) {
+    if (restFollows(text, pieces, 1, at + first.length)) return true;
   }
-  return true;
+  return false;
 }

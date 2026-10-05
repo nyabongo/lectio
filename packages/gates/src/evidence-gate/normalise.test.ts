@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { decodeEntities, excerptOccurs, excerptPieces, normaliseText, stripTags } from './normalise.ts';
+import {
+  decodeEntities,
+  excerptLongEnough,
+  excerptOccurs,
+  excerptPieces,
+  normaliseText,
+  stripTags,
+  wordCount,
+} from './normalise.ts';
 
 describe('decodeEntities', () => {
   it('decodes numeric references and common named entities', () => {
@@ -50,5 +58,39 @@ describe('excerptPieces / excerptOccurs', () => {
     expect(excerptOccurs('first … last', 'first, middle, last')).toBe(true);
     expect(excerptOccurs('last … first', 'first, middle, last')).toBe(false);
     expect(excerptOccurs('...', 'anything')).toBe(false);
+  });
+});
+
+describe('whole-word, windowed matching', () => {
+  const page = 'The labourers went into the vineyard and were paid at evening.';
+
+  it('matches whole words only', () => {
+    expect(excerptOccurs('he', page)).toBe(false);
+    expect(excerptOccurs('vine', page)).toBe(false);
+    expect(excerptOccurs('The ... vine ... paid ... a', page)).toBe(false);
+    expect(excerptOccurs('vineyard', page)).toBe(true);
+    expect(excerptOccurs('at evening.', page)).toBe(true);
+    expect(excerptOccurs('"went into', 'they "went into the field')).toBe(true);
+  });
+
+  it('tries later occurrences of a piece when an earlier one leads nowhere', () => {
+    expect(excerptOccurs('the … were paid', page)).toBe(true);
+    const text = `the start ${'x '.repeat(300)} the end were paid`;
+    expect(excerptOccurs('the … were paid', text)).toBe(true);
+    expect(excerptOccurs('the start … were paid', text)).toBe(false);
+    const three = `a b c d e f ${'x '.repeat(150)}d e f ${'y '.repeat(75)}g h i`;
+    expect(excerptOccurs('a b c … d e f … g h i', three)).toBe(true);
+  });
+
+  it('drops pieces with no letter or digit', () => {
+    expect(excerptPieces('— … ·')).toEqual([]);
+    expect(excerptOccurs('—', 'a — b')).toBe(false);
+  });
+
+  it('counts words and requires three in every piece', () => {
+    expect(wordCount('a comrade, mate - partner')).toBe(4);
+    expect(excerptLongEnough('a comrade, mate')).toBe(true);
+    expect(excerptLongEnough('a comrade … mate, partner, friend')).toBe(false);
+    expect(excerptLongEnough('…')).toBe(false);
   });
 });
