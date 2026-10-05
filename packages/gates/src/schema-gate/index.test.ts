@@ -22,7 +22,7 @@ import {
   validPassage,
 } from './fixtures/negative.ts';
 import type { PullRequestFixture } from './fixtures/negative.ts';
-import { SCHEMA_RULES, checkSchema, contentKindAt, contentPrefix, schemaGate } from './index.ts';
+import { SCHEMA_RULES, TRANSLATION_RULES, checkSchema, contentKindAt, contentPrefix, schemaGate } from './index.ts';
 
 const ROOT = '/repo';
 
@@ -63,7 +63,9 @@ const ruleIds = (result: GateResult): string[] => result.items.map((item) => ite
 describe('schemaGate', () => {
   it('declares every rule under the schema gate, each with a negative fixture', () => {
     expect(schemaGate.id).toBe('schema');
-    expect(schemaGate.rules.map((rule) => rule.id).sort()).toEqual(Object.keys(NEGATIVE_FIXTURES).sort());
+    // Translation rules have their negative fixtures in ./translations/fixtures/negative.ts.
+    const passageRules = schemaGate.rules.filter((rule) => !Object.values(TRANSLATION_RULES).includes(rule));
+    expect(passageRules.map((rule) => rule.id).sort()).toEqual(Object.keys(NEGATIVE_FIXTURES).sort());
     for (const rule of schemaGate.rules) expect(rule.id.startsWith('schema/')).toBe(true);
   });
 
@@ -522,8 +524,8 @@ describe('content paths', () => {
   });
 });
 
-describe('SCHEMA_RULES', () => {
-  it('is the rule list the gate declares', () => {
-    expect(schemaGate.rules).toEqual(Object.values(SCHEMA_RULES));
+describe('SCHEMA_RULES and TRANSLATION_RULES', () => {
+  it('are the rule list the gate declares', () => {
+    expect(schemaGate.rules).toEqual([...Object.values(SCHEMA_RULES), ...Object.values(TRANSLATION_RULES)]);
   });
 });

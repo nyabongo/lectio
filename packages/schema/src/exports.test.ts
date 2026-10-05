@@ -20,12 +20,12 @@ describe('@lectio/schema exports', () => {
     expect(pkg.exports['./json/*']).toBe('./json/*');
   });
 
-  it('exposes api, passage, calendar, gate-result and common as subpaths', () => {
+  it('exposes api, passage, translated-passage, calendar, gate-result and common as subpaths', () => {
     const subpaths = readdirSync(join(pkgDir, 'src'), { withFileTypes: true })
       .filter((entry) => entry.isDirectory() && existsSync(join(pkgDir, 'src', entry.name, 'index.ts')))
       .map((entry) => entry.name)
       .sort();
-    expect(subpaths).toEqual(['api', 'calendar', 'common', 'gate-result', 'passage']);
+    expect(subpaths).toEqual(['api', 'calendar', 'common', 'gate-result', 'passage', 'translated-passage']);
   });
 
   it('resolves @lectio/schema/<name> through the package exports', async () => {

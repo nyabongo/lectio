@@ -1,0 +1,561 @@
+{
+  "key": "PHIL.1.20-24_1.27",
+  "ref": "Phil 1:20c-24, 27a",
+  "locale": "en",
+  "summary": "In prison, Paul weighs life against death, finds Christ in both, and asks Philippi to live as citizens worthy of the gospel.",
+  "context": {
+    "title": "Life, death and citizenship",
+    "paragraphs": [
+      "Paul writes to Philippi as a prisoner: his chains, he says, have become known throughout the praetorium. [c1] The nineteenth-century preacher Alexander MacLaren takes Rome as the place of writing. [c2] In verse 20 Paul hopes Christ will be magnified in his body, through life or through death, and the reading weighs those two outcomes. [c3]",
+      "Philippi was rebuilt by Philip II of Macedon and under Augustus became a Roman colony, as Acts 16:12 notes. [c4] Colonists sent from Rome stayed enrolled in its tribes, making the town a small Rome abroad. [c5] Paul’s verb in verse 27, about living as citizens, would strike such readers, and the letter later places their citizenship in heaven. [c6]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "to-zen-christos",
+      "verse": "1:21",
+      "anchor": "to live is Christ",
+      "original": {
+        "text": "τὸ ζῆν Χριστός",
+        "lang": "grc",
+        "translit": "to zēn Christos",
+        "gloss": "the living [is] Christ"
+      },
+      "summary": "Greek has no verb here: “to me the living, Christ”. Living is so full of Christ that his name sums it up.",
+      "body": "The Greek puts “to me” first for emphasis and uses no verb. [c7] Bengel notes that the article marks “to live” as the subject, so Christ is the predicate. [c8] Calvin instead read Christ as gain to Paul in life and in death, a rendering the Pulpit Commentary judges weaker. [c9] Moule explains that living, for Paul, is so full of Christ that his name sums it up. [c10]"
+    },
+    {
+      "id": "kerdos",
+      "verse": "1:21",
+      "anchor": "gain",
+      "original": {
+        "text": "κέρδος",
+        "lang": "grc",
+        "translit": "kerdos",
+        "gloss": "gain, profit"
+      },
+      "summary": "Kerdos is plain gain or profit, the word Paul uses in 3:7 for advantages he later wrote off for Christ.",
+      "body": "Kerdos means gain or advantage, a word in Greek use since Homer. [c11] In 3:7 Paul uses its plural for the advantages he once counted as gains and now counts as loss because of Christ. [c12] Ellicott explains why dying is gain here: death is a new stage in union with Christ. [c13] Paul does not despise life, for in verse 24 he judges staying more necessary for their sake. [c14]"
+    },
+    {
+      "id": "analysai",
+      "verse": "1:23",
+      "anchor": "depart",
+      "original": {
+        "text": "ἀναλῦσαι",
+        "lang": "grc",
+        "translit": "analysai",
+        "gloss": "to loose, to depart"
+      },
+      "summary": "Analyō means to loosen; used of a ship slipping its moorings or of striking a tent or camp, it comes to mean “depart”.",
+      "body": "The verb’s root sense is loosing or undoing. [c15] By usage it can mean a ship unmooring or a camp striking its tents, and so to depart. [c16] Ellicott inclines to the camp picture: the body is a tent, and death the last striking of it. [c17] The related noun appears in 2 Timothy 4:6 for Paul’s own coming death. [c18] Paul pairs departing with being with Christ, which Ellicott takes to follow immediately on death. [c19]"
+    },
+    {
+      "id": "politeuesthe",
+      "verse": "1:27",
+      "anchor": "manner of life",
+      "original": {
+        "text": "πολιτεύεσθε",
+        "lang": "grc",
+        "translit": "politeuesthe",
+        "gloss": "live as citizens"
+      },
+      "summary": "Politeuesthe, from politēs, citizen, means “live as citizens”: a pointed word for readers in a Roman colony.",
+      "body": "The verb means to be a citizen, or to behave as one. [c20] Moule renders it “live your citizen-life” in a way worthy of the gospel. [c21] In the New Testament it occurs only here and in Acts 23:1, and its cognate noun appears in 3:20, where the believers’ citizenship is in heaven. [c22] In Hellenistic Greek it can also simply mean to conduct one’s life by some rule. [c23]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Paul writes as a prisoner: in Phil 1:7 he speaks of his bonds and in Phil 1:13 says they have become known in the whole praetorium.",
+      "sourceIds": ["phil-1-7", "phil-1-13"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Alexander MacLaren takes Paul to be writing to Philippi from Rome.",
+      "sourceIds": ["maclaren-phil-1-27-rome"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "In Phil 1:20 Paul hopes Christ will be magnified in his body, whether through life or through death, and verses 21-26 take up the alternative of life or death.",
+      "sourceIds": ["phil-1-20", "cambridge-phil-1-21-alternative"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Ellicott notes that Philippi was rebuilt by the father of Alexander the Great; Acts 16:12 calls it a colony, and Lumby says a Roman colony had been founded there by Augustus.",
+      "sourceIds": ["ellicott-acts-16-12-rebuilt", "acts-16-12", "cambridge-acts-16-12-augustus"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Roman colonists were sent out from Rome and their names remained enrolled in the lists of the tribes of Rome, so a colony was a bit of Rome on foreign soil.",
+      "sourceIds": ["cambridge-acts-16-12-tribes", "maclaren-phil-1-27-colony"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Ellicott finds the citizenship verb of Phil 1:27 natural in writing to a Roman colony proud of its citizenship, and Phil 3:20 places the believers’ πολίτευμα in heaven.",
+      "sourceIds": ["ellicott-phil-1-27-colony", "phil-3-20"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "In Phil 1:21 the Greek puts ἐμοί (to me) first, where it is strongly emphatic, and the clause τὸ ζῆν Χριστός has no verb.",
+      "sourceIds": ["phil-1-21", "cambridge-phil-1-21-emphatic"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Bengel notes that the article in τὸ ζῆν denotes the subject of the clause.",
+      "sourceIds": ["bengel-phil-1-21"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Calvin rendered the verse as Christ being gain to Paul in life and in death, a rendering the Pulpit Commentary judges “not so well”.",
+      "sourceIds": ["pulpit-phil-1-21-calvin"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Moule (Cambridge Bible) explains that living is for Paul so full of Christ that “Christ” sums it up.",
+      "sourceIds": ["cambridge-phil-1-21-full"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "κέρδος means gain or advantage and is attested in Greek from Homer down.",
+      "sourceIds": ["thayer-kerdos", "thayer-kerdos-homer"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "In Phil 3:7 Paul says that what were gains (κέρδη) to him he has counted loss because of Christ.",
+      "sourceIds": ["phil-3-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Ellicott explains that death is gain because it is a new stage in the progress of union with Christ.",
+      "sourceIds": ["ellicott-phil-1-21"],
+      "sensitive": true
+    },
+    {
+      "id": "c14",
+      "text": "In Phil 1:24 Paul judges remaining in the flesh more necessary for the Philippians’ sake.",
+      "sourceIds": ["phil-1-24"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The root meaning of ἀναλύω has to do with loosing or undoing.",
+      "sourceIds": ["cambridge-phil-1-23-root", "thayer-analyo"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "By usage ἀναλύω can refer to the unmooring of a ship or the striking of a tent or camp, and means to depart, including to depart from life.",
+      "sourceIds": ["cambridge-phil-1-23-ship", "thayer-analyo-depart"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Ellicott inclines (“perhaps better”) to the metaphor of striking tents and breaking camp, with death as the last striking of the tent.",
+      "sourceIds": ["ellicott-phil-1-23-tents", "ellicott-phil-1-23-last"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The related noun ἀνάλυσις appears in 2 Tim 4:6 for the time of Paul’s departure.",
+      "sourceIds": ["2tm-4-6", "ellicott-phil-1-23-noun"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Phil 1:23 joins departing with being with Christ, which Ellicott holds Paul contemplates as the immediate consequence of death.",
+      "sourceIds": ["phil-1-23", "ellicott-phil-1-23-immediate"],
+      "sensitive": true
+    },
+    {
+      "id": "c20",
+      "text": "In the middle voice πολιτεύω means to be a citizen, or to behave as a citizen.",
+      "sourceIds": ["thayer-politeuo-citizen", "thayer-politeuo-behave"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Moule renders Phil 1:27 literally as “live your citizen-life in a way worthy of” the gospel.",
+      "sourceIds": ["cambridge-phil-1-27"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "In the New Testament the verb occurs only in Phil 1:27 and Acts 23:1, and the cognate noun πολίτευμα occurs in Phil 3:20.",
+      "sourceIds": ["acts-23-1", "phil-3-20", "cambridge-phil-1-27-acts"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "In Hellenistic writings the verb can mean to conduct oneself according to some law of life, without emphasis on citizenship.",
+      "sourceIds": ["thayer-politeuo-hellenistic", "cambridge-phil-1-27-without"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "phil-1-7",
+      "type": "scripture",
+      "citation": "Philippians 1:7",
+      "ref": "Phil 1:7",
+      "excerpt": "τοῖς δεσμοῖς μου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-1-13",
+      "type": "scripture",
+      "citation": "Philippians 1:13",
+      "ref": "Phil 1:13",
+      "excerpt": "ἐν ὅλῳ τῷ πραιτωρίῳ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-1-20",
+      "type": "scripture",
+      "citation": "Philippians 1:20",
+      "ref": "Phil 1:20",
+      "excerpt": "εἴτε διὰ ζωῆς εἴτε διὰ θανάτου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-1-21",
+      "type": "scripture",
+      "citation": "Philippians 1:21",
+      "ref": "Phil 1:21",
+      "excerpt": "ἐμοὶ γὰρ τὸ ζῆν Χριστὸς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-1-23",
+      "type": "scripture",
+      "citation": "Philippians 1:23",
+      "ref": "Phil 1:23",
+      "excerpt": "εἰς τὸ ἀναλῦσαι καὶ σὺν Χριστῷ εἶναι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-1-24",
+      "type": "scripture",
+      "citation": "Philippians 1:24",
+      "ref": "Phil 1:24",
+      "excerpt": "ἀναγκαιότερον δι’ ὑμᾶς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-3-7",
+      "type": "scripture",
+      "citation": "Philippians 3:7",
+      "ref": "Phil 3:7",
+      "excerpt": "ἦν μοι κέρδη",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "phil-3-20",
+      "type": "scripture",
+      "citation": "Philippians 3:20",
+      "ref": "Phil 3:20",
+      "excerpt": "τὸ πολίτευμα ἐν οὐρανοῖς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "acts-16-12",
+      "type": "scripture",
+      "citation": "Acts 16:12",
+      "ref": "Acts 16:12",
+      "excerpt": "κολωνία",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "acts-23-1",
+      "type": "scripture",
+      "citation": "Acts 23:1",
+      "ref": "Acts 23:1",
+      "excerpt": "πεπολίτευμαι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "2tm-4-6",
+      "type": "scripture",
+      "citation": "2 Timothy 4:6",
+      "ref": "2 Tm 4:6",
+      "excerpt": "ὁ καιρὸς τῆς ἀναλύσεώς μου",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "maclaren-phil-1-27-rome",
+      "type": "web",
+      "citation": "Alexander MacLaren, Expositions of Holy Scripture, “Citizens of Heaven”, on Philippians 1:27-28 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
+      "excerpt": "Paul was not only writing to Philippi, but from Rome",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "maclaren-phil-1-27-colony",
+      "type": "web",
+      "citation": "Alexander MacLaren, Expositions of Holy Scripture, “Citizens of Heaven”, on Philippians 1:27-28 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
+      "excerpt": "It was, in fact, a bit of Rome on foreign soil.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-phil-1-27-colony",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
+      "excerpt": "a Roman colony proud of their full citizenship",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-27-acts",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
+      "excerpt": "occurs, in N.T., here and Acts 23:1",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-27",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
+      "excerpt": "live your citizen-life in a way worthy of",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-27-without",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:27 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
+      "excerpt": "without emphasis on the “citizen” element of the word",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-21-alternative",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-21.htm",
+      "excerpt": "The same subject: the Alternative of Life or Death",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-21-emphatic",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-21.htm",
+      "excerpt": "Strongly emphatic in the Greek",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-21-full",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-21.htm",
+      "excerpt": "so full of Christ, so preoccupied with Him and for Him",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bengel-phil-1-21",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Philippians 1:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-21.htm",
+      "excerpt": "The article denotes the subject, as again in the next clause",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "pulpit-phil-1-21-calvin",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Philippians 1:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-21.htm",
+      "excerpt": "Others, as Calvin, render (not so well)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-phil-1-21",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:21 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-21.htm",
+      "excerpt": "Death is a new stage in the progress of union with Christ",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-23-root",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:23 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
+      "excerpt": "The root meaning of the verb has to do with loosing, undoing",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-phil-1-23-ship",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:23 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
+      "excerpt": "the unmooring of a ship, or striking of a tent or camp",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-phil-1-23-tents",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:23 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
+      "excerpt": "from striking tents and breaking up a camp",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-phil-1-23-last",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:23 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
+      "excerpt": "death is the last striking of the tent on arrival",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-phil-1-23-immediate",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:23 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
+      "excerpt": "contemplated by St. Paul as the immediate consequence of death",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-phil-1-23-noun",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:23 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
+      "excerpt": "corresponds exactly to the substantive used in",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-acts-16-12-rebuilt",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Acts 16:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/acts/16-12.htm",
+      "excerpt": "rebuilt by the father of Alexander the Great",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-acts-16-12-augustus",
+      "type": "web",
+      "citation": "J. Rawson Lumby, The Acts of the Apostles, Cambridge Bible for Schools and Colleges (1882), on Acts 16:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/acts/16-12.htm",
+      "excerpt": "a colony had been founded there by Augustus",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-acts-16-12-tribes",
+      "type": "web",
+      "citation": "J. Rawson Lumby, The Acts of the Apostles, Cambridge Bible for Schools and Colleges (1882), on Acts 16:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/acts/16-12.htm",
+      "excerpt": "still enrolled in the lists of the tribes of Rome",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-kerdos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. κέρδος (Bible Hub, Strong's 2771)",
+      "url": "https://biblehub.com/greek/2771.htm",
+      "excerpt": "gain, advantage",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-kerdos-homer",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. κέρδος (Bible Hub, Strong's 2771)",
+      "url": "https://biblehub.com/greek/2771.htm",
+      "excerpt": "From Homer down",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-analyo",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀναλύω (Bible Hub, Strong's 360)",
+      "url": "https://biblehub.com/greek/360.htm",
+      "excerpt": "to unloose, undo again",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-analyo-depart",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀναλύω (Bible Hub, Strong's 360)",
+      "url": "https://biblehub.com/greek/360.htm",
+      "excerpt": "to depart from life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-politeuo-citizen",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. πολιτεύω (Bible Hub, Strong's 4176)",
+      "url": "https://biblehub.com/greek/4176.htm",
+      "excerpt": "to be a citizen",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-politeuo-behave",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. πολιτεύω (Bible Hub, Strong's 4176)",
+      "url": "https://biblehub.com/greek/4176.htm",
+      "excerpt": "to behave as a citizen",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "thayer-politeuo-hellenistic",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. πολιτεύω (Bible Hub, Strong's 4176)",
+      "url": "https://biblehub.com/greek/4176.htm",
+      "excerpt": "to conduct oneself as pledged to some law of life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-020-phil-1-20-27",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:28:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

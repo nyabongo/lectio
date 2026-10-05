@@ -72,6 +72,8 @@ describe('Reading page', () => {
     expect(html).toContain('note=v15-evil-eye');
     expect(html).toContain('note=_context');
     expect(html).toContain('A study aid, not Church teaching');
+    // Each note links to its permalink page.
+    for (const note of mt.translationNotes) expect(html).toContain(`href="/2026-09-20/gospel/notes/${note.id}/"`);
   });
 
   it('has Context and Original panels with headings and a Text link-out', async () => {

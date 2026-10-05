@@ -33,7 +33,8 @@ export default defineConfig({
     sitemap(options),
     ogImages(options),
     serviceWorker(options),
-    // Pagefind indexes the finished HTML, so it stays last.
+    // Pagefind runs after every page is written, so it stays last (it indexes note documents generated from the
+    // content, not dist HTML, and writes dist/pagefind/ after the service worker's build hook).
     pagefind(options),
   ],
 });

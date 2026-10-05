@@ -27,11 +27,14 @@ describe('BaseLayout', () => {
     expect(html).toContain('<h1>Readings</h1>');
   });
 
-  it('links to the calendar, settings and about pages under the base path', async () => {
+  it('links to the calendar, search, settings and about pages under the base path', async () => {
     const html = await render({ title: 'Lectio' });
     const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     expect(html).toContain(`href="${base}calendar/"`);
     expect(html).toContain(`href="${base}settings/"`);
+    expect(html).toMatch(
+      new RegExp(`<nav class="site-nav"[^>]*>[\\s\\S]*<a href="${base}search/"[^>]*>Search</a>[\\s\\S]*</nav>`),
+    );
     expect(html).toContain(`href="${base}about/"`);
     expect(html).toContain('<title>Lectio</title>');
   });

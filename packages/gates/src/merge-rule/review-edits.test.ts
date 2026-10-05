@@ -38,6 +38,14 @@ describe('approvedReviewEdits', () => {
     ]);
   });
 
+  it('lists a translation whose review block becomes approved', () => {
+    const file = 'passages/i18n/sw/MT.20.1-16.json';
+    expect(edits([{ path: file, status: 'added' }], { [file]: passage(approved) })).toEqual([file]);
+    expect(
+      edits([{ path: 'passages/i18n/en/MT.20.1-16.json', status: 'added' }], { [file]: passage(approved) }),
+    ).toEqual([]);
+  });
+
   it('ignores unchanged approvals, pending blocks, deletions, other files and unreadable JSON', () => {
     const head = {
       'passages/same.json': passage(approved),

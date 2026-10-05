@@ -11,10 +11,12 @@
  *    names, references and verses, per-sentence citations, orphans, unique ids, the review block
  *    and provenance;
  * 3. for a passage that exists on the base branch, that no translation-note or claim id was
- *    dropped (./stable-ids.ts), read through the context's git reader.
+ *    dropped (./stable-ids.ts), read through the context's git reader;
+ * 4. translations (`passages/i18n/<locale>/<key>.json`, ./translations/): their schema, their
+ *    English passage, staleness and the review they always need.
  *
- * Every finding is an error (the gate fails), except deleting a published passage, which is a
- * `warning` (the gate flags it for a person).
+ * Every finding is an error (the gate fails), except deleting a published passage, a stale
+ * translation and a pending translation, which are `warning`s (the gate flags them for a person).
  */
 import type { CalendarYear } from '@lectio/schema/calendar';
 import type { Passage } from '@lectio/schema/passage';
@@ -31,8 +33,10 @@ import { checkPassageRules } from './passage.ts';
 import { SCHEMA_RULES } from './rules.ts';
 import { MARKER_FORMAT, malformedMarkers } from './sentences.ts';
 import { checkStableIds } from './stable-ids.ts';
+import { TRANSLATION_RULES, checkTranslations } from './translations/index.ts';
 
 export { SCHEMA_RULES } from './rules.ts';
+export { TRANSLATION_RULES } from './translations/index.ts';
 
 const GATE_ID = 'schema';
 
@@ -134,13 +138,15 @@ export function checkSchema(context: GateContext): { items: GateResultItem[]; fi
     }
     if (kind === 'passage') items.push(...checkStableIds(change, baseText(change, context, prefix), text));
   }
-  return { items, files };
+  const translations = checkTranslations(context, prefix);
+  items.push(...translations.items);
+  return { items, files: files + translations.files };
 }
 
 export const schemaGate: Gate = {
   id: GATE_ID,
   title: 'Schema tests',
-  rules: Object.values(SCHEMA_RULES),
+  rules: [...Object.values(SCHEMA_RULES), ...Object.values(TRANSLATION_RULES)],
   run(context): GateResult {
     const { items, files } = checkSchema(context);
     return resultFromFindings(GATE_ID, items, { files });
