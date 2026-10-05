@@ -141,22 +141,22 @@ void main() {
           id: 1060,
           at: DateTime(2026, 9, 20, 7),
           title: 'Twenty-fifth Sunday in Ordinary Time',
-          body: ReminderStrings.body,
+          body: ReminderStrings.en.body,
           date: '2026-09-20',
         ),
         ReminderNotification(
           id: 1061,
           at: DateTime(2026, 9, 21, 7),
           title: 'Saint Matthew, Apostle and Evangelist',
-          body: ReminderStrings.body,
+          body: ReminderStrings.en.body,
           date: '2026-09-21',
         ),
         for (var day = 22; day <= 26; day++)
           ReminderNotification(
             id: 1060 + day - 20,
             at: DateTime(2026, 9, day, 7),
-            title: ReminderStrings.fallbackTitle,
-            body: ReminderStrings.body,
+            title: ReminderStrings.en.fallbackTitle,
+            body: ReminderStrings.en.body,
             date: '2026-09-$day',
           ),
       ]);
@@ -322,7 +322,7 @@ void main() {
 
       await scheduler.start();
 
-      expect(platform.scheduled.first.title, ReminderStrings.fallbackTitle);
+      expect(platform.scheduled.first.title, ReminderStrings.en.fallbackTitle);
       expect(
         platform.scheduled[1].title,
         'Saint Matthew, Apostle and Evangelist',
@@ -499,7 +499,7 @@ void main() {
     expect(platform.pending, hasLength(reminderDays));
     // The fake API publishes no days, so every title falls back.
     expect(platform.scheduled.map((reminder) => reminder.title).toSet(), {
-      ReminderStrings.fallbackTitle,
+      ReminderStrings.en.fallbackTitle,
     });
     expect(api.paths, hasLength(reminderDays));
   });

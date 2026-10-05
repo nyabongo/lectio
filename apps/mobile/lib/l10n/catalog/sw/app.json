@@ -1,0 +1,52 @@
+{
+  "tabs": {
+    "today": "Leo",
+    "reading": "Somo",
+    "listen": "Sikiliza"
+  },
+  "comingSoon": "Inakuja hivi karibuni",
+  "notFound": {
+    "title": "Haikupatikana",
+    "home": "Nenda kwa Leo"
+  },
+  "today": {
+    "backToToday": "Rudi leo",
+    "chooseDate": "Chagua tarehe",
+    "notesMissing": "Madokezo ya siku hii yanaandaliwa. Kila andiko liko kwa kubofya mara moja.",
+    "emptyDay": "Bado hakuna siku ya kalenda kwa tarehe hii. Kalenda inaorodhesha kila siku iliyo tayari.",
+    "loadFailed": "Siku hii haikuweza kupakiwa. Angalia muunganisho wako kisha ujaribu tena.",
+    "offline": "Nje ya mtandao: inaonyesha nakala iliyohifadhiwa kwenye kifaa hiki.",
+    "refreshFailed": "Siku hii haikuweza kusasishwa: inaonyesha nakala iliyohifadhiwa kwenye kifaa hiki.",
+    "linkFailed": "Andiko halikuweza kufunguliwa.",
+    "notesLabel": "Madokezo ya {ref}",
+    "linkoutLabel": "Andiko la {ref} kwenye {source} (hufunguka nje ya programu)"
+  },
+  "reading": {
+    "textLabel": "Soma andiko la {ref} kwenye {source} (hufunguka nje ya programu)",
+    "loading": "Inapakia masomo…",
+    "loadFailed": "Masomo hayakuweza kupakiwa. Angalia muunganisho wako kisha ujaribu tena.",
+    "offline": "Nje ya mtandao: inaonyesha madokezo yaliyohifadhiwa kwenye kifaa hiki.",
+    "citeMany": "Vyanzo {n}",
+    "noReadings": "Bado hakuna masomo ya siku hii.",
+    "noSuchReading": "Siku hii haina {slot}.",
+    "linkFailed": "Kiungo hakikuweza kufunguliwa.",
+    "linkedNote": "Dokezo lililoshirikiwa"
+  },
+  "reminder": {
+    "body": "Masomo na madokezo ya leo yako tayari.",
+    "permissionRefused": "Arifa haziruhusiwi kwa Lectio, kwa hiyo kikumbusho cha kila siku kimezimwa. Ziruhusu kwenye mipangilio ya kifaa chako, kisha ukiwashe tena."
+  },
+  "settings": {
+    "intro": "Hakuna akaunti. Mapendeleo yako huhifadhiwa kwenye kifaa hiki na hayatoki humo.",
+    "reminderHeading": "Kikumbusho cha kila siku",
+    "reminderSwitch": "Nikumbushe kila siku",
+    "reminderHint": "Arifa yenye sherehe ya siku. Hakuna kinachotumwa kwa seva.",
+    "reminderTime": "Muda wa kikumbusho",
+    "savedHeading": "Vilivyohifadhiwa kwenye kifaa hiki",
+    "bookmarks": "Alamisho na madokezo"
+  },
+  "share": {
+    "failed": "Imeshindwa kushiriki au kunakili kiungo.",
+    "linkNotRecognised": "Lectio haina ukurasa wa kiungo hicho, kwa hiyo imefungua Leo."
+  }
+}

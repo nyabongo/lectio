@@ -4,26 +4,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lectio/data/models/day.dart';
 import 'package:lectio/data/models/notes.dart';
-import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
 import 'package:lectio/features/share/share_sheet.dart';
 import 'package:lectio/features/share/site_links.dart';
 import 'package:lectio/features/today/today_labels.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 
-/// The share strings (L-114 translates them), as on the site.
-abstract final class ShareStrings {
+/// The share strings in the UI language: the site's `share` messages, and
+/// the app's own (`app_share_*`).
+class ShareStrings {
+  /// The strings of [_l10n].
+  const new(this._l10n);
+
+  /// The strings of the nearest localizations (English without them).
+  factory of(BuildContext context) {
+    return ShareStrings(LectioLocalizations.of(context));
+  }
+
+  /// The English strings.
+  static final ShareStrings en = ShareStrings(LectioLocalizations.en);
+
+  final LectioLocalizations _l10n;
+
   /// The button's tooltip, which screen readers say: `Share Mt 20:1-16a`.
-  static String shareLabel(String what) => 'Share $what';
+  String shareLabel(String what) {
+    return _l10n.text('share_buttonLabel', {'what': what});
+  }
 
   /// Shown when the text was copied instead of shared.
-  static const String copied = 'Copied the link with its reference.';
+  String get copied => _l10n.text('share_copied');
 
   /// Shown when neither sharing nor copying worked.
-  static const String failed = 'Could not share or copy the link.';
+  String get failed => _l10n.text('app_share_failed');
 
   /// Shown when a link opened Today because the app has no page for it.
-  static const String linkNotRecognised =
-      'Lectio has no page for that link, so it opened Today.';
+  String get linkNotRecognised => _l10n.text('app_share_linkNotRecognised');
+}
+
+/// The site path [path] (relative to the site root) of the page in
+/// [language]: Kiswahili pages live under `sw/` (`sw/2026-09-20/gospel/`),
+/// English ones at the root.
+String localizedPagePath(String path, String language) {
+  return language == 'sw' ? 'sw/$path' : path;
 }
 
 /// Writes [text] to the clipboard.
@@ -50,47 +72,72 @@ String? dayInsight(ApiDay day) {
 
 /// The share of a day: `Twenty-fifth Sunday in Ordinary Time, Sunday 20
 /// September 2026`, the [dayInsight] and the day's page on [site] (default:
-/// [siteBaseUrl]).
-ShareContent dayShare(ApiDay day, {Uri? site}) {
-  final date = formatDayDate(day.date);
-  final celebration = day.celebrations.firstOrNull?.name;
-  final ref = celebration == null ? date : '$celebration, $date';
+/// [siteBaseUrl]), all in [language] (the `sw/` page in Kiswahili).
+ShareContent dayShare(ApiDay day, {Uri? site, String language = 'en'}) {
+  final l10n = LectioLocalizations.forLanguage(language);
+  final date = formatLongDate(day.date, language);
+  final celebration = day.celebrations.firstOrNull?.nameIn(language).text;
+  final ref = celebration == null
+      ? date
+      : l10n.text('day_pageTitle', {'title': celebration, 'date': date});
   return ShareContent(
     title: ref,
     ref: ref,
     insight: dayInsight(day),
-    url: siteUrl(dayPagePath(day.date), site: site),
+    url: siteUrl(
+      localizedPagePath(dayPagePath(day.date), language),
+      site: site,
+    ),
   );
 }
 
 /// The share of [reading] on the ISO [date]: its reference, its notes'
-/// summary when approved, and its page on [site] (default: [siteBaseUrl]).
-ShareContent readingShare(String date, DayReading reading, {Uri? site}) {
-  final slot = ReadingStrings.en.slotLabel(reading.slot);
+/// summary when approved, and its page on [site] (default: [siteBaseUrl]),
+/// in [language].
+ShareContent readingShare(
+  String date,
+  DayReading reading, {
+  Uri? site,
+  String language = 'en',
+}) {
+  final l10n = LectioLocalizations.forLanguage(language);
+  final slot = slotLabelIn(l10n, reading.slot);
   return ShareContent(
-    title: '${reading.ref} · $slot',
+    title: l10n.text('reading_pageTitle', {'ref': reading.ref, 'slot': slot}),
     ref: reading.ref,
     insight: _summary(reading),
-    url: siteUrl(readingPagePath(date, reading.slot), site: site),
+    url: siteUrl(
+      localizedPagePath(readingPagePath(date, reading.slot), language),
+      site: site,
+    ),
   );
 }
 
 /// The share of one insight, [note] in [passage], whose reading is at the
 /// site path [page] (`2026-09-20/gospel/`): `“anchor” · Mt 20:1-16a, verse
-/// 15`, the note's summary and its page on [site] (default: [siteBaseUrl]).
+/// 15`, the note's summary and its page on [site] (default: [siteBaseUrl]),
+/// in [language].
 ShareContent noteShare(
   PassageNotes passage,
   TranslationNote note,
   String page, {
   Uri? site,
+  String language = 'en',
 }) {
-  final verse = verseLabel(passage, note);
-  final heading = '“${note.anchor}” · ${passage.ref}, verse $verse';
+  final heading = LectioLocalizations.forLanguage(language)
+      .text('insight_pageTitle', {
+        'anchor': note.anchor,
+        'ref': passage.ref,
+        'verse': verseLabel(passage, note),
+      });
   return ShareContent(
     title: heading,
     ref: heading,
     insight: note.summary,
-    url: siteUrl('${page}notes/${note.id}/', site: site),
+    url: siteUrl(
+      localizedPagePath('${page}notes/${note.id}/', language),
+      site: site,
+    ),
   );
 }
 
@@ -105,6 +152,7 @@ Future<ShareOutcome> shareFrom(
   ClipboardWriter copy = _copyToClipboard,
 }) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
+  final strings = ShareStrings.of(context);
   final box = context.findRenderObject();
   Rect? origin;
   if (box is RenderBox && box.hasSize) {
@@ -113,11 +161,11 @@ Future<ShareOutcome> shareFrom(
   final target = sheet ?? appShareSheet;
   final outcome = await target.share(content, origin: origin);
   if (outcome != ShareOutcome.fallback) return outcome;
-  var message = ShareStrings.copied;
+  var message = strings.copied;
   try {
     await copy(content.text);
   } on Exception {
-    message = ShareStrings.failed;
+    message = strings.failed;
   }
   messenger?.showSnackBar(SnackBar(content: Text(message)));
   return outcome;
@@ -139,7 +187,7 @@ class ShareButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      tooltip: ShareStrings.shareLabel(content.ref),
+      tooltip: ShareStrings.of(context).shareLabel(content.ref),
       icon: const Icon(Icons.share_outlined),
       onPressed: () => unawaited(shareFrom(context, content, sheet: sheet)),
     );

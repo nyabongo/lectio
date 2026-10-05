@@ -150,7 +150,7 @@ void main() {
       expect(copied, [
         {'text': content.text},
       ]);
-      expect(find.text(ShareStrings.copied), findsOneWidget);
+      expect(find.text(ShareStrings.en.copied), findsOneWidget);
     });
 
     testWidgets('says so when copying fails too', (tester) async {
@@ -163,7 +163,7 @@ void main() {
       );
       await tester.pump();
       expect(outcome, ShareOutcome.fallback);
-      expect(find.text(ShareStrings.failed), findsOneWidget);
+      expect(find.text(ShareStrings.en.failed), findsOneWidget);
     });
 
     testWidgets('does nothing more when cancelled or busy', (tester) async {

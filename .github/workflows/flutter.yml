@@ -5,7 +5,9 @@
 # is no trigger-level `paths:` filter. Instead its changes step diffs against
 # the PR base, or origin/main for any other event (for a push to main, where
 # origin/main is HEAD, the previous tip), and the job exits green when nothing
-# under apps/mobile, packages/schema/fixtures or this file changed.
+# under apps/mobile, packages/schema/fixtures, the site's string catalogs
+# (apps/web/src/i18n, which the app's strings are generated from, L-114) or
+# this file changed.
 # `workflow_dispatch` lets the merge-rule job (L-031) re-run it on the approval
 # commit.
 #
@@ -54,7 +56,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Did apps/mobile or the schema fixtures change?
+      - name: Did apps/mobile, the schema fixtures or the catalogs change?
         id: changes
         working-directory: .
         env:
@@ -71,7 +73,7 @@ jobs:
           fi
           echo "Diffing against $base"
           changed="$(git diff --name-only "$base"...HEAD)"
-          if grep -qE '^(apps/mobile/|packages/schema/fixtures/|\.github/workflows/flutter\.yml$)' <<<"$changed"; then
+          if grep -qE '^(apps/mobile/|packages/schema/fixtures/|apps/web/src/i18n/[^/]+/[^/]+\.json$|\.github/workflows/flutter\.yml$)' <<<"$changed"; then
             echo "relevant=true" >> "$GITHUB_OUTPUT"
           else
             echo "Nothing relevant to the Flutter app changed."
@@ -108,6 +110,18 @@ jobs:
           # platform excludes; the committed file must already be that form.
           if ! git diff --exit-code -- analysis_options.yaml; then
             echo "::error::flutter pub get rewrote apps/mobile/analysis_options.yaml; commit the version above."
+            exit 1
+          fi
+      # L-114: lib/l10n/app_*.arb and catalog.g.dart are generated from the
+      # site's catalogs (apps/web/src/i18n) and lib/l10n/catalog; a catalog
+      # change must come with the regenerated files.
+      - name: l10n files in sync with the catalogs
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          if ! dart run tool/sync_l10n.dart --check; then
+            echo "::error::Run 'dart run tool/sync_l10n.dart' in apps/mobile and commit the result:"
+            dart run tool/sync_l10n.dart
+            git diff
             exit 1
           fi
       - name: dart format --set-exit-if-changed

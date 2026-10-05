@@ -14,17 +14,25 @@
  *   `licence/commentary-unchecked` (needs review), never passed;
  * - `licence/excerpt-length`: no source excerpt is longer than `licenceGuard.maxExcerptWords`.
  *
- * Every limit comes from the config. The index only detects public-domain wording; the gate
- * repeats that limitation (`LIMITATION`) in its output.
+ * Translations (`passages/i18n/<locale>/<key>.json`, and any other file in a subdirectory of
+ * passages/, matched in any letter case, so a misplaced file is scanned too) get the checks that
+ * mean something for them: `licence/pd-bible-overlap` (English Bible wording pasted into a
+ * translation), `licence/commentary-overlap` against the web sources of the English passage they
+ * translate (both the key their file name promises and their `translationOf`) and
+ * `licence/excerpt-length`. Their quoted-run limit is gate 1's `schema/translation-quoted-run`.
+ *
+ * Every limit comes from the config. The index only detects public-domain English wording; the
+ * gate repeats that limitation (`LIMITATION`, and `TRANSLATION_LIMITATION` when a translation
+ * changed) in its output.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { LicenceGuardConfig } from '@lectio/config';
-import { contentKindOf } from '@lectio/content';
 import type { FetchedSource, SourceFetcher } from '@lectio/providers';
 import { LIMITATION, NORMALISER_VERSION, loadIndex, longestRun } from '@lectio/textguard';
 import type { ShingleIndex } from '@lectio/textguard';
+import { PASSAGE_KEY_PATTERN } from '@lectio/schema/common';
 
 import type { Gate, GateContext } from '../core/gate.ts';
 import { finding, resultFromFindings } from '../core/result.ts';
@@ -37,6 +45,13 @@ import type { NoteField, WebSourceRef } from './text.ts';
 
 export { LIMITATION };
 
+/** What the licence gate cannot see in a translation; repeated in its output when one changed. */
+export const TRANSLATION_LIMITATION =
+  'The public-domain index holds English Bibles only, so a modern Bible translation in another language ' +
+  '(for example a Kiswahili Bible) copied into a translation without quotation marks is caught by nothing ' +
+  'automated. For translations the safeguard is the mandatory human review (merge-rule/translation-needs-person, ' +
+  'schema/translation-needs-review); gate 1 applies the quoted-run limit (schema/translation-quoted-run).';
+
 const WHY =
   'Lectio never reproduces a Bible translation or a commentary: it links out for the text and writes its own notes.';
 
@@ -48,12 +63,12 @@ export const LICENCE_RULES = {
   ),
   pdBibleOverlap: defineRule(
     'licence/pd-bible-overlap',
-    'No note text shares a run of licenceGuard.maxBibleRunWords or more words with a public-domain English Bible (World English Bible, Douay-Rheims).',
+    'No note or translation text shares a run of licenceGuard.maxBibleRunWords or more words with a public-domain English Bible (World English Bible, Douay-Rheims).',
     'Rewrite the sentence in your own words and point to the verse by reference instead of reproducing its wording.',
   ),
   commentaryOverlap: defineRule(
     'licence/commentary-overlap',
-    'No note text shares a run of more than licenceGuard.maxCommentaryRunWords words with the fetched text of a cited web source.',
+    'No note or translation text shares a run of more than licenceGuard.maxCommentaryRunWords words with the fetched text of a web source cited by the passage (for a translation, by the English passage it translates).',
     'Paraphrase the commentary in your own words; keep the source in sources[] and, if needed, a short excerpt.',
   ),
   commentaryUnchecked: defineRule(
@@ -99,15 +114,47 @@ export interface LicenceGateOptions {
   readonly loadGuardIndex?: GuardIndexLoader;
 }
 
-/** The changed passage files under the content root (deleted files excluded). */
-function changedPassages(context: GateContext): string[] {
+/** The content-root prefix: `.` → `""`, `./content/` → `"content/"`. */
+function contentPrefix(context: GateContext): string {
   const root = context.config.content.root.replace(/^\.\/?/u, '').replace(/\/$/u, '');
-  const prefix = root === '' ? '' : `${root}/`;
-  return context.changedFiles
-    .filter((file) => file.status !== 'deleted')
-    .map((file) => file.path)
-    .filter((path) => path.startsWith(prefix) && path.slice(prefix.length).split('/').length === 2)
-    .filter((path) => contentKindOf(path) === 'passage');
+  return root === '' ? '' : `${root}/`;
+}
+
+/**
+ * The changed JSON files under passages/ (deleted files excluded), matched in any letter case so
+ * that `passages/I18N/…` or `PASSAGES/x.JSON` is scanned too (gate 1 rejects those paths): files
+ * directly in it are passages, files in any subdirectory are translations.
+ */
+function changedContent(context: GateContext): { passages: string[]; translations: string[] } {
+  const base = `${contentPrefix(context)}passages/`.toLowerCase();
+  const passages: string[] = [];
+  const translations: string[] = [];
+  for (const file of context.changedFiles) {
+    const lower = file.path.toLowerCase();
+    if (file.status === 'deleted' || !lower.startsWith(base) || !lower.endsWith('.json')) continue;
+    (lower.slice(base.length).includes('/') ? translations : passages).push(file.path);
+  }
+  return { passages, translations };
+}
+
+const PASSAGE_KEY = new RegExp(PASSAGE_KEY_PATTERN);
+
+/**
+ * The English passages whose sources a translation is checked against: the key its file name
+ * promises and its `translationOf`, each only when it is a passage key.
+ */
+function englishKeysOf(file: string, translation: unknown): string[] {
+  const name = file.slice(file.lastIndexOf('/') + 1).slice(0, -'.json'.length);
+  const of = (translation as Record<string, unknown> | null)?.['translationOf'];
+  return [...new Set([name, of])].filter((key): key is string => typeof key === 'string' && PASSAGE_KEY.test(key));
+}
+
+/** The web sources of the English passages a translation translates, each tagged with its file. */
+function englishSources(context: GateContext, file: string, translation: unknown): CitedSource[] {
+  return englishKeysOf(file, translation).flatMap((key) => {
+    const from = `${contentPrefix(context)}passages/${key}.json`;
+    return webSources(parse(context.readFile(from))).map((source) => ({ ...source, from }));
+  });
 }
 
 function parse(text: string | null): unknown {
@@ -189,6 +236,9 @@ function checkExcerpts(file: string, passage: unknown, limits: LicenceGuardConfi
   return items;
 }
 
+/** A web source to check against; `from` names the English passage that cites it, for a translation. */
+type CitedSource = WebSourceRef & { readonly from?: string };
+
 /** A fetched source, prepared, or why it could not be checked. */
 type SourceOutcome = { readonly words: SourceWords; readonly via: string } | { readonly problem: string };
 
@@ -218,15 +268,15 @@ async function fetchSource(fetcher: SourceFetcher, source: WebSourceRef): Promis
 
 async function checkCommentary(
   file: string,
-  passage: unknown,
+  cited: readonly CitedSource[],
   fields: readonly NoteField[],
   fetcher: SourceFetcher,
   cache: Map<string, Promise<SourceOutcome>>,
   limits: LicenceGuardConfig,
 ): Promise<{ items: GateResultItem[]; checked: number }> {
   const items: GateResultItem[] = [];
-  const byUrl = new Map<string, WebSourceRef[]>();
-  for (const source of webSources(passage)) {
+  const byUrl = new Map<string, CitedSource[]>();
+  for (const source of cited) {
     const key = `${source.url}\0${source.archivedUrl ?? ''}`;
     byUrl.set(key, [...(byUrl.get(key) ?? []), source]);
     if (!cache.has(key)) cache.set(key, fetchSource(fetcher, source));
@@ -234,16 +284,17 @@ async function checkCommentary(
   let checked = 0;
   for (const [key, sources] of byUrl) {
     const outcome = await (cache.get(key) as Promise<SourceOutcome>);
-    const first = sources[0] as WebSourceRef;
+    const first = sources[0] as CitedSource;
     if ('problem' in outcome) {
       for (const source of sources) {
+        const of = source.from === undefined ? '' : ` of ${source.from}`;
         items.push(
           finding(LICENCE_RULES.commentaryUnchecked, {
             file,
-            pointer: source.pointer,
+            pointer: source.from === undefined ? source.pointer : '',
             severity: 'warning',
             message:
-              `source ${source.sourceId} (${source.url}) could not be checked for copied wording: ${outcome.problem}. ` +
+              `source ${source.sourceId}${of} (${source.url}) could not be checked for copied wording: ${outcome.problem}. ` +
               'An unchecked source never passes silently; a reviewer must compare the note with it.',
           }),
         );
@@ -251,7 +302,8 @@ async function checkCommentary(
       continue;
     }
     checked++;
-    const ids = sources.map((source) => source.sourceId).join(', ');
+    const ids =
+      sources.map((source) => source.sourceId).join(', ') + (first.from === undefined ? '' : ` in ${first.from}`);
     for (const field of fields) {
       const run = longestSharedRun(field.text, outcome.words);
       if (run.words <= limits.maxCommentaryRunWords) continue;
@@ -297,9 +349,15 @@ function loadGuard(
 
 async function run(context: GateContext, loader: GuardIndexLoader) {
   const limits = context.config.licenceGuard;
-  const files = changedPassages(context);
-  const meta = { files: files.length, limits: { ...limits }, limitation: LIMITATION };
-  if (files.length === 0) return resultFromFindings('licence', [], meta);
+  const { passages, translations } = changedContent(context);
+  const meta = {
+    files: passages.length + translations.length,
+    translations: translations.length,
+    limits: { ...limits },
+    limitation: LIMITATION,
+    ...(translations.length === 0 ? {} : { translationLimitation: TRANSLATION_LIMITATION }),
+  };
+  if (meta.files === 0) return resultFromFindings('licence', [], meta);
 
   const items: GateResultItem[] = [];
   const guard = loadGuard(context, loader);
@@ -323,18 +381,32 @@ async function run(context: GateContext, loader: GuardIndexLoader) {
   }
   const cache = new Map<string, Promise<SourceOutcome>>();
   let sourcesChecked = 0;
-  for (const file of files) {
-    const passage = parse(context.readFile(file));
-    if (passage === undefined) continue; // unreadable JSON is the schema gate's finding
-    const fields = noteFields(passage);
-    items.push(...checkQuotes(file, fields, limits));
+  const files = [
+    ...passages.map((file) => ({ file, translation: false })),
+    ...translations.map((file) => ({ file, translation: true })),
+  ];
+  for (const { file, translation } of files) {
+    const value = parse(context.readFile(file));
+    if (value === undefined) continue; // unreadable JSON is the schema gate's finding
+    const fields = noteFields(value);
+    // A translation's quoted-run limit is gate 1's schema/translation-quoted-run.
+    if (!translation) items.push(...checkQuotes(file, fields, limits));
     if ('index' in guard) items.push(...checkBible(file, fields, guard.index, limits));
-    const commentary = await checkCommentary(file, passage, fields, context.providers.fetcher, cache, limits);
+    const cited = translation ? englishSources(context, file, value) : webSources(value);
+    const commentary = await checkCommentary(file, cited, fields, context.providers.fetcher, cache, limits);
     items.push(...commentary.items);
     sourcesChecked += commentary.checked;
-    items.push(...checkExcerpts(file, passage, limits));
+    items.push(...checkExcerpts(file, value, limits));
   }
   items.push(finding(LICENCE_RULES.pdBibleOverlap, { severity: 'info', message: `Limitation: ${LIMITATION}` }));
+  if (translations.length > 0) {
+    items.push(
+      finding(LICENCE_RULES.pdBibleOverlap, {
+        severity: 'info',
+        message: `Limitation (translations): ${TRANSLATION_LIMITATION}`,
+      }),
+    );
+  }
   return resultFromFindings('licence', items, { ...meta, sourcesFetched: cache.size, sourcesChecked });
 }
 

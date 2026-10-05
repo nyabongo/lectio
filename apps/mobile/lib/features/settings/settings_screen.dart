@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lectio/features/bookmarks/bookmarks_screen.dart';
 import 'package:lectio/features/settings/app_settings.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/screens/standalone_scaffold.dart';
 
@@ -36,6 +37,8 @@ class SettingsScreen extends StatelessWidget {
     final controller = SettingsScope.of(context);
     final settings = controller.settings;
     final theme = Theme.of(context);
+    final l10n = LectioLocalizations.of(context);
+    String t(String key) => l10n.text(key);
 
     Future<void> update(AppSettings next) async {
       final saved = await controller.update(next);
@@ -60,14 +63,11 @@ class SettingsScreen extends StatelessWidget {
     Widget choice({
       required String label,
       required bool selected,
-      required VoidCallback? onTap,
-      String? subtitle,
+      required VoidCallback onTap,
     }) => ListTile(
       title: Text(label),
-      subtitle: subtitle == null ? null : Text(subtitle),
       selected: selected,
       trailing: selected ? const Icon(Icons.check) : null,
-      enabled: onTap != null,
       onTap: onTap,
     );
 
@@ -77,38 +77,32 @@ class SettingsScreen extends StatelessWidget {
     );
 
     return StandaloneScaffold(
-      title: AppRoute.settings.title,
+      title: AppRoute.settings.titleIn(l10n),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Text(
-              'There are no accounts. Your preferences are saved on this '
-              'device and never leave it.',
-            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Text(t('app_settings_intro')),
           ),
-          heading('Text size'),
+          heading(t('settings_textSize_legend')),
           for (final size in TextSize.values)
             choice(
-              label: size.label,
+              label: t(size.labelKey),
               selected: settings.textSize == size,
               onTap: () => unawaited(update(settings.copyWith(textSize: size))),
             ),
-          hint(
-            'Notes on history and the original languages will read at this '
-            'size.',
-          ),
-          heading('Theme'),
+          hint(t('settings_textSize_preview')),
+          heading(t('settings_theme_legend')),
           for (final preference in ThemePreference.values)
             choice(
-              label: preference.label,
+              label: t(preference.labelKey),
               selected: settings.theme == preference,
               onTap: () =>
                   unawaited(update(settings.copyWith(theme: preference))),
             ),
-          hint("System follows your device's light or dark setting."),
-          heading('Default playback speed'),
+          hint(t('settings_theme_hint')),
+          heading(t('settings_speed_legend')),
           padded(
             Wrap(
               spacing: 8,
@@ -124,34 +118,25 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          hint(
-            'Where the Listen queue starts. You can still change it while '
-            'listening.',
-          ),
-          heading('Language'),
+          hint(t('settings_speed_hint')),
+          heading(t('settings_language_legend')),
           for (final language in AppLanguage.values)
             choice(
-              label: language.label,
-              subtitle: language.available ? null : 'Coming soon',
+              label: t('settings_language_${language.name}'),
               selected: settings.language == language,
-              onTap: language.available
-                  ? () =>
-                        unawaited(update(settings.copyWith(language: language)))
-                  : null,
+              onTap: () =>
+                  unawaited(update(settings.copyWith(language: language))),
             ),
-          heading('Daily reminder'),
+          heading(t('app_settings_reminderHeading')),
           SwitchListTile(
-            title: const Text('Remind me each day'),
-            subtitle: const Text(
-              "A notification with the day's celebration. Nothing is sent to "
-              'a server.',
-            ),
+            title: Text(t('app_settings_reminderSwitch')),
+            subtitle: Text(t('app_settings_reminderHint')),
             value: settings.dailyReminder,
             onChanged: (on) =>
                 unawaited(update(settings.copyWith(dailyReminder: on))),
           ),
           ListTile(
-            title: const Text('Reminder time'),
+            title: Text(t('app_settings_reminderTime')),
             trailing: Text(settings.reminderTime.format(context)),
             enabled: settings.dailyReminder,
             onTap: () async {
@@ -160,10 +145,10 @@ class SettingsScreen extends StatelessWidget {
               await update(settings.copyWith(reminderTime: time));
             },
           ),
-          heading('Saved on this device'),
+          heading(t('app_settings_savedHeading')),
           ListTile(
             leading: const Icon(Icons.bookmarks_outlined),
-            title: const Text(bookmarksTitle),
+            title: Text(t('app_settings_bookmarks')),
             trailing: const Icon(Icons.chevron_right),
             onTap: () =>
                 unawaited(context.push('${AppRoute.settings.path}/bookmarks')),

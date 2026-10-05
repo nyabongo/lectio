@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 
 /// A top-level destination of the app.
 ///
@@ -6,27 +7,35 @@ import 'package:flutter/material.dart';
 /// behind the header, as on the site.
 enum AppRoute {
   /// The day's celebration and readings.
-  today('/today', 'Today', Icons.today_outlined),
+  today('/today', 'app_tabs_today', Icons.today_outlined),
 
   /// Commentary on one reading.
-  reading('/reading', 'Reading', Icons.menu_book_outlined),
+  reading('/reading', 'app_tabs_reading', Icons.menu_book_outlined),
 
   /// The audio commentary.
-  listen('/listen', 'Listen', Icons.headphones_outlined),
+  listen('/listen', 'app_tabs_listen', Icons.headphones_outlined),
 
   /// The calendar and archive.
-  calendar('/calendar', 'Calendar', Icons.calendar_month_outlined),
+  calendar('/calendar', 'common_nav_calendar', Icons.calendar_month_outlined),
 
   /// Preferences.
-  settings('/settings', 'Settings', Icons.settings_outlined);
+  settings('/settings', 'common_nav_settings', Icons.settings_outlined);
 
-  new(this.path, this.title, this.icon);
+  new(this.path, this.titleKey, this.icon);
 
   /// The location go_router matches, e.g. `/today`.
   final String path;
 
-  /// The label shown in the header and navigation.
-  final String title;
+  /// The message key of the label shown in the header and navigation.
+  final String titleKey;
+
+  /// The label shown in the header and navigation, in [l10n]'s language.
+  String titleIn(LectioLocalizations l10n) => l10n.text(titleKey);
+
+  /// The label in the UI language of [context].
+  String titleOf(BuildContext context) {
+    return titleIn(LectioLocalizations.of(context));
+  }
 
   /// The icon shown in the navigation or header.
   final IconData icon;

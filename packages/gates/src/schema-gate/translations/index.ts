@@ -15,7 +15,12 @@
  *
  * When the pull request changes an English passage, every translation of it that the PR does not
  * touch is checked for staleness (a warning on that translation) or, when the English passage is
- * deleted, reported as orphaned.
+ * deleted or renamed, reported as orphaned (a rename is read through its old path too).
+ *
+ * Every other file the PR adds under passages/ must sit at a canonical path
+ * (`schema/translation-path`): a case variant such as `passages/I18N/sw/…`, an English or malformed
+ * locale, a nested directory or another subdirectory would otherwise escape these checks, the
+ * licence gate's translation scan and the merge rule's translation hold.
  */
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -23,8 +28,10 @@ import { join } from 'node:path';
 import type { LicenceGuardConfig } from '@lectio/config';
 import { checkPassage, issuesFromAjv, parseJson } from '@lectio/content';
 import type { ContentError } from '@lectio/content';
+import { PASSAGE_KEY_PATTERN, localeSchema } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
 import {
+  SOURCE_LOCALE_PATTERN,
   TRANSLATIONS_DIR,
   parseTranslatedPassagePath,
   translatableSha256,
@@ -35,6 +42,7 @@ import {
 import type { TranslatedPassage } from '@lectio/schema/translated-passage';
 
 import type { GateContext } from '../../core/gate.ts';
+import type { ChangedFile } from '../../core/git.ts';
 import { finding } from '../../core/result.ts';
 import type { GateResultItem } from '../../core/result.ts';
 import { englishWordCount, maskMarkers, preview, quotedSpans } from '../../licence-gate/text.ts';
@@ -72,6 +80,61 @@ export function englishKeyOf(relative: string): string | null {
   return match === null ? null : (match[1] as string);
 }
 
+const PASSAGES = 'passages/';
+const I18N = 'i18n/';
+const LOCALE = new RegExp(localeSchema.pattern);
+const SOURCE_LOCALE = new RegExp(SOURCE_LOCALE_PATTERN);
+const KEY = new RegExp(PASSAGE_KEY_PATTERN);
+
+/** Why a path under passages/i18n/ (spelled correctly) is not a translation path. */
+function translationPathProblem(rest: string): string {
+  const parts = rest.slice(I18N.length).split('/');
+  if (parts.length !== 2) return 'a translation sits exactly one locale directory below passages/i18n/';
+  const [locale, name] = parts as [string, string];
+  if (!name.endsWith('.json')) return 'a translation is a .json file (lower-case extension)';
+  if (!LOCALE.test(locale) || SOURCE_LOCALE.test(locale))
+    return `"${locale}" is not a translation locale (a BCP 47 tag such as sw or pt-BR, never English)`;
+  return `"${name.slice(0, -'.json'.length)}" is not a passage key`;
+}
+
+/**
+ * Why a file is misplaced under passages/ (matched in any letter case), or `null` when it is not
+ * under passages/, is a passage (`passages/<key>.json`) or is a canonical translation path. `path` is
+ * repository-relative; `prefix` is the content-root prefix (`""` or `"content/"`).
+ */
+export function misplacedContentFile(path: string, prefix: string): string | null {
+  const base = `${prefix}${PASSAGES}`;
+  if (!path.toLowerCase().startsWith(base.toLowerCase())) return null;
+  if (!path.startsWith(base)) return `the directory must be spelled ${base} exactly, in lower case`;
+  const rest = path.slice(base.length);
+  const slash = rest.indexOf('/');
+  if (slash < 0) {
+    // Only <key>.json may sit directly in passages/: anything else (notes.md, x.json.bak, a trailing
+    // dot or space) would be read by no gate and could ride along in an auto-merged PR.
+    if (!rest.endsWith('.json'))
+      return `only passage files (<key>.json, lower-case extension) may sit directly in ${base}`;
+    const key = rest.slice(0, -'.json'.length);
+    return KEY.test(key) ? null : `"${key}" is not a passage key`;
+  }
+  const dir = rest.slice(0, slash);
+  if (dir.toLowerCase() !== 'i18n')
+    return `${base}${dir}/ is not a content directory: only ${base}i18n/ may hold files`;
+  if (dir !== 'i18n') return `the translation directory must be spelled ${base}i18n/ exactly, in lower case`;
+  if (parseTranslatedPassagePath(`${PASSAGES}${rest}`) !== null) return null;
+  return translationPathProblem(rest);
+}
+
+function checkPath(push: Push, file: string, prefix: string): void {
+  const problem = misplacedContentFile(file, prefix);
+  if (problem === null) return;
+  push(
+    finding(TRANSLATION_RULES.translationPath, {
+      file,
+      message: `${file} is not a passage or translation path: ${problem}. Translations live at ${prefix}${TRANSLATIONS_DIR}/<locale>/<key>.json`,
+    }),
+  );
+}
+
 /** The English passage at the PR head: the passage, `missing`, or `invalid`. */
 type English = { readonly passage: Passage } | { readonly problem: 'missing' | 'invalid' };
 
@@ -95,6 +158,26 @@ function englishProblem(push: Push, file: string, key: string, problem: 'missing
         problem === 'missing'
           ? `the English passage passages/${key}.json does not exist`
           : `the English passage passages/${key}.json is not a valid passage, so the translation cannot be checked against it`,
+    }),
+  );
+}
+
+/** Where a renamed English passage went: the new path, and its key (`null` when it left passages/). */
+interface Rename {
+  readonly to: string;
+  readonly key: string | null;
+}
+
+function renamedAway(push: Push, file: string, from: string, locale: string, rename: Rename): void {
+  const what = `the English passage passages/${from}.json was renamed to ${rename.to}`;
+  push(
+    finding(TRANSLATION_RULES.translationOfExists, {
+      file,
+      pointer: '/translationOf',
+      message:
+        rename.key === null
+          ? `${what}, which is not a passage, so this translation is orphaned: restore the English passage or delete the translation`
+          : `${what}: move this translation to ${translatedPassagePath(locale, rename.key)} and set translationOf to "${rename.key}"`,
     }),
   );
 }
@@ -281,8 +364,9 @@ export function checkTranslationFile(
 
 /**
  * The untouched translations of an English passage the PR changed: stale ones are flagged, and
- * when the English passage is gone they are reported as orphaned. An unreadable or invalid
- * translation is left alone: it was checked when it landed.
+ * when the English passage is gone (deleted, or renamed away: `rename`) they are reported as
+ * orphaned, valid or not. An invalid translation of a passage that still exists is left alone: it
+ * was checked when it landed.
  */
 function checkDependents(
   context: GateContext,
@@ -290,24 +374,37 @@ function checkDependents(
   key: string,
   locales: readonly string[],
   checked: ReadonlySet<string>,
+  rename: Rename | undefined,
 ): GateResultItem[] {
   const items: GateResultItem[] = [];
+  const push: Push = (item) => items.push(item);
   const english = readEnglish(context, prefix, key);
   for (const locale of locales) {
     const file = `${prefix}${translatedPassagePath(locale, key)}`;
     if (checked.has(file)) continue;
     const text = context.readFile(file);
     if (text === null) continue;
-    const translation = parseTranslation(() => undefined, file, text);
-    if (translation === null) continue;
     if ('problem' in english) {
-      englishProblem((item) => items.push(item), file, key, english.problem);
+      if (rename !== undefined && english.problem === 'missing') renamedAway(push, file, key, locale, rename);
+      else englishProblem(push, file, key, english.problem);
       continue;
     }
+    const translation = parseTranslation(() => undefined, file, text);
+    if (translation === null) continue;
     const stale = staleFinding(file, translation, english.passage);
     if (stale !== null) items.push(stale);
   }
   return items;
+}
+
+/** The English key a rename moved away from, with where it went; `null` when the change is not one. */
+function renameOf(change: ChangedFile, prefix: string): (Rename & { readonly from: string }) | null {
+  const previous = change.previousPath;
+  if (change.status !== 'renamed' || previous === undefined || !previous.startsWith(prefix)) return null;
+  const from = englishKeyOf(previous.slice(prefix.length));
+  const key = change.path.startsWith(prefix) ? englishKeyOf(change.path.slice(prefix.length)) : null;
+  if (from === null || from === key) return null;
+  return { from, to: change.path, key };
 }
 
 /** Every translation finding for the pull request, and how many translation files were checked. */
@@ -317,22 +414,32 @@ export function checkTranslations(
   options: CheckTranslationsOptions = {},
 ): { items: GateResultItem[]; files: number } {
   const items: GateResultItem[] = [];
+  const push: Push = (item) => items.push(item);
   const checked = new Set<string>();
-  const englishKeys: string[] = [];
+  const englishKeys = new Set<string>();
+  const renames = new Map<string, Rename>();
   for (const change of context.changedFiles) {
+    if (change.status !== 'deleted') checkPath(push, change.path, prefix);
+    const rename = renameOf(change, prefix);
+    if (rename !== null) {
+      englishKeys.add(rename.from);
+      renames.set(rename.from, rename);
+    }
     if (!change.path.startsWith(prefix)) continue;
     const relative = change.path.slice(prefix.length);
     const key = englishKeyOf(relative);
-    if (key !== null) englishKeys.push(key);
+    if (key !== null) englishKeys.add(key);
     if (parseTranslatedPassagePath(relative) === null || change.status === 'deleted') continue;
     const text = context.readFile(change.path);
     if (text === null) continue;
     checked.add(change.path);
     items.push(...checkTranslationFile(context, prefix, change.path, text));
   }
-  if (englishKeys.length > 0) {
+  if (englishKeys.size > 0) {
     const locales = (options.listLocales ?? fsListLocales)(context, prefix);
-    for (const key of englishKeys) items.push(...checkDependents(context, prefix, key, locales, checked));
+    for (const key of englishKeys) {
+      items.push(...checkDependents(context, prefix, key, locales, checked, renames.get(key)));
+    }
   }
   return { items, files: checked.size };
 }
