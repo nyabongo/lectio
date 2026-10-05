@@ -186,7 +186,9 @@ void main() {
       appShareSheet = sheet;
       addTearDown(() => appShareSheet = null);
       await tester.pumpWidget(
-        MaterialApp(home: Scaffold(body: ShareButton(content: content))),
+        MaterialApp(
+          home: Scaffold(body: ShareButton(content: content)),
+        ),
       );
       await tester.tap(find.byType(ShareButton));
       await tester.pump();

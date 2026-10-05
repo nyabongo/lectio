@@ -82,8 +82,11 @@ String? locationForSitePath(List<String> segments) {
     [] => dayLocation(date),
     ['listen'] => listenLocation(date),
     [final slot] when _slot.hasMatch(slot) => readingLocation(date, null, slot),
-    [final slot, 'notes', final id] when _isNote(slot, id) =>
-      noteLocation(date, slot, id),
+    [final slot, 'notes', final id] when _isNote(slot, id) => noteLocation(
+      date,
+      slot,
+      id,
+    ),
     _ => null,
   };
 }

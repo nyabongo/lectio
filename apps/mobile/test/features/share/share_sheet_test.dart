@@ -80,9 +80,7 @@ void main() {
     });
 
     test('a failure is the fallback', () async {
-      var sheet = sheetAnswering(
-        () => throw PlatformException(code: 'error'),
-      );
+      var sheet = sheetAnswering(() => throw PlatformException(code: 'error'));
       expect(await sheet.share(_content), ShareOutcome.fallback);
       sheet = sheetAnswering(() => throw MissingPluginException());
       expect(await sheet.share(_content), ShareOutcome.fallback);
