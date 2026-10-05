@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { packageName } from './index.ts';
+import { audioKey, buildSegments, packageName, passagesOf, speakable } from './index.ts';
 
-describe('@lectio/audio placeholder', () => {
-  it('exports its package name', () => {
+describe('@lectio/audio', () => {
+  it('exports its package name and the narration script builder', () => {
     expect(packageName).toBe('@lectio/audio');
+    expect([audioKey, buildSegments, passagesOf, speakable].every((fn) => typeof fn === 'function')).toBe(true);
   });
 });
