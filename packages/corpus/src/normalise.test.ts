@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { normaliseGreek, normaliseHebrew, normaliseLatin, normaliserFor, phraseWords } from './normalise.ts';
+import { normaliseGreek, normaliseHebrew, normaliseLatin, normaliserFor, phraseWords, tokenForms } from './normalise.ts';
 
 describe('normaliseGreek', () => {
   it.each([
@@ -11,6 +11,8 @@ describe('normaliseGreek', () => {
     ['πονηρός'.normalize('NFD'), 'πονηροσ'],
     ['ἐγὼ', 'εγω'],
     ['Οὕτως', 'ουτωσ'],
+    ['λόγοϲ', 'λογοσ'],
+    ['ΛΟΓΟϹ', 'λογοσ'],
     ['ᾠδῇ', 'ωδη'],
     ['εἰμι;', 'ειμι'],
     ['δι’', 'δι'],
@@ -58,6 +60,8 @@ describe('normaliseLatin', () => {
     ['dixít.', 'dixit'],
     ['Dóminus', 'dominus'],
     ['rosā!', 'rosa'],
+    ['cǽlum', 'caelum'],
+    ['Ǽternus', 'aeternus'],
   ])('%s → %s', (input, expected) => {
     expect(normaliseLatin(input)).toBe(expected);
   });
@@ -77,5 +81,21 @@ describe('phraseWords', () => {
     expect(phraseWords('hbo', 'אֶת־הָֽרָקִיעַ֒')).toEqual(['את', 'הרקיע']);
     expect(phraseWords('grc', ' ὁ  ὀφθαλμός , σου ')).toEqual(['ο', 'οφθαλμοσ', 'σου']);
     expect(phraseWords('lat', '. ,')).toEqual([]);
+  });
+});
+
+describe('tokenForms', () => {
+  it('gives every contiguous run of OSHB "/" segments for Hebrew and Aramaic', () => {
+    expect(tokenForms('hbo', 'וְ/רָעָ֣ה')).toEqual(['ו', 'ורעה', 'רעה']);
+    expect(tokenForms('arc', 'a/b/c')).toEqual(['a', 'ab', 'abc', 'b', 'bc', 'c']);
+    expect(tokenForms('hbo', 'd/8064')).toEqual(['d', 'd8064', '8064']);
+    expect(tokenForms('hbo', 'ברא')).toEqual(['ברא']);
+  });
+
+  it('keeps one form for other languages and none for empty tokens', () => {
+    expect(tokenForms('grc', 'πονηρός')).toEqual(['πονηροσ']);
+    expect(tokenForms('lat', 'a/b')).toEqual(['ab']);
+    expect(tokenForms('hbo', '')).toEqual([]);
+    expect(tokenForms('hbo', '/׃')).toEqual([]);
   });
 });

@@ -55,6 +55,12 @@ describe('openCorpus on the fixture corpus', () => {
     await expect(corpus.findWord('grc-none', 'MT', 1, 1, 'x')).rejects.toThrow(CorpusError);
   });
 
+  it('rejects leading zeros instead of silently finding nothing', async () => {
+    await expect(corpus.getVerse('grc-test', 'MT', '020', 15)).rejects.toThrow('invalid chapter: "020"');
+    await expect(corpus.findWord('grc-test', 'MT', 20, '015', 'πονηρός')).rejects.toThrow('invalid verse: "015"');
+    expect(await corpus.getVerse('grc-test', 'MT', 20, 0)).toBeUndefined();
+  });
+
   describe('Greek matching is accent- and breathing-insensitive', () => {
     it.each([
       ['πονηρός', 'surface'],
@@ -114,10 +120,43 @@ describe('openCorpus on the fixture corpus', () => {
       expect(result.matches).toHaveLength(1);
     });
 
-    it('matches unpointed lemmas', async () => {
-      const result = await corpus.findWord('hbo-test', 'GN', 1, 1, 'את', { match: 'lemma' });
-      expect(result.matches.map((m) => m.index)).toEqual([3, 5]);
-      expect((await corpus.findWord('hbo-test', 'GN', 1, 1, 'ארץ', { match: 'lemma' })).matches).toHaveLength(1);
+    describe('OSHB "/" morpheme segmentation', () => {
+      const surface = { match: 'surface' } as const;
+      const indexes = async (book: string, c: number, v: number, word: string, match: 'surface' | 'lemma') =>
+        (await corpus.findWord('hbo-test', book, c, v, word, { match })).matches.map((m) => m.index);
+
+      it('matches a word without its attached prefixes (the bare word)', async () => {
+        expect(await indexes('GN', 1, 1, 'שמים', 'surface')).toEqual([4]);
+        expect(await indexes('GN', 1, 1, 'שָׁמַיִם', 'surface')).toEqual([4]);
+        expect(await indexes('GN', 1, 1, 'ארץ', 'surface')).toEqual([6]);
+        expect(await indexes('GN', 1, 1, 'ראשית', 'surface')).toEqual([0]);
+        expect(await indexes('DT', 15, 9, 'רעה', 'surface')).toEqual([0]);
+        expect(await indexes('DT', 15, 9, 'רָעָה', 'surface')).toEqual([0]);
+      });
+
+      it('matches the whole word, with or without the separator, and prefix runs', async () => {
+        expect(await indexes('GN', 1, 1, 'השמים', 'surface')).toEqual([4]);
+        expect(await indexes('GN', 1, 1, 'הַ/שָּׁמַיִם', 'surface')).toEqual([4]);
+        expect(await indexes('DT', 15, 9, 'ורעה', 'surface')).toEqual([0]);
+        expect(await indexes('GN', 1, 1, 'את', 'surface')).toEqual([3, 5]);
+        expect(await indexes('GN', 1, 1, 'ו', 'surface')).toEqual([5]);
+      });
+
+      it('does not match a partial segment', async () => {
+        expect(await indexes('GN', 1, 1, 'מים', 'surface')).toEqual([]);
+        expect(await indexes('DT', 15, 9, 'ורע', 'surface')).toEqual([]);
+      });
+
+      it("matches OSHB Strong's lemmas with or without their prefix codes", async () => {
+        expect(await indexes('GN', 1, 1, '8064', 'lemma')).toEqual([4]);
+        expect(await indexes('GN', 1, 1, 'd/8064', 'lemma')).toEqual([4]);
+        expect(await indexes('GN', 1, 1, '853', 'lemma')).toEqual([3, 5]);
+        expect(await indexes('GN', 1, 1, '1254 a', 'lemma')).toEqual([1]);
+        expect(await indexes('DT', 15, 9, '7489', 'lemma')).toEqual([0]);
+        expect(await indexes('DT', 15, 9, 'רעה', 'lemma')).toEqual([]);
+        expect((await corpus.findWord('hbo-test', 'DT', 15, 9, 'רעה')).matches).toHaveLength(1);
+        expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, 'שמים ואת ארץ', surface)).toBe(true);
+      });
     });
 
     it('treats maqaf as a word break in phrases', async () => {
@@ -135,6 +174,7 @@ describe('openCorpus on the fixture corpus', () => {
       expect((await corpus.findWord('lat-test', 'JN', 1, 1, 'aeternus', { match: 'surface' })).matches).toHaveLength(1);
       expect((await corpus.findWord('lat-test', 'JN', 1, 1, 'dixit')).matches).toHaveLength(1);
       expect(await corpus.phraseOccurs('lat-test', 'JN', 1, 1, 'Jesus æternus')).toBe(true);
+      expect((await corpus.findWord('lat-test', 'JN', 1, 1, 'ǽternus')).matches).toHaveLength(1);
     });
   });
 });

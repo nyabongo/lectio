@@ -19,7 +19,10 @@ function tidy(text: string): string {
   return text.replace(SPACES, ' ').trim();
 }
 
-/** Greek: NFD, strip accents and breathings, lower-case, final sigma to σ, strip punctuation and elision marks. */
+/**
+ * Greek: NFD, strip accents and breathings, lower-case, final and lunate sigma to σ, strip punctuation and elision
+ * marks.
+ */
 export function normaliseGreek(text: string): string {
   return tidy(
     text
@@ -28,7 +31,7 @@ export function normaliseGreek(text: string): string {
       .replace(GREEK_ELISION, '')
       .replace(PUNCTUATION, '')
       .toLowerCase()
-      .replace(/ς/gu, 'σ'),
+      .replace(/[ςϲ]/gu, 'σ'),
   );
 }
 
@@ -48,15 +51,15 @@ export function normaliseHebrew(text: string): string {
   );
 }
 
-/** Latin: lower-case, strip diacritics, j→i, æ→ae, œ→oe, strip punctuation. */
+/** Latin: lower-case, strip diacritics, æ/ǽ→ae, œ→oe, j→i, strip punctuation. */
 export function normaliseLatin(text: string): string {
   return tidy(
     text
       .toLowerCase()
-      .replace(/æ/gu, 'ae')
-      .replace(/œ/gu, 'oe')
       .normalize('NFD')
       .replace(MARKS, '')
+      .replace(/æ/gu, 'ae')
+      .replace(/œ/gu, 'oe')
       .replace(PUNCTUATION, '')
       .replace(/j/gu, 'i'),
   );
@@ -76,8 +79,28 @@ export function normaliserFor(language: Language): (text: string) => string {
 }
 
 /**
+ * The normalised forms a corpus token (surface or lemma) matches. Hebrew and Aramaic editions such as OSHB mark
+ * morpheme boundaries with "/" (`הַ/שָּׁמַ֖יִם`, lemma `d/8064`): the token matches every contiguous run of its
+ * segments, so the whole word (`השמים`), the bare word without its prefixes (`שמים`, `8064`) and any prefix run all
+ * match. Other languages have one form: the whole normalised token. An empty token matches nothing.
+ */
+export function tokenForms(language: Language, text: string): string[] {
+  const normalise = normaliserFor(language);
+  const raw = language === 'hbo' || language === 'arc' ? text.split('/') : [text];
+  const segments = raw.map((part) => normalise(part)).filter((part) => part !== '');
+  const forms: string[] = [];
+  for (let start = 0; start < segments.length; start += 1) {
+    for (let end = start + 1; end <= segments.length; end += 1) {
+      forms.push(segments.slice(start, end).join(''));
+    }
+  }
+  return forms;
+}
+
+/**
  * Splits a phrase into normalised words at whitespace and at the Hebrew maqaf, which joins words in writing but
- * separates tokens in the corpus. (A "/" morpheme separator inside a word is punctuation and is stripped.)
+ * separates tokens in the corpus. A "/" morpheme separator inside a query word is stripped, so the word compares
+ * as a whole.
  */
 export function phraseWords(language: Language, phrase: string): string[] {
   const normalise = normaliserFor(language);

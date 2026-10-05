@@ -15,7 +15,7 @@ import {
   SOURCE_FILE,
 } from './format.ts';
 import type { ChapterVerses, SourceInfo, Token } from './format.ts';
-import { normaliserFor, phraseWords } from './normalise.ts';
+import { normaliserFor, phraseWords, tokenForms } from './normalise.ts';
 
 export type MatchMode = 'surface' | 'lemma' | 'either';
 
@@ -156,7 +156,7 @@ export function openCorpus(root: string, options: OpenCorpusOptions = {}): Corpu
     return [...(verses[v] as readonly Token[])];
   }
 
-  /** Normalised [surface, lemma] of each token, plus a predicate for one query word against one token. */
+  /** The forms each token matches (see tokenForms), plus a predicate for one query word against one token. */
   async function prepare(
     edition: string,
     book: string,
@@ -168,12 +168,12 @@ export function openCorpus(root: string, options: OpenCorpusOptions = {}): Corpu
     const { language } = await source(edition);
     const normalise = normaliserFor(language);
     const mode = options.match ?? 'either';
-    const forms = (tokens ?? []).map(([surface, lemma]) => [normalise(surface), normalise(lemma)] as const);
+    const forms = (tokens ?? []).map(
+      ([surface, lemma]) => [new Set(tokenForms(language, surface)), new Set(tokenForms(language, lemma))] as const,
+    );
     const matches = (index: number, word: string): boolean => {
-      const [surface, lemma] = forms[index] as readonly [string, string];
-      const bySurface = mode !== 'lemma' && surface === word;
-      const byLemma = mode !== 'surface' && lemma !== '' && lemma === word;
-      return bySurface || byLemma;
+      const [surface, lemma] = forms[index] as readonly [Set<string>, Set<string>];
+      return (mode !== 'lemma' && surface.has(word)) || (mode !== 'surface' && lemma.has(word));
     };
     return { tokens, language, normalise, matches };
   }
