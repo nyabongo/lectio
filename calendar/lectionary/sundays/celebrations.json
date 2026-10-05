@@ -1,0 +1,1773 @@
+{
+  "$comment": "Sundays block (L-065), solemnities and feasts of the Lord in the proper of time, including the Triduum and the Easter Vigil, keyed by Lectio celebration id. Year A and the readings that are the same every year are imported from LitCal (import/litcal/sundays-celebrations.json). PalmSun, EasterVigil and MaryMotherOfGod were converted from the same pinned LitCal files by the same rules as the importer, which cannot read them: the procession gospel is the `procession` Mass; the Vigil readings use reading-1…7/psalm-1…7, `epistle`, and psalm-8 for the psalm after the epistle; the Mary, Mother of God psalm comes from OLM 1981 because LitCal's \"Psalm 66 (67)\" does not parse. Three LitCal refs known to be wrong are replaced by the OLM citation (OLM source), and the LitCal form is kept as their cross-check entry: Easter Vigil reading 6 (LitCal Bar 3:9-15, 32; 4:4), the 2nd Sunday after Christmas first reading (LitCal Sir 24:1-4, 12-16) and the Christ the King C psalm (LitCal Ps 122:1-3, ...). Everything LitCal lacks (most of Years B and C) is filled from the OLM 1981 structure, cited by OLM lectionary number. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "kind": "celebrations",
+  "entries": [
+    {
+      "key": "ascension-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Acts 1:1-11",
+              "printed": "Acts 1:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Ascension",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Acts 1:1-11",
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Acts 1:1-11",
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 47:2-3, 6-7, 8-9",
+              "printed": "Psalm 47:2-3, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Ascension",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 47:2-3, 6-7, 8-9",
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 47:2-3, 6-7, 8-9",
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Eph 1:17-23",
+              "printed": "Ephesians 1:17-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Ascension",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Eph 1:17-23",
+              "alternatives": [
+                {
+                  "ref": "Eph 4:1-13"
+                },
+                {
+                  "ref": "Eph 4:1-7, 11-13"
+                }
+              ],
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Eph 1:17-23",
+              "alternatives": [
+                {
+                  "ref": "Heb 9:24-28; 10:19-23"
+                }
+              ],
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 28:16-20",
+              "printed": "Matthew 28:16-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Ascension",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 16:15-20",
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 24:46-53",
+              "source": "olm-1981 p?#58",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "baptism-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Is 42:1-4, 6-7",
+              "printed": "Isaiah 42:1-4, 6-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#BaptismLord",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Is 42:1-4, 6-7",
+              "alternatives": [
+                {
+                  "ref": "Is 55:1-11"
+                }
+              ],
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Is 42:1-4, 6-7",
+              "alternatives": [
+                {
+                  "ref": "Is 40:1-5, 9-11"
+                }
+              ],
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 29:1-2, 3-4, 3, 9-10",
+              "printed": "Psalm 29:1-2, 3-4, 3, 9-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#BaptismLord",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 29:1-2, 3-4, 3, 9-10",
+              "alternatives": [
+                {
+                  "ref": "Is 12:2-3, 4, 5-6"
+                }
+              ],
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 29:1-2, 3-4, 3, 9-10",
+              "alternatives": [
+                {
+                  "ref": "Ps 104:1-2, 3-4, 24-25, 27-28, 29-30"
+                }
+              ],
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Acts 10:34-38",
+              "printed": "Acts 10:34-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#BaptismLord",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Acts 10:34-38",
+              "alternatives": [
+                {
+                  "ref": "1 Jn 5:1-9"
+                }
+              ],
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Acts 10:34-38",
+              "alternatives": [
+                {
+                  "ref": "Ti 2:11-14; 3:4-7"
+                }
+              ],
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 3:13-17",
+              "printed": "Matthew 3:13-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#BaptismLord",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 1:7-11",
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 3:15-16, 21-22",
+              "source": "olm-1981 p?#21",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-sunday",
+      "masses": [
+        {
+          "id": "easter-vigil",
+          "label": "Easter Vigil in the Holy Night",
+          "readings": [
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 28:1-10",
+              "printed": "Matthew 28:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 16:1-7",
+              "printed": "Mark 16:1-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_B/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 24:1-12",
+              "printed": "Luke 24:1-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-1",
+              "ref": "Gn 1:1-2:2",
+              "printed": "Genesis 1:1-2:2",
+              "alternatives": [
+                {
+                  "ref": "Gn 1:1, 26-31",
+                  "printed": "Genesis 1:1,26-31a"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-2",
+              "ref": "Gn 22:1-18",
+              "printed": "Genesis 22:1-18",
+              "alternatives": [
+                {
+                  "ref": "Gn 22:1-2, 9, 10-13, 15-18",
+                  "printed": "Genesis 22:1-2,9,10-13,15-18"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-3",
+              "ref": "Ex 14:15-15:1",
+              "printed": "Exodus 14:15-15:1",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-4",
+              "ref": "Is 54:5-14",
+              "printed": "Isaiah 54:5-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-5",
+              "ref": "Is 55:1-11",
+              "printed": "Isaiah 55:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-6",
+              "ref": "Bar 3:9-15, 32-4:4",
+              "source": "olm-1981 p?#41",
+              "status": "provisional"
+            },
+            {
+              "slot": "reading-7",
+              "ref": "Ez 36:16-17, 18-28",
+              "printed": "Ezekiel 36:16-17,18-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-1",
+              "ref": "Ps 104:1-2, 5-6, 10, 12, 13-14, 24, 35",
+              "printed": "Psalm 104:1-2,5-6,10,12,13-14,24,35",
+              "alternatives": [
+                {
+                  "ref": "Ps 33:4-5, 6-7, 12-13, 20, 22",
+                  "printed": "Psalm 33:4-5,6-7,12-13,20,22"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-2",
+              "ref": "Ps 16:5, 8, 9-10, 11",
+              "printed": "Psalm 16:5,8,9-10,11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-3",
+              "ref": "Ex 15:1-2, 3-4, 5-6, 17-18",
+              "printed": "Exodus 15:1-2,3-4,5-6,17-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-4",
+              "ref": "Ps 30:2, 4, 5-6, 11-12, 13",
+              "printed": "Psalm 30:2,4,5-6,11-12,13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-5",
+              "ref": "Is 12:2-3, 4, 5-6",
+              "printed": "Isaiah 12:2-3,4,5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-6",
+              "ref": "Ps 19:8, 9, 10, 11",
+              "printed": "Psalm 19:8,9,10,11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-7",
+              "ref": "Ps 42:3, 5; 43:3, 4",
+              "printed": "Psalm 42:3,5;43:3,4",
+              "alternatives": [
+                {
+                  "ref": "Is 12:2-3, 4, 5-6",
+                  "printed": "Isaiah 12:2-3,4,5-6"
+                },
+                {
+                  "ref": "Ps 51:12-13, 14-15, 18-19",
+                  "printed": "Psalm 51:12-13,14-15,18-19"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm-8",
+              "ref": "Ps 118:1-2, 16-17, 22-23",
+              "printed": "Psalm 118:1-2,16-17,22-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "epistle",
+              "ref": "Rom 6:3-11",
+              "printed": "Romans 6:3-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#EasterVigil",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Acts 10:34, 37-43",
+              "printed": "Acts 10:34a, 37-43",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Acts 10:34, 37-43",
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Acts 10:34, 37-43",
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 118:1-2, 16-17, 22-23",
+              "printed": "Psalm 118:1-2, 16-17, 22-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 118:1-2, 16-17, 22-23",
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 118:1-2, 16-17, 22-23",
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Col 3:1-4",
+              "printed": "Colossians 3:1-4",
+              "alternatives": [
+                {
+                  "ref": "1 Cor 5:6-8",
+                  "printed": "1 Corinthians 5:6b-8"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Col 3:1-4",
+              "alternatives": [
+                {
+                  "ref": "1 Cor 5:6-8"
+                }
+              ],
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Col 3:1-4",
+              "alternatives": [
+                {
+                  "ref": "1 Cor 5:6-8"
+                }
+              ],
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Jn 20:1-9",
+              "printed": "John 20:1-9",
+              "alternatives": [
+                {
+                  "ref": "Mt 28:1-10",
+                  "printed": "Matthew 28:1-10"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Jn 20:1-9",
+              "alternatives": [
+                {
+                  "ref": "Mk 16:1-7"
+                }
+              ],
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Jn 20:1-9",
+              "alternatives": [
+                {
+                  "ref": "Lk 24:1-12"
+                }
+              ],
+              "source": "olm-1981 p?#42",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "evening",
+          "label": "Evening Mass",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 10:34, 37-43",
+              "printed": "Acts 10:34a, 37-43",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.evening",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 118:1-2, 16-17, 22-23",
+              "printed": "Psalm 118:1-2, 16-17, 22-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.evening",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Col 3:1-4",
+              "printed": "Colossians 3:1-4",
+              "alternatives": [
+                {
+                  "ref": "1 Cor 5:6-8",
+                  "printed": "1 Corinthians 5:6b-8"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.evening",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 24:13-35",
+              "printed": "Luke 24:13-35",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Easter.evening",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "epiphany-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 60:1-6",
+              "printed": "Isaiah 60:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Epiphany",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 7-8, 10-11, 12-13",
+              "printed": "Psalm 72:1-2, 7-8, 10-11, 12-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Epiphany",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Eph 3:2-3, 5-6",
+              "printed": "Ephesians 3:2-3a, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Epiphany",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 2:1-12",
+              "printed": "Matthew 2:1-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Epiphany",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "friday-of-the-passion-of-the-lord",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 52:13-53:12",
+              "printed": "Isaiah 52:13-53:12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#GoodFri",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 31:2, 6, 12-13, 15-16, 17, 25",
+              "printed": "Psalm 31:2, 6, 12-13, 15-16, 17, 25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#GoodFri",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 4:14-16; 5:7-9",
+              "printed": "Hebrews 4:14-16; 5:7-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#GoodFri",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 18:1-19:42",
+              "printed": "John 18:1-19:42",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#GoodFri",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Sir 3:2-6, 12-14",
+              "printed": "Sirach 3:2-6, 12-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyFamily",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Sir 3:2-6, 12-14",
+              "alternatives": [
+                {
+                  "ref": "Gn 15:1-6; 21:1-3"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Sir 3:2-6, 12-14",
+              "alternatives": [
+                {
+                  "ref": "1 Sm 1:20-22, 24-28"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 128:1-2, 3, 4-5",
+              "printed": "Psalm 128:1-2, 3, 4-5",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyFamily",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 128:1-2, 3, 4-5",
+              "alternatives": [
+                {
+                  "ref": "Ps 105:1-2, 3-4, 5-6, 8-9"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 128:1-2, 3, 4-5",
+              "alternatives": [
+                {
+                  "ref": "Ps 84:2-3, 5-6, 9-10"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Col 3:12-21",
+              "printed": "Colossians 3:12-21",
+              "alternatives": [
+                {
+                  "ref": "Col 3:12-17",
+                  "printed": "Colossians 3:12-17"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyFamily",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Col 3:12-21",
+              "alternatives": [
+                {
+                  "ref": "Col 3:12-17"
+                },
+                {
+                  "ref": "Heb 11:8, 11-12, 17-19"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Col 3:12-21",
+              "alternatives": [
+                {
+                  "ref": "Col 3:12-17"
+                },
+                {
+                  "ref": "1 Jn 3:1-2, 21-24"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 2:13-15, 19-23",
+              "printed": "Matthew 2:13-15, 19-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyFamily",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Lk 2:22-40",
+              "alternatives": [
+                {
+                  "ref": "Lk 2:22, 39-40"
+                }
+              ],
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 2:41-52",
+              "source": "olm-1981 p?#17",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mary-mother-of-god",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 6:22-27",
+              "printed": "Numbers 6:22-27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#MaryMotherOfGod",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 67:2-3, 5, 6, 8",
+              "source": "olm-1981 p?#18",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Gal 4:4-7",
+              "printed": "Galatians 4:4-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#MaryMotherOfGod",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:16-21",
+              "printed": "Luke 2:16-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#MaryMotherOfGod",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "most-holy-body-and-blood-of-christ",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Dt 8:2-3, 14-16",
+              "printed": "Deuteronomy 8:2-3, 14b-16a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#CorpusChristi",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Ex 24:3-8",
+              "source": "olm-1981 p?#168",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Gn 14:18-20",
+              "source": "olm-1981 p?#169",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 147:12-13, 14-15, 19-20",
+              "printed": "Psalm 147:12-13, 14-15, 19-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#CorpusChristi",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 116:12-13, 15-16, 17-18",
+              "source": "olm-1981 p?#168",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 110:1, 2, 3, 4",
+              "source": "olm-1981 p?#169",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "1 Cor 10:16-17",
+              "printed": "1 Corinthians 10:16-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#CorpusChristi",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Heb 9:11-15",
+              "source": "olm-1981 p?#168",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "1 Cor 11:23-26",
+              "source": "olm-1981 p?#169",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Jn 6:51-58",
+              "printed": "John 6:51-58",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#CorpusChristi",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 14:12-16, 22-26",
+              "source": "olm-1981 p?#168",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 9:11-17",
+              "source": "olm-1981 p?#169",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "most-holy-trinity",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Ex 34:4-6, 8-9",
+              "printed": "Exodus 34:4b-6, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Trinity",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Dt 4:32-34, 39-40",
+              "source": "olm-1981 p?#165",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Prv 8:22-31",
+              "source": "olm-1981 p?#166",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Dn 3:52, 53, 54, 55, 56",
+              "printed": "Daniel 3:52, 53, 54, 55, 56",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Trinity",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 33:4-5, 6, 9, 18-19, 20, 22",
+              "source": "olm-1981 p?#165",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 8:4-5, 6-7, 8-9",
+              "source": "olm-1981 p?#166",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "2 Cor 13:11-13",
+              "printed": "2 Corinthians 13:11-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Trinity",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Rom 8:14-17",
+              "source": "olm-1981 p?#165",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Rom 5:1-5",
+              "source": "olm-1981 p?#166",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Jn 3:16-18",
+              "printed": "John 3:16-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Trinity",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mt 28:16-20",
+              "source": "olm-1981 p?#165",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Jn 16:12-15",
+              "source": "olm-1981 p?#166",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "most-sacred-heart-of-jesus",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Dt 7:6-11",
+              "printed": "Deuteronomy 7:6-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#SacredHeart",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Hos 11:1, 3-4, 8-9",
+              "source": "olm-1981 p?#171",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Ez 34:11-16",
+              "source": "olm-1981 p?#172",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 103:1-2, 3-4, 6-7, 8, 10",
+              "printed": "Psalm 103:1-2, 3-4, 6-7, 8, 10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#SacredHeart",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Is 12:2-3, 4, 5-6",
+              "source": "olm-1981 p?#171",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 23:1-3, 3-4, 5, 6",
+              "source": "olm-1981 p?#172",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "1 Jn 4:7-16",
+              "printed": "1 John 4:7-16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#SacredHeart",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Eph 3:8-12, 14-19",
+              "source": "olm-1981 p?#171",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Rom 5:5-11",
+              "source": "olm-1981 p?#172",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 11:25-30",
+              "printed": "Matthew 11:25-30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#SacredHeart",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Jn 19:31-37",
+              "source": "olm-1981 p?#171",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 15:3-7",
+              "source": "olm-1981 p?#172",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "nativity-of-the-lord",
+      "masses": [
+        {
+          "id": "vigil",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 62:1-5",
+              "printed": "Isaiah 62:1-5",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 89:4-5, 16-17, 27, 29",
+              "printed": "Psalm 89:4-5, 16-17, 27, 29",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Acts 13:16-17, 22-25",
+              "printed": "Acts 13:16-17, 22-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:1-25",
+              "printed": "Matthew 1:1-25",
+              "alternatives": [
+                {
+                  "ref": "Mt 1:18-25",
+                  "printed": "Matthew 1:18-25"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.vigil",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "night",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 9:1-6",
+              "printed": "Isaiah 9:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.night",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 2-3, 11-12, 13",
+              "printed": "Psalm 96:1-2, 2-3, 11-12, 13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.night",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Ti 2:11-14",
+              "printed": "Titus 2:11-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.night",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:1-14",
+              "printed": "Luke 2:1-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.night",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "dawn",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 62:11-12",
+              "printed": "Isaiah 62:11-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.dawn",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 97:1, 6, 11-12",
+              "printed": "Psalm 97:1, 6, 11-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.dawn",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Ti 3:4-7",
+              "printed": "Titus 3:4-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.dawn",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:15-20",
+              "printed": "Luke 2:15-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.dawn",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 52:7-10",
+              "printed": "Isaiah 52:7-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4, 5-6",
+              "printed": "Psalm 98:1, 2-3, 3-4, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 1:1-6",
+              "printed": "Hebrews 1:1-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:1-18",
+              "printed": "John 1:1-18",
+              "alternatives": [
+                {
+                  "ref": "Jn 1:1-5, 9-14",
+                  "printed": "John 1:1-5, 9-14"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas.day",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Ez 34:11-12, 15-17",
+              "printed": "Ezekiel 34:11-12, 15-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#ChristKing",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Dn 7:13-14",
+              "source": "olm-1981 p?#161",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "2 Sm 5:1-3",
+              "printed": "2 Samuel 5:1-3",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#ChristKing",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 23:1-2, 2-3, 5-6",
+              "printed": "Psalm 23:1-2, 2-3, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#ChristKing",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 93:1, 1-2, 5",
+              "source": "olm-1981 p?#161",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 122:1-2, 3-4, 4-5",
+              "source": "olm-1981 p?#162",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "1 Cor 15:20-26, 28",
+              "printed": "1 Corinthians 15:20-26, 28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#ChristKing",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Rv 1:5-8",
+              "source": "olm-1981 p?#161",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Col 1:12-20",
+              "printed": "Colossians 1:12-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#ChristKing",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 25:31-46",
+              "printed": "Matthew 25:31-46",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#ChristKing",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Jn 18:33-37",
+              "source": "olm-1981 p?#161",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 23:35-43",
+              "printed": "Luke 23:35-43",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_C/en.json#ChristKing",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "palm-sunday-of-the-passion-of-the-lord",
+      "masses": [
+        {
+          "id": "procession",
+          "label": "Commemoration of the Lord’s Entrance into Jerusalem",
+          "readings": [
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 21:1-11",
+              "printed": "Matthew 21:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#PalmSun",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 11:1-10",
+              "alternatives": [
+                {
+                  "ref": "Jn 12:12-16"
+                }
+              ],
+              "source": "olm-1981 p?#37",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 19:28-40",
+              "source": "olm-1981 p?#37",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Is 50:4-7",
+              "printed": "Isaiah 50:4-7",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#PalmSun",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Is 50:4-7",
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Is 50:4-7",
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 22:8-9, 17-18, 19-20, 23-24",
+              "printed": "Psalm 22:8-9, 17-18, 19-20, 23-24",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#PalmSun",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 22:8-9, 17-18, 19-20, 23-24",
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 22:8-9, 17-18, 19-20, 23-24",
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "Phil 2:6-11",
+              "printed": "Philippians 2:6-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#PalmSun",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Phil 2:6-11",
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "Phil 2:6-11",
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 26:14-27:66",
+              "printed": "Matthew 26:14-27:66",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#PalmSun",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 14:1-15:47",
+              "alternatives": [
+                {
+                  "ref": "Mk 15:1-39"
+                }
+              ],
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 22:14-23:56",
+              "alternatives": [
+                {
+                  "ref": "Lk 23:1-49"
+                }
+              ],
+              "source": "olm-1981 p?#38",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "pentecost-sunday",
+      "masses": [
+        {
+          "id": "vigil",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 11:1-9",
+              "printed": "Genesis 11:1-9",
+              "alternatives": [
+                {
+                  "ref": "Ex 19:3-8, 16-20",
+                  "printed": "Exodus 19:3-8a, 16-20b"
+                },
+                {
+                  "ref": "Ez 37:1-14",
+                  "printed": "Ezekiel 37:1-14"
+                },
+                {
+                  "ref": "Jl 3:1-5",
+                  "printed": "Joel 3:1-5"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 104:1-2, 24, 35, 27-28, 29, 30",
+              "printed": "Psalm 104:1-2, 24, 35, 27-28, 29, 30",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Rom 8:22-27",
+              "printed": "Romans 8:22-27",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.vigil",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 7:37-39",
+              "printed": "John 7:37-39",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.vigil",
+              "status": "provisional"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Acts 2:1-11",
+              "printed": "Acts 2:1-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Acts 2:1-11",
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Acts 2:1-11",
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "A",
+              "ref": "Ps 104:1, 24, 29-30, 31, 34",
+              "printed": "Psalm 104:1, 24, 29-30, 31, 34",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 104:1, 24, 29-30, 31, 34",
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 104:1, 24, 29-30, 31, 34",
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "A",
+              "ref": "1 Cor 12:3-7, 12-13",
+              "printed": "1 Corinthians 12:3b-7, 12-13",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "1 Cor 12:3-7, 12-13",
+              "alternatives": [
+                {
+                  "ref": "Gal 5:16-25"
+                }
+              ],
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "1 Cor 12:3-7, 12-13",
+              "alternatives": [
+                {
+                  "ref": "Rom 8:8-17"
+                }
+              ],
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Jn 20:19-23",
+              "printed": "John 20:19-23",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Pentecost.day",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Jn 20:19-23",
+              "alternatives": [
+                {
+                  "ref": "Jn 15:26-27; 16:12-15"
+                }
+              ],
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Jn 20:19-23",
+              "alternatives": [
+                {
+                  "ref": "Jn 14:15-16, 23-26"
+                }
+              ],
+              "source": "olm-1981 p?#63",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "second-sunday-after-christmas",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Sir 24:1-2, 8-12",
+              "source": "olm-1981 p?#19",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 147:12-13, 14-15, 19-20",
+              "printed": "Psalm 147:12-13, 14-15, 19-20",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas2",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Eph 1:3-6, 15-18",
+              "printed": "Ephesians 1:3-6, 15-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas2",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:1-18",
+              "printed": "John 1:1-18",
+              "alternatives": [
+                {
+                  "ref": "Jn 1:1-5, 9-14",
+                  "printed": "John 1:1-5, 9-14"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#Christmas2",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thursday-of-the-lords-supper",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ex 12:1-8, 11-14",
+              "printed": "Exodus 12:1-8, 11-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyThurs",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 116:12-13, 15-16, 17-18",
+              "printed": "Psalm 116:12-13, 15-16bc, 17-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyThurs",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Cor 11:23-26",
+              "printed": "1 Corinthians 11:23-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyThurs",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 13:1-15",
+              "printed": "John 13:1-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#HolyThurs",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
