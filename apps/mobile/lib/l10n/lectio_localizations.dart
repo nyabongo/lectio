@@ -65,7 +65,7 @@ class LectioLocalizations {
   static final Map<String, LectioLocalizations> _cache = {};
 
   /// The English strings.
-  static LectioLocalizations get en => LectioLocalizations.forLanguage('en');
+  static final LectioLocalizations en = LectioLocalizations.forLanguage('en');
 
   /// Loads the strings for `MaterialApp.locale`.
   static const LocalizationsDelegate<LectioLocalizations> delegate =

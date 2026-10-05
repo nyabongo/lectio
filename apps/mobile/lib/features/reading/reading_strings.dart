@@ -17,7 +17,7 @@ class ReadingStrings {
   }
 
   /// The English strings.
-  static ReadingStrings get en => ReadingStrings(LectioLocalizations.en);
+  static final ReadingStrings en = ReadingStrings(LectioLocalizations.en);
 
   final LectioLocalizations _l10n;
 

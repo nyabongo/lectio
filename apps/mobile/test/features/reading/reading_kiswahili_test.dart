@@ -14,8 +14,7 @@ const String swSeedDayPath = 'sw/$seedDayPath';
 /// Semantics widgets that mark their subtree as English.
 Finder markedEnglish() => find.byWidgetPredicate(
   (widget) =>
-      widget is Semantics &&
-      widget.properties.localeForSubtree == const Locale('en'),
+      widget is Semantics && widget.localeForSubtree == const Locale('en'),
 );
 
 void main() {
@@ -29,13 +28,11 @@ void main() {
       ReadingScope(
         repository: harness.repository,
         launchLink: harness.launch,
-        child: MaterialApp(
-          locale: const Locale('sw'),
+        child: const MaterialApp(
+          locale: Locale('sw'),
           supportedLocales: supportedLocales,
           localizationsDelegates: lectioLocalizationsDelegates,
-          home: const Scaffold(
-            body: ReadingScreen(date: seedDate, slot: 'gospel'),
-          ),
+          home: Scaffold(body: ReadingScreen(date: seedDate, slot: 'gospel')),
         ),
       ),
     );

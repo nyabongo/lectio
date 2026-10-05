@@ -28,8 +28,7 @@ String dayWithNames({String swStatus = 'provisional'}) {
 /// Semantics widgets that mark their subtree as English.
 Finder markedEnglish() => find.byWidgetPredicate(
   (widget) =>
-      widget is Semantics &&
-      widget.properties.localeForSubtree == const Locale('en'),
+      widget is Semantics && widget.localeForSubtree == const Locale('en'),
 );
 
 void main() {

@@ -37,7 +37,7 @@ class ReminderStrings {
   }
 
   /// The English strings.
-  static ReminderStrings get en => ReminderStrings.forLanguage(AppLanguage.en);
+  static final ReminderStrings en = ReminderStrings.forLanguage(AppLanguage.en);
 
   final LectioLocalizations _l10n;
 

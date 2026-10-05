@@ -15,7 +15,7 @@ class TodayStrings {
   }
 
   /// The English strings.
-  static TodayStrings get en => TodayStrings(LectioLocalizations.en);
+  static final TodayStrings en = TodayStrings(LectioLocalizations.en);
 
   final LectioLocalizations _l10n;
 

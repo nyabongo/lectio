@@ -15,8 +15,7 @@ Widget inApp(String language, Widget child) {
 
 /// Semantics widgets that set a locale for their subtree.
 Finder localeMarks(Locale locale) => find.byWidgetPredicate(
-  (widget) =>
-      widget is Semantics && widget.properties.localeForSubtree == locale,
+  (widget) => widget is Semantics && widget.localeForSubtree == locale,
 );
 
 void main() {
