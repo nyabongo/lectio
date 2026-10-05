@@ -1,0 +1,10 @@
+{
+  "name": "Greek test edition (fragment of the SBL Greek New Testament)",
+  "language": "grc",
+  "upstreamUrl": "https://example.test/grc-test.tar.gz",
+  "version": "fixture-1",
+  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "licence": "CC-BY-4.0",
+  "attribution": "Fragment of the SBL Greek New Testament.\nCopyright 2010 Society of Biblical Literature and Logos Bible Software.",
+  "versification": "NABRE"
+}
