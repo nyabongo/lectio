@@ -253,6 +253,14 @@ describe('runRender', () => {
     expect(manifest.entries).toEqual({});
   });
 
+  it('falls back to the system clock when the context has none', async () => {
+    // An empty manifest leaves the whole budget whatever the date, so the result does not depend on it.
+    const { out, io } = capture();
+    const code = await runRender(['--storage', 'memory', '--dry-run'], { cwd: dir, env, io });
+    expect(code).toBe(0);
+    expect(out.filter((line) => line.startsWith('  would render audio/en/'))).toHaveLength(3);
+  });
+
   it('stops before rendering when the month budget is spent', async () => {
     await writeConfig(10);
     const result = await run(['--storage', 'memory']);
