@@ -103,6 +103,22 @@ describe('runGates', () => {
     ]);
   });
 
+  it('fails a skipped result that carries findings instead of hiding them', async () => {
+    const rule = defineRule('lazy/rule', 'Holds.', 'Fix.');
+    const lazy = gate(
+      'lazy',
+      () => ({ gate: 'lazy', status: 'skipped', items: [finding(rule, { message: 'real error' })], meta: {} }),
+      [rule],
+    );
+    const report = await runGates([lazy, passingGate], context());
+    expect(report.status).toBe('fail');
+    expect(report.results[0]?.status).toBe('fail');
+    expect(report.results[0]?.items.map((item) => [item.ruleId, item.message])).toEqual([
+      ['lazy/rule', 'real error'],
+      [RUNNER_RULES.invalidResult.id, 'lazy reported 1 findings but status skipped'],
+    ]);
+  });
+
   it('fails a gate that reports an undeclared rule, once per rule', async () => {
     const declared = defineRule('strict/known', 'Known.', 'Fix.');
     const undeclared = defineRule('strict/unknown', 'Unknown.', 'Fix.');
