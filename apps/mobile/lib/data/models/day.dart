@@ -161,6 +161,7 @@ class LiturgicalDay<R> {
     required this.celebrations,
     required this.lectionaryMissing,
     required this.masses,
+    this.noMass = false,
   });
 
   /// Reads a day object, each reading read by [reading].
@@ -176,6 +177,7 @@ class LiturgicalDay<R> {
       celebrations: object.list('celebrations', Celebration.fromJson),
       lectionaryMissing: object.boolean('lectionaryMissing'),
       masses: object.list('masses', (mass) => Mass.fromJson(mass, reading)),
+      noMass: object.optionalBoolean('noMass') ?? false,
     );
   }
 
@@ -205,6 +207,11 @@ class LiturgicalDay<R> {
 
   /// Masses, each with its readings.
   final List<Mass<R>> masses;
+
+  /// Whether the day has no Mass at all (Holy Saturday: the Easter Vigil
+  /// belongs to Easter Sunday). Its empty [masses] are then not missing data.
+  /// Absent from the API on every other day.
+  final bool noMass;
 
   /// [colour] as a theme colour (green when unknown).
   LiturgicalColour get liturgicalColour => parseLiturgicalColour(colour);

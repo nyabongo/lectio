@@ -47,6 +47,9 @@ extension JsonRead on JsonObject {
   /// The boolean at [field].
   bool boolean(String field) => _read<bool>(field);
 
+  /// The boolean at [field], or `null` when it is null or absent.
+  bool? optionalBoolean(String field) => _read<bool?>(field);
+
   /// The number at [field] as a double, or `null` when null or absent.
   double? optionalNumber(String field) => _read<num?>(field)?.toDouble();
 

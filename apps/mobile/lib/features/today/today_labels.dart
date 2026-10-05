@@ -32,6 +32,11 @@ abstract final class TodayStrings {
   static const String lectionaryMissing =
       'The readings for this day are not listed yet.';
 
+  /// A day without any Mass (Holy Saturday).
+  static const String noMass =
+      'No Mass is celebrated on this day. The Easter Vigil, held after '
+      'nightfall, belongs to Easter Sunday, and its readings are listed there.';
+
   /// A date the API publishes no day document for.
   static const String emptyDay =
       'There is no calendar day for this date yet. The calendar lists every '
