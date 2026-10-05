@@ -1,0 +1,143 @@
+---
+/**
+ * One reading on a day page: its slot, its reference (linked to the Reading page when it has approved notes), the
+ * notes' summary or "Notes in preparation", and the "Text ↗" link-out, which opens the licensed text in a new tab
+ * and tells screen readers which reference, which source and that it opens a new tab. Built by `readingView` in
+ * src/lib/day.ts.
+ */
+import type { ReadingView } from '../../lib/day.ts';
+
+export interface Props {
+  reading: ReadingView;
+  /** Heading level of the reference: 3 under the Readings heading, 4 under a Mass label. */
+  level?: 3 | 4;
+}
+
+const { reading, level = 3 } = Astro.props;
+const Heading = level === 4 ? 'h4' : 'h3';
+---
+
+<li class:list={['reading', { 'reading--linked': reading.href !== null }]}>
+  <p class="reading__slot">{reading.slotLabel}</p>
+  <Heading class="reading__ref">
+    {reading.href === null ? reading.refLabel : <a href={reading.href}>{reading.refLabel}</a>}
+  </Heading>
+  {reading.summary !== null && <p class="reading__summary">{reading.summary}</p>}
+  {reading.pending !== null && <p class="reading__pending">{reading.pending}</p>}
+  <a class="reading__text" href={reading.linkout.href} target="_blank" rel="noopener noreferrer">
+    {reading.linkout.text}<span aria-hidden="true">↗</span><span class="visually-hidden">, {reading.linkout.detail}</span>
+  </a>
+</li>
+
+<style>
+  .reading {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 0 var(--space-s);
+    padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+    transition: border-color var(--duration-quick) var(--ease-out);
+  }
+
+  .reading::before {
+    content: '';
+    position: absolute;
+    inset-block: var(--space-s);
+    inset-inline-start: 0;
+    width: var(--band-height);
+    border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    background: var(--colour-rule);
+  }
+
+  .reading--linked::before {
+    background: var(--colour-accent);
+  }
+
+  .reading--linked:hover {
+    border-color: var(--colour-accent);
+  }
+
+  .reading__slot,
+  .reading__ref,
+  .reading__summary,
+  .reading__pending {
+    grid-column: 1;
+    margin: 0;
+  }
+
+  .reading__slot {
+    font-size: var(--step--2);
+    font-weight: var(--weight-strong);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--colour-muted);
+  }
+
+  .reading__ref {
+    font-size: var(--step-2);
+    margin-block: var(--space-3xs);
+  }
+
+  .reading__ref a {
+    color: var(--colour-ink);
+    text-decoration: none;
+  }
+
+  /* The whole card opens the Reading page; the link-out stays above it. */
+  .reading__ref a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-m);
+  }
+
+  .reading__ref a:focus-visible {
+    outline: none;
+  }
+
+  .reading__ref a:focus-visible::after {
+    outline: var(--focus-width) solid var(--colour-focus);
+    outline-offset: 2px;
+  }
+
+  .reading__summary {
+    color: var(--colour-muted);
+    font-size: var(--step--1);
+    max-width: var(--measure);
+  }
+
+  .reading__pending {
+    font-size: var(--step--1);
+    font-style: italic;
+    color: var(--colour-muted);
+  }
+
+  .reading__text {
+    position: relative;
+    z-index: 1;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    min-height: var(--tap-target);
+    padding-inline: var(--space-xs);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+    background: var(--colour-bg);
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .reading__text:hover {
+    background: var(--colour-accent-wash);
+  }
+</style>

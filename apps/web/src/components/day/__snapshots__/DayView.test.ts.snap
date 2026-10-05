@@ -1,0 +1,72 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DayView > renders 2026-09-20 from the fixture content root 1`] = `
+"<article class="day" aria-labelledby="day-title">
+<header class="day__header">
+<p class="day__date">
+<time datetime="2026-09-20">Sunday 20 September 2026</time>
+</p>
+<h1 id="day-title" class="day__title">Twenty-fifth Sunday in Ordinary Time</h1>
+<p class="day__meta">
+<span class="day__rank">
+<span class="swatch" role="img" aria-label="Liturgical colour: Green">
+</span>Sunday</span>
+<span>Ordinary Time · Week 25</span>
+<span>Sunday cycle A · Weekday cycle II</span>
+</p>
+</header>
+<section class="day__readings" aria-labelledby="readings-heading">
+<h2 id="readings-heading" class="visually-hidden">Readings</h2>
+<div class="mass">
+<ul class="readings">
+<li class="reading">
+<p class="reading__slot">First reading</p>
+<h3 class="reading__ref">Isaiah 55:6–9</h3>
+<p class="reading__pending">Notes in preparation</p>
+<a class="reading__text" href="https://www.drbo.org/chapter/27055.htm" target="_blank" rel="noopener noreferrer">Text<span aria-hidden="true">↗</span>
+<span class="visually-hidden">, Isaiah 55:6–9 at Douay-Rheims (drbo.org) (opens in a new tab)</span>
+</a>
+</li>
+<li class="reading">
+<p class="reading__slot">Psalm</p>
+<h3 class="reading__ref">Psalm 145:2–3, 8–9, 17–18</h3>
+<p class="reading__pending">Notes in preparation</p>
+<a class="reading__text" href="https://www.drbo.org/chapter/21144.htm" target="_blank" rel="noopener noreferrer">Text<span aria-hidden="true">↗</span>
+<span class="visually-hidden">, Psalm 145:2–3, 8–9, 17–18 at Douay-Rheims (drbo.org) (opens in a new tab)</span>
+</a>
+</li>
+<li class="reading">
+<p class="reading__slot">Second reading</p>
+<h3 class="reading__ref">Philippians 1:20c–24, 27a</h3>
+<p class="reading__pending">Notes in preparation</p>
+<a class="reading__text" href="https://www.drbo.org/chapter/57001.htm" target="_blank" rel="noopener noreferrer">Text<span aria-hidden="true">↗</span>
+<span class="visually-hidden">, Philippians 1:20c–24, 27a at Douay-Rheims (drbo.org) (opens in a new tab)</span>
+</a>
+</li>
+<li class="reading reading--linked">
+<p class="reading__slot">Gospel</p>
+<h3 class="reading__ref">
+<a href="/lectio/2026-09-20/gospel/">Matthew 20:1–16a</a>
+</h3>
+<p class="reading__summary">A landowner pays the last hired the same as the first, and asks whether his goodness is a cause for resentment.</p>
+<a class="reading__text" href="https://www.drbo.org/chapter/47020.htm" target="_blank" rel="noopener noreferrer">Text<span aria-hidden="true">↗</span>
+<span class="visually-hidden">, Matthew 20:1–16a at Douay-Rheims (drbo.org) (opens in a new tab)</span>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<nav class="day-nav" aria-label="Other days">
+<a class="day-nav__link day-nav__link--previous" href="/lectio/2026-09-19/" rel="prev">
+<span class="day-nav__label">
+<span aria-hidden="true">← </span>Previous day</span>
+<span class="day-nav__date">Saturday 19 September 2026</span>
+</a>
+<a class="day-nav__link day-nav__link--next" href="/lectio/2026-09-21/" rel="next">
+<span class="day-nav__label">Next day<span aria-hidden="true"> →</span>
+</span>
+<span class="day-nav__date">Monday 21 September 2026</span>
+</a>
+</nav>
+</article>"
+`;

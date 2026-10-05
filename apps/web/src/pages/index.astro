@@ -1,87 +1,55 @@
 ---
 /**
- * Scaffold placeholder (L-050) so the build has a page that exercises the layout, the theme and the content
- * repository. The Today page (L-053) replaces this file.
+ * The Today page, `/`: the day page for the build date in the site time zone (`siteDate`: Nairobi, or
+ * `LECTIO_DATE`). A tiny inline script moves to the day page for the device's own date when it differs and the
+ * site has it; without JavaScript, a list of the days ahead links to them. Built by src/lib/day.ts.
  */
+import DayView from '../components/day/DayView.astro';
+import UpcomingDays from '../components/day/UpcomingDays.astro';
+import Seo from '../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, formatDate, localePath, t } from '../i18n/index.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { dayColour } from '../lib/theme.ts';
-import { dayOrNearest, readingSummaries, siteContext, siteDate } from '../lib/site.ts';
+import { dayPageView, todaySwitch, todaySwitchScript, upcomingDays } from '../lib/day.ts';
+import type { DayEnv } from '../lib/day.ts';
+import { siteContext, siteDate, withBase } from '../lib/site.ts';
 
-const { config, repo } = siteContext();
-const day = dayOrNearest(repo, siteDate(config));
-const celebration: string | undefined = day?.day.celebrations[0]?.name;
-const season: string = day?.day.season ?? '';
-const readings = day === null ? [] : readingSummaries(day);
+const context = siteContext();
+const date = siteDate(context.config);
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const env: DayEnv = {
+  lang,
+  messages: { t, formatDate: (locale, day) => formatDate(locale, day) },
+  paths: (path) => withBase(base, localePath(lang, path)),
+};
+const view = dayPageView(env, context, date);
+const upcoming = upcomingDays(env, context.repo, date);
+const script = todaySwitchScript(todaySwitch(env, context.repo, date));
+const siteName = t(lang, 'common.site.name');
 ---
 
 <BaseLayout
-  title="Lectio"
-  description="A companion to the daily Mass readings: their history, their original words, and a voice."
-  date={day?.date}
-  celebration={celebration}
-  colour={dayColour(day?.day)}
+  title={siteName}
+  description={view?.description}
+  date={view?.date}
+  celebration={view?.title}
+  colour={view?.colour}
+  lang={lang}
 >
+  <Seo slot="head" title={siteName} description={view?.description} lang={lang} path="" />
+  <script is:inline set:html={script} slot="head" />
   {
-    day === null ? (
-      <p>No calendar day is available yet.</p>
+    view === null ? (
+      <section class="today-missing" aria-labelledby="today-heading">
+        <p class="eyebrow">{t(lang, 'day.todayHeading')}</p>
+        <h1 id="today-heading">{formatDate(lang, date)}</h1>
+        <p>{t(lang, 'day.todayMissing')}</p>
+      </section>
     ) : (
-      <>
-        <p class="eyebrow">{season.replaceAll('-', ' ')}</p>
-        <h1>{celebration}</h1>
-        <ul class="readings">
-          {readings.map((reading) => (
-            <li>
-              <span class="ref">{reading.ref}</span>
-              {reading.summary !== null && <span class="summary">{reading.summary}</span>}
-              <a href={reading.linkout} rel="noopener">
-                Text ↗
-              </a>
-            </li>
-          ))}
-        </ul>
-      </>
+      <DayView view={view} eyebrow={t(lang, 'day.todayHeading')} />
     )
   }
+  <noscript>
+    <UpcomingDays heading={t(lang, 'day.upcomingHeading')} days={upcoming} />
+  </noscript>
 </BaseLayout>
-
-<style>
-  .readings {
-    list-style: none;
-    margin: var(--space-m) 0 0;
-    padding: 0;
-    display: grid;
-    gap: var(--space-xs);
-    max-width: var(--measure);
-  }
-
-  .readings li {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: var(--space-3xs) var(--space-s);
-    padding: var(--space-s);
-    background: var(--colour-surface);
-    border: var(--rule-width) solid var(--colour-rule);
-    border-left: var(--band-height) solid var(--colour-accent);
-    border-radius: var(--radius-m);
-  }
-
-  .ref {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    font-weight: var(--weight-strong);
-  }
-
-  .summary {
-    grid-column: 1;
-    color: var(--colour-muted);
-    font-size: var(--step--1);
-  }
-
-  .readings a {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: center;
-    font-weight: var(--weight-strong);
-    color: var(--colour-accent-ink);
-  }
-</style>
