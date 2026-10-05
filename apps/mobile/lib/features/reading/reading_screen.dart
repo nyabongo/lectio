@@ -281,9 +281,12 @@ class ReadingDayView extends StatelessWidget {
                 if (reading != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      reading.ref,
-                      style: theme.textTheme.headlineSmall,
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        reading.ref,
+                        style: theme.textTheme.headlineSmall,
+                      ),
                     ),
                   ),
               ],
