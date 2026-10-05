@@ -254,6 +254,11 @@ describe('lectio-gates usage', () => {
     expect(logs).toEqual([USAGE, USAGE, USAGE, USAGE]);
   });
 
+  it('says the changed files are committed changes relative to --base', () => {
+    expect(USAGE).toContain('git diff <base>...<head>');
+    expect(USAGE).toContain('not committed is not checked');
+  });
+
   it('rejects an unknown command', async () => {
     expect(await runGatesCli(['merge'], options())).toBe(2);
     expect(errors).toEqual(['lectio-gates: unknown command "merge"', USAGE]);

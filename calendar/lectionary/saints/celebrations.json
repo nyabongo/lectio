@@ -1,5 +1,5 @@
 {
-  "$comment": "Saints block (L-069): the Proper of Saints of the General Roman Calendar, keyed by Lectio celebration id. It holds every solemnity and feast of the sanctoral (St Matthew is in the seed block) and the memorials and optional memorials with readings of their own: readings that tell of the saint or mystery, or that a decree assigned to a celebration added after 1981. Memorials whose readings come from a Common have no entry, so the resolver keeps the weekday readings (Lectionary Introduction 83); there is no commons file yet. Imported from LitCal where its leaf parses (import/litcal/saints.json); Faustina Kowalska and Mary, Mother of the Church are converted by hand from the same pinned LitCal decree leaves, which the importer cannot read (\"Psalm 103 (102)\", and \"Psalm 87: 1-2, 3; 5, 6-7\" whose ';' separates verses). Everything else is filled from the OLM 1981 structure, cited by lectionary number (the numbering used for St Matthew, #643). Kenya-proper celebrations (calendar/overrides/kenya.json) have no entry: none of the open sources covers them, and their readings need the Kenyan Daily Missal (011 Q5). Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "$comment": "Saints block (L-069): the Proper of Saints of the General Roman Calendar, keyed by Lectio celebration id. It holds every solemnity and feast of the sanctoral (St Matthew is in the seed block) and the memorials and optional memorials with readings of their own: readings that tell of the saint or mystery, or that a decree assigned to a celebration added after 1981. Memorials whose readings come from a Common have no entry, so the resolver keeps the weekday readings (Lectionary Introduction 83); there is no commons file yet. Imported from LitCal where its leaf parses (import/litcal/saints.json); Faustina Kowalska and Mary, Mother of the Church are converted by hand from the same pinned LitCal decree leaves, which the importer cannot read (\"Psalm 103 (102)\", which the importer now reads as Psalm 103, and \"Psalm 87: 1-2, 3; 5, 6-7\" whose ';' separates verses); their printed forms are recorded as \"Psalm 103:1-2, …\" and \"Psalm 87:1-2, 3, 5, 6-7\" so that they parse. Everything else is filled from the OLM 1981 structure, cited by lectionary number (the numbering used for St Matthew, #643). Kenya-proper celebrations (calendar/overrides/kenya.json) have no entry: none of the open sources covers them, and their readings need the Kenyan Daily Missal (011 Q5). Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
   "kind": "celebrations",
   "entries": [
     {
@@ -437,7 +437,7 @@
             {
               "slot": "psalm",
               "ref": "Ps 103:1-2, 3-4, 8-9, 13-14, 17-18",
-              "printed": "Psalm 103 (102): 1-2, 3-4, 8-9, 13-14, 17-18a",
+              "printed": "Psalm 103:1-2, 3-4, 8-9, 13-14, 17-18a",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#StFaustinaKowalska",
               "status": "provisional"
             },
@@ -1035,7 +1035,7 @@
             {
               "slot": "psalm",
               "ref": "Ps 87:1-2, 3, 5, 6-7",
-              "printed": "Psalm 87: 1-2, 3; 5, 6-7",
+              "printed": "Psalm 87:1-2, 3, 5, 6-7",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 decrees/lectionary/en.json#MaryMotherChurch",
               "status": "provisional"
             },

@@ -1,0 +1,102 @@
+{
+  "key": "MT.20.1-16",
+  "ref": "Mt 20:1-16a",
+  "locale": "en",
+  "summary": "Evidence-gate fixture: a landowner pays every worker the same day's wage.",
+  "context": {
+    "title": "Labourers in the vineyard",
+    "paragraphs": [
+      "The agreed pay was a denarius, the usual wage for a day. [c1] The owner's question uses the idiom of the evil eye. [c2]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "evil-eye",
+      "verse": "20:15",
+      "anchor": "envious",
+      "original": {
+        "text": "ὀφθαλμός σου πονηρός",
+        "lang": "grc",
+        "translit": "ophthalmos sou ponēros",
+        "gloss": "your eye evil"
+      },
+      "summary": "Greek asks whether the eye is evil.",
+      "body": "The evil eye was an image for grudging. [c2]"
+    },
+    {
+      "id": "denarius",
+      "verse": "20:2",
+      "anchor": "daily wage",
+      "original": {
+        "text": "δηναρίου",
+        "lang": "grc",
+        "translit": "dēnariou",
+        "gloss": "a denarius"
+      },
+      "summary": "Greek names the coin.",
+      "body": "A denarius was the usual pay for a day. [c1]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "A denarius was the usual wage for a day's work.",
+      "sourceIds": ["mt-20-2", "commentary-denarius"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "An evil eye was an idiom for grudging.",
+      "sourceIds": ["dt-15-9", "commentary-eye"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "mt-20-2",
+      "type": "scripture",
+      "citation": "Matthew 20:2",
+      "ref": "Mt 20:2",
+      "excerpt": "ἐκ δηναρίου τὴν ἡμέραν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "dt-15-9",
+      "type": "scripture",
+      "citation": "Deuteronomy 15:9",
+      "ref": "Dt 15:9",
+      "excerpt": "וְרָעָה עֵינְךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "commentary-denarius",
+      "type": "web",
+      "citation": "Fixture commentary on Matthew 20:2",
+      "url": "https://commentary.example.org/mt/20-2",
+      "excerpt": "A denarius was twice the usual wage",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:00:00Z"
+    },
+    {
+      "id": "commentary-eye",
+      "type": "web",
+      "citation": "Fixture commentary on Matthew 20:15",
+      "url": "https://commentary.example.org/mt/20-15",
+      "excerpt": "an evil eye meant … a generous one",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:00:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "fake",
+    "runId": "fixture-L-025",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T07:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

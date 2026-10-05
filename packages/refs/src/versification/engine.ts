@@ -35,7 +35,9 @@ export interface Versification {
   /**
    * First verse number of a chapter, or `undefined` if the chapter does not exist. Usually 1; the
    * Stuttgart numbering of the `vulgate` scheme starts Ps 115 at verse 10 and Ps 147 at verse 12,
-   * so Vulgate Ps 115 is verses 10-19: `chapterLength` 19, `firstVerse` 10, ten verses.
+   * so Vulgate Ps 115 is verses 10-19: `chapterLength` 19, `firstVerse` 10, ten verses. Thirteen
+   * `lxx` chapters start later too (1 Sm 13 and 18, 1 Kgs 3 and 14, Prv 16 and 19, Sir 6, Jer 2, 7,
+   * 17, 26, 32 and 34); `mapRef` maps a whole chapter onto one of them as the whole chapter.
    */
   firstVerse(book: BookCode, chapter: number, scheme?: Scheme): number | undefined;
   /** {@link chapterLength} as the lookup `enumerateVerses` takes. */

@@ -7,6 +7,13 @@
  * `printed` keeps LitCal's spelling, and whose `source` names the pinned revision and the leaf;
  * `a|b` becomes `ref` a with alternative b. Every imported reading is `provisional`.
  *
+ * Every reading takes the import's `cycle`, except the slots listed in `shared` (the weekday gospel,
+ * read in Years I and II alike), which are imported without one so that re-imports do not add
+ * `gospel (II)` duplicates. Palm Sunday's `palm_gospel` becomes the gospel of the `procession` Mass;
+ * an Easter Vigil leaf (`third_reading`, `responsorial_psalm_2`, `epistle`, …) maps to `reading-1`…,
+ * `psalm-1`…, `epistle`, and the psalm after the epistle to the next psalm number (`psalm-8`).
+ * LitCal's dual psalm numbers (`Psalm 66 (67)`) are read as the Hebrew one (canonical.ts).
+ *
  * The network call goes through the injected {@link TextFetcher}; tests pass a fake.
  */
 import type { ReadingSlot } from '@lectio/schema/common';
@@ -15,6 +22,7 @@ import type { RefError } from '@lectio/refs';
 
 import { canonicalRef } from '../canonical.ts';
 import { compareKeys } from '../keys.ts';
+import { slotRanker } from '../slots.ts';
 import { locatorRegExp } from '../sources.ts';
 import { CYCLES, ENTRY_KINDS } from '../types.ts';
 import type { Alternative, BlockFile, Cycle, Entry, EntryKind, MassEntry, Reading, SourceRegistry } from '../types.ts';
@@ -29,6 +37,8 @@ export interface LitcalImport {
   /** Lectio Mass id; defaults to `day`. */
   readonly mass?: string;
   readonly cycle?: Cycle;
+  /** Slots imported without `cycle` (shared by every cycle); defaults to the manifest's `shared`. */
+  readonly shared?: readonly ReadingSlot[];
   /** A `litcal` locator: `<dir>/en.json#<Key>[.<mass>]`. */
   readonly locator: string;
 }
@@ -37,6 +47,8 @@ export interface LitcalManifest {
   /** The block and file (relative to `calendar/lectionary/`) the readings are merged into. */
   readonly target: string;
   readonly kind: EntryKind;
+  /** Slots every import brings in without its `cycle`, e.g. `["gospel"]` for Ordinary Time weekdays. */
+  readonly shared?: readonly ReadingSlot[];
   readonly imports: readonly LitcalImport[];
 }
 
@@ -44,6 +56,13 @@ export interface ImportedReading {
   readonly key: string;
   readonly mass: string;
   readonly reading: Reading;
+}
+
+/** A Mass whose LitCal leaf (`<Key>.<mass>`) is gone while its parent leaf is still there. */
+export interface RemovedMass {
+  readonly key: string;
+  readonly mass: string;
+  readonly locator: string;
 }
 
 /** LitCal slot names → Lectio slots. Gospel acclamations are not readings and are skipped. */
@@ -54,6 +73,46 @@ const SLOTS: Readonly<Record<string, ReadingSlot | null>> = {
   gospel: 'gospel',
   gospel_acclamation: null,
 };
+
+const ORDINALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth'];
+
+/** A leaf of numbered readings (the Easter Vigil): it has a third reading, a numbered psalm or an epistle. */
+function isVigilLeaf(leaf: Record<string, unknown>): boolean {
+  return Object.keys(leaf).some((name) => name === 'third_reading' || name === 'epistle' || /_\d$/.test(name));
+}
+
+/**
+ * Where a LitCal slot goes: a Lectio slot and, for the palm gospel, the `procession` Mass; `null` to
+ * skip it (gospel acclamations); `undefined` when the name is unknown.
+ */
+function mapSlot(
+  name: string,
+  vigil: boolean,
+  readings: number,
+): { slot: ReadingSlot; mass?: string } | null | undefined {
+  if (name === 'palm_gospel') return { slot: 'gospel', mass: 'procession' };
+  if (!vigil || name === 'gospel' || name === 'gospel_acclamation') {
+    const slot = SLOTS[name];
+    return slot === undefined || slot === null ? slot : { slot };
+  }
+  if (name === 'epistle') return { slot: 'epistle' };
+  const reading = /^([a-z]+)_reading$/.exec(name);
+  const psalm = /^responsorial_psalm(?:_(\d|epistle))?$/.exec(name);
+  let slot: string | undefined;
+  if (reading !== null && ORDINALS.includes(reading[1] as string)) {
+    slot = `reading-${String(ORDINALS.indexOf(reading[1] as string) + 1)}`;
+  } else if (psalm !== null) {
+    const n = psalm[1] === undefined ? '1' : psalm[1] === 'epistle' ? String(readings + 1) : psalm[1];
+    slot = `psalm-${n}`;
+  }
+  return slot !== undefined && (READING_SLOTS as readonly string[]).includes(slot)
+    ? { slot: slot as ReadingSlot }
+    : undefined;
+}
+
+const isSlotList = (value: unknown): boolean =>
+  value === undefined ||
+  (Array.isArray(value) && value.every((slot) => (READING_SLOTS as readonly unknown[]).includes(slot)));
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -69,14 +128,16 @@ export function parseManifest(json: unknown, label: string): { data?: LitcalMani
     problems.push(`${label}: target must be <block>/<file>.json`);
   if (!ENTRY_KINDS.includes(json['kind'] as EntryKind))
     problems.push(`${label}: kind must be one of ${ENTRY_KINDS.join(', ')}`);
+  if (!isSlotList(json['shared'])) problems.push(`${label}: shared must be an array of reading slots`);
   json['imports'].forEach((item: unknown, i) => {
     const ok =
       isRecord(item) &&
       typeof item['key'] === 'string' &&
       typeof item['locator'] === 'string' &&
       (item['mass'] === undefined || typeof item['mass'] === 'string') &&
-      (item['cycle'] === undefined || CYCLES.includes(item['cycle'] as Cycle));
-    if (!ok) problems.push(`${label} imports[${i}]: expected { "key", "locator", "mass"?, "cycle"? }`);
+      (item['cycle'] === undefined || CYCLES.includes(item['cycle'] as Cycle)) &&
+      isSlotList(item['shared']);
+    if (!ok) problems.push(`${label} imports[${i}]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }`);
   });
   return problems.length === 0 ? { data: json as unknown as LitcalManifest, problems } : { problems };
 }
@@ -96,22 +157,34 @@ function toReading(slot: ReadingSlot, text: string, cycle: Cycle | undefined, so
   };
 }
 
-/** Fetches the manifest's LitCal files at the pinned revision and converts the listed leaves. */
+export interface LitcalImportResult {
+  readonly readings: ImportedReading[];
+  /** Masses LitCal no longer has (their parent leaf is still there); `mergeImported` drops their readings. */
+  readonly removedMasses: RemovedMass[];
+  readonly problems: string[];
+}
+
+/**
+ * Fetches the manifest's LitCal files at the pinned revision and converts the listed leaves. A
+ * shared slot that two imports of one key and Mass give differently is a problem.
+ */
 export async function importLitcal(
   manifest: LitcalManifest,
   registry: SourceRegistry,
   fetcher: TextFetcher,
-): Promise<{ readings: ImportedReading[]; problems: string[] }> {
+): Promise<LitcalImportResult> {
   const info = registry.sources['litcal'];
   if (info?.pinned === undefined || info.retrieval === undefined) {
-    return { readings: [], problems: ['sources.json: litcal needs "pinned" and "retrieval"'] };
+    return { readings: [], removedMasses: [], problems: ['sources.json: litcal needs "pinned" and "retrieval"'] };
   }
   const { pinned, retrieval } = info;
   const base = retrieval.replace('{rev}', pinned);
   const pattern = locatorRegExp(info);
   const files = new Map<string, Promise<unknown>>();
   const readings: ImportedReading[] = [];
+  const removedMasses: RemovedMass[] = [];
   const problems: string[] = [];
+  const sharedRefs = new Map<string, string>();
 
   for (const item of manifest.imports) {
     const at = `${item.key} ← ${item.locator}`;
@@ -128,12 +201,19 @@ export async function importLitcal(
         fetcher.fetchText(url).then((text) => JSON.parse(text) as unknown),
       );
     let leaf: unknown;
+    let parent: unknown;
     try {
       const json = await (files.get(url) as Promise<unknown>);
       leaf = isRecord(json) ? json[leafKey] : undefined;
+      parent = leaf;
       if (massKey !== undefined) leaf = isRecord(leaf) ? leaf[massKey] : undefined;
     } catch (error) {
       problems.push(`${at}: ${(error as Error).message}`);
+      continue;
+    }
+    const mass = item.mass ?? 'day';
+    if (leaf === undefined && massKey !== undefined && isRecord(parent)) {
+      removedMasses.push({ key: item.key, mass, locator: item.locator });
       continue;
     }
     if (!isRecord(leaf)) {
@@ -141,27 +221,44 @@ export async function importLitcal(
       continue;
     }
     const source = `litcal@${pinned} ${item.locator}`;
-    const found: Reading[] = [];
+    const shared = item.shared ?? manifest.shared ?? [];
+    const vigil = isVigilLeaf(leaf);
+    const numbered = Object.keys(leaf).filter((name) => /^[a-z]+_reading$/.test(name)).length;
+    const found: ImportedReading[] = [];
     for (const [name, value] of Object.entries(leaf)) {
-      const slot = SLOTS[name];
-      if (slot === undefined) problems.push(`${at}: unknown LitCal slot "${name}"`);
-      if (!slot || typeof value !== 'string' || value.trim() === '') continue;
+      const target = mapSlot(name, vigil, numbered);
+      if (target === undefined) problems.push(`${at}: unknown LitCal slot "${name}"`);
+      if (!target || typeof value !== 'string' || value.trim() === '') continue;
+      const cycle = shared.includes(target.slot) ? undefined : item.cycle;
       try {
-        found.push(toReading(slot, value, item.cycle, source));
+        found.push({ key: item.key, mass: target.mass ?? mass, reading: toReading(target.slot, value, cycle, source) });
       } catch (error) {
         // canonicalRef throws only RefError.
         problems.push(`${at} ${name}: ${(error as RefError).message}`);
       }
     }
     if (found.length === 0) problems.push(`${at}: the leaf has no readings`);
-    for (const reading of found) readings.push({ key: item.key, mass: item.mass ?? 'day', reading });
+    for (const imported of found) {
+      const { reading } = imported;
+      if (shared.includes(reading.slot)) {
+        const id = `${imported.key} ${imported.mass} ${reading.slot}`;
+        const earlier = sharedRefs.get(id);
+        if (earlier !== undefined && earlier !== reading.ref) {
+          problems.push(`${at}: shared ${reading.slot} "${reading.ref}" differs from "${earlier}" imported for ${id}`);
+        }
+        sharedRefs.set(id, reading.ref);
+      }
+      readings.push(imported);
+    }
   }
-  return { readings, problems };
+  return { readings, removedMasses, problems };
 }
 
-function readingOrder(a: Reading, b: Reading): number {
-  const slot = READING_SLOTS.indexOf(a.slot) - READING_SLOTS.indexOf(b.slot);
-  return slot !== 0 ? slot : CYCLES.indexOf(a.cycle as Cycle) - CYCLES.indexOf(b.cycle as Cycle);
+function readingOrder(rank: (slot: ReadingSlot) => number): (a: Reading, b: Reading) => number {
+  return (a, b) => {
+    const slot = rank(a.slot) - rank(b.slot);
+    return slot !== 0 ? slot : CYCLES.indexOf(a.cycle as Cycle) - CYCLES.indexOf(b.cycle as Cycle);
+  };
 }
 
 export interface MergeResult {
@@ -186,11 +283,17 @@ const isLitcalImport = (reading: Reading): boolean =>
 /**
  * Merges imported readings into a data file. A reading (same key, Mass, slot and cycle) is replaced
  * only when it is a provisional LitCal import; anything verified, disputed or from another source
- * is kept and reported. A provisional LitCal reading of a key and Mass that was imported again from
- * the same leaf, but that the leaf no longer supplies, is removed and reported. Entries are sorted by
- * key, readings by slot and cycle.
+ * is kept and reported. A provisional LitCal reading of a key that was imported again from the same
+ * leaf (whatever its Mass), but that the leaf no longer supplies, is removed and reported, and so are
+ * the provisional LitCal readings of a Mass whose leaf LitCal removed (`removedMasses`). A Mass left
+ * without readings is dropped, and so is an entry left without Masses or a common. Entries are sorted
+ * by key, readings in proclamation order (slots.ts) and by cycle.
  */
-export function mergeImported(file: BlockFile, imported: readonly ImportedReading[]): MergeResult {
+export function mergeImported(
+  file: BlockFile,
+  imported: readonly ImportedReading[],
+  removedMasses: readonly RemovedMass[] = [],
+): MergeResult {
   interface DraftMass {
     label?: string;
     readings: Reading[];
@@ -210,18 +313,23 @@ export function mergeImported(file: BlockFile, imported: readonly ImportedReadin
   const kept: string[] = [];
   const removed: string[] = [];
   const supplied = new Set(imported.map(({ key, mass, reading }) => readingId(key, mass, reading)));
-  const leaves = new Set(imported.map(({ key, mass, reading }) => `${key} ${mass} ${locatorOf(reading.source)}`));
+  const leaves = new Set(imported.map(({ key, reading }) => `${key} ${locatorOf(reading.source)}`));
+  const gone = new Set(removedMasses.map(({ key, mass, locator }) => `${key} ${mass} ${locator}`));
   for (const entry of entries.values()) {
     for (const [id, mass] of entry.masses) {
+      const before = mass.readings.length;
       mass.readings = mass.readings.filter((reading) => {
+        const locator = locatorOf(reading.source);
         const stale =
           isLitcalImport(reading) &&
-          leaves.has(`${entry.key} ${id} ${locatorOf(reading.source)}`) &&
-          !supplied.has(readingId(entry.key, id, reading));
+          ((leaves.has(`${entry.key} ${locator}`) && !supplied.has(readingId(entry.key, id, reading))) ||
+            gone.has(`${entry.key} ${id} ${locator}`));
         if (stale) removed.push(readingId(entry.key, id, reading));
         return !stale;
       });
+      if (before > 0 && mass.readings.length === 0) entry.masses.delete(id);
     }
+    if (entry.masses.size === 0 && entry.common === undefined) entries.delete(entry.key);
   }
   for (const { key, mass, reading } of imported) {
     const entry = entries.get(key) ?? { key, masses: new Map<string, DraftMass>() };
@@ -248,7 +356,7 @@ export function mergeImported(file: BlockFile, imported: readonly ImportedReadin
       masses: [...masses].map(([id, { label, readings }]): MassEntry => ({
         id,
         ...(label === undefined ? {} : { label }),
-        readings: [...readings].sort(readingOrder),
+        readings: [...readings].sort(readingOrder(slotRanker(readings.map((r) => r.slot)))),
       })),
     }));
   return { data: { kind: file.kind, entries: sorted }, added, replaced, kept, removed };

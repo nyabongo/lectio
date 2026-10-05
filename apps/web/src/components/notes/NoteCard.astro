@@ -3,6 +3,8 @@
  * One translation note card: "Verse 15 · “envious”", the original words (with `lang`, and `dir="rtl"` for
  * Hebrew and Aramaic), transliteration and literal gloss, the one-line summary, the body with source superscripts,
  * and the verification footer. `note` comes from `notesView()` (src/lib/reading.ts), so only approved notes reach it.
+ * With `permalink` (the note's own page, `insightPath()` in src/lib/insight.ts, with the base path applied) the card
+ * links to it.
  */
 import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
 import type { NoteView } from '../../lib/reading.ts';
@@ -14,9 +16,11 @@ export interface Props {
   method: 'human' | 'auto';
   lastReviewedAt: string | null;
   lang?: string;
+  /** Href of the note's permalink page; omitted, the card has no permalink. */
+  permalink?: string;
 }
 
-const { note, method, lastReviewedAt, lang = DEFAULT_LOCALE } = Astro.props;
+const { note, method, lastReviewedAt, lang = DEFAULT_LOCALE, permalink } = Astro.props;
 const headingId = `${note.anchorId}-heading`;
 ---
 
@@ -43,6 +47,17 @@ const headingId = `${note.anchorId}-heading`;
     reportUrl={note.reportUrl}
     lang={lang}
   />
+  {
+    permalink !== undefined && (
+      <a
+        class="note__permalink"
+        href={permalink}
+        aria-label={t(lang, 'insight.permalinkLabel', { verse: note.verse, anchor: note.anchor })}
+      >
+        {t(lang, 'insight.permalink')}
+      </a>
+    )
+  }
 </article>
 
 <style>
@@ -68,6 +83,18 @@ const headingId = `${note.anchorId}-heading`;
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--colour-accent-ink);
+  }
+
+  .note__permalink {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .note__permalink:hover {
+    color: var(--colour-link);
   }
 
   .note__anchor {

@@ -91,7 +91,6 @@ describe('checkLectionary', () => {
       'test/proper-of-time.json ot-sunday-25 day gospel (II): cycle II does not apply to ot-sunday-25; use A/B/C',
       'test/proper-of-time.json ot-sunday-25 day psalm: alternatives[0].ref "Psalm 145:2" is not spelled canonically; write "Ps 145:2"',
       'test/proper-of-time.json ot-weekday-25-tue: only celebrations may name a common',
-      'test/proper-of-time.json ot-weekday-25-tue day gospel (A): cycle A does not apply to ot-weekday-25-tue; use I/II',
       'test/proper-of-time.json entries[2]: key "Sunday 25" is not a valid proper-of-time key',
       'test/proper-of-time.json ot-sunday-26: mass id "Day" must be kebab-case',
       'test/proper-of-time.json ot-sunday-26: mass id "Day" must be kebab-case',

@@ -1,0 +1,577 @@
+{
+  "key": "PS.19.2-3_19.4-5",
+  "ref": "Ps 19:2-3, 4-5",
+  "locale": "en",
+  "summary": "The heavens tell God’s glory day after day without words, and their message goes out to the ends of the earth.",
+  "context": {
+    "title": "The heavens are telling",
+    "paragraphs": [
+      "This reading follows the Hebrew numbering, in which the psalm’s title counts as verse 1, so verses 2-5 here are verses 1-4 in many English Bibles. [c1] Psalm 19 moves from God’s glory in the heavens to praise of the Torah. [c2] The divine name changes with it, from El in verse 2 to the LORD when the law is praised. [c3]",
+      "Each day and each night hands the message on to the next in an unbroken tradition. [c4] Yet verse 4 says there is no speech and no words. [c5] The older English sense, that no language exists where their voice is unheard, is now widely given up: the heavens speak with a silent eloquence that still reaches the whole world. [c6]",
+      "Paul quotes verse 5 in Romans 10:18 in its Greek form, where the sound going out to all the earth becomes the voice of the gospel’s preachers. [c7] The Cambridge Bible sees in this a comparison: the gospel is proclaimed as widely as nature proclaims God’s glory. [c8] In the psalm itself the voice is the wordless witness of the sky. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "mesapperim",
+      "verse": "19:2",
+      "anchor": "declare",
+      "original": {
+        "text": "מְסַפְּרִים",
+        "lang": "hbo",
+        "translit": "məsappərîm",
+        "gloss": "are recounting"
+      },
+      "summary": "A participle: the heavens “are recounting” God’s glory, an ongoing act rather than a single declaration.",
+      "body": "In the Piel the verb sāpar means to recount, rehearse or declare, and BDB lists this verse among its uses for rehearsing the praise of God. [c10] The form is a participle, and Keil and Delitzsch find in it the idea of perpetuity: the telling never stops. [c11] Ellicott prefers the English “the heavens are telling” to a simple present tense. [c12]"
+    },
+    {
+      "id": "raqia",
+      "verse": "19:2",
+      "anchor": "firmament",
+      "original": {
+        "text": "הָרָקִיעַ",
+        "lang": "hbo",
+        "translit": "hārāqîaʿ",
+        "gloss": "the expanse"
+      },
+      "summary": "Rāqîaʿ is “the expanse”, the vault of heaven pictured as something beaten out and spread over the earth.",
+      "body": "BDB defines rāqîaʿ as an extended surface or expanse, as if beaten out, and lists this verse under the vault of heaven. [c13] The same word names the expanse made on the second day in Gen 1:6. [c14] The English “firmament” comes from the Latin firmamentum, which renders the Septuagint’s stereōma: both reflect the idea of the sky as a solid vault. [c15]"
+    },
+    {
+      "id": "yabbia",
+      "verse": "19:3",
+      "anchor": "pours out speech",
+      "original": {
+        "text": "יַבִּיעַ אֹמֶר",
+        "lang": "hbo",
+        "translit": "yabbîaʿ ʾōmer",
+        "gloss": "pours forth speech"
+      },
+      "summary": "The verb pictures a spring bubbling over: each day pours speech to the next as a fountain pours water.",
+      "body": "The root nāḇaʿ means to flow, spring or bubble up, and in the causative form to pour forth, often of speech. [c16] Proverbs 18:4 uses the same root for a flowing stream, an image of wisdom. [c17] Keil and Delitzsch hear in the word the rich fullness of an inexhaustible spring, as the testimony passes on from one day to the next. [c18]"
+    },
+    {
+      "id": "qav",
+      "verse": "19:5",
+      "anchor": "their sound",
+      "original": {
+        "text": "קַוָּם",
+        "lang": "hbo",
+        "translit": "qawwām",
+        "gloss": "their line"
+      },
+      "summary": "Hebrew has “their line”, a measuring line; the ancient versions read “their sound”, as Paul quotes it.",
+      "body": "The noun qav usually means a measuring line, and the Cambridge Bible keeps that sense here: the line marks the whole earth as the domain of the heavens’ message. [c19] The Greek and Latin versions read “their sound”, and BDB suggests the text should probably be read qōlām, “their sound”. [c20] Paul’s quotation in Rom 10:18 follows the Greek sound, phthongos. [c21]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "In the Hebrew text the superscription of Psalm 19 is verse 1, so Hebrew verses 19:2-5 correspond to English 19:1-4.",
+      "sourceIds": ["ps-19-1", "kd-ps-19-1-numbering"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Psalm 19 turns from the revelation of God in nature (Hebrew verses 2-7) to the law of the Lord (from Hebrew verse 8).",
+      "sourceIds": ["ps-19-8", "cambridge-ps-19-1-nature", "pulpit-ps-19-7-transition"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Verse 2 names God as El, and when the psalm turns to the law the name Jehovah (YHWH) takes the place of God.",
+      "sourceIds": ["ps-19-2-el", "ps-19-8", "cambridge-ps-19-7-name"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Each day and each night hands on the message to its successor in an unbroken tradition.",
+      "sourceIds": ["cambridge-ps-19-2-tradition"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Psalm 19:4 says that there is no speech and there are no words.",
+      "sourceIds": ["ps-19-4", "ellicott-ps-19-3-literal"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Many commentators reject the Authorised Version’s sense of the verse and read it as a silent eloquence that reaches the whole world, though Barnes defends the older sense.",
+      "sourceIds": ["cambridge-ps-19-3-silent", "pulpit-ps-19-3-without-sound", "barnes-ps-19-3-common-version"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Romans 10:18 quotes Psalm 19:5 in its Greek form, and there the sound is the voice of the preachers.",
+      "sourceIds": ["rom-10-18", "ellicott-rom-10-18-preachers"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Paul’s use compares the universality of the proclamation of the Gospel with the universality of the proclamation of God’s glory in nature.",
+      "sourceIds": ["cambridge-ps-19-4-paul"],
+      "sensitive": true
+    },
+    {
+      "id": "c9",
+      "text": "In the original psalm the voice is the unspoken testimony of the works of nature, especially the heavenly bodies.",
+      "sourceIds": ["ellicott-rom-10-18-psalm"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "The Piel of סָפַר means recount, rehearse, declare, and BDB lists Ps 19:2 among uses for rehearsing the praise of God.",
+      "sourceIds": ["ps-19-2-mesapperim", "bdb-sapar", "bdb-sapar-praise"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Keil and Delitzsch find the idea of perpetuity in the participle.",
+      "sourceIds": ["kd-ps-19-perpetuity"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Ellicott proposes “the heavens are telling” as the better rendering.",
+      "sourceIds": ["ellicott-ps-19-1-telling"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "BDB defines רָקִיעַ as an extended surface, (solid) expanse, as if beaten out, and lists Ps 19:2 under the vault of heaven.",
+      "sourceIds": ["ps-19-2-raqia", "bdb-raqia", "bdb-raqia-vault"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Genesis 1:6 uses רָקִיעַ for the expanse made amid the waters.",
+      "sourceIds": ["gn-1-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The English word firmament comes from the Vulgate’s firmamentum, which renders the Septuagint’s στερέωμα; both reflect the idea that the heavens are a solid concave.",
+      "sourceIds": ["bdb-raqia-versions", "barnes-ps-19-1-septuagint", "barnes-ps-19-1-solid"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "נָבַע means flow, spring, bubble up, and in the Hiphil pour forth, figuratively usually of speech; Ps 19:3 has the Hiphil יַבִּיעַ.",
+      "sourceIds": ["ps-19-3", "bdb-naba", "bdb-naba-speech"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Proverbs 18:4 uses the participle נֹבֵעַ of a flowing stream as a picture of the source of wisdom.",
+      "sourceIds": ["prv-18-4", "barnes-ps-19-2-fountain"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Keil and Delitzsch see in הִבִּיעַ the rich fullness of an inexhaustible spring, the testimony passing from one day to the next.",
+      "sourceIds": ["kd-ps-19-spring"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "קַו usually means a measuring line, and the Cambridge Bible explains the verse by the measuring line that marks the limits of possession: the whole earth is the heavens’ sphere.",
+      "sourceIds": ["ps-19-5", "bdb-qav", "cambridge-ps-19-4-line"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "The Septuagint, Vulgate and other ancient versions render the word “sound”, and BDB suggests reading קֹלָם, “their sound”.",
+      "sourceIds": ["barnes-ps-19-4-versions", "ellicott-ps-19-4-versions", "bdb-qav-emend"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Romans 10:18 quotes the verse with φθόγγος, following the Septuagint.",
+      "sourceIds": ["rom-10-18", "cambridge-rom-10-18-lxx"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "ps-19-1",
+      "type": "scripture",
+      "citation": "Psalm 19:1 (Hebrew numbering)",
+      "ref": "Ps 19:1",
+      "excerpt": "מִזְמוֹר לְדָוִד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-2-el",
+      "type": "scripture",
+      "citation": "Psalm 19:2 (Hebrew numbering)",
+      "ref": "Ps 19:2",
+      "excerpt": "אֵל",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-2-mesapperim",
+      "type": "scripture",
+      "citation": "Psalm 19:2 (Hebrew numbering)",
+      "ref": "Ps 19:2",
+      "excerpt": "מְסַפְּרִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-2-raqia",
+      "type": "scripture",
+      "citation": "Psalm 19:2 (Hebrew numbering)",
+      "ref": "Ps 19:2",
+      "excerpt": "הָרָקִיעַ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-3",
+      "type": "scripture",
+      "citation": "Psalm 19:3 (Hebrew numbering)",
+      "ref": "Ps 19:3",
+      "excerpt": "יַבִּיעַ אֹמֶר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-4",
+      "type": "scripture",
+      "citation": "Psalm 19:4 (Hebrew numbering)",
+      "ref": "Ps 19:4",
+      "excerpt": "אֵין אֹמֶר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-5",
+      "type": "scripture",
+      "citation": "Psalm 19:5 (Hebrew numbering)",
+      "ref": "Ps 19:5",
+      "excerpt": "קַוָּם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-19-8",
+      "type": "scripture",
+      "citation": "Psalm 19:8 (Hebrew numbering)",
+      "ref": "Ps 19:8",
+      "excerpt": "תּוֹרַת יְהוָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gn-1-6",
+      "type": "scripture",
+      "citation": "Genesis 1:6",
+      "ref": "Gn 1:6",
+      "excerpt": "רָקִיעַ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-18-4",
+      "type": "scripture",
+      "citation": "Proverbs 18:4",
+      "ref": "Prv 18:4",
+      "excerpt": "נֹבֵעַ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "rom-10-18",
+      "type": "scripture",
+      "citation": "Romans 10:18",
+      "ref": "Rom 10:18",
+      "excerpt": "ὁ φθόγγος αὐτῶν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "kd-ps-19-1-numbering",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 19:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
+      "excerpt": "(Heb.: 19:2-4)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "kd-ps-19-perpetuity",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 19:1-3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
+      "excerpt": "The idea of perpetuity, which lies even in the participle",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "kd-ps-19-spring",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 19:1-3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-3.htm",
+      "excerpt": "points to the rich fulness with which, as from an inexhaustible spring",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-19-1-nature",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1892), on Psalm 19:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
+      "excerpt": "The universal revelation of God in Nature",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-19-7-transition",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 19:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-7.htm",
+      "excerpt": "The transition from the glories of the material universe",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-19-7-name",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1892), on Psalm 19:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-7.htm",
+      "excerpt": "the name Jehovah now takes the place of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-19-2-tradition",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1892), on Psalm 19:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-2.htm",
+      "excerpt": "hands on the message to its successor in an unbroken tradition",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-19-3-literal",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 19:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-3.htm",
+      "excerpt": "The literal rendering is Not speech, not words",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-19-3-silent",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1892), on Psalm 19:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-3.htm",
+      "excerpt": "Theirs is a silent eloquence, yet it reaches from one end",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-19-3-without-sound",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 19:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-3.htm",
+      "excerpt": "it is without sound, without language",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-ps-19-3-common-version",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 19:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-3.htm",
+      "excerpt": "the idea conveyed by our common version is probably the correct one",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-rom-10-18-preachers",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Romans 10:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/romans/10-18.htm",
+      "excerpt": "Here, the voice of the preachers",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-rom-10-18-psalm",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Romans 10:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/romans/10-18.htm",
+      "excerpt": "the unspoken testimony of the works of nature",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-rom-10-18-lxx",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Romans, Cambridge Bible for Schools and Colleges (1879), on Romans 10:18 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/romans/10-18.htm",
+      "excerpt": "verbatim with the LXX., and closely with the Heb.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-19-4-paul",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1892), on Psalm 19:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-4.htm",
+      "excerpt": "a comparison of the universality of the proclamation of the Gospel",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-19-4-line",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1892), on Psalm 19:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-4.htm",
+      "excerpt": "The measuring line marks the limits of possession",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-ps-19-4-versions",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 19:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-4.htm",
+      "excerpt": "So it is rendered here by the Septuagint",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-19-4-versions",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 19:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-4.htm",
+      "excerpt": "actually appear in the LXX., Vulg., Symmachus, Jerome, and the Syriac",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-19-1-telling",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 19:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
+      "excerpt": "Better, the heavens are telling",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-ps-19-1-septuagint",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 19:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
+      "excerpt": "is taken from the word used by the translators of the Septuagint",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-ps-19-1-solid",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 19:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-1.htm",
+      "excerpt": "from the idea that the heavens above us are a solid concave",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-ps-19-2-fountain",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Psalm 19:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/19-2.htm",
+      "excerpt": "to pour forth copiously as a fountain. Compare Proverbs 18:4",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-sapar",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. סָפַר (Bible Hub, Strong's 5608)",
+      "url": "https://biblehub.com/hebrew/5608.htm",
+      "excerpt": "recount, rehearse, declare",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-sapar-praise",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. סָפַר (Bible Hub, Strong's 5608)",
+      "url": "https://biblehub.com/hebrew/5608.htm",
+      "excerpt": "all of rehearsing praise of",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-raqia",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
+      "url": "https://biblehub.com/hebrew/7549.htm",
+      "excerpt": "extended surface , (solid) expanse (as if beaten out",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-raqia-versions",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
+      "url": "https://biblehub.com/hebrew/7549.htm",
+      "excerpt": "ᵐ5 στερέωμα , ᵑ9 firmamentum",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-raqia-vault",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. רָקִיעַ (Bible Hub, Strong's 7549)",
+      "url": "https://biblehub.com/hebrew/7549.htm",
+      "excerpt": "the vault of heaven , or 'firmament,'",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-naba",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. נָבַע (Bible Hub, Strong's 5042)",
+      "url": "https://biblehub.com/hebrew/5042.htm",
+      "excerpt": "verb flow, spring, bubble up",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-naba-speech",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. נָבַע (Bible Hub, Strong's 5042)",
+      "url": "https://biblehub.com/hebrew/5042.htm",
+      "excerpt": "figurative, usually of speech , pour forth",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-qav",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. קַו (Bible Hub, Strong's 6957)",
+      "url": "https://biblehub.com/hebrew/6957.htm",
+      "excerpt": "measuring- line",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bdb-qav-emend",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. קַו (Bible Hub, Strong's 6957)",
+      "url": "https://biblehub.com/hebrew/6957.htm",
+      "excerpt": "read probably קֹלָם their sound",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021a-ps-19-2-5",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T11:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

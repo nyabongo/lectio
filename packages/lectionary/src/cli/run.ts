@@ -31,6 +31,11 @@ function isWorkspaceRoot(dir: string): boolean {
   }
 }
 
+/** The directory the user ran the command in: `INIT_CWD` (set by npm), else `cwd`. */
+export function invocationDir(env: NodeJS.ProcessEnv, cwd: string): string {
+  return resolve(env['INIT_CWD'] ?? cwd);
+}
+
 /**
  * The lectionary data directory: `LECTIO_LECTIONARY_ROOT` if set (relative to `INIT_CWD`, or `cwd` without it), else
  * `<repo>/calendar/lectionary`, where the repo root is the nearest ancestor of `INIT_CWD` (or `cwd`) whose
@@ -38,7 +43,7 @@ function isWorkspaceRoot(dir: string): boolean {
  */
 export function resolveLectionaryRoot(env: NodeJS.ProcessEnv, cwd: string): string {
   const explicit = env['LECTIO_LECTIONARY_ROOT'];
-  const base = resolve(env['INIT_CWD'] ?? cwd);
+  const base = invocationDir(env, cwd);
   if (explicit !== undefined && explicit !== '') return resolve(base, explicit);
   let dir = base;
   while (!isWorkspaceRoot(dir)) {
@@ -65,24 +70,37 @@ async function readCalendars(paths: readonly string[]): Promise<{ days: Lectiona
       problems.push(`${path}: ${(error as Error).message}`);
       continue;
     }
-    if (validateCalendarYear(json)) days.push(...json.days);
-    else problems.push(`${path}: not a valid calendar year file`);
+    if (validateCalendarYear(json)) {
+      days.push(...json.days);
+    } else {
+      // ajv always sets `errors` when validation fails.
+      const errors = (validateCalendarYear.errors as NonNullable<typeof validateCalendarYear.errors>).slice(0, 3);
+      const detail = errors.map((e) => `${e.instancePath || '/'} ${String(e.message)}`).join('; ');
+      problems.push(`${path}: not a valid calendar year file (${detail})`);
+    }
   }
   return { days, problems };
 }
 
 /**
  * `lectionary:check [--block <name>]… [--calendar <file>]…`: shape, refs, sources and status of every data file.
- * With calendar year files (paths relative to the repository root), also checks that every feast or solemnity
- * on a Sunday gets a second reading. Exit code 0 when clean, 1 when there are problems, 2 on usage errors.
+ * With calendar year files (relative paths resolve against `cwd`, the directory the command was run in), also
+ * checks that every feast or solemnity on a Sunday gets a second reading. Exit code 0 when clean, 1 when there are
+ * problems, 2 on usage errors (including a flag where a value belongs).
  */
-export async function runCheck(args: readonly string[], root: string, io: CliIo): Promise<number> {
+export async function runCheck(
+  args: readonly string[],
+  root: string,
+  io: CliIo,
+  cwd: string = process.cwd(),
+): Promise<number> {
   const blocks: string[] = [];
   const calendars: string[] = [];
   for (let i = 0; i < args.length; i += 1) {
     const value = args[i + 1];
-    if (args[i] === '--block' && value !== undefined) blocks.push(value);
-    else if (args[i] === '--calendar' && value !== undefined) calendars.push(resolve(root, '..', '..', value));
+    const ok = value !== undefined && !value.startsWith('--');
+    if (args[i] === '--block' && ok) blocks.push(value);
+    else if (args[i] === '--calendar' && ok) calendars.push(resolve(cwd, value));
     else {
       io.err('usage: lectionary:check [-- [--block <name>]… [--calendar <calendar/YYYY.json>]…]');
       return 2;
@@ -189,7 +207,7 @@ export async function runImportLitcal(
     report([...manifest.problems, ...registryProblems], io);
     return 1;
   }
-  const { readings, problems } = await importLitcal(manifest.data, registry, fetcher);
+  const { readings, removedMasses, problems } = await importLitcal(manifest.data, registry, fetcher);
   if (problems.length > 0) {
     io.err('import failed; nothing written:');
     report(problems, io);
@@ -209,7 +227,7 @@ export async function runImportLitcal(
     current = valid.data;
     comment = json['$comment'] as string | undefined;
   }
-  const merged = mergeImported(current, readings);
+  const merged = mergeImported(current, readings, removedMasses);
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, serialiseBlockFile(merged.data, comment));
   io.out(`import-litcal ${name}: ${merged.added} added, ${merged.replaced} replaced → ${manifest.data.target}`);

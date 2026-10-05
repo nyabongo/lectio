@@ -33,10 +33,7 @@ const range = (prefix: string, from: number, to: number, skip: number[] = []): s
     .filter((n) => !skip.includes(n))
     .map((n) => `${prefix}-sunday-${n}`);
 
-/**
- * Sundays 25 and 26 are in the seed block (Year A only), and a key may be defined only once. Their Years B and C are
- * a known gap, tracked in #142, which adds them to the seed block.
- */
+/** Sundays 25 and 26 are in the seed block (Years A, B and C; B and C added by #142), and a key may be defined only once. */
 const IN_SEED = [25, 26];
 const PROPER_OF_TIME = [
   ...range('advent', 1, 4),
@@ -131,14 +128,11 @@ describe('sundays block', () => {
     }
   });
 
-  // Known gap, tracked in #142: when #142 adds Years B and C to the seed block, expect SUNDAY_SLOTS for B and C here.
-  it('leaves Sundays 25 and 26 to the seed block, which has Year A only (Years B and C: #142)', () => {
+  it('leaves Sundays 25 and 26 to the seed block, which has all three years', () => {
     const pot = entries(all.files, 'proper-of-time');
     for (const week of IN_SEED) {
       const entry = pot.get(`ot-sunday-${week}`) as Entry;
-      expect(slotsFor(entry, 'day', 'A')).toEqual(SUNDAY_SLOTS);
-      expect(slotsFor(entry, 'day', 'B')).toEqual([]);
-      expect(slotsFor(entry, 'day', 'C')).toEqual([]);
+      for (const cycle of ['A', 'B', 'C'] as const) expect(slotsFor(entry, 'day', cycle)).toEqual(SUNDAY_SLOTS);
     }
   });
 
@@ -170,7 +164,8 @@ describe('sundays block', () => {
   it('compares every LitCal reading with OLM 1981; the OLM-filled readings are single-source with the LitCal leaf consulted', () => {
     const rows = blockRows(loaded.files);
     const litcal = rows.filter((row) => row.reading.source.startsWith('litcal@'));
-    // Known-wrong LitCal refs: the data holds the OLM citation, and LitCal's form is a recorded disagreement.
+    // Known-wrong LitCal refs: the data holds the OLM citation, and LitCal's form is a recorded disagreement,
+    // except Christ the King C, whose LitCal stanzas (Ps 122:1-3, 3-4, 4-5) cover the same verses.
     const corrected = [
       'celebrations:easter-sunday easter-vigil reading-6',
       'celebrations:second-sunday-after-christmas day first-reading',
@@ -178,8 +173,12 @@ describe('sundays block', () => {
     ];
     for (const id of corrected) {
       expect(rows.find((row) => row.id === id)?.reading.source).toMatch(/^olm-1981 /);
-      expect(result.disagreements.map((d) => d.id)).toContain(id);
     }
+    expect(result.disagreements.map((d) => d.id)).toEqual([
+      'proper-of-time:ot-sunday-17 day gospel (A)',
+      'celebrations:palm-sunday-of-the-passion-of-the-lord day gospel (A)',
+      ...corrected.slice(0, 2),
+    ]);
     expect(result.compared).toBe(litcal.length + corrected.length);
     expect(result.agreements + result.disagreements.length).toBe(result.compared);
     expect(result.singleSource).toHaveLength(rows.length - result.compared);
