@@ -80,8 +80,18 @@ jobs:
           channel: stable
           flutter-version-file: apps/mobile/pubspec.yaml
           cache: true
-      - run: flutter pub get
+      # pubspec.lock is committed; a stale or missing lock fails instead of
+      # silently re-resolving.
+      - name: flutter pub get --enforce-lockfile
         if: steps.changes.outputs.relevant == 'true'
+        run: |
+          if [ ! -f pubspec.lock ]; then
+            echo "::error::apps/mobile/pubspec.lock is missing. Commit this resolution:"
+            flutter pub get >/dev/null
+            cat pubspec.lock
+            exit 1
+          fi
+          flutter pub get --enforce-lockfile
       - name: dart format --set-exit-if-changed
         if: steps.changes.outputs.relevant == 'true'
         run: |
@@ -110,27 +120,9 @@ jobs:
           name: flutter-coverage-lcov
           path: apps/mobile/coverage/lcov.info
           retention-days: 14
-      # Until android/ and ios/ are committed, generate them from the pinned
-      # Flutter (flutter create never overwrites existing files) and keep them
-      # as an artifact for the first issue that needs native changes.
-      - name: Materialise platform folders
+      - name: Bundle id is io.github.nyabongo.lectio
         if: steps.changes.outputs.relevant == 'true'
-        run: |
-          if [ ! -d android ] || [ ! -d ios ]; then
-            flutter create --no-pub --org io.github.nyabongo --project-name lectio --platforms android,ios .
-          fi
-          grep -q 'applicationId = "io.github.nyabongo.lectio"' android/app/build.gradle.kts
-          grep -q 'PRODUCT_BUNDLE_IDENTIFIER = io.github.nyabongo.lectio;' ios/Runner.xcodeproj/project.pbxproj
-      - name: Upload platform folders
-        if: steps.changes.outputs.relevant == 'true'
-        uses: actions/upload-artifact@v7
-        with:
-          name: mobile-platforms
-          path: |
-            apps/mobile/android
-            apps/mobile/ios
-            apps/mobile/pubspec.lock
-          retention-days: 14
+        run: grep -q 'applicationId = "io.github.nyabongo.lectio"' android/app/build.gradle.kts
       - run: flutter build apk --debug
         if: steps.changes.outputs.relevant == 'true'
       - name: Upload debug APK
@@ -157,12 +149,15 @@ jobs:
           channel: stable
           flutter-version-file: apps/mobile/pubspec.yaml
           cache: true
-      - run: flutter pub get
-      - name: Materialise platform folders
+      - run: flutter pub get --enforce-lockfile
+      # ios/ is not committed yet (L-104 commits it): generate it from the
+      # pinned Flutter. flutter create never overwrites existing files.
+      - name: Materialise ios/
         run: |
           if [ ! -d ios ]; then
             flutter create --no-pub --org io.github.nyabongo --project-name lectio --platforms ios .
           fi
+          grep -q 'PRODUCT_BUNDLE_IDENTIFIER = io.github.nyabongo.lectio;' ios/Runner.xcodeproj/project.pbxproj
       - run: flutter build ios --no-codesign --debug
       - name: Upload Runner.app
         uses: actions/upload-artifact@v7

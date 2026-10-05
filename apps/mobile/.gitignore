@@ -36,6 +36,7 @@ ios/Flutter/Flutter.podspec
 ios/**/DerivedData/
 ios/**/xcuserdata/
 ios/Runner/GeneratedPluginRegistrant.*
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
 
 # Written by tool/check_coverage.dart --prepare
 test/coverage_imports_test.dart
