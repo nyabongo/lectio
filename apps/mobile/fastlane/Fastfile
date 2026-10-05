@@ -1,0 +1,170 @@
+# Store release lanes (L-109), run by .github/workflows/mobile-release.yml from
+# apps/mobile with BUNDLE_GEMFILE=fastlane/Gemfile. See README.md in this
+# directory for the secrets, the dry run and the owner's first upload.
+#
+# Credentials only ever come from the environment of the step that needs them
+# and go to fastlane options marked sensitive (never printed) or to files under
+# RUNNER_TEMP; nothing here echoes them.
+
+require "base64"
+require "fileutils"
+require "json"
+require "plist"
+require "tmpdir"
+
+skip_docs
+
+BUNDLE_ID = "io.github.nyabongo.lectio"
+# apps/mobile: flutter commands run here.
+APP_ROOT = File.expand_path("..", __dir__)
+METADATA = File.join(__dir__, "metadata")
+AAB = File.join(APP_ROOT, "build/app/outputs/bundle/release/app-release.aab")
+
+# Store limits for the metadata drafts, in characters.
+METADATA_LIMITS = {
+  "android/en-US/title.txt" => 30,
+  "android/en-US/short_description.txt" => 80,
+  "android/en-US/full_description.txt" => 4000,
+  "ios/en-US/name.txt" => 30,
+  "ios/en-US/subtitle.txt" => 30,
+  "ios/en-US/keywords.txt" => 100,
+  "ios/en-US/promotional_text.txt" => 170,
+  "ios/en-US/description.txt" => 4000,
+  "ios/en-US/support_url.txt" => 255,
+  "ios/en-US/marketing_url.txt" => 255
+}.freeze
+
+# --build-name/--build-number from the lane options or LECTIO_BUILD_NAME and
+# LECTIO_BUILD_NUMBER (the workflow sets them); unset means pubspec.yaml's.
+def version_args(options)
+  name = options[:build_name] || ENV["LECTIO_BUILD_NAME"]
+  number = options[:build_number] || ENV["LECTIO_BUILD_NUMBER"]
+  args = []
+  args << "--build-name=#{name}" unless name.to_s.empty?
+  args << "--build-number=#{number}" unless number.to_s.empty?
+  args
+end
+
+def flutter(*args)
+  Dir.chdir(APP_ROOT) { sh("flutter", *args) }
+end
+
+# Decodes a base64 environment variable into a file under RUNNER_TEMP (or a
+# temporary directory) and returns its path. The value is never printed.
+def decode_env_to_file(variable, file_name)
+  dir = ENV["RUNNER_TEMP"] || Dir.mktmpdir
+  path = File.join(dir, file_name)
+  File.binwrite(path, Base64.decode64(ENV.fetch(variable)))
+  File.chmod(0o600, path)
+  path
+end
+
+desc "Check the store metadata drafts: present, within store limits, and the iOS privacy answer is 'no data collected'"
+lane :check_metadata do
+  METADATA_LIMITS.each do |file, limit|
+    path = File.join(METADATA, file)
+    UI.user_error!("Missing store metadata draft #{file}") unless File.exist?(path)
+    length = File.read(path, encoding: "UTF-8").strip.length
+    UI.user_error!("#{file} is empty") if length.zero?
+    UI.user_error!("#{file} is #{length} characters; the store limit is #{limit}") if length > limit
+  end
+  privacy = JSON.parse(File.read(File.join(METADATA, "ios/app_privacy_details.json")))
+  unless privacy == [{ "data_protection" => ["DATA_NOT_COLLECTED"] }]
+    UI.user_error!("ios/app_privacy_details.json must declare DATA_NOT_COLLECTED only")
+  end
+  UI.success("Store metadata drafts are within the store limits")
+end
+
+platform :android do
+  desc "Build the release app bundle. Signing comes from the android.injected.signing.* Gradle properties " \
+       "the workflow writes when the upload key exists; without them the bundle is debug-signed (dry run)."
+  lane :build do |options|
+    flutter("build", "appbundle", "--release", *version_args(options))
+    UI.user_error!("No app bundle at #{AAB}") unless File.exist?(AAB)
+    UI.success("Built #{AAB}")
+  end
+
+  desc "Upload the built bundle to the Play internal testing track (needs PLAY_SERVICE_ACCOUNT_JSON)"
+  lane :internal do
+    upload_to_play_store(
+      package_name: BUNDLE_ID,
+      track: "internal",
+      aab: AAB,
+      json_key_data: ENV.fetch("PLAY_SERVICE_ACCOUNT_JSON"),
+      # `draft` until the app has a release the Play Console has reviewed; the
+      # workflow reads it from the PLAY_RELEASE_STATUS repository variable.
+      release_status: ENV.fetch("PLAY_RELEASE_STATUS", "draft"),
+      # Store listing drafts go up by hand once they are reviewed (README.md).
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
+
+platform :ios do
+  desc "Build the iOS archive. Without signing (dry run) this is `flutter build ipa --no-codesign`; " \
+       "with signing:true it imports the distribution certificate and provisioning profile and exports an ipa."
+  lane :build do |options|
+    unless options[:signed].to_s == "true"
+      flutter("build", "ipa", "--release", "--no-codesign", *version_args(options))
+      next
+    end
+
+    # A temporary keychain (fastlane_tmp_keychain) the certificate goes into.
+    setup_ci(force: true)
+    certificate = decode_env_to_file("IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64", "distribution.p12")
+    import_certificate(
+      certificate_path: certificate,
+      certificate_password: ENV.fetch("IOS_DISTRIBUTION_CERTIFICATE_PASSWORD"),
+      keychain_name: "fastlane_tmp_keychain",
+      keychain_password: ""
+    )
+    profile = decode_env_to_file("IOS_PROVISIONING_PROFILE_BASE64", "lectio.mobileprovision")
+    install_provisioning_profile(path: profile)
+    details = FastlaneCore::ProvisioningProfile.parse(profile)
+    team_id = details.fetch("TeamIdentifier").first
+    profile_name = details.fetch("Name")
+
+    update_code_signing_settings(
+      path: File.join(APP_ROOT, "ios/Runner.xcodeproj"),
+      use_automatic_signing: false,
+      targets: ["Runner"],
+      build_configurations: ["Release"],
+      team_id: team_id,
+      bundle_identifier: BUNDLE_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile_name
+    )
+    export_options = File.join(ENV["RUNNER_TEMP"] || Dir.mktmpdir, "ExportOptions.plist")
+    File.write(export_options, {
+      "method" => "app-store-connect",
+      "teamID" => team_id,
+      "signingStyle" => "manual",
+      "provisioningProfiles" => { BUNDLE_ID => profile_name },
+      "uploadSymbols" => true
+    }.to_plist)
+    flutter("build", "ipa", "--release", "--export-options-plist=#{export_options}", *version_args(options))
+  end
+
+  desc "Upload the signed ipa to TestFlight with the App Store Connect API key"
+  lane :beta do
+    ipa = Dir[File.join(APP_ROOT, "build/ios/ipa/*.ipa")].first
+    UI.user_error!("No ipa under build/ios/ipa; run `fastlane ios build signed:true` first") if ipa.nil?
+    app_store_connect_api_key(
+      key_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_API_ISSUER_ID"),
+      key_content: ENV.fetch("APP_STORE_CONNECT_API_KEY_P8_BASE64"),
+      is_key_content_base64: true,
+      in_house: false
+    )
+    upload_to_testflight(
+      ipa: ipa,
+      app_identifier: BUNDLE_ID,
+      # Internal testers only: external groups need Beta App Review.
+      distribute_external: false,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

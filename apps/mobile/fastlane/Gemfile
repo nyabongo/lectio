@@ -1,0 +1,9 @@
+# Fastlane for the store uploads (L-109). Run from apps/mobile with
+# BUNDLE_GEMFILE=fastlane/Gemfile; mobile-release.yml sets it.
+# fastlane is pinned exactly; Gemfile.lock pins everything else (the workflow
+# installs in frozen mode once the lock is committed).
+source "https://rubygems.org"
+
+ruby ">= 3.1"
+
+gem "fastlane", "2.240.1"
