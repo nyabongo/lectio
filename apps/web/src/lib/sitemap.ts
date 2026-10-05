@@ -16,9 +16,9 @@ export const SITEMAP_INDEX = 'sitemap-index.xml';
 
 /**
  * Pages that are `noindex` and so stay out of the sitemap, by their last path segment (in any locale and under
- * any base path): the search page (L-060) has no content of its own.
+ * any base path): the search page (L-060) has no content of its own, nor does the offline fallback (L-061).
  */
-export const NOINDEX_PAGES: ReadonlySet<string> = new Set(['search']);
+export const NOINDEX_PAGES: ReadonlySet<string> = new Set(['search', 'offline']);
 
 /**
  * Whether a built URL is an HTML page that belongs in the sitemap. Files with an extension (the static JSON API,

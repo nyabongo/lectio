@@ -31,6 +31,7 @@ describe('isSitemapPage', () => {
     ['https://nyabongo.github.io/lectio/feed.xml', false],
     ['https://nyabongo.github.io/lectio/search/', false],
     ['https://nyabongo.github.io/lectio/sw/search/', false],
+    ['https://nyabongo.github.io/lectio/offline/', false],
     ['https://nyabongo.github.io/', true],
   ])('%s is %s', (url, expected) => {
     expect(isSitemapPage(url)).toBe(expected);
