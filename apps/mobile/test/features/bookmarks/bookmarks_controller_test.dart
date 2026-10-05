@@ -62,16 +62,14 @@ void main() {
       now = now.add(const Duration(minutes: 1));
       await controller.toggleBookmark(gospel, title: 'Gospel');
 
-      expect([for (final b in controller.bookmarks) b.target], [
-        gospel,
-        insight,
-        day,
-      ]);
-      expect([for (final b in controllerOn(store).bookmarks) b.target], [
-        gospel,
-        insight,
-        day,
-      ]);
+      expect(
+        [for (final b in controller.bookmarks) b.target],
+        [gospel, insight, day],
+      );
+      expect(
+        [for (final b in controllerOn(store).bookmarks) b.target],
+        [gospel, insight, day],
+      );
     });
 
     test('remove one', () async {
@@ -121,7 +119,10 @@ void main() {
       final controller = controllerOn(store);
       await controller.saveNote(day, title: 'Sunday', text: 'a');
 
-      expect(await controller.saveNote(day, title: 'Sunday', text: '  '), isTrue);
+      expect(
+        await controller.saveNote(day, title: 'Sunday', text: '  '),
+        isTrue,
+      );
       expect(controller.noteFor(day), isNull);
       expect(controllerOn(store).notes, isEmpty);
     });
@@ -166,7 +167,9 @@ void main() {
 
     test('reads anything unreadable as empty', () {
       for (final raw in ['not json', '[]', '{"bookmarks": {}, "notes": 3}']) {
-        final broken = MemoryKeyValueStore({BookmarksController.storageKey: raw});
+        final broken = MemoryKeyValueStore({
+          BookmarksController.storageKey: raw,
+        });
         expect(controllerOn(broken).isEmpty, isTrue, reason: raw);
       }
     });

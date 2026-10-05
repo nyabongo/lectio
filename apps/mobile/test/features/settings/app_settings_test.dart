@@ -96,12 +96,10 @@ void main() {
 
   group('options', () {
     test('text sizes scale like the site', () {
-      expect([for (final size in TextSize.values) size.scale], [
-        0.9,
-        1,
-        1.125,
-        1.25,
-      ]);
+      expect(
+        [for (final size in TextSize.values) size.scale],
+        [0.9, 1, 1.125, 1.25],
+      );
       expect(TextSize.standard.label, 'Standard');
     });
 

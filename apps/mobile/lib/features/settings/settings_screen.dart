@@ -10,8 +10,10 @@ import 'package:lectio/src/screens/standalone_scaffold.dart';
 
 /// Asks the reader for a time of day, starting at the given one; `null` when
 /// they cancel.
-typedef TimePicker =
-    Future<TimeOfDay?> Function(BuildContext context, TimeOfDay initial);
+typedef TimePicker = Future<TimeOfDay?> Function(
+  BuildContext context,
+  TimeOfDay initial,
+);
 
 /// The Material time picker.
 Future<TimeOfDay?> materialTimePicker(BuildContext context, TimeOfDay initial) {
@@ -170,9 +172,8 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.bookmarks_outlined),
             title: const Text(bookmarksTitle),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => unawaited(
-              context.push('${AppRoute.settings.path}/bookmarks'),
-            ),
+            onTap: () =>
+                unawaited(context.push('${AppRoute.settings.path}/bookmarks')),
           ),
         ],
       ),

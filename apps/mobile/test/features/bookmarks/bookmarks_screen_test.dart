@@ -54,7 +54,9 @@ Future<void> pumpInPage(
   await tester.pumpWidget(
     BookmarksScope(
       notifier: controller,
-      child: MaterialApp(home: Scaffold(body: Center(child: child))),
+      child: MaterialApp(
+        home: Scaffold(body: Center(child: child)),
+      ),
     ),
   );
 }

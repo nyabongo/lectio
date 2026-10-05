@@ -150,9 +150,7 @@ void main() {
     expect(controller.settings.theme, ThemePreference.light);
   });
 
-  testWidgets('the daily reminder turns on and keeps its time', (
-    tester,
-  ) async {
+  testWidgets('the daily reminder turns on and keeps its time', (tester) async {
     final controller = await pumpApp(tester, store);
     final timeTile = find.widgetWithText(ListTile, 'Reminder time');
     expect(tester.widget<ListTile>(timeTile).enabled, isFalse);
