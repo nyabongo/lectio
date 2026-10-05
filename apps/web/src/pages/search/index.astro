@@ -1,0 +1,162 @@
+---
+/**
+ * Search (L-060), `/search/`: static search over the notes with no server. The `lectio:pagefind` integration writes
+ * the Pagefind bundle to `<base>pagefind/` after the build (src/integrations/pagefind.ts); this page lazily loads
+ * Pagefind's UI script and stylesheet from there once it has rendered, so no other page pays for search. Results
+ * can be narrowed by the `book` and `season` filters; a `?q=` link opens with that search run.
+ *
+ * Paths come from `searchPageConfig()` (src/lib/search.ts) and are base-path aware: result URLs are indexed
+ * relative to the base and Pagefind prefixes `baseUrl`. The UI strings are in src/i18n/en/search.json, and the
+ * Pagefind UI's own variables are mapped to the site tokens below.
+ */
+import Seo from '../../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { searchPageConfig } from '../../lib/search.ts';
+import { withBase } from '../../lib/site.ts';
+
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const title = t(lang, 'search.title');
+const description = t(lang, 'search.description');
+const calendarHref = withBase(base, localePath(lang, 'calendar/'));
+// Pagefind UI's `translations` option, keyed by its own names.
+const config = searchPageConfig(withBase(base), {
+  placeholder: t(lang, 'search.ui.placeholder'),
+  clear_search: t(lang, 'search.ui.clearSearch'),
+  load_more: t(lang, 'search.ui.loadMore'),
+  search_label: t(lang, 'search.ui.searchLabel'),
+  filters_label: t(lang, 'search.ui.filtersLabel'),
+  zero_results: t(lang, 'search.ui.zeroResults'),
+  many_results: t(lang, 'search.ui.manyResults'),
+  one_result: t(lang, 'search.ui.oneResult'),
+  alt_search: t(lang, 'search.ui.altSearch'),
+  search_suggestion: t(lang, 'search.ui.searchSuggestion'),
+  searching: t(lang, 'search.ui.searching'),
+});
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path="search/" />
+
+  <section class="search" aria-labelledby="search-heading">
+    <h1 id="search-heading">{title}</h1>
+    <p class="intro">{t(lang, 'search.intro')}</p>
+
+    <div class="search__ui" id="search-ui" data-search={JSON.stringify(config)}>
+      <p class="search__status" data-search-status hidden>{t(lang, 'search.loading')}</p>
+      <p class="search__status" data-search-error hidden>
+        {t(lang, 'search.unavailable')}
+        <a href={calendarHref}>{t(lang, 'search.calendarLink')}</a>
+      </p>
+    </div>
+    <noscript>
+      <p class="search__status">
+        {t(lang, 'search.noscript')}
+        <a href={calendarHref}>{t(lang, 'search.calendarLink')}</a>
+      </p>
+    </noscript>
+  </section>
+</BaseLayout>
+
+<script>
+  import { pagefindUiAssets, parseSearchPageConfig, queryFromSearch } from '../../lib/search.ts';
+
+  interface PagefindUiInstance {
+    triggerSearch(term: string): void;
+  }
+  type PagefindUiConstructor = new (options: Record<string, unknown>) => PagefindUiInstance;
+
+  const root = document.querySelector<HTMLElement>('[data-search]');
+  const config = parseSearchPageConfig(root?.dataset.search);
+  const status = root?.querySelector<HTMLElement>('[data-search-status]');
+  const failure = root?.querySelector<HTMLElement>('[data-search-error]');
+
+  function load(tag: 'script' | 'link', url: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const element = document.createElement(tag);
+      if (element instanceof HTMLScriptElement) element.src = url;
+      else if (element instanceof HTMLLinkElement) {
+        element.rel = 'stylesheet';
+        element.href = url;
+      }
+      element.addEventListener('load', () => resolve());
+      element.addEventListener('error', () => reject(new Error(`could not load ${url}`)));
+      document.head.append(element);
+    });
+  }
+
+  async function start(): Promise<void> {
+    if (root === null || config === null) return;
+    if (status) status.hidden = false;
+    const assets = pagefindUiAssets(config.bundlePath);
+    try {
+      await Promise.all([load('link', assets.style), load('script', assets.script)]);
+      const PagefindUI = (window as unknown as { PagefindUI?: PagefindUiConstructor }).PagefindUI;
+      if (PagefindUI === undefined) throw new Error('Pagefind UI did not load');
+      if (status) status.hidden = true;
+      const ui = new PagefindUI({
+        element: '#search-ui',
+        bundlePath: config.bundlePath,
+        baseUrl: config.baseUrl,
+        translations: config.translations,
+        showImages: false,
+        showSubResults: true,
+        resetStyles: false,
+        autofocus: true,
+      });
+      const term = queryFromSearch(location.search);
+      if (term !== null) ui.triggerSearch(term);
+    } catch {
+      if (status) status.hidden = true;
+      if (failure) failure.hidden = false;
+    }
+  }
+
+  void start();
+</script>
+
+<style>
+  .search {
+    max-width: var(--measure);
+  }
+
+  .intro {
+    color: var(--colour-muted);
+  }
+
+  .search__ui {
+    margin-top: var(--space-m);
+    /* Pagefind UI, styled with the site tokens. */
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: var(--colour-accent-ink);
+    --pagefind-ui-text: var(--colour-ink);
+    --pagefind-ui-background: var(--colour-surface);
+    --pagefind-ui-border: var(--colour-rule);
+    --pagefind-ui-tag: var(--colour-wash);
+    --pagefind-ui-border-width: var(--rule-width);
+    --pagefind-ui-border-radius: var(--radius-m);
+    --pagefind-ui-font: var(--font-body);
+  }
+
+  .search__status {
+    padding: var(--space-s);
+    background: var(--colour-wash);
+    border-radius: var(--radius-m);
+    color: var(--colour-muted);
+  }
+
+  /* Filter names are the index's keys (`book`, `season`). */
+  .search__ui :global(.pagefind-ui__filter-name) {
+    text-transform: capitalize;
+  }
+
+  .search__ui :global(.pagefind-ui__result-link) {
+    color: var(--colour-link);
+  }
+
+  .search__ui :global(mark) {
+    background: var(--colour-accent-wash);
+    color: inherit;
+  }
+</style>
