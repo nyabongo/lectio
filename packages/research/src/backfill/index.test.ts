@@ -1,4 +1,6 @@
+import { DEFAULT_CONFIG } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
+import type { ContentRepo } from '@lectio/content';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { e2eWorld } from '../cli/fixtures/e2e.ts';
@@ -6,8 +8,11 @@ import type { E2eWorld } from '../cli/fixtures/e2e.ts';
 import { main } from '../cli/main.ts';
 import type { CliContext } from '../cli/main.ts';
 import type { ComposeOptions, Toolkit } from '../cli/providers.ts';
+import type { RunReport, SummaryRow } from '../cli/run.ts';
 import { REGISTERED_SUBCOMMANDS } from '../cli/registry.ts';
-import { BACKFILL_USAGE, backfillSubcommand } from './index.ts';
+import { BACKFILL_USAGE, backfillSubcommand, formatBatchSummary } from './index.ts';
+import { estimateBackfill } from './estimate.ts';
+import { REPO } from './fixtures/calendars.ts';
 
 function capture(): { out: string[]; err: string[]; io: { out: (l: string) => void; err: (l: string) => void } } {
   const out: string[] = [];
@@ -107,7 +112,10 @@ describe('research backfill', () => {
     expect(text).toContain(
       'Back-fill ceiling: $3.00 (research.budget.backfillTotalUsd): covers every remaining passage.',
     );
-    expect(text).toContain('Batch ceiling: $3.00 (the run budget, at most research.budget.backfillTotalUsd).');
+    expect(text).toContain(
+      'Batch ceiling: $3.00, for this batch only (the run budget, at most research.budget.backfillTotalUsd). ' +
+        'Earlier batches are not counted: back-fill does not record its spend.',
+    );
     expect(text).toContain('Research plan 2026-10-05 to 2028-12-31 (819 days)');
     expect(ran.out.at(-1)).toBe('Back-fill: 1 passage(s) ready in this batch; 0 left, estimated $0.00.');
     expect(await world.github.listPrs({ state: 'all' })).toHaveLength(1);
@@ -143,7 +151,10 @@ describe('research backfill', () => {
   it('says when nothing is left to back-fill', async () => {
     const { context, composed } = setUp({ backfillTotalUsd: 100 });
     const ran = capture();
-    expect(await main(['backfill', '--execute', '--from-year', '2027', '--to-year', '2027'], context, ran.io)).toBe(0);
+    const repo = context.repo as ContentRepo;
+    const written = { ...context, repo: { ...repo, passageKeys: () => ['MT.20.1-16'] } };
+    expect(await main(['backfill', '--execute', '--to-year', '2026'], written, ran.io)).toBe(0);
+    expect(ran.out.join('\n')).toContain('Passage keys: 1 in the calendars, 1 already written, 0 to research');
     expect(ran.out.at(-1)).toBe('Nothing left to back-fill.');
     expect(composed).toEqual([]);
   });
@@ -156,6 +167,28 @@ describe('research backfill', () => {
     const common = capture();
     expect(await main(['backfill', '--provider', 'cloud'], context, common.io)).toBe(2);
     expect(common.err[0]).toContain('--provider must be live or fake');
+    const years = capture();
+    expect(await main(['backfill', '--to-year', '9999'], context, years.io)).toBe(2);
+    expect(years.err).toEqual(['--to-year 9999 has no calendar (committed calendar years: 2026–2026)']);
+  });
+
+  it('skips keys whose research PR a person closed before the batch is capped', async () => {
+    const { context, world } = setUp({ backfillTotalUsd: 100 });
+    const { github } = world;
+    await github.createBranch({ name: 'research/MT.20.1-16' });
+    await github.commitFiles({ branch: 'research/MT.20.1-16', message: 'x', files: [{ path: 'x', content: 'x' }] });
+    const { pr } = await github.openOrUpdatePr({ head: 'research/MT.20.1-16', title: 't', body: '' });
+    await github.closePr(pr.number);
+    const ran = capture();
+    expect(await main(['backfill', '--execute', '--budget', '5', '--max', '1'], context, ran.io)).toBe(0);
+    const text = ran.out.join('\n');
+    expect(text).toContain('To research (0, estimated $0.00)');
+    expect(text).not.toContain('passage file exists');
+    expect(text).toContain(`Skipped MT.20.1-16: a person closed PR #${String(pr.number)}`);
+    expect(ran.out.at(-1)).toBe(
+      'Back-fill: 0 passage(s) ready in this batch; 1 skipped (a person closed their PR); 0 left, estimated $0.00.',
+    );
+    expect(world.calls).toHaveLength(0);
   });
 
   it('opens the repository, corpus, clock and providers itself when the context has none', async () => {
@@ -166,5 +199,37 @@ describe('research backfill', () => {
     const text = ran.out.join('\n');
     expect(text).toContain('Passage keys: 1 in the calendars');
     expect(text).toMatch(/^Back-fill: \d passage\(s\) ready in this batch/mu);
+  });
+});
+
+describe('formatBatchSummary', () => {
+  const estimate = estimateBackfill({
+    fromYear: 2026,
+    toYear: 2026,
+    today: '2026-10-05',
+    repo: REPO,
+    config: DEFAULT_CONFIG,
+  });
+  const row = (key: string, pr: string): SummaryRow => ({
+    key,
+    research: 'written',
+    validation: 'ready',
+    costUsd: 1,
+    pr,
+    problem: false,
+  });
+
+  it('counts only published passages as ready, not a skipped publish', () => {
+    const report = {
+      dryRun: false,
+      rows: [row('JN.1.1', 'https://github.com/nyabongo/lectio/pull/1'), row('LK.1.1', 'not published: closed')],
+      published: [
+        { ok: true, key: 'JN.1.1' },
+        { ok: false, key: 'LK.1.1', skipped: true, error: new Error('closed') },
+      ],
+    } as unknown as RunReport;
+    expect(formatBatchSummary(estimate, report)).toBe(
+      'Back-fill: 1 passage(s) ready in this batch; 2 left, estimated $3.00.',
+    );
   });
 });

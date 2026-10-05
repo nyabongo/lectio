@@ -4,9 +4,12 @@
  * - By default it only prints the estimate (key count, cost at the per-passage average, the
  *   back-fill ceiling and the number of batches). No provider is built: nothing is called.
  * - `--execute` researches one batch through `research run` on a window from today to the end of
- *   the last year, so the planner orders keys by next occurrence and skips existing passages and
- *   open research PRs. The batch is bounded by reviewer capacity, weekly intake, `--max` and a
- *   ceiling of `min(run budget, research.budget.backfillTotalUsd)`.
+ *   the last year, so the planner orders keys by next occurrence and skips existing passages, open
+ *   research PRs and keys whose research PR a person closed (before the batch is capped). The batch
+ *   is bounded by reviewer capacity, weekly intake, `--max` and a ceiling of
+ *   `min(run budget, research.budget.backfillTotalUsd)`.
+ * - That ceiling applies to each batch on its own: spend is not recorded between batches, so
+ *   `backfillTotalUsd` is not yet a cumulative cap (a persisted ledger is a follow-up).
  * - With `backfillTotalUsd` at 0 (the default until the owner sets one) `--execute` refuses and
  *   nothing is generated. A live batch also needs `--budget <usd>`, at most `research.budget.perRunUsd`.
  *
@@ -16,6 +19,7 @@
 import { join } from 'node:path';
 
 import { openRepo } from '@lectio/content';
+import type { ContentRepo } from '@lectio/content';
 import { openCorpus } from '@lectio/corpus';
 import { systemClock } from '@lectio/providers';
 import { toIsoDateInZone } from '@lectio/shared';
@@ -25,15 +29,15 @@ import { runCeilingUsd } from '../cli/budget.ts';
 import type { CliContext, CliIo } from '../cli/main.ts';
 import { composeProviders } from '../cli/providers.ts';
 import type { RegisteredSubcommand } from '../cli/registry.ts';
-import { runResearch } from '../cli/run.ts';
-import type { RunReport } from '../cli/run.ts';
+import { closedKeys, runResearch } from '../cli/run.ts';
+import type { ClosedSkip, RunReport } from '../cli/run.ts';
 import { formatRunReport } from '../cli/summary.ts';
-import { BACKFILL_USAGE, parseBackfillArgs } from './args.ts';
+import { BACKFILL_USAGE, parseBackfillArgs, resolveYears } from './args.ts';
 import { backfillWindow, estimateBackfill } from './estimate.ts';
 import type { BackfillEstimate } from './estimate.ts';
 import { formatEstimate } from './format.ts';
 
-export { BACKFILL_USAGE, DEFAULT_FROM_YEAR, DEFAULT_TO_YEAR, parseBackfillArgs } from './args.ts';
+export { BACKFILL_USAGE, DEFAULT_FROM_YEAR, DEFAULT_TO_YEAR, parseBackfillArgs, resolveYears } from './args.ts';
 export type { BackfillArgs } from './args.ts';
 export { backfillWindow, estimateBackfill } from './estimate.ts';
 export type { BackfillEstimate, BackfillKey, BackfillWindow, EstimateInput } from './estimate.ts';
@@ -41,19 +45,39 @@ export { PREVIEW_KEYS, formatEstimate } from './format.ts';
 
 const money = (usd: number): string => `$${usd.toFixed(2)}`;
 
-/** Passages of a batch that came out ready (written, not abandoned, published or a dry run). */
+/**
+ * Passages of a batch that came out ready: written, not abandoned, and published (a PR) or, in a
+ * dry run, publishable. A publish that was skipped (for example a branch that already exists) is
+ * not progress.
+ */
 function done(report: RunReport): number {
-  return report.rows.filter((row) => row.research === 'written' && !row.problem).length;
+  const published = new Set(report.published.flatMap((outcome) => (outcome.ok ? [outcome.key] : [])));
+  return report.rows.filter(
+    (row) =>
+      row.research === 'written' && !row.problem && (report.dryRun ? row.pr === 'dry run' : published.has(row.key)),
+  ).length;
 }
 
-/** The closing line of a batch: what is left and what it would cost. */
-export function formatBatchSummary(estimate: BackfillEstimate, report: RunReport): string {
-  const left = estimate.remaining.length - done(report);
+/** The closing line of a batch: what is ready, what a person closed, what is left and what it would cost. */
+export function formatBatchSummary(
+  estimate: BackfillEstimate,
+  report: RunReport,
+  closed: readonly ClosedSkip[] = [],
+): string {
+  const ready = done(report);
+  const left = estimate.remaining.length - ready - closed.length;
   const verb = report.dryRun ? 'would be left (dry run: nothing was published)' : 'left';
   return (
-    `Back-fill: ${String(done(report))} passage(s) ready in this batch; ${String(left)} ${verb}, ` +
-    `estimated ${money(left * estimate.perPassageUsd)}.`
+    `Back-fill: ${String(ready)} passage(s) ready in this batch; ` +
+    (closed.length === 0 ? '' : `${String(closed.length)} skipped (a person closed their PR); `) +
+    `${String(left)} ${verb}, estimated ${money(left * estimate.perPassageUsd)}.`
   );
+}
+
+/** `repo` with `keys` listed among the passages, so the planner skips them before it caps the batch. */
+function hiding(repo: ContentRepo, keys: readonly string[]): ContentRepo {
+  if (keys.length === 0) return repo;
+  return { ...repo, passageKeys: () => [...repo.passageKeys(), ...keys] };
 }
 
 async function run(argv: readonly string[], context: CliContext, io: CliIo): Promise<number> {
@@ -67,8 +91,7 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
   const contentRoot = join(context.repoRoot, config.content.root);
   const repo = context.repo ?? openRepo(contentRoot);
   const estimate = estimateBackfill({
-    fromYear: args.fromYear,
-    toYear: args.toYear,
+    ...resolveYears(args, repo.years()),
     today: toIsoDateInZone(clock.now(), config.site.timezone),
     repo,
     config,
@@ -96,7 +119,11 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
   const ceilingUsd = Math.min(runCeilingUsd(common, config), totalUsd);
   if (common.dryRunForced) say('', '--provider fake: dry run, nothing is published.');
   else if (common.dryRun) say('', 'Dry run: nothing is published.');
-  say('', `Batch ceiling: ${money(ceilingUsd)} (the run budget, at most research.budget.backfillTotalUsd).`);
+  say(
+    '',
+    `Batch ceiling: ${money(ceilingUsd)}, for this batch only (the run budget, at most ` +
+      'research.budget.backfillTotalUsd). Earlier batches are not counted: back-fill does not record its spend.',
+  );
   const kit = await (context.compose ?? composeProviders)({
     mode: common.provider,
     config,
@@ -108,7 +135,12 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
   // Loaded here: main.ts loads the registry, which loads this module.
   const { dryRunGitHub } = await import('../cli/main.ts');
   const window = backfillWindow(estimate);
-  const report = await runResearch(
+  // Closed keys sit at the front of the order on every run; hide them so they do not use the batch.
+  const closed = await closedKeys(
+    estimate.remaining.map((entry) => ({ key: entry.key, ref: entry.ref, firstDate: entry.firstDate, dates: [] })),
+    kit.github,
+  );
+  const ran = await runResearch(
     { ...window, ...(args.max === undefined ? {} : { max: args.max }) },
     {
       ...kit,
@@ -116,12 +148,27 @@ async function run(argv: readonly string[], context: CliContext, io: CliIo): Pro
       ...(context.format === undefined ? {} : { format: context.format }),
       config,
       repoRoot: context.repoRoot,
-      repo,
+      repo: hiding(
+        repo,
+        closed.map((entry) => entry.key),
+      ),
       corpus: context.corpus ?? openCorpus(join(context.repoRoot, 'corpus')),
       dryRun: common.dryRun,
     },
   );
-  say('', formatRunReport(report), '', formatBatchSummary(estimate, report));
+  const shown = new Set(closed.map((entry) => entry.key));
+  // The planner lists the hidden keys as existing passages; leave them out and name them below.
+  const report: RunReport = {
+    ...ran,
+    plan: { ...ran.plan, skipped: ran.plan.skipped.filter((item) => !shown.has(item.key)) },
+  };
+  say(
+    '',
+    formatRunReport(report),
+    ...closed.map((entry) => `Skipped ${entry.key}: a person closed PR #${String(entry.pr)}`),
+    '',
+    formatBatchSummary(estimate, report, closed),
+  );
   return report.rows.some((row) => row.problem) ? 1 : 0;
 }
 
