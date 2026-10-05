@@ -48,5 +48,24 @@
   "share": {
     "failed": "Imeshindwa kushiriki au kunakili kiungo.",
     "linkNotRecognised": "Lectio haina ukurasa wa kiungo hicho, kwa hiyo imefungua Leo."
+  },
+  "listen": {
+    "emptyDay": "Bado hakuna siku ya kalenda kwa tarehe hii.",
+    "loadFailed": "Siku hii haikuweza kupakiwa. Angalia muunganisho wako kisha ujaribu tena.",
+    "nothingToPlay": "Bado hakuna madokezo ya kusikiliza kwa siku hii. Madokezo husomwa kwa sauti baada ya kukaguliwa na kuidhinishwa.",
+    "offline": "Nje ya mtandao: madokezo yasiyo na rekodi iliyohifadhiwa husomwa na sauti ya kifaa.",
+    "play": "Cheza",
+    "pause": "Sitisha",
+    "next": "Dokezo linalofuata",
+    "previous": "Dokezo lililotangulia",
+    "speed": "Kasi ya kucheza",
+    "deviceVoice": "Sauti ya kifaa",
+    "inEnglish": "Kwa Kiingereza",
+    "noVoice": "Kifaa hiki hakina sauti ya Kiswahili, kwa hiyo madokezo yasiyo na rekodi ya Kiswahili yanachezwa kwa Kiingereza.",
+    "queue": "Foleni",
+    "finished": "Imekamilika. Cheza ili kuanza tena.",
+    "kindContext": "Muktadha",
+    "kindNote": "Dokezo la tafsiri",
+    "position": "{index} kati ya {count}"
   }
 }

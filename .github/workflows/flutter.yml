@@ -11,9 +11,10 @@
 # `workflow_dispatch` lets the merge-rule job (L-031) re-run it on the approval
 # commit.
 #
-# `ios` is not a required check. It runs after `flutter` on push to main and on
-# PRs labelled `ios-build` (the `labeled` trigger re-runs the workflow when the
-# label is added).
+# `ios` is not a required check. It builds the committed ios/ project (L-104)
+# and fails when the build changes it. It runs after `flutter` on push to main
+# and on PRs labelled `ios-build` (the `labeled` trigger re-runs the workflow
+# when the label is added).
 #
 # Goldens (L-108, apps/mobile/test/goldens/screens/) are drawn here on Linux,
 # never locally. To draw new ones, run this workflow by hand on the PR branch
@@ -201,21 +202,48 @@ jobs:
           flutter-version-file: apps/mobile/pubspec.yaml
           cache: true
       - run: flutter pub get --enforce-lockfile
-      # ios/ is not committed yet (L-104 commits it): generate it from the
-      # pinned Flutter. flutter create never overwrites existing files.
-      - name: Materialise ios/
+      # ios/ is committed (L-104), CocoaPods integration included: the job
+      # fails when it is missing instead of generating a project that would
+      # pass without the committed Info.plist keys.
+      - name: Check the committed ios/ project
         run: |
           if [ ! -d ios ]; then
-            flutter create --no-pub --org io.github.nyabongo --project-name lectio --platforms ios .
+            echo "::error::apps/mobile/ios is missing. It is committed (L-104); restore it from git."
+            exit 1
           fi
           grep -q 'PRODUCT_BUNDLE_IDENTIFIER = io.github.nyabongo.lectio;' ios/Runner.xcodeproj/project.pbxproj
-          # L-114: declare English and Kiswahili (commit this with ios/).
-          if ! /usr/libexec/PlistBuddy -c 'Print :CFBundleLocalizations' ios/Runner/Info.plist >/dev/null 2>&1; then
-            /usr/libexec/PlistBuddy -c 'Add :CFBundleLocalizations array' \
-              -c 'Add :CFBundleLocalizations:0 string en' \
-              -c 'Add :CFBundleLocalizations:1 string sw' ios/Runner/Info.plist
-          fi
+          for key in CFBundleLocalizations UIBackgroundModes FlutterDeepLinkingEnabled CFBundleURLTypes; do
+            /usr/libexec/PlistBuddy -c "Print :$key" ios/Runner/Info.plist >/dev/null
+          done
       - run: flutter build ios --no-codesign --debug
+      # The build (pod install included) must not change the committed
+      # project: Podfile.lock pins the pods. When it does, the changed files
+      # are uploaded as `ios-project-changes` to commit.
+      - name: ios/ unchanged by the build
+        run: |
+          changed="$(git status --porcelain --untracked-files=all -- ios)"
+          if [ -n "$changed" ]; then
+            echo "::error::The build changed apps/mobile/ios; commit the ios-project-changes artifact:"
+            echo "$changed"
+            git diff -- ios
+            mkdir -p "$RUNNER_TEMP/ios-project-changes"
+            # ls-files prints paths relative to apps/mobile (status does not).
+            git ls-files --modified --others --exclude-standard -- ios | while read -r file; do
+              if [ -f "$file" ]; then
+                mkdir -p "$RUNNER_TEMP/ios-project-changes/$(dirname "$file")"
+                cp "$file" "$RUNNER_TEMP/ios-project-changes/$file"
+              fi
+            done
+            exit 1
+          fi
+      - name: Upload ios/ changes
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-project-changes
+          path: ${{ runner.temp }}/ios-project-changes/
+          retention-days: 14
+          if-no-files-found: ignore
       - name: Upload Runner.app
         uses: actions/upload-artifact@v7
         with:
