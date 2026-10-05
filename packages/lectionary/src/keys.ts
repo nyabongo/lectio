@@ -2,10 +2,14 @@
  * Proper-of-time keys: `<season>-sunday-<week>` and `<season>-weekday-<week>-<day>`, e.g.
  * `ot-sunday-25`, `ot-weekday-25-tue`, `lent-weekday-0-wed` (Ash Wednesday).
  */
+import type { SEASONS } from '@lectio/schema/calendar';
 import type { IsoDate } from '@lectio/shared';
 import { isIsoDate } from '@lectio/shared';
 
-/** Calendar seasons (the `season` of a calendar day) and their key prefix. */
+/** A calendar season: the `season` of a calendar day (`@lectio/schema/calendar`). */
+export type Season = (typeof SEASONS)[number];
+
+/** Every calendar season and its key prefix. */
 export const SEASON_PREFIX = {
   'ordinary-time': 'ot',
   advent: 'advent',
@@ -13,8 +17,7 @@ export const SEASON_PREFIX = {
   lent: 'lent',
   'paschal-triduum': 'triduum',
   easter: 'easter',
-} as const;
-export type Season = keyof typeof SEASON_PREFIX;
+} as const satisfies Readonly<Record<Season, string>>;
 
 export const WEEKDAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
 export type Weekday = (typeof WEEKDAYS)[number];
