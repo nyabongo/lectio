@@ -32,6 +32,25 @@ templates under `endpoints`, so a client only needs to know where `index.json` i
   file exists only when the passage has approved notes.
 - `{year}` is a four-digit year with a calendar file (`index.json` → `years`).
 
+### Kiswahili mirror: `sw/` (L-113)
+
+Every endpoint above except `index.json` is also published under `sw/` (`sw/days/{date}.json`,
+`sw/passages/index.json`, `sw/passages/{key}.json`, `sw/calendar/{year}.json`, `sw/upcoming.json`), with the same
+schemas and the same files: the same dates, keys and approved passages. The mirror is additive; nothing under the API
+root changes.
+
+- A passage is its Kiswahili translation (`passages/i18n/sw/<key>.json`, L-112) only when that translation is
+  approved **and** fresh (its `sourceSha256` equals the English file's translatable hash now, see
+  [content-model.md](content-model.md)); then `locale` is `"sw"` and `summary`, `context`, each note's `anchor`,
+  `original.gloss`, `summary` and `body`, and each claim's `text` are the Kiswahili ones.
+- Otherwise (no translation, pending, stale or out of step with the English) it is the English notes, unchanged, with
+  `locale: "en"`. Clients show those as English (the site marks them `lang="en"` with an "English only" badge).
+- Keys, references, verses, original-language words, `sourceIds`, `sources` and `review` are always the English
+  file's, so citations and permalinks match in both languages. `audio` stays `null`.
+- Celebration names in Kiswahili are already in every day document (`celebrations[].names`, L-111).
+
+Code: `apps/web/src/pages/api/v1/sw/`, built from `localeRepo()` in `apps/web/src/lib/notes-locale.ts`.
+
 ### Dates and time zone
 
 The build date is "today" in the site time zone (`site.timezone`, `Africa/Nairobi`), or `LECTIO_DATE` when a build
