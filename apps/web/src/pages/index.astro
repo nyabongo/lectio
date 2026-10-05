@@ -1,14 +1,14 @@
 ---
 /**
  * Scaffold placeholder (L-050) so the build has a page that exercises the layout, the theme and the content
- * repository. The Today page (L-053, issue #50) replaces this file.
+ * repository. The Today page (L-053) replaces this file.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { dayColour } from '../lib/theme.ts';
-import { dayOrNearest, readingSummaries, siteContext, todayIn } from '../lib/site.ts';
+import { dayOrNearest, readingSummaries, siteContext, siteDate } from '../lib/site.ts';
 
 const { config, repo } = siteContext();
-const day = dayOrNearest(repo, todayIn(config.site.timezone));
+const day = dayOrNearest(repo, siteDate(config));
 const celebration: string | undefined = day?.day.celebrations[0]?.name;
 const season: string = day?.day.season ?? '';
 const readings = day === null ? [] : readingSummaries(day);

@@ -102,6 +102,25 @@ export function todayIn(timezone: string, now: Date = new Date()): IsoDate {
   return toIsoDateInZone(now, timezone);
 }
 
+/** Environment variable that pins the date a build treats as "today" (`build:fixture` sets the fixture Sunday). */
+export const DATE_ENV_VAR = 'LECTIO_DATE';
+
+/**
+ * The date a build treats as "today": `$LECTIO_DATE` when set (so fixture builds and their screenshots are
+ * reproducible), otherwise today in `config.site.timezone`. Throws when `LECTIO_DATE` is set but not an ISO date.
+ */
+export function siteDate(
+  config: Pick<LectioConfig, 'site'>,
+  env: Readonly<Record<string, string | undefined>> = process.env,
+  now: Date = new Date(),
+): IsoDate {
+  const pinned = env[DATE_ENV_VAR];
+  if (pinned === undefined || pinned === '') return todayIn(config.site.timezone, now);
+  if (!isIsoDate(pinned))
+    throw new RangeError(`${DATE_ENV_VAR} must be an ISO date (YYYY-MM-DD), got ${JSON.stringify(pinned)}`);
+  return pinned;
+}
+
 /**
  * The day to show for `date`: that day when the calendar has it, otherwise the latest earlier day of the same year
  * that has readings, otherwise the earliest day of that year with readings, otherwise `null`. The scaffold's

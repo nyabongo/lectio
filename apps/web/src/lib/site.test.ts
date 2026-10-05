@@ -14,6 +14,7 @@ import {
   normaliseBase,
   readingSummaries,
   siteContext,
+  siteDate,
   todayIn,
   withBase,
 } from './site.ts';
@@ -129,6 +130,24 @@ describe('dates', () => {
     expect(todayIn('Africa/Nairobi', lateEvening)).toBe('2026-09-20');
     expect(todayIn('UTC', lateEvening)).toBe('2026-09-19');
     expect(todayIn('UTC')).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+});
+
+describe('siteDate', () => {
+  const now = new Date('2026-09-19T22:30:00Z');
+
+  it('uses LECTIO_DATE when it is set', () => {
+    expect(siteDate(DEFAULT_CONFIG, { LECTIO_DATE: '2026-09-20' }, now)).toBe('2026-09-20');
+  });
+
+  it('falls back to today in the site time zone', () => {
+    expect(siteDate(DEFAULT_CONFIG, {}, now)).toBe('2026-09-20');
+    expect(siteDate(DEFAULT_CONFIG, { LECTIO_DATE: '' }, now)).toBe('2026-09-20');
+    expect(siteDate(DEFAULT_CONFIG)).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('rejects a malformed LECTIO_DATE', () => {
+    expect(() => siteDate(DEFAULT_CONFIG, { LECTIO_DATE: 'tomorrow' }, now)).toThrow(/LECTIO_DATE/);
   });
 });
 
