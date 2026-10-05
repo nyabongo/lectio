@@ -1,0 +1,87 @@
+---
+/**
+ * Scaffold placeholder (L-050) so the build has a page that exercises the layout, the theme and the content
+ * repository. The Today page (L-053, issue #50) replaces this file.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { dayColour } from '../lib/theme.ts';
+import { dayOrNearest, readingSummaries, siteContext, todayIn } from '../lib/site.ts';
+
+const { config, repo } = siteContext();
+const day = dayOrNearest(repo, todayIn(config.site.timezone));
+const celebration: string | undefined = day?.day.celebrations[0]?.name;
+const season: string = day?.day.season ?? '';
+const readings = day === null ? [] : readingSummaries(day);
+---
+
+<BaseLayout
+  title="Lectio"
+  description="A companion to the daily Mass readings: their history, their original words, and a voice."
+  date={day?.date}
+  celebration={celebration}
+  colour={dayColour(day?.day)}
+>
+  {
+    day === null ? (
+      <p>No calendar day is available yet.</p>
+    ) : (
+      <>
+        <p class="eyebrow">{season.replaceAll('-', ' ')}</p>
+        <h1>{celebration}</h1>
+        <ul class="readings">
+          {readings.map((reading) => (
+            <li>
+              <span class="ref">{reading.ref}</span>
+              {reading.summary !== null && <span class="summary">{reading.summary}</span>}
+              <a href={reading.linkout} rel="noopener">
+                Text ↗
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .readings {
+    list-style: none;
+    margin: var(--space-m) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xs);
+    max-width: var(--measure);
+  }
+
+  .readings li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-3xs) var(--space-s);
+    padding: var(--space-s);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-left: var(--band-height) solid var(--colour-accent);
+    border-radius: var(--radius-m);
+  }
+
+  .ref {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+  }
+
+  .summary {
+    grid-column: 1;
+    color: var(--colour-muted);
+    font-size: var(--step--1);
+  }
+
+  .readings a {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+  }
+</style>

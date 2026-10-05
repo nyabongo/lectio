@@ -1,14 +1,20 @@
+/// <reference types="vitest/config" />
 /**
- * Minimal project config so the apps/web placeholder test runs under the root
- * `apps/*\/vitest.config.ts` project glob. L-050 replaces it (Astro Container
- * API tests etc.); keep `setupFiles` pointing at the root offline guard.
+ * Vitest project for apps/web, picked up by the root `apps/*\/vitest.config.ts` project glob.
+ *
+ * `getViteConfig` runs the tests through Astro's Vite pipeline, so `.astro` components can be rendered with the
+ * Container API (see src/layouts/*.test.ts). Coverage is configured at the root (src/lib and src/sw count);
+ * `setupFiles` keeps the root offline msw guard.
  */
-import { defineProject } from 'vitest/config';
+import { getViteConfig } from 'astro/config';
 
-export default defineProject({
-  test: {
-    name: '@lectio/web',
-    include: ['src/**/*.test.{ts,tsx,mts}'],
-    setupFiles: ['../../vitest.setup.ts'],
+export default getViteConfig(
+  {
+    test: {
+      name: '@lectio/web',
+      include: ['src/**/*.test.{ts,tsx,mts}'],
+      setupFiles: ['../../vitest.setup.ts'],
+    },
   },
-});
+  { logLevel: 'error' },
+);
