@@ -309,6 +309,14 @@
       "title": {}
     }
   },
+  "day_descriptionHolySaturday": "{date}: {title}. {season}. There is no Mass on Holy Saturday; the Easter Vigil belongs to Easter Sunday.",
+  "@day_descriptionHolySaturday": {
+    "placeholders": {
+      "date": {},
+      "season": {},
+      "title": {}
+    }
+  },
   "day_todayHeading": "Today",
   "day_todayMissing": "There is no calendar day for today yet. The calendar lists every day that is ready.",
   "day_upcomingHeading": "The days ahead",
@@ -322,6 +330,7 @@
     }
   },
   "day_lectionaryMissing": "The readings for this day are not listed yet.",
+  "day_holySaturdayNoMass": "There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its readings are listed there.",
   "day_notesInPreparation": "Notes in preparation",
   "day_linkout_text": "Text",
   "day_linkout_detail": "{ref} at {source} (opens in a new tab)",
