@@ -1,0 +1,10 @@
+{
+  "name": "Sample Hebrew Bible",
+  "language": "hbo",
+  "upstreamUrl": "https://github.com/example/hebrew-sample/archive/89abcdef0123456789abcdef0123456789abcdef.tar.gz",
+  "version": "89abcdef0123456789abcdef0123456789abcdef",
+  "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "licence": "CC-BY-4.0 AND LicenseRef-PublicDomain",
+  "attribution": "Hebrew text: a public-domain sample codex. Lemmas and morphology: Example project, licensed under CC BY 4.0.",
+  "versification": "original"
+}

@@ -1,0 +1,137 @@
+---
+/**
+ * `/calendar/`: the archive. Links to the build date's month first, then every month of every committed calendar
+ * year, and to the passage library. View model: `calendarIndex` in src/lib/calendar-view.ts.
+ */
+import Seo from '../../components/seo/Seo.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../i18n/index.ts';
+import { calendarIndex } from '../../lib/calendar-view.ts';
+import { siteContext, siteDate, withBase } from '../../lib/site.ts';
+
+const lang = DEFAULT_LOCALE;
+const title = t(lang, 'calendar.index.title');
+const description = t(lang, 'calendar.index.description');
+const base = import.meta.env.BASE_URL;
+const href = (path: string) => withBase(base, localePath(lang, path));
+const { config, repo } = siteContext();
+const today = siteDate(config);
+const view = calendarIndex(repo, today);
+const monthName = (date: string) => formatDate(lang, date, { month: 'long', year: 'numeric' });
+const shortMonth = (date: string) => formatDate(lang, date, { month: 'short' });
+const currentPath = view.current?.path;
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path={localePath(lang, 'calendar/').slice(1)} />
+  <p class="eyebrow">{t(lang, 'common.site.name')}</p>
+  <h1>{title}</h1>
+  <p class="lead">{t(lang, 'calendar.index.lead')}</p>
+
+  {
+    view.current === null ? (
+      <p class="empty">{t(lang, 'calendar.index.empty')}</p>
+    ) : (
+      <>
+        <p class="start">
+          <a class="primary" href={href(view.current.path)}>
+            {t(lang, 'calendar.index.current', { month: monthName(view.current.date) })}
+            <span aria-hidden="true">→</span>
+          </a>
+        </p>
+        <h2>{t(lang, 'calendar.index.years')}</h2>
+        {view.years.map((year) => (
+          <section class="year" aria-labelledby={`year-${String(year.year)}`}>
+            <h3 id={`year-${String(year.year)}`}>{year.year}</h3>
+            <ul class="months">
+              {year.months.map((month) => (
+                <li>
+                  <a
+                    href={href(month.path)}
+                    aria-label={monthName(month.date)}
+                    aria-current={month.path === currentPath ? 'date' : undefined}
+                  >
+                    {shortMonth(month.date)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </>
+    )
+  }
+
+  <p class="library">
+    <a href={href('passages/')}>{t(lang, 'calendar.index.library')}</a>
+  </p>
+</BaseLayout>
+
+<style>
+  .lead {
+    color: var(--colour-muted);
+    font-size: var(--step-1);
+    max-width: var(--measure);
+  }
+
+  .start {
+    margin-block: var(--space-m) var(--space-l);
+  }
+
+  .primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-height: var(--tap-target);
+    padding: var(--space-2xs) var(--space-m);
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+    border-radius: 999px;
+  }
+
+  .year {
+    margin-block: var(--space-m);
+  }
+
+  .months {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+    gap: var(--space-2xs);
+    max-width: 48rem;
+  }
+
+  .months a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--tap-target);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+    color: var(--colour-ink);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+  }
+
+  .months a:hover {
+    background: var(--colour-wash);
+  }
+
+  .months a[aria-current] {
+    border-color: var(--colour-accent);
+    box-shadow: inset 0 calc(-1 * var(--band-height)) 0 var(--colour-accent);
+  }
+
+  .library {
+    margin-top: var(--space-l);
+  }
+
+  .empty {
+    color: var(--colour-muted);
+  }
+</style>
