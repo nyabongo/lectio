@@ -17,6 +17,7 @@ import { validateCalendarYear } from '@lectio/schema/calendar';
 import type { CalendarDay, CalendarYear, Mass, Reading } from '@lectio/schema/calendar';
 
 import { romcalVersion } from '../generate.ts';
+import { unnamedCelebrations } from '../i18n/index.ts';
 import { toCalendarDay } from '../map.ts';
 import type { DetailedDay } from '../map.ts';
 import { generateRegionalDays, loadOverrides, overridesPath } from '../overrides/region.ts';
@@ -175,6 +176,17 @@ export function calendarProblems(calendar: CalendarYear): string[] {
   return problems;
 }
 
+/**
+ * Celebrations with no entry in `calendar/i18n/sw.json` (L-111): every id needs a Kiswahili name or
+ * an explicit `fallback` entry, so a missing name is a decision, not an accident.
+ */
+export function namingProblems(calendar: CalendarYear): string[] {
+  const ids = calendar.days.flatMap((day) => day.celebrations.map((c) => c.id));
+  return unnamedCelebrations(ids).map(
+    (id) => `${id}: no entry in calendar/i18n/sw.json (add a Kiswahili name, or a "fallback" entry with name null)`,
+  );
+}
+
 /** The file text: two-space JSON, LF, final newline. Key order is the order the objects were built in. */
 export function serialiseCalendar(calendar: CalendarYear): string {
   return `${JSON.stringify(calendar, null, 2)}\n`;
@@ -216,7 +228,7 @@ export async function buildYear(options: BuildOptions): Promise<BuildResult> {
     lectionary: new Lectionary(loaded.files),
     linkout: configLinkout(options.config),
   });
-  const problems = calendarProblems(result.calendar);
+  const problems = [...calendarProblems(result.calendar), ...namingProblems(result.calendar)];
   if (problems.length > 0) throw new Error(`calendar ${String(year)} is invalid:\n  ${problems.join('\n  ')}`);
   return result;
 }

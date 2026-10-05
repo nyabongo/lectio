@@ -18,6 +18,7 @@ import {
   buildYear,
   calendarPath,
   calendarProblems,
+  namingProblems,
   configLinkout,
   epiphanyDate,
   generatedBy,
@@ -135,7 +136,13 @@ describe('assembleYear', () => {
       sundayCycle: 'A',
       weekdayCycle: 'II',
       celebrations: [
-        { id: 'ordinary-time-25-sunday', name: 'Name of ordinary-time-25-sunday', rank: 'sunday', colour: 'green' },
+        {
+          id: 'ordinary-time-25-sunday',
+          name: 'Name of ordinary-time-25-sunday',
+          names: { en: 'Name of ordinary-time-25-sunday', sw: 'Dominika ya Ishirini na Tano ya Mwaka' },
+          rank: 'sunday',
+          colour: 'green',
+        },
       ],
       masses: [
         {
@@ -377,6 +384,38 @@ describe('helpers', () => {
   });
 });
 
+describe('namingProblems', () => {
+  it('accepts celebrations named in calendar/i18n/sw.json', () => {
+    const { calendar } = assembleYear({
+      year: 2026,
+      region: 'kenya',
+      generatedBy: 'test',
+      days: [sunday, monday],
+      lectionary,
+      linkout: drbo,
+    });
+    expect(namingProblems(calendar)).toEqual([]);
+  });
+
+  it('reports each celebration id without an entry once', () => {
+    const celebration = { id: 'saint-nobody', name: 'Saint Nobody', rank: 'memorial', colour: 'white' } as const;
+    const day = {
+      date: '2026-09-21',
+      season: 'ordinary-time',
+      seasonWeek: 25,
+      sundayCycle: 'A',
+      weekdayCycle: 'II',
+    } as const;
+    const calendar = minimal([
+      { ...day, celebrations: [celebration], masses: [], lectionaryMissing: true },
+      { ...day, date: '2026-09-22', celebrations: [celebration], masses: [], lectionaryMissing: true },
+    ]);
+    expect(namingProblems(calendar)).toEqual([
+      'saint-nobody: no entry in calendar/i18n/sw.json (add a Kiswahili name, or a "fallback" entry with name null)',
+    ]);
+  });
+});
+
 // Each test runs romcal over a whole year; give it room on a loaded CI runner.
 describe('buildYear', { timeout: 60_000 }, () => {
   const temps: string[] = [];
@@ -391,6 +430,10 @@ describe('buildYear', { timeout: 60_000 }, () => {
     expect(calendarProblems(calendar)).toEqual([]);
     const sept20 = calendar.days.find((d) => d.date === '2026-09-20');
     expect(sept20?.lectionaryMissing).toBe(false);
+    expect(sept20?.celebrations[0]?.names).toEqual({
+      en: 'Twenty-fifth Sunday in Ordinary Time',
+      sw: 'Dominika ya Ishirini na Tano ya Mwaka',
+    });
     expect(sept20?.masses[0]?.readings.map((r) => [r.key, r.linkout])).toEqual([
       ['IS.55.6-9', 'https://www.drbo.org/chapter/27055.htm'],
       ['PS.145.2-3_145.8-9_145.17-18', 'https://www.drbo.org/chapter/21144.htm'],

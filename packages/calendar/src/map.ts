@@ -5,6 +5,7 @@
 import type { CalendarDay, Celebration } from '@lectio/schema/calendar';
 import type { LiturgicalColour } from '@lectio/schema/common';
 
+import { celebrationNames } from './i18n/index.ts';
 import { toLectioId } from './ids.ts';
 
 export type Season = CalendarDay['season'];
@@ -229,7 +230,10 @@ export function mapCalendar(calendar: Readonly<Record<string, readonly RomcalDay
     .map((date) => mapDay(date, calendar[date] as readonly RomcalDayInput[]));
 }
 
-/** Strip the detail fields so the day matches the calendar schema exactly. */
+/**
+ * Strip the detail fields so the day matches the calendar schema exactly, and add each
+ * celebration's names in English and Kiswahili (L-111).
+ */
 export function toCalendarDay(day: DetailedDay): CalendarDay {
   return {
     date: day.date,
@@ -237,7 +241,13 @@ export function toCalendarDay(day: DetailedDay): CalendarDay {
     seasonWeek: day.seasonWeek,
     sundayCycle: day.sundayCycle,
     weekdayCycle: day.weekdayCycle,
-    celebrations: day.celebrations.map(({ id, name, rank, colour }) => ({ id, name, rank, colour })),
+    celebrations: day.celebrations.map(({ id, name, rank, colour }) => ({
+      id,
+      name,
+      names: celebrationNames(id, name),
+      rank,
+      colour,
+    })),
     masses: day.masses.map((mass) => ({ ...mass, readings: mass.readings.map((reading) => ({ ...reading })) })),
     lectionaryMissing: day.lectionaryMissing,
   };
