@@ -46,6 +46,11 @@ describe('createRuleBook', () => {
   });
 
   it('declares the runner rules under the runner prefix', () => {
-    expect(Object.values(RUNNER_RULES).map((rule) => gateOfRule(rule.id))).toEqual(['runner', 'runner', 'runner']);
+    expect(Object.values(RUNNER_RULES).map((rule) => gateOfRule(rule.id))).toEqual([
+      'runner',
+      'runner',
+      'runner',
+      'runner',
+    ]);
   });
 });

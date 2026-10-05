@@ -1,0 +1,4 @@
+{
+  "workflow": "content-checks.yml",
+  "jobs": ["changes", "deterministic"]
+}

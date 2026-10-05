@@ -366,8 +366,88 @@ describe('FakeGitHubClient checks and workflows', () => {
       actor: OWNER,
     });
     expect(await bot.getWorkflowRun(added.id)).toEqual(added);
+    expect(added.displayTitle).toBe('content-gates.yml');
+    expect(Number.isNaN(Date.parse(added.createdAt))).toBe(false);
     const pinned = bot.addWorkflowRun({ ...added, id: 42 });
     expect(pinned.id).toBe(42);
+  });
+
+  it('force-pushes a branch to any known commit', async () => {
+    const { bot } = setup();
+    const root = bot.headOf('main');
+    await bot.createBranch({ name: 'x' });
+    await bot.commitFiles({ branch: 'x', message: 'm', files: [{ path: 'a', content: 'a' }] });
+    bot.forcePush('x', root);
+    expect(bot.headOf('x')).toBe(root);
+    expect(() => bot.forcePush('x', 'nope')).toThrow(/no commit/);
+  });
+
+  it('lists the artifacts a run uploaded', async () => {
+    const { bot } = setup();
+    const run = bot.addWorkflowRun({
+      workflowFile: 'content-gates.yml',
+      event: 'workflow_run',
+      headSha: 'abc',
+      headBranch: 'main',
+      prNumbers: [],
+      status: 'completed',
+      conclusion: 'success',
+      actor: OWNER,
+    });
+    expect(await bot.listRunArtifacts(run.id)).toEqual([]);
+    bot.addRunArtifact(run.id, 'z');
+    bot.addRunArtifact(run.id, 'a');
+    expect(await bot.listRunArtifacts(run.id)).toEqual(['a', 'z']);
+    await expect(bot.listRunArtifacts(1)).rejects.toThrow(/no workflow run/);
+  });
+
+  it('publishes check runs and allows an empty commit only when asked', async () => {
+    const { bot } = setup();
+    const sha = bot.headOf('main');
+    const input = { name: 'merge-rule', headSha: sha, conclusion: 'failure' as const, title: 't', summary: 's' };
+    expect(await bot.createCheckRun(input)).toEqual({
+      name: 'merge-rule',
+      headSha: sha,
+      status: 'completed',
+      conclusion: 'failure',
+    });
+    expect(bot.publishedChecks).toEqual([{ ...input, actor: bot.actor }]);
+    await expect(bot.commitFiles({ branch: 'main', message: 'x', files: [] })).rejects.toThrow(/at least one file/);
+    const empty = await bot.commitFiles({ branch: 'main', message: 'x', files: [], allowEmpty: true });
+    expect(empty.parents).toEqual([sha]);
+    expect(bot.fileAt(empty.sha, 'README.md')).toBe(bot.fileAt(sha, 'README.md'));
+  });
+
+  it('lists the runs of a head sha, oldest first, with titles and server timestamps', async () => {
+    const { bot } = setup();
+    const fake = new FakeGitHubClient({
+      workflows: { 'content-gates.yml': { runName: (inputs) => `Content gates · PR #${inputs['pr'] ?? '?'}` } },
+    });
+    await fake.dispatchWorkflow('content-gates.yml', 'main', { pr: '7' });
+    await fake.dispatchWorkflow('content-gates.yml', 'main');
+    const sha = fake.headOf('main');
+    const later = fake.addWorkflowRun({
+      id: 1,
+      workflowFile: 'ci.yml',
+      event: 'pull_request',
+      headSha: sha,
+      headBranch: 'main',
+      prNumbers: [7],
+      status: 'completed',
+      conclusion: 'success',
+      actor: OWNER,
+      createdAt: '2026-10-05T10:00:00Z',
+      displayTitle: 'CI',
+    });
+    fake.addWorkflowRun({ ...later, id: 2, headSha: 'other' });
+    const runs = await fake.listRunsForSha(sha);
+    expect(runs.map((run) => [run.id, run.displayTitle])).toEqual([
+      [1, 'CI'],
+      [1000, 'Content gates · PR #7'],
+      [1001, 'Content gates · PR #?'],
+    ]);
+    expect(runs[0]?.createdAt).toBe('2026-10-05T10:00:00Z');
+    expect(await bot.listRunsForSha('none')).toEqual([]);
   });
 
   it('produces identical histories across runs', async () => {
