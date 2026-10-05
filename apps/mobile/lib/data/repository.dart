@@ -95,12 +95,14 @@ typedef _Cached<T> = ({CachedResponse entry, T value});
 /// [FormatException]). Streams are single-subscription and close when done.
 class LectioRepository {
   /// Creates a repository reading through `client` and keeping documents in
-  /// `cache`. `clock` gives the device time (default: now).
+  /// `cache`. `clock` gives the device time (default: now); [locale] picks
+  /// the documents' language (see [forLocale]).
   new({
     required this._client,
     required this._cache,
     DateTime Function()? clock,
     this.freshFor = const Duration(minutes: 15),
+    this.locale = defaultApiLocale,
   }) : _clock = clock ?? DateTime.now;
 
   final ApiClient _client;
@@ -109,6 +111,29 @@ class LectioRepository {
 
   /// How long a cached document is used without asking the network.
   final Duration freshFor;
+
+  /// The locale of the documents read: [defaultApiLocale] at the API root,
+  /// another one in its mirror (`sw/…`, L-113). `index.json` is shared.
+  final String locale;
+
+  LectioRepository? _root;
+  final Map<String, LectioRepository> _mirrors = {};
+
+  /// The repository reading [locale]'s documents (see [apiLocaleFor]) with
+  /// the same client, cache, clock and freshness, kept in their own cache
+  /// entries. Asking twice for a locale gives the same repository, so
+  /// screens can compare it with `identical`.
+  LectioRepository forLocale(String locale) {
+    final root = _root ?? this;
+    if (locale == root.locale) return root;
+    return root._mirrors[locale] ??= LectioRepository(
+      client: _client,
+      cache: _cache,
+      clock: _clock,
+      freshFor: freshFor,
+      locale: locale,
+    ).._root = root;
+  }
 
   /// `index.json`.
   Stream<DataSnapshot<ApiIndex>> watchIndex({bool refresh = false}) {
@@ -168,7 +193,7 @@ class LectioRepository {
         unavailable.add(date);
         continue;
       }
-      final path = dayPath(date);
+      final path = localizedPath(dayPath(date), locale);
       final cached = await _readCached(path, parseApiDay);
       if (cached != null && _isFresh(cached.entry)) {
         upToDate.add(date);
@@ -205,10 +230,11 @@ class LectioRepository {
   }
 
   Stream<DataSnapshot<T>> _watch<T>(
-    String path,
+    String documentPath,
     T Function(Object? json) parse, {
     required bool refresh,
   }) async* {
+    final path = localizedPath(documentPath, locale);
     final cached = await _readCached(path, parse);
     final DataSnapshot<T>? fromCache;
     if (cached == null) {
