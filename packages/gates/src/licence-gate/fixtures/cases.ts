@@ -76,6 +76,37 @@ export function passage(parts: PassageParts = {}): Record<string, unknown> {
   };
 }
 
+export interface TranslationParts {
+  readonly translationOf?: unknown;
+  readonly paragraphs?: readonly string[];
+  readonly gloss?: string;
+  readonly claims?: readonly { readonly id: string; readonly text: string }[];
+  /** Not in the translated-passage schema; set only to test that a schema-invalid file is still scanned. */
+  readonly sources?: readonly Record<string, unknown>[];
+}
+
+/** A minimal translation-shaped object (passages/i18n/<locale>/<key>.json) with the given prose, in invented Kiswahili. */
+export function translation(parts: TranslationParts = {}): Record<string, unknown> {
+  return {
+    translationOf: 'translationOf' in parts ? parts.translationOf : 'MT.20.1-16',
+    locale: 'sw',
+    summary: 'Mwenye shamba anawalipa wote sawa.',
+    context: { title: 'Wafanyakazi shambani', paragraphs: parts.paragraphs ?? ['Mathayo peke yake anaandika. [c1]'] },
+    translationNotes: [
+      {
+        id: 'evil-eye',
+        anchor: 'wivu',
+        gloss: parts.gloss ?? 'jicho lako ovu',
+        summary: 'Nahau ya ubahili.',
+        body: 'Jicho ovu ni ubahili. [c1]',
+      },
+    ],
+    claims: parts.claims ?? [{ id: 'c1', text: 'Mfano huu uko katika Mathayo peke yake.' }],
+    ...(parts.sources === undefined ? {} : { sources: parts.sources }),
+    schemaVersion: 1,
+  };
+}
+
 /** A web source entry. */
 export function webSource(id: string, url: string, extra: Record<string, unknown> = {}): Record<string, unknown> {
   return { id, type: 'web', citation: `Source ${id}`, url, retrievedAt: '2026-10-05T07:00:00Z', ...extra };

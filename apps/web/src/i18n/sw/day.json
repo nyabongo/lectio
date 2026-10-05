@@ -2,7 +2,7 @@
   "pageTitle": "{title}, {date}",
   "description": "{date}: {title}. {season}. Masomo: {refs}. Madokezo kuhusu historia yake na maneno yake asilia, kila andiko likiwa kwa kubofya mara moja.",
   "descriptionNoReadings": "{date}: {title}. {season}. Masomo ya siku hii bado hayajaorodheshwa.",
-  "descriptionNoMass": "{date}: {title}. {season}. Hakuna Misa inayoadhimishwa siku hii; Mkesha wa Pasaka ni wa Jumapili ya Pasaka.",
+  "descriptionHolySaturday": "{date}: {title}. {season}. Hakuna Misa siku ya Jumamosi Kuu; Mkesha wa Pasaka ni wa Jumapili ya Pasaka.",
   "todayHeading": "Leo",
   "todayMissing": "Bado hakuna siku ya kalenda kwa leo. Kalenda inaorodhesha kila siku iliyo tayari.",
   "upcomingHeading": "Siku zijazo",
@@ -12,7 +12,7 @@
     "other": "Siku hii ina Misa {count} za kuchagua."
   },
   "lectionaryMissing": "Masomo ya siku hii bado hayajaorodheshwa.",
-  "noMass": "Hakuna Misa inayoadhimishwa siku hii. Mkesha wa Pasaka, unaofanyika baada ya giza kuingia, ni wa Jumapili ya Pasaka, na masomo yake yameorodheshwa huko.",
+  "holySaturdayNoMass": "Hakuna Misa siku ya Jumamosi Kuu. Mkesha wa Pasaka, unaofanyika baada ya giza kuingia, ni wa Jumapili ya Pasaka, na masomo yake yameorodheshwa huko.",
   "notesInPreparation": "Madokezo yanaandaliwa",
   "linkout": {
     "text": "Andiko",

@@ -8,6 +8,7 @@ import 'package:lectio/features/reading/reading_screen.dart';
 import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -112,19 +113,41 @@ class _TodayScreenState extends State<TodayScreen> {
 
   String _initialDate() => parseIsoDate(widget.date) ?? _today;
 
+  /// The repository in the UI language's API locale (`sw/…` in
+  /// Kiswahili, L-113), set from the localizations.
+  LectioRepository? _repository;
+
   @override
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(onResume: _followToday);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _followLanguage();
+  }
+
+  /// Reads the day from the repository of the UI language, again from the
+  /// start when the language (or the repository) changed.
+  void _followLanguage() {
+    final language = LectioLocalizations.of(context).languageCode;
+    final repository = widget.repository.forLocale(apiLocaleFor(language));
+    if (identical(repository, _repository)) return;
+    _repository = repository;
+    _reset(_date);
     unawaited(_listen());
   }
 
   @override
   void didUpdateWidget(TodayScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.date != oldWidget.date) {
-      _reset(_initialDate());
-      unawaited(_listen());
+    if (widget.date != oldWidget.date ||
+        widget.repository != oldWidget.repository) {
+      _date = _initialDate();
+      _repository = null;
+      _followLanguage();
     }
   }
 
@@ -169,7 +192,7 @@ class _TodayScreenState extends State<TodayScreen> {
   Future<void> _listen({bool refresh = false}) {
     final done = Completer<void>();
     unawaited(_subscription?.cancel());
-    _subscription = widget.repository
+    _subscription = _repository!
         .watchDay(_date, refresh: refresh)
         .listen(
           (snapshot) => setState(() {
@@ -200,7 +223,7 @@ class _TodayScreenState extends State<TodayScreen> {
       initialDate: current,
       firstDate: DateTime(earliest.year - 1),
       lastDate: DateTime(latest.year + 1, 12, 31),
-      helpText: TodayStrings.chooseDate,
+      helpText: TodayStrings.of(context).chooseDate,
     );
     if (picked == null || !mounted) return;
     _goTo(isoDate(picked));
@@ -217,10 +240,9 @@ class _TodayScreenState extends State<TodayScreen> {
 
   Future<void> _openText(DayReading reading) async {
     final messenger = ScaffoldMessenger.of(context);
+    final failed = TodayStrings.of(context).linkFailed;
     if (!await _tryOpen(reading.linkout)) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text(TodayStrings.linkFailed)),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(failed)));
     }
   }
 
@@ -231,6 +253,7 @@ class _TodayScreenState extends State<TodayScreen> {
     if (snapshot == null && error == null) {
       return const Center(child: CircularProgressIndicator());
     }
+    final strings = TodayStrings.of(context);
     final today = _today;
     final header = DayHeader(
       date: _date,
@@ -248,16 +271,16 @@ class _TodayScreenState extends State<TodayScreen> {
         onText: (reading) => unawaited(_openText(reading)),
       );
     } else if (error is ApiNotFoundException) {
-      body = const Text(TodayStrings.emptyDay);
+      body = Text(strings.emptyDay);
     } else {
       body = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(TodayStrings.loadFailed),
+          Text(strings.loadFailed),
           const SizedBox(height: 8),
           FilledButton.tonal(
             onPressed: () => _show(_date),
-            child: const Text(TodayStrings.retry),
+            child: Text(strings.retry),
           ),
         ],
       );
@@ -272,7 +295,12 @@ class _TodayScreenState extends State<TodayScreen> {
           if (snapshot != null)
             Align(
               alignment: AlignmentDirectional.centerStart,
-              child: ShareButton(content: dayShare(snapshot.value)),
+              child: ShareButton(
+                content: dayShare(
+                  snapshot.value,
+                  language: strings.languageCode,
+                ),
+              ),
             ),
           const SizedBox(height: 16),
           body,

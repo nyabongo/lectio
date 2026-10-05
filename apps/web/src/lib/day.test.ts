@@ -123,13 +123,13 @@ describe('dayPageView with the fixture content root', () => {
   it('shows Holy Saturday (2026-04-04) as a day without any Mass, not as missing readings', () => {
     const view = dayPageView(env, context, '2026-04-04');
     expect(view).toMatchObject({
-      title: 'Holy Saturday/Easter Vigil',
+      title: 'Holy Saturday',
       colour: 'violet',
       masses: [],
       massOptions: null,
       missing: null,
       noMass:
-        'No Mass is celebrated on this day. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
+        'There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
         'readings are listed there.',
     });
   });
@@ -327,11 +327,11 @@ describe('dayView edge cases', () => {
     expect(view.masses).toEqual([]);
     expect(view.missing).toBeNull();
     expect(view.noMass).toBe(
-      'No Mass is celebrated on this day. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
+      'There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its ' +
         'readings are listed there.',
     );
     expect(view.description).toBe(
-      'Saturday 3 April 2027: Easter Vigil. Paschal Triduum. No Mass is celebrated on this day; the Easter Vigil ' +
+      'Saturday 3 April 2027: Easter Vigil. Paschal Triduum. There is no Mass on Holy Saturday; the Easter Vigil ' +
         'belongs to Easter Sunday.',
     );
     expect(dayView(env, day({ noMass: false }, []), { config: DEFAULT_CONFIG }).noMass).toBeNull();

@@ -126,7 +126,10 @@ export interface DayView {
   readonly massOptions: string | null;
   /** Shown instead of the readings when the calendar has no lectionary data for the day; otherwise `null`. */
   readonly missing: string | null;
-  /** Shown instead of the readings on a day without any Mass (`noMass`, Holy Saturday); otherwise `null`. */
+  /**
+   * Shown instead of the readings on a day without any Mass (`noMass`); otherwise `null`. Holy Saturday is the only
+   * such day (`NO_MASS_DAYS` in `@lectio/lectionary`), so the copy is Holy Saturday's: a second day needs its own.
+   */
   readonly noMass: string | null;
   /** The Listen button, when `config.site.features.listen` is on; otherwise `null`. */
   readonly listen: ListenView | null;
@@ -397,7 +400,7 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     masses,
     massOptions: masses.length > 1 ? t(lang, 'day.massOptions', { count: masses.length }) : null,
     missing,
-    noMass: withoutMass ? t(lang, 'day.noMass') : null,
+    noMass: withoutMass ? t(lang, 'day.holySaturdayNoMass') : null,
     listen: options.config.site.features.listen
       ? { href: env.paths(listenPath(date)), label: t(lang, 'day.listen') }
       : null,
@@ -405,7 +408,7 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     next: adjacent(env, options.next ?? null, t(lang, 'day.nextDay')),
     pageTitle: t(lang, 'day.pageTitle', { title, date: dateLabel }),
     description: withoutMass
-      ? t(lang, 'day.descriptionNoMass', described)
+      ? t(lang, 'day.descriptionHolySaturday', described)
       : refs.length === 0
         ? t(lang, 'day.descriptionNoReadings', described)
         : t(lang, 'day.description', { ...described, refs: refs.join('; ') }),

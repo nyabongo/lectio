@@ -2,6 +2,36 @@ import 'package:lectio/data/json.dart';
 import 'package:lectio/data/models/notes.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
 
+/// A name and the language it is written in (`en`, `sw`), so a name that
+/// fell back to English can be marked as English.
+typedef LocalizedName = ({String text, String language});
+
+/// A celebration's name in each UI language (`celebrations[].names`, L-111).
+class CelebrationNames {
+  /// Creates the names.
+  const new({required this.en, required this.sw, this.swStatus});
+
+  /// Reads a `names` object.
+  factory fromJson(Object? json) {
+    final object = asJsonObject(json, 'names');
+    return CelebrationNames(
+      en: object.string('en'),
+      sw: object.string('sw'),
+      swStatus: object.optionalString('swStatus'),
+    );
+  }
+
+  /// The English name.
+  final String en;
+
+  /// The Kiswahili name, or the English one when [swStatus] is `fallback`.
+  final String sw;
+
+  /// How far [sw] is reviewed: `provisional`, `reviewed`, or `fallback`
+  /// when the calendar has no Kiswahili name; `null` when not given.
+  final String? swStatus;
+}
+
 /// A celebration on a liturgical day.
 class Celebration {
   /// Creates a celebration.
@@ -10,17 +40,30 @@ class Celebration {
     required this.name,
     required this.rank,
     required this.colour,
+    this.names,
   });
 
   /// Reads a `celebrations` item.
   factory fromJson(Object? json) {
     final object = asJsonObject(json, 'celebrations');
+    final names = object.optionalObject('names');
     return Celebration(
       id: object.string('id'),
       name: object.string('name'),
       rank: object.string('rank'),
       colour: object.string('colour'),
+      names: names == null ? null : CelebrationNames.fromJson(names),
     );
+  }
+
+  /// The name in the UI [language]: the Kiswahili one for `sw` unless it is
+  /// a fallback, else the calendar's English [name].
+  LocalizedName nameIn(String language) {
+    final names = this.names;
+    if (language == 'sw' && names != null && names.swStatus != 'fallback') {
+      return (text: names.sw, language: 'sw');
+    }
+    return (text: name, language: 'en');
   }
 
   /// Stable id, for example `ordinary-time-25-sunday`.
@@ -34,6 +77,9 @@ class Celebration {
 
   /// Liturgical colour name.
   final String colour;
+
+  /// The name in each UI language, or `null` in documents without it.
+  final CelebrationNames? names;
 }
 
 /// A reading in a day document, with its approved notes inline.

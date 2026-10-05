@@ -66,7 +66,7 @@ void main() {
     await reminders.idle;
     await tester.pump();
 
-    expect(find.text(ReminderStrings.permissionRefused), findsOneWidget);
+    expect(find.text(ReminderStrings.en.permissionRefused), findsOneWidget);
     expect(settings.settings.dailyReminder, isFalse);
 
     // Unmounting the app stops listening.

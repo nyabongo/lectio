@@ -48,11 +48,13 @@ const FILES: Record<string, unknown> = {
     OrdWeekday24Monday: { first_reading: '1 Timothy 2:1-8', gospel: 'Luke 7:1-10' },
     OrdWeekday24Tuesday: { first_reading: '1 Timothy 3:1-13', gospel: 'Luke 7:11-17' },
     OrdWeekday24Wednesday: { first_reading: '1 Timothy 3:14-16', gospel: 'Luke 7:31-35' },
+    OrdWeekday24Thursday: { first_reading: '1 Timothy 4:12-16', gospel: 'Luke 7:36-50' },
   },
   [`${BASE}lectionary/feriale_per_annum_II/en.json`]: {
     OrdWeekday24Monday: { first_reading: '1 Corinthians 11:17-26, 33', gospel: 'Luke 7:1-10' },
     OrdWeekday24Tuesday: { first_reading: '1 Corinthians 12:12-14, 27-31a', gospel: 'Luke 7:11-16' },
     OrdWeekday24Wednesday: { first_reading: '1 Corinthians 12:31-13:13', gospel: 'Luke 7:31-35|Luke 7:31-34' },
+    OrdWeekday24Thursday: { first_reading: '1 Corinthians 15:1-11', gospel: 'Lk 7:36-50' },
   },
 };
 
@@ -192,25 +194,22 @@ describe('importLitcal', () => {
     ]);
   });
 
-  it('keys the shared-slot check by celebration, Mass and slot', async () => {
-    const { problems } = await importLitcal(
-      {
-        ...manifest([
-          { key: 'ot-weekday-24-tue', cycle: 'I', locator: 'feriale_per_annum_I/en.json#OrdWeekday24Tuesday' },
-          { key: 'ot-weekday-25-tue', cycle: 'II', locator: 'feriale_per_annum_II/en.json#OrdWeekday24Tuesday' },
-          {
-            key: 'ot-weekday-24-tue',
-            mass: 'other',
-            cycle: 'II',
-            locator: 'feriale_per_annum_II/en.json#OrdWeekday24Tuesday',
-          },
-        ]),
-        shared: ['gospel'],
-      },
-      REGISTRY,
-      fakeFetcher(),
-    );
-    expect(problems).toEqual([]);
+  it('reports a shared slot with the same ref but another printed form, per celebration, Mass and slot', async () => {
+    const thursday = (key: string, cycle: 'I' | 'II', mass?: string) => ({
+      key,
+      cycle,
+      ...(mass === undefined ? {} : { mass }),
+      locator: `feriale_per_annum_${cycle}/en.json#OrdWeekday24Thursday`,
+    });
+    const run = async (imports: LitcalManifest['imports']) =>
+      (await importLitcal({ ...manifest(imports), shared: ['gospel'] }, REGISTRY, fakeFetcher())).problems;
+    // Both leaves give Lk 7:36-50, printed differently: the old ref-only check let the last one win quietly.
+    expect(await run([thursday('ot-weekday-24-thu', 'I'), thursday('ot-weekday-24-thu', 'II')])).toEqual([
+      'ot-weekday-24-thu ← feriale_per_annum_II/en.json#OrdWeekday24Thursday: shared gospel "Lk 7:36-50" differs from "Luke 7:36-50" imported for ot-weekday-24-thu day gospel',
+    ]);
+    // Another celebration or another Mass is not a conflict.
+    expect(await run([thursday('ot-weekday-24-thu', 'I'), thursday('ot-weekday-25-thu', 'II')])).toEqual([]);
+    expect(await run([thursday('ot-weekday-24-thu', 'I'), thursday('ot-weekday-24-thu', 'II', 'other')])).toEqual([]);
   });
 
   it('reads the palm gospel into the procession Mass, the Easter Vigil into numbered slots, and dual psalm numbers', async () => {

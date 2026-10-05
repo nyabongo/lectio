@@ -43,7 +43,7 @@ void main() {
           await pumpScreen(tester, Screen.today, brightness: brightness);
 
           // The day's colour tints the screen.
-          final context = tester.element(find.text(TodayStrings.listen));
+          final context = tester.element(find.text(TodayStrings.en.listen));
           expect(
             Theme.of(context).colorScheme.primary,
             colour.accent(brightness),
@@ -92,18 +92,18 @@ void main() {
       await pumpScreen(tester, Screen.today);
 
       expect(
-        tester.getSemantics(find.text(TodayStrings.notes)),
+        tester.getSemantics(find.text(TodayStrings.en.notes)),
         isSemantics(
-          label: notesSemantics('Mt 20:1-16a'),
+          label: TodayStrings.en.notesSemantics('Mt 20:1-16a'),
           isButton: true,
           hasTapAction: true,
         ),
       );
       // The link-out keeps its tap action under its spoken label.
       expect(
-        tester.getSemantics(find.text(TodayStrings.text).last),
+        tester.getSemantics(find.text(TodayStrings.en.text).last),
         isSemantics(
-          label: linkoutSemantics(
+          label: TodayStrings.en.linkoutSemantics(
             'Mt 20:1-16a',
             Uri.parse('https://www.drbo.org/chapter/47020.htm'),
           ),

@@ -13,7 +13,8 @@
  * 4. `human-approved` when a configured reviewer (the PR author included) approved by label or
  *    comment after the last content commit.
  * 5. `needs-review` when any review condition holds (protected path, a translation under
- *    passages/i18n/ (not configurable), auto-merge disabled,
+ *    passages/i18n/ or any other subdirectory of passages/, matched in any letter case (not
+ *    configurable), auto-merge disabled,
  *    verifiers skipped or unreadable, low support, refutations, sensitive claims, gate flags,
  *    files outside passages/, fork PR, a deterministic gate that did not run).
  * 6. `auto-merge` otherwise. It never returns `close`.
@@ -140,7 +141,7 @@ export const MERGE_RULES = {
   ),
   translationNeedsPerson: defineRule(
     'merge-rule/translation-needs-person',
-    'A PR that changes a translation (passages/i18n/**) always needs a person (not configurable): translations never auto-merge.',
+    'A PR that changes a translation (passages/i18n/**), or any file in a subdirectory of passages/ in any letter case (passages/I18N/**), always needs a person (not configurable): translations never auto-merge.',
     'Ask a configured reviewer who reads the language to approve with the label or /approve.',
   ),
   autoMergeEnabled: defineRule(
@@ -238,6 +239,16 @@ function passagesPrefix(config: LectioConfig): string {
   return `${dir}/`;
 }
 
+/**
+ * Whether `file` sits in a subdirectory of passages/ (passages/i18n/** and anything else there),
+ * compared in lower case so a case variant such as passages/I18N/sw/… keeps the translation hold.
+ */
+function inPassagesSubdirectory(file: string, config: LectioConfig): boolean {
+  const prefix = passagesPrefix(config).toLowerCase();
+  const lower = file.toLowerCase();
+  return lower.startsWith(prefix) && lower.slice(prefix.length).includes('/');
+}
+
 const sameHandle = (a: string, b: string): boolean =>
   a.replace(/^@/, '').toLowerCase() === b.replace(/^@/, '').toLowerCase();
 
@@ -287,9 +298,8 @@ function reviewConditions(input: DecideInput, results: readonly GateResult[]): D
         message: `${file} is under ${prefix}** (never auto-merged)`,
       });
   }
-  const translations = `${passagesPrefix(config)}i18n/`;
   for (const file of files) {
-    if (file.startsWith(translations))
+    if (inPassagesSubdirectory(file, config))
       reasons.push({
         rule: MERGE_RULES.translationNeedsPerson,
         file,

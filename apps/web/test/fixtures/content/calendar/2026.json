@@ -12,7 +12,7 @@
       "celebrations": [
         {
           "id": "holy-saturday",
-          "name": "Holy Saturday/Easter Vigil",
+          "name": "Holy Saturday",
           "rank": "weekday",
           "colour": "violet"
         }

@@ -1,0 +1,585 @@
+{
+  "@@locale": "en",
+  "about_title": "About Lectio",
+  "about_description": "How Lectio’s notes are researched and checked, what “Verified” means, and the openly licensed texts, data and fonts it is built on.",
+  "about_eyebrow": "About and methodology",
+  "about_heading": "How Lectio works",
+  "about_intro": "Lectio is a companion to the daily Mass readings. For each reading it gives the historical context and notes on what the Hebrew, Greek or Latin says that English cannot. It carries commentary only: the readings themselves open at a licensed source.",
+  "about_studyAid_title": "A study aid, not Church teaching",
+  "about_studyAid_body": "Lectio’s notes are an aid to reading Scripture, not teaching of the Church and not a substitute for the Church’s own lectionary, catechesis or homily. They are researched with AI and checked before they appear, but they can still be wrong. Where a note touches doctrine, read it alongside the Church’s teaching, and ask a priest when in doubt.",
+  "about_steps_heading": "Four steps before a note appears",
+  "about_steps_intro": "Nothing is published on one AI’s say-so. Every note goes through these steps, ahead of time, as a pull request to the project’s public repository; readers never trigger an AI.",
+  "about_steps_research_title": "Research",
+  "about_steps_research_body": "An AI with web search studies the passage in its original language, its history and the commentaries. Every sentence must cite a source.",
+  "about_steps_tests_title": "Automatic tests",
+  "about_steps_tests_body": "Software confirms that each cited excerpt really appears in its source, and that each Greek, Hebrew or Latin word really occurs in that verse.",
+  "about_steps_crossExamine_title": "Cross-examine",
+  "about_steps_crossExamine_body": "Two independent AI models from different families re-read the sources: one confirms each claim, the other tries to disprove it.",
+  "about_steps_human_title": "Human gate",
+  "about_steps_human_body": "Anything flagged or doctrinally sensitive waits for a human reviewer. Only approved notes reach the site.",
+  "about_gates_heading": "The five checks on every change",
+  "about_gates_intro": "Technically, the steps above are five checks that every pull request must pass. The cheap, exact tests run first; the AI verifiers run only when those pass. A failed check never publishes anything.",
+  "about_gates_schema_title": "Schema tests",
+  "about_gates_schema_body": "Every file is well formed, every claim has a source, and every reference points to a verse that exists.",
+  "about_gates_evidence_title": "Evidence tests",
+  "about_gates_evidence_body": "Each cited excerpt appears in the fetched source, and each quoted Greek, Hebrew or Latin word occurs in that verse of the original-language texts listed below.",
+  "about_gates_licence_title": "Licence guard",
+  "about_gates_licence_body": "No long verbatim run from an English Bible translation or from a cited commentary. Lectio never stores the text of a copyrighted modern Bible translation.",
+  "about_gates_licence_index": "The guard compares notes against an index built from {editions}. The index holds only hashes of short word sequences, never the text.",
+  "@about_gates_licence_index": {
+    "placeholders": {
+      "editions": {}
+    }
+  },
+  "about_gates_licence_limitation": "Known limitation:",
+  "about_gates_verifiers_title": "AI verifiers",
+  "about_gates_verifiers_body": "Two models from different families see only the claims and their sources: one confirms that each claim is supported, the other tries to refute it.",
+  "about_gates_merge_title": "Merge rule",
+  "about_gates_merge_body": "When every check is green with high confidence, the change is published. Anything flagged, refuted or doctrinally sensitive waits for a human reviewer.",
+  "about_verified_heading": "What “Verified” means",
+  "about_verified_body": "A note marked “Verified” passed the schema, evidence and licence tests, and was then either confirmed by both AI verifiers with high confidence or, where a verifier flagged a claim or the subject is doctrinally sensitive, approved by a human reviewer. It lists its sources and the date it was last reviewed, so you can check it yourself.",
+  "about_verified_limits": "“Verified” means checked against the sources it cites. It does not mean infallible, and it is not an ecclesiastical approval.",
+  "about_readings_heading": "The readings themselves",
+  "about_readings_body": "Lectio never stores the text of a copyrighted modern Bible translation; the original-language and ancient-version texts it keeps are listed below. Each reading opens at {provider}, which Lectio links to and thanks for making the text freely available.",
+  "@about_readings_body": {
+    "placeholders": {
+      "provider": {}
+    }
+  },
+  "about_report_heading": "Found a mistake?",
+  "about_report_body": "If a note is wrong, unclear or out of place, please tell us. Reports are public GitHub issues and are reviewed by a person.",
+  "about_report_link": "Report an issue",
+  "about_sources_heading": "Sources and licences",
+  "about_sources_intro": "Lectio is built on openly licensed work. This list is generated from the project’s data files every time the site is built.",
+  "about_sources_own": "Lectio’s own code is released under the {licence}; the texts, data and fonts below keep their own licences.",
+  "@about_sources_own": {
+    "placeholders": {
+      "licence": {}
+    }
+  },
+  "about_sources_ownLicence": "MIT Licence",
+  "about_corpora_heading": "Original-language texts",
+  "about_corpora_intro": "The evidence tests check every quoted original-language word against these editions, which the repository holds as word lists with lemmas.",
+  "about_corpora_empty": "No original-language editions are installed yet.",
+  "about_corpora_project": "Project",
+  "about_corpora_licenceText": "Licence text",
+  "about_corpora_version": "Version {version}",
+  "@about_corpora_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "about_versification_heading": "Versification tables",
+  "about_versification_intro": "Chapter and verse counts and the mappings between numbering systems (for example Hebrew and Latin psalm numbers) come from:",
+  "about_lectionary_heading": "Lectionary data",
+  "about_lectionary_intro": "The list of readings for each day is imported from:",
+  "about_fonts_heading": "Fonts",
+  "about_fonts_intro": "Every typeface is self-hosted and licensed under the SIL Open Font License 1.1.",
+  "about_fonts_licence": "Licence (OFL 1.1)",
+  "about_fonts_reserved": "Reserved Font Name “{name}”.",
+  "@about_fonts_reserved": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "about_licences_label": "Licence:",
+  "about_licences_publicDomain": "Public domain",
+  "about_languages_grc": "Greek",
+  "about_languages_hbo": "Hebrew",
+  "about_languages_arc": "Aramaic",
+  "about_languages_lat": "Latin",
+  "app_tabs_today": "Today",
+  "app_tabs_reading": "Reading",
+  "app_tabs_listen": "Listen",
+  "app_comingSoon": "Coming soon",
+  "app_notFound_title": "Not found",
+  "app_notFound_home": "Go to Today",
+  "app_today_backToToday": "Back to today",
+  "app_today_chooseDate": "Choose a date",
+  "app_today_notesMissing": "Notes for this day are in preparation. Each text is a tap away.",
+  "app_today_emptyDay": "There is no calendar day for this date yet. The calendar lists every day that is ready.",
+  "app_today_loadFailed": "The day could not be loaded. Check your connection and try again.",
+  "app_today_offline": "Offline: showing the copy saved on this device.",
+  "app_today_refreshFailed": "The day could not be refreshed: showing the copy saved on this device.",
+  "app_today_linkFailed": "The text could not be opened.",
+  "app_today_notesLabel": "Notes on {ref}",
+  "@app_today_notesLabel": {
+    "placeholders": {
+      "ref": {}
+    }
+  },
+  "app_today_linkoutLabel": "Text of {ref} at {source} (opens outside the app)",
+  "@app_today_linkoutLabel": {
+    "placeholders": {
+      "ref": {},
+      "source": {}
+    }
+  },
+  "app_reading_textLabel": "Read the text of {ref} at {source} (opens outside the app)",
+  "@app_reading_textLabel": {
+    "placeholders": {
+      "ref": {},
+      "source": {}
+    }
+  },
+  "app_reading_loading": "Loading the readings…",
+  "app_reading_loadFailed": "The readings could not be loaded. Check your connection and try again.",
+  "app_reading_offline": "Offline: showing the notes saved on this device.",
+  "app_reading_citeMany": "Sources {n}",
+  "@app_reading_citeMany": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "app_reading_noReadings": "There are no readings for this day yet.",
+  "app_reading_noSuchReading": "This day has no {slot}.",
+  "@app_reading_noSuchReading": {
+    "placeholders": {
+      "slot": {}
+    }
+  },
+  "app_reading_linkFailed": "The link could not be opened.",
+  "app_reading_linkedNote": "Shared note",
+  "app_reminder_body": "Today's readings and notes are ready.",
+  "app_reminder_permissionRefused": "Notifications are not allowed for Lectio, so the daily reminder is off. Allow them in your device settings, then turn it on again.",
+  "app_settings_intro": "There are no accounts. Your preferences are saved on this device and never leave it.",
+  "app_settings_reminderHeading": "Daily reminder",
+  "app_settings_reminderSwitch": "Remind me each day",
+  "app_settings_reminderHint": "A notification with the day's celebration. Nothing is sent to a server.",
+  "app_settings_reminderTime": "Reminder time",
+  "app_settings_savedHeading": "Saved on this device",
+  "app_settings_bookmarks": "Bookmarks and notes",
+  "app_share_failed": "Could not share or copy the link.",
+  "app_share_linkNotRecognised": "Lectio has no page for that link, so it opened Today.",
+  "calendar_index_title": "Calendar",
+  "calendar_index_description": "Every day of the liturgical calendar, month by month, with its celebration and colour.",
+  "calendar_index_lead": "Every day of the Church’s year with its celebration and colour. Choose a day to see its readings and notes.",
+  "calendar_index_current": "Go to {month}",
+  "@calendar_index_current": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "calendar_index_years": "Archive",
+  "calendar_index_empty": "No calendar has been published yet.",
+  "calendar_index_library": "Browse the passage library",
+  "calendar_month_description": "The liturgical calendar for {month}: the celebration and colour of each day, with links to its readings.",
+  "@calendar_month_description": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "calendar_month_eyebrow": "Calendar",
+  "calendar_month_nav": "Other months",
+  "calendar_month_prev": "Previous month",
+  "calendar_month_next": "Next month",
+  "calendar_month_today": "Today",
+  "calendar_month_dayLabel": "{date}: {celebration}, {colour}",
+  "@calendar_month_dayLabel": {
+    "placeholders": {
+      "celebration": {},
+      "colour": {},
+      "date": {}
+    }
+  },
+  "calendar_month_empty": "This month is not in the published calendar yet.",
+  "calendar_month_celebrations": "Celebrations this month",
+  "calendar_month_allMonths": "All months",
+  "calendar_colour_green": "Green",
+  "calendar_colour_violet": "Violet",
+  "calendar_colour_white": "White",
+  "calendar_colour_gold": "Gold",
+  "calendar_colour_red": "Red",
+  "calendar_colour_rose": "Rose",
+  "calendar_colour_black": "Black",
+  "calendar_library_title": "Passage library",
+  "calendar_library_description": "Every reading with reviewed notes on its history and original words, by book.",
+  "calendar_library_lead": "Every passage with reviewed notes, book by book. Notes are written once per passage and reused each time the lectionary returns to it.",
+  "calendar_library_passages": "{count, plural, one{{count} passage} other{{count} passages}}",
+  "@calendar_library_passages": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "calendar_library_notes": "{count, plural, one{{count} note} other{{count} notes}}",
+  "@calendar_library_notes": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "calendar_library_dates": "{count, plural, one{read on {count} day} other{read on {count} days}}",
+  "@calendar_library_dates": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "calendar_library_testament_OT": "Old Testament",
+  "calendar_library_testament_NT": "New Testament",
+  "calendar_library_empty": "No passage has reviewed notes yet.",
+  "calendar_passage_description": "Notes on {ref}: {summary}",
+  "@calendar_passage_description": {
+    "placeholders": {
+      "ref": {},
+      "summary": {}
+    }
+  },
+  "calendar_passage_eyebrow": "Passage",
+  "calendar_passage_notes": "Notes",
+  "calendar_passage_context": "Context",
+  "calendar_passage_verse": "Verse {verse}",
+  "@calendar_passage_verse": {
+    "placeholders": {
+      "verse": {}
+    }
+  },
+  "calendar_passage_dates": "Read on",
+  "calendar_passage_datesLead": "Each date opens the Reading page with the full notes.",
+  "calendar_passage_noDates": "This passage is not in a published calendar yet.",
+  "calendar_passage_reviewed": "Last reviewed {date}",
+  "@calendar_passage_reviewed": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "calendar_passage_back": "All passages",
+  "common_site_name": "Lectio",
+  "common_site_pageTitle": "{title} · Lectio",
+  "@common_site_pageTitle": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "common_skipLink": "Skip to content",
+  "common_nav_label": "Site",
+  "common_nav_calendar": "Calendar",
+  "common_nav_search": "Search",
+  "common_nav_settings": "Settings",
+  "common_footer_disclaimer": "Lectio is a study aid, not Church teaching. Its notes on history and the original languages are researched with AI, checked against their sources and reviewed before they appear. The readings themselves open at a licensed source.",
+  "common_footer_about": "About Lectio and how notes are checked",
+  "day_pageTitle": "{title}, {date}",
+  "@day_pageTitle": {
+    "placeholders": {
+      "date": {},
+      "title": {}
+    }
+  },
+  "day_description": "{date}: {title}. {season}. Readings: {refs}. Notes on their history and original words, with each text a tap away.",
+  "@day_description": {
+    "placeholders": {
+      "date": {},
+      "refs": {},
+      "season": {},
+      "title": {}
+    }
+  },
+  "day_descriptionNoReadings": "{date}: {title}. {season}. The readings for this day are not listed yet.",
+  "@day_descriptionNoReadings": {
+    "placeholders": {
+      "date": {},
+      "season": {},
+      "title": {}
+    }
+  },
+  "day_descriptionHolySaturday": "{date}: {title}. {season}. There is no Mass on Holy Saturday; the Easter Vigil belongs to Easter Sunday.",
+  "@day_descriptionHolySaturday": {
+    "placeholders": {
+      "date": {},
+      "season": {},
+      "title": {}
+    }
+  },
+  "day_todayHeading": "Today",
+  "day_todayMissing": "There is no calendar day for today yet. The calendar lists every day that is ready.",
+  "day_upcomingHeading": "The days ahead",
+  "day_readingsHeading": "Readings",
+  "day_massOptions": "{count, plural, one{This day has {count} Mass to choose from.} other{This day has {count} Masses to choose from.}}",
+  "@day_massOptions": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "day_lectionaryMissing": "The readings for this day are not listed yet.",
+  "day_holySaturdayNoMass": "There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its readings are listed there.",
+  "day_notesInPreparation": "Notes in preparation",
+  "day_linkout_text": "Text",
+  "day_linkout_detail": "{ref} at {source} (opens in a new tab)",
+  "@day_linkout_detail": {
+    "placeholders": {
+      "ref": {},
+      "source": {}
+    }
+  },
+  "day_listen": "Listen to the notes",
+  "day_dayNav": "Other days",
+  "day_previousDay": "Previous day",
+  "day_nextDay": "Next day",
+  "day_colourLabel": "Liturgical colour: {colour}",
+  "@day_colourLabel": {
+    "placeholders": {
+      "colour": {}
+    }
+  },
+  "day_cycles": "Sunday cycle {sunday} · Weekday cycle {weekday}",
+  "@day_cycles": {
+    "placeholders": {
+      "sunday": {},
+      "weekday": {}
+    }
+  },
+  "day_seasonWeek": "{season} · Week {week}",
+  "@day_seasonWeek": {
+    "placeholders": {
+      "season": {},
+      "week": {}
+    }
+  },
+  "day_season_advent": "Advent",
+  "day_season_christmas": "Christmas Time",
+  "day_season_ordinaryTime": "Ordinary Time",
+  "day_season_lent": "Lent",
+  "day_season_paschalTriduum": "Paschal Triduum",
+  "day_season_easter": "Easter Time",
+  "day_rank_solemnity": "Solemnity",
+  "day_rank_sunday": "Sunday",
+  "day_rank_feast": "Feast",
+  "day_rank_memorial": "Memorial",
+  "day_rank_optionalMemorial": "Optional memorial",
+  "day_rank_commemoration": "Commemoration",
+  "day_rank_weekday": "Weekday",
+  "day_colour_white": "White",
+  "day_colour_red": "Red",
+  "day_colour_green": "Green",
+  "day_colour_violet": "Violet",
+  "day_colour_rose": "Rose",
+  "day_colour_black": "Black",
+  "day_colour_gold": "Gold",
+  "day_slot_firstReading": "First reading",
+  "day_slot_psalm": "Psalm",
+  "day_slot_secondReading": "Second reading",
+  "day_slot_gospel": "Gospel",
+  "day_slot_epistle": "Epistle",
+  "day_slot_readingN": "Reading {n}",
+  "@day_slot_readingN": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "day_slot_psalmN": "Psalm {n}",
+  "@day_slot_psalmN": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "day_slot_other": "Reading",
+  "insight_pageTitle": "“{anchor}” · {ref}, verse {verse}",
+  "@insight_pageTitle": {
+    "placeholders": {
+      "anchor": {},
+      "ref": {},
+      "verse": {}
+    }
+  },
+  "insight_eyebrow": "Translation note · {ref}",
+  "@insight_eyebrow": {
+    "placeholders": {
+      "ref": {}
+    }
+  },
+  "insight_backToReading": "All notes for {ref}",
+  "@insight_backToReading": {
+    "placeholders": {
+      "ref": {}
+    }
+  },
+  "insight_permalink": "Link to this note",
+  "insight_permalinkLabel": "Link to this note: verse {verse}, “{anchor}”",
+  "@insight_permalinkLabel": {
+    "placeholders": {
+      "anchor": {},
+      "verse": {}
+    }
+  },
+  "og_insightCaption": "What the {language} of today’s {slot} really says — {ref}",
+  "@og_insightCaption": {
+    "placeholders": {
+      "language": {},
+      "ref": {},
+      "slot": {}
+    }
+  },
+  "og_language_grc": "Greek",
+  "og_language_hbo": "Hebrew",
+  "og_language_arc": "Aramaic",
+  "og_language_la": "Latin",
+  "og_alt_cardFor": "Lectio card for {date}",
+  "@og_alt_cardFor": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "pwa_update_message": "A new version of Lectio is ready.",
+  "pwa_update_reload": "Reload",
+  "pwa_update_dismiss": "Not now",
+  "pwa_offline_title": "Offline",
+  "pwa_offline_description": "This page is not saved on this device yet.",
+  "pwa_offline_eyebrow": "No connection",
+  "pwa_offline_heading": "This page is not saved for offline reading",
+  "pwa_offline_body": "Lectio keeps today, the next six days and every day you have opened on this device, so you can read them without a connection. This page is not one of them yet. It will open once you are back online.",
+  "pwa_offline_home": "Go to today",
+  "pwa_offline_retry": "Try again",
+  "reading_pageTitle": "{ref} · {slot}",
+  "@reading_pageTitle": {
+    "placeholders": {
+      "ref": {},
+      "slot": {}
+    }
+  },
+  "reading_description": "Context and original-language notes for {ref}, a reading for {date}.",
+  "@reading_description": {
+    "placeholders": {
+      "date": {},
+      "ref": {}
+    }
+  },
+  "reading_backToDay": "All readings for {date}",
+  "@reading_backToDay": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "reading_tabs_label": "Reading notes",
+  "reading_tabs_context": "Context",
+  "reading_tabs_original": "Original",
+  "reading_tabs_text": "Text",
+  "reading_tabs_textLabel": "Read the text of {ref} at {source} (opens in a new tab)",
+  "@reading_tabs_textLabel": {
+    "placeholders": {
+      "ref": {},
+      "source": {}
+    }
+  },
+  "reading_pending": "Notes for this reading are in preparation. They appear here once they have been checked against their sources and approved.",
+  "reading_noNotes": "There are no original-language notes for this reading yet.",
+  "reading_sources": "Sources",
+  "reading_cite": "Source {n}",
+  "@reading_cite": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "reading_archived": "Archived copy",
+  "reading_note_verse": "Verse {verse}",
+  "@reading_note_verse": {
+    "placeholders": {
+      "verse": {}
+    }
+  },
+  "reading_note_originalLabel": "Original text",
+  "reading_note_translitLabel": "Transliteration",
+  "reading_note_glossLabel": "Literally",
+  "reading_verified": "{count, plural, one{Verified · {count} source} other{Verified · {count} sources}}",
+  "@reading_verified": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "reading_method_human": "Approved by a human reviewer after automatic checks.",
+  "reading_method_auto": "Approved after automatic checks and two independent AI verifiers.",
+  "reading_unverified": "Not yet verified",
+  "reading_lastReviewed": "Last reviewed {date}",
+  "@reading_lastReviewed": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "reading_report": "Report an issue",
+  "reading_disclaimer": "A study aid, not Church teaching. Every claim cites its sources: check them for yourself.",
+  "reading_englishOnly_badge": "English only",
+  "reading_englishOnly_text": "These notes have no reviewed translation yet, so they are shown in English.",
+  "search_title": "Search",
+  "search_description": "Search Lectio’s notes on the history and original words of the daily Mass readings, by book and season.",
+  "search_intro": "Search the notes on every reading that has them. Narrow the results by book or season.",
+  "search_loading": "Loading search…",
+  "search_unavailable": "Search is not available right now. Try again later, or browse the calendar.",
+  "search_noscript": "Search needs JavaScript. You can still browse every day from the calendar.",
+  "search_calendarLink": "Open the calendar",
+  "search_ui_placeholder": "Search the notes",
+  "search_ui_clearSearch": "Clear",
+  "search_ui_loadMore": "Load more results",
+  "search_ui_searchLabel": "Search the notes",
+  "search_ui_filtersLabel": "Filters",
+  "search_ui_zeroResults": "No notes match [SEARCH_TERM]",
+  "search_ui_manyResults": "[COUNT] readings match [SEARCH_TERM]",
+  "search_ui_oneResult": "[COUNT] reading matches [SEARCH_TERM]",
+  "search_ui_altSearch": "No notes match [SEARCH_TERM]. Showing results for [DIFFERENT_TERM] instead",
+  "search_ui_searchSuggestion": "No notes match [SEARCH_TERM]. Try one of these searches:",
+  "search_ui_searching": "Searching for [SEARCH_TERM]…",
+  "seo_defaultDescription": "A companion to the daily Mass readings: their history, their original words, and a voice.",
+  "seo_imageAlt": "Lectio: the daily Mass readings, their history, their original words, and a voice.",
+  "seo_notFoundTitle": "Page not found",
+  "seo_notFoundDescription": "There is no page at this address.",
+  "seo_notFoundEyebrow": "404",
+  "seo_notFoundHeading": "This page is not here",
+  "seo_notFoundBody": "The address may be mistyped, or the page may have moved. Every day’s readings can be reached from today’s page or the calendar.",
+  "seo_notFoundHome": "Go to today’s readings",
+  "seo_notFoundCalendar": "Open the calendar",
+  "settings_title": "Settings",
+  "settings_description": "Text size, theme, playback speed and language for Lectio. Preferences stay on this device.",
+  "settings_intro": "There are no accounts. Your preferences are saved in this browser and never leave this device.",
+  "settings_saved": "Saved on this device.",
+  "settings_notSaved": "This browser is not letting Lectio save settings, so they will reset when you leave.",
+  "settings_textSize_legend": "Text size",
+  "settings_textSize_small": "Small",
+  "settings_textSize_default": "Standard",
+  "settings_textSize_large": "Large",
+  "settings_textSize_larger": "Larger",
+  "settings_textSize_preview": "Notes on history and the original languages will read at this size.",
+  "settings_theme_legend": "Theme",
+  "settings_theme_system": "System",
+  "settings_theme_light": "Light",
+  "settings_theme_dark": "Dark",
+  "settings_theme_hint": "System follows your device's light or dark setting.",
+  "settings_speed_legend": "Default playback speed",
+  "settings_speed_option": "{speed}×",
+  "@settings_speed_option": {
+    "placeholders": {
+      "speed": {}
+    }
+  },
+  "settings_speed_hint": "Where the Listen queue starts. You can still change it while listening.",
+  "settings_language_legend": "Language",
+  "settings_language_en": "English",
+  "settings_language_sw": "Kiswahili",
+  "settings_language_comingSoon": "coming soon",
+  "settings_offline_legend": "Offline data",
+  "settings_offline_hint": "Removes days and audio saved for reading offline. Your settings are kept.",
+  "settings_offline_clear": "Clear offline data",
+  "settings_offline_cleared": "Offline data cleared.",
+  "settings_offline_unsupported": "This browser keeps no offline data for Lectio.",
+  "settings_offline_failed": "Offline data could not be cleared. Try again, or clear site data in your browser.",
+  "share_button": "Share",
+  "share_buttonLabel": "Share {what}",
+  "@share_buttonLabel": {
+    "placeholders": {
+      "what": {}
+    }
+  },
+  "share_options": "Ways to share",
+  "share_copy": "Copy link",
+  "share_copied": "Copied the link with its reference.",
+  "share_copyFailed": "Could not copy. Select the link below and copy it.",
+  "share_whatsapp": "WhatsApp",
+  "share_whatsappLabel": "Share on WhatsApp (opens in a new tab)",
+  "share_email": "Email",
+  "share_link": "Link to share"
+}

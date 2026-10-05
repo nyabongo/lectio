@@ -54,8 +54,8 @@ test.describe('A day without any Mass', () => {
     page,
   }) => {
     await page.goto('2026-04-04/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Holy Saturday/Easter Vigil');
-    await expect(page.locator('.day__no-mass')).toHaveText(/No Mass is celebrated on this day\./);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Holy Saturday');
+    await expect(page.locator('.day__no-mass')).toHaveText(/There is no Mass on Holy Saturday\./);
     await expect(page.locator('.day__missing')).toHaveCount(0);
     await expect(page.locator('.readings')).toHaveCount(0);
   });

@@ -121,7 +121,7 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(location(appRouter(tester)), '/today');
-      expect(find.text(ShareStrings.linkNotRecognised), findsOneWidget);
+      expect(find.text(ShareStrings.en.linkNotRecognised), findsOneWidget);
 
       appRouter(tester).go('/settings');
       await tester.pump();

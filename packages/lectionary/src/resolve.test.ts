@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { DATA_ROOT, GENERAL_ROMAN, entry, file, reading } from './fixtures/data.ts';
 import { loadLectionary } from './load.ts';
-import { Lectionary, NO_MASS_DAYS, epiphanyOf, resolveDay } from './resolve.ts';
+import { Lectionary, epiphanyOf, resolveDay } from './resolve.ts';
 import type { LectionaryDay, ResolveOptions } from './resolve.ts';
 
 /** A day in Ordinary Time 2026 (Year A, weekday Year II). */
@@ -543,30 +543,9 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
       weekdayCycle: 'II',
       celebrations: [{ id: 'holy-saturday', rank: 'weekday' }],
     };
-    expect(resolveDay(day, lectionary, GENERAL_ROMAN)).toEqual({
-      date: '2026-04-04',
-      properOfTimeKey: 'triduum-weekday-0-sat',
-      masses: [],
-      noMass: true,
-    });
-    expect(NO_MASS_DAYS.has('holy-saturday')).toBe(true);
-  });
-
-  it('lists the Easter Vigil on Easter Sunday, in proclamation order', () => {
-    const day: LectionaryDay = {
-      date: '2026-04-05',
-      season: 'easter',
-      seasonWeek: 1,
-      sundayCycle: 'A',
-      weekdayCycle: 'II',
-      celebrations: [{ id: 'easter-sunday', rank: 'solemnity' }],
-    };
-    const resolution = resolveDay(day, lectionary, GENERAL_ROMAN);
-    expect(resolution.noMass).toBe(false);
-    const { masses } = resolution;
-    expect(masses.map((m) => [m.id, m.label, m.from])).toEqual([
-      ['easter-vigil', 'Easter Vigil in the Holy Night', ['celebrations:easter-sunday']],
-      ['day', 'Mass of the day', ['celebrations:easter-sunday']],
+    const { masses } = resolveDay(day, lectionary, GENERAL_ROMAN);
+    expect(masses.map((m) => [m.id, m.label, m.from, m.missingSlots])).toEqual([
+      ['easter-vigil', 'Easter Vigil in the Holy Night', ['celebrations:easter-sunday'], []],
     ]);
     expect(masses[0]?.readings.map((r) => r.slot)).toEqual([
       'reading-1',

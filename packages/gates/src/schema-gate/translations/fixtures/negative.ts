@@ -89,6 +89,7 @@ export const TRANSLATION_NEGATIVE_FIXTURES: Readonly<Record<string, PullRequestF
   'schema/valid-translation': withTranslation((t) => {
     delete t['sourceSha256'];
   }),
+  'schema/translation-path': withTranslation(() => undefined, 'passages/I18N/sw/MT.20.1-16.json'),
   'schema/translation-of-exists': withTranslation((t) => {
     t['translationOf'] = 'MT.20.1-15';
   }, 'passages/i18n/sw/MT.20.1-15.json'),
