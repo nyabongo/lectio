@@ -9,27 +9,29 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json",
-    "dev": "tsx ../../scripts/run-planned.mjs L-050",
-    "build": "tsx ../../scripts/run-planned.mjs L-050",
-    "build:fixture": "tsx ../../scripts/run-planned.mjs L-050",
-    "preview": "tsx ../../scripts/run-planned.mjs L-050"
+    "typecheck": "tsc -p tsconfig.json && npm run check",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "build:fixture": "LECTIO_CONFIG=apps/web/test/lectio.config.fixture.json ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
   "dependencies": {
-    "@lectio/shared": "0.0.0",
-    "@lectio/config": "0.0.0",
-    "@lectio/schema": "0.0.0",
-    "@lectio/refs": "0.0.0",
-    "@lectio/corpus": "0.0.0",
-    "@lectio/content": "0.0.0",
-    "@lectio/audio": "0.0.0",
-    "@lectio/sharecards": "0.0.0",
-    "astro": "^7.3.5",
     "@astrojs/sitemap": "^3.7.4",
+    "@lectio/audio": "0.0.0",
+    "@lectio/config": "0.0.0",
+    "@lectio/content": "0.0.0",
+    "@lectio/corpus": "0.0.0",
+    "@lectio/refs": "0.0.0",
+    "@lectio/schema": "0.0.0",
+    "@lectio/sharecards": "0.0.0",
+    "@lectio/shared": "0.0.0",
+    "astro": "^7.3.5",
     "pagefind": "^1.5.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "@axe-core/playwright": "^4.13.0"
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0"
   }
 }

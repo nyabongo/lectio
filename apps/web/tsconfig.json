@@ -1,4 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src/**/*"]
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node", "astro/client"]
+  },
+  "include": ["src/**/*", "astro.config.mjs", "vitest.config.ts"],
+  "exclude": ["dist", "node_modules", ".astro"]
 }
