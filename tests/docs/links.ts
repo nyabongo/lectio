@@ -28,9 +28,12 @@ const HTML_ANCHOR = /<(?:a|[a-z][a-z0-9]*)\b[^>]*\b(?:id|name)\s*=\s*["']([^"']+
 const HTML_HREF = /<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi;
 const SCHEME = /^[a-z][a-z0-9+.-]*:/i;
 
-/** Lines outside fenced code blocks, with their 1-based numbers and code spans blanked out. */
-export function proseLines(markdown: string): { readonly line: number; readonly text: string }[] {
-  const out: { line: number; text: string }[] = [];
+/**
+ * Lines outside fenced code blocks, with their 1-based numbers: `text` has code spans blanked out, `raw` is the line
+ * as written (heading slugs keep code-span content).
+ */
+export function proseLines(markdown: string): { readonly line: number; readonly text: string; readonly raw: string }[] {
+  const out: { line: number; text: string; raw: string }[] = [];
   let fence: string | null = null;
   markdown.split(/\r?\n/).forEach((raw, index) => {
     const opener = FENCE.exec(raw);
@@ -42,7 +45,8 @@ export function proseLines(markdown: string): { readonly line: number; readonly 
       fence = opener[1] ?? null;
       return;
     }
-    out.push({ line: index + 1, text: raw.replace(/(`+)(?:(?!\1).)+?\1/g, (span) => ' '.repeat(span.length)) });
+    const text = raw.replace(/(`+)(?:(?!\1).)+?\1/g, (span) => ' '.repeat(span.length));
+    out.push({ line: index + 1, text, raw });
   });
   return out;
 }
@@ -85,8 +89,9 @@ export function slugify(text: string): string {
 export function anchorsOf(markdown: string): Set<string> {
   const anchors = new Set<string>();
   const seen = new Map<string, number>();
-  for (const { text } of proseLines(markdown)) {
-    const heading = /^ {0,3}#{1,6}\s+(.*?)(?:\s+#+)?\s*$/.exec(text);
+  for (const { text, raw } of proseLines(markdown)) {
+    // The raw line, not `text`: GitHub keeps code-span content in the slug (`Blocked (\`x\`)` → `blocked-x`).
+    const heading = /^ {0,3}#{1,6}\s+(.*?)(?:\s+#+)?\s*$/.exec(raw);
     if (heading) {
       const base = slugify(heading[1] as string);
       const count = seen.get(base) ?? 0;

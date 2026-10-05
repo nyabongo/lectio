@@ -47,6 +47,9 @@ flowchart LR
 | Audio            | `packages/audio`, deploy              | Narration rendered in CI, keyed by a hash of the text, stored in object storage; re-rendered only when text changes.                                     | L-080–L-085        |
 | Apps             | `apps/mobile`                         | Flutter reads the same `/api/v1` JSON the site publishes; no separate API.                                                                               | L-100–L-117        |
 
+The five content gates, rule by rule, are in [gates.md](gates.md); what a reviewer checks on a flagged PR, and how to
+approve it, is in the [reviewer guide](reviewer-guide.md).
+
 ## Principles
 
 - **The repository decides what is true.** One JSON file per passage; git history is the audit trail. There is no

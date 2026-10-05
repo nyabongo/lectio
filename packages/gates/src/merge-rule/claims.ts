@@ -1,9 +1,10 @@
 /**
- * The claims a PR asks the verifiers to check: every claim of every changed passage file at the
- * PR head. Auto-merge needs a verifier record for each of them, so a claim the verifiers gate left
+ * The claims a PR asks the verifiers to check: every claim of every changed passage file (under
+ * `config.content.root`) at the PR head. Auto-merge needs a verifier record for each of them, so a claim the verifiers gate left
  * out cannot ride along on the scores of the others.
  */
-import { contentKindOf } from '@lectio/content';
+import type { LectioConfig } from '@lectio/config';
+import { contentPlaceAt } from '@lectio/content';
 
 import type { GateContext } from '../core/gate.ts';
 
@@ -27,10 +28,13 @@ function claimIds(text: string): string[] | null {
 }
 
 /** Every claim of the changed passage files that exist at the head, in file then claim order. */
-export function changedClaims(context: Pick<GateContext, 'changedFiles' | 'readFile'>): ClaimRef[] {
+export function changedClaims(
+  context: Pick<GateContext, 'changedFiles' | 'readFile'> & { readonly config: Pick<LectioConfig, 'content'> },
+): ClaimRef[] {
+  const { root } = context.config.content;
   const claims: ClaimRef[] = [];
   for (const file of context.changedFiles) {
-    if (file.status === 'deleted' || contentKindOf(file.path) !== 'passage') continue;
+    if (file.status === 'deleted' || contentPlaceAt(file.path, root)?.kind !== 'passage') continue;
     const text = context.readFile(file.path);
     if (text === null) continue;
     const ids = claimIds(text) ?? [UNREADABLE_CLAIMS];
