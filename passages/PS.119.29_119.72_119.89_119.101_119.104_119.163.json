@@ -1,0 +1,681 @@
+{
+  "key": "PS.119.29_119.72_119.89_119.101_119.104_119.163",
+  "ref": "Ps 119:29, 72, 89, 101, 104, 163",
+  "locale": "en",
+  "summary": "Six lines from the great acrostic on God’s instruction reject the way of falsehood and prize the Torah above wealth.",
+  "context": {
+    "title": "Six verses from the Torah psalm",
+    "paragraphs": [
+      "Psalm 119 is an alphabetic acrostic of twenty-two stanzas, one for each Hebrew letter, and every verse of a stanza begins with that letter. [c1] The six verses here come from five of them: Daleth, Teth, Lamed, Mem (two verses) and Shin. [c2] Jamieson, Fausset and Brown suggest that the artful form served teaching and memory. [c3]",
+      "By one older count, only two verses in the whole psalm lack some term for God’s word. [c4] Torah, usually rendered law, is one of those terms and appears three times in these six verses. [c5] The psalm is tied to no particular event; it is the prayer of someone who has set God’s declared will before him as the rule of his life. [c6]",
+      "Three of the six verses name šeqer, falsehood, as the way the psalmist rejects. [c7] Older commentators took this less as the habit of telling lies than as any conduct not governed by God’s truth. [c8] Against it stands a word fixed for ever in the heavens, which the psalmist values above any amount of earthly riches. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "torah",
+      "verse": "119:72",
+      "anchor": "law",
+      "original": {
+        "text": "תּוֹרַת",
+        "lang": "hbo",
+        "translit": "tôrat",
+        "gloss": "instruction of"
+      },
+      "summary": "Tôrâ means direction or instruction before it means law in a legal sense.",
+      "body": "The lexicon gives direction and instruction as the senses of tôrâ, alongside law. [c10] Proverbs uses the same noun for a mother’s teaching and a sage’s. [c11] Jamieson, Fausset and Brown call it a term of general purport denoting instruction. [c12] Delitzsch notes that in v. 29 it means living instruction rather than a rigid fixed teaching. [c13]"
+    },
+    {
+      "id": "chonneni",
+      "verse": "119:29",
+      "anchor": "favor me",
+      "original": {
+        "text": "חָנֵּנִי",
+        "lang": "hbo",
+        "translit": "ḥonnēnî",
+        "gloss": "be gracious to me"
+      },
+      "summary": "The verb asks for grace: the psalmist receives God’s instruction as a favour, not as something owed.",
+      "body": "Ḥānan means to show favour or be gracious. [c14] It is the verb of the priestly blessing in Num 6:25. [c15] Here it takes two objects, so the psalmist asks God to be gracious to him with the law itself, and Barnes stresses that he does not claim it as a right. [c16] Ellicott calls this plea for grace the persistent cry of the psalm. [c17]"
+    },
+    {
+      "id": "nitsav",
+      "verse": "119:89",
+      "anchor": "firm",
+      "original": {
+        "text": "נִצָּב",
+        "lang": "hbo",
+        "translit": "niṣṣāb",
+        "gloss": "stationed, standing"
+      },
+      "summary": "Niṣṣāb pictures something set up and standing, like a pillar planted in heaven.",
+      "body": "The verb means to take one’s stand, or to stand where one is stationed. [c18] Barnes links it with setting up a pillar, an altar or a monument. [c19] The Cambridge Bible renders it standeth fast and reads the verse as a single clause, with the Greek, the Targum and Jerome. [c20] Delitzsch draws the conclusion that God’s word, standing in heaven, shares heaven’s stability. [c21]"
+    },
+    {
+      "id": "sheqer",
+      "verse": "119:163",
+      "anchor": "Falsehood",
+      "original": {
+        "text": "שֶׁקֶר",
+        "lang": "hbo",
+        "translit": "šeqer",
+        "gloss": "falsehood, deception"
+      },
+      "summary": "Šeqer is deception that disappoints: in this psalm, a way of life false to God rather than a single lie.",
+      "body": "Šeqer covers deception, fraud and false testimony, and first of all whatever deceives, disappoints and betrays. [c22] The Pulpit Commentary holds that in this verse the psalmist is not speaking of the habit of lying. [c23] The Cambridge Bible hears instead the pull of heathen ways against the truth of God’s law. [c24] Its opposite, in verse 30, is the way of faithfulness and loyalty to God. [c25]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Psalm 119 is divided into twenty-two stanzas named after the letters of the Hebrew alphabet; each stanza has eight verses beginning with its letter.",
+      "sourceIds": ["jfb-ps-119-1-stanzas", "jfb-ps-119-1-letter"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Ps 119:29, 72, 89, 101, 104 and 163 begin with the letters Daleth, Teth, Lamed, Mem, Mem and Shin, in the stanzas Keil and Delitzsch call the eightfold Daleth, Teth, Lamed, Mem and Shin.",
+      "sourceIds": [
+        "ps-119-29-daleth",
+        "ps-119-72-teth",
+        "ps-119-89-lamed",
+        "ps-119-101-mem",
+        "ps-119-104-mem",
+        "ps-119-163-shin",
+        "kd-ps-119-29",
+        "kd-ps-119-72",
+        "kd-ps-119-89",
+        "kd-ps-119-101",
+        "kd-ps-119-163"
+      ],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Jamieson, Fausset and Brown suggest the psalm was meant for instruction, especially of the young, and that its artificial structure aided memory.",
+      "sourceIds": ["jfb-ps-119-1-manual", "jfb-ps-119-1-memory"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "By the count of Jamieson, Fausset and Brown, only two verses of Psalm 119 (vv. 122 and 132) contain no term for God’s word.",
+      "sourceIds": ["jfb-ps-119-1-two-verses"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "The noun תּוֹרָה occurs in Ps 119:29, 72 and 163.",
+      "sourceIds": ["ps-119-29-torah", "ps-119-72-torah", "ps-119-163-torah"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Psalm 119 is not tied to a special occasion, and the psalmist has set God’s declared will before himself as the rule of his life.",
+      "sourceIds": ["jfb-ps-119-1-occasion", "cambridge-ps-119-29-rule"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "The noun שֶׁקֶר occurs in Ps 119:29, 104 and 163.",
+      "sourceIds": ["ps-119-29-sheqer", "ps-119-104-sheqer", "ps-119-163-shin"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Commentators take the falsehood of these verses as conduct not governed by God’s truth rather than the habit of lying.",
+      "sourceIds": ["cambridge-ps-119-29", "pulpit-ps-119-163"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Ps 119:89 says God’s word stands for ever in heaven, and Ps 119:72 values God’s law above great quantities of gold and silver, that is, above any amount of riches.",
+      "sourceIds": ["ps-119-89-lamed", "ps-119-72-gold", "pulpit-ps-119-89", "pulpit-ps-119-72"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "תּוֹרָה means direction, instruction, law.",
+      "sourceIds": ["bdb-torah"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "In Proverbs תּוֹרָה is used of a mother’s instruction (Prv 1:8) and of the teaching of sages (Prv 13:14).",
+      "sourceIds": ["bdb-torah-mother", "prv-1-8", "prv-13-14"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Jamieson, Fausset and Brown describe law in Psalm 119 as a term of general purport denoting the instruction of God’s word.",
+      "sourceIds": ["jfb-ps-119-1-law"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Keil and Delitzsch note that in Ps 119:29 תּוֹרָה has not the rigid notion of a fixed teaching but of living instruction.",
+      "sourceIds": ["kd-ps-119-29-torah"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "The verb חָנַן means to show favour, to be gracious.",
+      "sourceIds": ["bdb-chanan"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The priestly blessing in Num 6:25 uses the same verb חָנַן.",
+      "sourceIds": ["nm-6-25"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "In Ps 119:29 חָנַן takes a double accusative, and the psalmist asks for the law as a favour, not as a right.",
+      "sourceIds": ["kd-ps-119-29-double", "barnes-ps-119-29"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Ellicott renders the plea as be gracious to me according to thy law and calls it the persistent cry of the psalm.",
+      "sourceIds": ["ellicott-ps-119-29"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The Niphal of נָצַב means to take one’s stand, stand, or be stationed.",
+      "sourceIds": ["bdb-natsav", "bdb-natsav-stationed"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Barnes notes that the word means to set up or cause to stand, as a column, an altar or a monument.",
+      "sourceIds": ["barnes-ps-119-89"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "The Cambridge Bible renders the verb standeth fast and, following the Septuagint, the Targum and Jerome, treats Ps 119:89 as one clause.",
+      "sourceIds": ["cambridge-ps-119-89", "cambridge-ps-119-89-clause"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Keil and Delitzsch say God’s word has heaven as its standing-place and therefore shares heaven-like stability.",
+      "sourceIds": ["kd-ps-119-89-stability"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "שֶׁקֶר means deception, disappointment, falsehood, first of all what deceives, disappoints and betrays one.",
+      "sourceIds": ["bdb-sheqer", "bdb-sheqer-betrays"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "The Pulpit Commentary holds that in Ps 119:163 the psalmist is not speaking of the habit of lying but of false religion or moral teaching.",
+      "sourceIds": ["pulpit-ps-119-163", "pulpit-ps-119-163-systems"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "The Cambridge Bible takes the falsehood of Ps 119:163 as heathenism and heathenish tendencies, in contrast to the truth of God’s law.",
+      "sourceIds": ["cambridge-ps-119-163"],
+      "sensitive": false
+    },
+    {
+      "id": "c25",
+      "text": "The way of falsehood in Ps 119:29 is contrasted with the way of faithfulness, of loyalty to God, in Ps 119:30.",
+      "sourceIds": ["cambridge-ps-119-29-faithfulness"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "ps-119-29-daleth",
+      "type": "scripture",
+      "citation": "Psalm 119:29",
+      "ref": "Ps 119:29",
+      "excerpt": "דֶּרֶךְ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-29-torah",
+      "type": "scripture",
+      "citation": "Psalm 119:29",
+      "ref": "Ps 119:29",
+      "excerpt": "וְתוֹרָתְךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-29-sheqer",
+      "type": "scripture",
+      "citation": "Psalm 119:29",
+      "ref": "Ps 119:29",
+      "excerpt": "דֶּרֶךְ שֶׁקֶר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-72-teth",
+      "type": "scripture",
+      "citation": "Psalm 119:72",
+      "ref": "Ps 119:72",
+      "excerpt": "טוֹב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-72-torah",
+      "type": "scripture",
+      "citation": "Psalm 119:72",
+      "ref": "Ps 119:72",
+      "excerpt": "תּוֹרַת פִּיךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-72-gold",
+      "type": "scripture",
+      "citation": "Psalm 119:72",
+      "ref": "Ps 119:72",
+      "excerpt": "מֵאַלְפֵי זָהָב וָכָסֶף",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-89-lamed",
+      "type": "scripture",
+      "citation": "Psalm 119:89",
+      "ref": "Ps 119:89",
+      "excerpt": "לְעוֹלָם יְהוָה דְּבָרְךָ נִצָּב בַּשָּׁמָיִם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-101-mem",
+      "type": "scripture",
+      "citation": "Psalm 119:101",
+      "ref": "Ps 119:101",
+      "excerpt": "מִכָּל",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-104-mem",
+      "type": "scripture",
+      "citation": "Psalm 119:104",
+      "ref": "Ps 119:104",
+      "excerpt": "מִפִּקּוּדֶיךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-104-sheqer",
+      "type": "scripture",
+      "citation": "Psalm 119:104",
+      "ref": "Ps 119:104",
+      "excerpt": "אֹרַח שָׁקֶר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-163-shin",
+      "type": "scripture",
+      "citation": "Psalm 119:163",
+      "ref": "Ps 119:163",
+      "excerpt": "שֶׁקֶר שָׂנֵאתִי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-119-163-torah",
+      "type": "scripture",
+      "citation": "Psalm 119:163",
+      "ref": "Ps 119:163",
+      "excerpt": "תּוֹרָתְךָ אָהָבְתִּי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-1-8",
+      "type": "scripture",
+      "citation": "Proverbs 1:8",
+      "ref": "Prv 1:8",
+      "excerpt": "תּוֹרַת אִמֶּךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-13-14",
+      "type": "scripture",
+      "citation": "Proverbs 13:14",
+      "ref": "Prv 13:14",
+      "excerpt": "תּוֹרַת חָכָם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "nm-6-25",
+      "type": "scripture",
+      "citation": "Numbers 6:25",
+      "ref": "Nm 6:25",
+      "excerpt": "וִיחֻנֶּךָּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jfb-ps-119-1-stanzas",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "It is divided into twenty-two parts or stanzas",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-letter",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "Each stanza contains eight verses, and the first letter of each verse",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-manual",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "a manual of pious thoughts, especially for instructing the young",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-memory",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "its peculiar artificial structure was probably adopted to aid the memory",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-two-verses",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "There are but two verses (Ps 119:122, 132) which do not contain",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-occasion",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "does not appear to have any relation to any special occasion",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-ps-119-1-law",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Psalm 119:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-1.htm",
+      "excerpt": "is a term of rather general purport, denoting the instruction",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-29",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:25-32 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "The eightfold Daleth.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-29-torah",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:25-32 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "has not the rigid notion of a fixed teaching",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-29-double",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:25-32 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "is construed with a double accusative",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-72",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:65-72 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-72.htm",
+      "excerpt": "The eightfold Teth.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-89",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:89-96 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-89.htm",
+      "excerpt": "The eightfold Lamed.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-89-stability",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:89-96 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-89.htm",
+      "excerpt": "the qualities of heaven, and before all others, heaven-like stability",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-101",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:97-104 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-101.htm",
+      "excerpt": "The eightfold Mem.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-ps-119-163",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Psalm 119:161-168 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-163.htm",
+      "excerpt": "The eightfold ש (both Shin and Sin)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-29",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:29-30 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "all conduct that is not governed by God’s truth",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-29-rule",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:29-30 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "as the rule of his life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-29-faithfulness",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:29-30 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "is contrasted with the way of faithfulness, of loyalty to Him",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-119-163",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 119:163 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-163.htm",
+      "excerpt": "is not speaking of the habit of lying",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-119-163-systems",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 119:163 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-163.htm",
+      "excerpt": "False systems of religion are in the psalmist's thoughts",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-163",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:163 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-163.htm",
+      "excerpt": "Falsehood denotes heathenism and heathenish tendencies",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-119-89",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 119:89 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-89.htm",
+      "excerpt": "fixed and established forever in the heaven of heavens",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-ps-119-72",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 119:72 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-72.htm",
+      "excerpt": "I value it more than any amount of earthly riches",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-torah",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. תּוֹרָה (Bible Hub, Strong's 8451)",
+      "url": "https://biblehub.com/hebrew/8451.htm",
+      "excerpt": "direction, instruction, law",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-torah-mother",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. תּוֹרָה (Bible Hub, Strong's 8451)",
+      "url": "https://biblehub.com/hebrew/8451.htm",
+      "excerpt": "of a mother",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-chanan",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חָנַן (Bible Hub, Strong's 2603)",
+      "url": "https://biblehub.com/hebrew/2603.htm",
+      "excerpt": "verb shew favour, be gracious",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "barnes-ps-119-29",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Psalm 119:29 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "It was not a thing which he claimed as a right",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-119-29",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 119:29 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-29.htm",
+      "excerpt": "This is the persistent cry of the psalm.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-natsav",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. נָצַב (Bible Hub, Strong's 5324)",
+      "url": "https://biblehub.com/hebrew/5324.htm",
+      "excerpt": "take one's stand, stand",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-natsav-stationed",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. נָצַב (Bible Hub, Strong's 5324)",
+      "url": "https://biblehub.com/hebrew/5324.htm",
+      "excerpt": "be stationed (by appointment, or in fulfilment of duty)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "barnes-ps-119-89",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Psalm 119:89 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-89.htm",
+      "excerpt": "to stand, to cause to stand, to set up, as a column",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-89",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:89 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-89.htm",
+      "excerpt": "Standeth fast.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-119-89-clause",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 119:89 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/119-89.htm",
+      "excerpt": "in treating the verse as one clause",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-sheqer",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שֶׁקֶר (Bible Hub, Strong's 8267)",
+      "url": "https://biblehub.com/hebrew/8267.htm",
+      "excerpt": "deception, disappointment, falsehood",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-sheqer-betrays",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שֶׁקֶר (Bible Hub, Strong's 8267)",
+      "url": "https://biblehub.com/hebrew/8267.htm",
+      "excerpt": "what deceives, disappoints, and betrays one",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021c-ps-119-selection",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T12:55:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
