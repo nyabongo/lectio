@@ -183,19 +183,33 @@ export interface PagefindApi {
   close(): Promise<unknown>;
 }
 
+/**
+ * Pagefind's `writeFiles` is not used: its promise can resolve while the service is still writing (a file can be
+ * empty when read straight after, and closing the service then can leave it truncated). `getFiles` returns the
+ * whole bundle in memory instead, and the caller writes it.
+ */
 export interface PagefindIndexApi {
   addHTMLFile(file: { url: string; content: string }): Promise<{ errors: string[] }>;
-  writeFiles(options: { outputPath: string }): Promise<{ errors: string[] }>;
+  getFiles(): Promise<{ errors: string[]; files?: PagefindBundleFile[] }>;
 }
+
+/** One file of the Pagefind bundle; `path` is relative to the bundle directory (`pagefind.js`, `index/…`). */
+export interface PagefindBundleFile {
+  path: string;
+  content: Uint8Array;
+}
+
+/** Writes one bundle file; resolves only once the file is completely written. */
+export type WriteBundleFile = (file: PagefindBundleFile) => Promise<void>;
 
 function check(step: string, errors: readonly string[]): void {
   if (errors.length > 0) throw new Error(`Pagefind ${step} failed: ${errors.join('; ')}`);
 }
 
 /**
- * Indexes `docs` with Pagefind and writes the bundle to `outputPath` (normally `<outDir>/pagefind`). Throws on any
- * Pagefind error so a broken index fails the build. Returns the number of pages indexed. The Pagefind service is
- * closed afterwards, even on failure.
+ * Indexes `docs` with Pagefind and writes the bundle through `write` (normally into `<outDir>/pagefind`). Resolves
+ * once every file is written. Throws on any Pagefind error so a broken index fails the build. Returns the number of
+ * pages indexed. The Pagefind service is closed afterwards, even on failure.
  *
  * Documents in one language are indexed as `lang`. Documents in several (the `/sw/` mirror, L-113) are indexed by
  * each document's `<html lang>`: Pagefind writes one index per language and the search UI loads the one matching
@@ -204,7 +218,7 @@ function check(step: string, errors: readonly string[]): void {
 export async function writeSearchIndex(
   api: PagefindApi,
   docs: readonly SearchDocument[],
-  outputPath: string,
+  write: WriteBundleFile,
   lang: string,
 ): Promise<number> {
   try {
@@ -217,7 +231,10 @@ export async function writeSearchIndex(
         `indexing ${doc.url}`,
         (await index.addHTMLFile({ url: doc.url, content: searchDocumentHtml(doc) })).errors,
       );
-    check('writeFiles', (await index.writeFiles({ outputPath })).errors);
+    const bundle = await index.getFiles();
+    check('getFiles', bundle.errors);
+    if (bundle.files === undefined || bundle.files.length === 0) throw new Error('Pagefind getFiles returned no files');
+    await Promise.all(bundle.files.map(write));
     return docs.length;
   } finally {
     await api.close();
