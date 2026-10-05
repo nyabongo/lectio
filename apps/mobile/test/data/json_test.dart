@@ -70,10 +70,7 @@ void main() {
       expect(object.optionalNumber('absent'), isNull);
       expect(object.optionalUri('u'), Uri.parse('https://example.test/a'));
       expect(object.optionalUri('nil'), isNull);
-      expect(
-        object.optionalDateTime('t'),
-        DateTime.utc(2026, 9, 3, 17, 5),
-      );
+      expect(object.optionalDateTime('t'), DateTime.utc(2026, 9, 3, 17, 5));
       expect(object.optionalDateTime('absent'), isNull);
       expect(object.optionalObject('o'), {'x': 1});
       expect(object.optionalObject('nil'), isNull);

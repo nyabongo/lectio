@@ -55,7 +55,11 @@ void main() {
         'segments': <Object?>[],
       };
       json['masses'] = [
-        {'id': 'vigil', 'label': 'Vigil', 'readings': [reading]},
+        {
+          'id': 'vigil',
+          'label': 'Vigil',
+          'readings': [reading],
+        },
       ];
       json['colour'] = 'blue';
       final day = parseApiDay(json);

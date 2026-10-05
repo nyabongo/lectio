@@ -31,8 +31,7 @@ void main() {
     });
 
     test('rejects a non-string endpoint', () {
-      final json = fixtureObject('index')
-        ..['endpoints'] = {'day': 1};
+      final json = fixtureObject('index')..['endpoints'] = {'day': 1};
       expect(() => ApiIndex.fromJson(json), throwsFormatException);
     });
   });

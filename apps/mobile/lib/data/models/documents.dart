@@ -13,7 +13,10 @@ class DateRange {
   /// Reads a `dates` object.
   factory fromJson(Object? json) {
     final object = asJsonObject(json, 'dates');
-    return DateRange(first: object.string('first'), last: object.string('last'));
+    return DateRange(
+      first: object.string('first'),
+      last: object.string('last'),
+    );
   }
 
   /// First ISO date.

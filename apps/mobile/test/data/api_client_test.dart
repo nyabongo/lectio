@@ -72,9 +72,8 @@ void main() {
           headers: {'etag': '"v2"', 'last-modified': 'Mon'},
         ),
       );
-      final response = await ApiClient(
-        httpClient: mock,
-      ).get('index.json', lastModified: 'Sun');
+      final response = await ApiClient(httpClient: mock)
+          .get('index.json', lastModified: 'Sun');
       expect(response.body, isNull);
       expect(response.etag, '"v2"');
       expect(response.lastModified, 'Mon');

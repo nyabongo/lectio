@@ -66,19 +66,22 @@ void main() {
   }
 
   group('watch streams', () {
-    test('with an empty cache, the network answers and fills the cache', () async {
-      api.serveFixture('days/2026-09-20.json', 'day', etag: '"d1"');
-      final snapshots = await repository.watchDay('2026-09-20').toList();
-      expect(snapshots, hasLength(1));
-      final snapshot = snapshots.single;
-      expect(snapshot.origin, DataOrigin.network);
-      expect(snapshot.value.date, '2026-09-20');
-      expect(snapshot.fetchedAt, now);
-      expect(snapshot.refreshError, isNull);
-      final entry = await cache.read('days/2026-09-20.json');
-      expect(entry!.etag, '"d1"');
-      expect(entry.body, fixture('day'));
-    });
+    test(
+      'with an empty cache, the network answers and fills the cache',
+      () async {
+        api.serveFixture('days/2026-09-20.json', 'day', etag: '"d1"');
+        final snapshots = await repository.watchDay('2026-09-20').toList();
+        expect(snapshots, hasLength(1));
+        final snapshot = snapshots.single;
+        expect(snapshot.origin, DataOrigin.network);
+        expect(snapshot.value.date, '2026-09-20');
+        expect(snapshot.fetchedAt, now);
+        expect(snapshot.refreshError, isNull);
+        final entry = await cache.read('days/2026-09-20.json');
+        expect(entry!.etag, '"d1"');
+        expect(entry.body, fixture('day'));
+      },
+    );
 
     test('offline with an empty cache, the stream fails', () async {
       api.offline = true;
@@ -129,7 +132,10 @@ void main() {
         DataOrigin.cache,
         DataOrigin.network,
       ]);
-      expect(snapshots.first.value.readings.last.passage!.context.audio, isNull);
+      expect(
+        snapshots.first.value.readings.last.passage!.context.audio,
+        isNull,
+      );
       expect(
         snapshots.last.value.readings.last.passage!.context.audio,
         isNotNull,
