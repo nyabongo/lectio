@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lectio/data/models/day.dart';
 import 'package:lectio/data/models/notes.dart';
 import 'package:lectio/features/listen/locale.dart';
@@ -232,8 +233,12 @@ List<ListenSegment> segmentsForMass(
     }
   }
   if (localized != null) {
+    // Only for a reviewed translation, as narratedPassage decides.
     for (final segment in _apiSegments(localized)) {
-      if (segment.locale == 'sw') kiswahili[segment.id] = segment;
+      if (segment.locale == 'sw' &&
+          translations[segment.passageKey]?.locale == 'sw') {
+        kiswahili[segment.id] = segment;
+      }
     }
   }
   return List.unmodifiable([
@@ -248,27 +253,37 @@ List<ListenSegment> segmentsForMass(
 /// The API segments of [mass] that the app knows how to show, each with the
 /// display reference of its passage.
 ///
-/// A segment of a kind added to the API later is left out.
+/// A segment of a kind added to the API later is left out, and so is one
+/// whose passage is not among the Mass's readings (it has no reference to
+/// show).
 List<ListenSegment> _apiSegments(Mass<DayReading> mass) {
   final refs = <String, String>{};
   for (final reading in mass.readings) {
     refs.putIfAbsent(reading.key, () => reading.passage?.ref ?? reading.ref);
   }
-  return [
-    for (final segment in mass.segments)
-      if (_kinds[segment.kind] case final kind?)
-        ListenSegment(
-          id: segment.id,
-          kind: kind,
-          slot: segment.slot,
-          passageKey: segment.passageKey,
-          ref: refs[segment.passageKey] ?? segment.passageKey,
-          locale: segment.locale,
-          title: segment.title,
-          script: segment.script,
-          audio: segment.audio,
-        ),
-  ];
+  final out = <ListenSegment>[];
+  for (final segment in mass.segments) {
+    final kind = _kinds[segment.kind];
+    final ref = refs[segment.passageKey];
+    if (kind == null || ref == null) {
+      debugPrint('Listen: segment ${segment.id} left out (${segment.kind})');
+      continue;
+    }
+    out.add(
+      ListenSegment(
+        id: segment.id,
+        kind: kind,
+        slot: segment.slot,
+        passageKey: segment.passageKey,
+        ref: ref,
+        locale: segment.locale,
+        title: segment.title,
+        script: segment.script,
+        audio: segment.audio,
+      ),
+    );
+  }
+  return out;
 }
 
 const Map<String, SegmentKind> _kinds = {

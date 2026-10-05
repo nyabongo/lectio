@@ -190,18 +190,29 @@ void main() {
       expect(agathos.fallback, isNull);
     });
 
-    test('leaves out kinds it does not know and keeps a passage without '
-        'a reading', () {
+    test('leaves out kinds it does not know and passages without a '
+        'reading', () {
       final json = fixtureObject('day-with-segments');
       final [context, evilEye, _] = segmentsOf(json);
       context['kind'] = 'reading-intro';
       evilEye['passageKey'] = 'JN.1.1-5';
       final segments = segmentsForMass(parseApiDay(json).masses.single);
-      expect(segments.map((s) => s.id), [
-        'MT.20.1-16/note/v15-evil-eye',
-        'MT.20.1-16/note/v15-agathos',
-      ]);
-      expect(segments.first.ref, 'JN.1.1-5');
+      expect(segments.map((s) => s.id), ['MT.20.1-16/note/v15-agathos']);
+      expect(segments.single.ref, 'Mt 20:1-16a');
+    });
+
+    test('uses Kiswahili segments only for a Kiswahili mirror passage', () {
+      final json = fixtureObject('day-sw-with-segments');
+      final gospel =
+          (massOf(json)['readings']! as List<Object?>).last!
+              as Map<String, Object?>;
+      (gospel['passage']! as Map<String, Object?>)['locale'] = 'en';
+      final segments = segmentsForMass(
+        english,
+        localized: parseApiDay(json).masses.single,
+        language: 'sw',
+      );
+      expect(segments.map((s) => s.locale).toSet(), {'en'});
     });
 
     test('ignores the mirror in English', () {
