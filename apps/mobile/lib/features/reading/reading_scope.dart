@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:lectio/data/api_cache.dart';
-import 'package:lectio/data/api_client.dart';
-import 'package:lectio/data/file_api_cache.dart';
+import 'package:lectio/data/app_repository.dart';
 import 'package:lectio/data/repository.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,41 +16,9 @@ Future<bool> launchExternally(Uri url, {UrlLauncher launch = launchUrl}) {
   return launch(url, mode: LaunchMode.externalApplication);
 }
 
-/// An [ApiCache] opened on first use, for a cache that is created
-/// asynchronously (such as [FileApiCache.inSupportDirectory]).
-///
-/// When opening fails, every read and write fails with the same error, which
-/// the repository treats as an empty cache.
-class LazyApiCache implements ApiCache {
-  /// Creates a cache that calls [_open] once, on first use.
-  new(this._open);
-
-  final Future<ApiCache> Function() _open;
-
-  late final Future<ApiCache> _cache = _open();
-
-  @override
-  Future<CachedResponse?> read(String path) {
-    return _cache.then((cache) => cache.read(path));
-  }
-
-  @override
-  Future<void> write(String path, CachedResponse entry) async {
-    final cache = await _cache;
-    await cache.write(path, entry);
-  }
-}
-
-LectioRepository? _defaultRepository;
-
 /// The repository the Reading screen uses when no [ReadingScope] gives one:
-/// the production API over HTTP, cached in the app's support directory.
-LectioRepository defaultReadingRepository() {
-  return _defaultRepository ??= LectioRepository(
-    client: ApiClient(httpClient: http.Client()),
-    cache: LazyApiCache(FileApiCache.inSupportDirectory),
-  );
-}
+/// the app's shared [appRepository] (`lib/data/app_repository.dart`).
+LectioRepository defaultReadingRepository() => appRepository;
 
 /// Gives the Reading screen its data and the way it opens links, so tests
 /// pass fakes and the app can share one repository between features.
