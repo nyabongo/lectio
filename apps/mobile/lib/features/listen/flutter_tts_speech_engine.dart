@@ -58,7 +58,10 @@ double speechRate(double speed, {TargetPlatform? platform}) {
 ///   (which would skip a segment that never played). The next start event
 ///   clears what is still owed.
 /// - An error that reports an interruption or a cancel (`interrupted`,
-///   `cancel…`) is never a failure, as on the web.
+///   `cancel…`) is never a failure, as on the web. One that ends the
+///   speaking utterance with nothing owed (iOS interrupts speech for a call,
+///   say) reports [stalled], so the queue pauses and keeps its place rather
+///   than showing "playing" in silence.
 /// - Any other error after [speak] handed the utterance to the device, with
 ///   no debt outstanding, fails it even before it started: Android can
 ///   report one without ever starting, and the queue would wait on it.
@@ -67,7 +70,9 @@ double speechRate(double speed, {TargetPlatform? platform}) {
 ///   device cannot speak and the utterance fails (the queue skips it);
 ///   after one has, the stall is temporary and the engine reports
 ///   [stalled] (the queue pauses and keeps the place), as the web does
-///   (L-085).
+///   (L-085). A start that arrives after the watchdog stopped its utterance
+///   is late: that utterance is not speaking, and it still owes the end its
+///   stop brings, so the next utterance owes nothing for it.
 class FlutterTtsSpeechEngine implements SpeechEngine {
   /// Creates the engine; [create] builds the plugin (default:
   /// `FlutterTts()`), [platform] tells which platform runs (default:
@@ -103,6 +108,10 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   /// Whether the device has started an utterance since the engine was made.
   bool _heard = false;
 
+  /// The watchdog stopped the last utterance and none was queued since: a
+  /// start now is that utterance's, late.
+  bool _barked = false;
+
   Timer? _watchdog;
 
   @override
@@ -119,11 +128,17 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   FlutterTts get _plugin {
     return _tts ??= _create()
       ..setStartHandler(() {
+        _heard = true;
+        if (_barked) {
+          // The stopped utterance's late start: it is not speaking, and its
+          // end is still owed.
+          _barked = false;
+          return;
+        }
         _calm();
         _live = true;
         _queued = false;
         _owed = 0;
-        _heard = true;
       })
       ..setCompletionHandler(() => _ended(completed: true))
       ..setCancelHandler(_ended)
@@ -139,19 +154,22 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
 
   /// A terminal event: it pays a stopped utterance's debt first, else ends
   /// the current utterance (an [error] also before it started). A cancel
-  /// (neither [completed] nor [error]) never ends one.
+  /// (neither [completed] nor [error]) ends a speaking one as a stall, and
+  /// leaves one not started to the watchdog.
   void _ended({bool completed = false, Object? error}) {
     if (_owed > 0) {
       _owed--;
       return;
     }
-    if (_live && (completed || error != null)) {
+    if (_live) {
       _live = false;
       _calm();
-      if (error == null) {
+      if (completed) {
         _completed.add(null);
-      } else {
+      } else if (error != null) {
         _failed.add(error);
+      } else {
+        _stalled.add(null);
       }
     } else if (_queued && error != null) {
       _queued = false;
@@ -179,6 +197,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     _watchdog = null;
     if (!_queued) return;
     _retire();
+    _barked = true;
     unawaited(tts.stop());
     if (_failed.isClosed) return;
     if (_heard) {
@@ -237,6 +256,10 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     // From here an error before the start event is this utterance's,
     // unless a stopped one still owes its end.
     _queued = true;
+    _barked = false;
+    // An overlapping speak may have set a watchdog since this one retired
+    // the last utterance.
+    _calm();
     _watchdog = Timer(startTimeout, () => _bark(tts));
     // flutter_tts answers 1 when the utterance was queued, 0 when not.
     final Object? queued = await tts.speak(text);
