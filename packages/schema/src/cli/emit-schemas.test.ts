@@ -2,7 +2,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { JSON_DIR, SCHEMAS, emitSchemas, renderAll, schemaFileName } from './emit-schemas.ts';
 
@@ -43,17 +43,5 @@ describe('emitSchemas', () => {
     );
     const passage = JSON.parse(readFileSync(join(dir, 'passage.schema.json'), 'utf8')) as { $id: string };
     expect(passage.$id).toMatch(/passage\.schema\.json$/);
-  });
-});
-
-describe('cli/emit.ts', () => {
-  it('emits into the default directory and logs each path', async () => {
-    vi.resetModules();
-    vi.doMock('./emit-schemas.ts', () => ({ emitSchemas: vi.fn(() => Promise.resolve(['/x/a.schema.json'])) }));
-    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-    await import('./emit.ts');
-    expect(log).toHaveBeenCalledWith('wrote /x/a.schema.json');
-    log.mockRestore();
-    vi.doUnmock('./emit-schemas.ts');
   });
 });

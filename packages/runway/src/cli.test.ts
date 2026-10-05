@@ -16,6 +16,9 @@ describe('runway entry point', () => {
     process.argv = argv;
     process.exitCode = undefined;
     vi.restoreAllMocks();
+    processContext.mockReset();
+    runRunway.mockReset();
+    vi.resetModules();
   });
 
   it('runs runRunway with argv and the process context, and sets the exit code', async () => {

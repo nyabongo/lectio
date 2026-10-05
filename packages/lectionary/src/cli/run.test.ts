@@ -6,8 +6,10 @@ import { server } from '@lectio/shared/test-server';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { checkLectionary } from '../check.ts';
 import { DATA_ROOT, SHA } from '../fixtures/data.ts';
 import type { TextFetcher } from '../import/litcal.ts';
+import { loadLectionary } from '../load.ts';
 import { httpFetcher, resolveLectionaryRoot, runCheck, runCrosscheck, runImportLitcal } from './run.ts';
 
 function capture() {
@@ -56,6 +58,20 @@ describe('resolveLectionaryRoot', () => {
 });
 
 describe('runCheck', () => {
+  it('passes all the committed data and counts it like checkLectionary', async () => {
+    // The committed data, counted independently of the CLI.
+    const { files, registry } = await loadLectionary(DATA_ROOT);
+    const { stats } = checkLectionary(files, registry);
+    expect(stats.files).toBeGreaterThanOrEqual(9);
+    const { out, err, io } = capture();
+    expect(await runCheck([], DATA_ROOT, io)).toBe(0);
+    expect(out[0]).toBe(
+      `lectionary:check: ${String(stats.files)} files, ${String(stats.entries)} entries, ${String(stats.readings)} readings ` +
+        `(${String(stats.byStatus.provisional)} provisional, 0 verified, 0 disputed)`,
+    );
+    expect(err).toEqual([]);
+  });
+
   it('passes the committed seed block', async () => {
     const { out, err, io } = capture();
     expect(await runCheck(['--block', 'seed'], DATA_ROOT, io)).toBe(0);
