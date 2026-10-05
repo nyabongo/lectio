@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/api_cache.dart';
-import 'package:lectio/features/reading/reading_screen.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
+import 'package:lectio/features/reading/reading_screen.dart';
 
 import '../../data/fixtures.dart';
 import 'reading_harness.dart';

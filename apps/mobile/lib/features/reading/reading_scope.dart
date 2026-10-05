@@ -29,9 +29,8 @@ class LazyApiCache implements ApiCache {
   late final Future<ApiCache> _cache = _open();
 
   @override
-  Future<CachedResponse?> read(String path) async {
-    final cache = await _cache;
-    return cache.read(path);
+  Future<CachedResponse?> read(String path) {
+    return _cache.then((cache) => cache.read(path));
   }
 
   @override
