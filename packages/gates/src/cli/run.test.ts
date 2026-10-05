@@ -49,7 +49,7 @@ function options(overrides: Partial<GatesCliOptions> = {}): GatesCliOptions {
 const read = (path: string): string => readFileSync(join(dir, path), 'utf8');
 
 const OFFLINE_NOTE =
-  'Offline run: sources were checked with the offline fake fetcher, so every web source reads as missing (expect commentary-unchecked warnings). content-gates.yml runs with the live fetcher.';
+  'Offline run: sources were checked with the offline fake fetcher, so every web source reads as missing (expect commentary-unchecked warnings). the content workflows run with the live fetcher.';
 
 describe('lectio-gates run', () => {
   it('runs a dummy gate end to end: exit code, log, JSON report and PR comment', async () => {
@@ -149,7 +149,11 @@ describe('lectio-gates run', () => {
     const skipping = { ...dummyGate, run: () => skippedResult('dummy', 'no passages changed') };
     const code = await runGatesCli(['run'], options({ gates: [skipping] }));
     expect(code).toBe(0);
-    expect(logs).toEqual(['dummy: skipped (no passages changed)', 'lectio-gates: skipped']);
+    expect(logs).toEqual([
+      'dummy: skipped (no passages changed)',
+      `lectio-gates: ${OFFLINE_NOTE}`,
+      'lectio-gates: skipped',
+    ]);
   });
 
   // The gates still on their L-023 stub; each of L-024 to L-028 drops out of this list when it lands.

@@ -68,6 +68,6 @@ export function gateProviders(config: LectioConfig, env: Env, options: GateProvi
 /** One line for the log and the PR comment saying how sources were fetched. */
 export function fetcherNote(providers: Pick<ProviderSet, 'fakes'>): string {
   return providers.fakes.has('fetcher')
-    ? 'Offline run: sources were checked with the offline fake fetcher, so every web source reads as missing (expect commentary-unchecked warnings). content-gates.yml runs with the live fetcher.'
+    ? 'Offline run: sources were checked with the offline fake fetcher, so every web source reads as missing (expect commentary-unchecked warnings). the content workflows run with the live fetcher.'
     : 'Sources were fetched live (provider-fetch, SSRF guard on).';
 }
