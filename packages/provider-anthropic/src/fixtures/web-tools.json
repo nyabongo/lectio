@@ -5,16 +5,27 @@
   "model": "claude-sonnet-5-5",
   "content": [
     {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "EpoBCkgIBxABGAIiQHdlYi10b29scy1zaWc"
+    },
+    {
       "type": "server_tool_use",
       "id": "srvtoolu_01Search",
       "name": "web_search",
-      "input": { "query": "boiling point of water at sea level" },
-      "caller": { "type": "direct" }
+      "input": {
+        "query": "boiling point of water at sea level"
+      },
+      "caller": {
+        "type": "direct"
+      }
     },
     {
       "type": "web_search_tool_result",
       "tool_use_id": "srvtoolu_01Search",
-      "caller": { "type": "direct" },
+      "caller": {
+        "type": "direct"
+      },
       "content": [
         {
           "type": "web_search_result",
@@ -36,13 +47,19 @@
       "type": "server_tool_use",
       "id": "srvtoolu_01Fetch",
       "name": "web_fetch",
-      "input": { "url": "https://en.wikipedia.org/wiki/Boiling_point" },
-      "caller": { "type": "direct" }
+      "input": {
+        "url": "https://en.wikipedia.org/wiki/Boiling_point"
+      },
+      "caller": {
+        "type": "direct"
+      }
     },
     {
       "type": "web_fetch_tool_result",
       "tool_use_id": "srvtoolu_01Fetch",
-      "caller": { "type": "direct" },
+      "caller": {
+        "type": "direct"
+      },
       "content": {
         "type": "web_fetch_result",
         "url": "https://en.wikipedia.org/wiki/Boiling_point",
@@ -73,7 +90,13 @@
     "output_tokens": 187,
     "cache_creation_input_tokens": 0,
     "cache_read_input_tokens": 1024,
-    "server_tool_use": { "web_search_requests": 1, "web_fetch_requests": 1 },
-    "service_tier": "standard"
+    "server_tool_use": {
+      "web_search_requests": 1,
+      "web_fetch_requests": 1
+    },
+    "service_tier": "standard",
+    "output_tokens_details": {
+      "thinking_tokens": 62
+    }
   }
 }
