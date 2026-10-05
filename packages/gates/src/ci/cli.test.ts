@@ -16,6 +16,7 @@ import {
   REGISTRY,
   REPO_ROOT,
   REQUIRED_CHECKS,
+  REVIEWER,
   fakeCheckout,
   newRepo,
   openPr,
@@ -242,7 +243,7 @@ describe('lectio-gates ci', () => {
 
       bot.addRunArtifact(4242, artifact);
       expect(await run(['--phase', 'dispatch'])).toBe(2);
-      expect(errors.at(-2)).toBe('lectio-gates ci: --approval-commit is required');
+      expect(errors).toContain('lectio-gates ci: --approval-commit is required');
       expect(await run(['--phase', 'dispatch', '--approval-commit', approval])).toBe(0);
       expect(bot.dispatches.map((dispatch) => dispatch.file)).toEqual([...REGISTRY.workflows, 'content-gates.yml']);
 
@@ -250,7 +251,7 @@ describe('lectio-gates ci', () => {
       expect(await runCiCli(['merge', '--pr', String(number), '--sha', approval], options({ github: bot }))).toBe(0);
       expect(bot.merges).toHaveLength(1);
       expect(await runCiCli(['merge-rule', ...args.slice(1), '--phase', 'later'], options())).toBe(2);
-      expect(errors.at(-2)).toBe('lectio-gates ci: --phase must be decide, approve or dispatch (got "later")');
+      expect(errors).toContain('lectio-gates ci: --phase must be decide, approve or dispatch (got "later")');
     });
 
     it('publishes a green merge-rule check when nothing relevant changed', async () => {
@@ -338,33 +339,46 @@ describe('lectio-gates ci', () => {
       expect(summary).toContain(`Base \`${'b'.repeat(40)}\` · head \`${head}\` · 1 changed file`);
     });
 
-    it('tells a job that did not run from a job whose report artifact is missing', async () => {
-      const { bot, number, head } = await prepared();
-      const args = ['merge-rule', '--pr', String(number), '--head-sha', head, '--base', 'main', '--root', 'pr-head'];
-      const code = await runCiCli(
-        [
-          ...args,
-          '--results',
-          'out/deterministic/gates.json',
-          '--job-result',
-          'out/deterministic/gates.json=success',
-          '--results',
-          'out/verifiers/gates.json',
-          '--job-result',
-          'out/verifiers/gates.json=skipped',
-          '--results',
-          'out/other/gates.json',
-        ],
-        options({ github: bot, checkout: await fakeCheckout(bot, number) }),
-      );
-      expect(code).toBe(1);
-      expect(errors).toEqual([
-        '::warning::merge-rule: out/deterministic/gates.json is missing although its job ended success: its artifact was not found at out/deterministic/gates.json',
-      ]);
-      expect(logs).toContain('merge-rule: out/verifiers/gates.json is missing: that job did not run');
-      expect(logs).toContain('merge-rule: out/other/gates.json is missing: that job did not run');
-      expect(await runCiCli([...args, '--job-result', 'nonsense'], options({ github: bot }))).toBe(2);
-      expect(errors.at(-2)).toBe('lectio-gates ci: --job-result must be <file>=<result> (got "nonsense")');
+    it.each(['success', 'failure', 'cancelled'])(
+      'fails closed when a job that ended %s left no report, even with a reviewer’s approval',
+      async (jobResult) => {
+        const { bot, number, head } = await prepared();
+        await bot.as(REVIEWER).addLabels(number, ['approved']);
+        const args = ['merge-rule', '--pr', String(number), '--head-sha', head, '--base', 'main', '--root', 'pr-head'];
+        const code = await runCiCli(
+          [
+            ...args,
+            '--results',
+            'out/deterministic/gates.json',
+            '--job-result',
+            `out/deterministic/gates.json=${jobResult}`,
+            '--results',
+            'out/verifiers/gates.json',
+            '--job-result',
+            'out/verifiers/gates.json=skipped',
+            '--results',
+            'out/other/gates.json',
+          ],
+          options({ github: bot, checkout: await fakeCheckout(bot, number) }),
+        );
+        expect(code).toBe(1);
+        expect(errors).toEqual([
+          `::error::merge-rule: out/deterministic/gates.json is missing although its job ended ${jobResult}: its artifact was not found at out/deterministic/gates.json; blocking`,
+        ]);
+        expect(logs).toContain('merge-rule: out/verifiers/gates.json is missing: that job did not run');
+        expect(logs).toContain('merge-rule: out/other/gates.json is missing: that job did not run');
+        expect(read('output')).toContain('decision=blocked\nmanual-merge=false\nwrite=false\n');
+        expect(read('summary')).toContain('runner/report-missing');
+        expect(bot.headOf('research/mt-20')).toBe(head);
+        expect((await bot.getPr(number)).labels).toContain('gates-failed');
+        expect(bot.publishedChecks.at(-1)).toMatchObject({ headSha: head, conclusion: 'failure', title: 'blocked' });
+      },
+    );
+
+    it('refuses a malformed --job-result', async () => {
+      const args = ['merge-rule', '--pr', '7', '--head-sha', 'a'.repeat(40), '--base', 'main', '--root', 'r'];
+      expect(await runCiCli([...args, '--job-result', 'nonsense'], options())).toBe(2);
+      expect(errors).toContain('lectio-gates ci: --job-result must be <file>=<result> (got "nonsense")');
     });
 
     it('refuses a run without GITHUB_RUN_ID and malformed reports', async () => {

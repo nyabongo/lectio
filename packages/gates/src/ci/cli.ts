@@ -29,6 +29,7 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 
 import type { GatesCliOptions } from '../cli/run.ts';
 import type { GateResult } from '../core/result.ts';
+import { missingReportResult } from '../core/runner.ts';
 import { changedPaths } from '../merge-rule/index.ts';
 import type { FormatJson } from '../review/approve.ts';
 import { toolPrettierJson } from './approval-commit.ts';
@@ -239,11 +240,15 @@ function readReports(
     const path = ctx.path(file);
     if (!exists(path)) {
       const result = ran.get(file) ?? '';
-      if (result === '' || result === 'skipped') options.log(`merge-rule: ${file} is missing: that job did not run`);
-      else
-        options.error(
-          `::warning::merge-rule: ${file} is missing although its job ended ${result}: its artifact was not found at ${file}`,
-        );
+      if (result === '' || result === 'skipped') {
+        options.log(`merge-rule: ${file} is missing: that job did not run`);
+        continue;
+      }
+      // Fail closed: a job that ran but whose report is missing blocks the PR, approval or not.
+      options.error(
+        `::error::merge-rule: ${file} is missing although its job ended ${result}: its artifact was not found at ${file}; blocking`,
+      );
+      results.push(missingReportResult(file, result));
       continue;
     }
     const report = JSON.parse(read(path)) as { results?: unknown; fetcher?: unknown } | null;

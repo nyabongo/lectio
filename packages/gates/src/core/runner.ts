@@ -52,6 +52,18 @@ export function nonRegularResult(paths: readonly string[]): GateResult {
   );
 }
 
+/**
+ * The failed runner result for a gate report that a job which ran (`success`, `failure`,
+ * `cancelled`) did not hand over: the merge rule then blocks, whatever approval there is.
+ */
+export function missingReportResult(file: string, jobResult: string): GateResult {
+  return resultFromFindings(RUNNER_GATE_ID, [
+    finding(RUNNER_RULES.reportMissing, {
+      message: `${file} is missing although its job ended ${jobResult}`,
+    }),
+  ]);
+}
+
 /** Checks a gate's result; problems become runner findings and the result fails. */
 function checked(gate: Gate, result: unknown): GateResult {
   if (!validateGateResult(result)) {

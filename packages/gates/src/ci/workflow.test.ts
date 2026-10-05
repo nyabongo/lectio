@@ -146,6 +146,8 @@ describe('content-gates.yml (trusted side)', () => {
     // With the verifiers skipped only one artifact exists; a nameless download would unpack it
     // straight into its path. Each download names its artifact, so the layout never depends on count.
     for (const text of downloads) expect(text).toMatch(/name: \S+/);
+    // A missing artifact must not kill decide before the merge rule reports it (it then blocks).
+    for (const text of downloads) expect(text).toContain('continue-on-error: true');
     expect(decide).not.toMatch(/download-artifact@\S+\n(?: {8}.*\n)*? {10}path: out\n/);
   });
 
