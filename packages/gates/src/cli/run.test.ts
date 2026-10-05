@@ -10,7 +10,7 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 import { DUMMY_DIFF, DUMMY_FILES, dummyGate, passingGate } from '../core/fixtures/dummy-gate.ts';
 import { COMMENT_MARKER_LINE } from '../core/markdown.ts';
 import type * as MergeRule from '../merge-rule/index.ts';
-import { GATE_IDS } from '../registry.ts';
+import { GATES, GATE_IDS } from '../registry.ts';
 import { USAGE, runGatesCli } from './run.ts';
 import type { GatesCliOptions } from './run.ts';
 
@@ -96,14 +96,17 @@ describe('lectio-gates run', () => {
     expect(code).toBe(0);
   });
 
-  it('runs the stubs from the real registry', async () => {
-    const code = await runGatesCli(['run', '--gates', 'licence , verifiers'], options({ gates: undefined }));
+  // The gates still on their L-023 stub; each of L-024 to L-028 drops out of this list when it lands.
+  const stubs = GATES.filter((gate) => gate.rules.length === 0);
+  it.skipIf(stubs.length === 0)('runs the stubs from the real registry', async () => {
+    const list = stubs.map((gate) => gate.id).join(' , ');
+    const code = await runGatesCli(['run', '--gates', list], options({ gates: undefined }));
     expect(code).toBe(0);
-    expect(logs).toEqual([
-      'licence: skipped (not implemented (L-026))',
-      'verifiers: skipped (no live confirmer or refuter client (API key missing); a person reviews)',
-      'lectio-gates: skipped',
-    ]);
+    expect(logs).toHaveLength(stubs.length + 1);
+    stubs.forEach((gate, i) => {
+      expect(logs[i]).toMatch(new RegExp(`^${gate.id}: skipped \\(not implemented \\(L-02[4-8]\\)\\)$`));
+    });
+    expect(logs.at(-1)).toBe('lectio-gates: skipped');
   });
 
   it('refuses a --head that is not checked out at --root, and accepts one that is', async () => {
