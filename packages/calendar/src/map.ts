@@ -229,7 +229,7 @@ export function mapCalendar(calendar: Readonly<Record<string, readonly RomcalDay
     .map((date) => mapDay(date, calendar[date] as readonly RomcalDayInput[]));
 }
 
-/** Strip the detail fields so the day matches the calendar schema exactly. */
+/** Strip the detail fields so the day matches the calendar schema exactly; `noMass` only when true. */
 export function toCalendarDay(day: DetailedDay): CalendarDay {
   return {
     date: day.date,
@@ -240,5 +240,6 @@ export function toCalendarDay(day: DetailedDay): CalendarDay {
     celebrations: day.celebrations.map(({ id, name, rank, colour }) => ({ id, name, rank, colour })),
     masses: day.masses.map((mass) => ({ ...mass, readings: mass.readings.map((reading) => ({ ...reading })) })),
     lectionaryMissing: day.lectionaryMissing,
+    ...(day.noMass === true ? { noMass: true } : {}),
   };
 }

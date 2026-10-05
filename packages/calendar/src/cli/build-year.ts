@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
-import { Lectionary, loadLectionary, refKey, resolveDay } from '@lectio/lectionary';
+import { Lectionary, epiphanyOf, loadLectionary, refKey, resolveDay } from '@lectio/lectionary';
 import type { ResolveOptions, ResolvedReading } from '@lectio/lectionary';
 import { VersificationError, linkoutUrl } from '@lectio/refs';
 import { validateCalendarYear } from '@lectio/schema/calendar';
@@ -22,6 +22,7 @@ import type { NameCatalog } from '../i18n/index.ts';
 import { toCalendarDay } from '../map.ts';
 import type { DetailedDay } from '../map.ts';
 import { generateRegionalDays, loadOverrides, overridesPath } from '../overrides/region.ts';
+import type { RegionalOverrides } from '../overrides/schema.ts';
 
 /** The link-out URL of a reading (`key`) on `date`; throws `VersificationError` when it has none. */
 export type LinkoutFor = (key: string, date: string) => string;
@@ -32,6 +33,8 @@ export interface AssembleInput {
   readonly generatedBy: string;
   /** The region's detailed days, sorted by date (`generateRegionalDays`). */
   readonly days: readonly DetailedDay[];
+  /** The Epiphany's date in `year` under the region's rule ({@link regionEpiphany}). */
+  readonly epiphany: ResolveOptions['epiphany'];
   readonly lectionary: Lectionary;
   readonly linkout: LinkoutFor;
   /** The Kiswahili name catalog (`calendar/i18n/sw.json`, L-111) for each celebration's `names`. */
@@ -100,7 +103,8 @@ function toReading(reading: ResolvedReading, date: string, linkout: LinkoutFor, 
 /**
  * One day with its Masses. `lectionaryMissing` is true when the lectionary has no data for the
  * day (`masses: []`), when a Mass lacks a slot it needs (L-070 reports those days) or when a
- * reading was left out for want of a link-out; Masses left without any reading are dropped.
+ * reading was left out for want of a link-out; Masses left without any reading are dropped. A day
+ * without any Mass (Holy Saturday) has `noMass: true`, no Masses and no missing data.
  * `options` carry what the resolver needs from the rest of the year (the Epiphany's date).
  */
 export function assembleDay(
@@ -109,16 +113,19 @@ export function assembleDay(
   linkout: LinkoutFor,
   names: NameCatalog,
   warnings: string[],
-  options: ResolveOptions = {},
+  options: ResolveOptions,
 ): CalendarDay {
   let incomplete = false;
   const masses: Mass[] = [];
-  for (const mass of resolveDay(day, lectionary, options).masses) {
+  const resolution = resolveDay(day, lectionary, options);
+  for (const mass of resolution.masses) {
     const readings = mass.readings.flatMap((reading) => toReading(reading, day.date, linkout, warnings));
     if (mass.missingSlots.length > 0 || readings.length < mass.readings.length) incomplete = true;
     if (readings.length > 0) masses.push({ id: mass.id, label: mass.label, readings });
   }
-  const calendarDay = toCalendarDay({ ...day, masses, lectionaryMissing: masses.length === 0 || incomplete });
+  const { noMass } = resolution;
+  const lectionaryMissing = !noMass && (masses.length === 0 || incomplete);
+  const calendarDay = toCalendarDay({ ...day, masses, lectionaryMissing, noMass });
   return { ...calendarDay, celebrations: calendarDay.celebrations.map((c) => withNames(c, names)) };
 }
 
@@ -128,19 +135,35 @@ function withNames(celebration: Celebration, catalog: NameCatalog): Celebration 
   return { id, name, names: celebrationNames(id, name, catalog), rank, colour };
 }
 
+/**
+ * The date of the Epiphany in `year` under the region's `epiphanyOnSunday` transfer setting (the
+ * General Roman Calendar's 6 January when the region leaves it out), as romcal places it.
+ */
+export function regionEpiphany(
+  year: number,
+  overrides: Pick<RegionalOverrides, 'transfers'>,
+): ResolveOptions['epiphany'] {
+  return epiphanyOf(year, overrides.transfers.epiphanyOnSunday?.value ?? false);
+}
+
 /** The date of the Epiphany among the days, if they include it. */
-export function epiphanyDate(days: readonly DetailedDay[]): ResolveOptions['epiphany'] {
+export function epiphanyDate(days: readonly DetailedDay[]): string | undefined {
   return days.find((day) => day.celebrations.some((c) => c.id === 'epiphany-of-the-lord'))?.date;
 }
 
 /**
- * The calendar year file for already generated days. Pure: no I/O. The resolver learns the
- * Epiphany's date from the days, so 7–12 January follow the region's Epiphany rule.
+ * The calendar year file for already generated days. Pure: no I/O. The resolver takes the
+ * Epiphany's date from the region's rule, so 7–12 January follow it; days that place the Epiphany
+ * elsewhere are an error (the rule and the calendar disagree).
  */
 export function assembleYear(input: AssembleInput): BuildResult {
   const warnings: string[] = [];
-  const epiphany = epiphanyDate(input.days);
-  const options: ResolveOptions = epiphany === undefined ? {} : { epiphany };
+  const { epiphany } = input;
+  const found = epiphanyDate(input.days);
+  if (found !== undefined && found !== epiphany) {
+    throw new Error(`the days keep the Epiphany on ${found}, but the region's rule gives ${epiphany}`);
+  }
+  const options: ResolveOptions = { epiphany };
   const days = [...input.days]
     .sort((a, b) => a.date.localeCompare(b.date))
     .map((day) => assembleDay(day, input.lectionary, input.linkout, input.names, warnings, options));
@@ -238,6 +261,7 @@ export async function buildYear(options: BuildOptions): Promise<BuildResult> {
     region,
     generatedBy: options.generatedBy ?? generatedBy(packageVersion()),
     days,
+    epiphany: regionEpiphany(year, overrides),
     lectionary: new Lectionary(loaded.files),
     linkout: configLinkout(options.config),
     names,
