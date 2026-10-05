@@ -1,0 +1,104 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lectio-gates run > runs a dummy gate end to end: exit code, log, JSON report and PR comment > comment.md 1`] = `
+"<!-- lectio-gates -->
+## Lectio gates: a gate failed
+
+| Gate | Status | Details |
+| --- | --- | --- |
+| Always passes (\`always-pass\`) | Pass | no findings |
+| Dummy gate (\`dummy\`) | Fail | 2 errors, 1 warning, 1 note |
+
+### Findings
+
+#### Pull request
+
+- **info** · \`dummy/file-count\` (Dummy gate): 2 passages changed
+  - Rule: A content PR changes at most one passage.
+  - Fix: Split the PR so each passage is reviewed on its own.
+
+#### \`passages/MT.20.1-16.json\`
+
+**Whole file**
+
+- **warning** · \`dummy/summary-short\` (Dummy gate) at \`/summary\`: summary is 111 characters
+  - Rule: A passage summary stays under 100 characters.
+  - Fix: Shorten the summary to one plain sentence.
+
+**Claim \`c2\`**
+
+- **error** · \`dummy/claim-cites-source\` (Dummy gate) at \`/claims/1/sourceIds\`: claim c2 cites no source
+  - Rule: Every claim cites at least one source.
+  - Fix: Add the id of a supporting source to the claim’s sourceIds.
+
+**Claim \`c10\`**
+
+- **error** · \`dummy/claim-cites-source\` (Dummy gate) at \`/claims/2/sourceIds\`: claim c10 cites no source
+  - Rule: Every claim cites at least one source.
+  - Fix: Add the id of a supporting source to the claim’s sourceIds.
+
+<sub>Base \`origin/main\` · head \`HEAD\` · 4 changed files. Each finding names its rule; the fix says what to change.</sub>
+"
+`;
+
+exports[`lectio-gates run > runs a dummy gate end to end: exit code, log, JSON report and PR comment > gates.json 1`] = `
+"{
+  "reportVersion": 1,
+  "status": "fail",
+  "base": "origin/main",
+  "head": "HEAD",
+  "changedFiles": [
+    "docs/notes.md",
+    "passages/IS.55.6-9.json",
+    "passages/MT.20.1-16.json",
+    "passages/OLD.json"
+  ],
+  "results": [
+    {
+      "gate": "always-pass",
+      "status": "pass",
+      "items": [],
+      "meta": {}
+    },
+    {
+      "gate": "dummy",
+      "status": "fail",
+      "items": [
+        {
+          "ruleId": "dummy/claim-cites-source",
+          "severity": "error",
+          "file": "passages/MT.20.1-16.json",
+          "pointer": "/claims/1/sourceIds",
+          "claimId": "c2",
+          "message": "claim c2 cites no source"
+        },
+        {
+          "ruleId": "dummy/claim-cites-source",
+          "severity": "error",
+          "file": "passages/MT.20.1-16.json",
+          "pointer": "/claims/2/sourceIds",
+          "claimId": "c10",
+          "message": "claim c10 cites no source"
+        },
+        {
+          "ruleId": "dummy/summary-short",
+          "severity": "warning",
+          "file": "passages/MT.20.1-16.json",
+          "pointer": "/summary",
+          "message": "summary is 111 characters"
+        },
+        {
+          "ruleId": "dummy/file-count",
+          "severity": "info",
+          "pointer": "",
+          "message": "2 passages changed"
+        }
+      ],
+      "meta": {
+        "files": 4
+      }
+    }
+  ]
+}
+"
+`;
