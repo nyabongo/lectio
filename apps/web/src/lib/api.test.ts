@@ -116,6 +116,7 @@ describe('API built from the fixture content root', () => {
   it('publishes every endpoint of v1', () => {
     expect([...files.keys()].sort()).toEqual([
       'calendar/2026.json',
+      'days/2026-04-04.json',
       'days/2026-09-19.json',
       'days/2026-09-20.json',
       'days/2026-09-21.json',
@@ -132,6 +133,13 @@ describe('API built from the fixture content root', () => {
     const ok = validate(document);
     expect(formatErrors(ok ? [] : validate.errors)).toEqual([]);
     expect(ok).toBe(true);
+  });
+
+  it('marks a day without any Mass (Holy Saturday) with noMass and no Masses, and no other day', () => {
+    expect(files.get('days/2026-04-04.json')).toMatchObject({ masses: [], lectionaryMissing: false, noMass: true });
+    expect(files.get('days/2026-09-20.json')).not.toHaveProperty('noMass');
+    const calendar = files.get('calendar/2026.json') as { days: { date: string; noMass?: boolean }[] };
+    expect(calendar.days.filter((day) => day.noMass === true).map((day) => day.date)).toEqual(['2026-04-04']);
   });
 
   it('leaves the pending passage out everywhere', () => {
@@ -212,7 +220,7 @@ describe('API built from the fixture content root', () => {
       locales: ['en', 'sw'],
       apiRoot: 'https://nyabongo.github.io/lectio/api/v1/',
       years: [2026],
-      dates: { first: '2026-09-19', last: '2026-09-21' },
+      dates: { first: '2026-04-04', last: '2026-09-21' },
       passageCount: 1,
       endpoints: {
         ...API_ENDPOINTS,
@@ -358,8 +366,13 @@ describe('paths and URLs', () => {
 
   it('builds one static path per day, approved passage and year', () => {
     const { repo } = fixtureContext();
-    expect(dayStaticPaths(repo).map((path) => path.params.date)).toEqual(['2026-09-19', '2026-09-20', '2026-09-21']);
-    expect(dayStaticPaths(repo)[1]?.props.document).toEqual(apiDay(repo.resolveDay('2026-09-20')!));
+    expect(dayStaticPaths(repo).map((path) => path.params.date)).toEqual([
+      '2026-04-04',
+      '2026-09-19',
+      '2026-09-20',
+      '2026-09-21',
+    ]);
+    expect(dayStaticPaths(repo)[2]?.props.document).toEqual(apiDay(repo.resolveDay('2026-09-20')!));
     expect(passageStaticPaths(repo).map((path) => path.params.key)).toEqual([APPROVED]);
     expect(calendarStaticPaths(repo).map((path) => path.params.year)).toEqual(['2026']);
   });

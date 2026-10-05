@@ -281,7 +281,7 @@ A trimmed Swahili example for the passage example above:
 
 ```text
 { year, region, generatedBy, days[] }
-days[]:   { date, season, seasonWeek, sundayCycle, weekdayCycle, celebrations[], masses[], lectionaryMissing }
+days[]:   { date, season, seasonWeek, sundayCycle, weekdayCycle, celebrations[], masses[], lectionaryMissing, noMass? }
 celebrations[]: { id, name, names?: { en, sw, swStatus? }, rank, colour }
 masses[]:       { id, label, readings[] }
 readings[]:     { slot, ref, key, linkout }
@@ -299,6 +299,9 @@ readings[]:     { slot, ref, key, linkout }
   `seasonName` / `colourName` in `@lectio/calendar`.
 - At least one celebration per day. When `lectionaryMissing` is `false` the day has at least one Mass; when it is
   `true`, `masses` may be empty and the site shows the day without readings.
+- `noMass: true` marks a day without any Mass (Holy Saturday; the Easter Vigil belongs to Easter Sunday and is listed
+  only there). Such a day has `masses: []` and `lectionaryMissing: false`, and the site and app explain why it has no
+  readings. `calendar:build` writes `noMass` only when it is true.
 - A reading is a reference (`ref`, letters kept), its passage key and a link-out to a licensed or public-domain text.
 
 ## Gate result

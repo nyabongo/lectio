@@ -101,7 +101,11 @@ const celebrationSchema = {
   },
 } as const;
 
-/** One date. When the lectionary data is present (`lectionaryMissing: false`) the day has at least one Mass. */
+/**
+ * One date. When the lectionary data is present (`lectionaryMissing: false`) the day has at least one
+ * Mass, unless it is a day without any Mass (`noMass: true`, Holy Saturday): then `masses` is empty
+ * and the data is not missing.
+ */
 const daySchema = {
   type: 'object',
   additionalProperties: false,
@@ -125,11 +129,20 @@ const daySchema = {
     celebrations: { type: 'array', minItems: 1, items: celebrationSchema },
     masses: { type: 'array', items: massSchema },
     lectionaryMissing: { type: 'boolean' },
+    /**
+     * The day has no Mass at all (Holy Saturday: the Easter Vigil belongs to Easter Sunday). Written
+     * only when true; absent means false, so earlier files stay valid.
+     */
+    noMass: { type: 'boolean' },
   },
   allOf: [
     {
-      if: { properties: { lectionaryMissing: { const: false } } },
+      if: { properties: { lectionaryMissing: { const: false }, noMass: { const: false } } },
       then: { properties: { masses: { type: 'array', minItems: 1 } } },
+    },
+    {
+      if: { required: ['noMass'], properties: { noMass: { const: true } } },
+      then: { properties: { masses: { type: 'array', maxItems: 0 }, lectionaryMissing: { const: false } } },
     },
   ],
 } as const;

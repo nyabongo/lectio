@@ -5,15 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import { KNOWN_GAPS } from './gaps.ts';
 import type { KnownGap } from './gaps.ts';
-import {
-  countStatuses,
-  formatTotals,
-  formatYear,
-  knownGapFor,
-  resolveOptions,
-  unexpected,
-  yearReport,
-} from './report.ts';
+import { countStatuses, formatTotals, formatYear, knownGapFor, unexpected, yearReport } from './report.ts';
 import type { YearReport } from './report.ts';
 
 const SOURCE = 'olm-1981 n. 1';
@@ -53,13 +45,6 @@ function lectionaryDay(date: string, id: string): LectionaryDay {
   };
 }
 
-describe('resolveOptions', () => {
-  it('passes the Epiphany on when known', () => {
-    expect(resolveOptions('2026-01-06')).toEqual({ epiphany: '2026-01-06' });
-    expect(resolveOptions(undefined)).toEqual({});
-  });
-});
-
 describe('countStatuses', () => {
   it('counts readings by status, and distinct passages by status', () => {
     const lectionary = new Lectionary([file]);
@@ -68,7 +53,7 @@ describe('countStatuses', () => {
       lectionaryDay('2026-08-14', 'test-feast'),
       lectionaryDay('2026-08-15', 'no-such-feast'),
     ];
-    expect(countStatuses(days, lectionary)).toEqual({
+    expect(countStatuses(days, lectionary, { epiphany: '2026-01-06' })).toEqual({
       readings: { provisional: 4, verified: 2, disputed: 2 },
       passages: { provisional: 2, verified: 1, disputed: 1 },
     });

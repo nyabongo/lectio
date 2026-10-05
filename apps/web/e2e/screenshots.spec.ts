@@ -14,6 +14,8 @@ const SCREENSHOT_DIR = join(import.meta.dirname, '__screenshots__');
 const pageTypes = [
   { name: 'today', path: '' },
   { name: 'day', path: `${BUILD_DATE}/` },
+  // Holy Saturday: a day without any Mass (L-048b).
+  { name: 'day-no-mass', path: '2026-04-04/' },
   { name: 'reading-context', path: `${BUILD_DATE}/gospel/` },
   { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
   { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
@@ -31,6 +33,7 @@ const pageTypes = [
   // Kiswahili mirrors (L-110).
   { name: 'sw-today', path: 'sw/' },
   { name: 'sw-day', path: `sw/${BUILD_DATE}/` },
+  { name: 'sw-day-no-mass', path: 'sw/2026-04-04/' },
   // Kiswahili notes from the fixture's reviewed translation (L-113).
   { name: 'sw-reading-context', path: `sw/${BUILD_DATE}/gospel/` },
   { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },

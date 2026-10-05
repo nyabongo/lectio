@@ -9,13 +9,13 @@ import { findRepoRoot } from '@lectio/config';
 import { Lectionary, loadLectionary } from '@lectio/lectionary';
 import type { CalendarYear } from '@lectio/schema/calendar';
 
-import { calendarPath, calendarProblems, epiphanyDate } from '../cli/build-year.ts';
+import { calendarPath, calendarProblems, regionEpiphany } from '../cli/build-year.ts';
 import { committedYears, parseArgs } from '../cli/run.ts';
 import type { CliIo } from '../cli/run.ts';
 import { generateRegionalDays, loadOverrides, overridesPath } from '../overrides/region.ts';
 import { KNOWN_GAPS } from './gaps.ts';
 import type { KnownGap } from './gaps.ts';
-import { countStatuses, formatTotals, formatYear, resolveOptions, unexpected, yearReport } from './report.ts';
+import { countStatuses, formatTotals, formatYear, unexpected, yearReport } from './report.ts';
 import type { ReadingStats, YearReport } from './report.ts';
 
 export interface StatsOptions {
@@ -46,7 +46,7 @@ export async function resolvedStats(options: StatsOptions): Promise<ReadingStats
     );
   }
   const { days } = await generateRegionalDays(year, overrides);
-  return countStatuses(days, new Lectionary(loaded.files), resolveOptions(epiphanyDate(days)));
+  return countStatuses(days, new Lectionary(loaded.files), { epiphany: regionEpiphany(year, overrides) });
 }
 
 /** The repository above `INIT_CWD` (npm sets it to where the command was typed), else `cwd`. */

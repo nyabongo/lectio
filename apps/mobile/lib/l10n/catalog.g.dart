@@ -169,6 +169,7 @@ const String catalogJson = r'''
     "day_pageTitle": "{title}, {date}",
     "day_description": "{date}: {title}. {season}. Readings: {refs}. Notes on their history and original words, with each text a tap away.",
     "day_descriptionNoReadings": "{date}: {title}. {season}. The readings for this day are not listed yet.",
+    "day_descriptionHolySaturday": "{date}: {title}. {season}. There is no Mass on Holy Saturday; the Easter Vigil belongs to Easter Sunday.",
     "day_todayHeading": "Today",
     "day_todayMissing": "There is no calendar day for today yet. The calendar lists every day that is ready.",
     "day_upcomingHeading": "The days ahead",
@@ -178,6 +179,7 @@ const String catalogJson = r'''
       "other": "This day has {count} Masses to choose from."
     },
     "day_lectionaryMissing": "The readings for this day are not listed yet.",
+    "day_holySaturdayNoMass": "There is no Mass on Holy Saturday. The Easter Vigil, held after nightfall, belongs to Easter Sunday, and its readings are listed there.",
     "day_notesInPreparation": "Notes in preparation",
     "day_linkout_text": "Text",
     "day_linkout_detail": "{ref} at {source} (opens in a new tab)",
@@ -535,6 +537,7 @@ const String catalogJson = r'''
     "day_pageTitle": "{title}, {date}",
     "day_description": "{date}: {title}. {season}. Masomo: {refs}. Madokezo kuhusu historia yake na maneno yake asilia, kila andiko likiwa kwa kubofya mara moja.",
     "day_descriptionNoReadings": "{date}: {title}. {season}. Masomo ya siku hii bado hayajaorodheshwa.",
+    "day_descriptionHolySaturday": "{date}: {title}. {season}. Hakuna Misa siku ya Jumamosi Kuu; Mkesha wa Pasaka ni wa Jumapili ya Pasaka.",
     "day_todayHeading": "Leo",
     "day_todayMissing": "Bado hakuna siku ya kalenda kwa leo. Kalenda inaorodhesha kila siku iliyo tayari.",
     "day_upcomingHeading": "Siku zijazo",
@@ -544,6 +547,7 @@ const String catalogJson = r'''
       "other": "Siku hii ina Misa {count} za kuchagua."
     },
     "day_lectionaryMissing": "Masomo ya siku hii bado hayajaorodheshwa.",
+    "day_holySaturdayNoMass": "Hakuna Misa siku ya Jumamosi Kuu. Mkesha wa Pasaka, unaofanyika baada ya giza kuingia, ni wa Jumapili ya Pasaka, na masomo yake yameorodheshwa huko.",
     "day_notesInPreparation": "Madokezo yanaandaliwa",
     "day_linkout_text": "Andiko",
     "day_linkout_detail": "{ref} kwenye {source} (hufunguka kwenye kichupo kipya)",

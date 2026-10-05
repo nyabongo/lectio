@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { DATA_ROOT, entry, file, reading } from './fixtures/data.ts';
+import { DATA_ROOT, GENERAL_ROMAN, entry, file, reading } from './fixtures/data.ts';
 import { loadLectionary } from './load.ts';
-import { Lectionary, resolveDay } from './resolve.ts';
-import type { LectionaryDay } from './resolve.ts';
+import { Lectionary, epiphanyOf, resolveDay } from './resolve.ts';
+import type { LectionaryDay, ResolveOptions } from './resolve.ts';
 
 /** A day in Ordinary Time 2026 (Year A, weekday Year II). */
 function day(date: string, week: number, celebrations: LectionaryDay['celebrations']): LectionaryDay {
@@ -22,7 +22,11 @@ describe('resolveDay on the seed block', () => {
   });
 
   it('2026-09-20 resolves to the 25th Sunday, Year A (L-016 acceptance)', () => {
-    const resolution = resolveDay(day('2026-09-20', 25, [{ id: 'ordinary-time-25-sunday', rank: 'sunday' }]), seed);
+    const resolution = resolveDay(
+      day('2026-09-20', 25, [{ id: 'ordinary-time-25-sunday', rank: 'sunday' }]),
+      seed,
+      GENERAL_ROMAN,
+    );
     expect(resolution.properOfTimeKey).toBe('ot-sunday-25');
     expect(resolution.masses).toHaveLength(1);
     const [mass] = resolution.masses;
@@ -54,6 +58,7 @@ describe('resolveDay on the seed block', () => {
     const resolution = resolveDay(
       day('2026-09-21', 25, [{ id: 'matthew-apostle', rank: 'feast', name: 'Saint Matthew, Apostle and Evangelist' }]),
       seed,
+      GENERAL_ROMAN,
     );
     expect(resolution.properOfTimeKey).toBe('ot-weekday-25-mon');
     expect(brief(resolution.masses)).toEqual([
@@ -82,7 +87,7 @@ describe('resolveDay on the seed block', () => {
       day('2026-09-27', 26, [{ id: 'ordinary-time-26-sunday', rank: 'sunday' }]),
     ];
     const gospels = days.map((d) => {
-      const { masses } = resolveDay(d, seed);
+      const { masses } = resolveDay(d, seed, GENERAL_ROMAN);
       expect(masses).toHaveLength(1);
       expect(masses[0]?.missingSlots).toEqual([]);
       return masses[0]?.readings.at(-1)?.ref;
@@ -98,7 +103,7 @@ describe('resolveDay on the seed block', () => {
       'Lk 9:43-45',
       'Mt 21:28-32',
     ]);
-    const sunday26 = resolveDay(days[8] as LectionaryDay, seed).masses[0];
+    const sunday26 = resolveDay(days[8] as LectionaryDay, seed, GENERAL_ROMAN).masses[0];
     expect(sunday26?.readings[2]?.alternatives).toEqual([
       { ref: 'Phil 2:1-5', key: 'PHIL.2.1-5', printed: 'Philippians 2:1-5' },
     ]);
@@ -108,6 +113,7 @@ describe('resolveDay on the seed block', () => {
     const resolution = resolveDay(
       { ...day('2027-09-20', 25, [{ id: 'ordinary-time-25-monday', rank: 'weekday' }]), weekdayCycle: 'I' },
       seed,
+      GENERAL_ROMAN,
     );
     expect(brief(resolution.masses)).toEqual([
       {
@@ -120,7 +126,8 @@ describe('resolveDay on the seed block', () => {
 
   it('gives Sundays 25 and 26 their readings in Years B and C', () => {
     const sunday = (date: string, week: number, cycle: 'B' | 'C') =>
-      resolveDay({ ...day(date, week, [{ id: 's', rank: 'sunday' }]), sundayCycle: cycle }, seed).masses[0];
+      resolveDay({ ...day(date, week, [{ id: 's', rank: 'sunday' }]), sundayCycle: cycle }, seed, GENERAL_ROMAN)
+        .masses[0];
     expect(sunday('2027-09-19', 25, 'B')?.readings.map((r) => r.ref)).toEqual([
       'Wis 2:12, 17-20',
       'Ps 54:3-4, 5, 6, 8',
@@ -135,7 +142,7 @@ describe('resolveDay on the seed block', () => {
   });
 
   it('returns no Masses for a day without data', () => {
-    expect(resolveDay(day('2026-06-14', 11, [{ id: 'x', rank: 'sunday' }]), seed).masses).toEqual([]);
+    expect(resolveDay(day('2026-06-14', 11, [{ id: 'x', rank: 'sunday' }]), seed, GENERAL_ROMAN).masses).toEqual([]);
   });
 });
 
@@ -182,32 +189,36 @@ describe('resolveDay precedence', () => {
   const weekdayRefs = ['first-reading 2 Sm 6:12-15, 17-19', 'psalm Ps 24:7-10', 'gospel Mk 3:31-35'];
 
   it('uses the weekday cycle and ignores later definitions of the same key', () => {
-    expect(brief(resolveDay(tuesday([{ id: 'w', rank: 'weekday' }]), lectionary).masses)).toEqual([
+    expect(brief(resolveDay(tuesday([{ id: 'w', rank: 'weekday' }]), lectionary, GENERAL_ROMAN).masses)).toEqual([
       { id: 'day', refs: weekdayRefs, missing: [] },
     ]);
-    expect(brief(resolveDay(tuesday([]), lectionary).masses)).toEqual([{ id: 'day', refs: weekdayRefs, missing: [] }]);
+    expect(brief(resolveDay(tuesday([]), lectionary, GENERAL_ROMAN).masses)).toEqual([
+      { id: 'day', refs: weekdayRefs, missing: [] },
+    ]);
   });
 
   it('lays an obligatory memorial’s proper slots over the weekday', () => {
     const [mass] = resolveDay(
       tuesday([{ id: 'memorial-with-gospel', rank: 'memorial', name: 'St X' }]),
       lectionary,
+      GENERAL_ROMAN,
     ).masses;
     expect(mass?.label).toBe('St X');
     expect(mass?.readings.map((r) => `${r.slot} ${r.ref}`)).toEqual([...weekdayRefs.slice(0, 2), 'gospel Lk 10:1-9']);
     expect(mass?.from).toEqual(['proper-of-time:ot-weekday-3-tue', 'celebrations:memorial-with-gospel']);
-    const unnamed = resolveDay(tuesday([{ id: 'memorial-with-gospel', rank: 'memorial' }]), lectionary).masses[0];
+    const unnamed = resolveDay(tuesday([{ id: 'memorial-with-gospel', rank: 'memorial' }]), lectionary, GENERAL_ROMAN)
+      .masses[0];
     expect(unnamed?.label).toBe('memorial-with-gospel');
   });
 
   it('returns no Masses for a memorial without proper readings on a day without data', () => {
     const wednesday = { ...tuesday([{ id: 'memorial-without-entry', rank: 'memorial' }]), date: '2026-01-28' };
-    expect(resolveDay(wednesday, lectionary).masses).toEqual([]);
+    expect(resolveDay(wednesday, lectionary, GENERAL_ROMAN).masses).toEqual([]);
   });
 
   it('keeps the weekday for a memorial without proper readings', () => {
     for (const id of ['memorial-without-entry', 'memorial-with-common']) {
-      expect(brief(resolveDay(tuesday([{ id, rank: 'memorial' }]), lectionary).masses)).toEqual([
+      expect(brief(resolveDay(tuesday([{ id, rank: 'memorial' }]), lectionary, GENERAL_ROMAN).masses)).toEqual([
         { id: 'day', refs: weekdayRefs, missing: [] },
       ]);
     }
@@ -222,6 +233,7 @@ describe('resolveDay precedence', () => {
         { id: 'memorial-with-common', rank: 'commemoration' },
       ]),
       lectionary,
+      GENERAL_ROMAN,
     ).masses;
     expect(brief(masses)).toEqual([
       { id: 'day', refs: weekdayRefs, missing: [] },
@@ -229,7 +241,11 @@ describe('resolveDay precedence', () => {
     ]);
     expect(masses[1]?.label).toBe('St Y');
     expect(masses[1]?.readings[2]?.alternatives).toEqual([{ ref: 'Jn 15:9-11', key: 'JN.15.9-11' }]);
-    const unnamed = resolveDay(tuesday([{ id: 'optional-with-gospel', rank: 'optional-memorial' }]), lectionary);
+    const unnamed = resolveDay(
+      tuesday([{ id: 'optional-with-gospel', rank: 'optional-memorial' }]),
+      lectionary,
+      GENERAL_ROMAN,
+    );
     expect(unnamed.masses[1]?.label).toBe('optional-with-gospel');
   });
 
@@ -237,6 +253,7 @@ describe('resolveDay precedence', () => {
     const masses = resolveDay(
       { ...tuesday([{ id: 'optional-with-gospel', rank: 'optional-memorial' }]), date: '2026-01-28' },
       lectionary,
+      GENERAL_ROMAN,
     ).masses;
     expect(brief(masses)).toEqual([
       { id: 'optional-with-gospel', refs: ['gospel Jn 15:9-17'], missing: ['first-reading', 'psalm'] },
@@ -245,23 +262,29 @@ describe('resolveDay precedence', () => {
   });
 
   it('uses the common for a feast without its own readings', () => {
-    const masses = resolveDay(tuesday([{ id: 'feast-with-common', rank: 'feast', name: 'St Z' }]), lectionary).masses;
+    const masses = resolveDay(
+      tuesday([{ id: 'feast-with-common', rank: 'feast', name: 'St Z' }]),
+      lectionary,
+      GENERAL_ROMAN,
+    ).masses;
     expect(brief(masses)).toEqual([
       { id: 'day', refs: ['first-reading Acts 5:12-16', 'gospel Mt 10:1-4'], missing: ['psalm'] },
     ]);
     expect(masses[0]?.from).toEqual(['commons:apostles']);
     expect(masses[0]?.label).toBe('St Z');
-    expect(resolveDay(tuesday([{ id: 'feast-missing-common', rank: 'feast' }]), lectionary).masses).toEqual([]);
+    expect(
+      resolveDay(tuesday([{ id: 'feast-missing-common', rank: 'feast' }]), lectionary, GENERAL_ROMAN).masses,
+    ).toEqual([]);
   });
 
   it('asks a feast on a Sunday for a second reading', () => {
     const sunday = { ...tuesday([{ id: 'feast-with-common', rank: 'feast' }]), date: '2026-02-01' };
-    expect(resolveDay(sunday, lectionary).masses[0]?.missingSlots).toEqual(['psalm', 'second-reading']);
+    expect(resolveDay(sunday, lectionary, GENERAL_ROMAN).masses[0]?.missingSlots).toEqual(['psalm', 'second-reading']);
   });
 
   it('returns no Masses for a feast or solemnity without data, rather than the weekday', () => {
-    expect(resolveDay(tuesday([{ id: 'unknown', rank: 'feast' }]), lectionary).masses).toEqual([]);
-    expect(resolveDay(tuesday([{ id: 'unknown', rank: 'solemnity' }]), lectionary).masses).toEqual([]);
+    expect(resolveDay(tuesday([{ id: 'unknown', rank: 'feast' }]), lectionary, GENERAL_ROMAN).masses).toEqual([]);
+    expect(resolveDay(tuesday([{ id: 'unknown', rank: 'solemnity' }]), lectionary, GENERAL_ROMAN).masses).toEqual([]);
   });
 
   it('gives a solemnity each of its Masses and skips Masses with nothing for the cycle', () => {
@@ -271,6 +294,7 @@ describe('resolveDay precedence', () => {
         { id: 'optional-with-gospel', rank: 'optional-memorial' },
       ]),
       lectionary,
+      GENERAL_ROMAN,
     ).masses;
     expect(masses.map((m) => [m.id, m.label, m.missingSlots])).toEqual([
       ['vigil', 'Vigil Mass', ['psalm', 'second-reading']],
@@ -280,7 +304,11 @@ describe('resolveDay precedence', () => {
   });
 
   it('does not ask a Mass of numbered readings for the usual slots', () => {
-    const masses = resolveDay(tuesday([{ id: 'vigil-of-readings', rank: 'solemnity' }]), lectionary).masses;
+    const masses = resolveDay(
+      tuesday([{ id: 'vigil-of-readings', rank: 'solemnity' }]),
+      lectionary,
+      GENERAL_ROMAN,
+    ).masses;
     expect(masses[0]?.missingSlots).toEqual([]);
   });
 });
@@ -364,13 +392,13 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
     weekdayCycle: 'II',
     celebrations,
   });
-  const gospels = (d: LectionaryDay, options = {}) =>
+  const gospels = (d: LectionaryDay, options: ResolveOptions = GENERAL_ROMAN) =>
     resolveDay(d, lectionary, options).masses.map((m) => `${m.id} ${String(m.readings.at(-1)?.ref)}`);
 
   it('keeps the dated weekday readings of 2 January under an obligatory memorial without propers', () => {
     const basil = { id: 'basil-and-gregory', rank: 'memorial' as const, name: 'Sts Basil and Gregory' };
     for (const celebration of [{ ...basil, weekdayId: 'christmas-time-january-2' }, basil]) {
-      const { masses } = resolveDay(christmas('2026-01-02', [celebration]), lectionary);
+      const { masses } = resolveDay(christmas('2026-01-02', [celebration]), lectionary, GENERAL_ROMAN);
       expect(brief(masses)).toEqual([
         {
           id: 'day',
@@ -388,6 +416,7 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
     const { masses } = resolveDay(
       christmas('2026-01-02', [{ id: 'gregory-with-gospel', rank: 'memorial', weekdayId: 'christmas-time-january-2' }]),
       lectionary,
+      GENERAL_ROMAN,
     );
     expect(brief(masses)).toEqual([
       { id: 'day', refs: ['first-reading 1 Jn 2:22-28', 'psalm Ps 98:1, 2-3, 3-4', 'gospel Mt 23:8-12'], missing: [] },
@@ -457,8 +486,6 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
           epiphany: '2023-01-08',
         }),
       ).toEqual(['day Jn 2:1-11']);
-      // Without the Epiphany's date the calendar's names are used as they are.
-      expect(gospels(afterEpiphany('2026-01-07', 'wednesday'))).toEqual(['day Mk 6:45-52']);
       // Outside 7-12 January, or in another year, nothing is remapped.
       expect(gospels(afterEpiphany('2026-01-13', 'tuesday'), { epiphany: '2026-01-06' })).toEqual(['day Mk 6:34-44']);
       expect(gospels(afterEpiphany('2027-01-07', 'thursday'), { epiphany: '2026-01-06' })).toEqual(['day Lk 4:14-22']);
@@ -474,7 +501,7 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
       weekdayCycle,
       celebrations: [{ id: 'ordinary-time-1-monday', rank: 'weekday' }],
     });
-    const first = (d: LectionaryDay) => resolveDay(d, lectionary).masses[0]?.readings[0]?.ref;
+    const first = (d: LectionaryDay) => resolveDay(d, lectionary, GENERAL_ROMAN).masses[0]?.readings[0]?.ref;
     expect(first(monday('A', 'II'))).toBe('Is 4:2-6');
     expect(first(monday('B', 'II'))).toBe('1 Sm 1:1-8');
     expect(first(monday('B', 'I'))).toBe('Heb 1:1-6');
@@ -489,7 +516,7 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
       weekdayCycle: 'II',
       celebrations: [{ id: 'easter-monday', rank: 'solemnity' }],
     };
-    expect(resolveDay(day, lectionary).masses[0]?.missingSlots).toEqual([]);
+    expect(resolveDay(day, lectionary, GENERAL_ROMAN).masses[0]?.missingSlots).toEqual([]);
   });
 
   it('asks the Palm Sunday procession only for its gospel', () => {
@@ -501,7 +528,7 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
       weekdayCycle: 'II',
       celebrations: [{ id: 'palm-sunday', rank: 'sunday' }],
     };
-    expect(brief(resolveDay(day, lectionary).masses).map((m) => [m.id, m.missing])).toEqual([
+    expect(brief(resolveDay(day, lectionary, GENERAL_ROMAN).masses).map((m) => [m.id, m.missing])).toEqual([
       ['procession', []],
       ['day', []],
     ]);
@@ -516,7 +543,7 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
       weekdayCycle: 'II',
       celebrations: [{ id: 'holy-saturday', rank: 'weekday' }],
     };
-    const { masses } = resolveDay(day, lectionary);
+    const { masses } = resolveDay(day, lectionary, GENERAL_ROMAN);
     expect(masses.map((m) => [m.id, m.label, m.from, m.missingSlots])).toEqual([
       ['easter-vigil', 'Easter Vigil in the Holy Night', ['celebrations:easter-sunday'], []],
     ]);
@@ -529,6 +556,20 @@ describe('resolveDay: dated weekdays, the Epiphany, cycles and the Triduum', () 
       'psalm-3',
       'gospel',
     ]);
-    expect(resolveDay(day, new Lectionary([])).masses).toEqual([]);
+    expect(resolveDay(day, new Lectionary([]), GENERAL_ROMAN).masses).toEqual([]);
+  });
+});
+
+describe('epiphanyOf', () => {
+  it('gives 6 January under the General Roman Calendar', () => {
+    expect(epiphanyOf(2026, false)).toBe('2026-01-06');
+  });
+
+  it('gives the Sunday between 2 and 8 January where the Epiphany is kept on a Sunday', () => {
+    expect(epiphanyOf(2026, true)).toBe('2026-01-04');
+    expect(epiphanyOf(2027, true)).toBe('2027-01-03');
+    expect(epiphanyOf(2028, true)).toBe('2028-01-02');
+    expect(epiphanyOf(2023, true)).toBe('2023-01-08');
+    expect(epiphanyOf(2022, true)).toBe('2022-01-02');
   });
 });
