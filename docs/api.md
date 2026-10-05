@@ -155,6 +155,9 @@ nothing.
   (`lastReviewedAt`, `null` if unknown), which is what the "Verified" mark needs.
 - Context paragraphs and translation-note bodies keep their `[c1]` claim markers; resolve them through `claims` and
   `sourceIds` → `sources`.
+- **A day without any Mass** (Holy Saturday) has `"noMass": true`, `"masses": []` and `"lectionaryMissing": false`.
+  Explain it rather than calling the readings missing: the Easter Vigil belongs to Easter Sunday and is listed there.
+  Other days leave `noMass` out (read it as `false`).
 
 ## Audio
 
