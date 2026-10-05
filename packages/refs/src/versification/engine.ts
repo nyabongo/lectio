@@ -2,6 +2,7 @@ import { BOOKS, isBookCode } from '../books.ts';
 import type { BookCode } from '../books.ts';
 import type { VerseCountLookup, VerseId } from '../enumerate.ts';
 import { enumerateVerses } from '../enumerate.ts';
+import { chapterLabel, isLetteredChapter } from '../greek-esther.ts';
 import { fromKey } from '../key.ts';
 import type { Point, Ref, Segment } from '../types.ts';
 import { checkRef } from '../validate.ts';
@@ -21,7 +22,10 @@ export interface VersificationData {
 export type VerseInput = string | Ref | VerseId;
 
 export interface Versification {
-  /** Number of chapters of `book` in the scheme (0 if the scheme lacks the book). */
+  /**
+   * Number of chapters of `book` in the scheme (0 if the scheme lacks the book). Esther's lettered
+   * chapters A–F (`original` only, chapters 101-106) are not counted: `EST` has 10.
+   */
   chapterCount(book: BookCode, scheme?: Scheme): number;
   /**
    * Last verse number of a chapter, or `undefined` if the chapter does not exist. It is a verse
@@ -71,11 +75,13 @@ interface ResolvedSpan {
 interface BookTable {
   /** Index 0 is chapter 1; an empty list means the chapter does not exist. */
   readonly chapters: readonly (readonly ResolvedSpan[])[];
+  /** Esther's lettered chapters (A–F, stored as 101–106), kept out of the chapter count. */
+  readonly lettered: ReadonlyMap<number, readonly ResolvedSpan[]>;
 }
 
 interface SchemeTable {
   readonly file: VrsFile;
-  /** The scheme's Lectio supplement (mapping and exclusion lines only). */
+  /** The scheme's Lectio supplement (its book lines replace the file's, its mapping lines come first). */
   readonly supplement: VrsFile;
   /** Verses the file or the supplement excludes. */
   readonly excluded: ReadonlySet<string>;
@@ -87,9 +93,11 @@ interface SchemeTable {
   fromOriginal?: Map<string, SourceVerse>;
 }
 
-const label = (v: VerseId): string => `${v.book} ${v.c}:${v.v}`;
+const label = (v: VerseId): string => `${v.book} ${chapterLabel(v.book, v.c)}:${v.v}`;
 const pointLabel = (book: BookCode, point: Point): string =>
-  point.v === undefined ? `${book} ${point.c}` : `${book} ${point.c}:${point.v}`;
+  point.v === undefined
+    ? `${book} ${chapterLabel(book, point.c)}`
+    : `${book} ${chapterLabel(book, point.c)}:${point.v}`;
 
 /** Builds the versification functions over the given tables. The package's default instance uses the embedded data. */
 export function createVersification(data: VersificationData): Versification {
@@ -120,39 +128,47 @@ export function createVersification(data: VersificationData): Versification {
     const cached = table.books.get(book);
     if (cached) return cached;
     const usfm = BOOKS.find((b) => b.code === book)?.usfm ?? book;
-    const counts = table.file.books.get(usfm) ?? [];
+    const sourceBook = (id: string): readonly number[] | undefined =>
+      table.supplement.books.get(id) ?? table.file.books.get(id);
+    const counts = sourceBook(usfm) ?? [];
     const spans: readonly Span[] =
       definition(scheme).layouts[book] ?? counts.map((_, i) => ({ c: i + 1, book: usfm, sc: i + 1 }));
     const chapters: ResolvedSpan[][] = [];
+    const lettered = new Map<number, ResolvedSpan[]>();
     for (const span of spans) {
-      const sourceLength = table.file.books.get(span.book)?.[span.sc - 1] ?? 0;
+      const sourceLength = sourceBook(span.book)?.[span.sc - 1] ?? 0;
       const from = span.from ?? 1;
       const sv = span.sv ?? 1;
       const count = span.count ?? sourceLength - sv + 1;
       if (count < 1) continue;
+      const resolved = { from, to: from + count - 1, book: span.book, sc: span.sc, shift: sv - from };
+      if (isLetteredChapter(book, span.c)) {
+        lettered.set(span.c, [...(lettered.get(span.c) ?? []), resolved]);
+        continue;
+      }
       while (chapters.length < span.c) chapters.push([]);
-      (chapters[span.c - 1] as ResolvedSpan[]).push({
-        from,
-        to: from + count - 1,
-        book: span.book,
-        sc: span.sc,
-        shift: sv - from,
-      });
+      (chapters[span.c - 1] as ResolvedSpan[]).push(resolved);
     }
-    const result: BookTable = { chapters };
+    const result: BookTable = { chapters, lettered };
     table.books.set(book, result);
     return result;
   };
 
+  /** The spans of one chapter, numbered or lettered; empty when the chapter does not exist. */
+  const spansAt = (book: BookCode, chapter: number, scheme: Scheme): readonly ResolvedSpan[] => {
+    const table = bookTable(book, scheme);
+    return table.lettered.get(chapter) ?? table.chapters[chapter - 1] ?? [];
+  };
+
   const chapterLength = (book: BookCode, chapter: number, scheme: Scheme = 'original'): number | undefined => {
-    const spans = bookTable(book, scheme).chapters[chapter - 1] ?? [];
+    const spans = spansAt(book, chapter, scheme);
     return spans.length === 0 ? undefined : Math.max(...spans.map((span) => span.to));
   };
 
   const chapterCount = (book: BookCode, scheme: Scheme = 'original'): number => bookTable(book, scheme).chapters.length;
 
   const spanOf = (verse: VerseId, scheme: Scheme): ResolvedSpan | undefined =>
-    bookTable(verse.book, scheme).chapters[verse.c - 1]?.find((span) => span.from <= verse.v && verse.v <= span.to);
+    spansAt(verse.book, verse.c, scheme).find((span) => span.from <= verse.v && verse.v <= span.to);
 
   const sourceOf = (verse: VerseId, scheme: Scheme): SourceVerse | undefined => {
     const span = spanOf(verse, scheme);
@@ -170,7 +186,7 @@ export function createVersification(data: VersificationData): Versification {
   const firstVerse = (book: BookCode, chapter: number, scheme: Scheme = 'original'): number | undefined => {
     const last = chapterLength(book, chapter, scheme);
     if (last === undefined) return undefined;
-    const spans = bookTable(book, scheme).chapters[chapter - 1] as readonly ResolvedSpan[];
+    const spans = spansAt(book, chapter, scheme);
     let v = Math.min(...spans.map((span) => span.from));
     while (v < last && !verseExists({ book, c: chapter, v }, scheme)) v += 1;
     return v;
@@ -181,12 +197,17 @@ export function createVersification(data: VersificationData): Versification {
     if (!table.reverse) {
       const reverse = new Map<string, { book: BookCode; c: number; span: ResolvedSpan }[]>();
       for (const { code } of BOOKS) {
-        bookTable(code, scheme).chapters.forEach((spans, i) => {
+        const { chapters, lettered } = bookTable(code, scheme);
+        const all: (readonly [number, readonly ResolvedSpan[]])[] = [
+          ...chapters.map((spans, i) => [i + 1, spans] as const),
+          ...lettered,
+        ];
+        for (const [c, spans] of all) {
           for (const span of spans) {
             const key = `${span.book} ${span.sc}`;
-            reverse.set(key, [...(reverse.get(key) ?? []), { book: code, c: i + 1, span }]);
+            reverse.set(key, [...(reverse.get(key) ?? []), { book: code, c, span }]);
           }
-        });
+        }
       }
       table.reverse = reverse;
     }
@@ -243,18 +264,17 @@ export function createVersification(data: VersificationData): Versification {
     return fromSourceVerse(original, scheme);
   };
 
-  const missing = (
-    book: BookCode,
-    where: string,
-    code: 'UNKNOWN_VERSE' | 'NO_COUNTERPART',
-    detail: string,
-  ): VersificationError =>
-    book === 'EST'
+  const unknown = (where: string, scheme: Scheme): VersificationError =>
+    new VersificationError('UNKNOWN_VERSE', `${where} does not exist in the ${scheme} scheme`);
+
+  /** The error for a verse with no counterpart; Greek Esther's additions get their own code. */
+  const noCounterpart = (canonical: VerseId | undefined, where: string, to: Scheme): VersificationError =>
+    canonical && isLetteredChapter(canonical.book, canonical.c)
       ? new VersificationError(
           'UNSUPPORTED_GREEK_ESTHER',
-          `${where}: the Greek additions to Esther are not supported; only the Hebrew text's verses can be checked or mapped`,
+          `${where}: the ${to} scheme has no verse numbers for the Greek additions to Esther; greekEstherLxx gives the Rahlfs verse`,
         )
-      : new VersificationError(code, `${where} ${detail}`);
+      : new VersificationError('NO_COUNTERPART', `${where} has no counterpart in the ${to} scheme`);
 
   const tryMapVerse = (verse: VerseId, from: Scheme, to: Scheme): VerseId | undefined => {
     // Same scheme: no detour through `original`, where a many-to-one mapping could move the verse.
@@ -265,11 +285,9 @@ export function createVersification(data: VersificationData): Versification {
 
   const mapVerse = (verse: VerseId, from: Scheme, to: Scheme): VerseId => {
     definition(to);
-    if (!verseExists(verse, from))
-      throw missing(verse.book, label(verse), 'UNKNOWN_VERSE', `does not exist in the ${from} scheme`);
+    if (!verseExists(verse, from)) throw unknown(label(verse), from);
     const mapped = tryMapVerse(verse, from, to);
-    if (!mapped)
-      throw missing(verse.book, label(verse), 'NO_COUNTERPART', `(${from}) has no counterpart in the ${to} scheme`);
+    if (!mapped) throw noCounterpart(toCanonical(verse, from), `${label(verse)} (${from})`, to);
     return mapped;
   };
 
@@ -299,7 +317,7 @@ export function createVersification(data: VersificationData): Versification {
     for (const { start, end } of ref.segments) {
       for (const point of [start, end]) {
         if (!pointExists(ref.book, point, from)) {
-          throw missing(ref.book, pointLabel(ref.book, point), 'UNKNOWN_VERSE', `does not exist in the ${from} scheme`);
+          throw unknown(pointLabel(ref.book, point), from);
         }
       }
     }
@@ -323,9 +341,14 @@ export function createVersification(data: VersificationData): Versification {
       );
     }
     if (segments.length === 0) {
-      throw new VersificationError(
-        'NO_COUNTERPART',
-        `${ref.book}: no verse of the reference exists in the ${to} scheme`,
+      const first = (ref.segments[0] as Segment).start;
+      throw noCounterpart(
+        toCanonical(
+          { book: ref.book, c: first.c, v: first.v ?? (firstVerse(ref.book, first.c, from) as number) },
+          from,
+        ),
+        `${ref.book}: the reference (${from})`,
+        to,
       );
     }
     return { book: ref.book, segments };
@@ -337,8 +360,7 @@ export function createVersification(data: VersificationData): Versification {
   };
 
   const toSourceVerse = (verse: VerseId, scheme: Scheme = 'original'): SourceVerse => {
-    if (!verseExists(verse, scheme))
-      throw missing(verse.book, label(verse), 'UNKNOWN_VERSE', `does not exist in the ${scheme} scheme`);
+    if (!verseExists(verse, scheme)) throw unknown(label(verse), scheme);
     return sourceOf(verse, scheme) as SourceVerse;
   };
 

@@ -1,5 +1,5 @@
 {
-  "description": "Versification tables behind @lectio/refs (L-006): chapter and verse counts and cross-versification mappings. Numbers only; no Bible text.",
+  "description": "Versification tables behind @lectio/refs (L-006, Greek Esther L-049): chapter and verse counts and cross-versification mappings. Numbers only; no Bible text.",
   "sources": [
     {
       "id": "libpalaso",
@@ -15,7 +15,7 @@
           "path": "org.vrs",
           "upstream": "SIL.Scripture/Resources/org.vrs.txt",
           "scheme": "original",
-          "notes": "BHS for the Old Testament, UBS GNT / Nestle-Aland for the New; Greek-only material in separate books (S3Y, SUS, BEL, LJE, ESG).",
+          "notes": "BHS for the Old Testament, UBS GNT / Nestle-Aland for the New; Greek-only material in separate books (S3Y, SUS, BEL, LJE, ESG). The original scheme lays the NABRE lettered chapters of Esther (A-F) on ESG: A = 1:1-17, B = 3:14-20, C = 4:18-47, D = 5:1-16, E = 8:13-36, F = 10:4-14 (L-049).",
           "sha256": "1caee506dc4cc2947e45861c7d2ba5b5eeca9063ee263a37f2ca08f240e457ca"
         },
         {
@@ -36,7 +36,7 @@
           "path": "eng.vrs",
           "upstream": "SIL.Scripture/Resources/eng.vrs.txt",
           "scheme": "english",
-          "notes": "English Bibles (KJV/RSV tradition): psalm titles not counted as verses, Joel 2:28-32, Malachi 4.",
+          "notes": "English Bibles (KJV/RSV tradition): psalm titles not counted as verses, Joel 2:28-32, Malachi 4. Its ESG lines (the integrated Greek Esther onto Rahlfs's lettered sub-verses, e.g. ESG 4:29 = ESG 4:17k) give greekEstherLxx the Rahlfs verse of each verse of the NABRE lettered chapters (L-049).",
           "sha256": "003981c7f43c69b73b60d40a3f35f72e7ee017a686a6fb206f19a1b721157541"
         }
       ]
@@ -50,8 +50,8 @@
         {
           "path": "vul.supplement.vrs",
           "scheme": "vulgate",
-          "notes": "Jonah follows vul.vrs's own chapter table (Hebrew division, 1:16 2:11) instead of its mapping lines, which assume the English division. Psalms 115:1-9 and 147:1-11 are excluded, because vul.vrs numbers those psalms from verses 10 and 12.",
-          "sha256": "cfbc0e2e13be511d7a9bd9b7356e50f3d7a2625b8c58770748c4d318cefe6064"
+          "notes": "Jonah follows vul.vrs's own chapter table (Hebrew division, 1:16 2:11) instead of its mapping lines, which assume the English division. Psalms 115:1-9 and 147:1-11 are excluded, because vul.vrs numbers those psalms from verses 10 and 12. Esther (L-049): the Stuttgart (VUL83) chapter table that vul.vrs gives in a comment (Clementine / Douay-Rheims chapters 1-16, the Greek additions as 10:4-16:24) replaces its Nova Vulgata EST line, and the additions are mapped onto org.vrs ESG following STEPBible TVTMS (source stepbible-tvtms).",
+          "sha256": "2a321cdb144dcf7d145a8b5e204a299dbce5789b44aa4315f60b09a19b84ab50"
         },
         {
           "path": "lxx.supplement.vrs",
@@ -66,6 +66,17 @@
           "sha256": "49f4c27ffa5aec29298f74840320dbe2a523ab1ee35a28a282dd85c504c1dd13"
         }
       ]
+    },
+    {
+      "id": "stepbible-tvtms",
+      "name": "STEPBible TVTMS: Translators Versification Traditions with Methodology for Standardisation",
+      "url": "https://github.com/STEPBible/STEPBible-Data/tree/master/Versification",
+      "retrieved": "2026-10-05",
+      "licence": "CC BY 4.0",
+      "copyright": "Data created by www.STEPBible.org based on work at Tyndale House Cambridge",
+      "files": [],
+      "usedIn": ["vul.supplement.vrs"],
+      "notes": "Not embedded. The Esther sections ($Est.1:1-22, 3:1-14, 4:1-17, 5:1-14, 8:1-17, 10:1-3) give, verse by verse, the NABRE lettered chapters (column \"Latin\": A:1-17 ... F:1-11) against the Vulgate chapters 10:4-16:24 (column \"Latin2\"): A:1-11 = 11:2-12, A:12-17 = 12:1-6, B = 13:1-7, C:1-11 = 13:8-18, C:12-30 = 14:1-19, D:1 = 15:1-4, D:2-16 = 15:5-19, E = 16:1-24, F:1-10 = 10:4-13, F:11 = 11:1. vul.supplement.vrs writes these as mapping lines onto org.vrs ESG."
     }
   ]
 }
