@@ -45,8 +45,13 @@ root changes.
   `original.gloss`, `summary` and `body`, and each claim's `text` are the Kiswahili ones.
 - Otherwise (no translation, pending, stale or out of step with the English) it is the English notes, unchanged, with
   `locale: "en"`. Clients show those as English (the site marks them `lang="en"` with an "English only" badge).
-- Keys, references, verses, original-language words, `sourceIds`, `sources` and `review` are always the English
-  file's, so citations and permalinks match in both languages. `audio` stays `null`.
+- Keys, references, verses, original-language words, `sourceIds` and `sources` are always the English file's, so
+  citations and permalinks match in both languages. `review` describes the text actually shown: for a Kiswahili
+  passage it is the translation's review (`method: "human"`, its own `lastReviewedAt`); for an English fallback it
+  is the English file's. `audio` stays `null`.
+- `index.json` lists the mirror's templates under `endpoints.locales.sw` (`{ "day": "sw/days/{date}.json", … }`,
+  relative to the API root like the others), so a client still only needs `index.json`. The key is present only
+  when the site's `site.locales` include `sw`.
 - Celebration names in Kiswahili are already in every day document (`celebrations[].names`, L-111).
 
 Code: `apps/web/src/pages/api/v1/sw/`, built from `localeRepo()` in `apps/web/src/lib/notes-locale.ts`.

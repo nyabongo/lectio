@@ -6,6 +6,7 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import type { ResolvedDay } from '@lectio/content';
 import {
   validateApiCalendar,
   validateApiDay,
@@ -14,8 +15,13 @@ import {
   validateApiUpcoming,
 } from '@lectio/schema/api';
 import { formatErrors } from '@lectio/schema/common';
+import type { TranslatedPassage } from '@lectio/schema/translated-passage';
 import type { APIContext } from 'astro';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+
+import { apiDay, apiPassage, apiPassageIndex } from '../../../../lib/api.ts';
+import { localeRepo, translationSource } from '../../../../lib/notes-locale.ts';
+import { siteContext } from '../../../../lib/site.ts';
 
 const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../../..');
 
@@ -120,6 +126,31 @@ describe('/api/v1/sw/', () => {
     expect(next.from).toBe('2026-09-20');
     expect(summaries(next.days)).toContain(passageSummary);
   });
+});
+
+describe('/api/v1/sw/ without a reviewed, up-to-date translation', () => {
+  const { repo } = siteContext({ cwd: webRoot, env: { LECTIO_CONFIG: 'apps/web/test/lectio.config.fixture.json' } });
+  const translation = translationSource(repo.root)('sw', 'MT.20.1-16') as TranslatedPassage;
+  const cases: [string, TranslatedPassage][] = [
+    ['a stale translation', { ...translation, sourceSha256: '0'.repeat(64) }],
+    ['a pending translation', { ...translation, review: { status: 'pending', reviewers: [] } }],
+  ];
+
+  for (const [name, broken] of cases) {
+    it(`falls back to the English notes, marked en, for ${name}`, () => {
+      const sw = localeRepo(repo, 'sw', { translations: () => broken });
+      const day = apiDay(sw.resolveDay('2026-09-20') as ResolvedDay) as DayDoc;
+      valid(validateApiDay, day);
+      const gospel = day.masses.flatMap((mass) => mass.readings).find((reading) => reading.slot === 'gospel');
+      expect(gospel?.passage?.locale).toBe('en');
+      expect(gospel?.passage?.summary).toMatch(/^A landowner pays/);
+      const passage = apiPassage(sw, 'MT.20.1-16') as PassageDoc;
+      valid(validateApiPassage, passage);
+      expect(passage.passage).toMatchObject({ locale: 'en', summary: expect.stringMatching(/^A landowner/) as string });
+      const index = apiPassageIndex(sw) as PassageIndexDoc;
+      expect(index.passages[0]?.summary).toMatch(/^A landowner/);
+    });
+  }
 });
 
 const passageSummary =
