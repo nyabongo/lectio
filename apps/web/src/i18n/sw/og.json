@@ -1,0 +1,12 @@
+{
+  "insightCaption": "Kile ambacho {language} cha {slot} ya leo kinasema hasa — {ref}",
+  "language": {
+    "grc": "Kigiriki",
+    "hbo": "Kiebrania",
+    "arc": "Kiaramu",
+    "la": "Kilatini"
+  },
+  "alt": {
+    "cardFor": "Kadi ya Lectio ya {date}"
+  }
+}

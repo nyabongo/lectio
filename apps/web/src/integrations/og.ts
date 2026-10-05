@@ -59,7 +59,9 @@ export function ogImages(options: LectioIntegrationOptions): AstroIntegration {
         resetOgStats();
       },
       'astro:build:done': async ({ dir, logger }) => {
-        const report = await checkOgDist(fileURLToPath(dir), options.config.site.baseUrl, options.config.site.basePath);
+        const { baseUrl, basePath, locales, defaultLocale } = options.config.site;
+        const others = locales.filter((locale) => locale !== defaultLocale);
+        const report = await checkOgDist(fileURLToPath(dir), baseUrl, basePath, others);
         if (report.problems.length > 0) {
           throw new Error(`OG image check failed:\n${report.problems.join('\n')}`);
         }

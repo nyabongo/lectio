@@ -15,14 +15,19 @@
  * again. The integration in src/integrations/og.ts points the endpoints at the cache, logs the build time, prunes
  * stale entries and checks the built pages ({@link checkOgDist}).
  *
+ * Every other site locale has its own cards under `og/<locale>/` (L-113, `src/pages/og/sw/`): the Kiswahili card of a
+ * `/sw/` page shows the reviewed Kiswahili notes (else the English ones) with a Kiswahili date, labels, references,
+ * caption and alt text. `checkOgDist` checks that each locale's pages point at their own cards.
+ *
  * Card text is commentary, references and short original-language phrases: never reading text.
  */
 import { mkdir, readFile, readdir, rename, rm, stat, utimes, writeFile } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 
-import type { ContentRepo } from '@lectio/content';
+import type { ContentRepo, ResolvedDay, ResolvedReading } from '@lectio/content';
 import { getBook, tryParseRef } from '@lectio/refs';
 import type { Segment } from '@lectio/refs';
+import type { Reading } from '@lectio/schema/calendar';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -34,12 +39,21 @@ import {
   loadFonts,
   renderCard,
 } from '@lectio/sharecards';
-import type { DayCard, InsightCard, OriginalLanguage, ReadingCard, RenderOptions, ShareCard } from '@lectio/sharecards';
+import type {
+  AltTextLabels,
+  DayCard,
+  InsightCard,
+  OriginalLanguage,
+  ReadingCard,
+  RenderOptions,
+  ShareCard,
+} from '@lectio/sharecards';
 
 import { calendarDates, dayPageView, dayPath, refLabel, slotLabel } from './day.ts';
 import type { DayConfig, DayEnv } from './day.ts';
 import { insightPage, insightStaticPaths } from './insight.ts';
-import { readingPage, readingStaticPaths } from './reading.ts';
+import { refLabelIn } from './notes-locale.ts';
+import { readingPage, readingStaticPaths, readingsBySlot } from './reading.ts';
 import { absoluteUrl } from './seo.ts';
 import type { SeoImage } from './seo.ts';
 import { withBase } from './site.ts';
@@ -72,15 +86,19 @@ export type OgTarget =
   | { readonly kind: 'reading'; readonly date: string; readonly slot: string }
   | { readonly kind: 'insight'; readonly date: string; readonly slot: string; readonly noteId: string };
 
-/** The image path of a target, relative to the base path: `og/2026-09-20/gospel.png`. */
-export function ogImagePath(target: OgTarget): string {
+/**
+ * The image path of a target, relative to the base path: `og/2026-09-20/gospel.png`. A card in another locale than
+ * the default lives under `og/<locale>/` (`og/sw/2026-09-20/gospel.png`, L-113).
+ */
+export function ogImagePath(target: OgTarget, locale?: string, defaultLocale = DEFAULT_OG_LOCALE): string {
+  const dir = locale === undefined || locale === defaultLocale ? OG_DIR : `${OG_DIR}/${locale}`;
   switch (target.kind) {
     case 'day':
-      return `${OG_DIR}/${target.date}.png`;
+      return `${dir}/${target.date}.png`;
     case 'reading':
-      return `${OG_DIR}/${target.date}/${target.slot}.png`;
+      return `${dir}/${target.date}/${target.slot}.png`;
     default:
-      return `${OG_DIR}/${target.date}/${target.slot}/${target.noteId}.png`;
+      return `${dir}/${target.date}/${target.slot}/${target.noteId}.png`;
   }
 }
 
@@ -100,7 +118,14 @@ export function pageOgTarget(path: string): OgTarget | null {
   return null;
 }
 
-/** What the card builders need: messages and paths (as the pages have them), the site URL and the content. */
+/**
+ * What the card builders need: messages and paths (as the pages have them), the site URL and the content.
+ *
+ * Cards are drawn in `env.lang` (L-113). In the site's default locale they are the English cards of L-088; in any
+ * other locale `repo` should be that locale's view of the content (`siteRepo(lang)` in src/lib/notes-locale.ts), so
+ * summaries, anchors and captions come from approved, up-to-date translations, and the date, Gospel label, caption,
+ * references and alt text are written in that language from the UI catalogs (`og.*`, `day.slot.*`).
+ */
 export interface OgContext {
   readonly env: DayEnv;
   /** Absolute site URL (Astro's `site`). */
@@ -109,6 +134,34 @@ export interface OgContext {
   readonly base: string;
   readonly config: DayConfig;
   readonly repo: ContentRepo;
+  /** The site's default locale, whose cards keep the English wording and live at the root of `og/`; `en` if unset. */
+  readonly defaultLocale?: string;
+}
+
+/** The locale whose cards are not localised when an `OgContext` does not name its default locale. */
+export const DEFAULT_OG_LOCALE = 'en';
+
+/** Whether the context draws cards in another language than the site's default. */
+function localised(context: OgContext): boolean {
+  return context.env.lang !== (context.defaultLocale ?? DEFAULT_OG_LOCALE);
+}
+
+/** The page path of a card in the context's locale (`2026-09-20/` → `sw/2026-09-20/` on a Kiswahili card). */
+function cardPagePath(context: OgContext, path: string): string {
+  return localised(context) ? `${context.env.lang}/${path}` : path;
+}
+
+/** The date fields of a card: a Kiswahili card writes its own date (`Jumapili 20 Septemba 2026`). */
+function dateFields(context: OgContext, date: string): { dateLabel?: string } {
+  return localised(context) ? { dateLabel: context.env.messages.formatDate(context.env.lang, date) } : {};
+}
+
+/** The day's Gospel reference written in full in the context's locale (`Mathayo 20:1–16a`). */
+function gospelRefIn(context: OgContext, date: string): string {
+  // Only called when the day view found a Gospel, so the day and its Gospel exist.
+  const day = context.repo.resolveDay(date) as ResolvedDay;
+  const { ref }: Reading = readingsBySlot(day).get('gospel') as ResolvedReading;
+  return refLabelIn(context.env.lang, ref);
 }
 
 /** The day card for `date`, or `null` when no committed calendar has it. */
@@ -116,65 +169,102 @@ export function dayCard(context: OgContext, date: string): DayCard | null {
   const view = dayPageView(context.env, context, date);
   if (view === null) return null;
   const gospel = view.masses[0]?.readings.find((reading) => reading.slot === 'gospel');
+  const { lang } = context.env;
+  const { t } = context.env.messages;
   return {
     kind: 'day',
     date: view.date,
     colour: colourAttribute(view.colour),
-    url: absoluteUrl(context.site, context.base, dayPath(view.date)),
+    url: absoluteUrl(context.site, context.base, cardPagePath(context, dayPath(view.date))),
     celebration: view.title,
     subtitle: view.season,
-    ...(gospel === undefined ? {} : { gospelRef: gospel.refLabel }),
+    ...(gospel === undefined ? {} : { gospelRef: localised(context) ? gospelRefIn(context, date) : gospel.refLabel }),
+    ...dateFields(context, view.date),
+    ...(localised(context) && gospel !== undefined ? { gospelLabel: t(lang, 'day.slot.gospel') } : {}),
   };
 }
 
 /** The reading card for `date`/`slot`, or `null` when there is no such reading or its passage is not approved. */
 export function readingCard(context: OgContext, date: string, slot: string): ReadingCard | null {
-  const view = readingPage(context.repo, date, slot);
+  const view = readingPage(context.repo, date, slot, context.env.lang);
   if (view === null || view.notes === null) return null;
   return {
     kind: 'reading',
     date: view.date,
     colour: colourAttribute(view.colour),
-    url: absoluteUrl(context.site, context.base, view.path),
+    url: absoluteUrl(context.site, context.base, cardPagePath(context, view.path)),
     slotLabel: slotLabel(context.env, view.slot),
-    ref: refLabel(view.ref),
+    ref: refLabelIn(context.env.lang, view.ref),
     summary: view.notes.summary,
+    ...dateFields(context, view.date),
   };
 }
 
 /**
  * A note's verse written in full from the reading's reference: `Mt 20:1-16a` and `15` give `Matthew 20:15`, and
  * `21:3` (a verse in a later chapter) gives `Matthew 21:3`. A reference that does not parse is written as it is.
+ * With `locale`, the book is named in that language (`Mathayo 20:15` in Kiswahili, `refLabelIn`).
  */
-export function noteVerseLabel(readingRef: string, verse: string): string {
+export function noteVerseLabel(readingRef: string, verse: string, locale = DEFAULT_OG_LOCALE): string {
   const parsed = tryParseRef(readingRef);
   if (!parsed.ok) return refLabel(readingRef);
   // A parsed reference always has at least one segment.
   const chapter = (parsed.value.segments[0] as Segment).start.c;
   const full = verse.includes(':') ? verse : `${String(chapter)}:${verse}`;
-  return refLabel(`${getBook(parsed.value.book).abbrev} ${full}`);
+  return refLabelIn(locale, `${getBook(parsed.value.book).abbrev} ${full}`);
 }
 
 /** The insight card for one note, or `null` when there is no such approved note. */
 export function insightCard(context: OgContext, date: string, slot: string, noteId: string): InsightCard | null {
-  const view = insightPage(context.repo, date, slot, noteId);
+  const view = insightPage(context.repo, date, slot, noteId, context.env.lang);
   if (view === null) return null;
   const { reading, note } = view;
+  const { lang } = context.env;
+  const { t } = context.env.messages;
+  // `NoteView` carries the BCP 47 tag, which for the four original languages is the card's language code.
+  const language = note.original.lang as OriginalLanguage;
+  const slotText = slotLabel(context.env, reading.slot);
+  const ref = noteVerseLabel(reading.ref, note.verse, lang);
   return {
     kind: 'insight',
     date: reading.date,
     colour: colourAttribute(reading.colour),
-    url: absoluteUrl(context.site, context.base, view.path),
+    url: absoluteUrl(context.site, context.base, cardPagePath(context, view.path)),
     quote: note.anchor,
-    // `NoteView` carries the BCP 47 tag, which for the four original languages is the card's language code.
-    original: {
-      text: note.original.text,
-      language: note.original.lang as OriginalLanguage,
-      transliteration: note.original.translit,
-    },
-    slotLabel: slotLabel(context.env, reading.slot),
-    ref: noteVerseLabel(reading.ref, note.verse),
+    original: { text: note.original.text, language, transliteration: note.original.translit },
+    slotLabel: slotText,
+    ref,
+    ...dateFields(context, reading.date),
+    ...(localised(context)
+      ? {
+          caption: t(lang, 'og.insightCaption', {
+            language: originalLanguageNames(context)[language],
+            slot: slotText,
+            ref,
+          }),
+        }
+      : {}),
   };
+}
+
+/** The names of the original languages in the context's locale (`Kigiriki`). */
+function originalLanguageNames(context: OgContext): Readonly<Record<OriginalLanguage, string>> {
+  const { lang } = context.env;
+  const { t } = context.env.messages;
+  return {
+    grc: t(lang, 'og.language.grc'),
+    hbo: t(lang, 'og.language.hbo'),
+    arc: t(lang, 'og.language.arc'),
+    la: t(lang, 'og.language.la'),
+  };
+}
+
+/** The alt-text wording of a card in the context's locale (English cards keep the package's own). */
+export function ogAltLabels(context: OgContext): AltTextLabels {
+  if (!localised(context)) return {};
+  const { lang } = context.env;
+  const { t } = context.env.messages;
+  return { cardFor: (date) => t(lang, 'og.alt.cardFor', { date }), languageNames: originalLanguageNames(context) };
 }
 
 /**
@@ -204,8 +294,9 @@ export function ogCard(context: OgContext, target: OgTarget): ShareCard | null {
 }
 
 /**
- * The share image of a page (`path` relative to the base path), or `null` for pages without a card of their own
- * (they keep the brand card). A Reading page without approved notes uses its day's image.
+ * The share image of a page (`path` relative to the base path, in the default locale), or `null` for pages without
+ * a card of their own (they keep the brand card). A Reading page without approved notes uses its day's image. The
+ * image and its alt text are in the context's locale (`og/sw/…` for a Kiswahili page).
  */
 export function ogImageForPage(context: OgContext, path: string): SeoImage | null {
   const target = pageOgTarget(path);
@@ -215,10 +306,10 @@ export function ogImageForPage(context: OgContext, path: string): SeoImage | nul
     const card = ogCard(context, candidate);
     if (card !== null) {
       return {
-        src: withBase(context.base, ogImagePath(candidate)),
+        src: withBase(context.base, ogImagePath(candidate, context.env.lang, context.defaultLocale)),
         width: OG_WIDTH,
         height: OG_HEIGHT,
-        alt: cardAltText(card, { omitOriginal: !canDrawOriginal(card) }),
+        alt: cardAltText(card, { omitOriginal: !canDrawOriginal(card), ...ogAltLabels(context) }),
       };
     }
   }
@@ -440,14 +531,22 @@ export interface OgDistReport {
  * is a 1200×630 PNG of at most 300 KB, with matching width and height tags and alt text; day, reading and insight
  * pages point at an image under `og/`.
  */
-export async function checkOgDist(distDir: string, site: string | URL, base: string): Promise<OgDistReport> {
+export async function checkOgDist(
+  distDir: string,
+  site: string | URL,
+  base: string,
+  locales: readonly string[] = [],
+): Promise<OgDistReport> {
   const problems: string[] = [];
   const images = new Set<string>();
   const checked = new Map<string, string | null>();
   const pages = await htmlPages(distDir);
   const root = new URL(withBase(base), site);
   for (const page of pages) {
-    const pagePath = page.replace(/index\.html$/, '');
+    // A page under `<locale>/` (L-113) has its card under `og/<locale>/`.
+    const locale = locales.find((candidate) => page.startsWith(`${candidate}/`));
+    const imageDir = locale === undefined ? `${OG_DIR}/` : `${OG_DIR}/${locale}/`;
+    const pagePath = page.replace(/index\.html$/, '').slice(locale === undefined ? 0 : locale.length + 1);
     const meta = ogImageMeta(await readFile(join(distDir, page), 'utf8'));
     if (meta === null) {
       problems.push(`${page}: no og:image`);
@@ -463,8 +562,8 @@ export async function checkOgDist(distDir: string, site: string | URL, base: str
     }
     if (meta.alt === undefined || meta.alt.trim() === '') problems.push(`${page}: no og:image:alt`);
     if (pageOgTarget(pagePath) !== null) {
-      if (imagePath.startsWith(`${OG_DIR}/`)) images.add(imagePath);
-      else problems.push(`${page}: og:image ${imagePath} is not a page image under ${OG_DIR}/`);
+      if (imagePath.startsWith(imageDir)) images.add(imagePath);
+      else problems.push(`${page}: og:image ${imagePath} is not a page image under ${imageDir}`);
     }
     if (!checked.has(imagePath)) checked.set(imagePath, await imageProblem(join(distDir, imagePath)));
     const problem = checked.get(imagePath) ?? null;
