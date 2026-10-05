@@ -1,9 +1,9 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, parse, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_CONFIG } from './defaults.ts';
 import { ConfigError, DEFAULT_CONFIG_FILE, findRepoRoot, loadConfig, packageName, resolveConfigPath } from './index.ts';
@@ -12,11 +12,15 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
 
 let dir: string;
 
+// Each test gets a temp dir that is itself a fake repository root, so nothing
+// above os.tmpdir() and nothing in the developer's environment affects results.
 beforeEach(() => {
   dir = mkdtempSync(join(tmpdir(), 'lectio-config-'));
+  makeRepo();
 });
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   rmSync(dir, { recursive: true, force: true });
 });
 
@@ -27,7 +31,7 @@ function write(relative: string, content: unknown): string {
   return path;
 }
 
-/** A fake repository root in the temp dir. */
+/** Marks the temp dir as a repository root. */
 function makeRepo(): void {
   write('package.json', { name: 'fake', workspaces: ['packages/*'] });
 }
@@ -53,7 +57,8 @@ describe('loadConfig', () => {
     expect(Object.isFrozen(config)).toBe(true);
     expect(Object.isFrozen(config.reviewer.githubHandles)).toBe(true);
     expect(Object.isFrozen(config.linkout.providers.drbo)).toBe(true);
-    expect(Object.isFrozen(DEFAULT_CONFIG)).toBe(false);
+    expect(Object.isFrozen(DEFAULT_CONFIG)).toBe(true);
+    expect(Object.isFrozen(DEFAULT_CONFIG.linkout.providers.drbo)).toBe(true);
   });
 
   it('encodes the owner decisions as defaults', () => {
@@ -66,8 +71,12 @@ describe('loadConfig', () => {
     expect(config.research.budget.backfillTotalUsd).toBe(0);
     expect(config.autoMerge).toMatchObject({ minSupport: 0.9, requireBothVerifiers: true, maxRefutations: 0 });
     expect(config.reviewer.githubHandles).toEqual(['nyabongo']);
+    expect(config.research.models.generator.model).toBe('claude-opus-5-5');
+    expect(config.research.models.cheap.model).toBe('claude-haiku-4-5-20251001');
+    expect(config.verifiers.confirmer.model).toBe('claude-sonnet-5-5');
+    expect(config.tools.anthropic).toEqual({ webSearch: 'web_search_20260209', webFetch: 'web_fetch_20260209' });
     expect(config.lectionary).toMatchObject({
-      primarySource: 'liturgical-calendar-api',
+      primarySource: 'litcal',
       edition: 'OLM-1981',
       provisional: true,
     });
@@ -109,7 +118,6 @@ describe('loadConfig', () => {
   });
 
   it('honours LECTIO_CONFIG relative to the repository root', () => {
-    makeRepo();
     write('apps/web/test/lectio.config.fixture.json', { site: { features: { listen: true } } });
     const env = { LECTIO_CONFIG: 'apps/web/test/lectio.config.fixture.json' };
     const config = loadConfig(undefined, { cwd: join(dir, 'apps/web'), env });
@@ -131,7 +139,6 @@ describe('loadConfig', () => {
   });
 
   it('reads config/lectio.config.json from the repository root found above the working directory', () => {
-    makeRepo();
     write(DEFAULT_CONFIG_FILE, { research: { defaultDays: 7 } });
     mkdirSync(join(dir, 'packages/x'), { recursive: true });
     expect(loadConfig(undefined, { cwd: join(dir, 'packages/x'), env: {} }).research.defaultDays).toBe(7);
@@ -148,7 +155,9 @@ describe('loadConfig', () => {
   });
 
   it('uses process.env and process.cwd() by default', () => {
-    expect(() => loadConfig()).not.toThrow();
+    vi.stubEnv('LECTIO_CONFIG', '');
+    vi.stubEnv('INIT_CWD', repoRoot);
+    expect(loadConfig().site.basePath).toBe('/lectio');
     expect(resolveConfigPath(undefined, { env: {} }).path).toBe(join(findRepoRoot(process.cwd()), DEFAULT_CONFIG_FILE));
   });
 });
@@ -166,16 +175,20 @@ describe('resolveConfigPath', () => {
 
 describe('findRepoRoot', () => {
   it('finds the nearest package.json with workspaces', () => {
-    makeRepo();
     write('packages/a/package.json', { name: 'a' });
     expect(findRepoRoot(join(dir, 'packages/a'))).toBe(dir);
   });
 
-  it('skips unreadable manifests and falls back to the start directory', () => {
-    write('package.json', '{ broken');
-    expect(findRepoRoot(dir)).toBe(dir);
-    write('package.json', '[1]');
-    expect(findRepoRoot(join(dir))).toBe(dir);
+  it('skips unreadable and workspace-less manifests', () => {
+    write('a/package.json', '{ broken');
+    write('a/b/package.json', '[1]');
+    write('a/b/c/package.json', { name: 'c' });
+    expect(findRepoRoot(join(dir, 'a/b/c'))).toBe(dir);
+  });
+
+  it('falls back to the start directory when no root is found', () => {
+    const fsRoot = parse(dir).root;
+    expect(findRepoRoot(fsRoot)).toBe(fsRoot);
   });
 
   it('finds this repository', () => {

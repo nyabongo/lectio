@@ -2,7 +2,7 @@ import { Ajv } from 'ajv';
 import type { ErrorObject } from 'ajv';
 
 import { configSchema } from './schema.ts';
-import type { LectioConfig } from './types.ts';
+import type { LectioConfig, LlmFamily, ModelChoice } from './types.ts';
 
 /** One problem in a config, located by a JSON pointer (RFC 6901) into the file. */
 export interface ConfigIssue {
@@ -53,6 +53,18 @@ function toIssue(error: ErrorObject): ConfigIssue {
   return { pointer: error.instancePath, message: String(error.message) };
 }
 
+/** Model-id prefixes that reveal the family, so a mislabelled family cannot defeat the independence rule. */
+const MODEL_PREFIXES: readonly [RegExp, LlmFamily][] = [
+  [/^claude-/, 'anthropic'],
+  [/^(gpt-|o[0-9])/, 'openai'],
+  [/^gemini-/, 'google'],
+];
+
+/** The family a model id belongs to, or `undefined` when the id has no known prefix. */
+export function familyOfModel(model: string): LlmFamily | undefined {
+  return MODEL_PREFIXES.find(([prefix]) => prefix.test(model))?.[1];
+}
+
 /** Rules that span several keys and so cannot be said in the JSON Schema. */
 function crossFieldIssues(config: LectioConfig): ConfigIssue[] {
   const issues: ConfigIssue[] = [];
@@ -90,15 +102,26 @@ function crossFieldIssues(config: LectioConfig): ConfigIssue[] {
     }
   }
 
-  const models: [string, string][] = [
-    ['/research/models/generator/model', research.models.generator.model],
-    ['/research/models/repair/model', research.models.repair.model],
-    ['/verifiers/confirmer/model', verifiers.confirmer.model],
-    ['/verifiers/refuter/model', verifiers.refuter.model],
+  const models: [string, ModelChoice][] = [
+    ['/research/models/generator', research.models.generator],
+    ['/research/models/repair', research.models.repair],
+    ['/research/models/cheap', research.models.cheap],
+    ['/verifiers/confirmer', verifiers.confirmer],
+    ['/verifiers/refuter', verifiers.refuter],
   ];
-  for (const [pointer, model] of models) {
+  for (const [pointer, { family, model }] of models) {
     if (!Object.hasOwn(pricing, model)) {
-      issues.push({ pointer, message: `model "${model}" has no entry in pricing, so its cost cannot be metered` });
+      issues.push({
+        pointer: `${pointer}/model`,
+        message: `model "${model}" has no entry in pricing, so its cost cannot be metered`,
+      });
+    }
+    const implied = familyOfModel(model);
+    if (implied !== undefined && implied !== family) {
+      issues.push({
+        pointer: `${pointer}/family`,
+        message: `"${family}" does not match model "${model}", which belongs to the ${implied} family`,
+      });
     }
   }
 

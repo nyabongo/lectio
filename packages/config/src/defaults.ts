@@ -1,3 +1,4 @@
+import { deepFreeze } from './merge.ts';
 import type { LectioConfig } from './types.ts';
 
 /**
@@ -5,10 +6,12 @@ import type { LectioConfig } from './types.ts';
  * needs the keys it changes. `config/README.md` maps each key to its decision
  * issue; keep the two in step.
  *
- * Model ids and prices are placeholders to confirm when the live providers land
- * (L-039, L-040) and after the first real run (L-041).
+ * Model ids, tool versions and prices are placeholders that L-039 (Anthropic)
+ * and L-040 (OpenAI) confirm; L-041 revisits budgets after the first real run.
+ *
+ * Deeply frozen so no caller can change the defaults for later `loadConfig()` calls.
  */
-export const DEFAULT_CONFIG: LectioConfig = {
+export const DEFAULT_CONFIG: LectioConfig = deepFreeze({
   site: {
     baseUrl: 'https://nyabongo.github.io/lectio/',
     basePath: '/lectio',
@@ -65,13 +68,14 @@ export const DEFAULT_CONFIG: LectioConfig = {
     maxRepairs: 2,
     budget: { perPassageUsd: 1.5, perRunUsd: 25, backfillTotalUsd: 0 },
     models: {
-      generator: { family: 'anthropic', model: 'claude-sonnet-4-5' },
-      repair: { family: 'anthropic', model: 'claude-sonnet-4-5' },
+      generator: { family: 'anthropic', model: 'claude-opus-5-5' },
+      repair: { family: 'anthropic', model: 'claude-opus-5-5' },
+      cheap: { family: 'anthropic', model: 'claude-haiku-4-5-20251001' },
     },
   },
   runway: { windowDays: 21, maxMissingDays: 7 },
   verifiers: {
-    confirmer: { family: 'anthropic', model: 'claude-haiku-4-5' },
+    confirmer: { family: 'anthropic', model: 'claude-sonnet-5-5' },
     refuter: { family: 'openai', model: 'gpt-5' },
     mode: 'auto',
   },
@@ -90,14 +94,23 @@ export const DEFAULT_CONFIG: LectioConfig = {
   },
   lectionary: {
     edition: 'OLM-1981',
-    primarySource: 'liturgical-calendar-api',
-    crossCheckSource: 'olm-1981-index',
+    primarySource: 'litcal',
+    crossCheckSource: 'olm-1981',
     provisional: true,
   },
+  tools: {
+    anthropic: { webSearch: 'web_search_20260209', webFetch: 'web_fetch_20260209' },
+  },
   pricing: {
-    'claude-sonnet-4-5': { inputPerMTok: 3, outputPerMTok: 15, cachedInputPerMTok: 0.3, webSearchPerThousand: 10 },
-    'claude-haiku-4-5': { inputPerMTok: 1, outputPerMTok: 5, cachedInputPerMTok: 0.1, webSearchPerThousand: 10 },
+    'claude-opus-5-5': { inputPerMTok: 4, outputPerMTok: 20, cachedInputPerMTok: 0.2, webSearchPerThousand: 10 },
+    'claude-sonnet-5-5': { inputPerMTok: 2, outputPerMTok: 10, cachedInputPerMTok: 0.2, webSearchPerThousand: 10 },
+    'claude-haiku-4-5-20251001': {
+      inputPerMTok: 1,
+      outputPerMTok: 5,
+      cachedInputPerMTok: 0.1,
+      webSearchPerThousand: 10,
+    },
     'gpt-5': { inputPerMTok: 1.25, outputPerMTok: 10, cachedInputPerMTok: 0.125, webSearchPerThousand: 10 },
     fake: { inputPerMTok: 0, outputPerMTok: 0 },
   },
-};
+});

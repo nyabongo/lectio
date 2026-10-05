@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_CONFIG } from './defaults.ts';
 import { deepMerge } from './merge.ts';
-import { ConfigError, pointerSegment, validateConfig } from './validate.ts';
+import { ConfigError, familyOfModel, pointerSegment, validateConfig } from './validate.ts';
 import type { ConfigIssue } from './validate.ts';
 
 function issuesFor(override: unknown): readonly ConfigIssue[] {
@@ -21,7 +21,7 @@ describe('validateConfig', () => {
   });
 
   it('rejects verifiers from the same family with an explanation', () => {
-    const issues = issuesFor({ verifiers: { refuter: { family: 'anthropic', model: 'claude-haiku-4-5' } } });
+    const issues = issuesFor({ verifiers: { refuter: { family: 'anthropic', model: 'claude-haiku-4-5-20251001' } } });
     expect(issues).toHaveLength(1);
     expect(issues[0]?.pointer).toBe('/verifiers/refuter/family');
     expect(issues[0]?.message).toMatch(/different model families \(both are "anthropic"\)/);
@@ -108,6 +108,46 @@ describe('validateConfig', () => {
     ]);
   });
 
+  it('rejects a family label that contradicts the model id', () => {
+    expect(issuesFor({ verifiers: { refuter: { family: 'openai', model: 'claude-sonnet-5-5' } } })).toEqual(
+      expect.arrayContaining([
+        {
+          pointer: '/verifiers/refuter/family',
+          message: '"openai" does not match model "claude-sonnet-5-5", which belongs to the anthropic family',
+        },
+      ]),
+    );
+    expect(issuesFor({ research: { models: { cheap: { family: 'anthropic', model: 'gpt-5' } } } })).toEqual([
+      {
+        pointer: '/research/models/cheap/family',
+        message: '"anthropic" does not match model "gpt-5", which belongs to the openai family',
+      },
+    ]);
+  });
+
+  it('trusts the family label for model ids without a known prefix', () => {
+    const config = validateConfig(
+      deepMerge(DEFAULT_CONFIG, {
+        verifiers: { refuter: { family: 'google', model: 'custom-model' } },
+        pricing: { 'custom-model': { inputPerMTok: 1, outputPerMTok: 1 } },
+      }),
+    );
+    expect(config.verifiers.refuter.family).toBe('google');
+  });
+
+  it('validates the Anthropic tool versions', () => {
+    expect(issuesFor({ tools: { anthropic: { webSearch: 'web_search_latest', extra: 'x' } } })).toEqual(
+      expect.arrayContaining([
+        { pointer: '/tools/anthropic/webSearch', message: 'must match pattern "^web_search_[0-9]{8}$"' },
+        { pointer: '/tools/anthropic/extra', message: 'unknown key' },
+      ]),
+    );
+    const config = validateConfig(
+      deepMerge(DEFAULT_CONFIG, { tools: { anthropic: { webFetch: 'web_fetch_20250910' } } }),
+    );
+    expect(config.tools.anthropic.webFetch).toBe('web_fetch_20250910');
+  });
+
   it('keeps quoted words within the excerpt limit', () => {
     expect(issuesFor({ licenceGuard: { maxQuotedWords: 30 } })).toEqual([
       { pointer: '/licenceGuard/maxQuotedWords', message: 'must not exceed licenceGuard.maxExcerptWords' },
@@ -128,5 +168,15 @@ describe('validateConfig', () => {
 describe('pointerSegment', () => {
   it('escapes ~ and / per RFC 6901', () => {
     expect(pointerSegment('a~b/c')).toBe('a~0b~1c');
+  });
+});
+
+describe('familyOfModel', () => {
+  it('maps known prefixes to families', () => {
+    expect(familyOfModel('claude-opus-5-5')).toBe('anthropic');
+    expect(familyOfModel('gpt-5')).toBe('openai');
+    expect(familyOfModel('o3')).toBe('openai');
+    expect(familyOfModel('gemini-2.5-pro')).toBe('google');
+    expect(familyOfModel('fake')).toBeUndefined();
   });
 });

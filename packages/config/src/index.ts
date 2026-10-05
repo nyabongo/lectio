@@ -12,6 +12,6 @@ export { CONFIG_ENV_VAR, DEFAULT_CONFIG_FILE, findRepoRoot, loadConfig, resolveC
 export type { LoadConfigOptions, ResolvedConfigPath } from './load.ts';
 export { deepFreeze, deepMerge } from './merge.ts';
 export { configSchema } from './schema.ts';
-export { ConfigError, validateConfig } from './validate.ts';
+export { ConfigError, familyOfModel, validateConfig } from './validate.ts';
 export type { ConfigIssue } from './validate.ts';
 export type * from './types.ts';

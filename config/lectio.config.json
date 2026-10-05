@@ -65,11 +65,15 @@
     "models": {
       "generator": {
         "family": "anthropic",
-        "model": "claude-sonnet-4-5"
+        "model": "claude-opus-5-5"
       },
       "repair": {
         "family": "anthropic",
-        "model": "claude-sonnet-4-5"
+        "model": "claude-opus-5-5"
+      },
+      "cheap": {
+        "family": "anthropic",
+        "model": "claude-haiku-4-5-20251001"
       }
     }
   },
@@ -80,7 +84,7 @@
   "verifiers": {
     "confirmer": {
       "family": "anthropic",
-      "model": "claude-haiku-4-5"
+      "model": "claude-sonnet-5-5"
     },
     "refuter": {
       "family": "openai",
@@ -109,18 +113,30 @@
   },
   "lectionary": {
     "edition": "OLM-1981",
-    "primarySource": "liturgical-calendar-api",
-    "crossCheckSource": "olm-1981-index",
+    "primarySource": "litcal",
+    "crossCheckSource": "olm-1981",
     "provisional": true
   },
+  "tools": {
+    "anthropic": {
+      "webSearch": "web_search_20260209",
+      "webFetch": "web_fetch_20260209"
+    }
+  },
   "pricing": {
-    "claude-sonnet-4-5": {
-      "inputPerMTok": 3,
-      "outputPerMTok": 15,
-      "cachedInputPerMTok": 0.3,
+    "claude-opus-5-5": {
+      "inputPerMTok": 4,
+      "outputPerMTok": 20,
+      "cachedInputPerMTok": 0.2,
       "webSearchPerThousand": 10
     },
-    "claude-haiku-4-5": {
+    "claude-sonnet-5-5": {
+      "inputPerMTok": 2,
+      "outputPerMTok": 10,
+      "cachedInputPerMTok": 0.2,
+      "webSearchPerThousand": 10
+    },
+    "claude-haiku-4-5-20251001": {
       "inputPerMTok": 1,
       "outputPerMTok": 5,
       "cachedInputPerMTok": 0.1,

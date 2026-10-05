@@ -103,6 +103,8 @@ export interface ResearchConfig {
   readonly models: {
     readonly generator: ModelChoice;
     readonly repair: ModelChoice;
+    /** Cheap, high-volume tasks (classification, extraction, short rewrites). */
+    readonly cheap: ModelChoice;
   };
 }
 
@@ -152,6 +154,16 @@ export interface LectionaryConfig {
   readonly provisional: boolean;
 }
 
+/** Server-tool versions, per provider. */
+export interface ToolsConfig {
+  readonly anthropic: {
+    /** Anthropic web search tool `type`, for example `web_search_20260209`. */
+    readonly webSearch: string;
+    /** Anthropic web fetch tool `type`, for example `web_fetch_20260209`. */
+    readonly webFetch: string;
+  };
+}
+
 /** USD prices per million tokens (and per thousand web searches) for one model id. */
 export interface ModelPrice {
   readonly inputPerMTok: number;
@@ -172,6 +184,8 @@ export interface LectioConfig {
   readonly tts: TtsConfig;
   readonly licenceGuard: LicenceGuardConfig;
   readonly lectionary: LectionaryConfig;
+  /** Server-tool versions the live LLM providers send (L-039). */
+  readonly tools: ToolsConfig;
   /** Token prices by model id, used by the cost meter. */
   readonly pricing: Readonly<Record<string, ModelPrice>>;
 }

@@ -93,7 +93,7 @@ export const configSchema: Schema = object({
     prGrouping: oneOf('passage'),
     maxRepairs: nonNegInt,
     budget: object({ perPassageUsd: usd, perRunUsd: usd, backfillTotalUsd: usd }),
-    models: object({ generator: modelChoice, repair: modelChoice }),
+    models: object({ generator: modelChoice, repair: modelChoice, cheap: modelChoice }),
   }),
   runway: object({ windowDays: posInt, maxMissingDays: nonNegInt }),
   verifiers: object({
@@ -122,6 +122,12 @@ export const configSchema: Schema = object({
     primarySource: nonEmpty,
     crossCheckSource: nonEmpty,
     provisional: bool,
+  }),
+  tools: object({
+    anthropic: object({
+      webSearch: { type: 'string', pattern: '^web_search_[0-9]{8}$' },
+      webFetch: { type: 'string', pattern: '^web_fetch_[0-9]{8}$' },
+    }),
   }),
   pricing: record(
     object({ inputPerMTok: usd, outputPerMTok: usd, cachedInputPerMTok: usd, webSearchPerThousand: usd }, [
