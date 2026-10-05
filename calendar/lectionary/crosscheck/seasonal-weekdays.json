@@ -2714,6 +2714,24 @@
   ],
   "consulted": [
     {
+      "kind": "proper-of-time",
+      "key": "advent-weekday-1-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekday1Monday",
+      "note": "one reading for every year, compared with the OLM reading; no second source for the Year A substitute first reading Is 4:2-6"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-weekday-5-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday5Monday",
+      "note": "one reading for every year, compared with the OLM reading; no second source for the Year C substitute gospel Jn 8:12-20"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "easter-weekday-4-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#EasterWeekday4Monday",
+      "note": "one reading for every year, compared with the OLM reading; no second source for the Year A substitute gospel Jn 10:11-18"
+    },
+    {
       "kind": "celebrations",
       "key": "christmas-octave-day-6",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayDec30",

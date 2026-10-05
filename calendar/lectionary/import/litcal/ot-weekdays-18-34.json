@@ -1,7 +1,8 @@
 {
-  "$comment": "LitCal leaves imported into block ot-weekdays-18-34 (L-067). At the pinned revision LitCal has weekday data for OT weeks 18-34 only for week 34 of Year I; feriale_per_annum_I is empty for weeks 18-33 and feriale_per_annum_II for weeks 18-34. Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts ot-weekdays-18-34",
+  "$comment": "LitCal leaves imported into block ot-weekdays-18-34 (L-067). At the pinned revision LitCal has weekday data for OT weeks 18-34 only for week 34 of Year I; feriale_per_annum_I is empty for weeks 18-33 and feriale_per_annum_II for weeks 18-34. Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts ot-weekdays-18-34. The weekday gospel is shared by Years I and II, so `shared` imports it without a cycle.",
   "target": "ot-weekdays-18-34/proper-of-time.json",
   "kind": "proper-of-time",
+  "shared": ["gospel"],
   "imports": [
     { "key": "ot-weekday-34-mon", "cycle": "I", "locator": "feriale_per_annum_I/en.json#OrdWeekday34Monday" },
     { "key": "ot-weekday-34-tue", "cycle": "I", "locator": "feriale_per_annum_I/en.json#OrdWeekday34Tuesday" },

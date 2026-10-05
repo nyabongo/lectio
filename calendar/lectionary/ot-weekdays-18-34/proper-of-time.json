@@ -39,11 +39,13 @@
             {
               "slot": "gospel",
               "ref": "Mt 14:13-21",
-              "alternatives": [
-                {
-                  "ref": "Mt 14:22-36"
-                }
-              ],
+              "source": "olm-1981 p?#407",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 14:22-36",
               "source": "olm-1981 p?#407",
               "status": "provisional"
             }
@@ -88,11 +90,13 @@
             {
               "slot": "gospel",
               "ref": "Mt 14:22-36",
-              "alternatives": [
-                {
-                  "ref": "Mt 15:1-2, 10-14"
-                }
-              ],
+              "source": "olm-1981 p?#408",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Mt 15:1-2, 10-14",
               "source": "olm-1981 p?#408",
               "status": "provisional"
             }
@@ -3756,17 +3760,9 @@
             },
             {
               "slot": "gospel",
-              "cycle": "I",
               "ref": "Lk 21:1-4",
               "printed": "Luke 21:1-4",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday34Monday",
-              "status": "provisional"
-            },
-            {
-              "slot": "gospel",
-              "cycle": "II",
-              "ref": "Lk 21:1-4",
-              "source": "olm-1981 p?#503",
               "status": "provisional"
             }
           ]
@@ -3811,17 +3807,9 @@
             },
             {
               "slot": "gospel",
-              "cycle": "I",
               "ref": "Lk 21:5-11",
               "printed": "Luke 21:5-11",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday34Tuesday",
-              "status": "provisional"
-            },
-            {
-              "slot": "gospel",
-              "cycle": "II",
-              "ref": "Lk 21:5-11",
-              "source": "olm-1981 p?#504",
               "status": "provisional"
             }
           ]
@@ -3866,17 +3854,9 @@
             },
             {
               "slot": "gospel",
-              "cycle": "I",
               "ref": "Lk 21:12-19",
               "printed": "Luke 21:12-19",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday34Wednesday",
-              "status": "provisional"
-            },
-            {
-              "slot": "gospel",
-              "cycle": "II",
-              "ref": "Lk 21:12-19",
-              "source": "olm-1981 p?#505",
               "status": "provisional"
             }
           ]
@@ -3921,17 +3901,9 @@
             },
             {
               "slot": "gospel",
-              "cycle": "I",
               "ref": "Lk 21:20-28",
               "printed": "Luke 21:20-28",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday34Thursday",
-              "status": "provisional"
-            },
-            {
-              "slot": "gospel",
-              "cycle": "II",
-              "ref": "Lk 21:20-28",
-              "source": "olm-1981 p?#506",
               "status": "provisional"
             }
           ]
@@ -3976,17 +3948,9 @@
             },
             {
               "slot": "gospel",
-              "cycle": "I",
               "ref": "Lk 21:29-33",
               "printed": "Luke 21:29-33",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday34Friday",
-              "status": "provisional"
-            },
-            {
-              "slot": "gospel",
-              "cycle": "II",
-              "ref": "Lk 21:29-33",
-              "source": "olm-1981 p?#507",
               "status": "provisional"
             }
           ]
@@ -4031,17 +3995,9 @@
             },
             {
               "slot": "gospel",
-              "cycle": "I",
               "ref": "Lk 21:34-36",
               "printed": "Luke 21:34-36",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday34Saturday",
-              "status": "provisional"
-            },
-            {
-              "slot": "gospel",
-              "cycle": "II",
-              "ref": "Lk 21:34-36",
-              "source": "olm-1981 p?#508",
               "status": "provisional"
             }
           ]
