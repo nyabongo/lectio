@@ -141,7 +141,7 @@ export interface QuotedSpan {
 }
 
 const OPEN_BEFORE = /[\s([{“”"„«‘—–-]/u;
-const WORD_CHAR = /[\p{L}\p{N}]/u;
+const WORD_CHAR = /[\p{L}\p{M}\p{N}]/u;
 const SPACE = /\s/u;
 
 interface QuoteFamily {
@@ -166,7 +166,7 @@ const FAMILIES: readonly QuoteFamily[] = [
 /**
  * Spans of one family. A mark opens only at the start of a word (after a space or opening
  * punctuation, before a non-space) and closes only at the end of one (after a non-space, before
- * a non-letter), so the apostrophes in `owner’s` and `’tis` are not quotes.
+ * a non-letter; a combining mark counts as part of the letter), so the apostrophes in `owner’s` and `’tis` are not quotes.
  */
 function familySpans(text: string, family: QuoteFamily): QuotedSpan[] {
   const spans: QuotedSpan[] = [];
