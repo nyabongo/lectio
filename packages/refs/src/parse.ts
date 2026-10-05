@@ -4,7 +4,7 @@ import type { Result } from '@lectio/shared';
 import { findBook } from './books.ts';
 import type { Book } from './books.ts';
 import { RefError } from './errors.ts';
-import { isLetteredChapter, readChapter } from './greek-esther.ts';
+import { readChapter } from './greek-esther.ts';
 import type { Point, Ref, Segment } from './types.ts';
 import { checkSegment } from './validate.ts';
 
@@ -37,17 +37,16 @@ function point(c: number, v: number | undefined, part: string | undefined): Poin
 /** The chapter a written chapter stands for: letters only in Esther, and never Esther's stand-in numbers. */
 function chapterOf(book: Book, text: string, input: string): number {
   const chapter = readChapter(book.code, text);
-  if (chapter === undefined) {
-    throw new RefError(
-      'MALFORMED',
-      `"${text.toUpperCase()}" is not a chapter of ${book.name}; only Esther has lettered chapters (A–F)`,
-      input,
-    );
-  }
-  if (isNumber(text) && isLetteredChapter(book.code, chapter)) {
+  if (chapter !== undefined) return chapter;
+  // readChapter refuses a number only for Esther's stand-ins (101–106).
+  if (isNumber(text)) {
     throw new RefError('MALFORMED', `Esther has no chapter ${text}; cite the Greek additions by letter (A–F)`, input);
   }
-  return chapter;
+  throw new RefError(
+    'MALFORMED',
+    `"${text.toUpperCase()}" is not a chapter of ${book.name}; only Esther has lettered chapters (A–F)`,
+    input,
+  );
 }
 
 /**

@@ -75,11 +75,14 @@ describe('fromKey', () => {
     ['MT.1-2.3', 'both ends must be whole chapters or both verses'],
     ['JUDE.2.1', 'single chapter'],
     ['JUDE.1', 'single chapter'],
-    ['EST.103.12', 'the canonical spelling is "EST.C.12"'],
+    ['EST.103.12', 'cannot read segment "103.12"'],
+    ['EST.C.12_103.1', 'cannot read segment "103.1"'],
+    ['EST.1.2-C', 'cannot read segment "1.2-C"'],
+    ['EST.1-103', 'cannot read segment "1-103"'],
     ['GN.C.12', 'cannot read segment "C.12"'],
     ['GN.1-C', 'cannot read segment "1-C"'],
     ['EST.G.1', 'cannot read segment "G.1"'],
-    ['EST.C.12-D', 'the canonical spelling is "EST.C.12-104"'],
+    ['EST.C.12-D', 'cannot read segment "C.12-D"'],
     ['EST.4.17-C.2', 'cited separately'],
   ])('rejects %s', (key, reason) => {
     expect(isKey(key)).toBe(false);
@@ -109,5 +112,51 @@ describe('key file-name safety', () => {
     expect(isFilenameSafe('a/b')).toBe(false);
     expect(isFilenameSafe('x.')).toBe(false);
     expect(isFilenameSafe(toKey(ref))).toBe(true);
+  });
+});
+
+describe('KEY_PATTERN', () => {
+  it.each([
+    'MT.20.1-16',
+    'PHIL.1.20-24_1.27',
+    'PS.23',
+    'IS.40-41',
+    'EST.4.17',
+    'EST.C.12_C.14-16',
+    'EST.C.30-D.2',
+    'EST.A-B',
+    'EST.4_C.1-3',
+  ])('accepts %s', (key) => {
+    expect(key).toMatch(KEY_PATTERN);
+  });
+
+  it.each(['MT.1.C', 'GN.C.12', 'PS.C', 'EST.1.C', 'EST.C.D', 'EST.C.1-2.D', 'EST.G.1', 'est.C.1', 'EST.C.1_'])(
+    'refuses %s: letters only in an Esther chapter position',
+    (key) => {
+      expect(key).not.toMatch(KEY_PATTERN);
+    },
+  );
+});
+
+describe('Esther verse ends that look like stand-in chapters', () => {
+  // A verse end is a number, never a chapter: 101–106 are only refused as chapters.
+  it.each([
+    ['EST.1.2-103', 'Est 1:2-103', { start: { c: 1, v: 2 }, end: { c: 1, v: 103 } }],
+    ['EST.A.1-103', 'Est A:1-103', { start: { c: 101, v: 1 }, end: { c: 101, v: 103 } }],
+    ['EST.A.1-101', 'Est A:1-101', { start: { c: 101, v: 1 }, end: { c: 101, v: 101 } }],
+  ])('%s reads as %s does', (key, written, segment) => {
+    const ref = { book: 'EST' as const, segments: [segment] };
+    expect(fromKey(key)).toEqual(ref);
+    expect(toKey(ref)).toBe(key);
+    expect(toKey(parseRef(written))).toBe(key);
+  });
+
+  it('round-trips the property-test counterexample EST.A.1-101_A.1', () => {
+    const ref = fromKey('EST.A.1-101_A.1');
+    expect(ref.segments).toEqual([
+      { start: { c: 101, v: 1 }, end: { c: 101, v: 101 } },
+      { start: { c: 101, v: 1 }, end: { c: 101, v: 1 } },
+    ]);
+    expect(toKey(ref)).toBe('EST.A.1-101_A.1');
   });
 });

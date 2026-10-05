@@ -319,7 +319,9 @@ export function translationSegments(
     try {
       const result = localeSegments(repo, locale);
       segments.push(...result.segments);
-      for (const { key, reason } of result.skipped) io.err(`  skipped ${locale} ${key}: ${reason}`);
+      for (const { key, reason, message } of result.skipped) {
+        io.err(`  skipped ${locale} ${key}: ${reason}${message === undefined ? '' : ` (${message})`}`);
+      }
     } catch (error) {
       io.err(`  skipped locale ${locale}: ${(error as Error).message}`);
     }

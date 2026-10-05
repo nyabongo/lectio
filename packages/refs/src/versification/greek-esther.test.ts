@@ -175,6 +175,8 @@ describe('greekEstherLxx', () => {
     expect(code(() => greekEstherLxx(lettered('C', 31)))).toBe('UNKNOWN_VERSE');
     expect(code(() => greekEstherLxx({ book: 'PS', c: 103, v: 1 }))).toBe('UNKNOWN_VERSE');
     expect(() => greekEstherLxx(est(4, 17))).toThrow("EST 4:17 is not a verse of Esther's lettered chapters (A–F)");
+    // The message names the letter, never the stand-in number 103.
+    expect(() => greekEstherLxx(lettered('C', 99))).toThrow("EST C:99 is not a verse of Esther's lettered chapters");
   });
 
   it('reads only the single-verse ESG lines of eng.vrs', () => {
