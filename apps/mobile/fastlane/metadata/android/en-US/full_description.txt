@@ -1,0 +1,19 @@
+Lectio is a companion to the daily Mass readings: their history, their original words, and a voice.
+
+Follow: each day shows the liturgical day and its readings by reference. Lectio carries the commentary, not the readings; every reading opens at a licensed source.
+
+Understand: who wrote each passage, to whom, and why, plus notes on what the Hebrew, Greek or Latin says that a translation cannot. Every note lists its sources.
+
+Listen: one tap plays the day's context and translation notes as a single queue, with the screen locked too.
+
+Share: every day, reading and note has its own link to send to friends.
+
+Also in Lectio:
+- Bookmarks and personal notes, kept on your device.
+- A daily reminder at the time you choose.
+- English and Kiswahili.
+- Recently opened days stay available offline.
+
+Privacy: Lectio has no account, no ads and no analytics, and collects no data. Bookmarks, notes and settings stay on your device. The app only downloads the public commentary and narration that Lectio publishes.
+
+Lectio is open source: https://github.com/nyabongo/lectio

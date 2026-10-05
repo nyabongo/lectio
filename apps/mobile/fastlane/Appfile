@@ -1,0 +1,4 @@
+# The one app this repository ships (bundle id and Play package name). Store
+# credentials never live here: the lanes read them from the environment.
+app_identifier("io.github.nyabongo.lectio")
+package_name("io.github.nyabongo.lectio")

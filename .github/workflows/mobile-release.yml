@@ -1,0 +1,412 @@
+# Mobile release (L-109). Builds the Flutter app (apps/mobile) for the stores with fastlane
+# (apps/mobile/fastlane, README.md there): Android signed app bundle -> Play internal testing,
+# iOS ipa -> TestFlight with an App Store Connect API key.
+#
+# Triggers:
+# - `push` of a `mobile-v<major>.<minor>.<patch>` tag on a commit of main: a release. The tag gives the
+#   version name; the run number gives the build number (versionCode / CFBundleVersion), which only grows.
+# - `workflow_dispatch`: a dry run on any branch. It builds both apps unsigned (Android debug-signed,
+#   iOS `--no-codesign`), checks the store metadata drafts and never reads a signing or store secret.
+#
+# Secrets do not exist yet. A tag run without them builds what it can and skips signing and upload with a
+# note in the job summary instead of failing; the summary lists what is missing. Secrets reach only the
+# step that uses them (as env, never echoed). Only tag runs have jobs that reference `secrets.*`: the
+# `secrets` job (presence only) is skipped on a dispatch, and the signing and upload steps are gated on
+# its outputs, so a dispatch run is never sent a secret.
+#
+# Not a required check: it does not run on pull requests (no pull_request trigger, so no secrets on PRs).
+name: Mobile release
+
+on:
+  push:
+    tags: ['mobile-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # pubspec.yaml's environment.flutter pins the SDK (flutter-version-file).
+  RUBY_VERSION: '3.3'
+  BUNDLE_GEMFILE: ${{ github.workspace }}/apps/mobile/fastlane/Gemfile
+  FASTLANE_OPT_OUT_USAGE: 'YES'
+  FASTLANE_SKIP_UPDATE_CHECK: 'YES'
+  FASTLANE_HIDE_CHANGELOG: 'YES'
+  FASTLANE_SKIP_DOCS: 'YES'
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+
+jobs:
+  # Tag runs only: which secrets are set. Each output is the string 'true' or 'false', never a value.
+  # Skipped on a dispatch, so no job of a dry run references a secret.
+  secrets:
+    if: github.event_name == 'push' && github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/mobile-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      android-signing: ${{ steps.present.outputs.android-signing }}
+      play: ${{ steps.present.outputs.play }}
+      ios-signing: ${{ steps.present.outputs.ios-signing }}
+      app-store-connect: ${{ steps.present.outputs.app-store-connect }}
+    steps:
+      - name: Which secrets are set
+        id: present
+        env:
+          HAS_ANDROID_SIGNING: >-
+            ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 != '' && secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD != '' &&
+            secrets.ANDROID_UPLOAD_KEY_ALIAS != '' && secrets.ANDROID_UPLOAD_KEY_PASSWORD != '' }}
+          HAS_PLAY: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+          HAS_IOS_SIGNING: >-
+            ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 != '' &&
+            secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD != '' && secrets.IOS_PROVISIONING_PROFILE_BASE64 != '' }}
+          HAS_APP_STORE_CONNECT: >-
+            ${{ secrets.APP_STORE_CONNECT_API_KEY_ID != '' && secrets.APP_STORE_CONNECT_API_ISSUER_ID != '' &&
+            secrets.APP_STORE_CONNECT_API_KEY_P8_BASE64 != '' }}
+        run: |
+          {
+            echo "android-signing=$HAS_ANDROID_SIGNING"
+            echo "play=$HAS_PLAY"
+            echo "ios-signing=$HAS_IOS_SIGNING"
+            echo "app-store-connect=$HAS_APP_STORE_CONNECT"
+          } >> "$GITHUB_OUTPUT"
+
+  plan:
+    needs: secrets
+    # Runs when `secrets` is skipped (a dispatch: dry run) as well as when it succeeds.
+    if: ${{ !cancelled() && needs.secrets.result != 'failure' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      build-name: ${{ steps.plan.outputs.build-name }}
+      build-number: ${{ steps.plan.outputs.build-number }}
+      android-sign: ${{ steps.plan.outputs.android-sign }}
+      android-upload: ${{ steps.plan.outputs.android-upload }}
+      ios-sign: ${{ steps.plan.outputs.ios-sign }}
+      ios-upload: ${{ steps.plan.outputs.ios-upload }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Release or dry run
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+          SECRETS_JOB: ${{ needs.secrets.result }}
+          HAS_ANDROID_SIGNING: ${{ needs.secrets.outputs.android-signing }}
+          HAS_PLAY: ${{ needs.secrets.outputs.play }}
+          HAS_IOS_SIGNING: ${{ needs.secrets.outputs.ios-signing }}
+          HAS_APP_STORE_CONNECT: ${{ needs.secrets.outputs.app-store-connect }}
+        run: |
+          android_sign=false android_upload=false ios_sign=false ios_upload=false build_name=""
+          summary="$GITHUB_STEP_SUMMARY"
+          if [ "$EVENT" = push ] && [ "$REF_TYPE" = tag ] && [ "$SECRETS_JOB" = success ]; then
+            if [[ ! "$REF_NAME" =~ ^mobile-v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+              echo "::error::Release tags look like mobile-v1.2.3; got $REF_NAME."
+              exit 1
+            fi
+            build_name="${BASH_REMATCH[1]}"
+            if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+              echo "::error::$REF_NAME points at a commit that is not on main; tag a commit of main."
+              exit 1
+            fi
+            echo "## Mobile release $build_name (build $RUN_NUMBER)" >> "$summary"
+            if [ "$HAS_ANDROID_SIGNING" = true ]; then
+              android_sign=true
+              if [ "$HAS_PLAY" = true ]; then android_upload=true; else
+                echo "- Android: **upload skipped**, secret PLAY_SERVICE_ACCOUNT_JSON is not set." >> "$summary"
+              fi
+            else
+              echo "- Android: **signing and upload skipped**, the ANDROID_UPLOAD_KEYSTORE_BASE64, ANDROID_UPLOAD_KEYSTORE_PASSWORD, ANDROID_UPLOAD_KEY_ALIAS and ANDROID_UPLOAD_KEY_PASSWORD secrets are not all set; the bundle is debug-signed." >> "$summary"
+            fi
+            if [ "$HAS_IOS_SIGNING" = true ]; then
+              ios_sign=true
+              if [ "$HAS_APP_STORE_CONNECT" = true ]; then ios_upload=true; else
+                echo "- iOS: **upload skipped**, the APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_API_ISSUER_ID and APP_STORE_CONNECT_API_KEY_P8_BASE64 secrets are not all set." >> "$summary"
+              fi
+            else
+              echo "- iOS: **signing and upload skipped**, the IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64, IOS_DISTRIBUTION_CERTIFICATE_PASSWORD and IOS_PROVISIONING_PROFILE_BASE64 secrets are not all set; built with --no-codesign." >> "$summary"
+            fi
+          else
+            {
+              echo "## Mobile release: dry run (build $RUN_NUMBER)"
+              echo "Started by $EVENT on $REF_NAME. Both apps build unsigned and nothing is uploaded; no signing or store secret is read."
+              echo "Push a \`mobile-v<major>.<minor>.<patch>\` tag on main to release."
+            } >> "$summary"
+          fi
+          {
+            echo "build-name=$build_name"
+            echo "build-number=$RUN_NUMBER"
+            echo "android-sign=$android_sign"
+            echo "android-upload=$android_upload"
+            echo "ios-sign=$ios_sign"
+            echo "ios-upload=$ios_upload"
+          } >> "$GITHUB_OUTPUT"
+          echo "android sign=$android_sign upload=$android_upload; ios sign=$ios_sign upload=$ios_upload"
+
+  # Each platform has an unsigned job (dry runs, and tag runs without signing secrets) and a release job.
+  # Only the release jobs reference `secrets.*`, and they run only when `plan` says to sign, which a
+  # dispatch never does. The setup steps are shared through YAML anchors.
+  android:
+    needs: plan
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.android-sign != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      LECTIO_BUILD_NAME: ${{ needs.plan.outputs.build-name }}
+      LECTIO_BUILD_NUMBER: ${{ needs.plan.outputs.build-number }}
+    steps:
+      - &checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - &setup-java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+      - &setup-flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version-file: apps/mobile/pubspec.yaml
+          cache: true
+      - &setup-ruby
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      # Only the committed Gemfile.lock, installed frozen: nothing is resolved here.
+      - &install-fastlane
+        name: Install fastlane
+        working-directory: apps/mobile/fastlane
+        run: |
+          if [ ! -f Gemfile.lock ]; then
+            echo "::error::apps/mobile/fastlane/Gemfile.lock is missing; restore it from git (see the README there)."
+            exit 1
+          fi
+          bundle config set --local frozen true
+          bundle install --jobs 4
+      - &pub-get
+        run: flutter pub get --enforce-lockfile
+      - &check-metadata
+        run: bundle exec fastlane check_metadata
+      - name: Build (debug-signed, not for the store)
+        run: bundle exec fastlane android build
+      - name: Upload the app bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: lectio-aab-debug-signed
+          path: apps/mobile/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+          if-no-files-found: error
+      - name: Summary
+        if: always()
+        env:
+          OUTCOME: ${{ job.status }}
+        run: |
+          {
+            echo "### Android ($OUTCOME)"
+            echo "- Release app bundle built debug-signed (artifact lectio-aab-debug-signed); not uploaded."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  android-release:
+    needs: plan
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.android-sign == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      LECTIO_BUILD_NAME: ${{ needs.plan.outputs.build-name }}
+      LECTIO_BUILD_NUMBER: ${{ needs.plan.outputs.build-number }}
+    steps:
+      - *checkout
+      - *setup-java
+      - *setup-flutter
+      - *setup-ruby
+      - *install-fastlane
+      - *pub-get
+      - *check-metadata
+      # AGP reads the android.injected.signing.* Gradle properties (the ones Android Studio's signed-bundle
+      # wizard uses) and signs the release bundle with them, so build.gradle.kts keeps its debug fallback.
+      # The key, the properties and the Gradle daemon are gone when this step ends, before any upload.
+      - name: Build (signed with the upload key)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+          # No long-lived daemon keeps the passwords in memory after the build.
+          GRADLE_OPTS: -Dorg.gradle.daemon=false
+        run: |
+          keystore="$RUNNER_TEMP/upload-keystore.jks"
+          properties="$HOME/.gradle/gradle.properties"
+          cleanup() {
+            rm -f "$keystore"
+            if [ -f "$properties" ]; then sed -i '/^android\.injected\.signing\./d' "$properties"; fi
+            if [ -x android/gradlew ]; then android/gradlew --stop >/dev/null 2>&1 || true; fi
+          }
+          trap cleanup EXIT
+          # .properties values are one line each and a backslash escapes: refuse line breaks, double backslashes.
+          for value in "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD"; do
+            if [[ "$value" == *$'\n'* || "$value" == *$'\r'* ]]; then
+              echo "::error::The upload key's alias and passwords must be single-line."
+              exit 1
+            fi
+          done
+          escape() { printf '%s' "${1//\\/\\\\}"; }
+          base64 --decode <<<"$KEYSTORE_BASE64" > "$keystore"
+          chmod 600 "$keystore"
+          mkdir -p "$HOME/.gradle"
+          touch "$properties"
+          chmod 600 "$properties"
+          {
+            printf 'android.injected.signing.store.file=%s\n' "$(escape "$keystore")"
+            printf 'android.injected.signing.store.password=%s\n' "$(escape "$KEYSTORE_PASSWORD")"
+            printf 'android.injected.signing.key.alias=%s\n' "$(escape "$KEY_ALIAS")"
+            printf 'android.injected.signing.key.password=%s\n' "$(escape "$KEY_PASSWORD")"
+          } >> "$properties"
+          bundle exec fastlane android build
+          # The bundle's signer must be the upload key's certificate (an unsigned or debug-signed bundle fails).
+          expected="$(keytool -list -v -keystore "$keystore" -alias "$KEY_ALIAS" -storepass:env KEYSTORE_PASSWORD \
+            | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1)"
+          actual="$(keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab \
+            | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1)"
+          if [ -z "$expected" ] || [ "$expected" != "$actual" ]; then
+            echo "::error::The release bundle is not signed with the upload key (signer: ${actual:-none})."
+            exit 1
+          fi
+          echo "Signed with the upload key, SHA-256 $actual"
+      - name: Upload the app bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: lectio-release-aab
+          path: apps/mobile/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+          if-no-files-found: error
+      - name: Play internal testing
+        if: needs.plan.outputs.android-upload == 'true'
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          # `draft` until the app has a reviewed release; then set the repository variable to `completed`.
+          PLAY_RELEASE_STATUS: ${{ vars.PLAY_RELEASE_STATUS || 'draft' }}
+        run: bundle exec fastlane android internal
+      - name: Summary
+        if: always()
+        env:
+          UPLOAD: ${{ needs.plan.outputs.android-upload }}
+          OUTCOME: ${{ job.status }}
+        run: |
+          {
+            echo "### Android ($OUTCOME)"
+            if [ "$UPLOAD" = true ]; then echo "- Signed app bundle uploaded to the Play internal testing track."
+            else echo "- Signed app bundle built (artifact lectio-release-aab); not uploaded."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      # Belt and braces: the signed build step already removed these when it exited.
+      - name: Remove the upload key
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/upload-keystore.jks"
+          if [ -f "$HOME/.gradle/gradle.properties" ]; then
+            sed -i '/^android\.injected\.signing\./d' "$HOME/.gradle/gradle.properties"
+          fi
+
+  ios:
+    needs: plan
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.ios-sign != 'true' }}
+    runs-on: macos-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      LECTIO_BUILD_NAME: ${{ needs.plan.outputs.build-name }}
+      LECTIO_BUILD_NUMBER: ${{ needs.plan.outputs.build-number }}
+    steps:
+      - *checkout
+      - *setup-flutter
+      - *setup-ruby
+      - *install-fastlane
+      - *pub-get
+      # `flutter build ipa --no-codesign`: an unsigned archive, nothing to upload.
+      - name: Build (unsigned)
+        run: bundle exec fastlane ios build
+      - name: Summary
+        if: always()
+        env:
+          OUTCOME: ${{ job.status }}
+        run: |
+          {
+            echo "### iOS ($OUTCOME)"
+            echo "- Release archive built with --no-codesign; no ipa, nothing uploaded."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  ios-release:
+    needs: plan
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.ios-sign == 'true' }}
+    runs-on: macos-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      LECTIO_BUILD_NAME: ${{ needs.plan.outputs.build-name }}
+      LECTIO_BUILD_NUMBER: ${{ needs.plan.outputs.build-number }}
+    steps:
+      - *checkout
+      - *setup-flutter
+      - *setup-ruby
+      - *install-fastlane
+      - *pub-get
+      # The lane deletes the decoded certificate, profile and export options when it ends (ensure).
+      - name: Build (signed)
+        env:
+          IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 }}
+          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: bundle exec fastlane ios build signed:true
+      - name: Upload the ipa
+        uses: actions/upload-artifact@v7
+        with:
+          name: lectio-release-ipa
+          path: apps/mobile/build/ios/ipa/*.ipa
+          retention-days: 14
+          if-no-files-found: error
+      - name: TestFlight
+        if: needs.plan.outputs.ios-upload == 'true'
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8_BASE64 }}
+        run: bundle exec fastlane ios beta
+      - name: Summary
+        if: always()
+        env:
+          UPLOAD: ${{ needs.plan.outputs.ios-upload }}
+          OUTCOME: ${{ job.status }}
+        run: |
+          {
+            echo "### iOS ($OUTCOME)"
+            if [ "$UPLOAD" = true ]; then echo "- Signed ipa uploaded to TestFlight (internal testers)."
+            else echo "- Signed ipa built (artifact lectio-release-ipa); not uploaded."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      # Belt and braces after the lane's own cleanup: the signing files (names from the Fastfile) and
+      # setup_ci's temporary keychain, which holds the distribution certificate.
+      - name: Remove the signing files and keychain
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/lectio.mobileprovision" "$RUNNER_TEMP/ExportOptions.plist"
+          security delete-keychain fastlane_tmp_keychain-db 2>/dev/null || security delete-keychain fastlane_tmp_keychain 2>/dev/null || true
