@@ -7,7 +7,7 @@
  */
 import Seo from '../../../../components/seo/Seo.astro';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
-import { formatDate, localeOf, localePath, t } from '../../../../i18n/index.ts';
+import { formatDate, localeOf, localePath, shortWeekday, t } from '../../../../i18n/index.ts';
 import { colourDotCss, colourLabels, monthPath, monthStaticPaths, monthView } from '../../../../lib/calendar-view.ts';
 import type { MonthId } from '../../../../lib/calendar-view.ts';
 import { siteContext, siteDate, withBase } from '../../../../lib/site.ts';
@@ -79,7 +79,7 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
           view.weekdays.map((date) => (
             <th scope="col">
               <abbr title={formatDate(lang, date, { weekday: 'long' })}>
-                {formatDate(lang, date, { weekday: 'short' })}
+                {shortWeekday(lang, date)}
               </abbr>
             </th>
           ))
@@ -132,7 +132,9 @@ const dayLabel = (date: string, celebration: string | null, colour: string | nul
           {view.celebrations.map((item) => (
             <li>
               <a href={href(item.path)}>
-                <time datetime={item.date}>{formatDate(lang, item.date, { weekday: 'short', day: 'numeric' })}</time>
+                <time datetime={item.date}>
+                  {shortWeekday(lang, item.date)} {formatDate(lang, item.date, { day: 'numeric' })}
+                </time>
                 <span class="name">{item.name}</span>
                 <span class="colour">
                   <span class="colour-dot" data-colour={item.colour} aria-hidden="true" />

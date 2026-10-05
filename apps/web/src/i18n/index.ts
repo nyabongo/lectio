@@ -6,7 +6,13 @@
  *
  * Build-time only (pages and layouts): the default locale and the timezone come from the config via `siteContext()`.
  */
-import { buildCatalogs, formatDate as formatDateIn, localePath as localePathFor, translate } from '../lib/i18n.ts';
+import {
+  buildCatalogs,
+  formatDate as formatDateIn,
+  localePath as localePathFor,
+  shortWeekday as shortWeekdayIn,
+  translate,
+} from '../lib/i18n.ts';
 import type { MessageParams } from '../lib/i18n.ts';
 import { splitLocalePath } from '../lib/locales.ts';
 import { stripBase } from '../lib/seo.ts';
@@ -34,6 +40,11 @@ export function t(locale: string, key: string, params?: MessageParams): string {
 /** `date` (an ISO date, or a `Date` taken in `config.site.timezone`) as the site writes it in `locale`. */
 export function formatDate(locale: string, date: string | Date, options?: Intl.DateTimeFormatOptions): string {
   return formatDateIn(locale, date, siteContext().config.site.timezone, options);
+}
+
+/** The short weekday name of an ISO date in `locale` (`Sun`, `Jpi`), for tight spaces such as the month grid. */
+export function shortWeekday(locale: string, date: string): string {
+  return shortWeekdayIn(locale, date, siteContext().config.site.timezone);
 }
 
 /** A root-relative path for `locale`: the default locale at the root, others under `/<locale>/`. */
