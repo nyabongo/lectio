@@ -22,6 +22,7 @@ const pageTypes = [
   { name: 'passage', path: 'passages/MT.20.1-16/' },
   { name: 'settings', path: 'settings/' },
   { name: 'about', path: 'about/' },
+  { name: 'offline', path: 'offline/' },
   { name: 'not-found', path: 'no-such-page/', tag: EXPECTS_404 },
 ];
 
