@@ -136,7 +136,7 @@ describe('buildLocaleSegments', () => {
       'gospel:MT.20.1-16/note/agathos',
     ]);
     expect(all[0]?.text).toBe(
-      'Muktadha wa Isaya sura ya 55, mistari ya 6 hadi 9. Mtafuteni Bwana maadamu anapatikana. ' +
+      'Muktadha wa Isaya sura ya 55, mistari ya 6 hadi 9. Mwaliko wa toba kwa walio uhamishoni. ' +
         'Mistari hii inafunga kitabu cha faraja kilichoandikiwa walio uhamishoni Babeli.',
     );
   });

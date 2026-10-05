@@ -43,8 +43,15 @@ describe('speakSwahiliReferences', () => {
   });
 
   it('takes a chapter alone only for a psalm or a one-chapter book', () => {
-    expect(speakSwahiliReferences('Zab 23 na Yuda 3')).toBe('Zaburi ya 23 na Yuda, mstari wa 3');
+    expect(speakSwahiliReferences('Zab 23 na Yud 3')).toBe('Zaburi ya 23 na Yuda, mstari wa 3');
+    expect(speakSwahiliReferences('Filemoni 10')).toBe('Filemoni, mstari wa 10');
     expect(speakSwahiliReferences('Mwanzo 1 inaanza')).toBe('Mwanzo 1 inaanza');
+  });
+
+  it('reads Yuda with a chapter alone as a name (Judas), with chapter and verse as Jude', () => {
+    expect(speakSwahiliReferences('Yuda 12 alikuwa mmoja wao')).toBe('Yuda 12 alikuwa mmoja wao');
+    expect(speakSwahiliReferences('Yuda 1:12')).toBe('Yuda, mstari wa 12');
+    expect(speakSwahiliReferences('Yuda 1:3; 1:5')).toBe('Yuda, mistari ya 3 na 5');
   });
 
   it('leaves a trailing part that does not parse as prose, and an unparsable reference as written', () => {
