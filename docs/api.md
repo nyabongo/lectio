@@ -64,7 +64,12 @@ root changes.
 - Keys, references, verses, original-language words, `sourceIds` and `sources` are always the English file's, so
   citations and permalinks match in both languages. `review` describes the text actually shown: for a Kiswahili
   passage it is the translation's review (`method: "human"`, its own `lastReviewedAt`); for an English fallback it
-  is the English file's. `audio` stays `null`.
+  is the English file's.
+- Each Mass's `segments` follow the passages: a Kiswahili passage gives Kiswahili segments (`locale: "sw"`, the
+  script the render pipeline narrates from the translation, `translationSegments` in `@lectio/audio`), an English
+  fallback gives its English segments (`locale: "en"`). Ids are the English ones, so a client can match a segment
+  to its English counterpart and fall back per segment. `audio` (on segments and notes) is the file rendered for the
+  segment's own language, or `null`.
 - `index.json` lists the mirror's templates under `endpoints.locales.sw` (`{ "day": "sw/days/{date}.json", … }`,
   relative to the API root like the others), so a client still only needs `index.json`. The key is present only
   when the site's `site.locales` include `sw`.

@@ -32,8 +32,17 @@ interface NotesDoc {
   translationNotes: { id: string; anchor: string; verse: string }[];
   sources: { id: string }[];
 }
+interface SegmentDoc {
+  id: string;
+  passageKey: string;
+  locale: string;
+  script: string;
+}
 interface DayDoc {
-  masses: { readings: { slot: string; summary?: string | null; passage?: NotesDoc | null }[] }[];
+  masses: {
+    readings: { slot: string; summary?: string | null; passage?: NotesDoc | null }[];
+    segments?: SegmentDoc[];
+  }[];
 }
 interface PassageDoc {
   passage: NotesDoc;
@@ -99,6 +108,13 @@ describe('/api/v1/sw/', () => {
     // Sources stay the English file's, so citations match in both languages.
     expect(gospel?.passage?.sources.map((source) => source.id)).toContain('davies-allison');
     expect(readings.find((reading) => reading.slot === 'first-reading')?.passage).toBeNull();
+    // The Listen queue speaks the reviewed translation: the same ids as the English queue, in Kiswahili.
+    const segments = day.masses.flatMap((mass) => mass.segments ?? []);
+    expect(segments.map(({ id, locale }) => [id, locale])).toEqual([
+      ['MT.20.1-16/context', 'sw'],
+      ...(gospel?.passage?.translationNotes ?? []).map(({ id }) => [`MT.20.1-16/note/${id}`, 'sw']),
+    ]);
+    expect(segments[0]?.script).toMatch(/^Muktadha wa Mathayo sura ya 20/);
   });
 
   it('passages/{key}.json and passages/index.json exist only for approved passages, in Kiswahili', async () => {
@@ -146,6 +162,11 @@ describe('/api/v1/sw/ without a reviewed, up-to-date translation', () => {
       const gospel = day.masses.flatMap((mass) => mass.readings).find((reading) => reading.slot === 'gospel');
       expect(gospel?.passage?.locale).toBe('en');
       expect(gospel?.passage?.summary).toMatch(/^A landowner pays/);
+      // The Listen queue falls back to the English segments.
+      const segments = day.masses.flatMap((mass) => mass.segments ?? []);
+      expect(segments.length).toBeGreaterThan(0);
+      expect(segments.every(({ locale, passageKey }) => locale === 'en' && passageKey === 'MT.20.1-16')).toBe(true);
+      expect(segments[0]?.script).toMatch(/^Context for Matthew chapter 20/);
       const passage = apiPassage(sw, 'MT.20.1-16') as PassageDoc;
       valid(validateApiPassage, passage);
       expect(passage.passage).toMatchObject({ locale: 'en', summary: expect.stringMatching(/^A landowner/) as string });
