@@ -59,6 +59,10 @@ void main() {
     );
   });
 
+  test('notesSemantics names the reading', () {
+    expect(notesSemantics('Mt 20:1-16a'), 'Notes on Mt 20:1-16a');
+  });
+
   test('formatDayDate writes the date out', () {
     expect(formatDayDate('2026-09-20'), 'Sunday 20 September 2026');
     expect(formatDayDate('2027-01-01'), 'Friday 1 January 2027');

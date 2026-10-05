@@ -65,7 +65,10 @@ class DayHeader extends StatelessWidget {
           ),
         ),
         if (principal != null)
-          Text(principal.name, style: theme.textTheme.headlineMedium),
+          Semantics(
+            header: true,
+            child: Text(principal.name, style: theme.textTheme.headlineMedium),
+          ),
         if (day != null) ...[
           const SizedBox(height: 8),
           Wrap(
@@ -297,15 +300,21 @@ class ReadingCard extends StatelessWidget {
                   FilledButton.tonalIcon(
                     onPressed: onNotes,
                     icon: const Icon(Icons.menu_book_outlined),
-                    label: const Text(TodayStrings.notes),
+                    label: Text(
+                      TodayStrings.notes,
+                      semanticsLabel: notesSemantics(reading.ref),
+                    ),
                   ),
-                Semantics(
-                  label: linkoutSemantics(reading.ref, reading.linkout),
-                  button: true,
-                  excludeSemantics: true,
-                  child: TextButton(
-                    onPressed: onText,
-                    child: const Text(TodayStrings.text),
+                // The label replaces the button's text for screen readers;
+                // the button keeps its tap action.
+                TextButton(
+                  onPressed: onText,
+                  child: Text(
+                    TodayStrings.text,
+                    semanticsLabel: linkoutSemantics(
+                      reading.ref,
+                      reading.linkout,
+                    ),
                   ),
                 ),
               ],
