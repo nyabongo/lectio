@@ -3,8 +3,9 @@
  * The trust footer every note carries: the "Verified · N sources" mark (a disclosure that opens the sources with
  * their excerpts), how and when it was reviewed, and a "Report an issue" link to the content issue form.
  *
- * Only ever rendered for an approved passage: pages build it from `notesView()`, which exists only for approved
- * passages (src/lib/reading.ts).
+ * With no sources (unreachable for schema-valid content, whose prose always cites claims) it says "Not yet verified"
+ * instead of showing the mark. Only ever rendered for an approved passage: pages build it from `notesView()`, which
+ * exists only for approved passages (src/lib/reading.ts).
  */
 import { DEFAULT_LOCALE, formatDate, t } from '../../i18n/index.ts';
 import type { SourceView } from '../../lib/reading.ts';
@@ -26,29 +27,43 @@ const reviewed =
 ---
 
 <div class="verification">
-  <details class="verification__details">
-    <summary class="verified">
-      <svg class="verified__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-        <path d="M8 1.2 9.9 2.6l2.3-.1.7 2.2 1.9 1.4-.8 2.2.8 2.2-1.9 1.4-.7 2.2-2.3-.1L8 15.4l-1.9-1.4-2.3.1-.7-2.2-1.9-1.4.8-2.2-.8-2.2 1.9-1.4.7-2.2 2.3.1Z" fill="currentColor"></path>
-        <path d="m5.3 8.3 1.9 1.9 3.6-3.9" fill="none" stroke="var(--colour-surface)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-      </svg>
-      <span>{t(lang, 'reading.verified', { count: sources.length })}</span>
-    </summary>
-    <div class="verification__body">
-      <SourceList sources={sources} lang={lang} />
-      <p class="verification__meta">
-        {method === 'auto' ? t(lang, 'reading.method.auto') : t(lang, 'reading.method.human')}
-        {
-          reviewed !== null && (
-            <>
-              {' '}
-              <time datetime={lastReviewedAt}>{t(lang, 'reading.lastReviewed', { date: reviewed })}</time>
-            </>
-          )
-        }
-      </p>
-    </div>
-  </details>
+  {
+    sources.length === 0 ? (
+      <p class="unverified">{t(lang, 'reading.unverified')}</p>
+    ) : (
+      <details class="verification__details">
+        <summary class="verified">
+          <svg class="verified__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+            <path
+              d="M8 1.2 9.9 2.6l2.3-.1.7 2.2 1.9 1.4-.8 2.2.8 2.2-1.9 1.4-.7 2.2-2.3-.1L8 15.4l-1.9-1.4-2.3.1-.7-2.2-1.9-1.4.8-2.2-.8-2.2 1.9-1.4.7-2.2 2.3.1Z"
+              fill="currentColor"
+            />
+            <path
+              d="m5.3 8.3 1.9 1.9 3.6-3.9"
+              fill="none"
+              stroke="var(--colour-surface)"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>{t(lang, 'reading.verified', { count: sources.length })}</span>
+        </summary>
+        <div class="verification__body">
+          <SourceList sources={sources} lang={lang} />
+          <p class="verification__meta">
+            {method === 'auto' ? t(lang, 'reading.method.auto') : t(lang, 'reading.method.human')}
+            {reviewed !== null && (
+              <>
+                {' '}
+                <time datetime={lastReviewedAt}>{t(lang, 'reading.lastReviewed', { date: reviewed })}</time>
+              </>
+            )}
+          </p>
+        </div>
+      </details>
+    )
+  }
   <a class="report" href={reportUrl} rel="noopener external">{t(lang, 'reading.report')}</a>
 </div>
 
@@ -65,8 +80,17 @@ const reviewed =
     font-size: var(--step--1);
   }
 
-  .verification__details {
+  .verification__details,
+  .unverified {
     flex: 1 1 16rem;
+  }
+
+  .unverified {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    margin: 0;
+    color: var(--colour-muted);
   }
 
   .verified {

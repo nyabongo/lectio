@@ -37,6 +37,7 @@
     "human": "Approved by a human reviewer after automatic checks.",
     "auto": "Approved after automatic checks and two independent AI verifiers."
   },
+  "unverified": "Not yet verified",
   "lastReviewed": "Last reviewed {date}",
   "report": "Report an issue",
   "disclaimer": "A study aid, not Church teaching. Every claim cites its sources: check them for yourself."

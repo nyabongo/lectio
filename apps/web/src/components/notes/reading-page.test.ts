@@ -70,6 +70,7 @@ describe('Reading page', () => {
     expect(html).toContain('Approved by a human reviewer');
     expect(html).toContain('https://github.com/nyabongo/lectio/issues/new?template=content-issue.yml');
     expect(html).toContain('note=v15-evil-eye');
+    expect(html).toContain('note=_context');
     expect(html).toContain('A study aid, not Church teaching');
   });
 
@@ -90,8 +91,20 @@ describe('Reading page', () => {
     expect(html).toMatch(/<h1[^>]*>Is 55:6-9<\/h1>/);
     expect(html).toContain('in preparation');
     expect(html).not.toContain(is.context.title);
-    expect(html).not.toContain(is.summary);
-    for (const paragraph of is.context.paragraphs) expect(html).not.toContain(paragraph.replace(/\s*\[c\d+\]/g, ''));
+    // Short distinctive substrings (no quotes or apostrophes, so HTML escaping cannot hide a leak).
+    expect(is.translationNotes.length).toBeGreaterThan(0);
+    for (const leak of [
+      'book of consolation',
+      'Second Isaiah calls the exiles',
+      'PENDING-NOTE-SUMMARY',
+      'PENDING-NOTE-BODY',
+      'v8-thoughts',
+      'מַחְשְׁבוֹתַי',
+      'maḥšəḇôṯay',
+      'Brown, Driver and Briggs',
+      'Isaiah 40:1',
+    ])
+      expect(html).not.toContain(leak);
     expect(html).not.toContain('Verified');
     expect(html).not.toContain('class="note"');
     expect(html).not.toContain('issues/new');

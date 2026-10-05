@@ -59,11 +59,26 @@ describe('NoteCard', () => {
 });
 
 describe('Verification', () => {
+  it('says "Not yet verified" instead of a verified mark when there are no sources', async () => {
+    const html = await container.renderToString(Verification, {
+      props: { sources: [], method: 'human', lastReviewedAt: null, reportUrl: 'https://x.test/' },
+    });
+    expect(html).toContain('Not yet verified');
+    expect(html).not.toContain('Verified ·');
+    expect(html).not.toContain('<details');
+    expect(html).toContain('href="https://x.test/"');
+  });
+
   it('shows the review date when the passage has one', async () => {
     const html = await container.renderToString(Verification, {
-      props: { sources: [], method: 'human', lastReviewedAt: '2026-09-03T17:05:00Z', reportUrl: 'https://x.test/' },
+      props: {
+        sources: [hebrewSource, { ...hebrewSource, id: 'b', number: 3, anchorId: 'b' }],
+        method: 'human',
+        lastReviewedAt: '2026-09-03T17:05:00Z',
+        reportUrl: 'https://x.test/',
+      },
     });
-    expect(html).toContain('Verified · 0 sources');
+    expect(html).toContain('Verified · 2 sources');
     expect(html).toMatch(/<time datetime="2026-09-03T17:05:00Z"[^>]*>Last reviewed 3 September 2026<\/time>/);
     expect(html).toContain('href="https://x.test/"');
   });

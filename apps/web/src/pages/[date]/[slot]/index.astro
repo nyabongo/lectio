@@ -45,7 +45,7 @@ const slotLabel =
 const dateText = formatDate(lang, view.date);
 const title = t(lang, 'reading.pageTitle', { ref: view.ref, slot: slotLabel });
 const description = notes?.summary ?? t(lang, 'reading.description', { ref: view.ref, date: dateText });
-const source = linkoutSource(config);
+const source = linkoutSource(config, view.linkout);
 const dayHref = withBase(base, localePath(lang, `${view.date}/`));
 ---
 
@@ -188,11 +188,24 @@ const dayHref = withBase(base, localePath(lang, `${view.date}/`));
       panel.setAttribute('aria-labelledby', `tab-${panel.dataset.panel ?? ''}`);
       panel.tabIndex = 0;
     }
-    select(initialTab(location.hash, panelOf));
-    window.addEventListener('hashchange', () => {
-      select(initialTab(location.hash, panelOf));
-      document.getElementById(location.hash.slice(1))?.scrollIntoView();
-    });
+    // Hiding the other panel moves content after the browser has scrolled to the fragment, so scroll to its
+    // target again (a tab name itself needs no scroll).
+    const showFragment = (): void => {
+      const tab = initialTab(location.hash, panelOf);
+      select(tab);
+      const id = location.hash.slice(1);
+      if (id !== '' && !isTab(id)) {
+        let target: HTMLElement | null = null;
+        try {
+          target = document.getElementById(decodeURIComponent(id));
+        } catch {
+          target = document.getElementById(id);
+        }
+        target?.scrollIntoView();
+      }
+    };
+    showFragment();
+    window.addEventListener('hashchange', showFragment);
   }
 </script>
 
