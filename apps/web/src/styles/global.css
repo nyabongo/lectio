@@ -135,6 +135,25 @@ svg {
   transform: none;
 }
 
+/*
+ * Reduced motion (WCAG 2.3.3): the motion tokens already drop to 0ms; this also stills anything that does not use
+ * them (third-party UI such as Pagefind's, later components) and keeps scrolling instant.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Accent helpers for later pages. */
 .accent-ink {
   color: var(--colour-accent-ink);

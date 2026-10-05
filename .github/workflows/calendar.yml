@@ -1,7 +1,10 @@
-# Calendar check (L-017). Rebuilds every committed calendar/<year>.json in memory
-# from romcal, the regional overrides, the lectionary data and the link-out config,
-# and fails when a committed file is stale (`npm run calendar:check`). Offline: no
-# secrets; romcal computes the calendar locally.
+# Calendar check (L-017, L-070). Rebuilds every committed calendar/<year>.json in
+# memory from romcal, the regional overrides, the lectionary data and the link-out
+# config, and fails when a committed file is stale (`npm run calendar:check`). Then
+# runs the completeness report (`npm run calendar:report`), which fails when a
+# committed year has a day with `lectionaryMissing` that is not a known, documented
+# gap (packages/calendar/src/report/gaps.ts). Offline: no secrets; romcal computes
+# the calendar locally.
 #
 # Built like a required check, so it can be registered in .github/required-checks/
 # without changes: no trigger-level `paths:` filter (a `changes` step decides
@@ -77,3 +80,17 @@ jobs:
       - name: Committed calendar files are current
         if: steps.changes.outputs.relevant == 'true'
         run: npm run calendar:check
+
+      # The report is also written to the job summary, pass or fail.
+      - name: Completeness report (no missing days beyond the known gaps)
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          set -o pipefail
+          {
+            echo '### Calendar completeness report'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          status=0
+          npm run --silent calendar:report 2>&1 | tee -a "$GITHUB_STEP_SUMMARY" || status=$?
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
