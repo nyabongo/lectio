@@ -1,0 +1,39 @@
+{
+  "key": "IS.55.6-9",
+  "ref": "Is 55:6-9",
+  "locale": "en",
+  "summary": "Second Isaiah calls the exiles to seek the Lord, whose thoughts are higher than human thoughts.",
+  "context": {
+    "title": "Seek the Lord while he may be found",
+    "paragraphs": ["These verses close the book of consolation addressed to the exiles in Babylon. [c1]"]
+  },
+  "translationNotes": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Isaiah 40-55 is addressed to the Judean exiles in Babylon.",
+      "sourceIds": ["is-40-1"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "is-40-1",
+      "type": "scripture",
+      "citation": "Isaiah 40:1",
+      "ref": "Is 40:1"
+    }
+  ],
+  "provenance": {
+    "generator": "fake",
+    "runId": "fixture-is-55-6-9",
+    "models": [],
+    "promptVersion": "fixture",
+    "createdAt": "2026-09-01T08:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
