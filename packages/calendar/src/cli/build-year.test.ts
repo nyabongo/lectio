@@ -24,6 +24,7 @@ import {
   epiphanyDate,
   generatedBy,
   packageVersion,
+  regionEpiphany,
   serialiseCalendar,
 } from './build-year.ts';
 import type { LinkoutFor } from './build-year.ts';
@@ -111,6 +112,9 @@ const lectionary = new Lectionary([{ block: 'test', path: 'test/proper-of-time.j
 
 const drbo: LinkoutFor = (key) => `https://example.org/${key}`;
 
+/** The resolver's options under the General Roman Calendar's rule in 2026 (Epiphany on 6 January). */
+const GENERAL_ROMAN = { epiphany: '2026-01-06' } as const;
+
 describe('assembleYear', () => {
   const { calendar, warnings } = assembleYear({
     year: 2026,
@@ -120,6 +124,7 @@ describe('assembleYear', () => {
     lectionary,
     linkout: drbo,
     names,
+    epiphany: '2026-01-06',
   });
 
   it('sorts the days and keeps the header fields', () => {
@@ -251,14 +256,35 @@ describe('assembleYear in the Christmas season', () => {
       lectionary: seasonal,
       linkout: drbo,
       names,
+      epiphany,
     });
     return calendar.days[1]?.masses[0]?.readings.at(-1)?.ref;
   };
 
-  it('follows the Epiphany of the days: on 6 January, 7 January reads Monday’s readings; on a Sunday, its own', () => {
+  it('follows the region’s Epiphany: on 6 January, 7 January reads Monday’s readings; on a Sunday, its own', () => {
     expect(gospelOf7January('2026-01-06')).toBe('Mt 4:12-17, 23-25');
     expect(gospelOf7January('2026-01-04')).toBe('Mk 6:45-52');
     expect(epiphanyDate([monday])).toBeUndefined();
+  });
+
+  it('fails when the days keep the Epiphany on another date than the region’s rule', () => {
+    const days = [christmasDay('2026-01-04', 'epiphany-of-the-lord', 'solemnity')];
+    const input = { year: 2026, region: 'x', generatedBy: 'test', days, lectionary: seasonal, linkout: drbo, names };
+    expect(() => assembleYear({ ...input, epiphany: '2026-01-06' })).toThrow(
+      "the days keep the Epiphany on 2026-01-04, but the region's rule gives 2026-01-06",
+    );
+  });
+
+  it('derives the Epiphany from the region’s epiphanyOnSunday setting', () => {
+    const setting = (value: boolean) => ({
+      value,
+      source: { title: 't', url: 'https://example.org', accessed: '2026-10-05' },
+      confidence: 'confirmed' as const,
+    });
+    expect(regionEpiphany(2026, { transfers: { epiphanyOnSunday: setting(true) } })).toBe('2026-01-04');
+    expect(regionEpiphany(2027, { transfers: { epiphanyOnSunday: setting(true) } })).toBe('2027-01-03');
+    expect(regionEpiphany(2026, { transfers: { epiphanyOnSunday: setting(false) } })).toBe('2026-01-06');
+    expect(regionEpiphany(2026, { transfers: {} })).toBe('2026-01-06');
   });
 
   it('shows the canonical ref for a printed citation with a dual psalm number, which does not parse', () => {
@@ -269,6 +295,7 @@ describe('assembleYear in the Christmas season', () => {
       drbo,
       names,
       warnings,
+      GENERAL_ROMAN,
     );
     expect(result.masses[0]?.readings[0]?.ref).toBe('Ps 67:2-3, 5, 6, 8');
     expect(warnings).toHaveLength(1);
@@ -282,7 +309,7 @@ describe('assembleDay link-out failures', () => {
       if (key.startsWith('PS.')) throw new VersificationError('NO_COUNTERPART', 'no Vulgate counterpart');
       return `https://example.org/${key}`;
     };
-    const result = assembleDay(sunday, lectionary, linkout, names, warnings);
+    const result = assembleDay(sunday, lectionary, linkout, names, warnings, GENERAL_ROMAN);
     expect(result.masses[0]?.readings.map((r) => r.slot)).toEqual(['first-reading', 'second-reading', 'gospel']);
     expect(result.lectionaryMissing).toBe(true);
     expect(warnings).toEqual([
@@ -300,6 +327,7 @@ describe('assembleDay link-out failures', () => {
       },
       names,
       warnings,
+      GENERAL_ROMAN,
     );
     expect(result.masses).toEqual([]);
     expect(result.lectionaryMissing).toBe(true);
@@ -309,7 +337,7 @@ describe('assembleDay link-out failures', () => {
     const boom: LinkoutFor = () => {
       throw new Error('misconfigured provider');
     };
-    expect(() => assembleDay(sunday, lectionary, boom, names, [])).toThrow('misconfigured provider');
+    expect(() => assembleDay(sunday, lectionary, boom, names, [], GENERAL_ROMAN)).toThrow('misconfigured provider');
   });
 });
 
@@ -326,6 +354,7 @@ describe('calendarProblems', () => {
     lectionary,
     linkout: drbo,
     names,
+    epiphany: '2026-01-06',
   }).calendar;
 
   it('accepts a valid calendar', () => {
@@ -410,6 +439,7 @@ describe('namingProblems', () => {
       lectionary,
       linkout: drbo,
       names,
+      epiphany: '2026-01-06',
     });
     expect(namingProblems(calendar, names)).toEqual([]);
   });

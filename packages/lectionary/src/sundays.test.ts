@@ -11,7 +11,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { checkLectionary } from './check.ts';
 import { blockRows, crosscheckBlock, parseCrosscheckFile, renderDisputes } from './crosscheck.ts';
 import type { CrosscheckResult } from './crosscheck.ts';
-import { DATA_ROOT } from './fixtures/data.ts';
+import { DATA_ROOT, GENERAL_ROMAN } from './fixtures/data.ts';
 import { loadLectionary } from './load.ts';
 import type { LoadResult } from './load.ts';
 import { Lectionary, resolveDay } from './resolve.ts';
@@ -198,7 +198,7 @@ describe('sundays block', () => {
   it('resolves Sundays and solemnities of each cycle from the block', () => {
     const lectionary = new Lectionary(all.files);
     const keys = (d: LectionaryDay, mass = 'day') =>
-      resolveDay(d, lectionary)
+      resolveDay(d, lectionary, GENERAL_ROMAN)
         .masses.find((m) => m.id === mass)
         ?.readings.map((r) => r.key);
 
@@ -214,7 +214,11 @@ describe('sundays block', () => {
       'MT.4.12-23',
     );
     // Easter Sunday, Year C: the Vigil, the Mass of the day and the evening Mass.
-    const easter = resolveDay(day('2028-04-16', 'easter', 1, 'C', 'easter-sunday', 'solemnity'), lectionary);
+    const easter = resolveDay(
+      day('2028-04-16', 'easter', 1, 'C', 'easter-sunday', 'solemnity'),
+      lectionary,
+      GENERAL_ROMAN,
+    );
     expect(easter.masses.map((m) => [m.id, m.missingSlots])).toEqual([
       ['easter-vigil', []],
       ['day', []],
@@ -225,6 +229,7 @@ describe('sundays block', () => {
     const christmas = resolveDay(
       day('2026-12-25', 'christmas', 0, 'B', 'nativity-of-the-lord', 'solemnity'),
       lectionary,
+      GENERAL_ROMAN,
     );
     expect(christmas.masses.map((m) => m.id)).toEqual(['vigil', 'night', 'dawn', 'day']);
     expect(christmas.masses.every((m) => m.missingSlots.length === 0)).toBe(true);

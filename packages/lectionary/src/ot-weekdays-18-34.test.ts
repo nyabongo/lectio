@@ -7,7 +7,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { checkLectionary } from './check.ts';
 import { blockRows, crosscheckBlock, parseCrosscheckFile } from './crosscheck.ts';
 import type { CrosscheckResult } from './crosscheck.ts';
-import { DATA_ROOT } from './fixtures/data.ts';
+import { DATA_ROOT, GENERAL_ROMAN } from './fixtures/data.ts';
 import { loadLectionary } from './load.ts';
 import type { LoadResult } from './load.ts';
 import { Lectionary, resolveDay } from './resolve.ts';
@@ -97,6 +97,7 @@ describe(`${BLOCK} block`, () => {
           celebrations: [{ id: 'weekday', rank: 'weekday' }],
         },
         lectionary,
+        GENERAL_ROMAN,
       ).masses[0]?.readings.at(-1)?.ref;
     expect(gospel('2026-08-03', 'A', 'II')).toBe('Mt 14:22-36');
     expect(gospel('2026-08-04', 'A', 'II')).toBe('Mt 15:1-2, 10-14');

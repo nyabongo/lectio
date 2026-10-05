@@ -12,7 +12,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { checkLectionary } from './check.ts';
 import { blockRows, crosscheckBlock, parseCrosscheckFile, renderDisputes } from './crosscheck.ts';
 import type { CrosscheckResult } from './crosscheck.ts';
-import { DATA_ROOT } from './fixtures/data.ts';
+import { DATA_ROOT, GENERAL_ROMAN } from './fixtures/data.ts';
 import { loadLectionary } from './load.ts';
 import type { LoadResult } from './load.ts';
 import { Lectionary, resolveDay } from './resolve.ts';
@@ -226,12 +226,16 @@ describe('saints block', () => {
   it('resolves solemnities, feasts, memorials and optional memorials from the block', () => {
     const lectionary = new Lectionary(all.files);
     const gospels = (d: LectionaryDay) =>
-      resolveDay(d, lectionary).masses.map((m) => [m.id, m.readings.find((r) => r.slot === 'gospel')?.key]);
+      resolveDay(d, lectionary, GENERAL_ROMAN).masses.map((m) => [
+        m.id,
+        m.readings.find((r) => r.slot === 'gospel')?.key,
+      ]);
 
     // The Assumption on a Saturday (2026-08-15): the Vigil and the Mass of the day, each with a second reading.
     const assumption = resolveDay(
       day('2026-08-15', 19, 'A', 'II', [{ id: 'assumption-of-the-blessed-virgin-mary', rank: 'solemnity' }]),
       lectionary,
+      GENERAL_ROMAN,
     );
     expect(assumption.masses.map((m) => [m.id, m.missingSlots, m.readings.length])).toEqual([
       ['vigil', [], 4],
@@ -245,6 +249,7 @@ describe('saints block', () => {
     const sorrows = resolveDay(
       day('2026-09-15', 24, 'A', 'II', [{ id: 'our-lady-of-sorrows', rank: 'memorial' }]),
       lectionary,
+      GENERAL_ROMAN,
     ).masses;
     expect(sorrows.map((m) => [m.from, m.readings.map((r) => r.key)])).toEqual([
       [
@@ -257,6 +262,7 @@ describe('saints block', () => {
       resolveDay(
         day('2027-01-21', 2, 'B', 'I', [{ id: 'agnes-of-rome-virgin', rank: 'memorial' }]),
         lectionary,
+        GENERAL_ROMAN,
       ).masses.map((m) => m.from),
     ).toEqual([['proper-of-time:ot-weekday-2-thu']]);
     // St John Paul II (optional memorial): the weekday, and his Mass as an option.

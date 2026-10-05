@@ -50,7 +50,7 @@ export {
 export type { Season, Weekday } from './keys.ts';
 export { RESERVED_DIRS, listBlocks, loadBlock, loadLectionary, loadRegistry } from './load.ts';
 export type { LoadResult } from './load.ts';
-export { Lectionary, resolveDay } from './resolve.ts';
+export { Lectionary, epiphanyOf, resolveDay } from './resolve.ts';
 export type {
   CelebrationRank,
   LectionaryCelebration,

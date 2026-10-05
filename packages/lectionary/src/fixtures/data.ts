@@ -1,11 +1,15 @@
 /** Test helpers: small registries, readings and files. */
 import { fileURLToPath } from 'node:url';
 
+import type { ResolveOptions } from '../resolve.ts';
 import { parseRegistry } from '../sources.ts';
 import type { BlockFile, EntryKind, LoadedFile, Reading, SourceRegistry } from '../types.ts';
 
 export const SHA = '00f4cf1a799a95a94f9e03b3b2e3e56e481d3118';
 export const OTHER_SHA = '1111111111111111111111111111111111111111';
+
+/** Resolver options for the General Roman Calendar's rule in 2026: the Epiphany on 6 January. */
+export const GENERAL_ROMAN: ResolveOptions = { epiphany: '2026-01-06' };
 
 /** The committed data directory, `calendar/lectionary/`. */
 export const DATA_ROOT = fileURLToPath(new URL('../../../../calendar/lectionary', import.meta.url));

@@ -22,9 +22,10 @@
  *
  * Christmas season (OLM, nos. 205–217): where the Epiphany is kept on 6 January, 7–12 January read
  * the readings printed for Monday…Saturday after the Epiphany in date order (7 January = Monday's),
- * whatever the weekday the calendar names; pass the Epiphany's date in {@link ResolveOptions}.
- * Where it is kept on the Sunday between 2 and 8 January, the days before it read the dated
- * readings (`christmas-time-january-<n>`) and the days after it the weekday ones, as named.
+ * whatever the weekday the calendar names. Where it is kept on the Sunday between 2 and 8 January,
+ * the days before it read the dated readings (`christmas-time-january-<n>`) and the days after it
+ * the weekday ones, as named. The Epiphany's date is a required option ({@link ResolveOptions},
+ * {@link epiphanyOf}), so a caller cannot get the wrong rule by leaving it out.
  *
  * Cycles (types.ts, `Reading.cycle`): a reading without a cycle serves every year; one with the day's
  * weekday cycle (I/II) replaces it; one with the day's Sunday cycle (A/B/C) replaces both. On a
@@ -62,11 +63,23 @@ export type LectionaryDay = Readonly<Pick<CalendarDay, 'season' | 'seasonWeek' |
 
 export interface ResolveOptions {
   /**
-   * The date of the Epiphany in the day's year (the calendar has it). With 6 January, 7–12 January
-   * take the readings of Monday…Saturday after the Epiphany in date order. Without it, the
-   * calendar's weekday names are used as they are (right where the Epiphany is on a Sunday).
+   * The date of the Epiphany in the day's year ({@link epiphanyOf} from the region's
+   * `epiphanyOnSunday` setting). With 6 January, 7–12 January take the readings of Monday…Saturday
+   * after the Epiphany in date order; with a Sunday, the days before it read the dated readings and
+   * the days after it the calendar's weekday names. Required: there is no safe default.
    */
-  readonly epiphany?: IsoDate;
+  readonly epiphany: IsoDate;
+}
+
+/**
+ * The date of the Epiphany in `year`: 6 January, or, where it is kept on a Sunday
+ * (`epiphanyOnSunday`, the region's transfer setting), the Sunday between 2 and 8 January.
+ */
+export function epiphanyOf(year: number, onSunday: boolean): IsoDate {
+  if (!onSunday) return `${String(year)}-01-06` as IsoDate;
+  const weekday = new Date(Date.UTC(year, 0, 2)).getUTCDay();
+  const day = 2 + ((7 - weekday) % 7);
+  return `${String(year)}-01-0${String(day)}` as IsoDate;
 }
 
 export interface ResolvedAlternative {
@@ -208,22 +221,21 @@ function dateParts(date: IsoDate): [number, number, number] {
  * The entry id of a celebration on `date`: with the Epiphany on 6 January, `<weekday>-after-epiphany`
  * on 7–12 January becomes the one for its date (7 January → Monday's readings).
  */
-function entryId(id: string, date: IsoDate, epiphany: IsoDate | undefined): string {
-  if (epiphany === undefined || !AFTER_EPIPHANY.test(id)) return id;
+function entryId(id: string, date: IsoDate, epiphany: IsoDate): string {
+  if (!AFTER_EPIPHANY.test(id)) return id;
   const [year, month, day] = dateParts(date);
   if (epiphany !== `${String(year)}-01-06` || month !== 1 || day < 7 || day > 12) return id;
   return `${AFTER_EPIPHANY_DAYS[day - 7] as string}-after-epiphany`;
 }
 
 /** The dated weekday of a date that is not a Sunday (17–24 December, 29–31 December, 2–7 January before the Epiphany). */
-function datedWeekdayId(day: LectionaryDay, epiphany: IsoDate | undefined): string | undefined {
+function datedWeekdayId(day: LectionaryDay, epiphany: IsoDate): string | undefined {
   if (weekdayOf(day.date) === 'sun') return undefined;
   const [, month, date] = dateParts(day.date);
   if (day.season === 'advent' && month === 12 && date >= 17 && date <= 24) return `advent-december-${String(date)}`;
   if (day.season !== 'christmas') return undefined;
   if (month === 12 && date >= 29) return `christmas-octave-day-${String(date - 24)}`;
-  const beforeEpiphany = epiphany === undefined || day.date < epiphany;
-  if (month === 1 && date >= 2 && date <= 7 && beforeEpiphany) return `christmas-time-january-${String(date)}`;
+  if (month === 1 && date >= 2 && date <= 7 && day.date < epiphany) return `christmas-time-january-${String(date)}`;
   return undefined;
 }
 
@@ -231,7 +243,7 @@ function datedWeekdayId(day: LectionaryDay, epiphany: IsoDate | undefined): stri
  * Resolves the Masses of a day. Throws a `RefError` only when the data holds a ref that does not
  * parse, which `lectionary:check` rejects.
  */
-export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: ResolveOptions = {}): Resolution {
+export function resolveDay(day: LectionaryDay, lectionary: Lectionary, options: ResolveOptions): Resolution {
   const { epiphany } = options;
   const ptKey = properOfTimeKey(day.date, day.season, day.seasonWeek);
   const cycles: Cycle[] = [day.sundayCycle, day.weekdayCycle];
