@@ -1,0 +1,176 @@
+{
+  "apiVersion": 1,
+  "date": "2026-09-20",
+  "season": "ordinary-time",
+  "seasonWeek": 25,
+  "sundayCycle": "A",
+  "weekdayCycle": "II",
+  "colour": "green",
+  "celebrations": [
+    {
+      "id": "ordinary-time-25-sunday",
+      "name": "Twenty-fifth Sunday in Ordinary Time",
+      "rank": "sunday",
+      "colour": "green"
+    }
+  ],
+  "lectionaryMissing": false,
+  "masses": [
+    {
+      "id": "day",
+      "label": "Mass of the day",
+      "readings": [
+        {
+          "slot": "first-reading",
+          "ref": "Is 55:6-9",
+          "key": "IS.55.6-9",
+          "linkout": "https://www.drbo.org/chapter/27055.htm",
+          "passage": null
+        },
+        {
+          "slot": "psalm",
+          "ref": "Ps 145:2-3, 8-9, 17-18",
+          "key": "PS.145.2-3_145.8-9_145.17-18",
+          "linkout": "https://www.drbo.org/chapter/21144.htm",
+          "passage": null
+        },
+        {
+          "slot": "second-reading",
+          "ref": "Phil 1:20c-24, 27a",
+          "key": "PHIL.1.20-24_1.27",
+          "linkout": "https://www.drbo.org/chapter/57001.htm",
+          "passage": null
+        },
+        {
+          "slot": "gospel",
+          "ref": "Mt 20:1-16a",
+          "key": "MT.20.1-16",
+          "linkout": "https://www.drbo.org/chapter/47020.htm",
+          "passage": {
+            "key": "MT.20.1-16",
+            "ref": "Mt 20:1-16a",
+            "locale": "en",
+            "summary": "A landowner pays the last hired the same as the first, and asks whether his goodness is a cause for resentment.",
+            "context": {
+              "title": "Labourers in the vineyard",
+              "paragraphs": [
+                "Matthew alone records this parable, placed between two sayings about the last being first. [c1] A denarius was the customary pay for a labourer’s day in first-century Palestine. [c2]",
+                "The owner’s closing question uses the Jewish idiom of the evil eye, an image for begrudging another’s good fortune. [c3] Matthew has already set the sound eye against the evil eye in the Sermon on the Mount. [c4]"
+              ],
+              "audio": null
+            },
+            "translationNotes": [
+              {
+                "id": "v15-evil-eye",
+                "verse": "20:15",
+                "anchor": "envious",
+                "original": {
+                  "text": "ὀφθαλμός σου πονηρός",
+                  "lang": "grc",
+                  "translit": "ophthalmos sou ponēros",
+                  "gloss": "your eye evil"
+                },
+                "summary": "Greek asks “is your eye evil?”, an idiom for begrudging another’s good.",
+                "body": "The evil eye was a familiar image for stinginess and resentment (Deut 15:9; Prov 28:22). English trades the image for an abstract feeling and loses the echo of Mt 6:22-23. [c3][c4]",
+                "audio": null
+              },
+              {
+                "id": "v15-agathos",
+                "verse": "20:15",
+                "anchor": "generous",
+                "original": {
+                  "text": "ἀγαθός",
+                  "lang": "grc",
+                  "translit": "agathos",
+                  "gloss": "good"
+                },
+                "summary": "The landowner calls himself “good”, not merely “generous”.",
+                "body": "Agathos is the word Jesus reserves for God in Mt 19:17, a few verses earlier. The parable is about who the owner is, not only what he pays. [c5]",
+                "audio": null
+              }
+            ],
+            "claims": [
+              {
+                "id": "c1",
+                "text": "The parable of the labourers in the vineyard appears only in Matthew.",
+                "sourceIds": ["davies-allison"],
+                "sensitive": false
+              },
+              {
+                "id": "c2",
+                "text": "A denarius was a usual day’s wage for a labourer.",
+                "sourceIds": ["mt-20-2", "davies-allison"],
+                "sensitive": false
+              },
+              {
+                "id": "c3",
+                "text": "An “evil eye” was a Jewish idiom for stinginess or begrudging another’s good.",
+                "sourceIds": ["dt-15-9", "lsj-ophthalmos"],
+                "sensitive": false
+              },
+              {
+                "id": "c4",
+                "text": "Mt 6:22-23 contrasts the sound eye with the evil eye.",
+                "sourceIds": ["mt-6-22"],
+                "sensitive": false
+              },
+              {
+                "id": "c5",
+                "text": "In Mt 19:17 Jesus says that only one is good, using agathos.",
+                "sourceIds": ["mt-19-17"],
+                "sensitive": true
+              }
+            ],
+            "sources": [
+              {
+                "id": "mt-20-2",
+                "type": "scripture",
+                "citation": "Matthew 20:2",
+                "ref": "Mt 20:2"
+              },
+              {
+                "id": "mt-6-22",
+                "type": "scripture",
+                "citation": "Matthew 6:22-23",
+                "ref": "Mt 6:22-23"
+              },
+              {
+                "id": "mt-19-17",
+                "type": "scripture",
+                "citation": "Matthew 19:17",
+                "ref": "Mt 19:17",
+                "excerpt": "εἷς ἐστιν ὁ ἀγαθός",
+                "excerptLang": "grc"
+              },
+              {
+                "id": "dt-15-9",
+                "type": "scripture",
+                "citation": "Deuteronomy 15:9",
+                "ref": "Dt 15:9"
+              },
+              {
+                "id": "lsj-ophthalmos",
+                "type": "web",
+                "citation": "Liddell, Scott, Jones, A Greek-English Lexicon, s.v. ὀφθαλμός (Perseus Digital Library)",
+                "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0057:entry=o)fqalmo/s",
+                "archivedUrl": "https://web.archive.org/web/2026/https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0057:entry=o)fqalmo/s",
+                "retrievedAt": "2026-09-01T08:30:00Z"
+              },
+              {
+                "id": "davies-allison",
+                "type": "print",
+                "citation": "W. D. Davies and Dale C. Allison, The Gospel According to Saint Matthew, vol. 3 (ICC), T&T Clark, 1997, pp. 66-79"
+              }
+            ],
+            "review": {
+              "status": "approved",
+              "method": "human",
+              "lastReviewedAt": "2026-09-03T17:05:00Z"
+            }
+          },
+          "text": "reading text must never appear"
+        }
+      ]
+    }
+  ]
+}

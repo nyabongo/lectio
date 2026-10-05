@@ -20,12 +20,12 @@ describe('@lectio/schema exports', () => {
     expect(pkg.exports['./json/*']).toBe('./json/*');
   });
 
-  it('exposes passage, calendar, gate-result and common as subpaths', () => {
+  it('exposes api, passage, calendar, gate-result and common as subpaths', () => {
     const subpaths = readdirSync(join(pkgDir, 'src'), { withFileTypes: true })
       .filter((entry) => entry.isDirectory() && existsSync(join(pkgDir, 'src', entry.name, 'index.ts')))
       .map((entry) => entry.name)
       .sort();
-    expect(subpaths).toEqual(['calendar', 'common', 'gate-result', 'passage']);
+    expect(subpaths).toEqual(['api', 'calendar', 'common', 'gate-result', 'passage']);
   });
 
   it('resolves @lectio/schema/<name> through the package exports', async () => {
@@ -33,10 +33,12 @@ describe('@lectio/schema exports', () => {
     const calendar = await import('@lectio/schema/calendar');
     const gateResult = await import('@lectio/schema/gate-result');
     const common = await import('@lectio/schema/common');
+    const api = await import('@lectio/schema/api');
     expect(typeof passage.validatePassage).toBe('function');
     expect(typeof calendar.validateCalendarYear).toBe('function');
     expect(typeof gateResult.validateGateResult).toBe('function');
     expect(typeof common.createAjv).toBe('function');
+    expect(typeof api.validateApiDay).toBe('function');
   });
 
   it('resolves the emitted JSON through @lectio/schema/json/*', () => {
