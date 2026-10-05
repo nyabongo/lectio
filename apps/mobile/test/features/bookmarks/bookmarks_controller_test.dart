@@ -292,8 +292,8 @@ void main() {
 
     test('is included in the export', () {
       store = MemoryKeyValueStore({key: 'not json'});
-      final json = jsonDecode(controllerOn(store).exportJson())
-          as Map<String, Object?>;
+      final json =
+          jsonDecode(controllerOn(store).exportJson()) as Map<String, Object?>;
       expect(json['unreadable'], 'not json');
     });
   });

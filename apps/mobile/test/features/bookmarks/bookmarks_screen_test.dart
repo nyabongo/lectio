@@ -156,9 +156,7 @@ void main() {
     });
 
     testWidgets('says when saved data could not be read', (tester) async {
-      store = MemoryKeyValueStore({
-        BookmarksController.storageKey: 'not json',
-      });
+      store = MemoryKeyValueStore({BookmarksController.storageKey: 'not json'});
       final shared = <ShareParams>[];
       await pumpBookmarks(
         tester,

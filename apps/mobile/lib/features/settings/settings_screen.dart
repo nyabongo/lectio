@@ -132,9 +132,8 @@ class SettingsScreen extends StatelessWidget {
               subtitle: language.available ? null : 'Coming soon',
               selected: settings.language == language,
               onTap: language.available
-                  ? () => unawaited(
-                      update(settings.copyWith(language: language)),
-                    )
+                  ? () =>
+                        unawaited(update(settings.copyWith(language: language)))
                   : null,
             ),
           heading('Daily reminder'),
