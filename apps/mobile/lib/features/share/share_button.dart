@@ -124,14 +124,12 @@ ShareContent noteShare(
   Uri? site,
   String language = 'en',
 }) {
-  final heading = LectioLocalizations.forLanguage(language).text(
-    'insight_pageTitle',
-    {
-      'anchor': note.anchor,
-      'ref': passage.ref,
-      'verse': verseLabel(passage, note),
-    },
-  );
+  final heading = LectioLocalizations.forLanguage(language)
+      .text('insight_pageTitle', {
+        'anchor': note.anchor,
+        'ref': passage.ref,
+        'verse': verseLabel(passage, note),
+      });
   return ShareContent(
     title: heading,
     ref: heading,
