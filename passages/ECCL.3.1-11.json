@@ -15,7 +15,7 @@
     {
       "id": "zeman",
       "verse": "3:1",
-      "anchor": "appointed time",
+      "anchor": "season",
       "original": {
         "text": "זְמָן",
         "lang": "hbo",
@@ -28,7 +28,7 @@
     {
       "id": "yitron",
       "verse": "3:9",
-      "anchor": "advantage",
+      "anchor": "gain",
       "original": {
         "text": "יִתְרוֹן",
         "lang": "hbo",
@@ -41,7 +41,7 @@
     {
       "id": "inyan",
       "verse": "3:10",
-      "anchor": "task",
+      "anchor": "business",
       "original": {
         "text": "הָעִנְיָן",
         "lang": "hbo",
@@ -54,7 +54,7 @@
     {
       "id": "olam",
       "verse": "3:11",
-      "anchor": "the timeless",
+      "anchor": "eternity",
       "original": {
         "text": "הָעֹלָם",
         "lang": "hbo",
