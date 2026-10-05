@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { STORAGE_KEY } from '../settings.ts';
 import { RESUME_SAVE_INTERVAL, createListenController, stepSpeed } from './controller.ts';
 import type { ListenEnvironment, ListenUi } from './controller.ts';
-import { FakeAdapter, MemoryStorage, flush, track } from './fixtures/fakes.ts';
+import { FakeAdapter, FakeSynth, FakeTimer, FakeUtterance, MemoryStorage, flush, track } from './fixtures/fakes.ts';
+import { createSpeechAdapter } from './speech-adapter.ts';
 import type { ListenData, ListenTrack } from './listen.ts';
 import type { MediaAction, MediaSessionLike } from './media-session.ts';
 import { RESUME_KEY, loadResume, saveResume } from './resume.ts';
@@ -229,5 +230,25 @@ describe('createListenController', () => {
     await controller.audioReady;
     expect(ui.render).toHaveBeenLastCalledWith(expect.objectContaining({ unavailable: false }));
     expect(controller.player.state.status).toBe('idle');
+  });
+
+  it('stops where it is, keeping the reader’s place, when device speech stalls after it has spoken', () => {
+    const synth = new FakeSynth();
+    const timer = new FakeTimer();
+    const speech = createSpeechAdapter({ synth, utterance: (text) => new FakeUtterance(text), timer });
+    const { storage, ui, tick, make } = setup({ speech });
+    const controller = make();
+    controller.player.play();
+    synth.last()?.onstart?.({});
+    synth.last()?.onend?.({});
+    // The second segment never starts: a slow network voice, or a locked screen.
+    tick(RESUME_SAVE_INTERVAL);
+    timer.fire();
+    expect(controller.player.state).toMatchObject({ index: 1, status: 'paused' });
+    expect(ui.announce).toHaveBeenLastCalledWith('Paused: Title b');
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'b', source: 'speech' });
+    // Nothing was skipped, and play carries on with the same segment.
+    controller.player.play();
+    expect(controller.player.state).toMatchObject({ index: 1, status: 'playing' });
   });
 });

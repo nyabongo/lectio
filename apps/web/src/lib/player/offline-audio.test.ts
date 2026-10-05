@@ -1,7 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { clearOfflineData, OFFLINE_DATA_CACHE_PREFIX } from '../settings.ts';
-import { AUDIO_CACHE, AUDIO_CACHE_LIMIT, browserOfflineAudio, createOfflineAudio } from './offline-audio.ts';
+import {
+  AUDIO_CACHE,
+  AUDIO_CACHE_LIMIT,
+  DOWNLOAD_TIMEOUT,
+  browserOfflineAudio,
+  createOfflineAudio,
+} from './offline-audio.ts';
 import type { AudioCacheLike, OfflineAudioEnvironment, ResponseLike } from './offline-audio.ts';
 
 const response = (ok = true, body = 'wav'): ResponseLike => ({
@@ -105,6 +111,15 @@ describe('createOfflineAudio', () => {
     await expect(full.offline.source('x')).resolves.toBe('x');
   });
 
+  it('still plays a kept copy when the quota refuses to move it to the end', async () => {
+    const { cache, env, offline } = setup();
+    await offline.source('a');
+    cache.failPut = true;
+    await expect(offline.source('a')).resolves.toBe('blob:2');
+    expect(env.fetch).toHaveBeenCalledOnce();
+    expect([...cache.entries.keys()]).toEqual(['a']);
+  });
+
   it('streams when there is no Cache Storage, the cache cannot open, or an entry is broken', async () => {
     const none = setup({ caches: undefined });
     await expect(none.offline.source('x')).resolves.toBe('x');
@@ -122,15 +137,18 @@ describe('createOfflineAudio', () => {
 describe('browserOfflineAudio', () => {
   it('uses the scope’s caches, CORS fetch and object URLs', async () => {
     const cache = new FakeCache();
+    const signal = { aborted: false };
     const scope = {
       caches: { open: vi.fn(() => Promise.resolve(cache)) },
       fetch: vi.fn(() => Promise.resolve(response())),
       URL: { createObjectURL: vi.fn(() => 'blob:x'), revokeObjectURL: vi.fn() },
+      AbortSignal: { timeout: vi.fn(() => signal) },
     } as unknown as typeof globalThis;
     const offline = browserOfflineAudio(scope);
     await expect(offline.source('a')).resolves.toBe('blob:x');
     await offline.source('a');
-    expect(scope.fetch).toHaveBeenCalledExactlyOnceWith('a', { mode: 'cors', credentials: 'omit' });
+    expect(scope.fetch).toHaveBeenCalledExactlyOnceWith('a', { mode: 'cors', credentials: 'omit', signal });
+    expect(scope.AbortSignal.timeout).toHaveBeenCalledWith(DOWNLOAD_TIMEOUT);
     expect(scope.URL.revokeObjectURL).toHaveBeenCalledWith('blob:x');
   });
 });

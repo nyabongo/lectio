@@ -27,14 +27,58 @@ function events() {
 function setup(script = 'First sentence here. Second one follows.') {
   const synth = new FakeSynth();
   const timer = new FakeTimer();
-  const adapter = createSpeechAdapter({ synth, utterance: (text) => new FakeUtterance(text), timer });
+  const page = { hidden: false };
+  const adapter = createSpeechAdapter({
+    synth,
+    utterance: (text) => new FakeUtterance(text),
+    timer,
+    hidden: () => page.hidden,
+  });
   if (adapter === null) throw new Error('no adapter');
   const on = events();
   const item: Track = { ...track('a', null, script), locale: 'en' };
-  return { synth, adapter, on, item, timer };
+  return { synth, adapter, on, item, timer, page };
 }
 
 describe('the speech watchdog', () => {
+  it('pauses, and keeps the place, when an engine that has spoken before stalls', () => {
+    const { synth, adapter, on, timer } = setup();
+    const long: Track = { ...track('a', null, `${'A sentence of words. '.repeat(15)}End.`), locale: 'en' };
+    adapter.load(long, { rate: 1, position: 0 }, on);
+    adapter.play();
+    synth.last()?.onstart?.({});
+    synth.last()?.onend?.({});
+    // The next chunk never starts (a slow network voice, a locked screen).
+    const before = on.time.mock.calls.at(-1);
+    timer.fire();
+    expect(on.paused).toHaveBeenCalledOnce();
+    expect(on.error).not.toHaveBeenCalled();
+    expect(on.time.mock.calls.at(-1)).toEqual(before);
+    // Play picks up at that chunk.
+    const resumed = synth.spoken.length;
+    adapter.play();
+    expect(synth.spoken).toHaveLength(resumed + 1);
+    expect(synth.last()?.text).toBe(synth.spoken[resumed - 1]?.text);
+    // A stall on a later segment pauses too: the engine is known to speak.
+    adapter.load(long, { rate: 1, position: 0 }, on);
+    adapter.play();
+    timer.fire();
+    expect(on.paused).toHaveBeenCalledTimes(2);
+    expect(on.error).not.toHaveBeenCalled();
+  });
+
+  it('is not armed while the page is hidden', () => {
+    const { adapter, on, item, timer, page } = setup();
+    page.hidden = true;
+    adapter.load(item, { rate: 1, position: 0 }, on);
+    adapter.play();
+    expect(timer.pending.size).toBe(0);
+    page.hidden = false;
+    adapter.pause();
+    adapter.play();
+    expect(timer.pending.size).toBe(1);
+  });
+
   it('gives up on an utterance the engine never starts, and reports an error once', () => {
     const { synth, adapter, on, item, timer } = setup();
     adapter.load(item, { rate: 1, position: 0 }, on);
@@ -239,6 +283,11 @@ describe('browserSpeech', () => {
     const env = browserSpeech({ speechSynthesis: synth, SpeechSynthesisUtterance: FakeUtterance });
     expect(env?.synth).toBe(synth);
     expect(env?.utterance('Hi')).toBeInstanceOf(FakeUtterance);
+    expect(env?.hidden?.()).toBe(false);
+    const page = { hidden: true };
+    expect(
+      browserSpeech({ speechSynthesis: synth, SpeechSynthesisUtterance: FakeUtterance, document: page })?.hidden?.(),
+    ).toBe(true);
     expect(browserSpeech({ speechSynthesis: synth })).toBeNull();
     expect(browserSpeech({})).toBeNull();
   });

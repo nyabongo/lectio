@@ -266,6 +266,7 @@ const shortcuts = [
       SpeechSynthesisUtterance?: new (text: string) => UtteranceLike;
       navigator: { mediaSession?: MediaSessionLike };
       MediaMetadata?: new (init: MediaMetadataInit) => unknown;
+      document: { readonly hidden: boolean };
     };
     const controller = createListenController(data, data.speeds, ui, {
       storage: browserStorage(),

@@ -6,7 +6,8 @@
  * and the service worker's `clear-offline-data` message (L-061) remove it with the saved days, and keep the app shell.
  *
  * - Each file is downloaded once: the first play fetches it (CORS), stores it and plays the stored copy through an
- *   object URL. Narration files are small, so the wait is short, and a metered connection pays for one download.
+ *   object URL. Narration files are small, so the wait is short, and a metered connection pays for one download. In
+ *   the browser the download gives up after `DOWNLOAD_TIMEOUT` and the element streams the URL instead.
  * - Where that fetch is refused (no CORS rule on the bucket, see docs/operator-handbook.md), fails or there is no
  *   Cache Storage, the element streams the URL itself and nothing is kept.
  * - The cache keeps at most `AUDIO_CACHE_LIMIT` files. Playing a kept file moves it to the end, and the least recently
@@ -83,7 +84,11 @@ export function createOfflineAudio(env: OfflineAudioEnvironment): OfflineAudio {
   const kept = async (store: AudioCacheLike, url: string): Promise<Blob | null> => {
     const cached = await store.match(url);
     if (cached === undefined) return null;
-    await store.put(url, cached.clone());
+    try {
+      await store.put(url, cached.clone());
+    } catch {
+      // A full quota: the copy just stays where it is in the eviction order, and still plays.
+    }
     return cached.blob();
   };
 
@@ -113,12 +118,19 @@ export function createOfflineAudio(env: OfflineAudioEnvironment): OfflineAudio {
   };
 }
 
-/** The browser's Cache Storage, `fetch` and object URLs (CORS fetch, so the stored copy is readable). */
+/** The first-play download gives up after this long (ms), and the element streams the URL instead. */
+export const DOWNLOAD_TIMEOUT = 10_000;
+
+/**
+ * The browser's Cache Storage, `fetch` and object URLs: a CORS fetch, so the stored copy is readable, that is aborted
+ * after `DOWNLOAD_TIMEOUT` so a stalled connection falls back to streaming instead of leaving Play doing nothing.
+ */
 export function browserOfflineAudio(scope: typeof globalThis): OfflineAudio {
   const caches = (scope as { caches?: OfflineAudioEnvironment['caches'] }).caches;
   return createOfflineAudio({
     caches,
-    fetch: (url) => scope.fetch(url, { mode: 'cors', credentials: 'omit' }),
+    fetch: (url) =>
+      scope.fetch(url, { mode: 'cors', credentials: 'omit', signal: scope.AbortSignal.timeout(DOWNLOAD_TIMEOUT) }),
     createObjectURL: (blob) => scope.URL.createObjectURL(blob),
     revokeObjectURL: (url) => scope.URL.revokeObjectURL(url),
   });

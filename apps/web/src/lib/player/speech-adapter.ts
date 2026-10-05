@@ -14,8 +14,11 @@
  *   on Android and with network voices. Callbacks from a cancelled utterance are ignored.
  * - A watchdog: some engines (no voices installed, or none for the language) accept `speak()` and then never start
  *   or report anything. When an utterance gives no `start`, `boundary`, `end` or `error` within
- *   `SPEECH_START_TIMEOUT`, reading stops and the adapter reports an error, so the queue skips the segment instead
- *   of showing "playing" at 0:00 for ever.
+ *   `SPEECH_START_TIMEOUT`, reading stops. If the engine has never started an utterance for this adapter, it cannot
+ *   speak at all: the adapter reports an error and the queue skips the segment instead of showing "playing" at 0:00
+ *   for ever. Once it has started one, a stall is temporary (a slow network voice, a hidden or locked page holding
+ *   utterances back), so the adapter reports a pause: the queue stops where it is and keeps the reader's place. The
+ *   watchdog is not armed while the page is hidden.
  */
 import { speechSettings } from './locale.ts';
 import type { VoiceLike } from './locale.ts';
@@ -47,6 +50,8 @@ export interface SpeechEnvironment {
   readonly utterance: (text: string) => UtteranceLike;
   /** `setTimeout` and `clearTimeout`, for the watchdog (the global ones by default). */
   readonly timer?: { set(callback: () => void, ms: number): unknown; clear(handle: unknown): void };
+  /** Whether the page is hidden (`document.hidden`); the watchdog is not armed then. Never hidden by default. */
+  readonly hidden?: () => boolean;
 }
 
 /** How long an utterance may stay silent (no `start`, `boundary`, `end` or `error`) before it counts as failed. */
@@ -99,7 +104,10 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
   if (env === null) return null;
   const { synth, utterance: makeUtterance } = env;
   const timer = env.timer ?? GLOBAL_TIMER;
+  const hidden = env.hidden ?? (() => false);
   let watchdog: unknown = null;
+  /** Whether the engine has started any utterance for this adapter: a later stall is then temporary. */
+  let heard = false;
   let track: Track | null = null;
   let chunks: Chunk[] = [];
   let events: AdapterEvents | null = null;
@@ -116,6 +124,11 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
   const calm = (): void => {
     if (watchdog !== null) timer.clear(watchdog);
     watchdog = null;
+  };
+  /** The engine answered: stand the watchdog down and remember that this engine can speak. */
+  const answered = (): void => {
+    heard = true;
+    calm();
   };
 
   /** Speaks from `offset` to the end, chunk after chunk. */
@@ -137,17 +150,17 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
     if (settings.voice !== null) utterance.voice = settings.voice;
     utterance.rate = rate;
     utterance.onstart = () => {
-      if (token === generation) calm();
+      if (token === generation) answered();
     };
     utterance.onboundary = (event) => {
       if (token !== generation) return;
-      calm();
+      answered();
       offset = from + event.charIndex;
       report();
     };
     utterance.onend = () => {
       if (token !== generation) return;
-      calm();
+      answered();
       offset = chunk.start + chunk.text.length;
       report();
       speakFrom(token);
@@ -158,12 +171,16 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
       bound().error();
     };
     calm();
-    watchdog = timer.set(() => {
-      // Cleared on every callback and every stop, so a firing watchdog is always the current utterance's.
-      watchdog = null;
-      halt();
-      bound().error();
-    }, SPEECH_START_TIMEOUT);
+    if (!hidden())
+      watchdog = timer.set(() => {
+        // Cleared on every callback and every stop, so a firing watchdog is always the current utterance's.
+        watchdog = null;
+        halt();
+        // An engine that has spoken before is only stalled: stop here and keep the place. One that never has
+        // cannot speak: skip.
+        if (heard) bound().paused();
+        else bound().error();
+      }, SPEECH_START_TIMEOUT);
     synth.speak(utterance);
   }
 
@@ -219,12 +236,13 @@ export function createSpeechAdapter(env: SpeechEnvironment | null): PlaybackAdap
   };
 }
 
-/** The browser's speech synthesis, or `null` where there is none. */
+/** The browser's speech synthesis (and whether the page is hidden), or `null` where there is none. */
 export function browserSpeech(scope: {
   speechSynthesis?: SpeechSynthesisLike;
   SpeechSynthesisUtterance?: new (text: string) => UtteranceLike;
+  document?: { readonly hidden: boolean };
 }): SpeechEnvironment | null {
   const { speechSynthesis: synth, SpeechSynthesisUtterance: Utterance } = scope;
   if (synth === undefined || Utterance === undefined) return null;
-  return { synth, utterance: (text) => new Utterance(text) };
+  return { synth, utterance: (text) => new Utterance(text), hidden: () => scope.document?.hidden === true };
 }
