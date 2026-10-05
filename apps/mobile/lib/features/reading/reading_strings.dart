@@ -47,6 +47,9 @@ class ReadingStrings {
       'Notes for this reading are in preparation. They appear here once they '
       'have been checked against their sources and approved.';
 
+  /// What screen readers say for the note a shared link opened.
+  String get linkedNote => 'Shared note';
+
   /// Shown on the Original tab when a passage has no translation notes.
   String get noNotes =>
       'There are no original-language notes for this reading yet.';

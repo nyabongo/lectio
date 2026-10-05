@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/api_cache.dart';
+import 'package:lectio/features/reading/note_cards.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_screen.dart';
 
@@ -478,6 +479,84 @@ void main() {
         readingLocation(seedDate, null, 'gospel', tab: ReadingTab.original),
       );
       expect(find.text('VERSE 15 · “envious”'), findsOneWidget);
+    });
+
+    /// The seed day with 20 more Gospel notes after the seed ones, so the
+    /// last ones start well below the screen.
+    Map<String, Object?> manyNotesDay() {
+      final day = seedDay();
+      final notes = gospelOf(day)['translationNotes']! as List<Object?>;
+      final template = notes.last! as Map<String, Object?>;
+      for (var index = 1; index <= 20; index++) {
+        notes.add({
+          ...template,
+          'id': 'extra-$index',
+          'anchor': 'extra $index',
+        });
+      }
+      return day;
+    }
+
+    /// The note cards that are highlighted as linked.
+    Finder highlightedCards() {
+      return find.byWidgetPredicate(
+        (widget) => widget is NoteCard && widget.highlighted,
+      );
+    }
+
+    String noteLocation(String note) {
+      final reading = readingLocation(
+        seedDate,
+        null,
+        'gospel',
+        tab: ReadingTab.original,
+      );
+      return '$reading&note=$note';
+    }
+
+    testWidgets('/reading?…&note scrolls to and highlights the note', (
+      tester,
+    ) async {
+      harness.serveDay(manyNotesDay());
+      await pumpRouter(tester, noteLocation('extra-20'));
+
+      final card = tester.widget<NoteCard>(highlightedCards());
+      expect(card.note.id, 'extra-20');
+      final rect = tester.getRect(highlightedCards());
+      final screen = tester.view.physicalSize / tester.view.devicePixelRatio;
+      expect(rect.top, greaterThanOrEqualTo(0));
+      expect(rect.top, lessThan(screen.height));
+      final scrollable = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(SingleChildScrollView),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(scrollable.position.pixels, greaterThan(0));
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Semantics && widget.properties.label == 'Shared note',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('/reading?…&note with an unknown id stays at the top', (
+      tester,
+    ) async {
+      harness.serveDay(manyNotesDay());
+      await pumpRouter(tester, noteLocation('no-such-note'));
+
+      expect(find.text('VERSE 15 · “envious”'), findsOneWidget);
+      expect(highlightedCards(), findsNothing);
+      final scrollable = tester.state<ScrollableState>(
+        find.descendant(
+          of: find.byType(SingleChildScrollView),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      expect(scrollable.position.pixels, 0);
     });
 
     testWidgets('/reading?date&slot for a reading without notes', (

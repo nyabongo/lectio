@@ -72,6 +72,7 @@ class ReadingScreen extends StatefulWidget {
     this.mass,
     this.slot,
     this.initialTab = ReadingTab.context,
+    this.note,
   });
 
   /// The ISO date of the day, or `null` for today.
@@ -86,6 +87,10 @@ class ReadingScreen extends StatefulWidget {
 
   /// The tab shown first.
   final ReadingTab initialTab;
+
+  /// The id of a translation note to scroll to on the Original tab (from a
+  /// shared insight link), or `null`.
+  final String? note;
 
   @override
   State<ReadingScreen> createState() => _ReadingScreenState();
@@ -150,6 +155,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
             mass: widget.mass,
             slot: _slot,
             initialTab: widget.initialTab,
+            note: widget.note,
             offline: data.refreshError != null,
             onSlotSelected: _select,
           );
@@ -197,6 +203,7 @@ class ReadingDayView extends StatelessWidget {
     this.mass,
     this.slot,
     this.initialTab = ReadingTab.context,
+    this.note,
     this.offline = false,
     super.key,
   });
@@ -215,6 +222,9 @@ class ReadingDayView extends StatelessWidget {
 
   /// The tab shown first.
   final ReadingTab initialTab;
+
+  /// The id of the translation note to scroll to, or `null`.
+  final String? note;
 
   /// Whether the notes are saved ones that could not be refreshed.
   final bool offline;
@@ -244,6 +254,7 @@ class ReadingDayView extends StatelessWidget {
         date: day.date,
         reading: reading,
         initialTab: initialTab,
+        note: note,
       );
     }
     return Theme(
@@ -354,6 +365,7 @@ class ReadingNotesView extends StatelessWidget {
     required this.date,
     required this.reading,
     this.initialTab = ReadingTab.context,
+    this.note,
     super.key,
   });
 
@@ -365,6 +377,9 @@ class ReadingNotesView extends StatelessWidget {
 
   /// The tab shown first.
   final ReadingTab initialTab;
+
+  /// The id of the translation note to scroll to, or `null`.
+  final String? note;
 
   @override
   Widget build(BuildContext context) {
@@ -404,7 +419,7 @@ class ReadingNotesView extends StatelessWidget {
             child: TabBarView(
               children: [
                 ContextPanel(passage: passage, page: page),
-                OriginalPanel(passage: passage, page: page),
+                OriginalPanel(passage: passage, page: page, note: note),
               ],
             ),
           ),
@@ -416,7 +431,8 @@ class ReadingNotesView extends StatelessWidget {
 
 /// The Reading route inside the tab shell: `/reading` shows today's Gospel;
 /// `?date=2026-09-20&mass=day&slot=gospel` picks the day and reading, and
-/// `&tab=original` opens the Original tab (see [readingLocation]).
+/// `&tab=original` opens the Original tab (see [readingLocation]), and
+/// `&note=<id>` scrolls it to that note (a shared insight, L-107).
 GoRoute readingRoute() {
   return GoRoute(
     path: AppRoute.reading.path,
@@ -428,6 +444,7 @@ GoRoute readingRoute() {
         mass: query['mass'],
         slot: query['slot'],
         initialTab: ReadingTab.parse(query['tab']),
+        note: query['note'],
       );
     },
   );
