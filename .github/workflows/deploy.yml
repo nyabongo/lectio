@@ -157,8 +157,6 @@ jobs:
           # Empty (no audio) unless the render step wrote the manifest; see apps/web/src/lib/audio.ts.
           LECTIO_AUDIO_MANIFEST: ${{ steps.audio-manifest.outputs.path }}
 
-      # Only when a custom domain is configured (L-206). With the "GitHub Actions" Pages source the domain itself
-      # is set in the repository's Pages settings; the file keeps the artifact self-describing.
       # The build stamp: the smoke test polls it until the Pages URL serves this run's build, not the previous one.
       # The run id and attempt tell a daily rebuild of an unchanged commit from the deploy it replaces.
       - name: Build stamp
@@ -172,6 +170,8 @@ jobs:
             '{sha: $sha, build: $build, date: $date, builtAt: $builtAt}' > apps/web/dist/build.json
           echo "build-id=$BUILD_ID" >> "$GITHUB_OUTPUT"
 
+      # Only when a custom domain is configured (L-206). With the "GitHub Actions" Pages source the domain itself
+      # is set in the repository's Pages settings; the file keeps the artifact self-describing.
       - name: CNAME
         if: steps.site.outputs.domain != ''
         env:
@@ -230,6 +230,8 @@ jobs:
             return 1
           }
           stamp=""
+          # Only called through with_retries, which shellcheck cannot follow.
+          # shellcheck disable=SC2317,SC2329
           live_build() {
             stamp="$(curl -sf --max-time 30 -H 'Cache-Control: no-cache' "${base}build.json?run=${BUILD_ID}" || true)"
             [ "$(jq -r '.sha + " " + .build' <<<"$stamp" 2>/dev/null || true)" = "${SHA} ${BUILD_ID}" ]
@@ -240,6 +242,8 @@ jobs:
           fi
           echo "build ${BUILD_ID} (${SHA}) is live at ${base}" | tee -a "$GITHUB_STEP_SUMMARY"
           status=000
+          # Only called through with_retries, which shellcheck cannot follow.
+          # shellcheck disable=SC2317,SC2329
           answers_200() {
             status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$1" || true)"
             [ "$status" = "200" ]
