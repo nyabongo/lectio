@@ -4,12 +4,13 @@
  * on the device; the store, its validation and the inline head script live in src/lib/settings.ts.
  *
  * The static HTML checks the defaults; the client script checks the saved values on load, saves every change at
- * once and applies the theme and text size live. The head script applies the saved theme and size before paint.
+ * once and applies the theme and text size live. The base layout's head script applies the saved theme and size
+ * before paint on every page.
  */
 import Seo from '../../components/seo/Seo.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
-import { DEFAULT_SETTINGS, LANGUAGES, PLAYBACK_SPEEDS, headScript } from '../../lib/settings.ts';
+import { DEFAULT_SETTINGS, LANGUAGES, PLAYBACK_SPEEDS } from '../../lib/settings.ts';
 
 const lang = DEFAULT_LOCALE;
 const title = t(lang, 'settings.title');
@@ -46,10 +47,7 @@ const messages = {
 ---
 
 <BaseLayout title={title} description={description} lang={lang}>
-  <Fragment slot="head">
-    <script is:inline set:html={headScript()} />
-    <Seo title={title} description={description} lang={lang} path="settings/" />
-  </Fragment>
+  <Seo slot="head" title={title} description={description} lang={lang} path="settings/" />
 
   <div class="settings">
     <h1>{title}</h1>
@@ -144,31 +142,32 @@ const messages = {
 </BaseLayout>
 
 <script>
-  import {
-    applySettings,
-    browserStorage,
-    clearOfflineData,
-    fieldPatch,
-    loadSettings,
-    updateSettings,
-  } from '../../lib/settings.ts';
+  import { applySettings, browserStorage, clearOfflineData, createSettingsSession } from '../../lib/settings.ts';
 
   const form = document.querySelector<HTMLFormElement>('[data-settings-form]');
   const status = document.querySelector<HTMLElement>('[data-settings-status]');
   if (form !== null && status !== null) {
     const messages = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
+    // Empty the live region first so a repeated message ("Saved…" twice) is announced again.
     const say = (key: string): void => {
-      status.textContent = messages[key] ?? '';
+      status.textContent = '';
+      window.setTimeout(() => {
+        status.textContent = messages[key] ?? '';
+      }, 50);
     };
-    const storage = browserStorage();
-    const current = loadSettings(storage);
-    for (const [name, value] of Object.entries(current)) {
+    // Changes build on the settings in memory, so they add up even when storage cannot save them.
+    const session = createSettingsSession(browserStorage());
+    for (const [name, value] of Object.entries(session.current)) {
       const input = form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${String(value)}"]`);
       if (input !== null) input.checked = true;
     }
+    // Transitions start only after the saved choices have been styled (the read forces that style pass), so they
+    // do not visibly fade in over the defaults on load.
+    void form.offsetWidth;
+    form.dataset.ready = '';
     form.addEventListener('change', (event) => {
       const input = event.target as HTMLInputElement;
-      const { settings, saved } = updateSettings(storage, fieldPatch(input.name, input.value));
+      const { settings, saved } = session.change(input.name, input.value);
       applySettings(document.documentElement, settings);
       say(saved ? 'saved' : 'notSaved');
     });
@@ -234,6 +233,9 @@ const messages = {
     border: var(--rule-width) solid var(--colour-rule);
     border-radius: 999px;
     cursor: pointer;
+  }
+
+  .settings-form[data-ready] .segment {
     transition:
       background-color var(--duration-quick) var(--ease-out),
       color var(--duration-quick) var(--ease-out);
@@ -255,6 +257,19 @@ const messages = {
     background: var(--colour-accent);
     border-color: var(--colour-accent);
     color: var(--colour-on-accent);
+  }
+
+  /* Forced colours override backgrounds, so mark the selected segment with a thick system-colour outline. */
+  @media (forced-colors: active) {
+    .segment:has(input:checked) {
+      outline: 3px solid Highlight;
+      outline-offset: 1px;
+      border-color: Highlight;
+    }
+
+    .segment:has(input:focus-visible) {
+      outline-color: CanvasText;
+    }
   }
 
   .segment:has(input:focus-visible) {

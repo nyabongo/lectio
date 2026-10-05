@@ -12,8 +12,9 @@
  * the whole page scales). `headScript()` is the same logic as a dependency-free inline script for `<head>`, so the
  * saved theme and size apply before first paint.
  *
- * Other features read the store with `loadSettings(browserStorage())`; the Listen page (L-056) takes its starting
- * speed from `playbackSpeed`. `clearOfflineData` is the hook the PWA (L-061) fills: it empties Cache Storage.
+ * Other features read the store with `loadSettings(browserStorage())`; the Listen page (L-085) takes its starting
+ * speed from `playbackSpeed`. `clearOfflineData` is the hook for the PWA (L-061): it deletes the Cache Storage
+ * caches named with `OFFLINE_DATA_CACHE_PREFIX` and leaves the app-shell cache alone.
  */
 
 export const STORAGE_KEY = 'lectio.settings';
@@ -147,6 +148,31 @@ export function updateSettings(
   return { settings, saved: saveSettings(storage, settings) };
 }
 
+/** The settings page's state: changes build on the settings in memory, then are saved if storage allows. */
+export interface SettingsSession {
+  /** The settings now in effect, saved or not. */
+  readonly current: Settings;
+  /** Applies a form field change to `current` and tries to save the result. */
+  change(name: string, value: string): { settings: Settings; saved: boolean };
+}
+
+/**
+ * Starts from the saved settings and keeps them in memory, so that when storage is missing or refuses writes, each
+ * change still builds on the earlier ones rather than on the defaults.
+ */
+export function createSettingsSession(storage: SettingsStorage | null): SettingsSession {
+  let current = loadSettings(storage);
+  return {
+    get current() {
+      return current;
+    },
+    change(name, value) {
+      current = sanitizeSettings(fieldPatch(name, value), current);
+      return { settings: current, saved: saveSettings(storage, current) };
+    },
+  };
+}
+
 /**
  * A form field's value as a settings patch: `playbackSpeed` is parsed as a number, unknown names give an empty
  * patch (and invalid values are dropped later by `sanitizeSettings`).
@@ -208,21 +234,28 @@ export interface OfflineCaches {
   delete(name: string): Promise<boolean>;
 }
 
+/**
+ * Caches whose names start with this hold offline reading data (saved days, audio); they are what "Clear offline
+ * data" removes. The PWA (L-061) names its app-shell precache without it, so clearing never breaks the shell.
+ */
+export const OFFLINE_DATA_CACHE_PREFIX = 'lectio-data-';
+
 export type ClearOfflineResult =
   | { readonly status: 'cleared'; readonly count: number }
   | { readonly status: 'unsupported' }
   | { readonly status: 'failed' };
 
 /**
- * Deletes every cache the site stored for offline reading (the PWA of L-061 keeps its precache and saved days in
- * Cache Storage). Settings are kept. `unsupported` when the browser has no Cache Storage.
+ * Deletes the offline data caches, those whose names start with `prefix`. Settings and every other cache (the app
+ * shell) are kept. `unsupported` when the browser has no Cache Storage.
  */
 export async function clearOfflineData(
+  prefix: string = OFFLINE_DATA_CACHE_PREFIX,
   caches: OfflineCaches | undefined = (globalThis as { caches?: OfflineCaches }).caches,
 ): Promise<ClearOfflineResult> {
   if (caches === undefined) return { status: 'unsupported' };
   try {
-    const names = await caches.keys();
+    const names = (await caches.keys()).filter((name) => name.startsWith(prefix));
     const deleted = await Promise.all(names.map((name) => caches.delete(name)));
     return { status: 'cleared', count: deleted.filter(Boolean).length };
   } catch {

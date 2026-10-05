@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_SETTINGS,
   LANGUAGES,
+  OFFLINE_DATA_CACHE_PREFIX,
   PLAYBACK_SPEEDS,
   SETTINGS_VERSION,
   STORAGE_KEY,
@@ -11,6 +12,7 @@ import {
   applySettings,
   browserStorage,
   clearOfflineData,
+  createSettingsSession,
   fieldPatch,
   fontSizeFor,
   headScript,
@@ -229,20 +231,30 @@ describe('headScript', () => {
 });
 
 describe('clearOfflineData', () => {
-  it('deletes every cache', async () => {
-    const names = new Set(['lectio-precache', 'lectio-days', 'audio']);
+  it('deletes only the offline data caches and keeps the app shell', async () => {
+    const names = new Set(['lectio-data-days', 'lectio-data-audio', 'lectio-shell-v1', 'other']);
     const caches: OfflineCaches = {
-      keys: () => Promise.resolve([...names, 'gone']),
+      keys: () => Promise.resolve([...names, 'lectio-data-gone']),
       delete: (name) => Promise.resolve(names.delete(name)),
     };
-    expect(await clearOfflineData(caches)).toEqual({ status: 'cleared', count: 3 });
-    expect(names.size).toBe(0);
+    expect(await clearOfflineData(OFFLINE_DATA_CACHE_PREFIX, caches)).toEqual({ status: 'cleared', count: 2 });
+    expect([...names]).toEqual(['lectio-shell-v1', 'other']);
+  });
+
+  it('takes another prefix', async () => {
+    const names = new Set(['a-1', 'b-1']);
+    const caches: OfflineCaches = {
+      keys: () => Promise.resolve([...names]),
+      delete: (name) => Promise.resolve(names.delete(name)),
+    };
+    expect(await clearOfflineData('b-', caches)).toEqual({ status: 'cleared', count: 1 });
+    expect([...names]).toEqual(['a-1']);
   });
 
   it('reports a browser without Cache Storage', async () => {
-    expect(await clearOfflineData(undefined)).toEqual({ status: 'unsupported' });
     // Node has no Cache Storage, so the default is unsupported here.
     expect(await clearOfflineData()).toEqual({ status: 'unsupported' });
+    expect(await clearOfflineData('x-', undefined)).toEqual({ status: 'unsupported' });
   });
 
   it('reports a failure', async () => {
@@ -250,6 +262,51 @@ describe('clearOfflineData', () => {
       keys: () => Promise.reject(new Error('denied')),
       delete: () => Promise.resolve(true),
     };
-    expect(await clearOfflineData(caches)).toEqual({ status: 'failed' });
+    expect(await clearOfflineData(OFFLINE_DATA_CACHE_PREFIX, caches)).toEqual({ status: 'failed' });
+  });
+});
+
+describe('createSettingsSession', () => {
+  it('starts from the saved settings and saves each change', () => {
+    const storage = new FakeStorage();
+    saveSettings(storage, custom);
+    const session = createSettingsSession(storage);
+    expect(session.current).toEqual(custom);
+    expect(session.change('theme', 'light')).toEqual({ settings: { ...custom, theme: 'light' }, saved: true });
+    expect(loadSettings(storage)).toEqual({ ...custom, theme: 'light' });
+  });
+
+  it('keeps earlier changes in memory when storage is unavailable', () => {
+    const session = createSettingsSession(null);
+    expect(session.change('theme', 'dark')).toEqual({ settings: { ...DEFAULT_SETTINGS, theme: 'dark' }, saved: false });
+    expect(session.change('textSize', 'large')).toEqual({
+      settings: { ...DEFAULT_SETTINGS, theme: 'dark', textSize: 'large' },
+      saved: false,
+    });
+    expect(session.current).toEqual({ ...DEFAULT_SETTINGS, theme: 'dark', textSize: 'large' });
+  });
+
+  it('keeps earlier changes in memory when storage reads but refuses writes', () => {
+    const storage = new FakeStorage();
+    saveSettings(storage, custom);
+    const full: SettingsStorage = {
+      getItem: (key) => storage.getItem(key),
+      setItem() {
+        throw new Error('QuotaExceededError');
+      },
+    };
+    const session = createSettingsSession(full);
+    session.change('theme', 'light');
+    expect(session.change('playbackSpeed', '2')).toEqual({
+      settings: { ...custom, theme: 'light', playbackSpeed: 2 },
+      saved: false,
+    });
+    expect(loadSettings(storage)).toEqual(custom);
+  });
+
+  it('ignores invalid changes', () => {
+    const session = createSettingsSession(throwingStorage);
+    expect(session.change('theme', 'neon').settings).toEqual(DEFAULT_SETTINGS);
+    expect(session.change('unknown', 'x').settings).toEqual(DEFAULT_SETTINGS);
   });
 });
