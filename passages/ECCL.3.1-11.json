@@ -23,7 +23,7 @@
         "gloss": "set time"
       },
       "summary": "Verse 1 pairs two time-words: zeman, a rare late word for a fixed time, and ʿet, the everyday word.",
-      "body": "Zeman is a late Hebrew word, found elsewhere only in Nehemiah 2:6 and Esther 9:27 and 9:31. [c10] The Pulpit Commentary takes zeman as a fixed, definite portion of time and ʿet as the beginning of a period. [c11] Plumptre compares the pair to Greek chronos and kairos and suggests that the English words season and time ought perhaps to change places. [c12]"
+      "body": "Zeman is a late word, found elsewhere in biblical Hebrew only in Nehemiah 2:6 and Esther 9:27 and 9:31. [c10] The Pulpit Commentary takes zeman as a fixed, definite portion of time and ʿet as the beginning of a period. [c11] Plumptre compares the pair to Greek chronos and kairos and suggests that the English words season and time ought perhaps to change places. [c12]"
     },
     {
       "id": "yitron",
@@ -122,7 +122,7 @@
     },
     {
       "id": "c10",
-      "text": "The word זְמָן (zeman) belongs to late Hebrew and occurs elsewhere only in Nehemiah 2:6 and Esther 9:27, 31.",
+      "text": "The word זְמָן (zeman) belongs to late Hebrew and occurs elsewhere in biblical Hebrew only in Nehemiah 2:6 and Esther 9:27, 31.",
       "sourceIds": ["ellicott-eccl-3-1", "bdb-zeman", "barnes-eccl-3-1"],
       "sensitive": false
     },
