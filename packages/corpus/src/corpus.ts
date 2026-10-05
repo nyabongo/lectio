@@ -169,7 +169,7 @@ export function openCorpus(root: string, options: OpenCorpusOptions = {}): Corpu
     const normalise = normaliserFor(language);
     const mode = options.match ?? 'either';
     const forms = (tokens ?? []).map(
-      ([surface, lemma]) => [new Set(tokenForms(language, surface)), new Set(tokenForms(language, lemma))] as const,
+      ([surface, lemma]) => [new Set(tokenForms(language, surface)), new Set(tokenForms(language, lemma, 'lemma'))] as const,
     );
     const matches = (index: number, word: string): boolean => {
       const [surface, lemma] = forms[index] as readonly [Set<string>, Set<string>];

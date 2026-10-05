@@ -78,21 +78,35 @@ export function normaliserFor(language: Language): (text: string) => string {
   }
 }
 
+/** A Strong's number with an OSHB homograph letter, e.g. `1254 a` or `6213a`: the bare number is group 1. */
+const HOMOGRAPH = /^([0-9]+) ?[A-Za-z]$/u;
+
+/** Whether a token field is the surface form or the lemma. Only lemmas get the homograph rule. */
+export type TokenField = 'surface' | 'lemma';
+
 /**
- * The normalised forms a corpus token (surface or lemma) matches. Hebrew and Aramaic editions such as OSHB mark
- * morpheme boundaries with "/" (`הַ/שָּׁמַ֖יִם`, lemma `d/8064`): the token matches every contiguous run of its
- * segments, so the whole word (`השמים`), the bare word without its prefixes (`שמים`, `8064`) and any prefix run all
- * match. Other languages have one form: the whole normalised token. An empty token matches nothing.
+ * The normalised forms a corpus token (surface or lemma) matches.
+ *
+ * Hebrew and Aramaic editions such as OSHB mark morpheme boundaries with "/" (`הַ/שָּׁמַ֖יִם`, lemma `d/8064`). The
+ * token matches every contiguous run of its segments that ends with the last segment: the whole word (`השמים`,
+ * `d8064`) and the word without some or all of its prefixes (`שמים`, `8064`). A bare prefix never matches on its own
+ * (`ה` does not match `הַ/שָּׁמַ֖יִם`, lemma `d` does not match `d/8064`), so a query cannot pass on an article or a
+ * conjunction alone. Other languages have one form: the whole normalised token.
+ *
+ * Lemmas only: OSHB writes some Strong's numbers with a homograph letter (`1254 a`, `c/6213 a`). Such a lemma also
+ * matches with the letter removed, so the bare number `1254` matches `1254 a` (and `6213` matches `c/6213 a`). A
+ * query that names the letter (`1254 a`) matches only that homograph. An empty token matches nothing.
  */
-export function tokenForms(language: Language, text: string): string[] {
+export function tokenForms(language: Language, text: string, field: TokenField = 'surface'): string[] {
   const normalise = normaliserFor(language);
   const raw = language === 'hbo' || language === 'arc' ? text.split('/') : [text];
   const segments = raw.map((part) => normalise(part)).filter((part) => part !== '');
   const forms: string[] = [];
-  for (let start = 0; start < segments.length; start += 1) {
-    for (let end = start + 1; end <= segments.length; end += 1) {
-      forms.push(segments.slice(start, end).join(''));
-    }
+  for (let start = 0; start < segments.length; start += 1) forms.push(segments.slice(start).join(''));
+  const bare = field === 'lemma' ? HOMOGRAPH.exec(segments.at(-1) ?? '')?.[1] : undefined;
+  if (bare !== undefined) {
+    const prefixes = segments.slice(0, -1);
+    for (let start = 0; start <= prefixes.length; start += 1) forms.push([...prefixes.slice(start), bare].join(''));
   }
   return forms;
 }

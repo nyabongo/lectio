@@ -85,11 +85,28 @@ describe('phraseWords', () => {
 });
 
 describe('tokenForms', () => {
-  it('gives every contiguous run of OSHB "/" segments for Hebrew and Aramaic', () => {
-    expect(tokenForms('hbo', 'וְ/רָעָ֣ה')).toEqual(['ו', 'ורעה', 'רעה']);
-    expect(tokenForms('arc', 'a/b/c')).toEqual(['a', 'ab', 'abc', 'b', 'bc', 'c']);
-    expect(tokenForms('hbo', 'd/8064')).toEqual(['d', 'd8064', '8064']);
+  it('gives every run of OSHB "/" segments that ends with the last segment, for Hebrew and Aramaic', () => {
+    expect(tokenForms('hbo', 'וְ/רָעָ֣ה')).toEqual(['ורעה', 'רעה']);
+    expect(tokenForms('arc', 'a/b/c')).toEqual(['abc', 'bc', 'c']);
+    expect(tokenForms('hbo', 'd/8064', 'lemma')).toEqual(['d8064', '8064']);
     expect(tokenForms('hbo', 'ברא')).toEqual(['ברא']);
+  });
+
+  it('never gives a bare prefix or a prefix run on its own', () => {
+    expect(tokenForms('hbo', 'הַ/שָּׁמַ֖יִם')).not.toContain('ה');
+    expect(tokenForms('hbo', 'd/8064', 'lemma')).not.toContain('d');
+    expect(tokenForms('arc', 'a/b/c')).not.toContain('ab');
+    expect(tokenForms('arc', 'a/b/c')).not.toContain('b');
+  });
+
+  it("adds the bare Strong's number for a lemma with a homograph letter", () => {
+    expect(tokenForms('hbo', '1254 a', 'lemma')).toEqual(['1254 a', '1254']);
+    expect(tokenForms('hbo', 'c/6213 a', 'lemma')).toEqual(['c6213 a', '6213 a', 'c6213', '6213']);
+    expect(tokenForms('arc', '1234b', 'lemma')).toEqual(['1234b', '1234']);
+    expect(tokenForms('hbo', '1254 a')).toEqual(['1254 a']);
+    expect(tokenForms('hbo', '1254 ab', 'lemma')).toEqual(['1254 ab']);
+    expect(tokenForms('hbo', 'a/1254', 'lemma')).toEqual(['a1254', '1254']);
+    expect(tokenForms('hbo', '', 'lemma')).toEqual([]);
   });
 
   it('keeps one form for other languages and none for empty tokens', () => {

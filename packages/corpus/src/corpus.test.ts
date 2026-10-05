@@ -134,12 +134,37 @@ describe('openCorpus on the fixture corpus', () => {
         expect(await indexes('DT', 15, 9, 'רָעָה', 'surface')).toEqual([0]);
       });
 
-      it('matches the whole word, with or without the separator, and prefix runs', async () => {
+      it('matches the whole word, with or without the separator',async () => {
         expect(await indexes('GN', 1, 1, 'השמים', 'surface')).toEqual([4]);
         expect(await indexes('GN', 1, 1, 'הַ/שָּׁמַיִם', 'surface')).toEqual([4]);
         expect(await indexes('DT', 15, 9, 'ורעה', 'surface')).toEqual([0]);
         expect(await indexes('GN', 1, 1, 'את', 'surface')).toEqual([3, 5]);
-        expect(await indexes('GN', 1, 1, 'ו', 'surface')).toEqual([5]);
+      });
+
+      it('never matches a bare prefix (a run must end with the last segment)', async () => {
+        expect(await indexes('GN', 1, 1, 'ה', 'surface')).toEqual([]);
+        expect(await indexes('GN', 1, 1, 'הַ', 'surface')).toEqual([]);
+        expect(await indexes('GN', 1, 1, 'ו', 'surface')).toEqual([]);
+        expect(await indexes('GN', 1, 1, 'ב', 'surface')).toEqual([]);
+        expect(await indexes('DT', 15, 9, 'ו', 'surface')).toEqual([]);
+        expect(await indexes('GN', 1, 1, 'd', 'lemma')).toEqual([]);
+        expect(await indexes('GN', 1, 1, 'c', 'lemma')).toEqual([]);
+        expect(await indexes('GN', 1, 1, 'b', 'lemma')).toEqual([]);
+        expect((await corpus.findWord('hbo-test', 'GN', 1, 1, 'ה')).matches).toEqual([]);
+        expect((await corpus.findWord('hbo-test', 'GN', 1, 1, 'd')).matches).toEqual([]);
+        expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, 'ה שמים')).toBe(false);
+      });
+
+      it("matches a bare Strong's number against a lemma with a homograph letter", async () => {
+        expect(await indexes('GN', 1, 1, '1254', 'lemma')).toEqual([1]);
+        expect(await indexes('GN', 1, 1, '1254 a', 'lemma')).toEqual([1]);
+        expect(await indexes('GN', 1, 7, '6213', 'lemma')).toEqual([0]);
+        expect(await indexes('GN', 1, 7, '6213 a', 'lemma')).toEqual([0]);
+        expect(await indexes('GN', 1, 7, 'c/6213', 'lemma')).toEqual([0]);
+        expect(await indexes('GN', 1, 1, '1254 b', 'lemma')).toEqual([]);
+        expect(await indexes('GN', 1, 1, '125', 'lemma')).toEqual([]);
+        expect(await indexes('GN', 1, 1, '1254', 'surface')).toEqual([]);
+        expect(await corpus.phraseOccurs('hbo-test', 'GN', 1, 1, '7225 1254 430', { match: 'lemma' })).toBe(true);
       });
 
       it('does not match a partial segment', async () => {
