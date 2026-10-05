@@ -1,5 +1,5 @@
 {
-  "$comment": "Second source for block ot-weekdays-01-17 (L-066, 011 amendment 5). OLM 1981 for the readings imported from LitCal (Year II weeks 1-11 and their gospels), in OLM numbering (Nova Vulgata psalms; lectionary:crosscheck converts them, except Ps 115 and 147, whose Nova Vulgata verse numbers equal the Hebrew and are given by hand in `canonical`). LitCal, as printed, for 8-sat, which is filled from OLM 1981 because LitCal's first reading does not parse. LitCal has no data for the other OLM-filled readings (all of Year I; Year II and gospels of weeks 12-17) at the pinned revision in any language (en, fr, hr, it, la, nl); `consulted` records the leaves checked, so those readings are listed as single-source in disputes/ot-weekdays-01-17.md, together with the readings a person should check first. Psalm strophe divisions follow OLM; verse letters are dropped before comparing.",
+  "$comment": "Second source for block ot-weekdays-01-17 (L-066, 011 amendment 5). OLM 1981 for the readings imported from LitCal (Year II weeks 1-11 and their gospels), in OLM numbering (Nova Vulgata psalms; lectionary:crosscheck converts them, except Ps 115 and 147, whose Nova Vulgata verse numbers equal the Hebrew and are given by hand in `canonical`). LitCal, as printed, for 8-sat, which is filled from OLM 1981 because LitCal's first reading does not parse, and LitCal, as printed, for the 9-sat Year II psalm (Ps 78, which the block corrects to Ps 71 from OLM 1981; kept here so the LitCal error stays visible as a disagreement). Sir 47 and 48 are compared through a hand `canonical`. Chapter-crossing ranges are written as the primary splits them when they cover the same verses. LitCal has no data for the other OLM-filled readings (all of Year I; Year II and gospels of weeks 12-17) at the pinned revision in any language (en, fr, hr, it, la, nl); `consulted` records the leaves checked, so those readings are listed as single-source in disputes/ot-weekdays-01-17.md, together with the readings a person should check first. Psalm strophe divisions follow OLM; verse letters are dropped before comparing.",
   "block": "ot-weekdays-01-17",
   "entries": [
     {
@@ -503,7 +503,7 @@
       "mass": "day",
       "slot": "first-reading",
       "cycle": "II",
-      "ref": "2 Sm 18:9-10, 14, 24-25, 30-19:3",
+      "ref": "2 Sm 18:9-10, 14, 24-25, 30-32; 19:1-3",
       "source": "olm-1981 p?#324"
     },
     {
@@ -574,6 +574,16 @@
       "slot": "gospel",
       "ref": "Mk 6:7-13",
       "source": "olm-1981 p?#326"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Sir 47:2-11",
+      "canonical": "Sir 47:2-11",
+      "source": "olm-1981 p?#327"
     },
     {
       "kind": "proper-of-time",
@@ -901,7 +911,7 @@
       "key": "ot-weekday-6-fri",
       "mass": "day",
       "slot": "gospel",
-      "ref": "Mk 8:34-9:1",
+      "ref": "Mk 8:34-38; 9:1",
       "source": "olm-1981 p?#339"
     },
     {
@@ -1389,8 +1399,8 @@
       "mass": "day",
       "slot": "psalm",
       "cycle": "II",
-      "ref": "Ps 70:8-9, 14-15, 16-17, 22",
-      "source": "olm-1981 p?#358"
+      "ref": "Psalm 78:8-9, 14-15ab, 16-17, 22",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday9Saturday"
     },
     {
       "kind": "proper-of-time",
@@ -1638,6 +1648,16 @@
       "kind": "proper-of-time",
       "key": "ot-weekday-11-thu",
       "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Sir 48:1-14",
+      "canonical": "Sir 48:1-14",
+      "source": "olm-1981 p?#368"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-thu",
+      "mass": "day",
       "slot": "psalm",
       "cycle": "II",
       "ref": "Ps 96:1-2, 3-4, 5-6, 7",
@@ -1845,12 +1865,6 @@
     },
     {
       "kind": "proper-of-time",
-      "key": "ot-weekday-4-fri",
-      "source": "olm-1981 p?#327",
-      "note": "Sirach: the Nova Vulgata verse numbering differs from NABRE and convert.ts leaves Sirach to a person; OLM Sir 47 not compared, check the verse range by hand"
-    },
-    {
-      "kind": "proper-of-time",
       "key": "ot-weekday-4-sat",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Saturday",
       "note": "empty at the pinned revision"
@@ -1931,73 +1945,73 @@
       "kind": "proper-of-time",
       "key": "ot-weekday-7-mon",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Monday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-7-tue",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Tuesday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-7-wed",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Wednesday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-7-thu",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Thursday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-7-fri",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Friday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-7-sat",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Saturday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-8-mon",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Monday",
-      "note": "empty at the pinned revision. To check: Year I Sir 17:20-24 in particular: NABRE may number this passage 17:24-29; check the verse range"
+      "note": "empty at the pinned revision. To check: Year I Sirach: Sir 17:24-29 in NABRE/Greek numbering (the US Lectionary, after the 1970 NAB, prints 17:20-24)"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-8-tue",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Tuesday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision. To check: Year I Sirach: Sir 35:1-13 is the NABRE numbering of the US Lectionary's 35:1-12 (1970 NAB), worked out by hand; the RSV numbers the same passage 35:1-11, so check the verse range"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-8-wed",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Wednesday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision. To check: Year I Sirach: Sir 36:1-2, 5-6, 13-22 is the NABRE numbering of the US Lectionary's 36:1, 4-5a, 10-17 (1970 NAB), worked out by hand; check the verse range"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-8-thu",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Thursday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-8-fri",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Friday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision"
     },
     {
       "kind": "proper-of-time",
       "key": "ot-weekday-8-sat",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Saturday",
-      "note": "empty at the pinned revision. To check: Year I Sirach: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata and NABRE number Sirach differently in places, so check the verse range"
+      "note": "empty at the pinned revision. To check: Year I Sirach: the US Lectionary prints 51:12cd-20; verses 13-20 are numbered the same in NABRE, check where verse 12 starts"
     },
     {
       "kind": "proper-of-time",
@@ -2094,12 +2108,6 @@
       "key": "ot-weekday-11-thu",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Thursday",
       "note": "empty at the pinned revision"
-    },
-    {
-      "kind": "proper-of-time",
-      "key": "ot-weekday-11-thu",
-      "source": "olm-1981 p?#368",
-      "note": "Sirach: the Nova Vulgata verse numbering differs from NABRE and convert.ts leaves Sirach to a person; OLM Sir 48 not compared, check the verse range by hand"
     },
     {
       "kind": "proper-of-time",

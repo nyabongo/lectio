@@ -53,12 +53,16 @@ describe(`block ${BLOCK}`, () => {
     expect(rows).toHaveLength(102 * 5);
   });
 
-  it('imports Year II weeks 1-11 from LitCal (except 8-sat) and fills the rest from OLM 1981 by lectionary number', () => {
+  it('imports Year II weeks 1-11 from LitCal (except 8-sat and the 9-sat psalm) and fills the rest from OLM 1981 by lectionary number', () => {
     for (const row of rows) {
       const [, week, day] = /^ot-weekday-(\d+)-(\w+)$/.exec(row.key) as unknown as [string, string, string];
       const w = Number(week);
       const source = splitSource(row.reading.source);
-      const fromLitcal = w <= 11 && row.key !== 'ot-weekday-8-sat' && row.reading.cycle !== 'I';
+      const fromLitcal =
+        w <= 11 &&
+        row.key !== 'ot-weekday-8-sat' &&
+        row.reading.cycle !== 'I' &&
+        !(row.key === 'ot-weekday-9-sat' && row.reading.slot === 'psalm');
       if (fromLitcal) {
         expect(source?.id, row.id).toBe('litcal');
         expect(row.reading.printed, row.id).toBeDefined();
@@ -68,15 +72,12 @@ describe(`block ${BLOCK}`, () => {
     }
   });
 
-  it('compares every LitCal reading with OLM 1981, and names the LitCal leaves consulted for the rest', () => {
-    expect(result.compared).toBe(196);
-    expect(result.singleSource).toHaveLength(510 - 196);
+  it('compares every LitCal reading with a second source, and names the LitCal leaves consulted for the rest', () => {
+    expect(result.compared).toBe(198);
+    expect(result.singleSource).toHaveLength(510 - 198);
     expect(result.singleSource.every((single) => single.consulted.length > 0)).toBe(true);
-    expect(result.disagreements.map((d) => d.id)).toEqual([
-      'proper-of-time:ot-weekday-4-tue day first-reading (II)',
-      'proper-of-time:ot-weekday-6-fri day gospel',
-      'proper-of-time:ot-weekday-9-sat day psalm (II)',
-    ]);
+    // LitCal prints Ps 78 for the 9-sat psalm; the block has OLM's Ps 71 and keeps LitCal's error on record.
+    expect(result.disagreements.map((d) => d.id)).toEqual(['proper-of-time:ot-weekday-9-sat day psalm (II)']);
   });
 
   it('has a current disputes file', async () => {

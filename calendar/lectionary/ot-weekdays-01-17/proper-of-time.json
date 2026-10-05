@@ -1,5 +1,5 @@
 {
-  "$comment": "Block ot-weekdays-01-17 (L-066): Ordinary Time weekdays, weeks 1-17. Each day has a Year I and a Year II first reading and psalm and one gospel shared by both years. Year II weeks 1-11 (first reading, psalm, and the shared gospel) are imported from LitCal (import/litcal/ot-weekdays-01-17.json), except 8-sat, whose LitCal first reading does not parse (\"Jude 17:20b-25\"). Everything else is filled from the OLM 1981 structure, cited by OLM lectionary number (one number per weekday covers both years and the gospel); pages (p?) and printed forms are recorded by the verifier. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "$comment": "Block ot-weekdays-01-17 (L-066): Ordinary Time weekdays, weeks 1-17. Each day has a Year I and a Year II first reading and psalm and one gospel shared by both years. Year II weeks 1-11 (first reading, psalm, and the shared gospel) are imported from LitCal (import/litcal/ot-weekdays-01-17.json), except 8-sat, whose LitCal first reading does not parse (\"Jude 17:20b-25\"), and the 9-sat Year II psalm, where LitCal prints Ps 78 for Ps 71. Everything else is filled from the OLM 1981 structure, cited by OLM lectionary number (one number per weekday covers both years and the gospel); pages (p?) and printed forms are recorded by the verifier. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
   "kind": "proper-of-time",
   "entries": [
     {
@@ -1985,7 +1985,7 @@
             {
               "slot": "first-reading",
               "cycle": "I",
-              "ref": "Sir 17:20-24",
+              "ref": "Sir 17:24-29",
               "source": "olm-1981 p?#347",
               "status": "provisional"
             },
@@ -2032,7 +2032,7 @@
             {
               "slot": "first-reading",
               "cycle": "I",
-              "ref": "Sir 35:1-12",
+              "ref": "Sir 35:1-13",
               "source": "olm-1981 p?#348",
               "status": "provisional"
             },
@@ -2079,7 +2079,7 @@
             {
               "slot": "first-reading",
               "cycle": "I",
-              "ref": "Sir 36:1, 4-5, 10-17",
+              "ref": "Sir 36:1-2, 5-6, 13-22",
               "source": "olm-1981 p?#349",
               "status": "provisional"
             },
@@ -2521,9 +2521,8 @@
             {
               "slot": "psalm",
               "cycle": "II",
-              "ref": "Ps 78:8-9, 14-15, 16-17, 22",
-              "printed": "Psalm 78:8-9, 14-15ab, 16-17, 22",
-              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday9Saturday",
+              "ref": "Ps 71:8-9, 14-15, 16-17, 22",
+              "source": "olm-1981 p?#358",
               "status": "provisional"
             },
             {
