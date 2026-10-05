@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+// @lectio/schema is a devDependency of this package: only this test uses it, to check the fakes
+// against the real content schemas. Runtime code in @lectio/providers must not import it.
 import { formatErrors } from '@lectio/schema/common';
 import { calendarYearSchema, validateCalendarYear } from '@lectio/schema/calendar';
 import { gateResultSchema, validateGateResult } from '@lectio/schema/gate-result';
