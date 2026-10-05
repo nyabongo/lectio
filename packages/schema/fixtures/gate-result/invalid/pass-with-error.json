@@ -1,0 +1,14 @@
+{
+  "gate": "schema",
+  "status": "pass",
+  "items": [
+    {
+      "ruleId": "schema/no-reading-text",
+      "severity": "error",
+      "file": "passages/MT.20.1-16.json",
+      "pointer": "/text",
+      "message": "Passage files never store reading text (ADR 0003)."
+    }
+  ],
+  "meta": {}
+}

@@ -1,0 +1,13 @@
+{
+  "gate": "merge-rule",
+  "status": "flag",
+  "items": [
+    {
+      "ruleId": "merge-rule/protected-path",
+      "severity": "warning",
+      "pointer": "",
+      "message": "The PR changes a protected path; a human must approve."
+    }
+  ],
+  "meta": {}
+}

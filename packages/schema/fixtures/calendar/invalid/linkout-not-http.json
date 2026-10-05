@@ -1,0 +1,120 @@
+{
+  "year": 2026,
+  "region": "kenya",
+  "generatedBy": "@lectio/calendar 0.0.0 (fixture)",
+  "days": [
+    {
+      "date": "2026-04-04",
+      "season": "paschal-triduum",
+      "seasonWeek": 0,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "easter-vigil",
+          "name": "Easter Vigil",
+          "rank": "solemnity",
+          "colour": "white"
+        }
+      ],
+      "masses": [
+        {
+          "id": "vigil",
+          "label": "Easter Vigil in the Holy Night",
+          "readings": [
+            {
+              "slot": "reading-1",
+              "ref": "Gn 1:1—2:2",
+              "key": "GN.1.1-2.2",
+              "linkout": "https://www.drbo.org/chapter/01001.htm"
+            },
+            {
+              "slot": "psalm-1",
+              "ref": "Ps 104:1-2, 5-6, 10, 12, 13-14, 24, 35",
+              "key": "PS.104.1-2_104.5-6_104.10_104.12_104.13-14_104.24_104.35",
+              "linkout": "https://www.drbo.org/chapter/21104.htm"
+            },
+            {
+              "slot": "epistle",
+              "ref": "Rom 6:3-11",
+              "key": "ROM.6.3-11",
+              "linkout": "https://www.drbo.org/chapter/52006.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 28:1-10",
+              "key": "MT.28.1-10",
+              "linkout": "https://www.drbo.org/chapter/47028.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-09-20",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "ordinary-time-25-sunday",
+          "name": "Twenty-fifth Sunday in Ordinary Time",
+          "rank": "sunday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 55:6-9",
+              "key": "IS.55.6-9",
+              "linkout": "https://www.drbo.org/chapter/29055.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:2-3, 8-9, 17-18",
+              "key": "PS.145.2-3_145.8-9_145.17-18",
+              "linkout": "https://www.drbo.org/chapter/21145.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Phil 1:20c-24, 27a",
+              "key": "PHIL.1.20-24_1.27",
+              "linkout": "https://www.drbo.org/chapter/57001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:1-16a",
+              "key": "MT.20.1-16",
+              "linkout": "ftp://example.org/mt20"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    },
+    {
+      "date": "2026-09-21",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "matthew-apostle",
+          "name": "Saint Matthew, Apostle and Evangelist",
+          "rank": "feast",
+          "colour": "red"
+        }
+      ],
+      "masses": [],
+      "lectionaryMissing": true
+    }
+  ]
+}

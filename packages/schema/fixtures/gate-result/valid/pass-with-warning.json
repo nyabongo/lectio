@@ -1,0 +1,14 @@
+{
+  "gate": "evidence",
+  "status": "pass",
+  "items": [
+    {
+      "ruleId": "evidence/archive-missing",
+      "severity": "warning",
+      "file": "passages/MT.20.1-16.json",
+      "pointer": "/sources/4",
+      "message": "Web source has no archivedUrl."
+    }
+  ],
+  "meta": {}
+}
