@@ -1,0 +1,584 @@
+{
+  "key": "ECCL.1.2-11",
+  "ref": "Eccl 1:2-11",
+  "locale": "en",
+  "summary": "Qoheleth’s opening poem: generations, sun, wind and rivers move without end, yet nothing is gained and nothing is new.",
+  "context": {
+    "title": "The prologue of Qoheleth",
+    "paragraphs": [
+      "The speaker calls himself Qoheleth, a Hebrew title that the Greek Bible rendered Ecclesiastes, member of an assembly. [c1] The book presents him as son of David and king in Jerusalem, and ancient Jewish tradition identified him with Solomon. [c2] Many modern scholars, the Jewish Encyclopedia among them, judge from its late vocabulary that the book was written after the Exile. [c3]",
+      "These verses form the book’s prologue. [c4] They open with the cry hevel havalim, a Hebrew superlative built like holy of holies, and the same cry returns in 12:8 near the book’s close. [c5] Four witnesses follow, the earth, the sun, the wind and the rivers, each moving again and again without making real progress. [c6]",
+      "The poem then turns from nature to human affairs: what has been will be, and there is nothing new under the sun. [c7] Some commentators compare Stoic ideas of a recurring cycle, while others hold that Qoheleth speaks simply from experience. [c8] What looks new is only what has been forgotten, and later generations will forget us in turn. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "hevel",
+      "verse": "1:2",
+      "anchor": "vanity",
+      "original": {
+        "text": "הֲבֵל הֲבָלִים",
+        "lang": "hbo",
+        "translit": "hăbēl hăbālîm",
+        "gloss": "breath of breaths"
+      },
+      "summary": "Hevel means breath or vapour; “vanity” comes to English through the Latin and Greek and loses the picture.",
+      "body": "Hevel first means a breath or vapour, and so whatever is fleeting and without substance. [c10] It is the same word as the name Abel, whose life was cut short. [c11] The rendering vanity comes through the Vulgate from the Septuagint, while other Greek translators wrote vapour of vapours. [c12] The word occurs more often in this short book than in all the rest of the Old Testament together. [c13]"
+    },
+    {
+      "id": "qoheleth",
+      "verse": "1:2",
+      "anchor": "Qoheleth",
+      "original": {
+        "text": "קֹהֶלֶת",
+        "lang": "hbo",
+        "translit": "qōhelet",
+        "gloss": "one who assembles"
+      },
+      "summary": "Qoheleth comes from the verb for calling an assembly together; “Preacher” and “Teacher” fit it only loosely.",
+      "body": "Qoheleth is a feminine participle describing someone who calls an assembly together, used here as a name or title for a man. [c14] Older commentators proposed convener or debater instead of preacher, and the Brown-Driver-Briggs lexicon adds collector of sayings. [c15] The feminine form may point to personified Wisdom, who calls out to the people in Proverbs. [c16]"
+    },
+    {
+      "id": "yitron",
+      "verse": "1:3",
+      "anchor": "profit",
+      "original": {
+        "text": "יִתְרוֹן",
+        "lang": "hbo",
+        "translit": "yitrôn",
+        "gloss": "what is left over"
+      },
+      "summary": "Yitron, found only in Ecclesiastes, means what remains over: the surplus on life’s balance sheet.",
+      "body": "Yitron is found in the Old Testament only in Ecclesiastes. [c17] Its strict sense is what remains over, so the question asks whether any surplus is left on the balance sheet of life. [c18] The Cambridge Bible suggests it was a commercial word that came into common use after the Exile. [c19] Put as a question, the line amounts to a strong denial. [c20]"
+    },
+    {
+      "id": "under-the-sun",
+      "verse": "1:3",
+      "anchor": "under the sun",
+      "original": {
+        "text": "תַּחַת הַשָּׁמֶשׁ",
+        "lang": "hbo",
+        "translit": "taḥat haššāmeš",
+        "gloss": "under the sun"
+      },
+      "summary": "In the Bible “under the sun” belongs to this book alone; other books say “under heaven”.",
+      "body": "The phrase under the sun occurs some twenty-nine times in Ecclesiastes and nowhere else in the Old Testament, which says under heaven instead. [c21] It names the earth as the world of human life. [c22] The Cambridge Bible thought it Greek in character, but the Jewish Encyclopedia points to the same phrase for on earth in Phoenician inscriptions of the fourth century BC. [c23]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The author calls himself Qoheleth (Eccl 1:2), and the Septuagint rendered this Hebrew name as Ecclesiastes, literally “member of an assembly”.",
+      "sourceIds": ["eccl-1-2-qoheleth", "je-eccl-name"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Eccl 1:1 presents Qoheleth as son of David, king in Jerusalem, and the ancients (Peshitta, Targum, Talmud) identified him with Solomon.",
+      "sourceIds": ["eccl-1-1", "je-eccl-solomon"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "On the evidence of its late vocabulary, including Persian loanwords, the Jewish Encyclopedia (1906) holds that the book is post-exilic and that few still hold Solomonic authorship.",
+      "sourceIds": ["je-eccl-date"],
+      "sensitive": true
+    },
+    {
+      "id": "c4",
+      "text": "Eccl 1:2-11 is the prologue of the book.",
+      "sourceIds": ["pulpit-eccl-1-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "“Vanity of vanities” (hevel havalim) is a Hebrew superlative like “holy of holies”, and the cry recurs at Eccl 12:8.",
+      "sourceIds": ["eccl-1-2", "eccl-12-8", "barnes-eccl-1-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Eccl 1:4-7 takes in turn the earth, the sun, the wind and the waters, each an example of motion continually repeated with no real progress.",
+      "sourceIds": ["pulpit-eccl-1-6", "pulpit-eccl-1-6-progress"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Eccl 1:9 applies to human events what the preceding verses said of nature: there is nothing new under the sun.",
+      "sourceIds": ["eccl-1-9", "cambridge-eccl-1-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The Cambridge Bible compares Eccl 1:9 with the Stoic doctrine of a recurring cycle of events, while the Pulpit Commentary holds that Koheleth speaks merely from experience.",
+      "sourceIds": ["cambridge-eccl-1-9-stoic", "pulpit-eccl-1-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "Eccl 1:11 explains that things seem new only because what came before has been forgotten, and the present generation will be forgotten in turn.",
+      "sourceIds": ["ellicott-eccl-1-11", "ellicott-eccl-1-11-forgotten"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Hebrew hevel primarily means breath or vapour, and figuratively whatever is fleeting and perishable.",
+      "sourceIds": ["bdb-hevel", "cambridge-eccl-1-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Hevel is the same word as the proper name Abel, whose life was cut short.",
+      "sourceIds": ["pulpit-eccl-1-2-abel"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "The English “vanity” follows the Vulgate, which followed the Septuagint, while other Greek translators rendered the phrase “vapour of vapours”.",
+      "sourceIds": ["cambridge-eccl-1-2-vulgate", "pulpit-eccl-1-2-vapor"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Hevel occurs about thirty-seven times in Ecclesiastes, against about thirty-three times in all the rest of the Old Testament.",
+      "sourceIds": ["ellicott-eccl-1-2", "barnes-eccl-1-2-count"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Qoheleth is a feminine participle describing a person who calls an assembly together, used in Ecclesiastes as a man’s name or title.",
+      "sourceIds": ["eccl-1-2-qoheleth", "barnes-eccl-1-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Commentators have proposed “Convener” or “Debater” for Qoheleth, and Brown-Driver-Briggs gives “collector (of sentences)” beside “preacher”.",
+      "sourceIds": ["barnes-eccl-1-1-convener", "cambridge-eccl-1-1", "bdb-qoheleth"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Barnes connects the name Qoheleth with personified Wisdom calling the people together in Proverbs.",
+      "sourceIds": ["barnes-eccl-1-1-wisdom"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Yitron (“profit, advantage”) occurs in the Old Testament only in Ecclesiastes.",
+      "sourceIds": ["eccl-1-3-yitron", "bdb-yitron", "pulpit-eccl-1-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The strict meaning of yitron is “that which remains”, the surplus, if any, on the balance sheet of life.",
+      "sourceIds": ["cambridge-eccl-1-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "The Cambridge Bible suggests that yitron was probably a word brought into common use by Jewish commerce after the Captivity.",
+      "sourceIds": ["cambridge-eccl-1-3-commerce"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "The question form of Eccl 1:3 conveys a strong negative.",
+      "sourceIds": ["pulpit-eccl-1-3-negative"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "“Under the sun” occurs 29 times in Ecclesiastes and is peculiar to this book, other books saying “under heaven”.",
+      "sourceIds": ["eccl-1-3-under-the-sun", "cambridge-eccl-1-3-sun", "ellicott-eccl-1-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "“Under the sun” designates the earth as the world of men.",
+      "sourceIds": ["kd-eccl-1-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "The Cambridge Bible calls the phrase Greek in character, but the Jewish Encyclopedia notes it in the Phoenician Eshmunazar and Tabnith inscriptions, not later than 300 BC, meaning “on earth”.",
+      "sourceIds": ["cambridge-eccl-1-3-greek", "je-eccl-sun"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "eccl-1-1",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:1",
+      "ref": "Eccl 1:1",
+      "excerpt": "בֶּן־דָּוִד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-2",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:2",
+      "ref": "Eccl 1:2",
+      "excerpt": "הֲבֵל הֲבָלִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-2-qoheleth",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:2",
+      "ref": "Eccl 1:2",
+      "excerpt": "קֹהֶלֶת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-3-yitron",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:3",
+      "ref": "Eccl 1:3",
+      "excerpt": "יִתְרוֹן",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-3-under-the-sun",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:3",
+      "ref": "Eccl 1:3",
+      "excerpt": "תַּחַת הַשָּׁמֶשׁ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-9",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:9",
+      "ref": "Eccl 1:9",
+      "excerpt": "אֵין כָּל־חָדָשׁ תַּחַת הַשָּׁמֶשׁ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-12-8",
+      "type": "scripture",
+      "citation": "Ecclesiastes 12:8",
+      "ref": "Eccl 12:8",
+      "excerpt": "הֲבֵל הֲבָלִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "je-eccl-name",
+      "type": "web",
+      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
+      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
+      "excerpt": "is the Septuagint rendering of the Hebrew \"Ḳohelet,\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "je-eccl-solomon",
+      "type": "web",
+      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
+      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
+      "excerpt": "led the ancients to identify him with Solomon",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "je-eccl-date",
+      "type": "web",
+      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
+      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
+      "excerpt": "that the book is post-exilic may be asserted with confidence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "je-eccl-sun",
+      "type": "web",
+      "citation": "Jewish Encyclopedia (1906), “Ecclesiastes, Book of”",
+      "url": "https://www.jewishencyclopedia.com/articles/5415-ecclesiastes-book-of",
+      "excerpt": "found in the Eshmunazar and Tabnith inscriptions, not later than 300 B.C.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-2",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "PROLOGUE. The vanity of all human and mundane things",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-2-abel",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "We have it in the proper name Abel",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-2-vapor",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "other Greek translators, ἀτμὶς ἀτμίδων, \"vapor of vapors.\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-2",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "A well-known Hebrew idiom signifying vanity in the highest degree",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-2-count",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "occurs no less than 37 times in Ecclesiastes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-eccl-1-2",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "only thirty-three times in all the rest of the Old Testament",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-2",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "becomes the type of all that is fleeting and perishable",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-2-vulgate",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-2.htm",
+      "excerpt": "which is moulded on the Vulgate as that was upon the LXX",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-hevel",
+      "type": "web",
+      "citation": "Brown-Driver-Briggs Hebrew and English Lexicon (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "noun masculine vapour, breath",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-1",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "describes a person in the act of calling together an assembly",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-1-convener",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "Preacher - literally, Convener.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-1-wisdom",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "refers us to the action of Wisdom personified",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-1",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "better, Debater",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-qoheleth",
+      "type": "web",
+      "citation": "Brown-Driver-Briggs Hebrew and English Lexicon (1906), s.v. קֹהֶלֶת (Bible Hub, Strong's 6953)",
+      "url": "https://biblehub.com/hebrew/6953.htm",
+      "excerpt": "collector (of sentences), or (AV RV) preacher",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-yitron",
+      "type": "web",
+      "citation": "Brown-Driver-Briggs Hebrew and English Lexicon (1906), s.v. יִתְרוֹן (Bible Hub, Strong's 3504)",
+      "url": "https://biblehub.com/hebrew/3504.htm",
+      "excerpt": "advantage, profit, only Ecclesiastes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-3",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "is found only in this book, where it occurs frequently",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-3-negative",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "The interrogative form of the verse conveys a strong negative",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-3",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "the surplus, if any, of the balance-sheet of life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-3-commerce",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "one of the words which the commerce of the Jews",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-3-sun",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "occurring 29 times in Ecclesiastes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-3-greek",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "It is essentially Greek in character.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-eccl-1-3",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "In other books we have “under heaven.”",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-eccl-1-3",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Ecclesiastes 1:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-3.htm",
+      "excerpt": "the world of men, which we are wont to call",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-6",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-6.htm",
+      "excerpt": "ver. 4 being concerned with the earth, ver. 5 with the sun",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-6-progress",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-6.htm",
+      "excerpt": "a fresh example of motion continually repeated with no real progress",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-9",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-9.htm",
+      "excerpt": "is now repeated of the events of human life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-9-stoic",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-9.htm",
+      "excerpt": "the Stoic doctrine of a recurring cycle of events",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-eccl-1-9",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-9.htm",
+      "excerpt": "But Koheleth is speaking merely from experience",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-eccl-1-11",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 1:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-11.htm",
+      "excerpt": "this is only because its previous occurrence has been forgotten",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-eccl-1-11-forgotten",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 1:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-11.htm",
+      "excerpt": "So likewise will those of this generation be forgotten",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021d-eccl-1-2-11",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:40:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
