@@ -34,7 +34,7 @@ import type { ChapterVerses, SourceInfo, Token } from '../format.ts';
 import { downloadPinned } from '../import/download.ts';
 import type { Downloader, PinnedArchive } from '../import/download.ts';
 import { unpackTarball, writeChapter, writeEditionMetadata } from '../import/unpack.ts';
-import { fetchDownloader } from './vulgate.ts';
+import { corpusDownloader } from './shared.ts';
 
 export const LXX_EDITION = 'grc-lxx';
 
@@ -727,21 +727,28 @@ export interface ImportCliIo {
 
 /**
  * `npm run corpus:import:lxx`: imports into `corpusRoot`, caching the archive in `.cache/corpus` next to it (the
- * repository's git-ignored cache). Exit code 0 on success, 2 on a corpus error (bad hash, unexpected upstream layout,
+ * repository's git-ignored cache). The script injects the live downloader (`LiveDownloader` from
+ * `@lectio/provider-fetch`). Exit code 0 on success, 2 on a corpus error (bad hash, unexpected upstream layout,
  * network or HTTP error).
  */
 export async function runImportLxx(
   corpusRoot: string,
   io: ImportCliIo,
   {
-    downloader = fetchDownloader(),
+    downloader,
     archive,
     verseStarts,
-  }: Partial<Pick<ImportLxxOptions, 'downloader' | 'archive' | 'verseStarts'>> = {},
+  }: Pick<ImportLxxOptions, 'downloader'> & Partial<Pick<ImportLxxOptions, 'archive' | 'verseStarts'>>,
 ): Promise<number> {
   try {
     const cacheDir = join(dirname(corpusRoot), '.cache', 'corpus');
-    const summary = await importLxx({ downloader, corpusRoot, cacheDir, archive, verseStarts });
+    const summary = await importLxx({
+      downloader: corpusDownloader(downloader),
+      corpusRoot,
+      cacheDir,
+      archive,
+      verseStarts,
+    });
     io.out(
       `${summary.edition}: ${summary.books} books, ${summary.chapters} chapters, ${summary.verses} verses ` +
         `written to ${join(corpusRoot, summary.edition)}`,
