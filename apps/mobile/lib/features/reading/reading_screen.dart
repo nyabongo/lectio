@@ -9,10 +9,10 @@ import 'package:lectio/features/reading/note_cards.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
+import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/features/today/today_labels.dart';
 import 'package:lectio/l10n/in_language.dart';
 import 'package:lectio/l10n/lectio_localizations.dart';
-import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 
