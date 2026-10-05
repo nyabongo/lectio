@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:lectio/data/api_paths.dart';
 import 'package:lectio/data/models/day.dart';
 import 'package:lectio/data/repository.dart';
 import 'package:lectio/features/reading/note_cards.dart';
@@ -10,12 +10,11 @@ import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
 import 'package:lectio/features/share/share_button.dart';
+import 'package:lectio/features/today/today_labels.dart';
+import 'package:lectio/l10n/in_language.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
-
-const ReadingStrings _strings = ReadingStrings.en;
-
-final DateFormat _dayFormat = DateFormat('EEEE d MMMM y', 'en_US');
 
 final RegExp _isoDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
 
@@ -63,7 +62,8 @@ String readingLocation(
 ///
 /// Without a [date] it shows today's readings; without a [slot], the Gospel
 /// (else the first reading with notes). Data comes from the nearest
-/// [ReadingScope], else [defaultReadingRepository].
+/// [ReadingScope], else [defaultReadingRepository], in the UI language's
+/// API locale (the `sw/` mirror in Kiswahili, L-113).
 class ReadingScreen extends StatefulWidget {
   /// Creates the Reading screen.
   const new({
@@ -110,7 +110,9 @@ class _ReadingScreenState extends State<ReadingScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final repository = ReadingScope.repositoryOf(context);
+    final language = LectioLocalizations.of(context).languageCode;
+    final repository = ReadingScope.repositoryOf(context)
+        .forLocale(apiLocaleFor(language));
     if (!identical(repository, _repository)) {
       _repository = repository;
       _day = _watch();
@@ -164,7 +166,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
             snapshot.connectionState == ConnectionState.done) {
           return _LoadFailed(onRetry: _retry);
         }
-        return Center(child: Text(_strings.loading));
+        return Center(child: Text(ReadingStrings.of(context).loading));
       },
     );
   }
@@ -177,15 +179,16 @@ class _LoadFailed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_strings.loadFailed, textAlign: TextAlign.center),
+            Text(strings.loadFailed, textAlign: TextAlign.center),
             const SizedBox(height: 16),
-            FilledButton(onPressed: onRetry, child: Text(_strings.retry)),
+            FilledButton(onPressed: onRetry, child: Text(strings.retry)),
           ],
         ),
       ),
@@ -234,20 +237,23 @@ class ReadingDayView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final base = Theme.of(context);
     final theme = buildLectioTheme(day.liturgicalColour, base.brightness);
     final bySlot = readingsBySlot(day);
     final reading = pickReading(day, slot, mass: mass);
-    final celebration = day.celebrations.firstOrNull?.name;
-    final date = _dayFormat.format(DateTime.parse(day.date));
+    final celebration = day.celebrations.firstOrNull?.nameIn(
+      strings.languageCode,
+    );
+    final date = formatLongDate(day.date, strings.languageCode);
     final muted = theme.textTheme.bodySmall?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
     final Widget body;
     if (bySlot.isEmpty) {
-      body = _Message(_strings.noReadings);
+      body = _Message(strings.noReadings);
     } else if (reading == null) {
-      body = _Message(_strings.noSuchReading(slot!));
+      body = _Message(strings.noSuchReading(slot!));
     } else {
       body = ReadingNotesView(
         key: ValueKey('${day.date}/$mass/${reading.slot}'),
@@ -267,10 +273,13 @@ class ReadingDayView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (offline) Text(_strings.offline, style: muted),
-                Text(
-                  [?celebration, date].join(' · '),
-                  style: theme.textTheme.labelLarge,
+                if (offline) Text(strings.offline, style: muted),
+                InLanguage(
+                  language: celebration?.language ?? strings.languageCode,
+                  child: Text(
+                    [?celebration?.text, date].join(' · '),
+                    style: theme.textTheme.labelLarge,
+                  ),
                 ),
                 if (bySlot.length > 1)
                   SingleChildScrollView(
@@ -282,7 +291,7 @@ class ReadingDayView extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsetsDirectional.only(end: 8),
                             child: ChoiceChip(
-                              label: Text(_strings.slotLabel(item)),
+                              label: Text(strings.slotLabel(item)),
                               selected: item == reading?.slot,
                               onSelected: (_) => onSlotSelected(item),
                             ),
@@ -304,7 +313,13 @@ class ReadingDayView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        ShareButton(content: readingShare(day.date, reading)),
+                        ShareButton(
+                          content: readingShare(
+                            day.date,
+                            reading,
+                            language: strings.languageCode,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -345,7 +360,8 @@ class TextLinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = _strings.textLabel(
+    final strings = ReadingStrings.of(context);
+    final label = strings.textLabel(
       reading.ref,
       linkoutSource(reading.linkout),
     );
@@ -354,7 +370,7 @@ class TextLinkButton extends StatelessWidget {
       child: TextButton.icon(
         onPressed: () => unawaited(openLink(context, reading.linkout)),
         icon: const Icon(Icons.open_in_new, size: 18),
-        label: Text(_strings.textTab),
+        label: Text(strings.textTab),
       ),
     );
   }
@@ -386,6 +402,7 @@ class ReadingNotesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ReadingStrings.of(context);
     final passage = reading.passage;
     final page = readingPagePath(date, reading.slot);
     if (passage == null || !isApproved(passage)) {
@@ -396,7 +413,7 @@ class ReadingNotesView extends StatelessWidget {
             alignment: AlignmentDirectional.centerEnd,
             child: TextLinkButton(reading: reading),
           ),
-          Text(_strings.pending),
+          Text(strings.pending),
         ],
       );
     }
@@ -410,20 +427,57 @@ class ReadingNotesView extends StatelessWidget {
               Expanded(
                 child: TabBar(
                   tabs: [
-                    Tab(text: _strings.contextTab),
-                    Tab(text: _strings.originalTab),
+                    Tab(text: strings.contextTab),
+                    Tab(text: strings.originalTab),
                   ],
                 ),
               ),
               TextLinkButton(reading: reading),
             ],
           ),
+          if (passage.locale != strings.languageCode)
+            EnglishOnlyNotice(strings: strings),
           Expanded(
-            child: TabBarView(
-              children: [
-                ContextPanel(passage: passage, page: page),
-                OriginalPanel(passage: passage, page: page, note: note),
-              ],
+            child: InLanguage(
+              language: passage.locale,
+              child: TabBarView(
+                children: [
+                  ContextPanel(passage: passage, page: page),
+                  OriginalPanel(passage: passage, page: page, note: note),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Says that the notes below are in English because they have no reviewed
+/// translation into the UI language yet, as the site's "English only"
+/// badge does.
+class EnglishOnlyNotice extends StatelessWidget {
+  /// Creates the notice in the language of [strings].
+  const new({required this.strings, super.key});
+
+  /// The UI strings.
+  final ReadingStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Chip(label: Text(strings.englishOnly)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              strings.englishOnlyText,
+              style: theme.textTheme.bodySmall,
             ),
           ),
         ],

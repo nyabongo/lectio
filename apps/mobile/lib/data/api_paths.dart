@@ -25,3 +25,23 @@ String passagePath(String key) => 'passages/${Uri.encodeComponent(key)}.json';
 
 /// `calendar/{year}.json`.
 String calendarPath(int year) => 'calendar/$year.json';
+
+/// The locale of the documents at the API root.
+const String defaultApiLocale = 'en';
+
+/// Locales with a mirror of the documents under `<locale>/` (L-113).
+const List<String> apiMirrorLocales = ['sw'];
+
+/// The locale whose documents the app reads for the UI [language]: its
+/// mirror when there is one, else [defaultApiLocale].
+String apiLocaleFor(String? language) {
+  return apiMirrorLocales.contains(language) ? language! : defaultApiLocale;
+}
+
+/// [path] in [locale]'s mirror: `sw/days/2026-09-20.json` for `sw`, the path
+/// unchanged for [defaultApiLocale]. `index.json` has no mirror; it lists
+/// the mirrors under `endpoints.locales`.
+String localizedPath(String path, String locale) {
+  if (locale == defaultApiLocale || path == indexPath) return path;
+  return '$locale/$path';
+}

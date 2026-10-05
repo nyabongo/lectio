@@ -1,0 +1,52 @@
+{
+  "tabs": {
+    "today": "Today",
+    "reading": "Reading",
+    "listen": "Listen"
+  },
+  "comingSoon": "Coming soon",
+  "notFound": {
+    "title": "Not found",
+    "home": "Go to Today"
+  },
+  "today": {
+    "backToToday": "Back to today",
+    "chooseDate": "Choose a date",
+    "notesMissing": "Notes for this day are in preparation. Each text is a tap away.",
+    "emptyDay": "There is no calendar day for this date yet. The calendar lists every day that is ready.",
+    "loadFailed": "The day could not be loaded. Check your connection and try again.",
+    "offline": "Offline: showing the copy saved on this device.",
+    "refreshFailed": "The day could not be refreshed: showing the copy saved on this device.",
+    "linkFailed": "The text could not be opened.",
+    "notesLabel": "Notes on {ref}",
+    "linkoutLabel": "Text of {ref} at {source} (opens outside the app)"
+  },
+  "reading": {
+    "textLabel": "Read the text of {ref} at {source} (opens outside the app)",
+    "loading": "Loading the readings…",
+    "loadFailed": "The readings could not be loaded. Check your connection and try again.",
+    "offline": "Offline: showing the notes saved on this device.",
+    "citeMany": "Sources {n}",
+    "noReadings": "There are no readings for this day yet.",
+    "noSuchReading": "This day has no {slot}.",
+    "linkFailed": "The link could not be opened.",
+    "linkedNote": "Shared note"
+  },
+  "reminder": {
+    "body": "Today's readings and notes are ready.",
+    "permissionRefused": "Notifications are not allowed for Lectio, so the daily reminder is off. Allow them in your device settings, then turn it on again."
+  },
+  "settings": {
+    "intro": "There are no accounts. Your preferences are saved on this device and never leave it.",
+    "reminderHeading": "Daily reminder",
+    "reminderSwitch": "Remind me each day",
+    "reminderHint": "A notification with the day's celebration. Nothing is sent to a server.",
+    "reminderTime": "Reminder time",
+    "savedHeading": "Saved on this device",
+    "bookmarks": "Bookmarks and notes"
+  },
+  "share": {
+    "failed": "Could not share or copy the link.",
+    "linkNotRecognised": "Lectio has no page for that link, so it opened Today."
+  }
+}

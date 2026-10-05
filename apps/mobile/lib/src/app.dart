@@ -8,11 +8,13 @@ import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
 import 'package:lectio/features/share/deep_links.dart';
 import 'package:lectio/features/share/share_button.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 import 'package:lectio/src/routing/router.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
 
-/// The Lectio app: Material 3, tinted by the day's liturgical colour.
+/// The Lectio app: Material 3, tinted by the day's liturgical colour, in the
+/// language chosen in Settings (English or Kiswahili, L-114).
 class LectioApp extends StatefulWidget {
   /// Creates the app with the accent for [colour], starting at
   /// [initialLocation]. [settings] and [bookmarks] default to controllers in
@@ -76,7 +78,12 @@ class _LectioAppState extends State<LectioApp> {
     widget.links?.attach(_router, onUnrecognised: _linkNotRecognised);
     _refusals = widget.reminders?.permissionRefusals.listen(
       (_) => _messenger.currentState?.showSnackBar(
-        const SnackBar(content: Text(ReminderStrings.permissionRefused)),
+        SnackBar(
+          content: Text(
+            ReminderStrings.forLanguage(_settings.settings.language)
+                .permissionRefused,
+          ),
+        ),
       ),
     );
   }
@@ -85,7 +92,13 @@ class _LectioAppState extends State<LectioApp> {
   void _linkNotRecognised() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _messenger.currentState?.showSnackBar(
-        const SnackBar(content: Text(ShareStrings.linkNotRecognised)),
+        SnackBar(
+          content: Text(
+            ShareStrings(
+              LectioLocalizations.forLanguage(_settings.settings.language.name),
+            ).linkNotRecognised,
+          ),
+        ),
       ),
     );
   }
@@ -109,6 +122,9 @@ class _LectioAppState extends State<LectioApp> {
           listenable: _settings,
           builder: (context, _) => MaterialApp.router(
             title: 'Lectio',
+            locale: _settings.settings.language.locale,
+            supportedLocales: supportedLocales,
+            localizationsDelegates: lectioLocalizationsDelegates,
             scaffoldMessengerKey: _messenger,
             theme: buildLectioTheme(widget.colour, Brightness.light),
             darkTheme: buildLectioTheme(widget.colour, Brightness.dark),

@@ -13,7 +13,9 @@
  * 3. for a passage that exists on the base branch, that no translation-note or claim id was
  *    dropped (./stable-ids.ts), read through the context's git reader;
  * 4. translations (`passages/i18n/<locale>/<key>.json`, ./translations/): their schema, their
- *    English passage, staleness and the review they always need.
+ *    English passage, staleness, the review they always need, translations orphaned by a deleted
+ *    or renamed English passage, and any other file under passages/ at a non-canonical path
+ *    (a case variant such as passages/I18N/, another subdirectory, a malformed name).
  *
  * Every finding is an error (the gate fails), except deleting a published passage, a stale
  * translation and a pending translation, which are `warning`s (the gate flags them for a person).

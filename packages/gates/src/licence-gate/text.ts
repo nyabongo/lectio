@@ -47,8 +47,9 @@ export function maskMarkers(text: string): string {
 }
 
 /**
- * Every prose field Lectio writes in a passage: the summary, context title and paragraphs,
- * translation-note summaries, bodies and glosses, and claim texts. Reads defensively: a field of
+ * Every prose field Lectio writes in a passage or a translation: the summary, context title and
+ * paragraphs, translation-note summaries, bodies and glosses (`original.gloss` in a passage,
+ * `gloss` in a translation), and claim texts. Reads defensively: a field of
  * the wrong type is skipped (the schema gate reports it).
  */
 export function noteFields(passage: unknown): NoteField[] {
@@ -74,6 +75,8 @@ export function noteFields(passage: unknown): NoteField[] {
     const base = `/translationNotes/${String(i)}`;
     add(`${base}/summary`, note['summary']);
     add(`${base}/body`, note['body']);
+    // A translation's note carries its gloss directly.
+    add(`${base}/gloss`, note['gloss']);
     const original = note['original'];
     if (isObject(original)) add(`${base}/original/gloss`, original['gloss']);
   });

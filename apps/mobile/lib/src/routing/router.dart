@@ -6,6 +6,7 @@ import 'package:lectio/features/reading/reading_screen.dart';
 import 'package:lectio/features/settings/settings_screen.dart';
 import 'package:lectio/features/share/deep_link_routes.dart';
 import 'package:lectio/features/today/today_screen.dart';
+import 'package:lectio/l10n/lectio_localizations.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/routing/app_shell.dart';
 
@@ -48,12 +49,13 @@ class NotFoundScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = LectioLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Not found')),
+      appBar: AppBar(title: Text(l10n.text('app_notFound_title'))),
       body: Center(
         child: TextButton(
           onPressed: () => context.go(AppRoute.today.path),
-          child: const Text('Go to Today'),
+          child: Text(l10n.text('app_notFound_home')),
         ),
       ),
     );

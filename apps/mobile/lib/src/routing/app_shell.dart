@@ -20,12 +20,12 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(current.title),
+        title: Text(current.titleOf(context)),
         actions: [
           for (final route in [AppRoute.calendar, AppRoute.settings])
             IconButton(
               icon: Icon(route.icon),
-              tooltip: route.title,
+              tooltip: route.titleOf(context),
               onPressed: () => unawaited(context.push(route.path)),
             ),
         ],
@@ -36,7 +36,10 @@ class AppShell extends StatelessWidget {
         onDestinationSelected: (index) => context.go(AppRoute.tabs[index].path),
         destinations: [
           for (final tab in AppRoute.tabs)
-            NavigationDestination(icon: Icon(tab.icon), label: tab.title),
+            NavigationDestination(
+              icon: Icon(tab.icon),
+              label: tab.titleOf(context),
+            ),
         ],
       ),
     );

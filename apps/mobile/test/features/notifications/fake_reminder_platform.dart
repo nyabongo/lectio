@@ -69,13 +69,17 @@ class FakeCelebrations implements CelebrationSource {
   /// The dates asked for, in order.
   final List<String> asked = [];
 
+  /// The language of each question, in order.
+  final List<String> languages = [];
+
   /// Dates whose answer waits for this future (forever when it never
   /// completes).
   final Map<String, Future<void>> holds = {};
 
   @override
-  Future<String?> celebrationOn(String date) async {
+  Future<String?> celebrationOn(String date, {String language = 'en'}) async {
     asked.add(date);
+    languages.add(language);
     await holds[date];
     return names[date];
   }
