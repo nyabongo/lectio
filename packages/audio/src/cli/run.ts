@@ -5,6 +5,7 @@
 import { resolve } from 'node:path';
 
 import { findRepoRoot, loadConfig } from '@lectio/config';
+import type { LectioConfig } from '@lectio/config';
 import { openRepo } from '@lectio/content';
 import type { ContentRepo } from '@lectio/content';
 import { FakeTtsProvider, FsObjectStorage, MemoryObjectStorage, systemClock } from '@lectio/providers';
@@ -14,11 +15,9 @@ import { charactersThisMonth, readManifest } from '../render/manifest.ts';
 import { findOrphans, pickFormat, planRender } from '../render/plan.ts';
 import type { Orphan, RenderPlan } from '../render/plan.ts';
 import { render } from '../render/render.ts';
+import { TTS_VERSIONS } from '../render/resolve.ts';
 import { buildSegments } from '../script/segments.ts';
 import type { NarrationSegment } from '../script/segments.ts';
-
-/** Engine version per provider, folded into every audio key so providers never share files. */
-export const TTS_VERSIONS: Readonly<Record<string, string>> = { fake: 'fake-1' };
 
 export interface RenderCliIo {
   readonly out: (line: string) => void;
@@ -34,8 +33,10 @@ export interface RenderCliContext {
 }
 
 export interface RenderArgs {
-  readonly provider: string;
-  readonly storage: string;
+  /** `--provider`; `undefined` means `config.tts.provider`. */
+  readonly provider: string | undefined;
+  /** `--storage`; `undefined` means the one `config.tts.storage.provider` names. */
+  readonly storage: string | undefined;
   readonly dryRun: boolean;
   readonly concurrency: number;
   readonly retries: number;
@@ -68,12 +69,39 @@ export function parseRenderArgs(args: readonly string[]): RenderArgs | string {
   const retries = count('--retries', 2, 0);
   if (typeof retries === 'string') return retries;
   return {
-    provider: values['--provider'] ?? 'fake',
-    storage: values['--storage'] ?? 'fs:.audio-out',
+    provider: values['--provider'],
+    storage: values['--storage'],
     dryRun,
     concurrency,
     retries,
   };
+}
+
+/** Directory for `fs` storage when `--storage` is not given (as in `createProviders`). */
+export const STORAGE_DIR_ENV = 'LECTIO_STORAGE_DIR';
+
+/**
+ * The provider and storage specs to use: the flags, else what the config names (`fs` storage in
+ * `$LECTIO_STORAGE_DIR`, default `.audio-out`). Warns when a flag overrides the config.
+ */
+export function resolveTargets(
+  args: RenderArgs,
+  config: LectioConfig,
+  env: Readonly<Record<string, string | undefined>>,
+  io: RenderCliIo,
+): { readonly provider: string; readonly storage: string } {
+  const storageKind = config.tts.storage.provider;
+  const storageDefault = storageKind === 'fs' ? `fs:${env[STORAGE_DIR_ENV] || '.audio-out'}` : storageKind;
+  const provider = args.provider ?? config.tts.provider;
+  const storage = args.storage ?? storageDefault;
+  if (provider !== config.tts.provider) {
+    io.err(`  warning: --provider ${provider} overrides tts.provider ${config.tts.provider}`);
+  }
+  const kind = storage === 'memory' ? 'memory' : storage.split(':')[0];
+  if (kind !== storageKind) {
+    io.err(`  warning: --storage ${storage} overrides tts.storage.provider ${storageKind}`);
+  }
+  return { provider, storage };
 }
 
 /** The TTS provider for `--provider`. Live providers are wired in by the deploy job (L-082). */
@@ -122,6 +150,7 @@ export function reportPlan(
       `(${String(plan.characters)} characters of ${String(remaining)} left this month)`,
   );
   for (const { segmentId, locale } of plan.skipped) io.err(`  no voice for ${locale}: ${segmentId}`);
+  for (const key of plan.stale) io.err(`  missing from storage, rendering again: ${key}`);
   if (orphans.length === 0) return;
   io.out(`  ${String(orphans.length)} orphaned file(s), not deleted:`);
   for (const orphan of orphans) {
@@ -138,8 +167,10 @@ export async function runRender(argv: readonly string[], context: RenderCliConte
     io.err(`audio:render: ${args}\n${USAGE}`);
     return 2;
   }
-  const tts = ttsFor(args.provider);
-  const storage = storageFor(args.storage, context.cwd);
+  const config = loadConfig(undefined, { cwd: context.cwd, env: context.env });
+  const targets = resolveTargets(args, config, context.env, io);
+  const tts = ttsFor(targets.provider);
+  const storage = storageFor(targets.storage, context.cwd);
   for (const problem of [tts, storage]) {
     if (typeof problem === 'string') {
       io.err(`audio:render: ${problem}\n${USAGE}`);
@@ -150,20 +181,17 @@ export async function runRender(argv: readonly string[], context: RenderCliConte
   const store = storage as ObjectStorage;
   const clock = context.clock ?? systemClock;
 
-  const config = loadConfig(undefined, { cwd: context.cwd, env: context.env });
   const repo = openRepo(resolve(findRepoRoot(context.cwd), config.content.root));
   const segments = approvedSegments(repo, io);
   const manifest = await readManifest(store);
+  const storedKeys = (await store.list('audio/')).map((info) => info.key);
   const plan = planRender(segments, manifest, {
     voices: config.tts.voices,
-    ttsVersion: TTS_VERSIONS[args.provider] as string,
+    ttsVersion: TTS_VERSIONS[targets.provider] as string,
     format: pickFormat(ttsProvider.formats),
+    storedKeys,
   });
-  const orphans = findOrphans(
-    plan,
-    manifest,
-    (await store.list('audio/')).map((info) => info.key),
-  );
+  const orphans = findOrphans(plan, manifest, storedKeys);
   const remaining = Math.max(0, config.tts.monthlyCharBudget - charactersThisMonth(manifest, clock.now()));
 
   reportPlan(segments.length, plan, orphans, remaining, io);

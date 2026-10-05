@@ -11,7 +11,19 @@ import type { Passage } from '@lectio/schema/passage';
 
 import { emptyManifest, readManifest } from '../render/manifest.ts';
 import { planRender } from '../render/plan.ts';
-import { USAGE, approvedSegments, parseRenderArgs, reportPlan, runRender, storageFor, ttsFor } from './run.ts';
+import { DEFAULT_CONFIG, deepMerge } from '@lectio/config';
+import type { LectioConfig } from '@lectio/config';
+
+import {
+  USAGE,
+  approvedSegments,
+  parseRenderArgs,
+  reportPlan,
+  resolveTargets,
+  runRender,
+  storageFor,
+  ttsFor,
+} from './run.ts';
 
 const FIXTURE_REPO = fileURLToPath(new URL('../script/fixtures/repo', import.meta.url));
 
@@ -24,8 +36,8 @@ function capture(): { out: string[]; err: string[]; io: { out: (l: string) => vo
 describe('parseRenderArgs', () => {
   it('has defaults and reads every flag', () => {
     expect(parseRenderArgs([])).toEqual({
-      provider: 'fake',
-      storage: 'fs:.audio-out',
+      provider: undefined,
+      storage: undefined,
       dryRun: false,
       concurrency: 4,
       retries: 2,
@@ -106,6 +118,42 @@ describe('reportPlan', () => {
   });
 });
 
+describe('resolveTargets', () => {
+  const args = { dryRun: false, concurrency: 1, retries: 0 };
+  const config = (tts: object): LectioConfig => deepMerge(DEFAULT_CONFIG, { tts }) as LectioConfig;
+
+  it('defaults to the configured provider and storage, quietly', () => {
+    const { err, io } = capture();
+    const cfg = config({});
+    expect(resolveTargets({ ...args, provider: undefined, storage: undefined }, cfg, {}, io)).toEqual({
+      provider: 'fake',
+      storage: 'fs:.audio-out',
+    });
+    expect(
+      resolveTargets({ ...args, provider: undefined, storage: undefined }, cfg, { LECTIO_STORAGE_DIR: 'x' }, io),
+    ).toMatchObject({ storage: 'fs:x' });
+    const live = config({ provider: 'azure', storage: { provider: 's3' } });
+    expect(resolveTargets({ ...args, provider: undefined, storage: undefined }, live, {}, io)).toEqual({
+      provider: 'azure',
+      storage: 's3',
+    });
+    expect(err).toEqual([]);
+  });
+
+  it('warns when a flag overrides the config', () => {
+    const { err, io } = capture();
+    const live = config({ provider: 'azure', storage: { provider: 's3' } });
+    expect(resolveTargets({ ...args, provider: 'fake', storage: 'memory' }, live, {}, io)).toEqual({
+      provider: 'fake',
+      storage: 'memory',
+    });
+    expect(err).toEqual([
+      '  warning: --provider fake overrides tts.provider azure',
+      '  warning: --storage memory overrides tts.storage.provider s3',
+    ]);
+  });
+});
+
 describe('runRender', () => {
   let dir: string;
   let repo: string;
@@ -170,6 +218,31 @@ describe('runRender', () => {
     expect(dry.out.filter((line) => line.endsWith('(manifest, storage)'))).toHaveLength(1);
   });
 
+  it('renders again exactly the file that went missing from storage', async () => {
+    expect((await run([])).code).toBe(0);
+    const storage = new FsObjectStorage(join(dir, '.audio-out'));
+    const [lost, ...kept] = Object.keys((await readManifest(storage)).entries) as [string, ...string[]];
+    await rm(join(dir, '.audio-out', 'meta', `${lost}.json`));
+    await rm(join(dir, '.audio-out', 'objects', `${lost}.body`));
+    const result = await run([]);
+    expect(result.code).toBe(0);
+    expect(result.out[0]).toContain('2 up to date, 1 to render');
+    expect(result.err).toEqual([`  missing from storage, rendering again: ${lost}`]);
+    expect(result.out.at(-1)).toMatch(/^audio:render: rendered 1, adopted 0, failed 0/);
+    expect(await storage.head(lost)).not.toBeNull();
+    expect(kept).toHaveLength(2);
+  });
+
+  it('exits 2 when the configured provider is not available yet', async () => {
+    await writeFile(
+      join(dir, 'lectio.config.json'),
+      JSON.stringify({ content: { root: repo }, tts: { provider: 'azure' } }),
+    );
+    const result = await run([]);
+    expect(result.code).toBe(2);
+    expect(result.err[0]).toContain('unsupported --provider "azure"');
+  });
+
   it('lists what it would render on a dry run without writing anything', async () => {
     await writeConfig(1_000_000, 'https://cdn.example/');
     const result = await run(['--storage', 'fs:out', '--dry-run']);
@@ -201,7 +274,7 @@ describe('runRender', () => {
     for (const args of [['--nope'], ['--provider', 'azure'], ['--storage', 's3:x']]) {
       const result = await run(args);
       expect(result.code).toBe(2);
-      expect(result.err[0]).toContain(USAGE);
+      expect(result.err.at(-1)).toContain(USAGE);
     }
   });
 });
