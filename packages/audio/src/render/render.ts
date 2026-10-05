@@ -121,30 +121,23 @@ export async function render(
   const failed: RenderFailure[] = [];
   let characters = 0;
 
-  const entry = (key: string, fields: Omit<ManifestEntry, 'url' | 'createdAt'>): ManifestEntry => ({
-    url: `${publicBaseUrl}${key}`,
+  const entry = (
+    item: RenderPlanItem,
+    fields: Pick<ManifestEntry, 'bytes' | 'durationMs' | 'contentType' | 'characters'>,
+  ): ManifestEntry => ({
+    url: `${publicBaseUrl}${item.key}`,
     ...fields,
+    voice: item.voice,
+    ttsVersion: plan.ttsVersion,
+    format: plan.format,
     createdAt: clock.now().toISOString(),
   });
 
-  const synthesize = async (item: RenderPlanItem): Promise<void> => {
+  /** Runs `call`, retrying retryable provider errors with doubling delays. */
+  const withRetries = async <T>(call: () => Promise<T>): Promise<T> => {
     for (let attempt = 0; ; attempt++) {
       try {
-        const result = await tts.synthesize({ text: item.text, voice: item.voice, format: plan.format });
-        characters += result.characters;
-        await storage.put(item.key, result.audio, {
-          contentType: result.contentType,
-          cacheControl: AUDIO_CACHE_CONTROL,
-        });
-        entries[item.key] = entry(item.key, {
-          bytes: result.audio.length,
-          durationMs: result.durationMs,
-          voice: item.voice,
-          contentType: result.contentType,
-          characters: result.characters,
-        });
-        rendered.push(item.key);
-        return;
+        return await call();
       } catch (error) {
         if (!(error instanceof ProviderError && error.retryable) || attempt >= retries) throw error;
         await sleep(retryDelayMs * 2 ** attempt);
@@ -152,15 +145,33 @@ export async function render(
     }
   };
 
+  // Synthesis and upload retry separately, so a storage hiccup never bills the text twice.
+  const synthesize = async (item: RenderPlanItem): Promise<void> => {
+    const result = await withRetries(() => tts.synthesize({ text: item.text, voice: item.voice, format: plan.format }));
+    characters += result.characters;
+    await withRetries(() =>
+      storage.put(item.key, result.audio, { contentType: result.contentType, cacheControl: AUDIO_CACHE_CONTROL }),
+    );
+    entries[item.key] = entry(item, {
+      bytes: result.audio.length,
+      durationMs: result.durationMs,
+      contentType: result.contentType,
+      characters: result.characters,
+    });
+    rendered.push(item.key);
+  };
+
+  // `head` first: only a WAV body is downloaded, to read its length from the header.
   const adopt = async (item: RenderPlanItem): Promise<boolean> => {
-    const stored = await storage.get(item.key);
-    if (stored === null) return false;
-    entries[item.key] = entry(item.key, {
-      bytes: stored.info.size,
-      durationMs: wavDurationMs(stored.body),
-      voice: item.voice,
-      contentType: stored.info.contentType,
-      characters: 0,
+    const info = await storage.head(item.key);
+    if (info === null) return false;
+    const body = info.contentType === 'audio/wav' ? (await storage.get(item.key))?.body : undefined;
+    entries[item.key] = entry(item, {
+      bytes: info.size,
+      durationMs: body === undefined ? null : wavDurationMs(body),
+      contentType: info.contentType,
+      // An object at a hashed key with no entry was almost certainly paid for by an interrupted run.
+      characters: item.characters,
     });
     adopted.push(item.key);
     return true;

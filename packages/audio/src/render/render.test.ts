@@ -74,6 +74,8 @@ describe('render', () => {
       bytes: stored?.body.length,
       durationMs: (first?.characters as number) * 50,
       voice: 'en-KE-AsiliaNeural',
+      ttsVersion: 'fake-1',
+      format: 'wav',
       createdAt: '2026-10-05T06:00:00.000Z',
       contentType: 'audio/wav',
       characters: first?.characters,
@@ -113,10 +115,18 @@ describe('render', () => {
     await storage.put(wavItem.key, audio, { contentType: 'audio/wav' });
     await storage.put(mp3Item.key, new Uint8Array([0xff, 0xfb]), { contentType: 'audio/mpeg' });
     const tts = new FakeTtsProvider();
+    const get = vi.spyOn(storage, 'get');
     const result = await render(plan, tts, storage, { manifest: emptyManifest() });
     expect(tts.requests).toEqual([]);
+    expect(get.mock.calls).toEqual([[wavItem.key]]);
     expect(result.adopted).toEqual([wavItem.key, mp3Item.key].sort());
-    expect(result.manifest.entries[wavItem.key]).toMatchObject({ bytes: audio.length, durationMs: 500, characters: 0 });
+    expect(result.manifest.entries[wavItem.key]).toMatchObject({
+      bytes: audio.length,
+      durationMs: 500,
+      characters: wavItem.characters,
+      ttsVersion: 'fake-1',
+      format: 'wav',
+    });
     expect(result.manifest.entries[mp3Item.key]).toMatchObject({
       bytes: 2,
       durationMs: null,
@@ -156,6 +166,22 @@ describe('render', () => {
     expect(tts.calls.filter((t) => t === b)).toHaveLength(2);
     expect(result.rendered).toEqual([plan.items[3]?.key]);
     expect(Object.keys((await readManifest(storage)).entries)).toEqual([plan.items[3]?.key]);
+  });
+
+  it('retries a failed upload without synthesizing (and billing) the text again', async () => {
+    const storage = new MemoryObjectStorage();
+    const put = storage.put.bind(storage);
+    let failures = 1;
+    vi.spyOn(storage, 'put').mockImplementation((key, body, options) => {
+      if (key !== MANIFEST_KEY && failures-- > 0) return Promise.reject(new ProviderError('unavailable', 'r2 down'));
+      return put(key, body, options);
+    });
+    const tts = new FakeTtsProvider();
+    const plan = planFor(SEGMENTS.slice(0, 1));
+    const result = await render(plan, tts, storage, { manifest: emptyManifest(), sleep: noSleep });
+    expect(result.rendered).toHaveLength(1);
+    expect(tts.requests).toHaveLength(1);
+    expect(result.characters).toBe(plan.characters);
   });
 
   it('does not write the manifest when nothing succeeded', async () => {
