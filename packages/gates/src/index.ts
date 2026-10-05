@@ -10,7 +10,7 @@ export const packageName = '@lectio/gates';
 
 export { createContext, nodeReadText } from './core/gate.ts';
 export type { CreateContextOptions, Gate, GateContext, ReadText } from './core/gate.ts';
-export { createGit, nodeGitExec, parseNameStatus } from './core/git.ts';
+export { checkedOutAt, createGit, nodeGitExec, parseNameStatus } from './core/git.ts';
 export type { ChangeStatus, ChangedFile, Git, GitExec } from './core/git.ts';
 export { COMMENT_MARKER, COMMENT_MARKER_LINE, DEFAULT_MAX_COMMENT_LENGTH, renderComment } from './core/markdown.ts';
 export type { RenderOptions } from './core/markdown.ts';
@@ -23,14 +23,9 @@ export type { GateReport } from './core/runner.ts';
 export { USAGE, runGatesCli } from './cli/run.ts';
 export type { GatesCliOptions } from './cli/run.ts';
 export { DECISIONS, GREEN_DECISIONS, decide } from './merge-rule/index.ts';
-export type {
-  ApprovalCommit,
-  DecideInput,
-  DecideOutput,
-  Decision,
-  PullRequestApproval,
-  PullRequestFacts,
-} from './merge-rule/index.ts';
+export type { DecideInput, DecideOutput, Decision } from './merge-rule/index.ts';
+export { parsePullRequestFacts, pullRequestFactsProblems } from './core/pull-request.ts';
+export type { ApprovalCommit, PullRequestApproval, PullRequestFacts } from './core/pull-request.ts';
 export { GATES, GATE_IDS, allRules, ruleBookFor, selectGates } from './registry.ts';
 export type { GateId } from './registry.ts';
 export {
@@ -42,8 +37,10 @@ export {
   configuredHandle,
   humanReview,
   nodeReviewFs,
+  passageContentHash,
   prettierJson,
   reviewTimestamp,
+  tempPathFor,
 } from './review/approve.ts';
 export type {
   ApprovalOutcome,

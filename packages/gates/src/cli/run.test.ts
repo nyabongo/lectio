@@ -106,6 +106,16 @@ describe('lectio-gates run', () => {
     ]);
   });
 
+  it('refuses a --head that is not checked out at --root, and accepts one that is', async () => {
+    const gitExec = (args: readonly string[]): string => {
+      if (args[0] !== 'rev-parse') return DUMMY_DIFF;
+      return args.at(-1) === 'HEAD^{commit}' ? 'aaa\n' : args.at(-1) === 'pr-head^{commit}' ? 'aaa\n' : 'bbb\n';
+    };
+    expect(await runGatesCli(['run', '--head', 'other', '--gates', 'always-pass'], options({ gitExec }))).toBe(2);
+    expect(errors[0]).toBe(`lectio-gates: --head other is not the commit checked out at ${dir}; check it out first`);
+    expect(await runGatesCli(['run', '--head', 'pr-head', '--gates', 'always-pass'], options({ gitExec }))).toBe(0);
+  });
+
   it('rejects unknown flags', async () => {
     expect(await runGatesCli(['run', '--nope'], options())).toBe(2);
     expect(errors[0]).toMatch(/^lectio-gates: Unknown option '--nope'/);
@@ -134,6 +144,7 @@ describe('lectio-gates decide', () => {
   it('passes the results to the merge rule and exits 1 unless approved', async () => {
     await writeReport();
     const pr = {
+      number: 7,
       files: ['config/lectio.config.json'],
       reviewEdits: [],
       approval: null,
@@ -163,16 +174,23 @@ describe('lectio-gates decide', () => {
     expect(logs).toEqual(['decision: needs-review', '  - not implemented (L-028)']);
   });
 
-  it('exits 0 for a green decision', async () => {
+  it('exits 0 for a green decision and passes --pr-number into the facts', async () => {
     await writeReport();
     vi.resetModules();
+    const inputs: unknown[] = [];
     vi.doMock('../merge-rule/index.ts', async (importOriginal) => ({
       ...(await importOriginal<typeof MergeRule>()),
-      decide: () => ({ decision: 'auto-merge', reasons: [] }),
+      decide: (input: unknown) => {
+        inputs.push(input);
+        return { decision: 'auto-merge', reasons: [] };
+      },
     }));
     const cli = await import('./run.ts');
-    expect(await cli.runGatesCli(['decide', '--results', 'gates.json', '--pr', 'gates.json'], options())).toBe(0);
+    expect(await cli.runGatesCli(['decide', '--results', 'gates.json', '--pr-number', '42'], options())).toBe(0);
     expect(logs).toEqual(['decision: auto-merge']);
+    expect(inputs[0]).toMatchObject({
+      pr: { number: 42, files: expect.arrayContaining(['docs/notes.md']) as unknown, approval: null },
+    });
     vi.doUnmock('../merge-rule/index.ts');
     vi.resetModules();
   });
@@ -183,7 +201,13 @@ describe('lectio-gates decide', () => {
     [['--results', 'empty.json'], 'empty.json: expected a gate report with a "results" array'],
     [['--results', 'null.json'], 'null.json: expected a gate report with a "results" array'],
     [['--results', 'invalid.json'], 'invalid.json: results/0 is not a valid gate result'],
-  ])('rejects bad input %j', async (args, message) => {
+    [['--results', 'gates.json', '--pr', 'bad.json'], 'bad.json: not valid JSON'],
+    [
+      ['--results', 'gates.json', '--pr', 'gates.json'],
+      'gates.json: not valid pull request facts: number: missing or of the wrong type',
+    ],
+  ])('rejects bad input %j without a stack trace', async (args, message) => {
+    await writeReport();
     writeFileSync(join(dir, 'bad.json'), '{');
     writeFileSync(join(dir, 'empty.json'), '{}');
     writeFileSync(join(dir, 'null.json'), 'null');

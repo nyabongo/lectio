@@ -73,3 +73,17 @@ export function createGit(cwd: string, exec: GitExec = nodeGitExec): Git {
     },
   };
 }
+
+/**
+ * `true` when `ref` names the commit checked out at `cwd`. Gates read the working tree (the
+ * content repo and `readFile`), so a run is only coherent when `--head` is that checkout.
+ */
+export function checkedOutAt(exec: GitExec, cwd: string, ref: string): boolean {
+  if (ref === 'HEAD') return true;
+  const commit = (name: string): string => exec(['rev-parse', '--verify', '--quiet', `${name}^{commit}`], cwd).trim();
+  try {
+    return commit(ref) === commit('HEAD');
+  } catch {
+    return false;
+  }
+}

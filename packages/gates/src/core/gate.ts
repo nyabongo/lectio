@@ -23,7 +23,11 @@ export interface GateContext {
   readonly root: string;
   /** The ref the PR merges into, e.g. `origin/main`. */
   readonly base: string;
-  /** The PR head ref, e.g. `HEAD`. */
+  /**
+   * The PR head ref, e.g. `HEAD`. It must be the commit checked out at `root`: `changedFiles`
+   * diffs `base...head`, while `readFile` and `repo` read the working tree under `root`
+   * (`lectio-gates run` refuses a `--head` that is not checked out there; `checkedOutAt`).
+   */
   readonly head: string;
   /** Every file the PR changes, sorted by path, deletions included. */
   readonly changedFiles: readonly ChangedFile[];

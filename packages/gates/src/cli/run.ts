@@ -3,7 +3,11 @@
  *
  *     lectio-gates run [--gates schema,evidence,licence] [--base origin/main] [--head HEAD]
  *                      [--root <dir>] [--config <file>] [--json out/gates.json] [--markdown out/comment.md]
- *     lectio-gates decide --results out/gates.json [--pr pr.json] [--json out/decision.json]
+ *     lectio-gates decide --results out/gates.json [--pr pr.json | --pr-number <n>] [--json out/decision.json]
+ *
+ * `run` reads files from the working tree at `--root`, so `--head` must be the commit checked out
+ * there (it is refused otherwise). `--pr` is a JSON file of `PullRequestFacts` (core/pull-request.ts);
+ * without it the facts come from the git diff, with PR number `--pr-number` (0: no PR, a local run).
  *
  * `run` exits 1 when a gate fails (a flag, which needs review, exits 0). `decide` passes the
  * results to the merge rule and exits 0 for approved-commit, human-approved and auto-merge, else 1.
@@ -22,22 +26,23 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 
 import type { Gate } from '../core/gate.ts';
 import { createContext } from '../core/gate.ts';
-import { createGit, nodeGitExec } from '../core/git.ts';
+import { checkedOutAt, createGit, nodeGitExec } from '../core/git.ts';
 import type { Git, GitExec } from '../core/git.ts';
 import { renderComment } from '../core/markdown.ts';
 import { formatFinding, skipReason } from '../core/result.ts';
 import type { GateResult } from '../core/result.ts';
 import { runGates } from '../core/runner.ts';
 import type { GateReport } from '../core/runner.ts';
+import { parsePullRequestFacts } from '../core/pull-request.ts';
+import type { PullRequestFacts } from '../core/pull-request.ts';
 import { GREEN_DECISIONS, decide } from '../merge-rule/index.ts';
-import type { PullRequestFacts } from '../merge-rule/index.ts';
 import { GATES, ruleBookFor, selectGates } from '../registry.ts';
 
 export const USAGE = [
   'usage: lectio-gates run [--gates <id,id,…>] [--base <ref>] [--head <ref>] [--root <dir>] [--config <file>]',
   '                        [--json <file>] [--markdown <file>]',
   '       lectio-gates decide --results <gates.json> [--pr <pr.json>] [--base <ref>] [--head <ref>] [--root <dir>]',
-  '                           [--config <file>] [--json <file>]',
+  '                           [--pr-number <n>] [--config <file>] [--json <file>]',
 ].join('\n');
 
 export interface GatesCliOptions {
@@ -82,6 +87,7 @@ function writeText(path: string, text: string): void {
 
 interface Setup {
   readonly root: string;
+  readonly exec: GitExec;
   readonly git: Git;
   readonly config: LectioConfig;
   readonly write: (path: string, text: string) => void;
@@ -93,9 +99,11 @@ function setup(options: GatesCliOptions, values: { root?: string; config?: strin
   const path = (file: string): string => resolve(options.cwd, file);
   const config = options.config ?? loadConfig(values.config, { cwd: options.cwd, env: options.env });
   const root = values.root === undefined ? findRepoRoot(options.cwd) : path(values.root);
+  const exec = options.gitExec ?? nodeGitExec;
   return {
     root,
-    git: createGit(root, options.gitExec ?? nodeGitExec),
+    exec,
+    git: createGit(root, exec),
     config,
     path,
     write: options.writeFile ?? writeText,
@@ -120,7 +128,11 @@ async function runCommand(args: readonly string[], options: GatesCliOptions): Pr
   } catch (error) {
     throw new UsageError((error as Error).message);
   }
-  const { root, git, config, write, path } = setup(options, values);
+  const { root, exec, git, config, write, path } = setup(options, values);
+  // Gates read files from the working tree at --root, so --head must be what is checked out there.
+  if (!checkedOutAt(exec, root, values.head)) {
+    throw new UsageError(`--head ${values.head} is not the commit checked out at ${root}; check it out first`);
+  }
   const context = createContext({
     root,
     base: values.base,
@@ -157,14 +169,34 @@ function readResults(text: string, file: string): GateResult[] {
   });
 }
 
+function readPullRequestFacts(text: string, file: string): PullRequestFacts {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch (error) {
+    throw new UsageError(`${file}: not valid JSON (${(error as Error).message})`);
+  }
+  try {
+    return parsePullRequestFacts(parsed);
+  } catch (error) {
+    throw new UsageError(`${file}: ${(error as Error).message}`);
+  }
+}
+
 async function decideCommand(args: readonly string[], options: GatesCliOptions): Promise<number> {
-  const { values } = parse(args, { ...COMMON, results: { type: 'string' }, pr: { type: 'string' } });
+  const { values } = parse(args, {
+    ...COMMON,
+    results: { type: 'string' },
+    pr: { type: 'string' },
+    'pr-number': { type: 'string', default: '0' },
+  });
   if (values.results === undefined) throw new UsageError('decide needs --results <gates.json>');
   const { git, config, read, write, path } = setup(options, values);
   const results = readResults(read(path(values.results)), values.results);
   const pr: PullRequestFacts =
     values.pr === undefined
       ? {
+          number: Number(values['pr-number']),
           files: git.changedFiles(values.base, values.head).map((file) => file.path),
           reviewEdits: [],
           approval: null,
@@ -172,7 +204,7 @@ async function decideCommand(args: readonly string[], options: GatesCliOptions):
           lastContentCommitAt: null,
           fork: false,
         }
-      : (JSON.parse(read(path(values.pr))) as PullRequestFacts);
+      : readPullRequestFacts(read(path(values.pr)), values.pr);
   const outcome = decide({ results, config, pr });
   options.log(`decision: ${outcome.decision}`);
   for (const reason of outcome.reasons) options.log(`  - ${reason}`);
