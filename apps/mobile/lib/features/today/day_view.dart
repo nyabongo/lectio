@@ -142,9 +142,8 @@ class _Rank extends StatelessWidget {
         // Wraps instead of overflowing at 200% text on a narrow phone.
         Flexible(
           child: Text(
-            TodayStrings.of(
-              context,
-            ).rankAndColourLabel(celebration.rank, celebration.colour),
+            TodayStrings.of(context)
+                .rankAndColourLabel(celebration.rank, celebration.colour),
             style: theme.textTheme.labelLarge?.copyWith(color: scheme.primary),
           ),
         ),
