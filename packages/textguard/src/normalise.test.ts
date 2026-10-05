@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { normaliseWord, tokenise } from './normalise.ts';
+import type { Token } from './normalise.ts';
 
 describe('normaliseWord', () => {
   it.each([
@@ -51,5 +52,37 @@ describe('tokenise', () => {
       { word: 'a', start: 0, end: 1 },
       { word: 'b', start: 4, end: 5 },
     ]);
+  });
+
+  describe('combining marks (Unicode category M) stay inside the word', () => {
+    const words = (s: string) => tokenise(s).map((t) => t.word);
+    // Psalm 1:1, first five words, from the committed OSHB corpus (corpus/hbo-oshb/PS/1.json), morpheme slashes removed.
+    const PSALM_1_1 = 'אַ֥שְֽׁרֵי הָאִ֗ישׁ אֲשֶׁ֤ר לֹ֥א הָלַךְ֮';
+    const JOHN_1_1 = 'Ἐν ἀρχῇ ἦν ὁ λόγος';
+
+    it('keeps pointed Hebrew (niqqud and cantillation) as one word each, with offsets over the marks', () => {
+      const tokens = tokenise(PSALM_1_1);
+      expect(tokens.map((t) => t.word)).toEqual(['אשרי', 'האיש', 'אשר', 'לא', 'הלך']);
+      expect(PSALM_1_1.slice((tokens[0] as Token).start, (tokens[0] as Token).end)).toBe('אַ֥שְֽׁרֵי');
+      expect(PSALM_1_1.slice((tokens[4] as Token).start, (tokens[4] as Token).end)).toBe('הָלַךְ֮');
+    });
+
+    it('tokenises NFC and NFD polytonic Greek alike', () => {
+      expect(words(JOHN_1_1)).toEqual(['εν', 'αρχη', 'ην', 'ο', 'λογος']);
+      expect(words(JOHN_1_1.normalize('NFD'))).toEqual(words(JOHN_1_1));
+    });
+
+    it('tokenises NFD Latin like NFC Latin', () => {
+      expect(words('naïve café'.normalize('NFD'))).toEqual(['naive', 'cafe']);
+    });
+
+    it('splits at maqaf, like a hyphen, and joins at geresh and gershayim, like an apostrophe', () => {
+      expect(words('אֶת־הָרָקִיעַ')).toEqual(['את', 'הרקיע']);
+      expect(words('צה״ל ג׳ורג׳')).toEqual(['צהל', 'גורג']);
+    });
+
+    it('ignores a stray mark with no letter before it', () => {
+      expect(words('\u0301 a')).toEqual(['a']);
+    });
   });
 });

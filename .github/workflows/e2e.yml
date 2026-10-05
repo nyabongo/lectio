@@ -1,0 +1,150 @@
+# End-to-end smoke tests (L-063). Playwright drives `astro preview` of the fixture
+# build (apps/web/test/lectio.config.fixture.json, build date 2026-09-20) on desktop
+# Chromium and a Pixel 7, on a fixed clock of 2026-09-20 08:00 Nairobi. Full-page
+# screenshots of every page type and viewport are uploaded as the
+# `e2e-screenshots` artifact and listed in the job summary (for review only; no
+# visual diffing). Offline: no secrets, and the suite refuses requests that leave
+# the preview server. Config: apps/web/playwright.config.ts; tests: apps/web/e2e.
+#
+# `e2e` is a required check (.github/required-checks/e2e.json), so there is no
+# trigger-level `paths:` filter; the `changes` step decides whether there is
+# anything to test and otherwise exits green. `workflow_dispatch` lets the
+# merge-rule job (L-031) re-run it on the approval commits it pushes.
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NODE_VERSION: 22
+  ASTRO_TELEMETRY_DISABLED: 1
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Relevant: the web app, the packages it builds from, content and config,
+      # the dependency manifests and this workflow. On a pull request the diff is
+      # against the PR base; on any other event it is against origin/main (on a
+      # push to main, where HEAD is origin/main, against the previous commit).
+      - name: Detect relevant changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+          else
+            git fetch --no-tags origin main
+            base="$(git rev-parse origin/main)"
+            if [ "$base" = "$(git rev-parse HEAD)" ]; then
+              base="$(git rev-parse HEAD~1 2>/dev/null || echo "$base")"
+            fi
+          fi
+          changed="$(git diff --name-only "$base"...HEAD)"
+          echo "Changed files since ${base}:"
+          echo "$changed"
+          if echo "$changed" | grep -Eq '^(apps/web/|packages/|passages/|calendar/|config/|package\.json$|package-lock\.json$|\.github/workflows/e2e\.yml$)'; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing relevant to the e2e suite changed; skipping." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.changes.outputs.relevant == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - if: steps.changes.outputs.relevant == 'true'
+        run: npm ci
+
+      - name: Playwright version
+        id: playwright
+        if: steps.changes.outputs.relevant == 'true'
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: browsers
+        if: steps.changes.outputs.relevant == 'true'
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium
+
+      - name: Install Chromium
+        if: steps.changes.outputs.relevant == 'true' && steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Chromium system dependencies
+        if: steps.changes.outputs.relevant == 'true' && steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Typecheck the e2e suite
+        if: steps.changes.outputs.relevant == 'true'
+        run: npx tsc -p apps/web/e2e/tsconfig.json
+
+      # The config's web server builds the fixture site and runs `astro preview`.
+      - name: Run the e2e suite
+        if: steps.changes.outputs.relevant == 'true'
+        run: npx playwright test -c apps/web/playwright.config.ts
+
+      - name: Upload screenshots
+        id: screenshots
+        if: always() && steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-screenshots
+          path: apps/web/e2e/__screenshots__
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload report
+        if: failure() && steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-report
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          retention-days: 7
+
+      - name: List screenshots in the job summary
+        if: always() && steps.changes.outputs.relevant == 'true'
+        env:
+          ARTIFACT_URL: ${{ steps.screenshots.outputs.artifact-url }}
+        run: |
+          dir=apps/web/e2e/__screenshots__
+          {
+            echo "## E2E screenshots"
+            echo
+            if [ -n "$ARTIFACT_URL" ]; then
+              echo "Full-page screenshots per page type and viewport: [download e2e-screenshots]($ARTIFACT_URL)."
+            fi
+            echo
+            echo "| Page | Viewports |"
+            echo "| --- | --- |"
+            if [ -d "$dir" ]; then
+              find "$dir" -name '*.png' -printf '%f\n' | sed 's/\.png$//' | sort -u | while read -r page; do
+                viewports="$(find "$dir" -name "$page.png" -printf '%h\n' | xargs -n1 basename | sort | paste -sd ',' - | sed 's/,/, /g')"
+                echo "| \`$page\` | $viewports |"
+              done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
