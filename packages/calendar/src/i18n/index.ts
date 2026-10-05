@@ -5,7 +5,7 @@
  * with status `fallback`, so a lookup never fails.
  *
  * Stable API for the web and app UIs (L-110 and later): `seasonName`, `colourName`,
- * `celebrationName`, `celebrationNames` and the `SWAHILI` catalog.
+ * `celebrationName`, `celebrationNameIn`, `celebrationNames` and the `SWAHILI` catalog.
  */
 import type { LiturgicalColour } from '@lectio/schema/common';
 
@@ -64,6 +64,16 @@ export interface LocalisedName {
 export function celebrationName(id: string, english: string, catalog: NameCatalog = SWAHILI): LocalisedName {
   const entry = Object.hasOwn(catalog.celebrations, id) ? catalog.celebrations[id] : undefined;
   return entry?.name ? { name: entry.name, status: entry.status } : { name: english, status: 'fallback' };
+}
+
+/**
+ * The translated name of celebration `id` in `locale`, or undefined when there is none (English,
+ * an unknown locale or id, or a flagged fallback): callers fall back to the calendar's own name.
+ * Matches the web's `CelebrationLookup` adapter (L-110).
+ */
+export function celebrationNameIn(locale: string, id: string, catalog: NameCatalog = SWAHILI): string | undefined {
+  if (locale !== catalog.locale || !Object.hasOwn(catalog.celebrations, id)) return undefined;
+  return catalog.celebrations[id]?.name ?? undefined;
 }
 
 /** `{ en, sw }` for a celebration; `sw` is the English name when there is no Kiswahili one. */

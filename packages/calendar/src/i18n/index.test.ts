@@ -16,6 +16,7 @@ import {
   ENGLISH_SEASON_NAMES,
   SWAHILI,
   celebrationName,
+  celebrationNameIn,
   celebrationNames,
   colourName,
   seasonName,
@@ -111,6 +112,17 @@ describe('celebrationName and celebrationNames', () => {
       en: 'The Nativity of the Lord (Christmas)',
       sw: 'Kuzaliwa kwa Bwana (Noeli)',
     });
+  });
+});
+
+describe('celebrationNameIn', () => {
+  it('gives the translated name, or undefined so the caller keeps the calendar name', () => {
+    expect(celebrationNameIn('sw', 'ordinary-time-25-sunday')).toBe('Dominika ya Ishirini na Tano ya Mwaka');
+    expect(celebrationNameIn('sw', 'easter-sunday', fake)).toBe('Pasaka');
+    expect(celebrationNameIn('en', 'easter-sunday', fake)).toBeUndefined();
+    expect(celebrationNameIn('sw', 'saint-nobody', fake)).toBeUndefined();
+    expect(celebrationNameIn('sw', 'unknown-id', fake)).toBeUndefined();
+    expect(celebrationNameIn('sw', 'constructor', fake)).toBeUndefined();
   });
 });
 
