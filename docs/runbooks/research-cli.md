@@ -22,8 +22,8 @@ Flags every subcommand takes:
 | `--budget <usd>`        | `0`     | The run's spend ceiling. A live run refuses to start without it (see [Costs](#costs)) |
 
 `run` and `plan` also take `--from YYYY-MM-DD` (default today in `site.timezone`), `--days n` (default
-`research.defaultDays`, 14), `--only <passage key>` and `--max n`. `fixup` takes `--pr <n>`, `--force` and
-`--report <gates.json>`. Exit codes: `0` done, `1` something needs your attention, `2` a bad command line.
+`research.defaultDays`, 14), `--only <passage key>` and `--max n`. `fixup` takes `--pr <n>`, `--force`,
+`--allow-stale` and `--report <gates.json>`. `backfill` is reserved for L-072 and prints "not implemented yet". Exit codes: `0` done, `1` something needs your attention, `2` a bad command line.
 
 ## Prerequisites
 
@@ -74,8 +74,13 @@ A PR that the merge rule sends to review waits for you:
   comment**. Only accounts in `reviewer.githubHandles` count, and only after the last content commit; you may approve
   your own research PR this way.
 - The merge-rule job then writes the review block in a signed approval commit and merges.
-- To reject a passage, **close** the PR. Research never re-opens it and the planner skips the key (`run` reports
-  "a person closed PR #n"). To research it again, delete the `research/<key>` branch first.
+- To reject a passage, **close** the PR. A closed PR blocks its key for good: the planner and publishing both skip it
+  (`run` reports "a person closed PR #n"), and deleting the `research/<key>` branch does not change that, because
+  GitHub keeps the closed PR with its branch name.
+- To give a rejected passage another go, **reopen** the PR on GitHub (possible while its branch still exists). It is
+  then an open research PR again: once the gates have run on it, `fixup --pr <n>` can repair it, or you can edit the
+  file on the branch yourself and review it. A fresh research run for a rejected key is not possible today; it needs
+  an owner decision and a future override.
 
 ## Fix-up mode
 
@@ -90,10 +95,13 @@ pasted into a PR never reaches the model), passes the verifier findings for that
 gates 1–3, and pushes the result as a new commit on the same branch. The gates then run again. It never closes the PR.
 
 - It refuses a closed or fork PR, a branch that is not `research/<key>`, and a branch someone else pushed to.
-- It refuses a PR you already approved, because the new commit resets the approval; `--force` overrides.
-- It refuses a gates comment written for an older head (wait for the gates to finish); `--force` overrides.
-- When the comment says findings were left out for its size, download the content-gates run's `gates.json` artifact
-  (`gh run download <run id>`) and pass it with `--report <path>/gates.json`.
+- It refuses a PR you already approved, because the new commit resets the approval; `--force` overrides that check
+  only.
+- It refuses gate output for another head, and gate output that does not name the full commit sha it checked (the
+  comment's `Checked head:` line and hidden `lectio-gates-head` marker, or the report's `head`): wait for the gates to
+  re-run. `--allow-stale` overrides that check only. Every check an override skipped is printed.
+- When the comment left findings out for its size, fix-up warns. Download the run's `gates-report` artifact
+  (`gh run download <run id> -n gates-report`) and pass `--report gates.json`.
 - A sensitive-claim flag is never "fixed": it is for a person to judge.
 
 ## Costs
@@ -117,10 +125,12 @@ gates 1–3, and pushes the result as a new commit on the same branch. The gates
 | `gh could not tell who you are`                                  | `gh auth login`, then `gh auth status`                                        |
 | `research.models.… is a openai model`                            | Point `research.models` at Anthropic models                                   |
 | A passage `abandoned`                                            | Read its problems in the pre-validation section; it is planned again next run |
-| `not published: branch research/<key> exists without an open PR` | A leftover branch: delete it on GitHub to research the passage again          |
-| `not published: … was closed without merging`                    | A person rejected the passage; delete the branch to try again                 |
+| `not published: branch research/<key> exists without an open PR` | A leftover branch with no PR at all: delete it on GitHub, then run again      |
+| `not published: … was closed without merging`                    | A person rejected the passage; see [Approving a PR](#approving-a-pr)          |
 | `has no gates comment from github-actions[bot] yet`              | Wait for the content-gates workflow to finish on the PR                       |
 | `is already approved`                                            | Leave it, or pass `--force` if the fix is worth a new review                  |
+| `wait for the gates to re-run, or pass --allow-stale`            | Wait for the content gates on the current head, then run fix-up again         |
+| `research backfill: not implemented yet`                         | Back-fill arrives with L-072                                                  |
 | `--provider fake: dry run` and every passage `abandoned`         | Expected: fake output carries fake provenance, which gate 1 rejects           |
 
 Translations (`translate`) follow the same flags and budget rules; see [L-112](https://github.com/nyabongo/lectio/issues/200)
