@@ -1,0 +1,877 @@
+{
+  "$comment": "Seasonal weekdays (L-068) whose readings follow the date or a fixed day rather than a week: 17-24 December, the Christmas octave weekdays (29-31 December), 2-7 January, the weekdays after Epiphany and the Easter octave. Keyed by the Lectio celebration id the calendar (romcal) gives those weekdays, so the resolver picks them as the principal celebration. 17-24 December, 29 December, 3 January and the Easter octave are imported from LitCal (import/litcal/seasonal-weekdays-dated.json); the rest are filled from the OLM 1981 structure because LitCal is empty, wrong (5 January) or gives psalms without verses. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "kind": "celebrations",
+  "entries": [
+    {
+      "key": "advent-december-17",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 49:2, 8-10",
+              "printed": "Genesis 49:2, 8-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec17",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 3-4, 7-8, 17",
+              "printed": "Psalm 72:1-2, 3-4ab, 7-8, 17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec17",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:1-17",
+              "printed": "Matthew 1:1-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec17",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-18",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 23:5-8",
+              "printed": "Jeremiah 23:5-8",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec18",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 12-13, 18-19",
+              "printed": "Psalm 72:1-2, 12-13, 18-19",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec18",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:18-25",
+              "printed": "Matthew 1:18-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec18",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-19",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jgs 13:2-7, 24-25",
+              "printed": "Judges 13:2-7, 24-25a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec19",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 71:3-4, 5-6, 16-17",
+              "printed": "Psalm 71:3-4a, 5-6ab, 16-17",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec19",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:5-25",
+              "printed": "Luke 1:5-25",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec19",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-20",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 7:10-14",
+              "printed": "Isaiah 7:10-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec20",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 24:1-2, 3-4, 5-6",
+              "printed": "Psalm 24:1-2, 3-4ab, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec20",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:26-38",
+              "printed": "Luke 1:26-38",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec20",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-21",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Sg 2:8-14",
+              "printed": "Song of Songs 2:8-14",
+              "alternatives": [
+                {
+                  "ref": "Zep 3:14-18",
+                  "printed": "Zephaniah 3:14-18a"
+                }
+              ],
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec21",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 33:2-3, 11-12, 20-21",
+              "printed": "Psalm 33:2-3, 11-12, 20-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec21",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:39-45",
+              "printed": "Luke 1:39-45",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec21",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-22",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Sm 1:24-28",
+              "printed": "1 Samuel 1:24-28",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec22",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "1 Sm 2:1, 4-5, 6-7, 8",
+              "printed": "1 Samuel 2:1, 4-5, 6-7, 8abcd",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec22",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:46-56",
+              "printed": "Luke 1:46-56",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec22",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-23",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Mal 3:1-4, 23-24",
+              "printed": "Malachi 3:1-4, 23-24",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec23",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 25:4-5, 8-9, 10, 14",
+              "printed": "Psalm 25:4-5ab, 8-9, 10, 14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec23",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:57-66",
+              "printed": "Luke 1:57-66",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec23",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "advent-december-24",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Sm 7:1-5, 8-12, 14, 16",
+              "printed": "2 Samuel 7:1-5, 8b-12, 14a, 16",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec24",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 89:2-3, 4-5, 27, 29",
+              "printed": "Psalm 89:2-3, 4-5, 27, 29",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec24",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:67-79",
+              "printed": "Luke 1:67-79",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_adventus/en.json#AdventWeekdayDec24",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-octave-day-5",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 2:3-11",
+              "printed": "1 John 2:3-11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayDec29",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 2-3, 5-6",
+              "printed": "Psalm 96:1-2a, 2b-3, 5b-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayDec29",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:22-35",
+              "printed": "Luke 2:22-35",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayDec29",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-octave-day-6",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 2:12-17",
+              "source": "olm-1981 p?#203",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:7-8, 8-9, 10",
+              "source": "olm-1981 p?#203",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:36-40",
+              "source": "olm-1981 p?#203",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-octave-day-7",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 2:18-21",
+              "source": "olm-1981 p?#204",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 96:1-2, 11-12, 13",
+              "source": "olm-1981 p?#204",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:1-18",
+              "source": "olm-1981 p?#204",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-time-january-2",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 2:22-28",
+              "source": "olm-1981 p?#205",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4",
+              "source": "olm-1981 p?#205",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:19-28",
+              "source": "olm-1981 p?#205",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-time-january-3",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 2:29-3:6",
+              "printed": "1 John 2:29-3:6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayJan3",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 3-4, 5-6",
+              "printed": "Psalm 98:1, 3cd-4, 5-6",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayJan3",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:29-34",
+              "printed": "John 1:29-34",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#ChristmasWeekdayJan3",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-time-january-4",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 3:7-10",
+              "source": "olm-1981 p?#207",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 7-8, 9",
+              "source": "olm-1981 p?#207",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:35-42",
+              "source": "olm-1981 p?#207",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-time-january-5",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 3:11-21",
+              "source": "olm-1981 p?#208",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 100:1-2, 3, 4, 5",
+              "source": "olm-1981 p?#208",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:43-51",
+              "source": "olm-1981 p?#208",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-time-january-6",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 5:5-13",
+              "source": "olm-1981 p?#209",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 147:12-13, 14-15, 19-20",
+              "source": "olm-1981 p?#209",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 1:7-11",
+              "alternatives": [
+                {
+                  "ref": "Lk 3:23-38"
+                }
+              ],
+              "source": "olm-1981 p?#209",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "christmas-time-january-7",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 5:14-21",
+              "source": "olm-1981 p?#210",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 149:1-2, 3-4, 5-6, 9",
+              "source": "olm-1981 p?#210",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 2:1-11",
+              "source": "olm-1981 p?#210",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-friday",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 4:1-12",
+              "printed": "Acts 4:1-12",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#FriOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 118:1-2, 4, 22-24, 25-27",
+              "printed": "Psalm 118:1-2 and 4, 22-24, 25-27a",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#FriOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:1-14",
+              "printed": "John 21:1-14",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#FriOctaveEaster",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-monday",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 2:14, 22-33",
+              "printed": "Acts 2:14, 22-33",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#MonOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 16:1-2, 5, 7-8, 9-10, 11",
+              "printed": "Psalm 16:1-2a and 5, 7-8, 9-10, 11",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#MonOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 28:8-15",
+              "printed": "Matthew 28:8-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#MonOctaveEaster",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-saturday",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 4:13-21",
+              "printed": "Acts 4:13-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#SatOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 118:1, 14-15, 16-18, 19-21",
+              "printed": "Psalm 118:1 and 14-15ab, 16-18, 19-21",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#SatOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 16:9-15",
+              "printed": "Mark 16:9-15",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#SatOctaveEaster",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-thursday",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 3:11-26",
+              "printed": "Acts 3:11-26",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#ThuOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 8:2, 5, 6-7, 8-9",
+              "printed": "Psalm 8:2ab and 5, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#ThuOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 24:35-48",
+              "printed": "Luke 24:35-48",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#ThuOctaveEaster",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-tuesday",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 2:36-41",
+              "printed": "Acts 2:36-41",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#TueOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 33:4-5, 18-19, 20, 22",
+              "printed": "Psalm 33:4-5, 18-19, 20 and 22",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#TueOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 20:11-18",
+              "printed": "John 20:11-18",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#TueOctaveEaster",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "easter-wednesday",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 3:1-10",
+              "printed": "Acts 3:1-10",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#WedOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 105:1-2, 3-4, 6-7, 8-9",
+              "printed": "Psalm 105:1-2, 3-4, 6-7, 8-9",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#WedOctaveEaster",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 24:13-35",
+              "printed": "Luke 24:13-35",
+              "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_paschatis/en.json#WedOctaveEaster",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "friday-after-epiphany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 5:5-13",
+              "source": "olm-1981 p?#216",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 147:12-13, 14-15, 19-20",
+              "source": "olm-1981 p?#216",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 5:12-16",
+              "source": "olm-1981 p?#216",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "monday-after-epiphany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 3:22-4:6",
+              "source": "olm-1981 p?#212",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 2:7-8, 10-12",
+              "source": "olm-1981 p?#212",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 4:12-17, 23-25",
+              "source": "olm-1981 p?#212",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "saturday-after-epiphany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 5:14-21",
+              "source": "olm-1981 p?#217",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 149:1-2, 3-4, 5-6, 9",
+              "source": "olm-1981 p?#217",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:22-30",
+              "source": "olm-1981 p?#217",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "thursday-after-epiphany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 4:19-5:4",
+              "source": "olm-1981 p?#215",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 14, 15, 17",
+              "source": "olm-1981 p?#215",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 4:14-22",
+              "source": "olm-1981 p?#215",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tuesday-after-epiphany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 4:7-10",
+              "source": "olm-1981 p?#213",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 3-4, 7-8",
+              "source": "olm-1981 p?#213",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 6:34-44",
+              "source": "olm-1981 p?#213",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "wednesday-after-epiphany",
+      "masses": [
+        {
+          "id": "day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Jn 4:11-18",
+              "source": "olm-1981 p?#214",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 72:1-2, 10, 12-13",
+              "source": "olm-1981 p?#214",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 6:45-52",
+              "source": "olm-1981 p?#214",
+              "status": "provisional"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
