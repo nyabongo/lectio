@@ -1072,8 +1072,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Conversion of Saint Paul the Apostle",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 22:3-16",
+              "key": "ACTS.22.3-16",
+              "linkout": "https://www.drbo.org/chapter/51022.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 117:1, 2",
+              "key": "PS.117.1_117.2",
+              "linkout": "https://www.drbo.org/chapter/21116.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 16:15-18",
+              "key": "MK.16.15-18",
+              "linkout": "https://www.drbo.org/chapter/48016.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-01-26",
@@ -1092,25 +1117,25 @@
       "masses": [
         {
           "id": "day",
-          "label": "Mass of the day",
+          "label": "Saints Timothy and Titus, Bishops",
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "Heb 10:1-10",
-              "key": "HEB.10.1-10",
-              "linkout": "https://www.drbo.org/chapter/65010.htm"
+              "ref": "2 Tm 1:1-8",
+              "key": "2TM.1.1-8",
+              "linkout": "https://www.drbo.org/chapter/62001.htm"
             },
             {
               "slot": "psalm",
-              "ref": "Ps 40:2, 4, 7-8, 10, 11",
-              "key": "PS.40.2_40.4_40.7-8_40.10_40.11",
-              "linkout": "https://www.drbo.org/chapter/21039.htm"
+              "ref": "Ps 96:1-2, 2-3, 7-8, 10",
+              "key": "PS.96.1-2_96.2-3_96.7-8_96.10",
+              "linkout": "https://www.drbo.org/chapter/21095.htm"
             },
             {
               "slot": "gospel",
-              "ref": "Mark 3:31-35",
-              "key": "MK.3.31-35",
-              "linkout": "https://www.drbo.org/chapter/48003.htm"
+              "ref": "Lk 10:1-9",
+              "key": "LK.10.1-9",
+              "linkout": "https://www.drbo.org/chapter/49010.htm"
             }
           ]
         }
@@ -1395,8 +1420,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Presentation of the Lord",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Mal 3:1-4",
+              "key": "MAL.3.1-4",
+              "linkout": "https://www.drbo.org/chapter/44003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 24:7, 8, 9, 10",
+              "key": "PS.24.7_24.8_24.9_24.10",
+              "linkout": "https://www.drbo.org/chapter/21023.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 2:14-18",
+              "key": "HEB.2.14-18",
+              "linkout": "https://www.drbo.org/chapter/65002.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:22-40",
+              "key": "LK.2.22-40",
+              "linkout": "https://www.drbo.org/chapter/49002.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-02-03",
@@ -2270,8 +2326,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Chair of Saint Peter the Apostle",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Pt 5:1-4",
+              "key": "1PT.5.1-4",
+              "linkout": "https://www.drbo.org/chapter/67005.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 4, 5, 6",
+              "key": "PS.23.1-3_23.4_23.5_23.6",
+              "linkout": "https://www.drbo.org/chapter/21022.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 16:13-19",
+              "key": "MT.16.13-19",
+              "linkout": "https://www.drbo.org/chapter/47016.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-02-23",
@@ -2495,6 +2576,30 @@
               "ref": "Luke 15:1-3, 11-32",
               "key": "LK.15.1-3_15.11-32",
               "linkout": "https://www.drbo.org/chapter/49015.htm"
+            }
+          ]
+        },
+        {
+          "id": "gregory-of-narek-abbot",
+          "label": "Saint Gregory of Narek, Abbot and Doctor of the Church",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Wisdom 7: 7-10, 15-16",
+              "key": "WIS.7.7-10_7.15-16",
+              "linkout": "https://www.drbo.org/chapter/25007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 37: 3-4, 5-6, 30-31",
+              "key": "PS.37.3-4_37.5-6_37.30-31",
+              "linkout": "https://www.drbo.org/chapter/21036.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Matthew 7: 21-29",
+              "key": "MT.7.21-29",
+              "linkout": "https://www.drbo.org/chapter/47007.htm"
             }
           ]
         }
@@ -3361,8 +3466,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Joseph, Spouse of the Blessed Virgin Mary",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Sm 7:4-5, 12-14, 16",
+              "key": "2SM.7.4-5_7.12-14_7.16",
+              "linkout": "https://www.drbo.org/chapter/10007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 89:2-3, 4-5, 27, 29",
+              "key": "PS.89.2-3_89.4-5_89.27_89.29",
+              "linkout": "https://www.drbo.org/chapter/21088.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Rom 4:13, 16-18, 22",
+              "key": "ROM.4.13_4.16-18_4.22",
+              "linkout": "https://www.drbo.org/chapter/52004.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:16, 18-21, 24",
+              "key": "MT.1.16_1.18-21_1.24",
+              "linkout": "https://www.drbo.org/chapter/47001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-03-20",
@@ -4211,8 +4347,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Annunciation of the Lord",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 7:10-14; 8:10",
+              "key": "IS.7.10-14_8.10",
+              "linkout": "https://www.drbo.org/chapter/27007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 40:7-8, 8-9, 10, 11",
+              "key": "PS.40.7-8_40.8-9_40.10_40.11",
+              "linkout": "https://www.drbo.org/chapter/21039.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Heb 10:4-10",
+              "key": "HEB.10.4-10",
+              "linkout": "https://www.drbo.org/chapter/65010.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:26-38",
+              "key": "LK.1.26-38",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-04-06",
@@ -5361,6 +5528,30 @@
               "linkout": "https://www.drbo.org/chapter/50015.htm"
             }
           ]
+        },
+        {
+          "id": "joseph-the-worker",
+          "label": "Saint Joseph the Worker",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Gn 1:26-2:3",
+              "key": "GN.1.26-2.3",
+              "linkout": "https://www.drbo.org/chapter/01001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 90:2, 3-4, 12-13, 14, 16",
+              "key": "PS.90.2_90.3-4_90.12-13_90.14_90.16",
+              "linkout": "https://www.drbo.org/chapter/21089.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 13:54-58",
+              "key": "MT.13.54-58",
+              "linkout": "https://www.drbo.org/chapter/47013.htm"
+            }
+          ]
         }
       ],
       "lectionaryMissing": false
@@ -5427,8 +5618,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saints Philip and James, Apostles",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Cor 15:1-8",
+              "key": "1COR.15.1-8",
+              "linkout": "https://www.drbo.org/chapter/53015.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "key": "PS.19.2-3_19.4-5",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 14:6-14",
+              "key": "JN.14.6-14",
+              "linkout": "https://www.drbo.org/chapter/50014.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-05-04",
@@ -5732,6 +5948,30 @@
               "linkout": "https://www.drbo.org/chapter/50016.htm"
             }
           ]
+        },
+        {
+          "id": "john-of-avila-priest",
+          "label": "Saint John of Ávila, Priest and Doctor of the Church",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 13: 46-49",
+              "key": "ACTS.13.46-49",
+              "linkout": "https://www.drbo.org/chapter/51013.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 23: 1-3a, 4, 5, 6",
+              "key": "PS.23.1-3_23.4_23.5_23.6",
+              "linkout": "https://www.drbo.org/chapter/21022.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Matthew 5: 13-19",
+              "key": "MT.5.13-19",
+              "linkout": "https://www.drbo.org/chapter/47005.htm"
+            }
+          ]
         }
       ],
       "lectionaryMissing": false
@@ -5894,8 +6134,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Matthias, Apostle",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 1:15-17, 20-26",
+              "key": "ACTS.1.15-17_1.20-26",
+              "linkout": "https://www.drbo.org/chapter/51001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 113:1-2, 3-4, 5-6, 7-8",
+              "key": "PS.113.1-2_113.3-4_113.5-6_113.7-8",
+              "linkout": "https://www.drbo.org/chapter/21112.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 15:9-17",
+              "key": "JN.15.9-17",
+              "linkout": "https://www.drbo.org/chapter/50015.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-05-15",
@@ -6034,25 +6299,25 @@
       "masses": [
         {
           "id": "day",
-          "label": "Mass of the day",
+          "label": "Blessed Virgin Mary, Mother of the Church",
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "Sir 1:1-10",
-              "key": "SIR.1.1-10",
-              "linkout": "https://www.drbo.org/chapter/26001.htm"
+              "ref": "Genesis 3: 9-15, 20",
+              "key": "GN.3.9-15_3.20",
+              "linkout": "https://www.drbo.org/chapter/01003.htm"
             },
             {
               "slot": "psalm",
-              "ref": "Ps 93:1, 1-2, 5",
-              "key": "PS.93.1_93.1-2_93.5",
-              "linkout": "https://www.drbo.org/chapter/21092.htm"
+              "ref": "Ps 87:1-2, 3, 5, 6-7",
+              "key": "PS.87.1-2_87.3_87.5_87.6-7",
+              "linkout": "https://www.drbo.org/chapter/21086.htm"
             },
             {
               "slot": "gospel",
-              "ref": "Mark 9:14-29",
-              "key": "MK.9.14-29",
-              "linkout": "https://www.drbo.org/chapter/48009.htm"
+              "ref": "John 19: 25-34",
+              "key": "JN.19.25-34",
+              "linkout": "https://www.drbo.org/chapter/50019.htm"
             }
           ]
         }
@@ -6619,6 +6884,30 @@
               "linkout": "https://www.drbo.org/chapter/48011.htm"
             }
           ]
+        },
+        {
+          "id": "paul-vi-pope",
+          "label": "Saint Paul VI, Pope",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Corinthians 9: 16-19, 22-23",
+              "key": "1COR.9.16-19_9.22-23",
+              "linkout": "https://www.drbo.org/chapter/53009.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 96: 1-2a, 2b-3, 7-8a, 10",
+              "key": "PS.96.1-2_96.2-3_96.7-8_96.10",
+              "linkout": "https://www.drbo.org/chapter/21095.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Matthew 16: 13-19",
+              "key": "MT.16.13-19",
+              "linkout": "https://www.drbo.org/chapter/47016.htm"
+            }
+          ]
         }
       ],
       "lectionaryMissing": false
@@ -6685,8 +6974,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Visitation of the Blessed Virgin Mary",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Zep 3:14-18",
+              "key": "ZEP.3.14-18",
+              "linkout": "https://www.drbo.org/chapter/41003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Is 12:2-3, 4, 5-6",
+              "key": "IS.12.2-3_12.4_12.5-6",
+              "linkout": "https://www.drbo.org/chapter/27012.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:39-56",
+              "key": "LK.1.39-56",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-06-01",
@@ -6916,6 +7230,30 @@
               "ref": "Mark 12:38-44",
               "key": "MK.12.38-44",
               "linkout": "https://www.drbo.org/chapter/48012.htm"
+            }
+          ]
+        },
+        {
+          "id": "immaculate-heart-of-mary",
+          "label": "The Immaculate Heart of the Blessed Virgin Mary",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 61:9-11",
+              "key": "IS.61.9-11",
+              "linkout": "https://www.drbo.org/chapter/27061.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "1 Sm 2:1, 4-5, 6-7, 8",
+              "key": "1SM.2.1_2.4-5_2.6-7_2.8",
+              "linkout": "https://www.drbo.org/chapter/09002.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 2:41-51",
+              "key": "LK.2.41-51",
+              "linkout": "https://www.drbo.org/chapter/49002.htm"
             }
           ]
         }
@@ -7161,25 +7499,25 @@
       "masses": [
         {
           "id": "day",
-          "label": "Mass of the day",
+          "label": "Saint Barnabas, Apostle",
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "2 Cor 4:7-15",
-              "key": "2COR.4.7-15",
-              "linkout": "https://www.drbo.org/chapter/54004.htm"
+              "ref": "Acts 11:21-26; 13:1-3",
+              "key": "ACTS.11.21-26_13.1-3",
+              "linkout": "https://www.drbo.org/chapter/51011.htm"
             },
             {
               "slot": "psalm",
-              "ref": "Ps 116:10-11, 15-16, 17-18",
-              "key": "PS.116.10-11_116.15-16_116.17-18",
-              "linkout": "https://www.drbo.org/chapter/21115.htm"
+              "ref": "Ps 98:1, 2-3, 3-4, 5-6",
+              "key": "PS.98.1_98.2-3_98.3-4_98.5-6",
+              "linkout": "https://www.drbo.org/chapter/21097.htm"
             },
             {
               "slot": "gospel",
-              "ref": "Matthew 5:27-32",
-              "key": "MT.5.27-32",
-              "linkout": "https://www.drbo.org/chapter/47005.htm"
+              "ref": "Mt 10:7-13",
+              "key": "MT.10.7-13",
+              "linkout": "https://www.drbo.org/chapter/47010.htm"
             }
           ]
         }
@@ -7740,8 +8078,69 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "vigil",
+          "label": "Vigil Mass",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Jer 1:4-10",
+              "key": "JER.1.4-10",
+              "linkout": "https://www.drbo.org/chapter/28001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 71:1-2, 3-4, 5-6, 15, 17",
+              "key": "PS.71.1-2_71.3-4_71.5-6_71.15_71.17",
+              "linkout": "https://www.drbo.org/chapter/21070.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Pt 1:8-12",
+              "key": "1PT.1.8-12",
+              "linkout": "https://www.drbo.org/chapter/67001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:5-17",
+              "key": "LK.1.5-17",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "label": "The Nativity of Saint John the Baptist",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 49:1-6",
+              "key": "IS.49.1-6",
+              "linkout": "https://www.drbo.org/chapter/27049.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 139:1-3, 13-14, 14-15",
+              "key": "PS.139.1-3_139.13-14_139.14-15",
+              "linkout": "https://www.drbo.org/chapter/21138.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Acts 13:22-26",
+              "key": "ACTS.13.22-26",
+              "linkout": "https://www.drbo.org/chapter/51013.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 1:57-66, 80",
+              "key": "LK.1.57-66_1.80",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-06-25",
@@ -7931,8 +8330,69 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "vigil",
+          "label": "Vigil Mass",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 3:1-10",
+              "key": "ACTS.3.1-10",
+              "linkout": "https://www.drbo.org/chapter/51003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "key": "PS.19.2-3_19.4-5",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Gal 1:11-20",
+              "key": "GAL.1.11-20",
+              "linkout": "https://www.drbo.org/chapter/55001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 21:15-19",
+              "key": "JN.21.15-19",
+              "linkout": "https://www.drbo.org/chapter/50021.htm"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "label": "Saints Peter and Paul, Apostles",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 12:1-11",
+              "key": "ACTS.12.1-11",
+              "linkout": "https://www.drbo.org/chapter/51012.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 34:2-3, 4-5, 6-7, 8-9",
+              "key": "PS.34.2-3_34.4-5_34.6-7_34.8-9",
+              "linkout": "https://www.drbo.org/chapter/21033.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "2 Tm 4:6-8, 17-18",
+              "key": "2TM.4.6-8_4.17-18",
+              "linkout": "https://www.drbo.org/chapter/62004.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 16:13-19",
+              "key": "MT.16.13-19",
+              "linkout": "https://www.drbo.org/chapter/47016.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-06-30",
@@ -8080,8 +8540,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Thomas, Apostle",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 2:19-22",
+              "key": "EPH.2.19-22",
+              "linkout": "https://www.drbo.org/chapter/56002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 117:1, 2",
+              "key": "PS.117.1_117.2",
+              "linkout": "https://www.drbo.org/chapter/21116.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 20:24-29",
+              "key": "JN.20.24-29",
+              "linkout": "https://www.drbo.org/chapter/50020.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-07-04",
@@ -8919,8 +9404,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Mary Magdalene",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Sg 3:1-4",
+              "key": "SG.3.1-4",
+              "linkout": "https://www.drbo.org/chapter/24003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 63:2, 3-4, 5-6, 8-9",
+              "key": "PS.63.2_63.3-4_63.5-6_63.8-9",
+              "linkout": "https://www.drbo.org/chapter/21062.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 20:1-2, 11-18",
+              "key": "JN.20.1-2_20.11-18",
+              "linkout": "https://www.drbo.org/chapter/50020.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-07-23",
@@ -9215,25 +9725,25 @@
       "masses": [
         {
           "id": "day",
-          "label": "Mass of the day",
+          "label": "Saints Martha, Mary and Lazarus",
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "Ex 40:16-21, 34-38",
-              "key": "EX.40.16-21_40.34-38",
-              "linkout": "https://www.drbo.org/chapter/02040.htm"
+              "ref": "1 Jn 4:7-16",
+              "key": "1JN.4.7-16",
+              "linkout": "https://www.drbo.org/chapter/69004.htm"
             },
             {
               "slot": "psalm",
-              "ref": "Ps 84:3, 4, 5-6, 8, 11",
-              "key": "PS.84.3_84.4_84.5-6_84.8_84.11",
-              "linkout": "https://www.drbo.org/chapter/21083.htm"
+              "ref": "Ps 34:2-3, 4-5, 6-7, 8-9, 10-11",
+              "key": "PS.34.2-3_34.4-5_34.6-7_34.8-9_34.10-11",
+              "linkout": "https://www.drbo.org/chapter/21033.htm"
             },
             {
               "slot": "gospel",
-              "ref": "Mt 13:47-53",
-              "key": "MT.13.47-53",
-              "linkout": "https://www.drbo.org/chapter/47013.htm"
+              "ref": "Jn 11:19-27",
+              "key": "JN.11.19-27",
+              "linkout": "https://www.drbo.org/chapter/50011.htm"
             }
           ]
         }
@@ -9584,8 +10094,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Transfiguration of the Lord",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 7:9-10, 13-14",
+              "key": "DN.7.9-10_7.13-14",
+              "linkout": "https://www.drbo.org/chapter/32007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 97:1-2, 5-6, 9",
+              "key": "PS.97.1-2_97.5-6_97.9",
+              "linkout": "https://www.drbo.org/chapter/21096.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "2 Pt 1:16-19",
+              "key": "2PT.1.16-19",
+              "linkout": "https://www.drbo.org/chapter/68001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mk 9:2-10",
+              "key": "MK.9.2-10",
+              "linkout": "https://www.drbo.org/chapter/48009.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-08-07",
@@ -9751,8 +10292,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Lawrence, Deacon and Martyr",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Cor 9:6-10",
+              "key": "2COR.9.6-10",
+              "linkout": "https://www.drbo.org/chapter/54009.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 112:1-2, 5-6, 7-8, 9",
+              "key": "PS.112.1-2_112.5-6_112.7-8_112.9",
+              "linkout": "https://www.drbo.org/chapter/21111.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 12:24-26",
+              "key": "JN.12.24-26",
+              "linkout": "https://www.drbo.org/chapter/50012.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-08-11",
@@ -9954,8 +10520,69 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "vigil",
+          "label": "Vigil Mass",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 Chronicles 15:3-4, 15-16; 16:1-2",
+              "key": "1CHR.15.3-4_15.15-16_16.1-2",
+              "linkout": "https://www.drbo.org/chapter/13015.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 132:6-7, 9-10, 13-14",
+              "key": "PS.132.6-7_132.9-10_132.13-14",
+              "linkout": "https://www.drbo.org/chapter/21131.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Corinthians 15:54b-57",
+              "key": "1COR.15.54-57",
+              "linkout": "https://www.drbo.org/chapter/53015.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Luke 11:27-28",
+              "key": "LK.11.27-28",
+              "linkout": "https://www.drbo.org/chapter/49011.htm"
+            }
+          ]
+        },
+        {
+          "id": "day",
+          "label": "The Assumption of the Blessed Virgin Mary",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Revelation 11:19a; 12:1-6a, 10ab",
+              "key": "RV.11.19_12.1-6_12.10",
+              "linkout": "https://www.drbo.org/chapter/73011.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 45:10, 11, 12, 16",
+              "key": "PS.45.10_45.11_45.12_45.16",
+              "linkout": "https://www.drbo.org/chapter/21044.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Corinthians 15:20-27",
+              "key": "1COR.15.20-27",
+              "linkout": "https://www.drbo.org/chapter/53015.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Luke 1:39-56",
+              "key": "LK.1.39-56",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-08-16",
@@ -10337,8 +10964,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Bartholomew, Apostle",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rv 21:9-14",
+              "key": "RV.21.9-14",
+              "linkout": "https://www.drbo.org/chapter/73021.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:10-11, 12-13, 17-18",
+              "key": "PS.145.10-11_145.12-13_145.17-18",
+              "linkout": "https://www.drbo.org/chapter/21144.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:45-51",
+              "key": "JN.1.45-51",
+              "linkout": "https://www.drbo.org/chapter/50001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-08-25",
@@ -10966,8 +11618,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Nativity of the Blessed Virgin Mary",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Mi 5:1-4",
+              "key": "MI.5.1-4",
+              "linkout": "https://www.drbo.org/chapter/38005.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 13:6, 6",
+              "key": "PS.13.6_13.6",
+              "linkout": "https://www.drbo.org/chapter/21012.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 1:1-16, 18-23",
+              "key": "MT.1.1-16_1.18-23",
+              "linkout": "https://www.drbo.org/chapter/47001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-09",
@@ -11193,8 +11870,39 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Exaltation of the Holy Cross",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Nm 21:4-9",
+              "key": "NM.21.4-9",
+              "linkout": "https://www.drbo.org/chapter/04021.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 78:1-2, 34-35, 36-37, 38",
+              "key": "PS.78.1-2_78.34-35_78.36-37_78.38",
+              "linkout": "https://www.drbo.org/chapter/21077.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Phil 2:6-11",
+              "key": "PHIL.2.6-11",
+              "linkout": "https://www.drbo.org/chapter/57002.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 3:13-17",
+              "key": "JN.3.13-17",
+              "linkout": "https://www.drbo.org/chapter/50003.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-15",
@@ -11213,18 +11921,30 @@
       "masses": [
         {
           "id": "day",
-          "label": "Mass of the day",
+          "label": "Our Lady of Sorrows",
           "readings": [
             {
+              "slot": "first-reading",
+              "ref": "Heb 5:7-9",
+              "key": "HEB.5.7-9",
+              "linkout": "https://www.drbo.org/chapter/65005.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 31:2-3, 3-4, 5-6, 15-16, 20",
+              "key": "PS.31.2-3_31.3-4_31.5-6_31.15-16_31.20",
+              "linkout": "https://www.drbo.org/chapter/21030.htm"
+            },
+            {
               "slot": "gospel",
-              "ref": "Lk 7:31-35",
-              "key": "LK.7.31-35",
-              "linkout": "https://www.drbo.org/chapter/49007.htm"
+              "ref": "Jn 19:25-27",
+              "key": "JN.19.25-27",
+              "linkout": "https://www.drbo.org/chapter/50019.htm"
             }
           ]
         }
       ],
-      "lectionaryMissing": true
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-16",
@@ -11292,6 +12012,30 @@
               "ref": "Lk 8:1-3",
               "key": "LK.8.1-3",
               "linkout": "https://www.drbo.org/chapter/49008.htm"
+            }
+          ]
+        },
+        {
+          "id": "hildegard-of-bingen-abbess",
+          "label": "Saint Hildegard of Bingen, Abbess and Doctor of the Church",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Song of Songs 8: 6-7",
+              "key": "SG.8.6-7",
+              "linkout": "https://www.drbo.org/chapter/24008.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 45: 11-12, 14-15, 16-17",
+              "key": "PS.45.11-12_45.14-15_45.16-17",
+              "linkout": "https://www.drbo.org/chapter/21044.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Matthew 25: 1-13",
+              "key": "MT.25.1-13",
+              "linkout": "https://www.drbo.org/chapter/47025.htm"
             }
           ]
         }
@@ -11670,8 +12414,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saints Michael, Gabriel and Raphael, Archangels",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Dn 7:9-10, 13-14",
+              "key": "DN.7.9-10_7.13-14",
+              "linkout": "https://www.drbo.org/chapter/32007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 138:1-2, 2-3, 4-5",
+              "key": "PS.138.1-2_138.2-3_138.4-5",
+              "linkout": "https://www.drbo.org/chapter/21137.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 1:47-51",
+              "key": "JN.1.47-51",
+              "linkout": "https://www.drbo.org/chapter/50001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-09-30",
@@ -11774,25 +12543,25 @@
       "masses": [
         {
           "id": "day",
-          "label": "Mass of the day",
+          "label": "The Holy Guardian Angels",
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "Bar 4:5-12, 27-29",
-              "key": "BAR.4.5-12_4.27-29",
-              "linkout": "https://www.drbo.org/chapter/30004.htm"
+              "ref": "Ex 23:20-23",
+              "key": "EX.23.20-23",
+              "linkout": "https://www.drbo.org/chapter/02023.htm"
             },
             {
               "slot": "psalm",
-              "ref": "Ps 69:33-35, 36-37",
-              "key": "PS.69.33-35_69.36-37",
-              "linkout": "https://www.drbo.org/chapter/21068.htm"
+              "ref": "Ps 91:1-2, 3-4, 5-6, 10-11",
+              "key": "PS.91.1-2_91.3-4_91.5-6_91.10-11",
+              "linkout": "https://www.drbo.org/chapter/21090.htm"
             },
             {
               "slot": "gospel",
-              "ref": "Lk 10:17-24",
-              "key": "LK.10.17-24",
-              "linkout": "https://www.drbo.org/chapter/49010.htm"
+              "ref": "Mt 18:1-5, 10",
+              "key": "MT.18.1-5_18.10",
+              "linkout": "https://www.drbo.org/chapter/47018.htm"
             }
           ]
         }
@@ -11931,6 +12700,30 @@
               "ref": "Lk 10:38-42",
               "key": "LK.10.38-42",
               "linkout": "https://www.drbo.org/chapter/49010.htm"
+            }
+          ]
+        },
+        {
+          "id": "faustina-kowalska-virgin",
+          "label": "Saint Faustina Kowalska, Virgin",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ephesians 3: 14-19",
+              "key": "EPH.3.14-19",
+              "linkout": "https://www.drbo.org/chapter/56003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 103:1-2, 3-4, 8-9, 13-14, 17-18",
+              "key": "PS.103.1-2_103.3-4_103.8-9_103.13-14_103.17-18",
+              "linkout": "https://www.drbo.org/chapter/21102.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Matthew 11: 25-30",
+              "key": "MT.11.25-30",
+              "linkout": "https://www.drbo.org/chapter/47011.htm"
             }
           ]
         }
@@ -12219,6 +13012,30 @@
               "ref": "Lk 11:29-32",
               "key": "LK.11.29-32",
               "linkout": "https://www.drbo.org/chapter/49011.htm"
+            }
+          ]
+        },
+        {
+          "id": "john-xxiii-pope",
+          "label": "Saint John XXIII, Pope",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ezekiel 34: 11-16",
+              "key": "EZ.34.11-16",
+              "linkout": "https://www.drbo.org/chapter/31034.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 23: 1-3a, 4, 5, 6",
+              "key": "PS.23.1-3_23.4_23.5_23.6",
+              "linkout": "https://www.drbo.org/chapter/21022.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "John 21: 15-17",
+              "key": "JN.21.15-17",
+              "linkout": "https://www.drbo.org/chapter/50021.htm"
             }
           ]
         }
@@ -12515,8 +13332,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Luke, Evangelist",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "2 Tm 4:10-17",
+              "key": "2TM.4.10-17",
+              "linkout": "https://www.drbo.org/chapter/62004.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 145:10-11, 12-13, 17-18",
+              "key": "PS.145.10-11_145.12-13_145.17-18",
+              "linkout": "https://www.drbo.org/chapter/21144.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 10:1-9",
+              "key": "LK.10.1-9",
+              "linkout": "https://www.drbo.org/chapter/49010.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-10-19",
@@ -12704,6 +13546,30 @@
               "ref": "Lk 12:54-59",
               "key": "LK.12.54-59",
               "linkout": "https://www.drbo.org/chapter/49012.htm"
+            }
+          ]
+        },
+        {
+          "id": "john-paul-ii-pope",
+          "label": "Saint John Paul II, Pope",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Isaiah 52: 7-10",
+              "key": "IS.52.7-10",
+              "linkout": "https://www.drbo.org/chapter/27052.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 96: 1-2a, 2b-3, 7-8a, 10",
+              "key": "PS.96.1-2_96.2-3_96.7-8_96.10",
+              "linkout": "https://www.drbo.org/chapter/21095.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "John 21: 15-17",
+              "key": "JN.21.15-17",
+              "linkout": "https://www.drbo.org/chapter/50021.htm"
             }
           ]
         }
@@ -12946,8 +13812,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saints Simon and Jude, Apostles",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Eph 2:19-22",
+              "key": "EPH.2.19-22",
+              "linkout": "https://www.drbo.org/chapter/56002.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:2-3, 4-5",
+              "key": "PS.19.2-3_19.4-5",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Lk 6:12-16",
+              "key": "LK.6.12-16",
+              "linkout": "https://www.drbo.org/chapter/49006.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-10-29",
@@ -13095,8 +13986,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "All Saints",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rv 7:2-4, 9-14",
+              "key": "RV.7.2-4_7.9-14",
+              "linkout": "https://www.drbo.org/chapter/73007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 24:1-2, 3-4, 5-6",
+              "key": "PS.24.1-2_24.3-4_24.5-6",
+              "linkout": "https://www.drbo.org/chapter/21023.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Jn 3:1-3",
+              "key": "1JN.3.1-3",
+              "linkout": "https://www.drbo.org/chapter/69003.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 5:1-12",
+              "key": "MT.5.1-12",
+              "linkout": "https://www.drbo.org/chapter/47005.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-11-02",
@@ -13112,8 +14034,39 @@
           "colour": "violet"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Commemoration of All the Faithful Departed (All Souls’ Day)",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Wis 3:1-9",
+              "key": "WIS.3.1-9",
+              "linkout": "https://www.drbo.org/chapter/25003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 23:1-3, 3-4, 5, 6",
+              "key": "PS.23.1-3_23.3-4_23.5_23.6",
+              "linkout": "https://www.drbo.org/chapter/21022.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Rom 5:5-11",
+              "key": "ROM.5.5-11",
+              "linkout": "https://www.drbo.org/chapter/52005.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 6:37-40",
+              "key": "JN.6.37-40",
+              "linkout": "https://www.drbo.org/chapter/50006.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-11-03",
@@ -13393,8 +14346,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Dedication of the Lateran Basilica",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Ez 47:1-2, 8-9, 12",
+              "key": "EZ.47.1-2_47.8-9_47.12",
+              "linkout": "https://www.drbo.org/chapter/31047.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 46:2-3, 5-6, 8-9",
+              "key": "PS.46.2-3_46.5-6_46.8-9",
+              "linkout": "https://www.drbo.org/chapter/21045.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "1 Cor 3:9-11, 16-17",
+              "key": "1COR.3.9-11_3.16-17",
+              "linkout": "https://www.drbo.org/chapter/53003.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Jn 2:13-22",
+              "key": "JN.2.13-22",
+              "linkout": "https://www.drbo.org/chapter/50002.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-11-10",
@@ -13798,6 +14782,30 @@
               "ref": "Lk 19:41-44",
               "key": "LK.19.41-44",
               "linkout": "https://www.drbo.org/chapter/49019.htm"
+            }
+          ]
+        },
+        {
+          "id": "dedication-of-the-basilicas-of-saints-peter-and-paul-apostles",
+          "label": "The Dedication of the Basilicas of Saints Peter and Paul, Apostles",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Acts 28:11-16, 30-31",
+              "key": "ACTS.28.11-16_28.30-31",
+              "linkout": "https://www.drbo.org/chapter/51028.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 98:1, 2-3, 3-4, 5-6",
+              "key": "PS.98.1_98.2-3_98.3-4_98.5-6",
+              "linkout": "https://www.drbo.org/chapter/21097.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 14:22-33",
+              "key": "MT.14.22-33",
+              "linkout": "https://www.drbo.org/chapter/47014.htm"
             }
           ]
         }
@@ -14310,8 +15318,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint Andrew, Apostle",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Rom 10:9-18",
+              "key": "ROM.10.9-18",
+              "linkout": "https://www.drbo.org/chapter/52010.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Ps 19:8, 9, 10, 11",
+              "key": "PS.19.8_19.9_19.10_19.11",
+              "linkout": "https://www.drbo.org/chapter/21018.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 4:18-22",
+              "key": "MT.4.18-22",
+              "linkout": "https://www.drbo.org/chapter/47004.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-12-01",
@@ -14645,8 +15678,39 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Immaculate Conception of the Blessed Virgin Mary",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Genesis 3:9-15, 20",
+              "key": "GN.3.9-15_3.20",
+              "linkout": "https://www.drbo.org/chapter/01003.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 98:1, 2-3ab, 3cd-4",
+              "key": "PS.98.1_98.2-3_98.3-4",
+              "linkout": "https://www.drbo.org/chapter/21097.htm"
+            },
+            {
+              "slot": "second-reading",
+              "ref": "Ephesians 1:3-6, 11-12",
+              "key": "EPH.1.3-6_1.11-12",
+              "linkout": "https://www.drbo.org/chapter/56001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Luke 1:26-38",
+              "key": "LK.1.26-38",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-12-09",
@@ -14738,6 +15802,30 @@
               "ref": "Matthew 11:16-19",
               "key": "MT.11.16-19",
               "linkout": "https://www.drbo.org/chapter/47011.htm"
+            }
+          ]
+        },
+        {
+          "id": "our-lady-of-loreto",
+          "label": "Our Lady of Loreto",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Isaiah 7: 10-14; 8: 10",
+              "key": "IS.7.10-14_8.10",
+              "linkout": "https://www.drbo.org/chapter/27007.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Luke 1: 46-47, 48-49, 50-51, 52-53, 54-55",
+              "key": "LK.1.46-47_1.48-49_1.50-51_1.52-53_1.54-55",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Luke 1: 26-38",
+              "key": "LK.1.26-38",
+              "linkout": "https://www.drbo.org/chapter/49001.htm"
             }
           ]
         }
@@ -15562,8 +16650,33 @@
           "colour": "white"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "Saint John, Apostle and Evangelist",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 John 1:1-4",
+              "key": "1JN.1.1-4",
+              "linkout": "https://www.drbo.org/chapter/69001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 97:1-2, 5-6, 11-12",
+              "key": "PS.97.1-2_97.5-6_97.11-12",
+              "linkout": "https://www.drbo.org/chapter/21096.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "John 20:1a, 2-8",
+              "key": "JN.20.1_20.2-8",
+              "linkout": "https://www.drbo.org/chapter/50020.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-12-28",
@@ -15579,8 +16692,33 @@
           "colour": "red"
         }
       ],
-      "masses": [],
-      "lectionaryMissing": true
+      "masses": [
+        {
+          "id": "day",
+          "label": "The Holy Innocents, Martyrs",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "1 John 1:5-10; 2:1-2",
+              "key": "1JN.1.5-10_2.1-2",
+              "linkout": "https://www.drbo.org/chapter/69001.htm"
+            },
+            {
+              "slot": "psalm",
+              "ref": "Psalm 124:2-3, 4-5, 7cd-8",
+              "key": "PS.124.2-3_124.4-5_124.7-8",
+              "linkout": "https://www.drbo.org/chapter/21123.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Matthew 2:13-18",
+              "key": "MT.2.13-18",
+              "linkout": "https://www.drbo.org/chapter/47002.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
     },
     {
       "date": "2027-12-29",
