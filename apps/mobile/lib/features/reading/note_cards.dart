@@ -6,6 +6,7 @@ import 'package:lectio/data/models/notes.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
+import 'package:lectio/features/share/share_button.dart';
 
 /// U+200E LEFT-TO-RIGHT MARK.
 const String leftToRightMark = '\u200E';
@@ -290,6 +291,7 @@ class NoteCard extends StatelessWidget {
     required this.passage,
     required this.note,
     required this.page,
+    this.highlighted = false,
     super.key,
   });
 
@@ -302,6 +304,10 @@ class NoteCard extends StatelessWidget {
   /// The site path of the reading, which reports carry.
   final String page;
 
+  /// Whether this is the note a shared link opened: outlined in the accent
+  /// colour and announced as such to screen readers.
+  final bool highlighted;
+
   @override
   Widget build(BuildContext context) {
     final strings = ReadingStrings.of(context);
@@ -310,7 +316,13 @@ class NoteCard extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final original = note.original;
     final verse = strings.verse(verseLabel(passage, note)).toUpperCase();
-    return Card(
+    final card = Card(
+      shape: highlighted
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: theme.colorScheme.primary, width: 2),
+            )
+          : null,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
         child: Column(
@@ -381,10 +393,23 @@ class NoteCard extends StatelessWidget {
                 page: page,
               ),
             ),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ShareButton(
+                content: noteShare(
+                  passage,
+                  note,
+                  page,
+                  language: strings.languageCode,
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+    if (!highlighted) return card;
+    return Semantics(container: true, label: strings.linkedNote, child: card);
   }
 }
 
@@ -460,9 +485,12 @@ class ContextPanel extends StatelessWidget {
 }
 
 /// The Original tab: one card per translation note.
-class OriginalPanel extends StatelessWidget {
+///
+/// With a [note] id (a shared insight link), the matching card is scrolled
+/// into view and highlighted; an unknown id leaves the tab as it is.
+class OriginalPanel extends StatefulWidget {
   /// Creates the Original tab of [passage], shown on [page].
-  const new({required this.passage, required this.page, super.key});
+  const new({required this.passage, required this.page, this.note, super.key});
 
   /// The approved notes.
   final PassageNotes passage;
@@ -470,23 +498,72 @@ class OriginalPanel extends StatelessWidget {
   /// The site path of the reading, which reports carry.
   final String page;
 
+  /// The id of the note to scroll to, or `null`.
+  final String? note;
+
+  @override
+  State<OriginalPanel> createState() => _OriginalPanelState();
+}
+
+class _OriginalPanelState extends State<OriginalPanel> {
+  final GlobalKey _target = GlobalKey();
+
+  /// [OriginalPanel.note] when the passage has that note, else `null`.
+  String? get _linked {
+    final id = widget.note;
+    final notes = widget.passage.translationNotes;
+    return notes.any((note) => note.id == id) ? id : null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (_linked != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _reveal());
+    }
+  }
+
+  void _reveal() {
+    final context = _target.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 300),
+        alignment: 0.1,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = ReadingStrings.of(context);
+    final passage = widget.passage;
     final notes = passage.translationNotes;
-    return ListView(
+    final linked = _linked;
+    // Every card is built (no lazy list), so the linked one can be found
+    // and scrolled to however far down it is.
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      children: [
-        if (notes.isEmpty)
-          Text(strings.noNotes)
-        else
-          for (final note in notes)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: NoteCard(passage: passage, note: note, page: page),
-            ),
-        const ReadingDisclaimer(),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (notes.isEmpty)
+            Text(strings.noNotes)
+          else
+            for (final note in notes)
+              Padding(
+                key: note.id == linked ? _target : null,
+                padding: const EdgeInsets.only(bottom: 12),
+                child: NoteCard(
+                  passage: passage,
+                  note: note,
+                  page: widget.page,
+                  highlighted: note.id == linked,
+                ),
+              ),
+          const ReadingDisclaimer(),
+        ],
+      ),
     );
   }
 }

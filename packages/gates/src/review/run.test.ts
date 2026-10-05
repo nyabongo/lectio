@@ -72,6 +72,15 @@ describe('review:approve', () => {
     expect(JSON.parse(files[FIXTURE] ?? '').review.lastReviewedAt).toBe('2026-10-07T08:00:00Z');
   });
 
+  it('approves a file named twice once, keeping the first spelling', async () => {
+    const { files, logs, errors, options } = setup();
+    const args = ['passages/MT.20.1-16.json', './passages/MT.20.1-16.json', '--reviewer', 'nyabongo'];
+    expect(await runApprove(args, options)).toBe(0);
+    expect(errors).toEqual([]);
+    expect(logs).toEqual(['approved passages/MT.20.1-16.json']);
+    expect(JSON.parse(files[FIXTURE] ?? '').review.reviewers).toEqual(['nyabongo']);
+  });
+
   it('exits 1 for an unknown handle', async () => {
     const { logs, errors, options } = setup();
     expect(await runApprove(['passages/MT.20.1-16.json', '--reviewer', 'stranger'], options)).toBe(1);

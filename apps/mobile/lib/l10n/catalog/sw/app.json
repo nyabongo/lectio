@@ -29,7 +29,8 @@
     "citeMany": "Vyanzo {n}",
     "noReadings": "Bado hakuna masomo ya siku hii.",
     "noSuchReading": "Siku hii haina {slot}.",
-    "linkFailed": "Kiungo hakikuweza kufunguliwa."
+    "linkFailed": "Kiungo hakikuweza kufunguliwa.",
+    "linkedNote": "Dokezo lililoshirikiwa"
   },
   "reminder": {
     "body": "Masomo na madokezo ya leo yako tayari.",
@@ -43,5 +44,9 @@
     "reminderTime": "Muda wa kikumbusho",
     "savedHeading": "Vilivyohifadhiwa kwenye kifaa hiki",
     "bookmarks": "Alamisho na madokezo"
+  },
+  "share": {
+    "failed": "Imeshindwa kushiriki au kunakili kiungo.",
+    "linkNotRecognised": "Lectio haina ukurasa wa kiungo hicho, kwa hiyo imefungua Leo."
   }
 }

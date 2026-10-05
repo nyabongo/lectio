@@ -137,15 +137,30 @@ describe('Pagefind in Kiswahili (L-113)', () => {
 });
 
 describe('buildSearchIndex', () => {
-  it('writes to <outDir>/pagefind through the given API', async () => {
-    const writeFiles = vi.fn(() => Promise.resolve({ errors: [] }));
+  it('writes the bundle Pagefind returns into <outDir>/pagefind, subdirectories included', async () => {
+    const files = [
+      { path: 'pagefind.js', content: new TextEncoder().encode('js') },
+      { path: 'fragment/en_1.pf_fragment', content: new Uint8Array([31, 139, 8]) },
+    ];
     const api: PagefindApi = {
       createIndex: () =>
-        Promise.resolve({ errors: [], index: { addHTMLFile: () => Promise.resolve({ errors: [] }), writeFiles } }),
+        Promise.resolve({
+          errors: [],
+          index: {
+            addHTMLFile: () => Promise.resolve({ errors: [] }),
+            getFiles: () => Promise.resolve({ errors: [], files }),
+          },
+        }),
       close: () => Promise.resolve(null),
     };
-    await expect(buildSearchIndex(options, '/site/dist', api)).resolves.toBe(2);
-    expect(writeFiles).toHaveBeenCalledWith({ outputPath: join('/site/dist', PAGEFIND_DIR) });
+    const site = await mkdtemp(join(tmpdir(), 'lectio-pagefind-fake-'));
+    try {
+      await expect(buildSearchIndex(options, site, api)).resolves.toBe(2);
+      expect(await readFile(join(site, PAGEFIND_DIR, 'pagefind.js'), 'utf8')).toBe('js');
+      expect([...(await readFile(join(site, PAGEFIND_DIR, 'fragment/en_1.pf_fragment')))]).toEqual([31, 139, 8]);
+    } finally {
+      await rm(site, { recursive: true, force: true });
+    }
   });
 });
 

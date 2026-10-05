@@ -65,6 +65,9 @@ class ReadingStrings {
   /// Shown for a reading whose notes are not approved yet.
   String get pending => _t('reading_pending');
 
+  /// What screen readers say for the note a shared link opened.
+  String get linkedNote => _t('app_reading_linkedNote');
+
   /// Shown on the Original tab when a passage has no translation notes.
   String get noNotes => _t('reading_noNotes');
 

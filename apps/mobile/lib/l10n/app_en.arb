@@ -139,6 +139,7 @@
     }
   },
   "app_reading_linkFailed": "The link could not be opened.",
+  "app_reading_linkedNote": "Shared note",
   "app_reminder_body": "Today's readings and notes are ready.",
   "app_reminder_permissionRefused": "Notifications are not allowed for Lectio, so the daily reminder is off. Allow them in your device settings, then turn it on again.",
   "app_settings_intro": "There are no accounts. Your preferences are saved on this device and never leave it.",
@@ -148,6 +149,8 @@
   "app_settings_reminderTime": "Reminder time",
   "app_settings_savedHeading": "Saved on this device",
   "app_settings_bookmarks": "Bookmarks and notes",
+  "app_share_failed": "Could not share or copy the link.",
+  "app_share_linkNotRecognised": "Lectio has no page for that link, so it opened Today.",
   "calendar_index_title": "Calendar",
   "calendar_index_description": "Every day of the liturgical calendar, month by month, with its celebration and colour.",
   "calendar_index_lead": "Every day of the Church’s year with its celebration and colour. Choose a day to see its readings and notes.",

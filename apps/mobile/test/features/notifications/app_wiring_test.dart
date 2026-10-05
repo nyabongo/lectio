@@ -30,7 +30,7 @@ void main() {
     });
     final platform = FakeReminderPlatform();
 
-    await runLectio(reminderPlatform: platform);
+    await runLectio(reminderPlatform: platform, links: const Stream.empty());
     await tester.pumpAndSettle();
     final app = tester.widget<LectioApp>(find.byType(LectioApp));
     await app.reminders!.idle;

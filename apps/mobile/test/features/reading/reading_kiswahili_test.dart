@@ -80,6 +80,17 @@ void main() {
     expect(markedEnglish(), findsOneWidget);
   });
 
+  testWidgets('a day without a celebration shows its date alone', (
+    tester,
+  ) async {
+    final day = seedDay()..['celebrations'] = <Object?>[];
+    harness.api.serve(swSeedDayPath, jsonEncode(day));
+
+    await pumpSwahili(tester);
+
+    expect(find.text('Jumapili 20 Septemba 2026'), findsOneWidget);
+  });
+
   testWidgets('a day that cannot be loaded says so in Kiswahili', (
     tester,
   ) async {

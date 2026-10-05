@@ -29,7 +29,8 @@
     "citeMany": "Sources {n}",
     "noReadings": "There are no readings for this day yet.",
     "noSuchReading": "This day has no {slot}.",
-    "linkFailed": "The link could not be opened."
+    "linkFailed": "The link could not be opened.",
+    "linkedNote": "Shared note"
   },
   "reminder": {
     "body": "Today's readings and notes are ready.",
@@ -43,5 +44,9 @@
     "reminderTime": "Reminder time",
     "savedHeading": "Saved on this device",
     "bookmarks": "Bookmarks and notes"
+  },
+  "share": {
+    "failed": "Could not share or copy the link.",
+    "linkNotRecognised": "Lectio has no page for that link, so it opened Today."
   }
 }
