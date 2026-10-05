@@ -8,6 +8,7 @@ export const packageName = '@lectio/calendar';
 export { MAX_YEAR, MIN_YEAR, generateDays, generateDetailedDays, romcalVersion } from './generate.ts';
 export type { GenerateOptions } from './generate.ts';
 export { ROMCAL_ID_ALIASES, toLectioId } from './ids.ts';
+export * from './overrides/index.ts';
 export { NAME_CORRECTIONS, mapCalendar, mapDay, precedenceLevel, toCalendarDay } from './map.ts';
 export type {
   CelebrationDetail,

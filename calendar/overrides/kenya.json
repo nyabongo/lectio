@@ -1,0 +1,320 @@
+{
+  "region": "kenya",
+  "description": "Kenya: changes to the General Roman Calendar for the dioceses of Kenya (Kenya Conference of Catholic Bishops). Researched for L-015 from GCatholic.org, which publishes the Kenyan calendar; the KCCB Ordo itself is not published online. Every entry that is not \"confirmed\" waits for sign-off against the KCCB Ordo (L-209).",
+  "transfers": {
+    "epiphanyOnSunday": {
+      "value": true,
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Epiphany on the Sunday between 2 and 8 January (4 January 2026). GCatholic.org lists it on Sunday for Kenya in 2025, 2026 and 2027; not yet checked against the KCCB Ordo."
+    },
+    "ascensionOnSunday": {
+      "value": true,
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Ascension on the Seventh Sunday of Easter (17 May 2026). GCatholic.org lists it on Sunday for Kenya in 2025, 2026 and 2027; not yet checked against the KCCB Ordo."
+    },
+    "corpusChristiOnSunday": {
+      "value": true,
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Corpus Christi on the Sunday after Trinity Sunday (7 June 2026). GCatholic.org lists it on Sunday for Kenya in 2025, 2026 and 2027; not yet checked against the KCCB Ordo."
+    }
+  },
+  "entries": [
+    {
+      "action": "move",
+      "id": "pius-v-pope",
+      "date": "04-28",
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "uncertain",
+      "notes": "GCatholic.org lists Saint Pius V on 28 April for Kenya (2025, 2026, 2027), making room for Our Lady Mother of Africa on 30 April. The date needs checking against the KCCB Ordo (L-209)."
+    },
+    {
+      "action": "add",
+      "id": "our-lady-mother-of-africa",
+      "name": "Our Lady Mother of Africa",
+      "date": "04-30",
+      "rank": "feast",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "uncertain",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027. Ranked a feast there; the rank needs checking against the KCCB Ordo (L-209)."
+    },
+    {
+      "action": "add",
+      "id": "our-lady-help-of-christians",
+      "name": "Our Lady Help of Christians",
+      "date": "05-24",
+      "rank": "memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2025), compared with its General Roman Calendar (2025)",
+        "url": "https://gcatholic.org/calendar/2025/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "uncertain",
+      "notes": "Listed for Kenya as an obligatory memorial by GCatholic.org in 2025 and 2027 (in 2026 the day is Pentecost). The rank needs checking against the KCCB Ordo (L-209)."
+    },
+    {
+      "action": "add",
+      "id": "daniel-comboni-bishop",
+      "name": "Saint Daniel Comboni, Bishop",
+      "date": "10-10",
+      "rank": "memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya as an obligatory memorial by GCatholic.org in 2025 and 2026 (in 2027 the day is a Sunday)."
+    },
+    {
+      "action": "add",
+      "id": "all-saints-of-africa",
+      "name": "All Saints of Africa",
+      "date": "11-06",
+      "rank": "memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya as an obligatory memorial by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "adrian-of-canterbury-abbot",
+      "name": "Saint Adrian of Canterbury, Abbot",
+      "date": "01-09",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "cyprian-michael-tansi-priest",
+      "name": "Blessed Cyprian Michael Tansi, Priest",
+      "date": "01-20",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "alexander-of-alexandria-bishop",
+      "name": "Saint Alexander of Alexandria, Bishop",
+      "date": "02-26",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2025), compared with its General Roman Calendar (2025)",
+        "url": "https://gcatholic.org/calendar/2025/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027. A commemoration when the day falls in Lent (2026, 2027)."
+    },
+    {
+      "action": "add",
+      "id": "benedict-the-moor-religious",
+      "name": "Saint Benedict the Moor, Religious",
+      "date": "04-04",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2025), compared with its General Roman Calendar (2025)",
+        "url": "https://gcatholic.org/calendar/2025/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya by GCatholic.org in 2025 (a commemoration in Lent); in 2026 the day is Holy Saturday and in 2027 Easter Sunday."
+    },
+    {
+      "action": "add",
+      "id": "zeno-of-verona-bishop",
+      "name": "Saint Zeno of Verona, Bishop",
+      "date": "04-12",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2027), compared with its General Roman Calendar (2027)",
+        "url": "https://gcatholic.org/calendar/2027/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya by GCatholic.org in 2025 (a commemoration in Lent) and 2027; in 2026 the day is the Second Sunday of Easter."
+    },
+    {
+      "action": "add",
+      "id": "marcellinus-of-embrun-bishop",
+      "name": "Saint Marcellinus of Embrun, Bishop",
+      "date": "04-20",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya by GCatholic.org in 2026 and 2027; in 2025 the day is Easter Sunday."
+    },
+    {
+      "action": "add",
+      "id": "onuphrius-abbot",
+      "name": "Saint Onuphrius, Abbot",
+      "date": "06-12",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2025), compared with its General Roman Calendar (2025)",
+        "url": "https://gcatholic.org/calendar/2025/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya by GCatholic.org in 2025 and 2027; in 2026 the day is the Sacred Heart."
+    },
+    {
+      "action": "add",
+      "id": "victor-i-pope",
+      "name": "Saint Victor I, Pope and Martyr",
+      "date": "07-28",
+      "rank": "optional-memorial",
+      "colours": ["red"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "justin-de-jacobis-bishop",
+      "name": "Saint Justin de Jacobis, Bishop",
+      "date": "07-30",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "isidore-bakanja-martyr",
+      "name": "Blessed Isidore Bakanja, Martyr",
+      "date": "08-12",
+      "rank": "optional-memorial",
+      "colours": ["red"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "victoria-rasoamanarivo",
+      "name": "Blessed Victoria Rasoamanarivo",
+      "date": "08-18",
+      "rank": "optional-memorial",
+      "colours": ["white"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "maurice-of-agaune-and-companions-martyrs",
+      "name": "Saint Maurice of Agaune and Companions, Martyrs",
+      "date": "09-22",
+      "rank": "optional-memorial",
+      "colours": ["red"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "daudi-okelo-and-jildo-irwa-martyrs",
+      "name": "Blesseds Daudi Okelo and Jildo Irwa, Martyrs",
+      "date": "10-20",
+      "rank": "optional-memorial",
+      "colours": ["red"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    },
+    {
+      "action": "add",
+      "id": "marie-clementine-anuarite-nengapeta-virgin-and-martyr",
+      "name": "Blessed Marie-Clémentine Anuarite Nengapeta, Virgin and Martyr",
+      "date": "12-01",
+      "rank": "optional-memorial",
+      "colours": ["red"],
+      "source": {
+        "title": "GCatholic.org, Liturgical Calendar — Kenya (2026), compared with its General Roman Calendar (2026)",
+        "url": "https://gcatholic.org/calendar/2026/KE-en",
+        "accessed": "2026-10-05"
+      },
+      "confidence": "probable",
+      "notes": "Listed for Kenya (not in the General Roman Calendar) by GCatholic.org in 2025, 2026 and 2027."
+    }
+  ]
+}
