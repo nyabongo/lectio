@@ -9,6 +9,7 @@ import {
   TRANSLATED_PASSAGE_SCHEMA_VERSION,
   TRANSLATIONS_DIR,
   citedClaimIds,
+  normaliseForHash,
   parseTranslatedPassagePath,
   translatableFields,
   translatableSha256,
@@ -131,6 +132,13 @@ describe('translated-passage schema', () => {
     expect(errorsOf(data)).toContainEqual(expected);
   });
 
+  it('accepts the example in docs/content-model.md', () => {
+    const doc = readFileSync(new URL('../../../../docs/content-model.md', import.meta.url), 'utf8');
+    const example = /```json translated-passage\n([\s\S]*?)\n```/.exec(doc)?.[1] ?? '';
+    const ok = validateTranslatedPassage(JSON.parse(example));
+    expect(formatErrors(ok ? [] : validateTranslatedPassage.errors)).toEqual([]);
+  });
+
   it('is identified and versioned', () => {
     expect(translatedPassageSchema.$id).toMatch(/translated-passage\.schema\.json$/);
     expect(pending.schemaVersion).toBe(TRANSLATED_PASSAGE_SCHEMA_VERSION);
@@ -187,6 +195,24 @@ describe('translatableSha256', () => {
     const changed = structuredClone(english);
     (changed.claims[0] as { text: string }).text = 'Changed.';
     expect(translatableSha256(changed)).not.toBe(pending.sourceSha256);
+  });
+
+  it('ignores whitespace-only and NFC/NFD edits, but not a changed word', () => {
+    const spaced = structuredClone(english);
+    (spaced.claims[0] as { text: string }).text = `  ${english.claims[0]?.text ?? ''}  `.replace(
+      'parable',
+      'parable   \n',
+    );
+    (spaced.context as { title: string }).title = english.context.title.normalize('NFD');
+    expect(translatableSha256(spaced)).toBe(pending.sourceSha256);
+    const reworded = structuredClone(english);
+    (reworded.claims[0] as { text: string }).text = (english.claims[0]?.text ?? '').replace('only', 'solely');
+    expect(translatableSha256(reworded)).not.toBe(pending.sourceSha256);
+  });
+
+  it('normalises strings for hashing', () => {
+    expect(normaliseForHash(' a\u00a0 b\n\tc ')).toBe('a b c');
+    expect(normaliseForHash('e\u0301')).toBe('\u00e9');
   });
 
   it('ignores sources, provenance and review', () => {

@@ -11,7 +11,8 @@
  * ([ADR 0003](../../../../docs/adr/0003-never-store-reading-text.md)): `text` and `verses` are
  * banned by name.
  *
- * `sourceSha256` is {@link translatableSha256} of the English file the translation was made from;
+ * `sourceSha256` is {@link translatableSha256} of the English file the translation was made from
+ * (its translatable fields, whitespace- and NFC-normalised);
  * gate 1 flags the translation as stale when the English text changes (`schema/translation-not-stale`).
  *
  * The review block has no auto path: a translation is approved by a person or not at all.
@@ -229,15 +230,42 @@ export function translatableFields(passage: Passage): TranslatableFields {
 }
 
 /**
- * sha256 (hex) of the English passage's translatable fields, serialised as JSON in the fixed
- * order of {@link translatableFields}. It changes exactly when a translator would have to look
- * again: a field they translate, or the set and order of notes, claims or paragraphs. Sources,
- * provenance and the review block do not count.
+ * How a string is normalised before hashing: Unicode NFC, every run of whitespace collapsed to one
+ * space, and leading and trailing whitespace trimmed. Edits that change no wording (a double or
+ * trailing space, a line break, NFD vs NFC accents) leave the hash unchanged.
+ */
+export function normaliseForHash(text: string): string {
+  return text.normalize('NFC').replace(/\s+/gu, ' ').trim();
+}
+
+/**
+ * sha256 (hex) of the English passage's translatable fields, which is what `sourceSha256` records.
+ *
+ * Exactly what is hashed: the UTF-8 bytes of `JSON.stringify` of {@link translatableFields} (keys
+ * in the fixed order `summary`, `context` {`title`, `paragraphs`}, `translationNotes` [{`id`,
+ * `anchor`, `gloss`, `summary`, `body`}], `claims` [{`id`, `text`}]), with every string first passed
+ * through {@link normaliseForHash}. Ids, claim markers and the order of paragraphs, notes and claims
+ * count (a translation follows that order); sources, references, original-language words other
+ * than the gloss, provenance and the review block do not.
  */
 export function translatableSha256(passage: Passage): string {
-  return createHash('sha256')
-    .update(JSON.stringify(translatableFields(passage)), 'utf8')
-    .digest('hex');
+  const fields = translatableFields(passage);
+  const normalised: TranslatableFields = {
+    summary: normaliseForHash(fields.summary),
+    context: {
+      title: normaliseForHash(fields.context.title),
+      paragraphs: fields.context.paragraphs.map(normaliseForHash),
+    },
+    translationNotes: fields.translationNotes.map((note) => ({
+      id: normaliseForHash(note.id),
+      anchor: normaliseForHash(note.anchor),
+      gloss: normaliseForHash(note.gloss),
+      summary: normaliseForHash(note.summary),
+      body: normaliseForHash(note.body),
+    })),
+    claims: fields.claims.map((claim) => ({ id: normaliseForHash(claim.id), text: normaliseForHash(claim.text) })),
+  };
+  return createHash('sha256').update(JSON.stringify(normalised), 'utf8').digest('hex');
 }
 
 /** One way a translation does not line up with its English passage. */

@@ -220,6 +220,17 @@ describe('translations of a changed English passage', () => {
     expect(check(englishChanged((p) => (p['sources'][0]['citation'] = 'Deut 15:9')))).toEqual([]);
   });
 
+  it('stay fresh after a whitespace-only English edit', () => {
+    const items = check(
+      englishChanged((p) => {
+        // Leading and trailing spaces are schema errors in a passage, so only inner whitespace changes.
+        p['claims'][0]['text'] = String(p['claims'][0]['text']).replace(' ', '  ');
+        p['summary'] = String(p['summary']).replace(' ', '  ');
+      }),
+    );
+    expect(items).toEqual([]);
+  });
+
   it('are flagged stale when a translatable field changed', () => {
     const items = check(englishChanged((p) => (p['claims'][0]['text'] = 'Only Matthew has this parable.')));
     expect(items).toEqual([
