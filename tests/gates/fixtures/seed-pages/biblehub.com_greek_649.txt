@@ -1,0 +1,22 @@
+Thayer's Greek Lexicon
+STRONGS NT 649: ἀποστέλλω
+ἀποστέλλω; future ἀποστελῶ; 1 aorist ἀπέστειλα; perfect ἀπέσταλκα (3 person plural ἀπέσταλκαν Acts 16:36 L T Tr WH (see γίνομαι at the beginning); passive, present ἀποστέλλομαι); perfect ἀπεστάλμαι; 2 aorist ἀπεστάλην; (from Sophocles down); properly, to send off, send away;
+
+1. to order (one) to go to a place appointed;
+
+a. either persons sent with commissions, or things intended for someone. So, very frequently, Jesus teaches that God sent him, as Matthew 10:40; Mark 9:37; Luke 10:16; John 5:36, etc. he, too, is said to have sent his apostles, i. e. to have appointed them: Mark 6:7; Matthew 10:16; Luke 22:35; John 20:21, etc. messengers are sent: Luke 7:3; Luke 9:52; Luke 10:1; servants, Mark 6:27; Mark 12:2; Matthew 21:36; Matthew 22:3; an embassy, Luke 14:32; Luke 19:14; angels, Mark 13:27; Matthew 24:31, etc. Things are said to be sent, which are ordered to be led away or conveyed to anyone, as Matthew 21:3; Mark 11:3; τό δρέπανον i. e. reapers, Mark 4:29 (others take ἀποστέλλω here of the putting forth of the sickle, i. e. of the act of reaping; cf. (Joel 3:18); Revelation 14:15 (under the word πέμπω, b.)); τόν λόγον, Acts 10:36; Acts 13:26 (L T Tr WH ἐξαπεστάλη); τήν ἐπαγγελίαν (equivalent to ἐπηγγελμενον, i. e. the promised Holy Spirit) ἐφ' ὑμᾶς, Luke 24:49 (T Tr WH ἐξαποστέλλω); τί διά χειρός τίνος, after the Hebrew בְּיַד, Acts 11:30.
+
+b. The place of the sending is specified: ἀποστέλλειν εἰς τινα τόπον, Matthew 20:2; Luke 1:26; Acts 7:34; Acts 10:8; Acts 19:22; 2 Timothy 4:12; Revelation 5:6, etc. God sent Jesus εἰς τόν κόσμον: John 3:17; John 10:36; John 17:18; 1 John 4:9. εἰς (unto, i. e.) among: Matthew 15:24; Luke 11:49; Acts (Acts 22:21 WH marginal reading); ; (ἐν (by a pregnant or a Latin construction) cf. Winers Grammar, § 50, 4; Buttmann, 329 (283): Matthew 10:16; Luke 10:3; yet see 1 a. above); ὀπίσω τίνος, Luke 19:14; ἔμπροσθεν τίνος, John 3:28; and πρό προσώπου τίνος, after the Hebrew לִפְנֵי־, before (to precede) one: Matthew 11:10; Mark 1:2; Luke 7:27; Luke 10:1. πρός τινα, to one: Matthew 21:34, 37; Mark 12:2; Luke 7:3, 20; John 5:33; Acts 8:14; 2 Corinthians 12:17, etc. Whence, or by or from whom, one is sent: ὑπό τοῦ Θεοῦ, Luke 1:26 (T Tr WH ἀπό); παρά Θεοῦ, John 1:6 (Sir. 15:9); ἀπό with the genitive of person, from the house of anyone: Acts 10:17 (T WH Tr marginal reading ὑπό), 21 Rec.; ἐκ with the genitive of place: John 1:19.
+
+c. The object of the mission is indicated by an infinitive following: Mark 3:14; Matthew 22:3; Luke 1:19; Luke 4:18 (Isaiah 61:1 (on the perfect cf. Winers Grammar, 272 (255); Buttmann, 197 (171))); Luke 9:2; John 4:38; 1 Corinthians 1:17; Revelation 22:6. (followed by εἰς for: εἰς διακονίαν, Hebrews 1:14. followed by ἵνα: Mark 12:2, 13; Luke 20:10, 20; John 1:19; John 3:17; John 7:32; 1 John 4:9. (followed by ὅπως: Acts 9:17.) followed by an accusative with infinitive: Acts 5:21. followed by τινα with a predicate accusative: Acts 3:26 (εὐλογοῦντα ὑμᾶς to confer God's blessing on you (cf. Buttmann, 203ff (176ff)); Acts 7:35 (ἄρχοντα, to be a ruler); 1 John 4:10.
+
+d. ἀποστέλλειν by itself, without an accusative (cf. Winers Grammar, 594 (552); Buttmann, 146 (128)): as ἀποστέλλειν πρός τινα, John 5:33; with the addition of the participle λέγων, λέγουσα, λέγοντες, to say through a messenger: Matthew 27:19; Mark 3:31 (here φωνοῦντες αὐτόν R G, καλοῦντες αὐτόν L T Tr WH); John 11:3; Acts 13:15; (Acts 21:25 περί τῶν πεπιστευκότων ἐθνῶν ἡμεῖς ἀπεστείλαμεν (L Tr text WH text) κρίναντες etc. we sent word, giving judgment, etc.). When one accomplished anything through a messenger, it is expressed thus: ἀποστείλας or πέμψας he did so and so; as, ἀποστείλας ἀνεῖλε, Matthew 2:16; Mark 6:17; Acts 7:14; Revelation 1:1; (so also the Greeks, as Xenophon, Cyril 3, 1, 6 πέμψας ἠρώτα, Plutarch, de liber. educ. c. 14 πέμψας ἀνεῖλε τόν θεοκριτον; and the Sept. 2 Kings 6:13 ἀποστείλας λήψομαι αὐτόν).
+
+2. to send away, i. e. to dismiss;
+
+a. to allow one to depart: τινα ἐν ἀφέσει, that he may be in a state of liberty, Luke 4:18 (19), (Isaiah 58:6).
+
+b. to order one to depart, send off: Mark 8:26; τινα κενόν, Mark 12:3.
+
+c. to drive away: Mark 5:10. (Compare: ἐξαποστέλλω, συναποστέλλω. Synonym: see πέμπω, at the end)
+

@@ -53,8 +53,15 @@ export function contentFiles(root: string = REPO_ROOT): string[] {
   return [...listJson(root, `${prefix}calendar`), ...listJson(root, `${prefix}passages`)];
 }
 
-/** A gate context over the working tree: every given file counts as added; nothing exists on the base. */
-export function contentContext(files: readonly string[] = contentFiles(), root: string = REPO_ROOT): GateContext {
+/**
+ * A gate context over the working tree: every given file counts as added; nothing exists on the base.
+ * `env` reaches `createProviders` (for example `LECTIO_SOURCE_FIXTURES`, recorded pages for the fetcher).
+ */
+export function contentContext(
+  files: readonly string[] = contentFiles(),
+  root: string = REPO_ROOT,
+  env: Readonly<Record<string, string>> = {},
+): GateContext {
   const changed: ChangedFile[] = files.map((path) => ({ path, status: 'added' }));
   const git: Git = { changedFiles: () => changed, show: () => null };
   const config = loadConfig(undefined, { cwd: root });
@@ -63,7 +70,7 @@ export function contentContext(files: readonly string[] = contentFiles(), root: 
     base: 'working-tree',
     head: 'working-tree',
     config,
-    providers: createProviders(config, {}),
+    providers: createProviders(config, env),
     git,
   });
 }
