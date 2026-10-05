@@ -1,0 +1,43 @@
+{
+  "slot": {
+    "firstReading": "First reading",
+    "psalm": "Responsorial psalm",
+    "secondReading": "Second reading",
+    "gospel": "Gospel",
+    "epistle": "Epistle",
+    "readingN": "Reading {n}",
+    "psalmN": "Psalm {n}"
+  },
+  "pageTitle": "{ref} · {slot}",
+  "description": "Context and original-language notes for {ref}, a reading for {date}.",
+  "backToDay": "All readings for {date}",
+  "tabs": {
+    "label": "Reading notes",
+    "context": "Context",
+    "original": "Original",
+    "text": "Text",
+    "textLabel": "Read the text of {ref} at {source} (opens in a new tab)"
+  },
+  "pending": "Notes for this reading are in preparation. They appear here once they have been checked against their sources and approved.",
+  "noNotes": "There are no original-language notes for this reading yet.",
+  "sources": "Sources",
+  "cite": "Source {n}",
+  "archived": "Archived copy",
+  "note": {
+    "verse": "Verse {verse}",
+    "originalLabel": "Original text",
+    "translitLabel": "Transliteration",
+    "glossLabel": "Literally"
+  },
+  "verified": {
+    "one": "Verified · {count} source",
+    "other": "Verified · {count} sources"
+  },
+  "method": {
+    "human": "Approved by a human reviewer after automatic checks.",
+    "auto": "Approved after automatic checks and two independent AI verifiers."
+  },
+  "lastReviewed": "Last reviewed {date}",
+  "report": "Report an issue",
+  "disclaimer": "A study aid, not Church teaching. Every claim cites its sources: check them for yourself."
+}
