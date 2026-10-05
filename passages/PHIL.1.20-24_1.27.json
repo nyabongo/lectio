@@ -7,14 +7,14 @@
     "title": "Life, death and citizenship",
     "paragraphs": [
       "Paul writes to Philippi as a prisoner: his chains, he says, have become known throughout the praetorium. [c1] The nineteenth-century preacher Alexander MacLaren takes Rome as the place of writing. [c2] In verse 20 Paul hopes Christ will be magnified in his body, through life or through death, and the reading weighs those two outcomes. [c3]",
-      "Philippi was a Roman colony, as Acts 16:12 notes, founded by Augustus. [c4] Colonists were sent out from Rome and stayed enrolled in its tribes, so the town was a small Rome on foreign soil. [c5] Paul’s verb in verse 27, about living as citizens, would strike such readers, and the letter later places their citizenship in heaven. [c6]"
+      "Philippi was rebuilt by Philip, father of Alexander the Great, and under Augustus became a Roman colony, as Acts 16:12 notes. [c4] Colonists were sent out from Rome and stayed enrolled in its tribes, so the town was a small Rome on foreign soil. [c5] Paul’s verb in verse 27, about living as citizens, would strike such readers, and the letter later places their citizenship in heaven. [c6]"
     ]
   },
   "translationNotes": [
     {
       "id": "to-zen-christos",
       "verse": "1:21",
-      "anchor": "life is Christ",
+      "anchor": "to live is Christ",
       "original": {
         "text": "τὸ ζῆν Χριστός",
         "lang": "grc",
@@ -47,13 +47,13 @@
         "translit": "analysai",
         "gloss": "to loose, to depart"
       },
-      "summary": "Analyō means to loosen; used of a ship slipping its moorings or soldiers striking camp, it comes to mean “depart”.",
-      "body": "The verb’s root sense is loosing or undoing. [c15] By usage it can mean a ship unmooring or a camp striking its tents, and so to depart. [c16] Ellicott prefers the camp picture: the body is a tent, and death the last striking of it. [c17] The related noun appears in 2 Timothy 4:6 for Paul’s own coming death. [c19] Paul pairs departing with being with Christ, which Ellicott takes to follow immediately on death. [c18]"
+      "summary": "Analyō means to loosen; used of a ship slipping its moorings or of striking a tent or camp, it comes to mean “depart”.",
+      "body": "The verb’s root sense is loosing or undoing. [c15] By usage it can mean a ship unmooring or a camp striking its tents, and so to depart. [c16] Ellicott inclines to the camp picture: the body is a tent, and death the last striking of it. [c17] The related noun appears in 2 Timothy 4:6 for Paul’s own coming death. [c18] Paul pairs departing with being with Christ, which Ellicott takes to follow immediately on death. [c19]"
     },
     {
       "id": "politeuesthe",
       "verse": "1:27",
-      "anchor": "conduct yourselves",
+      "anchor": "manner of life",
       "original": {
         "text": "πολιτεύεσθε",
         "lang": "grc",
@@ -85,8 +85,8 @@
     },
     {
       "id": "c4",
-      "text": "Acts 16:12 calls Philippi a colony; a Roman colony had been founded there by Augustus.",
-      "sourceIds": ["acts-16-12", "cambridge-acts-16-12-augustus"],
+      "text": "Ellicott notes that Philippi was rebuilt by the father of Alexander the Great; Acts 16:12 calls it a colony, and Lumby says a Roman colony had been founded there by Augustus.",
+      "sourceIds": ["ellicott-acts-16-12-rebuilt", "acts-16-12", "cambridge-acts-16-12-augustus"],
       "sensitive": false
     },
     {
@@ -163,21 +163,21 @@
     },
     {
       "id": "c17",
-      "text": "Ellicott prefers the metaphor of striking tents and breaking camp, with death as the last striking of the tent.",
+      "text": "Ellicott inclines (“perhaps better”) to the metaphor of striking tents and breaking camp, with death as the last striking of the tent.",
       "sourceIds": ["ellicott-phil-1-23-tents", "ellicott-phil-1-23-last"],
       "sensitive": false
     },
     {
       "id": "c18",
-      "text": "Phil 1:23 joins departing with being with Christ, which Ellicott holds Paul contemplates as the immediate consequence of death.",
-      "sourceIds": ["phil-1-23", "ellicott-phil-1-23-immediate"],
-      "sensitive": true
-    },
-    {
-      "id": "c19",
       "text": "The related noun ἀνάλυσις appears in 2 Tim 4:6 for the time of Paul’s departure.",
       "sourceIds": ["2tm-4-6", "ellicott-phil-1-23-noun"],
       "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Phil 1:23 joins departing with being with Christ, which Ellicott holds Paul contemplates as the immediate consequence of death.",
+      "sourceIds": ["phil-1-23", "ellicott-phil-1-23-immediate"],
+      "sensitive": true
     },
     {
       "id": "c20",
@@ -194,7 +194,7 @@
     {
       "id": "c22",
       "text": "In the New Testament the verb occurs only in Phil 1:27 and Acts 23:1, and the cognate noun πολίτευμα occurs in Phil 3:20.",
-      "sourceIds": ["acts-23-1", "phil-3-20", "ellicott-phil-1-27-acts"],
+      "sourceIds": ["acts-23-1", "phil-3-20", "cambridge-phil-1-27-acts"],
       "sensitive": false
     },
     {
@@ -321,11 +321,11 @@
       "retrievedAt": "2026-10-05T09:15:00Z"
     },
     {
-      "id": "ellicott-phil-1-27-acts",
+      "id": "cambridge-phil-1-27-acts",
       "type": "web",
-      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:27 (Bible Hub)",
+      "citation": "H. C. G. Moule, The Epistle to the Philippians, Cambridge Bible for Schools and Colleges (1889), on Philippians 1:27 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/philippians/1-27.htm",
-      "excerpt": "The same word is employed by St. Paul in Acts 23:1",
+      "excerpt": "occurs, in N.T., here and Acts 23:1",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:15:00Z"
     },
@@ -452,6 +452,15 @@
       "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Philippians 1:23 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/philippians/1-23.htm",
       "excerpt": "corresponds exactly to the substantive used in",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-acts-16-12-rebuilt",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Acts 16:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/acts/16-12.htm",
+      "excerpt": "rebuilt by the father of Alexander the Great",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:15:00Z"
     },

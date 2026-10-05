@@ -6,7 +6,7 @@
   "context": {
     "title": "An alphabet of praise",
     "paragraphs": [
-      "Psalm 145 is an acrostic: its verses begin with the letters of the Hebrew alphabet in order. [c1] The line for nun is missing from the Hebrew after verse 13; the Septuagint and other ancient versions supply one, modelled on verse 17. [c2] Gill reports a Talmudic explanation from Rashi: nun opens Amos’s lament over fallen Israel. [c3]",
+      "Psalm 145 is an acrostic: its verses begin with the letters of the Hebrew alphabet in order. [c1] The line for nun is missing from the Hebrew after verse 13; the Septuagint and other ancient versions supply one, modelled on verse 17, and one Hebrew manuscript has it, though Ellicott doubts it there. [c2] Gill reports a Talmudic explanation from Rashi: nun opens Amos’s lament over fallen Israel. [c3]",
       "Its heading names it a tehillah of David, a song of praise, and from its first verse addresses God as King. [c4] In Jewish prayer it is the heart of the Ashre, said twice in the morning service and once in the afternoon. [c5] The Talmud promises a share in the world to come to whoever recites it three times a day. [c6]",
       "Verse 8 takes up the Lord’s description of himself to Moses in Exodus 34:6, almost word for word. [c7] Verse 9 widens that mercy: the LORD is good to all, and his compassion reaches all his works, not Israel alone. [c8] The verses chosen for today end by bringing this greatness near to everyone who calls on him in truth. [c9]"
     ]
@@ -19,11 +19,11 @@
       "original": {
         "text": "אֵין חֵקֶר",
         "lang": "hbo",
-        "translit": "ʾên ḥēqer",
+        "translit": "ein ḥeqer",
         "gloss": "there is no searching"
       },
       "summary": "Hebrew says there is “no searching” of God’s greatness: no inquiry ever reaches its bottom.",
-      "body": "Ḥeqer is a searching out, and with ʾên it says that something cannot be searched. [c10] Keil and Delitzsch explain that God’s greatness is so deep that no searching can reach its bottom. [c11] Isaiah 40:28 uses the same phrase for God’s understanding, and the Cambridge Bible hears that verse echoed here. [c12] Today’s first reading makes a similar point about God’s plans and paths. [c13]"
+      "body": "Ḥeqer is a searching out, and with ein it says that something cannot be searched. [c10] Keil and Delitzsch explain that God’s greatness is so deep that no searching can reach its bottom. [c11] Isaiah 40:28 uses the same phrase for God’s understanding, and the Cambridge Bible hears that verse echoed here. [c12] Today’s first reading makes a similar point about God’s plans and paths. [c13]"
     },
     {
       "id": "channun-rachum",
@@ -32,11 +32,11 @@
       "original": {
         "text": "חַנּוּן וְרַחוּם",
         "lang": "hbo",
-        "translit": "ḥannûn wəraḥûm",
+        "translit": "ḥannun veraḥum",
         "gloss": "gracious and compassionate"
       },
-      "summary": "Two adjectives used only of God, taken from Exodus 34:6 with their order reversed, as in several later books.",
-      "body": "Both adjectives are used in the Bible only of God. [c14] Exodus 34:6 has the older order, raḥum weḥannun; Psalm 145:8 reverses it, as do Joel, Jonah and Nehemiah. [c15] In Jonah 4:2 the prophet names this very pair to explain why he fled towards Tarshish. [c16] Jewish fast-day services read the Exodus passage aloud, with its thirteen qualities of mercy. [c17]"
+      "summary": "Two adjectives used almost only of God, taken from Exodus 34:6 with their order reversed, as in several later books.",
+      "body": "Both adjectives are used in the Bible almost only of God, though Psalm 112:4 may apply them to the upright. [c14] Exodus 34:6 has the older order, raḥum veḥannun; Psalm 145:8 reverses it, as do Joel, Jonah and Nehemiah. [c15] In Jonah 4:2 the prophet names this very pair to explain why he fled towards Tarshish. [c16] Jewish fast-day services read the Exodus passage aloud, with its thirteen qualities of mercy. [c17]"
     },
     {
       "id": "chasid",
@@ -45,11 +45,11 @@
       "original": {
         "text": "חָסִיד",
         "lang": "hbo",
-        "translit": "ḥāsîd",
+        "translit": "ḥasid",
         "gloss": "kind, loyal in love"
       },
       "summary": "Ḥasid, often “holy” in English, comes from ḥesed, kindness; said of God it means loving, full of kindness.",
-      "body": "Ḥasid belongs with ḥesed, kindness, and BDB favours an active sense: one who shows kindness. [c18] The Septuagint rendered it hosios, holy, a choice many English versions follow. [c19] Applied to God it occurs only here and in Jeremiah 3:12, where the Cambridge Bible takes it as full of lovingkindness. [c20] The line pairs it with the LORD being righteous in all his ways. [c21]"
+      "body": "Ḥasid belongs with ḥesed, kindness, and BDB favours an active sense: one who shows kindness. [c18] The Septuagint rendered it hosios, holy. [c19] Applied to God it occurs only here and in Jeremiah 3:12, where the Cambridge Bible takes it as full of lovingkindness. [c20] The line pairs it with the LORD being righteous in all his ways. [c21]"
     },
     {
       "id": "qarov",
@@ -58,7 +58,7 @@
       "original": {
         "text": "קָרוֹב",
         "lang": "hbo",
-        "translit": "qārôb",
+        "translit": "qarov",
         "gloss": "near"
       },
       "summary": "Qarov, near, is the word Isaiah 55:6 also uses: the God beyond searching is close to those who call.",
@@ -74,8 +74,13 @@
     },
     {
       "id": "c2",
-      "text": "The nun verse is missing from the Hebrew after Psalm 145:13; the Septuagint, Vulgate, Syriac and other versions supply a verse there, a variation of Psalm 145:17.",
-      "sourceIds": ["ellicott-ps-145-13-nun", "ellicott-ps-145-13-variation", "gill-ps-145-13-supply"],
+      "text": "The nun verse is missing from the Hebrew after Psalm 145:13; the Septuagint, Vulgate, Syriac and other versions supply a verse there, a variation of Psalm 145:17; Ellicott adds that it is found in one Hebrew manuscript, though he thinks it suspicious there.",
+      "sourceIds": [
+        "ellicott-ps-145-13-nun",
+        "ellicott-ps-145-13-variation",
+        "gill-ps-145-13-supply",
+        "ellicott-ps-145-13-ms"
+      ],
       "sensitive": false
     },
     {
@@ -146,8 +151,8 @@
     },
     {
       "id": "c14",
-      "text": "The adjectives חַנּוּן (gracious) and רַחוּם (compassionate) are used only of God.",
-      "sourceIds": ["bdb-channun", "bdb-rachum"],
+      "text": "BDB describes the adjectives חַנּוּן (gracious) and רַחוּם (compassionate) as used only of God, but its list includes Psalm 112:4, where the pair follows a mention of the upright.",
+      "sourceIds": ["bdb-channun", "bdb-rachum", "ps-112-4"],
       "sensitive": false
     },
     {
@@ -331,6 +336,14 @@
       "excerptLang": "hbo"
     },
     {
+      "id": "ps-112-4",
+      "type": "scripture",
+      "citation": "Psalm 112:4",
+      "ref": "Ps 112:4",
+      "excerpt": "לַיְשָׁרִים חַנּוּן וְרַחוּם",
+      "excerptLang": "hbo"
+    },
+    {
       "id": "gill-ps-145-13-alphabet",
       "type": "web",
       "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 145:13 (Bible Hub)",
@@ -381,6 +394,15 @@
       "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
       "excerpt": "have here a variation of Psalm 145:17",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "ellicott-ps-145-13-ms",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 145:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-13.htm",
+      "excerpt": "though found in one Hebrew MS., is apparently suspicious there",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:15:00Z"
     },

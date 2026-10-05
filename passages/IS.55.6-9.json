@@ -23,7 +23,7 @@
         "gloss": "my thoughts, my plans"
       },
       "summary": "Hebrew maḥashavah covers plans and purposes, not only passing thoughts: here it names what God intends to do.",
-      "body": "The noun means thought, but also device, plan and purpose. [c9] Verse 7 uses it for the schemes of the wicked man, and verse 8 sets God’s own plans against them. [c10] Skinner’s Cambridge commentary takes God’s thoughts here as purposes of redemption, too vast for despairing minds. [c11] Jeremiah 29:11 uses the same noun for God’s plans of peace for the exiles. [c12]"
+      "body": "The noun means thought, but also device, plan and purpose. [c9] Verse 7 uses it for the schemes of the wicked man, and verse 8 sets God’s own plans against human ones. [c10] Skinner’s Cambridge commentary takes God’s thoughts here as purposes of redemption, too vast for despairing minds. [c11] Jeremiah 29:11 uses the same noun for God’s plans of peace for the exiles. [c12]"
     },
     {
       "id": "derakhim",
@@ -41,7 +41,7 @@
     {
       "id": "yarbeh-lisloach",
       "verse": "55:7",
-      "anchor": "generous in forgiving",
+      "anchor": "abundantly pardon",
       "original": {
         "text": "יַרְבֶּה לִסְלוֹחַ",
         "lang": "hbo",
@@ -54,14 +54,14 @@
     {
       "id": "shuv",
       "verse": "55:7",
-      "anchor": "turn",
+      "anchor": "return",
       "original": {
         "text": "וְיָשֹׁב",
         "lang": "hbo",
         "translit": "veyashov",
         "gloss": "and let him return"
       },
-      "summary": "Shuv, “return”, is the Bible’s main verb for repentance, and the chapter plays on it again with rain and with God’s word.",
+      "summary": "Shuv, “return”, is a main biblical verb for repentance, and the chapter plays on it again with rain and with God’s word.",
       "body": "Shuv means to turn back or return, and with God as the goal it means to seek him penitently. [c21] Jewish tradition calls repentance teshubah, literally return, and names shub as one of its two biblical verbs. [c22] The same verb comes back in verses 10 and 11: rain and snow do not return to the sky without watering the earth, and God’s word does not return to him empty. [c23]"
     }
   ],
@@ -86,7 +86,7 @@
     },
     {
       "id": "c4",
-      "text": "Isaiah 55:6 calls the hearers to seek the LORD while he may be found, a call to repentance because of his nearness.",
+      "text": "Isaiah 55:6 calls the hearers to seek the LORD while he may be found; Skinner (Cambridge Bible) reads verses 6-7 as a call to repentance because of the nearness of the kingdom of God.",
       "sourceIds": ["is-55-6", "cambridge-is-55-6"],
       "sensitive": false
     },
@@ -333,7 +333,7 @@
       "type": "web",
       "citation": "J. Skinner, Isaiah XL–LXVI, Cambridge Bible for Schools and Colleges (1898), on Isaiah 55:6 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/isaiah/55-6.htm",
-      "excerpt": "The call to repentance, because of the nearness",
+      "excerpt": "repentance, because of the nearness of the kingdom of God",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:15:00Z"
     },
