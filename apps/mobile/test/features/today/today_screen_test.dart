@@ -146,7 +146,7 @@ void main() {
       expect(find.text('Sunday · Green'), findsOneWidget);
       expect(find.text('Ordinary Time · Week 25'), findsOneWidget);
       expect(find.text('Sunday cycle A · Weekday cycle II'), findsOneWidget);
-      expect(find.text(TodayStrings.backToToday), findsNothing);
+      expect(find.text(TodayStrings.en.backToToday), findsNothing);
       expect(accent(tester), LiturgicalColour.green.light);
 
       for (final label in [
@@ -163,11 +163,11 @@ void main() {
         find.textContaining('A landowner pays the last hired'),
         findsOneWidget,
       );
-      expect(find.text(TodayStrings.notesInPreparation), findsNWidgets(3));
-      expect(find.text(TodayStrings.notes), findsOneWidget);
-      expect(find.text(TodayStrings.text), findsNWidgets(4));
-      expect(find.text(TodayStrings.notesMissing), findsNothing);
-      expect(find.text(TodayStrings.offline), findsNothing);
+      expect(find.text(TodayStrings.en.notesInPreparation), findsNWidgets(3));
+      expect(find.text(TodayStrings.en.notes), findsOneWidget);
+      expect(find.text(TodayStrings.en.text), findsNWidgets(4));
+      expect(find.text(TodayStrings.en.notesMissing), findsNothing);
+      expect(find.text(TodayStrings.en.offline), findsNothing);
       expect(
         find.bySemanticsLabel(
           'Text of Mt 20:1-16a at www.drbo.org (opens outside the app)',
@@ -175,15 +175,15 @@ void main() {
         findsOneWidget,
       );
       expect(find.bySemanticsLabel('Notes on Mt 20:1-16a'), findsOneWidget);
-      await reveal(tester, find.text(TodayStrings.listen));
-      expect(find.text(TodayStrings.listen), findsOneWidget);
+      await reveal(tester, find.text(TodayStrings.en.listen));
+      expect(find.text(TodayStrings.en.listen), findsOneWidget);
     });
 
     testWidgets('Notes opens the Reading tab for the reading', (tester) async {
       await pumpToday(tester);
 
-      await reveal(tester, find.text(TodayStrings.notes));
-      await tester.tap(find.text(TodayStrings.notes));
+      await reveal(tester, find.text(TodayStrings.en.notes));
+      await tester.tap(find.text(TodayStrings.en.notes));
       await tester.pumpAndSettle();
 
       expect(
@@ -195,7 +195,7 @@ void main() {
     testWidgets('Listen opens the Listen tab for the day', (tester) async {
       await pumpToday(tester);
 
-      await tester.tap(find.text(TodayStrings.listen));
+      await tester.tap(find.text(TodayStrings.en.listen));
       await tester.pumpAndSettle();
 
       expect(find.text('listen date=$seedDate'), findsOneWidget);
@@ -206,20 +206,20 @@ void main() {
     ) async {
       await pumpToday(tester);
 
-      await tester.tap(find.text(TodayStrings.text).first);
+      await tester.tap(find.text(TodayStrings.en.text).first);
       await tester.pumpAndSettle();
 
       expect(opened, [Uri.parse('https://www.drbo.org/chapter/27055.htm')]);
-      expect(find.text(TodayStrings.linkFailed), findsNothing);
+      expect(find.text(TodayStrings.en.linkFailed), findsNothing);
     });
 
     testWidgets('a link-out nothing can open says so', (tester) async {
       await pumpToday(tester, openUrl: (url) async => false);
 
-      await tester.tap(find.text(TodayStrings.text).first);
+      await tester.tap(find.text(TodayStrings.en.text).first);
       await tester.pumpAndSettle();
 
-      expect(find.text(TodayStrings.linkFailed), findsOneWidget);
+      expect(find.text(TodayStrings.en.linkFailed), findsOneWidget);
     });
 
     testWidgets('a link-out that fails to launch says so', (tester) async {
@@ -228,10 +228,10 @@ void main() {
         openUrl: (url) async => throw const FormatException('no launcher'),
       );
 
-      await tester.tap(find.text(TodayStrings.text).first);
+      await tester.tap(find.text(TodayStrings.en.text).first);
       await tester.pumpAndSettle();
 
-      expect(find.text(TodayStrings.linkFailed), findsOneWidget);
+      expect(find.text(TodayStrings.en.linkFailed), findsOneWidget);
     });
 
     for (final linkout in [
@@ -249,11 +249,11 @@ void main() {
         );
         await pumpToday(tester);
 
-        await tester.tap(find.text(TodayStrings.text).first);
+        await tester.tap(find.text(TodayStrings.en.text).first);
         await tester.pumpAndSettle();
 
         expect(opened, isEmpty);
-        expect(find.text(TodayStrings.linkFailed), findsOneWidget);
+        expect(find.text(TodayStrings.en.linkFailed), findsOneWidget);
       });
     }
 
@@ -306,8 +306,8 @@ void main() {
       unawaited(refresh.show());
       await tester.pumpAndSettle();
 
-      expect(find.text(TodayStrings.offline), findsOneWidget);
-      expect(find.text(TodayStrings.refreshFailed), findsNothing);
+      expect(find.text(TodayStrings.en.offline), findsOneWidget);
+      expect(find.text(TodayStrings.en.refreshFailed), findsNothing);
       expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
     });
 
@@ -323,8 +323,8 @@ void main() {
       unawaited(refresh.show());
       await tester.pumpAndSettle();
 
-      expect(find.text(TodayStrings.refreshFailed), findsOneWidget);
-      expect(find.text(TodayStrings.offline), findsNothing);
+      expect(find.text(TodayStrings.en.refreshFailed), findsOneWidget);
+      expect(find.text(TodayStrings.en.offline), findsNothing);
       expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
     });
 
@@ -333,7 +333,7 @@ void main() {
     ) async {
       final router = await pumpToday(tester);
 
-      await tester.tap(find.byTooltip(TodayStrings.chooseDate));
+      await tester.tap(find.byTooltip(TodayStrings.en.chooseDate));
       await tester.pumpAndSettle();
       await tester.tap(find.text('21'));
       await tester.tap(find.text('OK'));
@@ -342,10 +342,10 @@ void main() {
       expect(location(router), '/today?date=2026-09-21');
       expect(api.paths.last, 'days/2026-09-21.json');
       expect(find.text('Monday 21 September 2026'), findsOneWidget);
-      expect(find.text(TodayStrings.emptyDay), findsOneWidget);
+      expect(find.text(TodayStrings.en.emptyDay), findsOneWidget);
       expect(find.text('TODAY'), findsNothing);
 
-      await tester.tap(find.text(TodayStrings.backToToday));
+      await tester.tap(find.text(TodayStrings.en.backToToday));
       await tester.pumpAndSettle();
 
       expect(location(router), '/today');
@@ -357,7 +357,7 @@ void main() {
       await pumpToday(tester);
       final requests = api.requests.length;
 
-      await tester.tap(find.byTooltip(TodayStrings.chooseDate));
+      await tester.tap(find.byTooltip(TodayStrings.en.chooseDate));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
@@ -387,7 +387,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Saturday 19 September 2026'), findsOneWidget);
-      expect(find.text(TodayStrings.emptyDay), findsOneWidget);
+      expect(find.text(TodayStrings.en.emptyDay), findsOneWidget);
 
       await tester.pumpWidget(screen('2026-09-19'));
       await tester.pumpAndSettle();
@@ -417,9 +417,9 @@ void main() {
       final router = await pumpToday(tester);
       now = DateTime(2026, 9, 21, 7);
       await pullToRefresh(tester);
-      expect(find.text(TodayStrings.backToToday), findsOneWidget);
+      expect(find.text(TodayStrings.en.backToToday), findsOneWidget);
 
-      await tester.tap(find.text(TodayStrings.backToToday));
+      await tester.tap(find.text(TodayStrings.en.backToToday));
       await tester.pumpAndSettle();
 
       expect(location(router), '/today');
@@ -434,7 +434,7 @@ void main() {
       final router = await pumpToday(tester);
       now = DateTime(2026, 9, 21, 7);
 
-      await tester.tap(find.byTooltip(TodayStrings.chooseDate));
+      await tester.tap(find.byTooltip(TodayStrings.en.chooseDate));
       await tester.pumpAndSettle();
       await tester.tap(find.text('21'));
       await tester.tap(find.text('OK'));
@@ -478,9 +478,9 @@ void main() {
 
       expect(find.text('TODAY'), findsOneWidget);
       expect(find.text('Sunday 20 September 2026'), findsOneWidget);
-      expect(find.text(TodayStrings.emptyDay), findsOneWidget);
-      expect(find.text(TodayStrings.retry), findsNothing);
-      expect(find.text(TodayStrings.listen), findsNothing);
+      expect(find.text(TodayStrings.en.emptyDay), findsOneWidget);
+      expect(find.text(TodayStrings.en.retry), findsNothing);
+      expect(find.text(TodayStrings.en.listen), findsNothing);
       expect(find.byType(ReadingCard), findsNothing);
     });
 
@@ -489,7 +489,7 @@ void main() {
 
       expect(api.paths, ['days/2026-03-02.json']);
       expect(find.text('Monday 2 March 2026'), findsOneWidget);
-      expect(find.text(TodayStrings.backToToday), findsOneWidget);
+      expect(find.text(TodayStrings.en.backToToday), findsOneWidget);
     });
 
     testWidgets('a day the lectionary lacks says the readings are missing', (
@@ -504,8 +504,8 @@ void main() {
       );
       await pumpToday(tester);
 
-      expect(find.text(TodayStrings.lectionaryMissing), findsOneWidget);
-      expect(find.text(TodayStrings.listen), findsNothing);
+      expect(find.text(TodayStrings.en.lectionaryMissing), findsOneWidget);
+      expect(find.text(TodayStrings.en.listen), findsNothing);
       expect(find.byType(ReadingCard), findsNothing);
     });
 
@@ -520,12 +520,12 @@ void main() {
       );
       await pumpToday(tester);
 
-      expect(find.text(TodayStrings.notesMissing), findsOneWidget);
-      expect(find.text(TodayStrings.listen), findsNothing);
+      expect(find.text(TodayStrings.en.notesMissing), findsOneWidget);
+      expect(find.text(TodayStrings.en.listen), findsNothing);
       await reveal(tester, find.text('GOSPEL'));
-      expect(find.text(TodayStrings.notes), findsNothing);
-      expect(find.text(TodayStrings.notesInPreparation), findsNWidgets(4));
-      expect(find.text(TodayStrings.text), findsNWidgets(4));
+      expect(find.text(TodayStrings.en.notes), findsNothing);
+      expect(find.text(TodayStrings.en.notesInPreparation), findsNWidgets(4));
+      expect(find.text(TodayStrings.en.text), findsNWidgets(4));
     });
   });
 
@@ -561,14 +561,14 @@ void main() {
       findsOneWidget,
     );
     expect(accent(tester), LiturgicalColour.red.light);
-    expect(find.text(massOptionsLabel(2)), findsOneWidget);
+    expect(find.text(TodayStrings.en.massOptionsLabel(2)), findsOneWidget);
     await reveal(tester, find.text('Mass of the day'));
     expect(find.text('Mass of the day'), findsOneWidget);
     await reveal(tester, find.text('Vigil Mass'));
     expect(find.text('Vigil Mass'), findsOneWidget);
 
-    await reveal(tester, find.text(TodayStrings.notes).last);
-    await tester.tap(find.text(TodayStrings.notes).last);
+    await reveal(tester, find.text(TodayStrings.en.notes).last);
+    await tester.tap(find.text(TodayStrings.en.notes).last);
     await tester.pumpAndSettle();
     expect(
       find.text('reading date=$seedDate&mass=vigil&slot=gospel'),
@@ -580,16 +580,16 @@ void main() {
     api.status = 500;
     await pumpToday(tester);
 
-    expect(find.text(TodayStrings.loadFailed), findsOneWidget);
+    expect(find.text(TodayStrings.en.loadFailed), findsOneWidget);
     expect(find.byType(ReadingCard), findsNothing);
 
     api
       ..status = null
       ..serveFixture('days/$seedDate.json', 'day');
-    await tester.tap(find.text(TodayStrings.retry));
+    await tester.tap(find.text(TodayStrings.en.retry));
     await tester.pumpAndSettle();
 
-    expect(find.text(TodayStrings.loadFailed), findsNothing);
+    expect(find.text(TodayStrings.en.loadFailed), findsNothing);
     expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
   });
 

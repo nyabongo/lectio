@@ -8,41 +8,39 @@ import 'package:flutter/material.dart';
 /// `apps/web/src/lib/settings.ts`).
 enum TextSize {
   /// 90%.
-  small(0.9, 'Small'),
+  small(0.9, 'settings_textSize_small'),
 
   /// The device's own size.
-  standard(1, 'Standard'),
+  standard(1, 'settings_textSize_default'),
 
   /// 112.5%.
-  large(1.125, 'Large'),
+  large(1.125, 'settings_textSize_large'),
 
   /// 125%.
-  larger(1.25, 'Larger');
+  larger(1.25, 'settings_textSize_larger');
 
-  new(this.scale, this.label);
+  new(this.scale, this.labelKey);
 
   /// The factor applied to the device's text scale.
   final double scale;
 
-  /// The label shown in Settings.
-  final String label;
+  /// The message key of the label shown in Settings.
+  final String labelKey;
 }
 
 /// The colour theme: the device's choice, or always light or dark.
 enum ThemePreference {
   /// Follow the device's light or dark setting.
-  system('System'),
+  system,
 
   /// Always light.
-  light('Light'),
+  light,
 
   /// Always dark.
-  dark('Dark');
+  dark;
 
-  new(this.label);
-
-  /// The label shown in Settings.
-  final String label;
+  /// The message key of the label shown in Settings.
+  String get labelKey => 'settings_theme_$name';
 
   /// This preference as a [ThemeMode] for `MaterialApp.themeMode`.
   ThemeMode get mode => switch (this) {
@@ -52,22 +50,19 @@ enum ThemePreference {
   };
 }
 
-/// UI languages. A language that is not [available] yet is listed as coming
-/// soon and cannot be chosen (L-114 adds Kiswahili).
+/// UI languages (L-114). The language switches the app's strings
+/// (`lib/l10n`) and the API documents it reads (the `sw/` mirror).
 enum AppLanguage {
   /// English.
-  en('English', available: true),
+  en('English'),
 
-  /// Kiswahili.
-  sw('Kiswahili', available: false);
+  /// Kiswahili (provisional strings until #221's review).
+  sw('Kiswahili');
 
-  new(this.label, {required this.available});
+  new(this.label);
 
-  /// The language's own name.
+  /// The language's own name, the same in every UI language.
   final String label;
-
-  /// Whether the language can be chosen.
-  final bool available;
 
   /// The language as a [Locale].
   Locale get locale => Locale(name);
@@ -135,11 +130,6 @@ class AppSettings {
     const defaults = AppSettings();
     if (json is! Map<String, Object?>) return defaults;
     final speed = json['playbackSpeed'];
-    final language = _byName(
-      AppLanguage.values,
-      json['language'],
-      defaults.language,
-    );
     final reminder = json['dailyReminder'];
     return AppSettings(
       textSize: _byName(TextSize.values, json['textSize'], defaults.textSize),
@@ -147,7 +137,11 @@ class AppSettings {
       playbackSpeed: speed is num && playbackSpeeds.contains(speed.toDouble())
           ? speed.toDouble()
           : defaults.playbackSpeed,
-      language: language.available ? language : defaults.language,
+      language: _byName(
+        AppLanguage.values,
+        json['language'],
+        defaults.language,
+      ),
       dailyReminder: reminder is bool ? reminder : defaults.dailyReminder,
       reminderTime:
           parseClockTime(json['reminderTime']) ?? defaults.reminderTime,

@@ -9,7 +9,7 @@ void main() {
         id: 1060,
         at: DateTime(2026, 9, 20, 7),
         title: title,
-        body: ReminderStrings.body,
+        body: ReminderStrings.en.body,
         date: '2026-09-20',
       );
     }

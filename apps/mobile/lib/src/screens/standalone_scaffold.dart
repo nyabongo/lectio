@@ -22,7 +22,7 @@ class StandaloneScaffold extends StatelessWidget {
     if (!context.canPop()) {
       leading = IconButton(
         icon: Icon(AppRoute.today.icon),
-        tooltip: AppRoute.today.title,
+        tooltip: AppRoute.today.titleOf(context),
         onPressed: () => context.go(AppRoute.today.path),
       );
     }

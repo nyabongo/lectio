@@ -58,10 +58,10 @@ void main() {
       );
     });
 
-    test('does not pick a language that is not available yet', () {
+    test('reads Kiswahili', () {
       expect(
         AppSettings.fromJson(const {'language': 'sw'}).language,
-        AppLanguage.en,
+        AppLanguage.sw,
       );
     });
 
@@ -106,21 +106,20 @@ void main() {
         [for (final size in TextSize.values) size.scale],
         [0.9, 1, 1.125, 1.25],
       );
-      expect(TextSize.standard.label, 'Standard');
+      expect(TextSize.standard.labelKey, 'settings_textSize_default');
     });
 
     test('theme preferences map to theme modes', () {
       expect(ThemePreference.system.mode, ThemeMode.system);
       expect(ThemePreference.light.mode, ThemeMode.light);
       expect(ThemePreference.dark.mode, ThemeMode.dark);
-      expect(ThemePreference.dark.label, 'Dark');
+      expect(ThemePreference.dark.labelKey, 'settings_theme_dark');
     });
 
-    test('languages have locales and Kiswahili is coming soon', () {
+    test('languages have locales and their own names', () {
       expect(AppLanguage.en.locale, const Locale('en'));
       expect(AppLanguage.sw.locale, const Locale('sw'));
-      expect(AppLanguage.en.available, isTrue);
-      expect(AppLanguage.sw.available, isFalse);
+      expect(AppLanguage.en.label, 'English');
       expect(AppLanguage.sw.label, 'Kiswahili');
     });
 
