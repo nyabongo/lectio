@@ -67,3 +67,52 @@ export function isStrictCompatible(schema: JsonSchema): boolean {
   };
   return visit(schema);
 }
+
+/**
+ * Constraint-only keywords strict mode rejects. Removing them only loosens the schema,
+ * and the client still validates the answer against the full schema, so they are
+ * dropped from the copy sent to the API instead of giving up strict decoding.
+ */
+const DROPPABLE_KEYWORDS: ReadonlySet<string> = new Set([
+  'minLength',
+  'maxLength',
+  'uniqueItems',
+  'minProperties',
+  'maxProperties',
+  'default',
+  'examples',
+  '$comment',
+  '$schema',
+  '$id',
+  'deprecated',
+  'readOnly',
+  'writeOnly',
+]);
+
+function strip(node: unknown): unknown {
+  if (!isRecord(node)) return node;
+  const copy: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(node)) {
+    if (DROPPABLE_KEYWORDS.has(key)) continue;
+    if ((key === 'properties' || key === '$defs' || key === 'definitions') && isRecord(value)) {
+      copy[key] = Object.fromEntries(Object.entries(value).map(([name, child]) => [name, strip(child)]));
+    } else if (key === 'items') {
+      copy[key] = strip(value);
+    } else if (key === 'anyOf' && Array.isArray(value)) {
+      copy[key] = (value as unknown[]).map(strip);
+    } else {
+      copy[key] = value;
+    }
+  }
+  return copy;
+}
+
+/**
+ * The schema to send in strict mode: `schema` without the {@link DROPPABLE_KEYWORDS},
+ * or `undefined` when even that copy does not meet the strict rules (then the full
+ * schema is sent non-strict).
+ */
+export function toStrictSchema(schema: JsonSchema): JsonSchema | undefined {
+  const stripped = strip(schema) as JsonSchema;
+  return isStrictCompatible(stripped) ? stripped : undefined;
+}

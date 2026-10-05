@@ -23,22 +23,34 @@ refuter is not an OpenAI model. `new OpenAiLlmClient({ apiKey, costMeter })` bui
 
 ## Behaviour
 
-- **Structured output.** `responseSchema` is sent as a `json_schema` text format. It is `strict` when the schema meets
-  OpenAI's strict-mode rules (closed objects, every property required, supported keywords only) and non-strict
-  otherwise. The answer is validated locally either way. Invalid JSON or a schema mismatch is retried once with the
-  errors (`outputRetries`), then rejects with `LlmOutputError`.
+- **Reasoning budget.** gpt-5 always reasons, and OpenAI's `max_output_tokens` caps reasoning and the visible answer
+  _together_. The client therefore treats `request.maxTokens` as the budget for the **answer only** and sends
+  `max_output_tokens = maxTokens + reasoningTokens`. The allowance defaults to 4096 (`reasoningTokens` option), so
+  callers size `maxTokens` for the answer alone and never need to add reasoning to it. `reasoning.effort` defaults to
+  `low` (`reasoningEffort` option). `minimal` is raised to `low` on requests that carry web tools, because web search
+  does not support minimal effort.
+- **Truncation.** An answer cut off by that cap (`status: incomplete`, reason `max_output_tokens`) rejects at once with
+  `LlmOutputError` ("answer truncated at N output tokens (reasoning used R)"). It is not retried, because the same
+  budget would be cut off again. Raise `maxTokens` or `reasoningTokens` instead.
+- **Structured output.** `responseSchema` is sent as a `json_schema` text format. Constraint-only keywords that strict
+  mode rejects (`minLength`, `maxLength`, `uniqueItems`, `minProperties`, `maxProperties`, annotations) are removed
+  from the copy that is sent. If that copy meets OpenAI's strict rules (closed objects, every property required,
+  supported keywords only), it is sent with `strict: true`. Otherwise the full schema is sent non-strict. Either way the
+  answer is validated locally against the **full** schema. A completed answer that is invalid JSON or misses the schema
+  is retried once with the errors (`outputRetries`), then rejects with `LlmOutputError`.
 - **Refusals** reject with `LlmRefusalError` (an `LlmOutputError`, not retried).
-- **Usage → cost meter.** Every call, including a failed attempt, is charged at `config.pricing`. Cached input tokens
-  are billed separately and each `web_search_call` search counts as one web search. A dated snapshot id the API reports
-  (for example `gpt-5-2025-08-07`) is billed as the requested id when the snapshot itself is not priced. Unpriced models
-  and spent budgets are rejected before any request is sent.
+- **Usage → cost meter.** Every call is charged at `config.pricing`, including failed attempts that report usage.
+  Cached input tokens are billed separately, and each `web_search_call` search counts as one web search. A dated
+  snapshot id the API reports (for example `gpt-5-2025-08-07`) is billed as the requested id when the snapshot itself is
+  not priced. Unpriced models and spent budgets are rejected before any request is sent.
 - **Retries.** The SDK retries rate limits, timeouts and 5xx responses (default 3 times, honouring `retry-after`).
   After that, failures map to `ProviderError` codes: `rate-limited` (not retryable when the quota is exhausted),
   `timeout`, `unavailable`, `invalid-request`, `not-found`, `conflict`.
 - **Web tools.** OpenAI has one `web_search` tool that also opens pages, so `web_search` and `web_fetch` both map onto
-  it. Domain filters are merged and `maxUses` becomes `max_tool_calls`. Citations come from `url_citation` annotations,
-  deduplicated by URL. The tool type defaults to `web_search` (`webSearchTool` overrides it). `config.tools` only has
-  Anthropic entries so far.
+  it. Domain filters are merged and normalised to bare hosts (scheme, path and case stripped). More than 100 domains
+  (the API's limit) rejects as `invalid-request` before the call. `maxUses` becomes `max_tool_calls`. Citations come
+  from `url_citation` annotations, deduplicated by URL. The tool type defaults to `web_search` (`webSearchTool`
+  overrides it). `config.tools` only has Anthropic entries so far.
 - Responses are sent with `store: false`, so OpenAI does not keep them.
 
 ## Setting the API key

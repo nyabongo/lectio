@@ -20,7 +20,7 @@ import type {
 } from 'openai/resources/responses/responses';
 
 import { LlmRefusalError, toProviderError } from './errors.ts';
-import { isStrictCompatible } from './strict-schema.ts';
+import { toStrictSchema } from './strict-schema.ts';
 
 /** The family this package talks to. Config validation keeps it different from the confirmer's. */
 export const OPENAI_FAMILY: LlmFamily = 'openai';
@@ -33,6 +33,17 @@ const MIN_OUTPUT_TOKENS = 16;
 
 /** Name sent with a structured-output schema (the API requires one). */
 const SCHEMA_NAME = 'lectio_response';
+
+/** Most entries `filters.allowed_domains` accepts. */
+export const MAX_ALLOWED_DOMAINS = 100;
+
+/** Default reasoning effort: verifier answers are short, so `low` keeps reasoning cheap and bounded. */
+export const DEFAULT_REASONING_EFFORT = 'low';
+
+/** Default reasoning allowance added on top of `request.maxTokens` (see {@link OpenAiLlmClientOptions.reasoningTokens}). */
+export const DEFAULT_REASONING_TOKENS = 4096;
+
+export type OpenAiReasoningEffort = 'minimal' | 'low' | 'medium' | 'high';
 
 export interface OpenAiLlmClientOptions {
   /** API key (`OPENAI_API_KEY`). */
@@ -51,6 +62,17 @@ export interface OpenAiLlmClientOptions {
   readonly webSearchTool?: 'web_search' | 'web_search_2025_08_26';
   /** A custom `fetch` for the SDK (tests). Default the global one. */
   readonly fetch?: typeof fetch;
+  /**
+   * Reasoning effort sent as `reasoning.effort`. Default {@link DEFAULT_REASONING_EFFORT}.
+   * `minimal` is raised to `low` on requests with web tools, which do not support it.
+   */
+  readonly reasoningEffort?: OpenAiReasoningEffort;
+  /**
+   * Reasoning allowance in tokens. `request.maxTokens` is the budget for the visible
+   * answer; OpenAI's `max_output_tokens` caps reasoning and answer together, so the
+   * client sends `maxTokens + reasoningTokens`. Default {@link DEFAULT_REASONING_TOKENS}.
+   */
+  readonly reasoningTokens?: number;
 }
 
 function checkRequest(request: LlmRequest): void {
@@ -80,13 +102,29 @@ function mapTools(
   if (tools.length === 0) return { tools: [] };
   const filters = tools.map((tool) => tool.allowedDomains ?? []);
   const unrestricted = filters.some((list) => list.length === 0);
-  const domains = unrestricted ? [] : [...new Set(filters.flat())];
+  const domains = unrestricted ? [] : [...new Set(filters.flat().map(normaliseDomain))];
+  if (domains.length > MAX_ALLOWED_DOMAINS) {
+    throw new ProviderError(
+      'invalid-request',
+      `openai: web search allows at most ${MAX_ALLOWED_DOMAINS} domains, got ${domains.length}`,
+    );
+  }
   const tool: Tool = domains.length > 0 ? { type, filters: { allowed_domains: domains } } : { type };
   const limits = tools.map((t) => t.maxUses);
   const maxToolCalls = limits.every((n): n is number => n !== undefined)
     ? limits.reduce((sum, n) => sum + n, 0)
     : undefined;
   return maxToolCalls === undefined ? { tools: [tool] } : { tools: [tool], maxToolCalls };
+}
+
+/** `allowed_domains` entries are bare hosts: drop any scheme, path and trailing dot, lower-case. */
+function normaliseDomain(domain: string): string {
+  return domain
+    .trim()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//i, '')
+    .replace(/[/?#].*$/, '')
+    .replace(/\.$/, '')
+    .toLowerCase();
 }
 
 function toInput(messages: readonly LlmMessage[]): ResponseInputItem[] {
@@ -132,7 +170,7 @@ function readOutput(response: OpenAiResponse): ParsedOutput {
 function readUsage(response: OpenAiResponse): LlmUsage {
   const usage = response.usage;
   const input = usage?.input_tokens ?? 0;
-  const cached = Math.min(input, usage?.input_tokens_details.cached_tokens ?? 0);
+  const cached = Math.min(input, usage?.input_tokens_details?.cached_tokens ?? 0);
   const webSearches = response.output.filter(
     (item) => item.type === 'web_search_call' && item.action.type === 'search',
   ).length;
@@ -160,7 +198,10 @@ function parseJson(text: string): { ok: true; value: unknown } | { ok: false; er
  *   malformed answer is retried with the validation errors, then rejects with
  *   {@link LlmOutputError}.
  * - A refusal rejects with {@link LlmRefusalError}.
- * - Usage of every call (including failed attempts) is charged to the cost meter.
+ * - Reasoning: `reasoning.effort` (default `low`) and `max_output_tokens` =
+ *   `maxTokens` + a reasoning allowance (default 4096). An answer cut off by that cap
+ *   rejects at once with {@link LlmOutputError} (no repair retry).
+ * - Usage of every call (including failed attempts that report usage) is charged to the cost meter.
  * - Rate limits, timeouts and 5xx responses are retried by the SDK, then mapped to
  *   {@link ProviderError} (`rate-limited`, `timeout`, `unavailable`).
  * - Responses are not stored on OpenAI's side (`store: false`).
@@ -171,11 +212,19 @@ export class OpenAiLlmClient implements LlmClient {
   readonly #meter: CostMeter;
   readonly #outputRetries: number;
   readonly #webSearchTool: NonNullable<OpenAiLlmClientOptions['webSearchTool']>;
+  readonly #reasoningEffort: OpenAiReasoningEffort;
+  readonly #reasoningTokens: number;
 
   constructor(options: OpenAiLlmClientOptions) {
     if (options.apiKey.length === 0) {
       throw new ProviderError('invalid-request', 'openai: an API key is required (set OPENAI_API_KEY)');
     }
+    const reasoningTokens = options.reasoningTokens ?? DEFAULT_REASONING_TOKENS;
+    if (!Number.isInteger(reasoningTokens) || reasoningTokens < 0) {
+      throw new RangeError(`reasoningTokens must be a non-negative integer, got ${String(reasoningTokens)}`);
+    }
+    this.#reasoningTokens = reasoningTokens;
+    this.#reasoningEffort = options.reasoningEffort ?? DEFAULT_REASONING_EFFORT;
     this.#sdk = new OpenAI({
       apiKey: options.apiKey,
       maxRetries: options.maxRetries ?? 3,
@@ -202,10 +251,25 @@ export class OpenAiLlmClient implements LlmClient {
       const response = await this.#call(request, input);
       const model = this.#billedModel(response.model, request.model);
       const usage = readUsage(response);
-      this.#meter.chargeUsage(model, usage, `llm:${model}:${request.role}`);
+      const failed = response.status === 'failed' || Boolean(response.error);
+      // A failed response is charged only when it reports usage; anything else always is.
+      if (!failed || response.usage) this.#meter.chargeUsage(model, usage, `llm:${model}:${request.role}`);
+      if (failed) {
+        const detail = response.error ? `${response.error.code}: ${response.error.message}` : 'no detail';
+        throw new ProviderError('unavailable', `openai ${request.role}: response failed (${detail})`);
+      }
 
       const output = readOutput(response);
       if (output.refusal !== undefined) throw new LlmRefusalError(output.refusal);
+      if (response.status === 'incomplete' && response.incomplete_details?.reason === 'max_output_tokens') {
+        // Retrying with the same budget would be cut off again (and charged again).
+        const reasoning = response.usage?.output_tokens_details?.reasoning_tokens ?? 0;
+        throw new LlmOutputError(
+          `openai ${request.role}: answer truncated at ${this.#outputBudget(request)} output tokens ` +
+            `(reasoning used ${reasoning}); raise maxTokens or the client's reasoningTokens`,
+          output.text,
+        );
+      }
       const base = { citations: output.citations, usage, model, family: this.family };
       if (schema === undefined) {
         if (output.text.length === 0) {
@@ -234,11 +298,14 @@ export class OpenAiLlmClient implements LlmClient {
   async #call(request: LlmRequest, input: ResponseInputItem[]): Promise<OpenAiResponse> {
     const { tools, maxToolCalls } = mapTools(request.tools ?? [], this.#webSearchTool);
     const schema = request.responseSchema;
+    const strictSchema = schema === undefined ? undefined : toStrictSchema(schema);
+    const effort = this.#reasoningEffort === 'minimal' && tools.length > 0 ? 'low' : this.#reasoningEffort;
     const params: ResponseCreateParamsNonStreaming = {
       model: request.model,
       instructions: request.system,
       input,
-      max_output_tokens: Math.max(MIN_OUTPUT_TOKENS, request.maxTokens),
+      max_output_tokens: this.#outputBudget(request),
+      reasoning: { effort },
       store: false,
       ...(tools.length > 0 ? { tools } : {}),
       ...(maxToolCalls === undefined ? {} : { max_tool_calls: maxToolCalls }),
@@ -249,23 +316,22 @@ export class OpenAiLlmClient implements LlmClient {
               format: {
                 type: 'json_schema',
                 name: SCHEMA_NAME,
-                schema: { ...schema },
-                strict: isStrictCompatible(schema),
+                schema: { ...(strictSchema ?? schema) },
+                strict: strictSchema !== undefined,
               },
             },
           }),
     };
-    let response: OpenAiResponse;
     try {
-      response = await this.#sdk.responses.create(params);
+      return await this.#sdk.responses.create(params);
     } catch (error) {
       throw toProviderError(error);
     }
-    if (response.status === 'failed' || response.error) {
-      const detail = response.error ? `${response.error.code}: ${response.error.message}` : 'no detail';
-      throw new ProviderError('unavailable', `openai ${request.role}: response failed (${detail})`);
-    }
-    return response;
+  }
+
+  /** `max_output_tokens`: the answer budget plus the reasoning allowance. */
+  #outputBudget(request: LlmRequest): number {
+    return Math.max(MIN_OUTPUT_TOKENS, request.maxTokens + this.#reasoningTokens);
   }
 
   /** The id to bill: the answering model when it is priced, else the requested one (dated snapshots such as `gpt-5-2025-08-07`). */

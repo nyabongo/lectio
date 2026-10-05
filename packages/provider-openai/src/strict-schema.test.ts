@@ -1,7 +1,7 @@
 import { CONTRACT_RESPONSE_SCHEMA } from '@lectio/providers/contracts';
 import { describe, expect, it } from 'vitest';
 
-import { isStrictCompatible } from './strict-schema.ts';
+import { isStrictCompatible, toStrictSchema } from './strict-schema.ts';
 
 const closed = (properties: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
   type: 'object',
@@ -58,5 +58,49 @@ describe('isStrictCompatible', () => {
     expect(isStrictCompatible({ type: 'object', additionalProperties: false })).toBe(true);
     expect(isStrictCompatible(closed({ bad: true }))).toBe(false);
     expect(isStrictCompatible(closed({ list: { type: 'array', items: [{ type: 'string' }] } }))).toBe(false);
+  });
+});
+
+describe('toStrictSchema', () => {
+  it('drops constraint-only keywords at every schema position, keeping property names', () => {
+    const schema = closed(
+      {
+        minLength: { type: 'string', minLength: 1, maxLength: 300 },
+        list: { type: 'array', uniqueItems: true, items: { type: 'string', minLength: 1 } },
+        either: { anyOf: [{ type: 'string', maxLength: 3 }, { type: 'null' }] },
+        ref: { $ref: '#/$defs/thing' },
+      },
+      {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        $defs: { thing: closed({ id: { type: 'string', default: 'x' } }) },
+      },
+    );
+    expect(toStrictSchema(schema)).toEqual(
+      closed(
+        {
+          minLength: { type: 'string' },
+          list: { type: 'array', items: { type: 'string' } },
+          either: { anyOf: [{ type: 'string' }, { type: 'null' }] },
+          ref: { $ref: '#/$defs/thing' },
+        },
+        { $defs: { thing: closed({ id: { type: 'string' } }) } },
+      ),
+    );
+    // The input is not modified.
+    expect(schema.properties.minLength).toEqual({ type: 'string', minLength: 1, maxLength: 300 });
+  });
+
+  it('leaves non-schema values alone (and then rejects them)', () => {
+    expect(toStrictSchema(closed({ a: { type: 'array', items: true } }))).toBeUndefined();
+  });
+
+  it('makes the contract schema strict', () => {
+    expect(isStrictCompatible(toStrictSchema(CONTRACT_RESPONSE_SCHEMA) ?? {})).toBe(true);
+  });
+
+  it('returns undefined when the structure itself is not strict-compatible', () => {
+    expect(toStrictSchema({ type: 'object', properties: { a: { type: 'string' } } })).toBeUndefined();
+    expect(toStrictSchema(closed({ a: { oneOf: [{ type: 'string' }] } }))).toBeUndefined();
+    expect(toStrictSchema(closed({ a: { type: 'string' } }, { properties: 'bad' }))).toBeUndefined();
   });
 });

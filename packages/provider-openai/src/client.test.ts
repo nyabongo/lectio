@@ -6,11 +6,12 @@ import { server } from '@lectio/shared/test-server';
 import { delay, http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { OPENAI_FAMILY, OpenAiLlmClient } from './client.ts';
+import { DEFAULT_REASONING_TOKENS, MAX_ALLOWED_DOMAINS, OPENAI_FAMILY, OpenAiLlmClient } from './client.ts';
 import type { OpenAiLlmClientOptions } from './client.ts';
 import { LlmRefusalError } from './errors.ts';
 import { RESPONSES_URL, fixture, recordedHandler, sequenceHandler } from './fixtures/recorded.ts';
 import type { SentBody } from './fixtures/recorded.ts';
+import { toStrictSchema } from './strict-schema.ts';
 
 const MODEL = 'gpt-5';
 
@@ -63,7 +64,9 @@ describe('OpenAiLlmClient: success', () => {
       model: MODEL,
       instructions: 'Try to refute the claim.',
       input: [{ type: 'message', role: 'user', content: 'Claim: water boils at 100 degrees Celsius at sea level.' }],
-      max_output_tokens: 800,
+      // The answer budget plus the default reasoning allowance.
+      max_output_tokens: 800 + DEFAULT_REASONING_TOKENS,
+      reasoning: { effort: 'low' },
       store: false,
     });
     expect(response).toEqual({
@@ -97,8 +100,30 @@ describe('OpenAiLlmClient: success', () => {
   it('raises max_output_tokens to the API minimum', async () => {
     const sent: SentBody[] = [];
     server.use(recordedHandler(sent));
-    await client().generate(ask({ maxTokens: 4 }));
+    await client({ reasoningTokens: 0 }).generate(ask({ maxTokens: 4 }));
     expect(sent[0]?.['max_output_tokens']).toBe(16);
+  });
+
+  it('sends the configured reasoning effort and allowance', async () => {
+    const sent: SentBody[] = [];
+    server.use(recordedHandler(sent));
+    await client({ reasoningEffort: 'high', reasoningTokens: 10_000 }).generate(ask({ maxTokens: 500 }));
+    expect(sent[0]).toMatchObject({ reasoning: { effort: 'high' }, max_output_tokens: 10_500 });
+  });
+
+  it('keeps minimal effort without tools and raises it to low with web search', async () => {
+    const sent: SentBody[] = [];
+    server.use(recordedHandler(sent));
+    const minimal = client({ reasoningEffort: 'minimal' });
+    await minimal.generate(ask());
+    await minimal.generate(ask({ tools: [{ kind: 'web_search' }], responseSchema: CONTRACT_RESPONSE_SCHEMA }));
+    expect(sent[0]?.['reasoning']).toEqual({ effort: 'minimal' });
+    expect(sent[1]?.['reasoning']).toEqual({ effort: 'low' });
+  });
+
+  it('rejects a negative or fractional reasoning allowance', () => {
+    expect(() => client({ reasoningTokens: -1 })).toThrow(RangeError);
+    expect(() => client({ reasoningTokens: 1.5 })).toThrow(/non-negative integer/);
   });
 
   it('passes assistant turns through', async () => {
@@ -124,9 +149,11 @@ describe('OpenAiLlmClient: success', () => {
     const sent: SentBody[] = [];
     server.use(recordedHandler(sent));
     const response = await client().generate(ask({ responseSchema: CONTRACT_RESPONSE_SCHEMA }));
-    expect(sent[0]?.text).toEqual({
-      format: { type: 'json_schema', name: 'lectio_response', schema: CONTRACT_RESPONSE_SCHEMA, strict: false },
-    });
+    // minLength is dropped from the copy sent in strict mode; the answer is still checked against the full schema.
+    const sentSchema = sent[0]?.text?.format?.['schema'] as { properties: { reasons: { items: unknown } } };
+    expect(sent[0]?.text?.format).toMatchObject({ type: 'json_schema', name: 'lectio_response', strict: true });
+    expect(sentSchema.properties.reasons.items).toEqual({ type: 'string' });
+    expect(sentSchema).toEqual(toStrictSchema(CONTRACT_RESPONSE_SCHEMA));
     expect(response.output).toEqual({
       verdict: 'supported',
       support: 0.97,
@@ -201,11 +228,44 @@ describe('OpenAiLlmClient: success', () => {
     expect(sent[0]).not.toHaveProperty('max_tool_calls');
   });
 
+  it('strips schemes, paths and case from allowed domains', async () => {
+    const sent: SentBody[] = [];
+    server.use(recordedHandler(sent));
+    await client().generate(
+      ask({
+        tools: [
+          {
+            kind: 'web_search',
+            allowedDomains: ['https://En.Wikipedia.org/wiki/Water', ' usgs.gov. ', 'en.wikipedia.org'],
+          },
+        ],
+      }),
+    );
+    expect(sent[0]?.tools).toEqual([
+      { type: 'web_search', filters: { allowed_domains: ['en.wikipedia.org', 'usgs.gov'] } },
+    ]);
+  });
+
+  it('rejects more than 100 allowed domains before any HTTP call', async () => {
+    const allowedDomains = Array.from({ length: MAX_ALLOWED_DOMAINS + 1 }, (_, i) => `site${i}.example`);
+    const error = await failure(client().generate(ask({ tools: [{ kind: 'web_search', allowedDomains }] })));
+    expect(error.code).toBe('invalid-request');
+    expect(error.message).toContain('at most 100 domains, got 101');
+  });
+
   it('sends no tools for an empty tool list', async () => {
     const sent: SentBody[] = [];
     server.use(recordedHandler(sent));
     await client().generate(ask({ tools: [] }));
     expect(sent[0]).not.toHaveProperty('tools');
+  });
+
+  it('tolerates a usage block without token details', async () => {
+    const body = fixture('text');
+    body['usage'] = { input_tokens: 10, output_tokens: 5, total_tokens: 15 };
+    server.use(sequenceHandler([body]));
+    const response = await client().generate(ask());
+    expect(response.usage).toEqual({ inputTokens: 10, outputTokens: 5 });
   });
 
   it('treats a missing usage block as zero tokens', async () => {
@@ -271,7 +331,7 @@ describe('OpenAiLlmClient: refusal and malformed output', () => {
     expect(retryInput[1]).toEqual({
       type: 'message',
       role: 'assistant',
-      content: '{"verdict": "supported", "support": 0.9',
+      content: 'Verdict: supported (0.9), not sensitive.',
     });
     expect(retryInput[2]).toMatchObject({ type: 'message', role: 'user' });
     expect((retryInput[2] as { content: string }).content).toContain('invalid JSON');
@@ -285,9 +345,51 @@ describe('OpenAiLlmClient: refusal and malformed output', () => {
     const error = await failure(client({ costMeter }).generate(ask({ responseSchema: CONTRACT_RESPONSE_SCHEMA })));
     expect(error).toBeInstanceOf(LlmOutputError);
     expect(error).not.toBeInstanceOf(LlmRefusalError);
-    expect(error.message).toContain('status incomplete, max_output_tokens');
-    expect((error as LlmOutputError).rawText).toBe('{"verdict": "supported", "support": 0.9');
+    expect(error.message).toContain('status completed');
+    expect((error as LlmOutputError).rawText).toBe('Verdict: supported (0.9), not sensitive.');
     expect(costMeter.entries()).toHaveLength(2);
+  });
+
+  it('rejects an answer cut off by max_output_tokens at once, without a repair retry', async () => {
+    const sent: SentBody[] = [];
+    server.use(sequenceHandler([fixture('truncated'), fixture('structured')], sent));
+    const costMeter = meter();
+    const error = await failure(
+      client({ costMeter, reasoningTokens: 0 }).generate(
+        ask({ maxTokens: 512, responseSchema: CONTRACT_RESPONSE_SCHEMA }),
+      ),
+    );
+    expect(error).toBeInstanceOf(LlmOutputError);
+    expect(error.message).toContain('answer truncated at 512 output tokens (reasoning used 500)');
+    expect((error as LlmOutputError).rawText).toBe('{"verdict": "supported", "support": 0.9');
+    expect(sent).toHaveLength(1);
+    expect(costMeter.entries()).toHaveLength(1);
+  });
+
+  it('rejects a truncated plain-text answer too, even without usage details', async () => {
+    const body = { ...fixture('truncated'), text: { format: { type: 'text' } } };
+    delete (body as Record<string, unknown>)['usage'];
+    server.use(sequenceHandler([body]));
+    const error = await failure(client().generate(ask()));
+    expect(error.message).toContain('reasoning used 0');
+  });
+
+  it('sends a schema that cannot be made strict in full, non-strict, and still validates it', async () => {
+    const sent: SentBody[] = [];
+    const loose: JsonSchema = { ...CONTRACT_RESPONSE_SCHEMA, additionalProperties: true };
+    server.use(sequenceHandler([fixture('structured')], sent));
+    const response = await client().generate(ask({ responseSchema: loose }));
+    expect(sent[0]?.text?.format).toMatchObject({ schema: loose, strict: false });
+    expect(response.output).toMatchObject({ verdict: 'supported' });
+  });
+
+  it('keeps the repair path for incomplete answers that were not cut off by the token cap', async () => {
+    const body = { ...fixture('malformed'), status: 'incomplete', incomplete_details: { reason: 'content_filter' } };
+    server.use(sequenceHandler([body]));
+    const error = await failure(
+      client({ outputRetries: 0 }).generate(ask({ responseSchema: CONTRACT_RESPONSE_SCHEMA })),
+    );
+    expect(error.message).toContain('status incomplete, content_filter');
   });
 
   it('reports schema violations without retrying when outputRetries is 0', async () => {
@@ -377,10 +479,22 @@ describe('OpenAiLlmClient: HTTP failures', () => {
     expect(error.message).toContain('server_error: boom');
   });
 
-  it('maps a failed response without detail to unavailable', async () => {
+  it('maps a failed response without detail to unavailable, charging the usage it reports', async () => {
     server.use(sequenceHandler([{ ...fixture('text'), status: 'failed' }]));
-    const error = await failure(client().generate(ask()));
+    const costMeter = meter();
+    const error = await failure(client({ costMeter }).generate(ask()));
     expect(error.message).toContain('no detail');
+    expect(costMeter.entries()).toHaveLength(1);
+    expect(costMeter.entries()[0]?.usage).toEqual({ inputTokens: 58, outputTokens: 96 });
+  });
+
+  it('does not charge a failed response that reports no usage', async () => {
+    const body = { ...fixture('text'), status: 'failed' };
+    delete (body as Record<string, unknown>)['usage'];
+    server.use(sequenceHandler([body]));
+    const costMeter = meter();
+    await failure(client({ costMeter }).generate(ask()));
+    expect(costMeter.entries()).toEqual([]);
   });
 });
 

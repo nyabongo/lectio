@@ -9,7 +9,15 @@ import { http, HttpResponse } from 'msw';
 export const RESPONSES_URL = 'https://api.openai.com/v1/responses';
 
 export type FixtureName =
-  'text' | 'structured' | 'web-search' | 'refusal' | 'malformed' | 'off-schema' | 'rate-limit' | 'insufficient-quota';
+  | 'text'
+  | 'structured'
+  | 'web-search'
+  | 'refusal'
+  | 'malformed'
+  | 'truncated'
+  | 'off-schema'
+  | 'rate-limit'
+  | 'insufficient-quota';
 
 /** A fresh copy of a fixture body. */
 export function fixture(name: FixtureName): Record<string, unknown> {
