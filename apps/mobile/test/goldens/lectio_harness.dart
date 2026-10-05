@@ -81,9 +81,9 @@ void useDeviceTextScale(WidgetTester tester, double factor) {
   addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 }
 
-/// The seed day with its celebrations in [colour], as JSON.
+/// The seed day and its celebrations in [colour], as JSON.
 String seedDayIn(String colour) {
-  final day = fixtureObject('day');
+  final day = fixtureObject('day')..['colour'] = colour;
   for (final item in day['celebrations']! as List<Object?>) {
     (item! as Map<String, Object?>)['colour'] = colour;
   }

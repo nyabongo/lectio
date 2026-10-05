@@ -72,7 +72,13 @@ void main() {
 
           final context = tester.element(find.byType(Scaffold).first);
           expect(MediaQuery.textScalerOf(context).scale(10), 20);
-          expect(tester.takeException(), isNull);
+          final error = tester.takeException();
+          // The whole error names the widget that overflowed.
+          expect(
+            error,
+            isNull,
+            reason: error is FlutterError ? error.toStringDeep() : '$error',
+          );
         });
       }
     }
