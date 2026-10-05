@@ -532,8 +532,18 @@ describe('GhGitHubClient', () => {
       created_at: '2026-10-05T09:00:00Z',
     });
     fake.addRun({ ...base, path: 'ci.yml', event: 'push', head_sha: 'd'.repeat(40), pull_requests: [] });
+    fake.addRun({
+      ...base,
+      id: 1,
+      path: 'ci.yml',
+      event: 'workflow_dispatch',
+      head_sha: sha,
+      pull_requests: [],
+      created_at: '2026-10-05T09:00:00Z',
+    });
     const runs = await client.listRunsForSha(sha);
     expect(runs.map((run) => [run.event, run.displayTitle, run.createdAt, run.prNumbers])).toEqual([
+      ['workflow_dispatch', '', '2026-10-05T09:00:00Z', []],
       ['issue_comment', '', '2026-10-05T09:00:00Z', []],
       ['pull_request', 'Content gates · PR #7', '2026-10-05T10:00:00Z', [7]],
     ]);

@@ -4,6 +4,8 @@ exports[`lectio-gates run > runs a dummy gate end to end: exit code, log, JSON r
 "<!-- lectio-gates -->
 ## Lectio gates: a gate failed
 
+> Offline run: sources were checked with the offline fake fetcher, so every web source reads as missing (expect commentary-unchecked warnings). content-gates.yml runs with the live fetcher.
+
 | Gate | Status | Details |
 | --- | --- | --- |
 | Always passes (\`always-pass\`) | Pass | no findings |
@@ -98,7 +100,8 @@ exports[`lectio-gates run > runs a dummy gate end to end: exit code, log, JSON r
         "files": 4
       }
     }
-  ]
+  ],
+  "fetcher": "offline-fake"
 }
 "
 `;

@@ -8,6 +8,8 @@ import { DEFAULT_CONFIG } from '@lectio/config';
 import { validateGateResult } from '@lectio/schema/gate-result';
 
 import { DUMMY_DIFF, DUMMY_FILES, dummyGate, passingGate } from '../core/fixtures/dummy-gate.ts';
+import { LiveSourceFetcher } from '@lectio/provider-fetch';
+
 import { COMMENT_MARKER_LINE } from '../core/markdown.ts';
 import { skippedResult } from '../core/result.ts';
 import type * as MergeRule from '../merge-rule/index.ts';
@@ -46,6 +48,9 @@ function options(overrides: Partial<GatesCliOptions> = {}): GatesCliOptions {
 
 const read = (path: string): string => readFileSync(join(dir, path), 'utf8');
 
+const OFFLINE_NOTE =
+  'Offline run: sources were checked with the offline fake fetcher, so every web source reads as missing (expect commentary-unchecked warnings). content-gates.yml runs with the live fetcher.';
+
 describe('lectio-gates run', () => {
   it('runs a dummy gate end to end: exit code, log, JSON report and PR comment', async () => {
     const code = await runGatesCli(
@@ -77,7 +82,50 @@ describe('lectio-gates run', () => {
 
   it('exits 0 when nothing fails and writes nothing without --json/--markdown', async () => {
     expect(await runGatesCli(['--', 'run', '--gates', 'always-pass'], options())).toBe(0);
-    expect(logs).toEqual(['always-pass: pass', 'lectio-gates: pass']);
+    expect(logs).toEqual(['always-pass: pass', `lectio-gates: ${OFFLINE_NOTE}`, 'lectio-gates: pass']);
+  });
+
+  it('says in the log, the JSON report and the comment when sources came from the offline fake fetcher', async () => {
+    const args = ['run', '--gates', 'always-pass', '--json', 'out/g.json', '--markdown', 'out/c.md'];
+    expect(await runGatesCli(args, options())).toBe(0);
+    expect(logs).toContain(`lectio-gates: ${OFFLINE_NOTE}`);
+    expect(JSON.parse(read('out/g.json'))).toMatchObject({ fetcher: 'offline-fake' });
+    const lines = read('out/c.md').split('\n');
+    expect(lines.slice(0, 4)).toEqual([
+      COMMENT_MARKER_LINE,
+      '## Lectio gates: all gates passed',
+      '',
+      `> ${OFFLINE_NOTE}`,
+    ]);
+  });
+
+  it('wires the live fetcher with --fetch live (and says so)', async () => {
+    let fetcher: unknown;
+    const probe = {
+      ...passingGate,
+      run: (context: Parameters<typeof passingGate.run>[0]) => {
+        fetcher = context.providers.fetcher;
+        return passingGate.run(context);
+      },
+    };
+    const args = ['run', '--fetch', 'live', '--json', 'out/g.json', '--markdown', 'out/c.md'];
+    expect(await runGatesCli(args, options({ gates: [probe] }))).toBe(0);
+    expect(fetcher).toBeInstanceOf(LiveSourceFetcher);
+    expect(logs).toContain('lectio-gates: Sources were fetched live (provider-fetch, SSRF guard on).');
+    expect(JSON.parse(read('out/g.json'))).toMatchObject({ fetcher: 'live' });
+    expect(read('out/c.md')).not.toContain('Offline run');
+  });
+
+  it('refuses an unknown --fetch or --llm mode', async () => {
+    expect(await runGatesCli(['run', '--fetch', 'sometimes'], options())).toBe(2);
+    expect(errors[0]).toBe('lectio-gates: --fetch must be one of live, fixtures (got "sometimes")');
+    expect(await runGatesCli(['run', '--llm', 'maybe'], options())).toBe(2);
+    expect(errors[2]).toBe('lectio-gates: --llm must be one of live, off (got "maybe")');
+  });
+
+  it('routes ci commands to the content-gates CLI', async () => {
+    expect(await runGatesCli(['ci', 'nope'], options())).toBe(2);
+    expect(errors[0]).toBe('lectio-gates ci: unknown ci command "nope"');
   });
 
   it('exits 0 for a flag (needs review is not a failure)', async () => {

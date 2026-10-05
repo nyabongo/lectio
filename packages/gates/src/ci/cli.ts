@@ -1,0 +1,266 @@
+/**
+ * `lectio-gates ci <command>`: the steps of content-gates.yml (L-031). Each job checks out main for
+ * tooling, runs `npm ci` there and calls one of these; the PR head is only data in `pr-head/`.
+ *
+ *     lectio-gates ci resolve                         which PR and head; writes run, pr, head-sha, …
+ *     lectio-gates ci changes --root pr-head --base <ref>          writes relevant=true|false
+ *     lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root pr-head
+ *                                [--results <gates.json>]…        writes decision, manual-merge
+ *     lectio-gates ci merge --pr <n> --sha <sha>
+ *
+ * Step outputs go to `$GITHUB_OUTPUT` and the job summary to `$GITHUB_STEP_SUMMARY` (printed when
+ * unset). The GitHub client is provider-gh acting as `github-actions[bot]` with the required checks
+ * from `.github/required-checks/` of the tooling checkout. Exit codes: 0 green, 1 red, 2 usage.
+ */
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { parseArgs } from 'node:util';
+import type { ParseArgsOptionsConfig } from 'node:util';
+
+import { findRepoRoot, loadConfig } from '@lectio/config';
+import type { LectioConfig } from '@lectio/config';
+import { GhGitHubClient } from '@lectio/provider-gh';
+import type { GitHubClient } from '@lectio/providers';
+import { validateGateResult } from '@lectio/schema/gate-result';
+
+import type { GatesCliOptions } from '../cli/run.ts';
+import type { GateResult } from '../core/result.ts';
+import { changedPaths } from '../merge-rule/index.ts';
+import type { FormatJson } from '../review/approve.ts';
+import { toolPrettierJson } from './approval-commit.ts';
+import { gitCheckout } from './checkout.ts';
+import type { PrCheckout } from './checkout.ts';
+import { ACTIONS_BOT } from './facts.ts';
+import { runMergeJob } from './merge-job.ts';
+import { runMergeRuleJob } from './merge-rule-job.ts';
+import { readRequiredChecks } from './registry.ts';
+import type { RequiredChecksRegistry } from './registry.ts';
+import { relevantFiles, resolveTarget } from './target.ts';
+
+export const CI_USAGE = [
+  'usage: lectio-gates ci resolve',
+  '       lectio-gates ci changes --root <dir> --base <ref> [--head <ref>]',
+  '       lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root <dir> [--results <file>]…',
+  '       lectio-gates ci merge --pr <n> --sha <sha>',
+].join('\n');
+
+export interface CiCliOptions extends GatesCliOptions {
+  /** Default: provider-gh as github-actions[bot] (`GH_TOKEN`), with the registry's required checks. */
+  readonly github?: GitHubClient;
+  /** Default: the git worktree at `--root`. */
+  readonly checkout?: PrCheckout;
+  /** Default: `.github/required-checks/` of the tooling checkout. */
+  readonly registry?: RequiredChecksRegistry;
+  readonly format?: FormatJson;
+  readonly now?: () => Date;
+  readonly appendFile?: (path: string, text: string) => void;
+}
+
+class CiUsageError extends Error {}
+
+function parse<T extends ParseArgsOptionsConfig>(args: readonly string[], options: T) {
+  try {
+    return parseArgs({ args: [...args], options, strict: true, allowPositionals: false }).values;
+  } catch (error) {
+    throw new CiUsageError((error as Error).message);
+  }
+}
+
+function required(values: Record<string, unknown>, name: string): string {
+  const value = values[name];
+  if (typeof value !== 'string' || value === '') throw new CiUsageError(`--${name} is required`);
+  return value;
+}
+
+function prNumber(value: string): number {
+  if (!/^[1-9][0-9]*$/.test(value)) throw new CiUsageError(`--pr must be a PR number (got "${value}")`);
+  return Number(value);
+}
+
+const SHA = /^[0-9a-f]{40}(?:[0-9a-f]{24})?$/;
+function sha(name: string, value: string): string {
+  if (!SHA.test(value)) throw new CiUsageError(`--${name} must be a full commit sha (got "${value}")`);
+  return value;
+}
+
+interface Io {
+  readonly toolRoot: string;
+  readonly config: () => LectioConfig;
+  readonly registry: () => RequiredChecksRegistry;
+  readonly github: () => GitHubClient;
+  readonly output: (values: Readonly<Record<string, string | number | boolean>>) => void;
+  readonly summary: (text: string) => void;
+  readonly path: (file: string) => string;
+}
+
+function io(options: CiCliOptions): Io {
+  const { env } = options;
+  const toolRoot = findRepoRoot(options.cwd);
+  const append = options.appendFile ?? ((path: string, text: string) => appendFileSync(path, text, 'utf8'));
+  let registry: RequiredChecksRegistry | undefined;
+  const getRegistry = (): RequiredChecksRegistry => (registry ??= options.registry ?? readRequiredChecks(toolRoot));
+  let github: GitHubClient | undefined;
+  return {
+    toolRoot,
+    config: () => options.config ?? loadConfig(undefined, { cwd: options.cwd, env }),
+    registry: getRegistry,
+    github: () =>
+      (github ??=
+        options.github ??
+        new GhGitHubClient({
+          viewer: ACTIONS_BOT,
+          requiredChecks: getRegistry().checks,
+          env,
+          ...(env['GITHUB_REPOSITORY'] ? { repo: env['GITHUB_REPOSITORY'] } : {}),
+        })),
+    output(values) {
+      const lines = Object.entries(values).map(([key, value]) => `${key}=${String(value).replace(/[\r\n]+/g, ' ')}`);
+      for (const line of lines) options.log(`output ${line}`);
+      const file = env['GITHUB_OUTPUT'];
+      if (file) append(file, `${lines.join('\n')}\n`);
+    },
+    summary(text) {
+      const file = env['GITHUB_STEP_SUMMARY'];
+      if (file) append(file, `${text}\n`);
+      else options.log(text);
+    },
+    path: (file) => resolve(options.cwd, file),
+  };
+}
+
+async function resolveCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
+  parse(args, {});
+  const eventName = options.env['GITHUB_EVENT_NAME'] ?? '';
+  const eventPath = options.env['GITHUB_EVENT_PATH'];
+  if (!eventName || !eventPath) throw new CiUsageError('resolve needs GITHUB_EVENT_NAME and GITHUB_EVENT_PATH');
+  const read = options.readFile ?? ((file: string) => readFileSync(file, 'utf8'));
+  const payload: unknown = JSON.parse(read(eventPath));
+  const target = await resolveTarget(eventName, payload, ctx.github(), ctx.config());
+  options.log(`resolve: ${target.reason}`);
+  ctx.output({
+    run: target.run,
+    reason: target.reason,
+    pr: target.prNumber,
+    'head-sha': target.headSha,
+    'head-ref': target.headRef,
+    base: target.base,
+    'base-ref': target.baseRef,
+    fork: target.fork,
+    verifiers: target.verifiers,
+    'approval-head': target.approvalHead,
+  });
+  return 0;
+}
+
+async function changesCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
+  const values = parse(args, { root: { type: 'string' }, base: { type: 'string' }, head: { type: 'string' } });
+  const root = ctx.path(required(values, 'root'));
+  const checkout = options.checkout ?? gitCheckout(root, options.gitExec);
+  const paths = changedPaths(checkout.changedFiles(required(values, 'base'), values.head ?? 'HEAD'));
+  const relevant = relevantFiles(paths);
+  options.log(`changes: ${String(paths.length)} changed, ${String(relevant.length)} relevant`);
+  for (const path of paths) options.log(`  ${relevant.includes(path) ? '*' : ' '} ${path}`);
+  if (relevant.length === 0)
+    ctx.summary('Nothing relevant to the content gates changed (passages/, calendar/, corpus/, config/); skipping.');
+  ctx.output({ relevant: relevant.length > 0 });
+  return 0;
+}
+
+interface ReadReports {
+  readonly results: GateResult[];
+  readonly offline: boolean;
+}
+
+function readReports(files: readonly string[], options: CiCliOptions, ctx: Io): ReadReports {
+  const read = options.readFile ?? ((file: string) => readFileSync(file, 'utf8'));
+  const exists = options.readFile === undefined ? existsSync : () => true;
+  const results: GateResult[] = [];
+  let offline = false;
+  for (const file of files) {
+    const path = ctx.path(file);
+    if (!exists(path)) {
+      options.log(`merge-rule: ${file} is missing (that job did not run)`);
+      continue;
+    }
+    const report = JSON.parse(read(path)) as { results?: unknown; fetcher?: unknown } | null;
+    if (!Array.isArray(report?.results)) throw new CiUsageError(`${file}: expected a gate report with "results"`);
+    for (const [index, result] of report.results.entries()) {
+      if (!validateGateResult(result)) throw new CiUsageError(`${file}: results/${String(index)} is not a gate result`);
+      results.push(result);
+    }
+    if (report.fetcher === 'offline-fake') offline = true;
+  }
+  return { results, offline };
+}
+
+async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
+  const values = parse(args, {
+    pr: { type: 'string' },
+    'head-sha': { type: 'string' },
+    base: { type: 'string' },
+    root: { type: 'string' },
+    results: { type: 'string', multiple: true },
+  });
+  const number = prNumber(required(values, 'pr'));
+  const headSha = sha('head-sha', required(values, 'head-sha'));
+  const base = required(values, 'base');
+  const root = ctx.path(required(values, 'root'));
+  const runId = options.env['GITHUB_RUN_ID'] ?? '';
+  if (!/^[1-9][0-9]*$/.test(runId)) throw new CiUsageError('merge-rule needs GITHUB_RUN_ID');
+  const { results, offline } = readReports(values.results ?? [], options, ctx);
+  const outcome = await runMergeRuleJob({
+    github: ctx.github(),
+    config: ctx.config(),
+    checkout: options.checkout ?? gitCheckout(root, options.gitExec),
+    registry: ctx.registry(),
+    prNumber: number,
+    headSha,
+    base,
+    runId,
+    results,
+    ...(offline ? { note: 'the deterministic gates ran with the offline fake fetcher' } : {}),
+    format: options.format ?? toolPrettierJson(ctx.toolRoot),
+    now: options.now ?? (() => new Date()),
+    log: options.log,
+  });
+  ctx.summary(outcome.summary);
+  ctx.output({
+    decision: outcome.decision ?? 'none',
+    'manual-merge': outcome.manualMerge,
+    'approval-commit': outcome.approvalCommitSha ?? '',
+  });
+  return outcome.exitCode;
+}
+
+async function mergeCommand(args: readonly string[], options: CiCliOptions, ctx: Io): Promise<number> {
+  const values = parse(args, { pr: { type: 'string' }, sha: { type: 'string' } });
+  const outcome = await runMergeJob({
+    github: ctx.github(),
+    prNumber: prNumber(required(values, 'pr')),
+    sha: sha('sha', required(values, 'sha')),
+    log: options.log,
+  });
+  return outcome.exitCode;
+}
+
+const COMMANDS = {
+  resolve: resolveCommand,
+  changes: changesCommand,
+  'merge-rule': mergeRuleCommand,
+  merge: mergeCommand,
+} as const;
+
+/** Runs `lectio-gates ci <command> …` and returns the exit code. */
+export async function runCiCli(argv: readonly string[], options: CiCliOptions): Promise<number> {
+  const [command, ...rest] = argv;
+  try {
+    if (command === undefined || !Object.hasOwn(COMMANDS, command))
+      throw new CiUsageError(command === undefined ? 'missing ci command' : `unknown ci command "${command}"`);
+    return await COMMANDS[command as keyof typeof COMMANDS](rest, options, io(options));
+  } catch (error) {
+    if (!(error instanceof CiUsageError)) throw error;
+    options.error(`lectio-gates ci: ${error.message}`);
+    options.error(CI_USAGE);
+    return 2;
+  }
+}
