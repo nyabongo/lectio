@@ -124,14 +124,16 @@ describe('runCheck', () => {
     );
     await writeFile(join(root, 'bad.json'), '{"year": 2025}');
     const a = capture();
-    expect(await runCheck(['--calendar', calendar], root, a.io)).toBe(1);
+    expect(await runCheck(['--block', 'seed', '--calendar', calendar], root, a.io)).toBe(1);
     expect(a.err).toEqual([
       '1 problem:',
       '  2025-09-21 matthew-apostle day: a feast on a Sunday needs a second reading (from celebrations:matthew-apostle)',
     ]);
     const b = capture();
     const missing = join(root, 'missing.json');
-    expect(await runCheck(['--calendar', join(root, 'bad.json'), '--calendar', missing], root, b.io)).toBe(1);
+    expect(
+      await runCheck(['--block', 'seed', '--calendar', join(root, 'bad.json'), '--calendar', missing], root, b.io),
+    ).toBe(1);
     expect(b.err).toEqual([
       '2 problems:',
       `  ${join(root, 'bad.json')}: not a valid calendar year file`,
