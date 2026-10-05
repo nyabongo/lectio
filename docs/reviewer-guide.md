@@ -29,10 +29,12 @@ The merge-rule job keeps exactly one decision label on every content PR, and rep
 | ---------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | `auto-merge-candidate` | Green: auto-merge, a counted approval, or a valid approval commit. It merges by itself | Nothing. Close the PR or push to it to stop it  |
 | `needs-review`         | Waiting for a person (also any green PR that changes `.github/**`)                     | Review it (below)                               |
-| `gates-failed`         | Blocked: a deterministic gate failed, or a forged approval or hand-set review block    | Nothing until the author or fix-up pushes a fix |
+| `gates-failed`         | Blocked: a deterministic gate failed, or a forged approval or hand-set review block    | Act on it: see [Blocked](#blocked-gates-failed) |
 
-You add one label yourself: **`approved`**, to approve (below). The `merge-rule` check on the PR is green for
-`auto-merge-candidate` and red otherwise; it is a required check, so a red one keeps the merge button closed.
+You add one label yourself: **`approved`**, to approve (below). The `merge-rule` check on the PR is green for a green
+decision (`auto-merge`, `human-approved`, `approved-commit`), including a `.github/**` PR that is labelled
+`needs-review` because you merge it by hand. It is red for `needs-review` and `gates-failed`; it is a required check,
+so a red one keeps the merge button closed.
 
 ## Reading the gates comment
 
@@ -56,7 +58,9 @@ from the top:
 6. **`Checked head:`** with the full commit sha. If it is not the PR's latest commit, the gates are still running on
    the new head: wait for the comment to update.
 
-[gates.md](gates.md#the-gates-comment) shows a full sample comment, rendered by the real merge rule. When a comment
+[gates.md](gates.md#the-gates-comment) shows a full sample comment, rendered by the real merge rule. The sample PR
+is synthetic (an invented passage) until the L-033 bad-week fixture
+([#230](https://github.com/nyabongo/lectio/pull/230)) lands. When a comment
 says findings were left out for its size, download the run's `gates-report` artifact for the full list
 (`gh run download <run id> -n gates-report`).
 
@@ -113,12 +117,32 @@ label, comment or approval commit. On a PR, use the label or `/approve`.
 
 ## When it is not right
 
-- **A small fix**: run `npm run research -- fixup --pr <n> --budget 3`. It repairs the findings in the latest gates
-  comment and pushes a commit; the gates run again. See the [research runbook](runbooks/research-cli.md#fix-up-mode).
+Research PRs are opened under the owner's account, so the reviewer is usually also the author: nobody else will push a
+fix. You act on the PR yourself.
+
+- **Verifier findings** (low support, a refutation, no verdict): run `npm run research -- fixup --pr <n> --budget 3`.
+  Fix-up repairs only these. It reads the latest gates comment and pushes a commit, and the gates run again. See the
+  [research runbook](runbooks/research-cli.md#fix-up-mode). A sensitive-claim flag is never fixed by a tool.
 - **An edit you can make**: edit the file on the PR branch and push. The gates run again; approve once they have.
 - **A wrong passage**: close the PR. A closed PR blocks that passage key for good: the planner skips it.
 - **Stopping a PR already approved**: removing the label or deleting the comment after the approval commit was written
   does not stop the merge. Close the PR, or push to it.
+
+### Blocked (`gates-failed`)
+
+Read the merge rule's reasons in the gates comment first. They say which of these two cases you have.
+
+- **A schema, evidence or licence failure** is a content problem. On a deterministic failure the verifiers never run,
+  so fix-up has nothing to repair. Read each finding's fix, then edit the passage on the PR branch and push; the gates
+  run again. If the passage is not worth saving, close the PR. Closing blocks that passage key for good, so a fresh
+  research run for it is not possible today.
+- **A forged approval commit, a review block set to approved by hand, or a symbolic link or submodule**
+  (`merge-rule/approval-commit-valid`, `merge-rule/review-block-approved`, `runner/regular-files`) is a security
+  signal, not a content bug. Do not approve and do not merge. Find out who pushed what: the commit authors and
+  signatures on the PR branch (`git log --format='%H %an %ae %G? %s' origin/main..<branch>`), the PR's timeline, and
+  the Actions run history for content-gates.yml. Then close the PR. If you did not push those commits yourself, rotate
+  the tokens that can write to the repository (your personal access tokens and the `gh` login the research CLI uses),
+  review the collaborator list and deploy keys, and check the `llm-verifiers` environment's secrets.
 
 ## Quick reference
 

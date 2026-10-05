@@ -170,7 +170,8 @@ run. It has:
 5. `Checked head:` with the full commit sha, so a stale comment can be told from a current one.
 
 This is the comment for an invented PR whose verifiers gave one claim low support and whose evidence rests partly on a
-print source. It is rendered by the real merge rule and comment renderer, so it changes when they do:
+print source. It is rendered by the real merge rule and comment renderer, so it changes when they do. The PR is synthetic until the
+L-033 bad-week fixture ([#230](https://github.com/nyabongo/lectio/pull/230)) lands:
 
 <!-- generated:sample-comment -->
 
