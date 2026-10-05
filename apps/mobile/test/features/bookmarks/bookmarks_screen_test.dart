@@ -210,10 +210,12 @@ void main() {
 
   group('BookmarkButton', () {
     testWidgets('toggles the bookmark', (tester) async {
+      // A target read back from JSON, as a screen gets it from the API.
+      final target = BookmarkTarget.fromJson(gospel.toJson());
       await pumpInPage(
         tester,
         controller,
-        const BookmarkButton(target: gospel, title: 'Gospel'),
+        BookmarkButton(target: target, title: 'Gospel'),
       );
       expect(find.byIcon(Icons.bookmark_border), findsOneWidget);
 
