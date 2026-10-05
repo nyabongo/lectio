@@ -11,7 +11,7 @@
  * code into the browser bundle.
  */
 import type { LectioConfig } from '@lectio/config';
-import type { ContentRepo, ResolvedDay, ResolvedReading } from '@lectio/content';
+import type { ContentRepo, ResolvedDay, ResolvedMass, ResolvedReading } from '@lectio/content';
 import type { Reading } from '@lectio/schema/calendar';
 import type { Passage, PassageClaim, PassageSource, TranslationNote } from '@lectio/schema/passage';
 
@@ -24,8 +24,11 @@ export const CONTENT_ISSUE_TEMPLATE = 'content-issue.yml';
 /** Ids of the issue form fields the report link prefills (they must match the form's `id`s). */
 export const CONTENT_ISSUE_FIELDS = ['passage', 'note', 'page'] as const;
 
-/** The note id a report about the Context panel carries. */
-export const CONTEXT_NOTE_ID = 'context';
+/**
+ * The note id a report about the Context panel carries. The leading underscore keeps it out of the translation-note
+ * id space (note ids are slugs, which cannot start with `_`), so a report is never ambiguous.
+ */
+export const CONTEXT_NOTE_ID = '_context';
 
 /** How a reading slot is named on the page; numbered slots carry `n`. */
 export type SlotName =
@@ -221,7 +224,7 @@ function noteView(passage: Passage, note: TranslationNote, page: string): NoteVi
 
 /** The reader-facing notes of an approved passage; `page` is the page path the report links carry. */
 export function notesView(passage: Passage, page: string): NotesView {
-  const scope = CONTEXT_NOTE_ID;
+  const scope = 'context';
   const claimIds = passage.context.paragraphs.flatMap(citedClaims);
   return {
     key: passage.key,
@@ -278,13 +281,28 @@ export function readingView(day: ResolvedDay, reading: ResolvedReading): Reading
   };
 }
 
+/** The id of the Mass during the Day, the principal Mass of a day with several (Vigil, Night, Dawn, Day). */
+export const PRINCIPAL_MASS_ID = 'day';
+
 /**
- * The readings of `day` by slot: every Mass in order, the first reading for a slot winning (a day with several
- * Masses that share a slot gets one page for it, from its first Mass).
+ * `masses` with the principal Mass (`id === 'day'`) first and the others in calendar order. The lectionary lists a
+ * solemnity's Masses Vigil first, so ordering by this decides which Mass "owns" a shared slot.
+ */
+export function principalFirst<M extends { readonly id: string }>(masses: readonly M[]): M[] {
+  return [
+    ...masses.filter((mass) => mass.id === PRINCIPAL_MASS_ID),
+    ...masses.filter((mass) => mass.id !== PRINCIPAL_MASS_ID),
+  ];
+}
+
+/**
+ * The readings of `day` by slot. When several Masses share a slot (Easter, Christmas, Pentecost and the other vigil
+ * solemnities), the Mass during the Day wins, then the first Mass in calendar order that has the slot. This is the
+ * one rule for which reading a `/[date]/[slot]/` page shows; the Today page links slots by the same helper.
  */
 export function readingsBySlot(day: ResolvedDay): Map<string, ResolvedReading> {
   const bySlot = new Map<string, ResolvedReading>();
-  for (const mass of day.masses)
+  for (const mass of principalFirst(day.masses as readonly (ResolvedMass & { readonly id: string })[]))
     for (const reading of mass.readings) {
       const { slot }: Reading = reading;
       if (!bySlot.has(slot)) bySlot.set(slot, reading);
@@ -311,10 +329,35 @@ export function readingStaticPaths(repo: ContentRepo): { params: { date: string;
     );
 }
 
-/** The name of the licensed source the Text tab opens (the configured link-out provider's label). */
-export function linkoutSource(config: Pick<LectioConfig, 'linkout'>): string {
-  const { provider, providers } = config.linkout;
-  return providers[provider]?.label ?? provider;
+/** Hosts of the built-in link-out providers (`linkout.providers.*.builtin`). */
+const BUILTIN_HOSTS: Readonly<Record<string, string>> = { drbo: 'drbo.org' };
+
+function hostOf(url: string): string | null {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The name of the licensed source a link-out URL opens, taken from the URL itself so the label always matches the
+ * link: the label of the configured provider (the active one first) whose host is the URL's host, else the host.
+ * The calendar's `linkout` URLs are generated, so a provider switch before the calendar is rebuilt never mislabels.
+ */
+export function linkoutSource(config: Pick<LectioConfig, 'linkout'>, url: string): string {
+  const host = hostOf(url);
+  if (host === null) return url;
+  const { provider: active, providers } = config.linkout;
+  const names = [active, ...Object.keys(providers).filter((name) => name !== active)];
+  for (const name of names) {
+    const provider = providers[name];
+    if (provider === undefined) continue;
+    const providerHost =
+      provider.builtin === undefined ? hostOf(provider.template ?? '') : (BUILTIN_HOSTS[provider.builtin] ?? null);
+    if (providerHost === host) return provider.label;
+  }
+  return host;
 }
 
 /** The tab panels in order (the Text tab is a link-out, not a panel). */
@@ -323,7 +366,13 @@ export type ReadingTab = (typeof READING_TABS)[number];
 
 /** The tab to open first: the one the URL fragment names (`#original`, or an element inside it), else Context. */
 export function initialTab(hash: string, panelOf: (id: string) => ReadingTab | null = () => null): ReadingTab {
-  const id = decodeURIComponent(hash.replace(/^#/, ''));
+  const raw = hash.replace(/^#/, '');
+  let id = raw;
+  try {
+    id = decodeURIComponent(raw);
+  } catch {
+    // A malformed escape (`#%`): use the fragment as written.
+  }
   if ((READING_TABS as readonly string[]).includes(id)) return id as ReadingTab;
   return (id === '' ? null : panelOf(id)) ?? 'context';
 }

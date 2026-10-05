@@ -11,12 +11,15 @@ import {
   CONTENT_ISSUE_FIELDS,
   CONTENT_ISSUE_REPO,
   CONTENT_ISSUE_TEMPLATE,
+  CONTEXT_NOTE_ID,
+  PRINCIPAL_MASS_ID,
   citedClaims,
   firstChapter,
   htmlLang,
   initialTab,
   linkoutSource,
   notesView,
+  principalFirst,
   readingPage,
   readingPath,
   readingStaticPaths,
@@ -161,7 +164,8 @@ describe('notesView', () => {
       'lsj-ophthalmos',
       'davies-allison',
     ]);
-    expect(new URL(view.context.reportUrl).searchParams.get('note')).toBe('context');
+    expect(new URL(view.context.reportUrl).searchParams.get('note')).toBe(CONTEXT_NOTE_ID);
+    expect(CONTEXT_NOTE_ID).toBe('_context');
   });
 
   it('builds every translation note with its original, sources and report link', () => {
@@ -276,7 +280,18 @@ describe('reading pages from the fixture content root', () => {
     expect(view?.key).toBe(PENDING);
     expect(is.review.status).toBe('pending');
     expect(view?.notes).toBeNull();
-    expect(JSON.stringify(view)).not.toContain(is.context.title);
+    // The pending fixture has a Hebrew translation note with distinctive markers; none of it may leak.
+    expect(is.translationNotes).toHaveLength(1);
+    const json = JSON.stringify(view);
+    for (const leak of [
+      is.context.title,
+      is.summary,
+      'PENDING-NOTE-SUMMARY',
+      'PENDING-NOTE-BODY',
+      'v8-thoughts',
+      'מַחְשְׁבוֹתַי',
+    ])
+      expect(json).not.toContain(leak);
   });
 
   it('has no notes for a reading without a passage file', () => {
@@ -297,12 +312,56 @@ describe('reading pages from the fixture content root', () => {
     expect(readingView(noCelebration, gospel)).toMatchObject({ celebration: null, colour: null });
   });
 
-  it('keeps the first reading for a slot when several Masses share it', () => {
+  it('takes a shared slot from the Mass during the Day, after a Vigil listed first (Easter, Christmas)', () => {
     const day = repo.resolveDay('2026-09-20') as ResolvedDay;
     const [mass] = day.masses;
+    const reading = (slot: string, ref: string) => ({ ...mass?.readings[0], slot, ref });
+    const vigil = {
+      ...mass,
+      id: 'vigil',
+      readings: [reading('reading-1', 'Gn 1:1-2:2'), reading('epistle', 'Rom 6:3-11'), reading('gospel', 'Mt 28:1-10')],
+    };
+    const dayMass = {
+      ...mass,
+      id: 'day',
+      readings: [reading('first-reading', 'Acts 10:34a, 37-43'), reading('gospel', 'Jn 20:1-9')],
+    };
+    const easter = { ...day, masses: [vigil, dayMass] } as unknown as ResolvedDay;
+    const refs = new Map([...readingsBySlot(easter)].map(([slot, r]) => [slot, (r as Reading).ref]));
+    expect(refs.get('gospel')).toBe('Jn 20:1-9');
+    expect(refs.get('first-reading')).toBe('Acts 10:34a, 37-43');
+    // Slots only the Vigil has still get a page, from the Vigil.
+    expect(refs.get('reading-1')).toBe('Gn 1:1-2:2');
+    expect(refs.get('epistle')).toBe('Rom 6:3-11');
+
+    const christmas = {
+      ...day,
+      masses: [
+        { ...vigil, readings: [reading('gospel', 'Mt 1:1-25')] },
+        { ...mass, id: 'night', readings: [reading('gospel', 'Lk 2:1-14')] },
+        { ...mass, id: 'dawn', readings: [reading('gospel', 'Lk 2:15-20')] },
+        { ...dayMass, readings: [reading('gospel', 'Jn 1:1-18')] },
+      ],
+    } as unknown as ResolvedDay;
+    expect((readingsBySlot(christmas).get('gospel') as Reading | undefined)?.ref).toBe('Jn 1:1-18');
+  });
+
+  it('falls back to the first Mass in calendar order when no Mass is the Mass during the Day', () => {
+    const day = repo.resolveDay('2026-09-20') as ResolvedDay;
+    const [mass] = day.masses;
+    const first = { ...mass, id: 'vigil' };
     const evening = { ...mass, id: 'evening', readings: [{ ...mass?.readings[3], ref: 'Other' }] };
-    const twoMasses = { ...day, masses: [mass, evening] } as unknown as ResolvedDay;
+    const twoMasses = { ...day, masses: [first, evening] } as unknown as ResolvedDay;
     expect((readingsBySlot(twoMasses).get('gospel') as Reading | undefined)?.ref).toBe('Mt 20:1-16a');
+  });
+
+  it('orders the principal Mass first and keeps the rest in order', () => {
+    expect(principalFirst([{ id: 'vigil' }, { id: 'night' }, { id: 'day' }]).map((m) => m.id)).toEqual([
+      'day',
+      'vigil',
+      'night',
+    ]);
+    expect(PRINCIPAL_MASS_ID).toBe('day');
   });
 
   it('builds page paths under the date', () => {
@@ -311,9 +370,31 @@ describe('reading pages from the fixture content root', () => {
 });
 
 describe('linkoutSource', () => {
-  it('names the configured provider, or falls back to its key', () => {
-    expect(linkoutSource(fixture.config)).toBe('Douay-Rheims (drbo.org)');
-    expect(linkoutSource({ linkout: { ...fixture.config.linkout, provider: 'missing' } })).toBe('missing');
+  const { linkout } = fixture.config;
+
+  it('names the provider whose host the link-out URL is on', () => {
+    expect(linkoutSource(fixture.config, 'https://www.drbo.org/chapter/47020.htm')).toBe('Douay-Rheims (drbo.org)');
+    expect(linkoutSource(fixture.config, 'https://bible.usccb.org/bible/matthew/20?1')).toBe(
+      'New American Bible (USCCB)',
+    );
+  });
+
+  it('follows the URL, not the active provider, so label and link always agree', () => {
+    const switched = { linkout: { ...linkout, provider: 'usccb' } };
+    expect(linkoutSource(switched, 'https://www.drbo.org/chapter/47020.htm')).toBe('Douay-Rheims (drbo.org)');
+    const missing = { linkout: { ...linkout, provider: 'missing' } };
+    expect(linkoutSource(missing, 'https://universalis.com/20260920/mass.htm')).toBe('Universalis');
+  });
+
+  it('falls back to the host, or the URL itself when it does not parse', () => {
+    expect(linkoutSource(fixture.config, 'https://www.example.org/x')).toBe('example.org');
+    expect(linkoutSource(fixture.config, 'not a url')).toBe('not a url');
+    const odd = { linkout: { ...linkout, providers: { x: { label: 'X', enabled: true, builtin: 'other' } } } };
+    expect(linkoutSource(odd as never, 'https://drbo.org/a')).toBe('drbo.org');
+    const broken = { linkout: { ...linkout, providers: { y: { label: 'Y', enabled: true, template: 'nope' } } } };
+    expect(linkoutSource(broken as never, 'https://drbo.org/a')).toBe('drbo.org');
+    const neither = { linkout: { ...linkout, providers: { z: { label: 'Z', enabled: true } } } };
+    expect(linkoutSource(neither as never, 'https://drbo.org/a')).toBe('drbo.org');
   });
 });
 
@@ -325,6 +406,12 @@ describe('tabs', () => {
     expect(initialTab('#unknown')).toBe('context');
     expect(initialTab('#note-v15-evil-eye', (id) => (id.startsWith('note-') ? 'original' : null))).toBe('original');
     expect(initialTab('#x', () => null)).toBe('context');
+  });
+
+  it('survives a malformed fragment, using it as written', () => {
+    expect(initialTab('#%')).toBe('context');
+    expect(initialTab('#%E0%A4%A', (id) => (id === '%E0%A4%A' ? 'original' : null))).toBe('original');
+    expect(initialTab('#note-%C3%A9', (id) => (id === 'note-é' ? 'original' : null))).toBe('original');
   });
 
   it('moves with the arrow keys (wrapping), Home and End', () => {
