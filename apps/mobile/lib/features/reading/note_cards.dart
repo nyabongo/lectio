@@ -6,6 +6,7 @@ import 'package:lectio/data/models/notes.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
+import 'package:lectio/features/share/share_button.dart';
 
 const ReadingStrings _strings = ReadingStrings.en;
 
@@ -358,6 +359,10 @@ class NoteCard extends StatelessWidget {
                 note: note.id,
                 page: page,
               ),
+            ),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ShareButton(content: noteShare(passage, note, page)),
             ),
           ],
         ),

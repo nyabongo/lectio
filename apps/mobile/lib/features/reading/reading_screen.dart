@@ -9,6 +9,7 @@ import 'package:lectio/features/reading/note_cards.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:lectio/features/reading/reading_strings.dart';
 import 'package:lectio/features/reading/reading_view.dart';
+import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 
@@ -281,9 +282,16 @@ class ReadingDayView extends StatelessWidget {
                 if (reading != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      reading.ref,
-                      style: theme.textTheme.headlineSmall,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            reading.ref,
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                        ),
+                        ShareButton(content: readingShare(day.date, reading)),
+                      ],
                     ),
                   ),
               ],

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
 import 'package:lectio/features/notifications/daily_reminder_scheduler.dart';
 import 'package:lectio/features/reading/reading_screen.dart';
+import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
 import 'package:lectio/src/routing/app_route.dart';
@@ -266,7 +267,16 @@ class _TodayScreenState extends State<TodayScreen> {
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
-        children: [header, const SizedBox(height: 16), body],
+        children: [
+          header,
+          if (snapshot != null)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ShareButton(content: dayShare(snapshot.value)),
+            ),
+          const SizedBox(height: 16),
+          body,
+        ],
       ),
     );
     if (snapshot == null) return content;
