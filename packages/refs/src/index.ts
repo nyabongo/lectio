@@ -1,7 +1,7 @@
 /**
  * @lectio/refs: the book table, the lectionary reference parser, canonical
  * passage keys (ADR 0004), formatters, verse enumeration, and versification
- * (verse existence and cross-versification mapping, L-006). Link-outs live in L-007.
+ * (verse existence and cross-versification mapping, L-006), and link-out URLs (L-007).
  */
 export const packageName = '@lectio/refs';
 
@@ -42,3 +42,19 @@ export type {
   VersificationData,
   VersificationErrorCode,
 } from './versification/index.ts';
+export {
+  DRBO_BASE,
+  LinkoutError,
+  REFERENCE_SCHEME,
+  TEMPLATE_TOKENS,
+  activeProvider,
+  compactDate,
+  drboChapterUrl,
+  drboUrl,
+  fillTemplate,
+  firstChapter,
+  linkoutUrl,
+  templateTokens,
+  templateValues,
+} from './linkout/index.ts';
+export type { Linkout, LinkoutErrorCode, TemplateToken } from './linkout/index.ts';
