@@ -5,9 +5,6 @@ import 'package:lectio/src/routing/router.dart';
 void main() {
   test('Today, Reading and Listen are the tabs', () {
     expect(AppRoute.tabs, [AppRoute.today, AppRoute.reading, AppRoute.listen]);
-    expect(AppRoute.calendar.isTab, isFalse);
-    expect(AppRoute.settings.isTab, isFalse);
-    expect(AppRoute.listen.isTab, isTrue);
   });
 
   test('every route has a distinct absolute path', () {
@@ -18,6 +15,8 @@ void main() {
 
   test('tabForPath finds the tab or falls back to Today', () {
     expect(tabForPath('/reading'), AppRoute.reading);
+    expect(tabForPath('/listen/queue'), AppRoute.listen);
+    expect(tabForPath('/readings'), AppRoute.today);
     expect(tabForPath('/calendar'), AppRoute.today);
     expect(tabForPath('/nowhere'), AppRoute.today);
   });

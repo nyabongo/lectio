@@ -74,6 +74,18 @@ void main() {
     });
   }
 
+  for (final location in ['/calendar', '/settings']) {
+    testWidgets('a deep link to $location leads back to Today', (tester) async {
+      await tester.pumpWidget(LectioApp(initialLocation: location));
+      await tester.pumpAndSettle();
+      expect(find.byType(BackButton), findsNothing);
+
+      await tester.tap(find.byTooltip('Today'));
+      await tester.pumpAndSettle();
+      expect(headerTitle('Today'), findsOneWidget);
+    });
+  }
+
   testWidgets('an unknown location shows not found', (tester) async {
     await tester.pumpWidget(const LectioApp(initialLocation: '/nowhere'));
     await tester.pumpAndSettle();

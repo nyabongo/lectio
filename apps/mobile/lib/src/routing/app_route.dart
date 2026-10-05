@@ -33,7 +33,4 @@ enum AppRoute {
 
   /// The bottom-navigation tabs, in display order.
   static const List<AppRoute> tabs = [today, reading, listen];
-
-  /// Whether this route is a bottom-navigation tab.
-  bool get isTab => tabs.contains(this);
 }

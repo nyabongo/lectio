@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lectio/features/calendar/calendar_screen.dart';
+import 'package:lectio/features/listen/listen_screen.dart';
+import 'package:lectio/features/reading/reading_screen.dart';
+import 'package:lectio/features/settings/settings_screen.dart';
+import 'package:lectio/features/share/deep_link_routes.dart';
+import 'package:lectio/features/today/today_screen.dart';
 import 'package:lectio/src/routing/app_route.dart';
 import 'package:lectio/src/routing/app_shell.dart';
-import 'package:lectio/src/screens/placeholder_screen.dart';
 
-/// The tab whose path is [path], falling back to Today.
+/// The tab whose path is [path] or a sub-path of it, falling back to Today.
 AppRoute tabForPath(String path) {
   for (final tab in AppRoute.tabs) {
-    if (tab.path == path) return tab;
+    if (path == tab.path || path.startsWith('${tab.path}/')) return tab;
   }
   return AppRoute.today;
 }
@@ -15,7 +20,9 @@ AppRoute tabForPath(String path) {
 /// Builds the app's router, starting at [initialLocation].
 ///
 /// `/` redirects to Today. The tabs share [AppShell]; Calendar and Settings
-/// open full screen on top of it. Unknown locations show a not-found page.
+/// open full screen on top of it; shared links come last. Each route lives in
+/// its feature's file under `lib/features/`, so a feature issue replaces only
+/// its own file. Unknown locations show a not-found page.
 GoRouter createRouter({String initialLocation = '/today'}) {
   return GoRouter(
     initialLocation: initialLocation,
@@ -24,24 +31,11 @@ GoRouter createRouter({String initialLocation = '/today'}) {
       ShellRoute(
         builder: (context, state, child) =>
             AppShell(current: tabForPath(state.uri.path), child: child),
-        routes: [
-          for (final tab in AppRoute.tabs)
-            GoRoute(
-              path: tab.path,
-              name: tab.name,
-              builder: (context, state) => PlaceholderScreen(route: tab),
-            ),
-        ],
+        routes: [todayRoute(), readingRoute(), listenRoute()],
       ),
-      for (final route in [AppRoute.calendar, AppRoute.settings])
-        GoRoute(
-          path: route.path,
-          name: route.name,
-          builder: (context, state) => Scaffold(
-            appBar: AppBar(title: Text(route.title)),
-            body: PlaceholderScreen(route: route),
-          ),
-        ),
+      calendarRoute(),
+      settingsRoute(),
+      ...deepLinkRoutes(),
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),
   );
