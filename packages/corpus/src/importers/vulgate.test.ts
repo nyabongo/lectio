@@ -99,7 +99,11 @@ async function treeHash(dir: string): Promise<string> {
     for (const entry of entries) {
       const path = join(current, entry.name);
       if (entry.isDirectory()) await walk(path);
-      else hash.update(relative(dir, path)).update('\0').update(await readFile(path));
+      else
+        hash
+          .update(relative(dir, path))
+          .update('\0')
+          .update(await readFile(path));
     }
   }
   await walk(dir);
@@ -151,14 +155,26 @@ describe('parseVulgateBook', () => {
   it('parses chapters and verses (CRLF or LF, with or without a final newline)', () => {
     const book = parseVulgateBook('1:1 Alpha beta.\r\n1:2 Gamma.\r\n2:1 Delta', 'X.lat');
     expect([...book.keys()]).toEqual(['1', '2']);
-    expect(book.get('1')).toEqual({ '1': [['Alpha', ''], ['beta.', '']], '2': [['Gamma.', '']] });
+    expect(book.get('1')).toEqual({
+      '1': [
+        ['Alpha', ''],
+        ['beta.', ''],
+      ],
+      '2': [['Gamma.', '']],
+    });
     expect(book.get('2')).toEqual({ '1': [['Delta', '']] });
     expect(parseVulgateBook('1:1 A\n', 'X.lat').get('1')).toEqual({ '1': [['A', '']] });
   });
 
   it('stores a prologue as its own verse, before the first "["', () => {
     const book = parseVulgateBook('1:1 <Prologus>Ante dixit : [<Aleph>Quomodo/\r\n', 'Lam.lat');
-    expect(book.get('1')).toEqual({ [PROLOGUE_VERSE]: [['Ante', ''], ['dixit', '']], '1': [['Quomodo', '']] });
+    expect(book.get('1')).toEqual({
+      [PROLOGUE_VERSE]: [
+        ['Ante', ''],
+        ['dixit', ''],
+      ],
+      '1': [['Quomodo', '']],
+    });
   });
 
   it.each([
@@ -218,9 +234,7 @@ describe('importClementineVulgate', () => {
     expect((await corpus.editions()).length).toBe(1);
     expect(await readdir(corpusRoot)).toEqual([VULGATE_EDITION]);
 
-    expect(await listLicences(corpusRoot)).toEqual([
-      { edition: VULGATE_EDITION, ...vulgateSource(archive) },
-    ]);
+    expect(await listLicences(corpusRoot)).toEqual([{ edition: VULGATE_EDITION, ...vulgateSource(archive) }]);
     const licence = await readFile(join(corpusRoot, VULGATE_EDITION, 'LICENSE.md'), 'utf8');
     expect(licence).toContain(`> ${LICENCE_STATEMENT}`);
     expect(licence).toContain('# Synthetic upstream README\n\nFor tests.\n');
@@ -289,7 +303,12 @@ describe('importClementineVulgate staging and swap', () => {
     const bytes = await fixtureArchive(dir, edit);
     const archive = { url: testUrl, sha256: sha256Hex(bytes), version: 'test-1' };
     const corpusRoot = join(dir, 'corpus');
-    const base = { corpusRoot, cacheDir: join(dir, 'cache'), archive, downloader: fakeDownloader({ [testUrl]: bytes }) };
+    const base = {
+      corpusRoot,
+      cacheDir: join(dir, 'cache'),
+      archive,
+      downloader: fakeDownloader({ [testUrl]: bytes }),
+    };
     return { corpusRoot, base };
   }
   async function oldEdition(corpusRoot: string): Promise<void> {
@@ -373,9 +392,7 @@ describe('fetchDownloader', () => {
 
   it('throws a CorpusError on an HTTP error status', async () => {
     server.use(http.get(testUrl, () => new HttpResponse(null, { status: 404 })));
-    await expect(fetchDownloader().fetchBytes(testUrl)).rejects.toThrow(
-      new CorpusError(`GET ${testUrl}: HTTP 404`),
-    );
+    await expect(fetchDownloader().fetchBytes(testUrl)).rejects.toThrow(new CorpusError(`GET ${testUrl}: HTTP 404`));
   });
 
   it('throws a CorpusError on a network error', async () => {
