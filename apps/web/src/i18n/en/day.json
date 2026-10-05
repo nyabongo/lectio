@@ -1,0 +1,62 @@
+{
+  "pageTitle": "{title}, {date}",
+  "description": "{title}, {date}. The readings: {refs}. Notes on their history and original words, with each text a tap away.",
+  "descriptionNoReadings": "{title}, {date}. The readings for this day are not listed yet.",
+  "todayHeading": "Today",
+  "todayMissing": "There is no calendar day for today yet. The calendar lists every day that is ready.",
+  "upcomingHeading": "The days ahead",
+  "readingsHeading": "Readings",
+  "massOptions": {
+    "one": "This day has {count} Mass to choose from.",
+    "other": "This day has {count} Masses to choose from."
+  },
+  "lectionaryMissing": "The readings for this day are not listed yet.",
+  "notesInPreparation": "Notes in preparation",
+  "linkout": {
+    "text": "Text",
+    "detail": "{ref} at {source} (opens in a new tab)"
+  },
+  "listen": "Listen to the notes",
+  "dayNav": "Other days",
+  "previousDay": "Previous day",
+  "nextDay": "Next day",
+  "colourLabel": "Liturgical colour: {colour}",
+  "cycles": "Sunday cycle {sunday} · Weekday cycle {weekday}",
+  "seasonWeek": "{season} · Week {week}",
+  "season": {
+    "advent": "Advent",
+    "christmas": "Christmas Time",
+    "ordinaryTime": "Ordinary Time",
+    "lent": "Lent",
+    "paschalTriduum": "Paschal Triduum",
+    "easter": "Easter Time"
+  },
+  "rank": {
+    "solemnity": "Solemnity",
+    "sunday": "Sunday",
+    "feast": "Feast",
+    "memorial": "Memorial",
+    "optionalMemorial": "Optional memorial",
+    "commemoration": "Commemoration",
+    "weekday": "Weekday"
+  },
+  "colour": {
+    "white": "White",
+    "red": "Red",
+    "green": "Green",
+    "violet": "Violet",
+    "rose": "Rose",
+    "black": "Black",
+    "gold": "Gold"
+  },
+  "slot": {
+    "firstReading": "First reading",
+    "psalm": "Psalm",
+    "secondReading": "Second reading",
+    "gospel": "Gospel",
+    "epistle": "Epistle",
+    "readingN": "Reading {n}",
+    "psalmN": "Psalm {n}",
+    "other": "Reading"
+  }
+}

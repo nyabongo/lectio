@@ -161,8 +161,8 @@ describe('lectio-gates decide', () => {
       options(),
     );
     expect(code).toBe(1);
-    expect(logs[0]).toBe('decision: needs-review');
-    expect(JSON.parse(read('out/decision.json'))).toMatchObject({ decision: 'needs-review' });
+    expect(logs[0]).toBe('decision: blocked');
+    expect(JSON.parse(read('out/decision.json'))).toMatchObject({ decision: 'blocked' });
   });
 
   it('builds the PR facts from git when --pr is missing', async () => {
@@ -174,7 +174,32 @@ describe('lectio-gates decide', () => {
     };
     expect(await runGatesCli(['decide', '--results', 'gates.json', '--base', 'main'], options({ gitExec }))).toBe(1);
     expect(seen).toEqual([['diff', '--name-status', '-z', 'main...HEAD']]);
-    expect(logs).toEqual(['decision: needs-review', '  - not implemented (L-028)']);
+    expect(logs).toEqual(['decision: blocked', '  - the dummy gate failed']);
+  });
+
+  it('without --pr, checks review blocks set to approved and the old paths of renames', async () => {
+    writeFileSync(join(dir, 'gates.json'), JSON.stringify({ results: [] }));
+    const rename = ['R100', 'config/old.json', 'passages/NEW.json', ''].join('\0');
+    const gitExec = (args: readonly string[]): string => (args[0] === 'diff' ? rename : '');
+    const passage = (status: string) => JSON.stringify({ claims: [{ id: 'c1' }], review: { status } });
+
+    writeFileSync(join(dir, 'passages/NEW.json'), passage('approved'));
+    expect(await runGatesCli(['decide', '--results', 'gates.json'], options({ gitExec }))).toBe(1);
+    expect(logs).toContain(
+      '  - passages/NEW.json sets its review block to approved without a verified approval or a valid approval commit',
+    );
+
+    logs = [];
+    writeFileSync(join(dir, 'passages/NEW.json'), passage('pending'));
+    expect(await runGatesCli(['decide', '--results', 'gates.json'], options({ gitExec }))).toBe(1);
+    expect(logs).toContain('  - config/old.json is under config/** (never auto-merged)');
+  });
+
+  it('decide refuses a --head that is not checked out', async () => {
+    await writeReport();
+    const gitExec = (args: readonly string[]): string => (args.at(-1) === 'HEAD^{commit}' ? 'aaa' : 'bbb');
+    expect(await runGatesCli(['decide', '--results', 'gates.json', '--head', 'feature'], options({ gitExec }))).toBe(2);
+    expect(errors[0]).toMatch(/--head feature is not the commit checked out/);
   });
 
   it('exits 0 for a green decision and passes --pr-number into the facts', async () => {

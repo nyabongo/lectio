@@ -1,0 +1,47 @@
+# Content runway monitor (L-073). Once a day, checks the next `runway.windowDays`
+# days (from today in `site.timezone`) for readings without an approved note and
+# keeps one issue, marked `<!-- lectio-runway -->`, in step: opened or updated
+# while more than `runway.maxMissingDays` days are missing, updated and closed once
+# the count is back within it (`npm run runway`, packages/runway).
+#
+# Not a required check (no pull_request trigger, nothing to register in
+# .github/required-checks/). It never runs research, which stays a local CLI. No
+# secrets: the job's GITHUB_TOKEN may only read contents and write issues.
+name: Runway
+
+on:
+  schedule:
+    # 04:17 UTC is 07:17 in Africa/Nairobi, after the day has started there.
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+# One run at a time, so two runs never race to create the issue.
+concurrency:
+  group: runway
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  runway:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check the runway and upsert the runway issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run runway
