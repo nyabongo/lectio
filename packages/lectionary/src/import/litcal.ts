@@ -14,6 +14,11 @@
  * `psalm-1`…, `epistle`, and the psalm after the epistle to the next psalm number (`psalm-8`).
  * LitCal's dual psalm numbers (`Psalm 66 (67)`) are read as the Hebrew one (canonical.ts).
  *
+ * The import fails rather than guess: a manifest with unknown properties, an import key that is not a
+ * key of the target's kind, or a Mass sub-leaf (`<Key>.<mass>`) that LitCal does not have is a
+ * problem. A Mass LitCal really dropped is confirmed with `"removed": true` on its import, which drops
+ * its provisional readings on merge.
+ *
  * The network call goes through the injected {@link TextFetcher}; tests pass a fake.
  */
 import type { ReadingSlot } from '@lectio/schema/common';
@@ -21,7 +26,7 @@ import { READING_SLOTS } from '@lectio/schema/common';
 import type { RefError } from '@lectio/refs';
 
 import { canonicalRef } from '../canonical.ts';
-import { compareKeys } from '../keys.ts';
+import { PROPER_OF_TIME_KEY, SLUG, compareKeys } from '../keys.ts';
 import { slotRanker } from '../slots.ts';
 import { locatorRegExp } from '../sources.ts';
 import { CYCLES, ENTRY_KINDS } from '../types.ts';
@@ -41,6 +46,11 @@ export interface LitcalImport {
   readonly shared?: readonly ReadingSlot[];
   /** A `litcal` locator: `<dir>/en.json#<Key>[.<mass>]`. */
   readonly locator: string;
+  /**
+   * Confirms that LitCal dropped the Mass sub-leaf the locator names: its provisional readings are
+   * removed on merge. Without it, a missing sub-leaf fails the import (a typo must not delete data).
+   */
+  readonly removed?: boolean;
 }
 
 export interface LitcalManifest {
@@ -110,6 +120,21 @@ function mapSlot(
     : undefined;
 }
 
+const MANIFEST_PROPERTIES = new Set(['$comment', 'target', 'kind', 'shared', 'imports']);
+const IMPORT_PROPERTIES = new Set(['key', 'locator', 'mass', 'cycle', 'shared', 'removed']);
+
+/** Properties of `record` that `allowed` does not list, quoted, for a message. */
+function unknownProperties(record: Record<string, unknown>, allowed: ReadonlySet<string>): string[] {
+  return Object.keys(record)
+    .filter((name) => !allowed.has(name))
+    .map((name) => `"${name}"`);
+}
+
+/** Whether `key` is a key of an entry of `kind` (types.ts): a proper-of-time key, else a slug. */
+function isEntryKey(kind: unknown, key: string): boolean {
+  return kind === 'proper-of-time' ? PROPER_OF_TIME_KEY.test(key) : SLUG.test(key);
+}
+
 const isSlotList = (value: unknown): boolean =>
   value === undefined ||
   (Array.isArray(value) && value.every((slot) => (READING_SLOTS as readonly unknown[]).includes(slot)));
@@ -118,7 +143,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-/** Shape check of a parsed manifest. */
+/** Shape check of a parsed manifest: unknown properties and keys that do not fit the kind are problems. */
 export function parseManifest(json: unknown, label: string): { data?: LitcalManifest; problems: string[] } {
   if (!isRecord(json) || typeof json['target'] !== 'string' || !Array.isArray(json['imports'])) {
     return { problems: [`${label}: expected { "target", "kind", "imports": [...] }`] };
@@ -129,6 +154,8 @@ export function parseManifest(json: unknown, label: string): { data?: LitcalMani
   if (!ENTRY_KINDS.includes(json['kind'] as EntryKind))
     problems.push(`${label}: kind must be one of ${ENTRY_KINDS.join(', ')}`);
   if (!isSlotList(json['shared'])) problems.push(`${label}: shared must be an array of reading slots`);
+  const unknown = unknownProperties(json, MANIFEST_PROPERTIES);
+  if (unknown.length > 0) problems.push(`${label}: unknown properties ${unknown.join(', ')}`);
   json['imports'].forEach((item: unknown, i) => {
     const ok =
       isRecord(item) &&
@@ -136,8 +163,17 @@ export function parseManifest(json: unknown, label: string): { data?: LitcalMani
       typeof item['locator'] === 'string' &&
       (item['mass'] === undefined || typeof item['mass'] === 'string') &&
       (item['cycle'] === undefined || CYCLES.includes(item['cycle'] as Cycle)) &&
+      (item['removed'] === undefined || typeof item['removed'] === 'boolean') &&
       isSlotList(item['shared']);
-    if (!ok) problems.push(`${label} imports[${i}]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }`);
+    if (!ok) {
+      problems.push(`${label} imports[${i}]: expected { "key", "locator", "mass"?, "cycle"?, "shared"?, "removed"? }`);
+      return;
+    }
+    const extra = unknownProperties(item, IMPORT_PROPERTIES);
+    if (extra.length > 0) problems.push(`${label} imports[${i}]: unknown properties ${extra.join(', ')}`);
+    const key = item['key'] as string;
+    if (!isEntryKey(json['kind'], key))
+      problems.push(`${label} imports[${i}]: "${key}" is not a ${String(json['kind'])} key`);
   });
   return problems.length === 0 ? { data: json as unknown as LitcalManifest, problems } : { problems };
 }
@@ -159,14 +195,27 @@ function toReading(slot: ReadingSlot, text: string, cycle: Cycle | undefined, so
 
 export interface LitcalImportResult {
   readonly readings: ImportedReading[];
-  /** Masses LitCal no longer has (their parent leaf is still there); `mergeImported` drops their readings. */
+  /** Masses confirmed gone from LitCal (`"removed": true`); `mergeImported` drops their readings. */
   readonly removedMasses: RemovedMass[];
   readonly problems: string[];
 }
 
+/** What a shared slot must agree on across imports: the reference, its printed form and its alternatives. */
+function sharedSignature(reading: Reading): string {
+  const { ref, printed, alternatives = [] } = reading;
+  return JSON.stringify([ref, printed, alternatives.map((alt) => [alt.ref, alt.printed])]);
+}
+
+/** A reading for a conflict message, as LitCal prints it (`a | b`); imported readings always keep `printed`. */
+function describe(reading: Reading): string {
+  return [reading, ...(reading.alternatives ?? [])].map((part) => String(part.printed)).join(' | ');
+}
+
 /**
  * Fetches the manifest's LitCal files at the pinned revision and converts the listed leaves. A
- * shared slot that two imports of one key and Mass give differently is a problem.
+ * shared slot that two imports of one celebration (key), Mass and slot give differently (ref, printed
+ * form or alternatives) is a problem, and so is a Mass sub-leaf LitCal does not have, unless the
+ * import confirms it with `"removed": true`.
  */
 export async function importLitcal(
   manifest: LitcalManifest,
@@ -184,7 +233,7 @@ export async function importLitcal(
   const readings: ImportedReading[] = [];
   const removedMasses: RemovedMass[] = [];
   const problems: string[] = [];
-  const sharedRefs = new Map<string, string>();
+  const sharedReadings = new Map<string, Reading>();
 
   for (const item of manifest.imports) {
     const at = `${item.key} ← ${item.locator}`;
@@ -213,7 +262,16 @@ export async function importLitcal(
     }
     const mass = item.mass ?? 'day';
     if (leaf === undefined && massKey !== undefined && isRecord(parent)) {
-      removedMasses.push({ key: item.key, mass, locator: item.locator });
+      if (item.removed === true) removedMasses.push({ key: item.key, mass, locator: item.locator });
+      else
+        problems.push(
+          `${at}: ${leafKey} in ${path} has no "${massKey}" (${Object.keys(parent).join(', ')}); ` +
+            'fix the locator, or set "removed": true if LitCal dropped this Mass',
+        );
+      continue;
+    }
+    if (item.removed === true) {
+      problems.push(`${at}: marked "removed" but ${path} still has the leaf`);
       continue;
     }
     if (!isRecord(leaf)) {
@@ -242,11 +300,13 @@ export async function importLitcal(
       const { reading } = imported;
       if (shared.includes(reading.slot)) {
         const id = `${imported.key} ${imported.mass} ${reading.slot}`;
-        const earlier = sharedRefs.get(id);
-        if (earlier !== undefined && earlier !== reading.ref) {
-          problems.push(`${at}: shared ${reading.slot} "${reading.ref}" differs from "${earlier}" imported for ${id}`);
+        const earlier = sharedReadings.get(id);
+        if (earlier !== undefined && sharedSignature(earlier) !== sharedSignature(reading)) {
+          problems.push(
+            `${at}: shared ${reading.slot} "${describe(reading)}" differs from "${describe(earlier)}" imported for ${id}`,
+          );
         }
-        sharedRefs.set(id, reading.ref);
+        sharedReadings.set(id, reading);
       }
       readings.push(imported);
     }

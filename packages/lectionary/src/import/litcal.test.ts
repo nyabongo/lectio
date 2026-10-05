@@ -47,10 +47,12 @@ const FILES: Record<string, unknown> = {
   [`${BASE}lectionary/feriale_per_annum_I/en.json`]: {
     OrdWeekday24Monday: { first_reading: '1 Timothy 2:1-8', gospel: 'Luke 7:1-10' },
     OrdWeekday24Tuesday: { first_reading: '1 Timothy 3:1-13', gospel: 'Luke 7:11-17' },
+    OrdWeekday24Wednesday: { first_reading: '1 Timothy 3:14-16', gospel: 'Luke 7:31-35' },
   },
   [`${BASE}lectionary/feriale_per_annum_II/en.json`]: {
     OrdWeekday24Monday: { first_reading: '1 Corinthians 11:17-26, 33', gospel: 'Luke 7:1-10' },
     OrdWeekday24Tuesday: { first_reading: '1 Corinthians 12:12-14, 27-31a', gospel: 'Luke 7:11-16' },
+    OrdWeekday24Wednesday: { first_reading: '1 Corinthians 12:31-13:13', gospel: 'Luke 7:31-35|Luke 7:31-34' },
   },
 };
 
@@ -170,8 +172,45 @@ describe('importLitcal', () => {
       fakeFetcher(),
     );
     expect(conflict.problems).toEqual([
-      'ot-weekday-24-tue ← feriale_per_annum_II/en.json#OrdWeekday24Tuesday: shared gospel "Lk 7:11-16" differs from "Lk 7:11-17" imported for ot-weekday-24-tue day gospel',
+      'ot-weekday-24-tue ← feriale_per_annum_II/en.json#OrdWeekday24Tuesday: shared gospel "Luke 7:11-16" differs from "Luke 7:11-17" imported for ot-weekday-24-tue day gospel',
     ]);
+  });
+
+  it('reports a shared slot with the same ref but other alternatives', async () => {
+    const wednesday = (cycle: 'I' | 'II') => ({
+      key: 'ot-weekday-24-wed',
+      cycle,
+      locator: `feriale_per_annum_${cycle}/en.json#OrdWeekday24Wednesday`,
+    });
+    const { problems } = await importLitcal(
+      { ...manifest([wednesday('I'), wednesday('II')]), shared: ['gospel'] },
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect(problems).toEqual([
+      'ot-weekday-24-wed ← feriale_per_annum_II/en.json#OrdWeekday24Wednesday: shared gospel "Luke 7:31-35 | Luke 7:31-34" differs from "Luke 7:31-35" imported for ot-weekday-24-wed day gospel',
+    ]);
+  });
+
+  it('keys the shared-slot check by celebration, Mass and slot', async () => {
+    const { problems } = await importLitcal(
+      {
+        ...manifest([
+          { key: 'ot-weekday-24-tue', cycle: 'I', locator: 'feriale_per_annum_I/en.json#OrdWeekday24Tuesday' },
+          { key: 'ot-weekday-25-tue', cycle: 'II', locator: 'feriale_per_annum_II/en.json#OrdWeekday24Tuesday' },
+          {
+            key: 'ot-weekday-24-tue',
+            mass: 'other',
+            cycle: 'II',
+            locator: 'feriale_per_annum_II/en.json#OrdWeekday24Tuesday',
+          },
+        ]),
+        shared: ['gospel'],
+      },
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect(problems).toEqual([]);
   });
 
   it('reads the palm gospel into the procession Mass, the Easter Vigil into numbered slots, and dual psalm numbers', async () => {
@@ -232,15 +271,40 @@ describe('importLitcal', () => {
     ]);
   });
 
-  it('reports a Mass whose leaf LitCal removed, while its parent leaf is still there', async () => {
+  it('fails on a Mass sub-leaf LitCal does not have (a typo must not delete readings)', async () => {
     const { readings, removedMasses, problems } = await importLitcal(
-      manifest([{ key: 'christmas', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.night' }]),
+      manifest([{ key: 'christmas', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.nigth' }]),
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect({ readings, removedMasses }).toEqual({ readings: [], removedMasses: [] });
+    expect(problems).toEqual([
+      'christmas ← dominicale_et_festivum_A/en.json#Christmas.nigth: Christmas in dominicale_et_festivum_A/en.json ' +
+        'has no "nigth" (vigil); fix the locator, or set "removed": true if LitCal dropped this Mass',
+    ]);
+  });
+
+  it('reports a Mass confirmed removed from LitCal, while its parent leaf is still there', async () => {
+    const locator = 'dominicale_et_festivum_A/en.json#Christmas.night';
+    const { readings, removedMasses, problems } = await importLitcal(
+      manifest([{ key: 'christmas', mass: 'night', locator, removed: true }]),
       REGISTRY,
       fakeFetcher(),
     );
     expect({ readings, problems }).toEqual({ readings: [], problems: [] });
-    expect(removedMasses).toEqual([
-      { key: 'christmas', mass: 'night', locator: 'dominicale_et_festivum_A/en.json#Christmas.night' },
+    expect(removedMasses).toEqual([{ key: 'christmas', mass: 'night', locator }]);
+  });
+
+  it('fails when a Mass marked removed is still in LitCal', async () => {
+    const locator = 'dominicale_et_festivum_A/en.json#Christmas.vigil';
+    const { readings, removedMasses, problems } = await importLitcal(
+      manifest([{ key: 'christmas', mass: 'vigil', locator, removed: true }]),
+      REGISTRY,
+      fakeFetcher(),
+    );
+    expect({ readings, removedMasses }).toEqual({ readings: [], removedMasses: [] });
+    expect(problems).toEqual([
+      `christmas ← ${locator}: marked "removed" but dominicale_et_festivum_A/en.json still has the leaf`,
     ]);
   });
 
@@ -279,8 +343,8 @@ describe('parseManifest', () => {
     ).toEqual([
       'm.json: target must be <block>/<file>.json',
       'm.json: kind must be one of proper-of-time, celebrations, commons',
-      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }',
-      'm.json imports[1]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }',
+      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"?, "removed"? }',
+      'm.json imports[1]: expected { "key", "locator", "mass"?, "cycle"?, "shared"?, "removed"? }',
     ]);
     expect(
       parseManifest(
@@ -294,7 +358,40 @@ describe('parseManifest', () => {
       ).problems,
     ).toEqual([
       'm.json: shared must be an array of reading slots',
-      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"? }',
+      'm.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"?, "removed"? }',
+    ]);
+    expect(
+      parseManifest(
+        { target: 'a/b.json', kind: 'commons', imports: [{ key: 'k', locator: 'l', removed: 'yes' }] },
+        'm.json',
+      ).problems,
+    ).toEqual(['m.json imports[0]: expected { "key", "locator", "mass"?, "cycle"?, "shared"?, "removed"? }']);
+  });
+
+  it('reports unknown properties', () => {
+    expect(
+      parseManifest(
+        {
+          $comment: 'kept',
+          target: 'a/b.json',
+          kind: 'commons',
+          sharde: ['gospel'],
+          imports: [{ key: 'k', locator: 'l', mas: 'night', cylce: 'A' }],
+        },
+        'm.json',
+      ).problems,
+    ).toEqual(['m.json: unknown properties "sharde"', 'm.json imports[0]: unknown properties "mas", "cylce"']);
+  });
+
+  it('reports import keys that are not keys of the kind', () => {
+    const json = (kind: string, key: string) => ({ target: 'a/b.json', kind, imports: [{ key, locator: 'l' }] });
+    expect(parseManifest(json('proper-of-time', 'ot-sunday-25'), 'm.json').problems).toEqual([]);
+    expect(parseManifest(json('proper-of-time', 'ot-sundy-25'), 'm.json').problems).toEqual([
+      'm.json imports[0]: "ot-sundy-25" is not a proper-of-time key',
+    ]);
+    expect(parseManifest(json('celebrations', 'matthew-apostle'), 'm.json').problems).toEqual([]);
+    expect(parseManifest(json('celebrations', 'Matthew Apostle'), 'm.json').problems).toEqual([
+      'm.json imports[0]: "Matthew Apostle" is not a celebrations key',
     ]);
   });
 });
