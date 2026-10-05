@@ -15,13 +15,17 @@ import {
   deviceDate,
   indexDates,
   indexUrl,
+  entryDate,
+  isHashedAsset,
   isIsoDate,
+  isTrustedSender,
   isObsoleteCache,
   isOfflineDataCache,
   isPagePath,
   lruEvictions,
   parseClientMessage,
   precachePaths,
+  referencedAssets,
   requestStrategy,
   scopeUrl,
   scopedPath,
@@ -36,6 +40,7 @@ describe('cache names', () => {
     const names = cacheNames('abc');
     expect(names).toEqual({
       shell: 'lectio-shell-abc',
+      assets: 'lectio-assets',
       search: 'lectio-search-abc',
       upcoming: 'lectio-data-upcoming',
       visited: 'lectio-data-visited',
@@ -45,6 +50,8 @@ describe('cache names', () => {
     expect(isOfflineDataCache(names.upcoming)).toBe(true);
     expect(isOfflineDataCache(names.visited)).toBe(true);
     expect(isOfflineDataCache(names.shell)).toBe(false);
+    expect(isOfflineDataCache(names.assets)).toBe(false);
+    expect(isObsoleteCache(names.assets, 'abc')).toBe(false);
   });
 
   it.each([
@@ -276,4 +283,72 @@ describe('precachePaths', () => {
     expect(precachePaths(['settings/index.html'])).toEqual(['settings/']);
     expect(SHELL_PAGES).toContain('offline/');
   });
+});
+
+describe('isHashedAsset', () => {
+  it('is true under _astro/ only', () => {
+    expect(isHashedAsset('_astro/index.abc.css')).toBe(true);
+    expect(isHashedAsset('fonts/a.woff2')).toBe(false);
+  });
+});
+
+describe('entryDate', () => {
+  it.each([
+    ['2026-09-20/', '2026-09-20'],
+    ['2026-09-20/gospel/', '2026-09-20'],
+    ['api/v1/days/2026-09-20.json', '2026-09-20'],
+    ['api/v1/index.json', null],
+    ['calendar/2026/09/', null],
+    ['2026-02-30/', null],
+    ['2026-09-20.json', null],
+  ])('%s → %s', (path, expected) => {
+    expect(entryDate(new URL(path, SCOPE).href, SCOPE)).toBe(expected);
+  });
+
+  it('is null outside the scope', () => {
+    expect(entryDate('https://example.org/2026-09-20/', SCOPE)).toBeNull();
+  });
+});
+
+describe('referencedAssets', () => {
+  it('finds hashed assets in HTML, CSS and JS, resolved against the referring URL', () => {
+    const html =
+      '<link rel="stylesheet" href="/lectio/_astro/index.abc.css">' +
+      "<script type=module src='/lectio/_astro/page.def.js?v=1'></script>" +
+      '<link rel="preload" href="/lectio/fonts/a.woff2">' +
+      '<img src="https://cdn.example.com/_astro/x.png">' +
+      '<a href="/lectio/_astro/index.abc.css#again">';
+    expect(referencedAssets(html, new URL('2026-09-20/', SCOPE).href, SCOPE)).toEqual([
+      'https://example.org/lectio/_astro/index.abc.css',
+      'https://example.org/lectio/_astro/page.def.js',
+    ]);
+    const js = 'import{a}from"./chunk.123.js";import("./lazy.456.js");const u=`../fonts/b.woff2`;';
+    expect(referencedAssets(js, new URL('_astro/page.def.js', SCOPE).href, SCOPE)).toEqual([
+      'https://example.org/lectio/_astro/chunk.123.js',
+      'https://example.org/lectio/_astro/lazy.456.js',
+    ]);
+    const css = '.a{background:url(./bg.789.png)}';
+    expect(referencedAssets(css, new URL('_astro/index.abc.css', SCOPE).href, SCOPE)).toEqual([
+      'https://example.org/lectio/_astro/bg.789.png',
+    ]);
+  });
+
+  it('skips references that are not URLs', () => {
+    expect(referencedAssets('"http://[bad.js"', SCOPE, SCOPE)).toEqual([]);
+  });
+});
+
+describe('isTrustedSender', () => {
+  it('trusts the scope origin, or a source page inside the scope when there is no origin', () => {
+    expect(isTrustedSender('https://example.org', undefined, SCOPE)).toBe(true);
+    expect(isTrustedSender('https://evil.example', url('2026-09-20/'), SCOPE)).toBe(false);
+    expect(isTrustedSender('', 'https://example.org/lectio/settings/', SCOPE)).toBe(true);
+    expect(isTrustedSender('', 'https://example.org/other/', SCOPE)).toBe(false);
+    expect(isTrustedSender('', 'not a url', SCOPE)).toBe(false);
+    expect(isTrustedSender('', undefined, SCOPE)).toBe(false);
+  });
+
+  function url(path: string): string {
+    return new URL(path, SCOPE).href;
+  }
 });

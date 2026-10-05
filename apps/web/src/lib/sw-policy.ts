@@ -6,13 +6,19 @@
  * so it must stay free of Node and Astro imports.
  *
  * Caches:
- * - `lectio-shell-<version>`: the precached app shell (CSS, JS, fonts, icons, manifest, the offline page and a few
- *   shell pages). Versioned per build; older shell caches are deleted on activate.
+ * - `lectio-shell-<version>`: the precached app shell (fonts, icons, manifest, the offline page and a few shell
+ *   pages). Versioned per build; older shell caches are deleted on activate.
+ * - `lectio-assets`: Astro's content-hashed bundles (`_astro/*`), shared across builds so a page cached under an
+ *   older build still finds its CSS and JS after a deploy. After each activate it is pruned to what the current shell
+ *   and the cached pages still reference (`referencedAssets`, followed through CSS and JS imports).
  * - `lectio-search-<version>`: the Pagefind bundle, cached at run time (stale-while-revalidate). Pagefind writes its
  *   files after the service worker's build hook, so they cannot be precached.
  * - `lectio-data-upcoming`: the next seven days (day page, reading pages and day JSON), refreshed on activate and
  *   whenever a page opens.
  * - `lectio-data-visited`: pages and API documents the reader opened, stale-while-revalidate with an LRU cap.
+ *
+ * Entries the worker stores in the data caches carry the build version in `VERSION_HEADER`. A page from another build
+ * is served network first while the network answers, and only offline from the cache.
  *
  * The data caches carry `OFFLINE_DATA_CACHE_PREFIX` (`lectio-data-`, from settings.ts), so Settings → Clear offline
  * data removes them and keeps the shell.
@@ -23,6 +29,12 @@ export { OFFLINE_DATA_CACHE_PREFIX };
 
 /** Prefix of the versioned app-shell precache. Deliberately not `lectio-data-`. */
 export const SHELL_CACHE_PREFIX = 'lectio-shell-';
+
+/** The unversioned cache of content-hashed assets (`_astro/*`). */
+export const ASSET_CACHE = 'lectio-assets';
+
+/** Response header the worker adds to what it stores in the data caches: the build version that stored it. */
+export const VERSION_HEADER = 'x-lectio-sw-version';
 
 /** Prefix of the versioned run-time cache for the Pagefind bundle. */
 export const SEARCH_CACHE_PREFIX = 'lectio-search-';
@@ -51,6 +63,7 @@ export const OFFLINE_PAGE = 'offline/';
 /** Every cache name the worker uses for one build. */
 export interface CacheNames {
   readonly shell: string;
+  readonly assets: string;
   readonly search: string;
   readonly upcoming: string;
   readonly visited: string;
@@ -59,6 +72,7 @@ export interface CacheNames {
 export function cacheNames(version: string): CacheNames {
   return {
     shell: `${SHELL_CACHE_PREFIX}${version}`,
+    assets: ASSET_CACHE,
     search: `${SEARCH_CACHE_PREFIX}${version}`,
     upcoming: `${OFFLINE_DATA_CACHE_PREFIX}upcoming`,
     visited: `${OFFLINE_DATA_CACHE_PREFIX}visited`,
@@ -112,6 +126,14 @@ export function scopedPath(url: string, scope: string): string | null {
 /** True when `path` (relative to the base) looks like an HTML page: a directory URL or an `.html` file. */
 export function isPagePath(path: string): boolean {
   return path === '' || path.endsWith('/') || path.endsWith('.html');
+}
+
+/** Astro's hashed bundles live under `_astro/`; their names change whenever their content does. */
+export const HASHED_ASSET_PREFIX = '_astro/';
+
+/** True for a path (relative to the base) of a content-hashed asset. */
+export function isHashedAsset(path: string): boolean {
+  return path.startsWith(HASHED_ASSET_PREFIX);
 }
 
 /** The strategy for a request, given the worker's scope (`registration.scope`). */
@@ -228,6 +250,47 @@ export function shouldPrefetch(
   interval: number = PREFETCH_INTERVAL_MS,
 ): boolean {
   return last === null || last.today !== today || now - last.at >= interval;
+}
+
+const ENTRY_DATE = /^(?:(\d{4}-\d{2}-\d{2})\/|api\/v1\/days\/(\d{4}-\d{2}-\d{2})\.json$)/;
+
+/** The date an upcoming-cache entry belongs to (a day page, a Reading page or a day document), or `null`. */
+export function entryDate(url: string, scope: string): string | null {
+  const path = scopedPath(url, scope);
+  const match = path === null ? null : ENTRY_DATE.exec(path);
+  const date = match?.[1] ?? match?.[2];
+  return date !== undefined && isIsoDate(date) ? date : null;
+}
+
+const ASSET_REFERENCE = /["'`(]([^"'`()\s<>]+?\.(?:css|js|mjs|woff2?|png|svg|jpe?g|webp|avif|gif))["'`)?#]/g;
+
+/**
+ * The hashed assets `text` refers to: every quoted or `url(…)` reference to a file, resolved against `url` (the
+ * document or asset it came from), kept when it is under `_astro/` in the scope. Run over HTML pages, then over the
+ * CSS and JS they load (relative imports such as `"./chunk.abc.js"` resolve against the asset), it gives everything a
+ * cached page needs. Sorted, without repeats.
+ */
+export function referencedAssets(text: string, url: string, scope: string): string[] {
+  const found = new Set<string>();
+  for (const match of text.matchAll(ASSET_REFERENCE)) {
+    const reference = String(match[1]);
+    if (!URL.canParse(reference, url)) continue;
+    const resolved = new URL(reference, url);
+    resolved.search = '';
+    resolved.hash = '';
+    const path = scopedPath(resolved.href, scope);
+    if (path !== null && isHashedAsset(path)) found.add(resolved.href);
+  }
+  return [...found].sort();
+}
+
+/**
+ * Whether a message comes from a page of this site: its `origin` is the scope's origin, or, when the browser leaves
+ * `origin` empty, its source client's URL is inside the scope.
+ */
+export function isTrustedSender(origin: string, sourceUrl: string | undefined, scope: string): boolean {
+  if (origin !== '') return origin === new URL(scope).origin;
+  return sourceUrl !== undefined && URL.canParse(sourceUrl) && scopedPath(sourceUrl, scope) !== null;
 }
 
 /** Messages a page sends the worker. */

@@ -157,9 +157,13 @@ export class FakeScope implements WorkerScope {
     await Promise.all(waits);
   }
 
-  async message(data: unknown): Promise<number> {
+  /** Dispatches a message (from the scope's origin unless `sender` says otherwise); resolves to how many waits. */
+  async message(
+    data: unknown,
+    sender: Pick<MessageEventLike, 'origin' | 'source'> = { origin: new URL(this.registration.scope).origin },
+  ): Promise<number> {
     const waits: Promise<unknown>[] = [];
-    const event: MessageEventLike = { data, waitUntil: (promise) => void waits.push(promise) };
+    const event: MessageEventLike = { data, ...sender, waitUntil: (promise) => void waits.push(promise) };
     (this.listeners.get('message') as ((event: MessageEventLike) => void) | undefined)?.(event);
     await Promise.all(waits);
     return waits.length;

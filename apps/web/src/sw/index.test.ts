@@ -31,6 +31,9 @@ describe('service worker entry', () => {
     listeners.get('activate')?.({ waitUntil: (promise) => void waits.push(promise) });
     await Promise.all(waits);
     expect(claim).toHaveBeenCalledOnce();
+    const message = { data: { type: 'prefetch', today: '2026-09-20' }, origin: 'https://example.org' };
+    listeners.get('message')?.({ ...message, waitUntil: (promise) => void waits.push(promise) } as WaitUntilEvent);
+    await Promise.all(waits);
     expect(fetch).toHaveBeenCalledWith('https://example.org/lectio/api/v1/index.json', { cache: 'no-cache' });
   });
 });
