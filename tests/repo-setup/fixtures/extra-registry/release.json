@@ -1,0 +1,4 @@
+{
+  "workflow": "release.yml",
+  "jobs": ["release-dry-run", "lint"]
+}

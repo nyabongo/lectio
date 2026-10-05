@@ -12,8 +12,9 @@ import MarkedText from '../../../../../components/notes/MarkedText.astro';
 import Verification from '../../../../../components/notes/Verification.astro';
 import Seo from '../../../../../components/seo/Seo.astro';
 import ShareButton from '../../../../../components/share/ShareButton.astro';
-import { DEFAULT_LOCALE, localePath, t } from '../../../../../i18n/index.ts';
+import { localeOf, localePath, t } from '../../../../../i18n/index.ts';
 import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import { partLang } from '../../../../../lib/locales.ts';
 import { readingPath } from '../../../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../../../lib/site.ts';
 import { insightPage, insightStaticPaths } from '../../../../../lib/insight.ts';
@@ -23,13 +24,15 @@ export function getStaticPaths() {
 }
 
 const { date, slot, noteId } = Astro.params;
-const view = insightPage(siteContext().repo, date, slot, noteId);
+const lang = localeOf(Astro.url);
+const view = insightPage(siteContext().repo, date, slot, noteId, lang);
 if (view === null) throw new Error(`no approved note ${noteId} for ${date}/${slot}`);
 
-const lang = DEFAULT_LOCALE;
 const base = import.meta.env.BASE_URL;
 const { reading, note, path } = view;
 const { method, lastReviewedAt } = reading.notes;
+// Notes stay in their own language (English) on other locales' pages: mark them (WCAG 3.1.2).
+const notesLang = partLang(reading.notes.lang, lang);
 const title = t(lang, 'insight.pageTitle', { anchor: note.anchor, ref: reading.ref, verse: note.verse });
 const description = note.summary;
 // Back to the note's card on the reading page: the fragment opens the Original tab there.
@@ -42,6 +45,7 @@ const headingId = `${note.anchorId}-heading`;
   description={description}
   date={reading.date}
   celebration={reading.celebration ?? undefined}
+  celebrationLang={reading.celebrationLang}
   colour={reading.colour ?? undefined}
   lang={lang}
 >
@@ -56,7 +60,7 @@ const headingId = `${note.anchorId}-heading`;
       <h1 class="insight__title" id={headingId}>
         <span class="insight__verse">{t(lang, 'reading.note.verse', { verse: note.verse })}</span>
         <span aria-hidden="true"> · </span>
-        <span class="insight__anchor">“{note.anchor}”</span>
+        <span class="insight__anchor" lang={notesLang}>“{note.anchor}”</span>
       </h1>
       <ShareButton title={title} shareRef={title} insight={note.summary} path={path} lang={lang} />
     </header>
@@ -67,11 +71,11 @@ const headingId = `${note.anchorId}-heading`;
       <dt class="visually-hidden">{t(lang, 'reading.note.translitLabel')}</dt>
       <dd class="insight__translit">{note.original.translit}</dd>
       <dt class="visually-hidden">{t(lang, 'reading.note.glossLabel')}</dt>
-      <dd class="insight__gloss">“{note.original.gloss}”</dd>
+      <dd class="insight__gloss" lang={notesLang}>“{note.original.gloss}”</dd>
     </dl>
 
-    <p class="insight__summary">{note.summary}</p>
-    <p class="insight__body"><MarkedText segments={note.body} lang={lang} /></p>
+    <p class="insight__summary" lang={notesLang}>{note.summary}</p>
+    <p class="insight__body" lang={notesLang}><MarkedText segments={note.body} lang={lang} contentLang={notesLang} /></p>
 
     <Verification
       sources={note.sources}

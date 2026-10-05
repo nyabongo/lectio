@@ -61,6 +61,11 @@
         {
           "id": "ordinary-time-25-sunday",
           "name": "Twenty-fifth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-fifth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Tano ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }

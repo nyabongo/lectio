@@ -9,14 +9,14 @@
  * or font appears here without any change to this page.
  */
 import Seo from '../../components/seo/Seo.astro';
-import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import { localeOf, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { LICENSE_URL, REPORT_ISSUE_URL, linkoutCredit, loadAttributions, siteAttributionPaths } from '../../lib/attributions.ts';
 import { intlLocale } from '../../lib/i18n.ts';
 import { siteContext, withBase } from '../../lib/site.ts';
 import Licence from './_Licence.astro';
 
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const base = import.meta.env.BASE_URL;
 const title = t(lang, 'about.title');
 const description = t(lang, 'about.description');

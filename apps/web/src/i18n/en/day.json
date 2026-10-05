@@ -1,7 +1,7 @@
 {
   "pageTitle": "{title}, {date}",
-  "description": "{title}, {date}. The readings: {refs}. Notes on their history and original words, with each text a tap away.",
-  "descriptionNoReadings": "{title}, {date}. The readings for this day are not listed yet.",
+  "description": "{date}: {title}. {season}. Readings: {refs}. Notes on their history and original words, with each text a tap away.",
+  "descriptionNoReadings": "{date}: {title}. {season}. The readings for this day are not listed yet.",
   "todayHeading": "Today",
   "todayMissing": "There is no calendar day for today yet. The calendar lists every day that is ready.",
   "upcomingHeading": "The days ahead",

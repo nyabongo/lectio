@@ -25,7 +25,9 @@ const showMassLabels = view.masses.length > 1;
   <header class="day__header">
     {eyebrow !== undefined && <p class="eyebrow">{eyebrow}</p>}
     <p class="day__date"><time datetime={view.date}>{view.dateLabel}</time></p>
-    <h1 id="day-title" class="day__title">{view.title}</h1>
+    <h1 id="day-title" class="day__title" lang={view.titleLang}>
+      {view.title}
+    </h1>
     <p class="day__meta">
       {
         principal !== undefined && (
@@ -46,7 +48,7 @@ const showMassLabels = view.masses.length > 1;
         <ul class="day__others">
           {others.map((celebration) => (
             <li>
-              {celebration.name}{' '}
+              <span lang={celebration.nameLang}>{celebration.name}</span>{' '}
               <span class="day__other-rank">
                 · {celebration.rank} · {celebration.colourLabel}
               </span>

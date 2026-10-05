@@ -8,14 +8,15 @@
  * `headScript()` (src/lib/settings.ts, L-057) applies the reader's saved theme and text size before first paint.
  *
  * Header and footer strings come from `src/i18n/<lang>/common.json` (L-051) and links are locale-prefixed with
- * `localePath`; slots `head` (extra head elements, e.g. the SEO component of L-058) and `header-actions` (extra
- * header controls) let pages add to both.
+ * `localePath`; the nav ends with the language switcher (L-110); slots `head` (extra head elements, e.g. the SEO
+ * component of L-058) and `header-actions` (extra header controls) let pages add to both.
  *
  * PWA (L-061): the manifest, theme colour and icons are linked here, and `PwaUpdate` registers the service worker
  * and holds the update-available toast.
  */
 import '../styles/global.css';
 
+import LocaleSwitcher from '../components/locale-switcher/LocaleSwitcher.astro';
 import PwaUpdate from '../components/pwa/PwaUpdate.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../i18n/index.ts';
 import { headScript } from '../lib/settings.ts';
@@ -31,13 +32,15 @@ export interface Props {
   date?: string;
   /** The day's celebration, shown under the date title. */
   celebration?: string;
+  /** The celebration name's language when it is not the page's (an untranslated English name). */
+  celebrationLang?: string | undefined;
   /** Liturgical colour of the day (`green`, `violet`, `white`, `gold`, `red`, `rose`, `black`). */
   colour?: string;
   /** Page language (a locale with catalogs in `src/i18n/`); defaults to `en`. */
   lang?: string;
 }
 
-const { title, description, date, celebration, colour, lang = DEFAULT_LOCALE } = Astro.props;
+const { title, description, date, celebration, celebrationLang, colour, lang = DEFAULT_LOCALE } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const siteName = t(lang, 'common.site.name');
 const fullTitle = title === siteName ? title : t(lang, 'common.site.pageTitle', { title });
@@ -80,7 +83,7 @@ const links = {
           dateTitle !== undefined && (
             <p class="date-title">
               <time datetime={date}>{dateTitle}</time>
-              {celebration !== undefined && <span class="celebration">{celebration}</span>}
+              {celebration !== undefined && <span class="celebration" lang={celebrationLang}>{celebration}</span>}
             </p>
           )
         }
@@ -88,6 +91,7 @@ const links = {
           <a href={links.calendar}>{t(lang, 'common.nav.calendar')}</a>
           <a href={links.search}>{t(lang, 'common.nav.search')}</a>
           <a href={links.settings}>{t(lang, 'common.nav.settings')}</a>
+          <LocaleSwitcher lang={lang} />
           <slot name="header-actions" />
         </nav>
       </div>

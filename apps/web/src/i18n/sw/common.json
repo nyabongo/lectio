@@ -1,0 +1,17 @@
+{
+  "site": {
+    "name": "Lectio",
+    "pageTitle": "{title} · Lectio"
+  },
+  "skipLink": "Ruka hadi maudhui",
+  "nav": {
+    "label": "Tovuti",
+    "calendar": "Kalenda",
+    "search": "Tafuta",
+    "settings": "Mipangilio"
+  },
+  "footer": {
+    "disclaimer": "Lectio ni msaada wa kujifunzia, si mafundisho ya Kanisa. Madokezo yake kuhusu historia na lugha asilia yanafanyiwa utafiti kwa msaada wa AI, yanakaguliwa dhidi ya vyanzo vyake na kupitiwa kabla ya kuonekana. Masomo yenyewe hufunguka kwenye chanzo chenye leseni.",
+    "about": "Kuhusu Lectio na jinsi madokezo yanavyokaguliwa"
+  }
+}

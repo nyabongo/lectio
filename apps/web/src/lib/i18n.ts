@@ -177,6 +177,22 @@ export function formatDate(
 }
 
 /**
+ * Short weekday names, Sunday first, for locales whose Intl `short` form is the full name: Kenyan Kiswahili writes
+ * `Jumapili` for both, which does not fit a 320 px month grid, so the site uses the customary abbreviations.
+ */
+export const SHORT_WEEKDAYS: Readonly<Record<string, readonly string[]>> = {
+  sw: ['Jpi', 'Jtt', 'Jnn', 'Jtn', 'Alh', 'Iju', 'Jmo'],
+};
+
+/** The short weekday of an ISO date in `locale` (`Sun`, `Jpi`): `SHORT_WEEKDAYS`, else Intl's `short` form. */
+export function shortWeekday(locale: string, date: string, timeZone: string): string {
+  // formatDate also validates the date, whose UTC weekday is the calendar day's.
+  const short = formatDate(locale, date, timeZone, { weekday: 'short' });
+  const names = SHORT_WEEKDAYS[locale];
+  return names === undefined ? short : (names[new Date(`${date}T00:00:00Z`).getUTCDay()] as string);
+}
+
+/**
  * A root-relative site path for `locale`: `defaultLocale` stays at the root (`/calendar/`), every other locale
  * lives under `/<locale>/` (`/sw/calendar/`). Combine with `withBase` (src/lib/site.ts) for the base path.
  */

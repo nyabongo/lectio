@@ -103,6 +103,8 @@ describe('content-gates.yml (trusted side)', () => {
     expect(secrets).toEqual(['ANTHROPIC_API_KEY', 'OPENAI_API_KEY']);
     for (const [id, text] of Object.entries(GATES)) expect(text.includes('secrets.'), id).toBe(id === 'verifiers');
     for (const id of ['gates-trusted', 'verifiers']) expect(job(GATES, id)).not.toContain('GH_TOKEN');
+    for (const [id, text] of Object.entries(GATES)) expect(/^\s+environment:/m.test(text), id).toBe(id === 'verifiers');
+    expect(job(GATES, 'verifiers')).toMatch(/^ {4}environment: llm-verifiers$/m);
     for (const line of gates.split('\n').filter((text) => text.includes('GH_TOKEN')))
       expect(line.trim()).toBe('GH_TOKEN: ${{ github.token }}');
   });

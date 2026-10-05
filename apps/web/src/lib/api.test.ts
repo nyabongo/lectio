@@ -184,7 +184,7 @@ describe('API built from the fixture content root', () => {
       buildDate: FIXTURE_DATE,
       timezone: 'Africa/Nairobi',
       defaultLocale: 'en',
-      locales: ['en'],
+      locales: ['en', 'sw'],
       apiRoot: 'https://nyabongo.github.io/lectio/api/v1/',
       years: [2026],
       dates: { first: '2026-09-19', last: '2026-09-21' },

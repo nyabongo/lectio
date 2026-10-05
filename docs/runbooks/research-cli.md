@@ -23,7 +23,8 @@ Flags every subcommand takes:
 
 `run` and `plan` also take `--from YYYY-MM-DD` (default today in `site.timezone`), `--days n` (default
 `research.defaultDays`, 14), `--only <passage key>` and `--max n`. `fixup` takes `--pr <n>`, `--force`,
-`--allow-stale` and `--report <gates.json>`. `backfill` is reserved for L-072 and prints "not implemented yet". Exit codes: `0` done, `1` something needs your attention, `2` a bad command line.
+`--allow-stale` and `--report <gates.json>`. `backfill` takes `--from-year`, `--to-year`, `--per-passage <usd>`,
+`--max n` and `--execute`; it only prints an estimate unless you pass `--execute` (see [Back-fill](#back-fill)). Exit codes: `0` done, `1` something needs your attention, `2` a bad command line.
 
 ## Prerequisites
 
@@ -115,6 +116,34 @@ gates 1–3, and pushes the result as a new commit on the same branch. The gates
 - A fix-up is one passage: it spends at most `perPassageUsd` and at most `--budget`.
 - Fake runs cost nothing; their meter uses `--budget` (or `perRunUsd`) so the output looks like a live run.
 
+## Back-fill
+
+```bash
+npm run research -- backfill                          # estimate only: calls nothing, needs no key and no gh
+npm run research -- backfill --per-passage 1.20       # estimate at a measured average (L-041's first-run report)
+npm run research -- backfill --execute --budget 20    # research one batch (needs backfillTotalUsd > 0)
+```
+
+- **Estimate (the default).** It counts the unique passage keys in the 2026–2028 calendars (`--from-year` and
+  `--to-year` narrow the range, within the committed calendar years), minus the passages already in `passages/`. It
+  orders them by next occurrence from today, with keys whose dates are all past last. It prints the key count, the
+  estimated cost, the back-fill ceiling, how many batches that takes and the next keys. The cost uses
+  `--per-passage` when given and `research.budget.perPassageUsd` otherwise. `--per-passage` only changes the
+  estimate: a batch plans and meters with `perPassageUsd`, so put a measured average there in a config PR.
+- **`--execute`** researches one batch through the same pipeline as `run`, on a window from today to the end of the
+  last year. The planner skips existing passages, open research PRs and keys whose research PR a person closed. The
+  batch is capped by reviewer capacity, weekly intake, `--max` and a ceiling of the lower of `--budget` and
+  `research.budget.backfillTotalUsd`. `--dry-run` and `--provider fake` research but publish nothing, as with `run`.
+- **Ceilings.** With `research.budget.backfillTotalUsd` at `0` (the default), `--execute` refuses and nothing is
+  generated, even with `--budget` or `--provider fake`. A live batch also needs `--budget <usd>`, at most
+  `research.budget.perRunUsd`.
+- **`backfillTotalUsd` caps each batch, not the back-fill as a whole.** Back-fill does not record what earlier
+  batches spent, so running `--execute` N times can spend up to N × the batch ceiling. Track the total yourself
+  (each run prints what it spent) and lower or zero `backfillTotalUsd` when the back-fill budget is used up. A
+  persisted cumulative ledger is a follow-up.
+- The batch ends with `Back-fill: N passage(s) ready in this batch; M left, estimated $X.` Only passages that got a
+  PR (or, in a dry run, would have) count as ready.
+
 ## Troubleshooting
 
 | Message                                                          | What to do                                                                    |
@@ -130,7 +159,8 @@ gates 1–3, and pushes the result as a new commit on the same branch. The gates
 | `has no gates comment from github-actions[bot] yet`              | Wait for the content-gates workflow to finish on the PR                       |
 | `is already approved`                                            | Leave it, or pass `--force` if the fix is worth a new review                  |
 | `wait for the gates to re-run, or pass --allow-stale`            | Wait for the content gates on the current head, then run fix-up again         |
-| `research backfill: not implemented yet`                         | Back-fill arrives with L-072                                                  |
+| `research.budget.backfillTotalUsd is $0.00`                      | Back-fill only estimates; the owner sets a ceiling in a config PR first       |
+| `--to-year … has no calendar`                                    | Pick years that have a `calendar/<year>.json`                                 |
 | `--provider fake: dry run` and every passage `abandoned`         | Expected: fake output carries fake provenance, which gate 1 rejects           |
 
 Translations (`translate`) follow the same flags and budget rules; see [L-112](https://github.com/nyabongo/lectio/issues/200)

@@ -117,11 +117,11 @@ describe('main', () => {
     expect(abandoned.out.join('\n')).toContain('Result: the repairs did not pass the gates; nothing pushed');
   });
 
-  it('reserves backfill for L-072: not implemented yet, exit 2', async () => {
+  it('routes backfill to its registered subcommand (L-072), which parses its own flags', async () => {
     world = e2eWorld();
     const out = capture();
     expect(await main(['backfill', '--anything'], world.context, out.io)).toBe(2);
-    expect(out.err).toEqual(['research backfill: not implemented yet (L-072)']);
+    expect(out.err[0]).toContain("Unknown option '--anything'");
     expect(out.out).toEqual([]);
   });
 

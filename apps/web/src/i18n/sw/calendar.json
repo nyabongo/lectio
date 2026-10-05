@@ -1,0 +1,57 @@
+{
+  "index": {
+    "title": "Kalenda",
+    "description": "Kila siku ya kalenda ya liturujia, mwezi kwa mwezi, pamoja na adhimisho na rangi yake.",
+    "lead": "Kila siku ya mwaka wa Kanisa pamoja na adhimisho na rangi yake. Chagua siku uone masomo na madokezo yake.",
+    "current": "Nenda {month}",
+    "years": "Hifadhi",
+    "empty": "Bado hakuna kalenda iliyochapishwa.",
+    "library": "Vinjari maktaba ya vifungu"
+  },
+  "month": {
+    "description": "Kalenda ya liturujia ya {month}: adhimisho na rangi ya kila siku, pamoja na viungo vya masomo yake.",
+    "eyebrow": "Kalenda",
+    "nav": "Miezi mingine",
+    "prev": "Mwezi uliotangulia",
+    "next": "Mwezi unaofuata",
+    "today": "Leo",
+    "dayLabel": "{date}: {celebration}, {colour}",
+    "empty": "Mwezi huu bado haumo kwenye kalenda iliyochapishwa.",
+    "celebrations": "Maadhimisho ya mwezi huu",
+    "allMonths": "Miezi yote"
+  },
+  "colour": {
+    "green": "Kijani",
+    "violet": "Zambarau",
+    "white": "Nyeupe",
+    "gold": "Dhahabu",
+    "red": "Nyekundu",
+    "rose": "Waridi",
+    "black": "Nyeusi"
+  },
+  "library": {
+    "title": "Maktaba ya vifungu",
+    "description": "Kila somo lenye madokezo yaliyopitiwa kuhusu historia yake na maneno yake asilia, kitabu kwa kitabu.",
+    "lead": "Kila kifungu chenye madokezo yaliyopitiwa, kitabu kwa kitabu. Madokezo huandikwa mara moja kwa kila kifungu na kutumika tena kila mara kitabu cha masomo kinaporudia kifungu hicho.",
+    "passages": { "one": "kifungu {count}", "other": "vifungu {count}" },
+    "notes": { "one": "dokezo {count}", "other": "madokezo {count}" },
+    "dates": { "one": "kinasomwa siku {count}", "other": "kinasomwa siku {count}" },
+    "testament": {
+      "OT": "Agano la Kale",
+      "NT": "Agano Jipya"
+    },
+    "empty": "Bado hakuna kifungu chenye madokezo yaliyopitiwa."
+  },
+  "passage": {
+    "description": "Madokezo kuhusu {ref}: {summary}",
+    "eyebrow": "Kifungu",
+    "notes": "Madokezo",
+    "context": "Muktadha",
+    "verse": "Mstari {verse}",
+    "dates": "Kinasomwa",
+    "datesLead": "Kila tarehe inafungua ukurasa wa Somo wenye madokezo kamili.",
+    "noDates": "Kifungu hiki bado hakimo kwenye kalenda iliyochapishwa.",
+    "reviewed": "Kilipitiwa mara ya mwisho {date}",
+    "back": "Vifungu vyote"
+  }
+}
