@@ -8,6 +8,12 @@ class _FakeTts extends Fake implements FlutterTts {
   VoidCallback? onComplete;
   ErrorHandler? onError;
   Set<String> missingLanguages = {};
+  Set<String> voices = {'en-GB', 'sw-TZ'};
+
+  @override
+  Future<dynamic> isLanguageAvailable(String language) async {
+    return voices.contains(language);
+  }
 
   @override
   void setCompletionHandler(VoidCallback callback) => onComplete = callback;
@@ -77,12 +83,12 @@ void main() {
 
     expect(created, 1);
     expect(tts.calls, [
-      'language en',
+      'language en-GB',
       'rate 0.5',
       'speak One.',
       'rate 1.0',
       'speak Two.',
-      'language sw',
+      'language sw-TZ',
       'rate 0.5',
       'speak Moja.',
       'stop',
@@ -99,16 +105,26 @@ void main() {
     expect(tts.calls.take(2), ['shared true', 'category playback']);
   });
 
-  test('keeps the device voice when the locale has none', () async {
-    final tts = _FakeTts()..missingLanguages.add('sw');
+  test('keeps the device voice when setting one fails', () async {
+    final tts = _FakeTts()..missingLanguages.add('sw-TZ');
     final engine = FlutterTtsSpeechEngine(create: () => tts);
     await engine.speak('Moja.', locale: 'sw', speed: 1);
     await engine.speak('Mbili.', locale: 'sw', speed: 1);
     expect(tts.calls.where((call) => call.startsWith('language')), [
-      'language sw',
-      'language sw',
+      'language sw-TZ',
+      'language sw-TZ',
     ]);
     expect(tts.calls.last, 'speak Mbili.');
+  });
+
+  test('canSpeak looks for a voice of the language', () async {
+    final tts = _FakeTts();
+    final engine = FlutterTtsSpeechEngine(create: () => tts);
+    expect(await engine.canSpeak('sw'), isTrue);
+    expect(await engine.canSpeak('en'), isTrue);
+    tts.voices = {'en-US'};
+    expect(await engine.canSpeak('sw'), isFalse);
+    expect(await engine.canSpeak('en'), isTrue);
   });
 
   test('reports completions and errors', () async {

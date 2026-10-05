@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:lectio/features/listen/listen_players.dart';
+import 'package:lectio/features/listen/locale.dart';
 
 /// flutter_tts's normal rate: `0.5` on both Android and iOS (the plugin
 /// doubles it for Android's engine).
@@ -63,6 +64,15 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   }
 
   @override
+  Future<bool> canSpeak(String locale) async {
+    final voices = FlutterTtsVoices(tts: await _setUp());
+    for (final tag in NarrationLocale.of(locale).voices) {
+      if (await voices.isLanguageAvailable(tag)) return true;
+    }
+    return false;
+  }
+
+  @override
   Future<void> speak(
     String text, {
     required String locale,
@@ -70,8 +80,14 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   }) async {
     final tts = await _setUp();
     if (locale != _language) {
+      // The best voice for the language (sw-KE, then sw-TZ …), else an
+      // English one; the queue plays English instead of Kiswahili text
+      // when the device has no Kiswahili voice (ListenSegment.fallback).
       try {
-        await tts.setLanguage(locale);
+        await useVoiceFor(
+          NarrationLocale.of(locale),
+          FlutterTtsVoices(tts: tts),
+        );
         _language = locale;
       } on Exception catch (error) {
         // The device keeps its own voice.

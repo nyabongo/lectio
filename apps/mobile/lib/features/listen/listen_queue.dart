@@ -59,6 +59,8 @@ class ListenQueue extends ChangeNotifier {
   ListenStatus _status = ListenStatus.idle;
   double _speed;
   bool _speaking = false;
+  bool _fallingBack = false;
+  final Map<String, Future<bool>> _voices = {};
   bool _fileLoaded = false;
   Duration? _duration;
 
@@ -91,6 +93,22 @@ class ListenQueue extends ChangeNotifier {
   /// Whether sound is on its way: playing, or loading to play.
   bool get active =>
       _status == ListenStatus.playing || _status == ListenStatus.loading;
+
+  /// Whether the current segment plays as its English
+  /// [ListenSegment.fallback], because the device has no voice for its
+  /// language.
+  bool get fallingBack => _fallingBack;
+
+  /// Whether the device can read [locale] (`en`, `sw`) aloud. Asked once
+  /// per locale; a device that cannot say counts as able.
+  Future<bool> canSpeak(String locale) {
+    return _voices[locale] ??= _speech.canSpeak(locale).catchError((
+      Object error,
+    ) {
+      debugPrint('Listen: no answer about $locale voices ($error)');
+      return true;
+    });
+  }
 
   /// Length of the current segment's file, when known.
   Duration? get duration => _speaking ? null : _duration;
@@ -243,6 +261,7 @@ class ListenQueue extends ChangeNotifier {
     final fileLoaded = _fileLoaded;
     _speaking = false;
     _fileLoaded = false;
+    _fallingBack = false;
     if (speaking) await _speech.stop();
     if (fileLoaded) await _player.stop();
   }
@@ -258,9 +277,28 @@ class ListenQueue extends ChangeNotifier {
     await halted;
     await _prepare();
     if (generation != _generation) return;
+    await _play(generation, segment);
+  }
+
+  /// Plays [segment]'s file, or else reads it aloud.
+  Future<void> _play(int generation, ListenSegment segment) async {
+    _duration = segment.audio?.duration;
     final audio = segment.audio;
     if (audio != null && await _loadFile(generation, audio.url)) return;
     if (generation != _generation) return;
+    await _voice(generation, segment);
+  }
+
+  /// Reads [segment] aloud, or plays its English fallback when the device
+  /// has no voice for its language.
+  Future<void> _voice(int generation, ListenSegment segment) async {
+    final fallback = segment.fallback;
+    if (fallback != null && !await canSpeak(segment.locale)) {
+      if (generation != _generation) return;
+      _fallingBack = true;
+      await _play(generation, fallback);
+      return;
+    }
     await _speak(generation, segment);
   }
 
@@ -343,7 +381,13 @@ class ListenQueue extends ChangeNotifier {
     if (!_fileLoaded || !active) return;
     final generation = ++_generation;
     _status = ListenStatus.loading;
-    unawaited(_speak(generation, _segments[_index]));
+    final current = _segments[_index];
+    final fallback = current.fallback;
+    unawaited(
+      _fallingBack && fallback != null
+          ? _speak(generation, fallback)
+          : _voice(generation, current),
+    );
   }
 
   /// The device voice finished (or could not read) the current segment.

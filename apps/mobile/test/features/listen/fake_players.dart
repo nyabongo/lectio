@@ -114,6 +114,15 @@ class FakeSpeechEngine implements SpeechEngine {
   /// Whether [speak] throws.
   bool throws = false;
 
+  /// The languages the device has a voice for.
+  Set<String> voices = {'en', 'sw'};
+
+  /// Whether [canSpeak] fails.
+  bool voiceCheckThrows = false;
+
+  /// The locales [canSpeak] was asked about, in order.
+  final List<String> asked = [];
+
   /// Whether [dispose] ran.
   bool disposed = false;
 
@@ -140,6 +149,13 @@ class FakeSpeechEngine implements SpeechEngine {
   }
 
   @override
+  Future<bool> canSpeak(String locale) async {
+    asked.add(locale);
+    if (voiceCheckThrows) throw Exception('no voices');
+    return voices.contains(locale);
+  }
+
+  @override
   Future<void> stop() async => calls.add('stop');
 
   @override
@@ -152,16 +168,23 @@ class FakeSpeechEngine implements SpeechEngine {
 
 /// A segment `S<n>` with audio at `https://audio.test/<n>.mp3`, or read by
 /// the device voice when [audio] is false.
-ListenSegment testSegment(int n, {bool audio = true, double? seconds}) {
+ListenSegment testSegment(
+  int n, {
+  bool audio = true,
+  double? seconds,
+  String locale = 'en',
+  ListenSegment? fallback,
+}) {
   return ListenSegment(
     id: 'MT.20.1-16/note/n$n',
     kind: n == 0 ? SegmentKind.context : SegmentKind.translationNote,
     slot: 'gospel',
     passageKey: 'MT.20.1-16',
     ref: 'Mt 20:1-16a',
-    locale: 'en',
+    locale: locale,
     title: 'Segment $n',
     script: 'Script $n.',
+    fallback: fallback,
     audio: audio
         ? Audio(
             url: Uri.parse('https://audio.test/$n.mp3'),

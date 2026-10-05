@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/features/listen/listen_queue.dart';
+import 'package:lectio/features/listen/listen_segment.dart';
 
 import 'fake_players.dart';
 
@@ -419,6 +420,100 @@ void main() {
 
       expect(queue.status, ListenStatus.playing);
       expect(player.calls.where((call) => call == 'play'), hasLength(1));
+    });
+  });
+
+  group('a language the device cannot speak', () {
+    // A Kiswahili note without a recording, and its English original.
+    ListenSegment swahili({bool englishAudio = true, bool audio = false}) {
+      return testSegment(
+        1,
+        audio: audio,
+        locale: 'sw',
+        fallback: testSegment(0, audio: englishAudio, seconds: 30),
+      );
+    }
+
+    test('is read by its own voice when the device has one', () async {
+      await queue.load('a', [swahili()]);
+      await queue.play();
+      expect(speech.calls, ['speak sw 1.0 Script 1.']);
+      expect(queue.fallingBack, isFalse);
+      expect(player.calls, isEmpty);
+    });
+
+    test('plays the English recording instead', () async {
+      speech.voices = {'en'};
+      await queue.load('a', [swahili()]);
+      await queue.play();
+
+      expect(queue.fallingBack, isTrue);
+      expect(queue.speaking, isFalse);
+      expect(player.calls, ['load ${testUrl(0)}', 'speed 1.0', 'play']);
+      expect(speech.calls, isEmpty);
+    });
+
+    test('reads the English note when it has no recording either', () async {
+      speech.voices = {'en'};
+      await queue.load('a', [swahili(englishAudio: false)]);
+      await queue.play();
+
+      expect(queue.fallingBack, isTrue);
+      expect(queue.speaking, isTrue);
+      expect(speech.calls, ['speak en 1.0 Script 0.']);
+    });
+
+    test('asks about each language once', () async {
+      speech.voices = {'en'};
+      await queue.load('a', [swahili(), swahili()]);
+      await queue.play();
+      await queue.next();
+      expect(speech.asked, ['sw']);
+      expect(await queue.canSpeak('sw'), isFalse);
+      expect(speech.asked, ['sw']);
+    });
+
+    test('a device that cannot say counts as able', () async {
+      speech.voiceCheckThrows = true;
+      await queue.load('a', [swahili()]);
+      await queue.play();
+      expect(queue.fallingBack, isFalse);
+      expect(speech.calls, ['speak sw 1.0 Script 1.']);
+    });
+
+    test('a Kiswahili recording that fails falls back to English', () async {
+      speech.voices = {'en'};
+      await queue.load('a', [swahili(audio: true)]);
+      await queue.play();
+      expect(queue.fallingBack, isFalse);
+
+      player.fail();
+      await settle();
+      expect(queue.fallingBack, isTrue);
+      expect(player.calls.last, 'play');
+      expect(player.calls, contains('load ${testUrl(0)}'));
+    });
+
+    test('an English recording that fails is read in English', () async {
+      speech.voices = {'en'};
+      await queue.load('a', [swahili()]);
+      await queue.play();
+      player.fail();
+      await settle();
+      expect(queue.fallingBack, isTrue);
+      expect(speech.calls, ['speak en 1.0 Script 0.']);
+    });
+
+    test('a skip while asking wins', () async {
+      speech.voices = {'en'};
+      await queue.load('a', [swahili(), testSegment(2, audio: false)]);
+      final first = queue.play();
+      final second = queue.skipTo(1);
+      await Future.wait([first, second]);
+      expect(queue.index, 1);
+      expect(queue.fallingBack, isFalse);
+      expect(player.calls, isEmpty);
+      expect(speech.calls, ['speak en 1.0 Script 2.']);
     });
   });
 

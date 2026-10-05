@@ -60,6 +60,9 @@ abstract interface class SpeechEngine {
     required double speed,
   });
 
+  /// Whether the device has a voice for [locale] (`en`, `sw`).
+  Future<bool> canSpeak(String locale);
+
   /// Stops speaking.
   Future<void> stop();
 
