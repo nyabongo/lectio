@@ -1,0 +1,16 @@
+{
+  "update": {
+    "message": "Toleo jipya la Lectio liko tayari.",
+    "reload": "Pakia upya",
+    "dismiss": "Si sasa"
+  },
+  "offline": {
+    "title": "Nje ya mtandao",
+    "description": "Ukurasa huu bado haujahifadhiwa kwenye kifaa hiki.",
+    "eyebrow": "Hakuna mtandao",
+    "heading": "Ukurasa huu haujahifadhiwa kwa kusoma bila mtandao",
+    "body": "Lectio huhifadhi leo, siku sita zijazo na kila siku uliyofungua kwenye kifaa hiki, ili uweze kuzisoma bila mtandao. Ukurasa huu bado si mmojawapo. Utafunguka utakaporudi mtandaoni.",
+    "home": "Nenda kwenye leo",
+    "retry": "Jaribu tena"
+  }
+}

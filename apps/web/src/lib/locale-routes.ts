@@ -7,8 +7,11 @@
 import { readdir } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 
-/** Page files that never get a locale mirror: the not-found and error pages are served once for the whole site. */
-export const UNLOCALISED_PAGES: ReadonlySet<string> = new Set(['404', '500']);
+/**
+ * Pages that never get a locale mirror: the not-found and error pages, and the offline fallback the service worker
+ * (L-061) serves for any page it has not saved, are served once for the whole site.
+ */
+export const UNLOCALISED_PAGES: ReadonlySet<string> = new Set(['404', '500', 'offline']);
 
 /** One injected route: the `/<locale>/…` pattern and the page file that renders it. */
 export interface LocaleRoute {
@@ -27,8 +30,8 @@ export function pagePattern(file: string, locales: readonly string[]): string | 
   const segments = file.slice(0, -'.astro'.length).split('/');
   if (segments.some((segment) => segment === '' || segment.startsWith('_') || segment.startsWith('.'))) return null;
   if (segments.length > 1 && locales.includes(segments[0] as string)) return null;
-  if (segments.length === 1 && UNLOCALISED_PAGES.has(segments[0] as string)) return null;
   if (segments.at(-1) === 'index') segments.pop();
+  if (segments.length === 1 && UNLOCALISED_PAGES.has(segments[0] as string)) return null;
   return `/${segments.join('/')}`;
 }
 

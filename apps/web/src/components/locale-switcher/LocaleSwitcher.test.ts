@@ -39,7 +39,8 @@ describe('LocaleSwitcher', () => {
     expect(await render('sw', 'sw/')).not.toContain('data-homes');
   });
 
-  it('renders nothing on the not-found page', async () => {
+  it('renders nothing on the not-found and offline pages', async () => {
     expect(await render('en', '404.html')).not.toContain('data-locale-switcher');
+    expect(await render('en', 'offline/')).not.toContain('data-locale-switcher');
   });
 });

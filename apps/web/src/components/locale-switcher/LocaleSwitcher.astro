@@ -6,8 +6,8 @@
  * language to that language's Today page (`preferredHome`). Deep links are never redirected, so a shared link
  * opens in the language it was shared in.
  *
- * Renders nothing when the site has a single locale, and on the not-found page. Paths come from `localeLinks()`
- * in src/lib/locales.ts.
+ * Renders nothing when the site has a single locale, and on the not-found and offline pages. Paths come from
+ * `localeLinks()` in src/lib/locales.ts.
  */
 import { DEFAULT_LOCALE, LOCALES, t } from '../../i18n/index.ts';
 import { localeLinks, pathInLocale } from '../../lib/locales.ts';
@@ -23,8 +23,8 @@ const { lang } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const path = stripBase(base, Astro.url.pathname);
 const links = localeLinks(path, LOCALES, DEFAULT_LOCALE);
-// The not-found page is served once for the whole site, so it has no other language to switch to.
-const others = /^404(?:\.html|\/)?$/.test(path) ? [] : links.filter((link) => !link.current);
+// The not-found and offline pages are served once for the whole site, so they have no other language to switch to.
+const others = /^(?:404(?:\.html|\/)?|offline\/)$/.test(path) ? [] : links.filter((link) => !link.current);
 // Each language's name in that language ("English", "Kiswahili").
 const nameIn = (locale: string): string => {
   const names: Record<string, string> = {

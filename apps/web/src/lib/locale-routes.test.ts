@@ -25,10 +25,11 @@ describe('pagePattern', () => {
     expect(pagePattern('_drafts/index.astro', locales)).toBeNull();
     expect(pagePattern('.hidden/index.astro', locales)).toBeNull();
     expect(pagePattern('404.astro', locales)).toBeNull();
+    expect(pagePattern('offline/index.astro', locales)).toBeNull();
     expect(pagePattern('sw/index.astro', locales)).toBeNull();
     expect(pagePattern('en/index.astro', locales)).toBeNull();
     expect(pagePattern('/index.astro', locales)).toBeNull();
-    expect([...UNLOCALISED_PAGES]).toEqual(['404', '500']);
+    expect([...UNLOCALISED_PAGES]).toEqual(['404', '500', 'offline']);
   });
 });
 
@@ -85,6 +86,6 @@ describe('listPageFiles', () => {
         '/sw/settings',
       ]),
     );
-    expect(patterns.filter((pattern) => pattern.includes('api') || pattern.includes('404'))).toEqual([]);
+    expect(patterns.filter((pattern) => /api|404|offline/.test(pattern))).toEqual([]);
   });
 });
