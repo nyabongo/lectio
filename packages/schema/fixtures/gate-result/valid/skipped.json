@@ -1,0 +1,8 @@
+{
+  "gate": "merge-rule",
+  "status": "skipped",
+  "items": [],
+  "meta": {
+    "reason": "earlier gate failed"
+  }
+}

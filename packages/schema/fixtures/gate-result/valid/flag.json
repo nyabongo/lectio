@@ -1,0 +1,19 @@
+{
+  "gate": "verifiers",
+  "status": "flag",
+  "items": [
+    {
+      "ruleId": "verifiers.sensitive-claim",
+      "severity": "warning",
+      "file": "passages/MT.20.1-16.json",
+      "pointer": "/claims/4",
+      "message": "Sensitive claim needs a human reviewer.",
+      "claimId": "c5"
+    }
+  ],
+  "meta": {
+    "confirmer": "claude-opus-5-5",
+    "refuter": "gpt-6",
+    "costUsd": 0.12
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "key": "MT.20.1-16",
+  "ref": "Mt 20:1-16a",
+  "locale": "en",
+  "summary": "A landowner pays the last hired the same as the first, and asks whether his goodness is a cause for resentment.",
+  "context": {
+    "title": "Labourers in the vineyard",
+    "paragraphs": [
+      "Matthew alone records this parable, placed between two sayings about the last being first. [c1] A denarius was the customary pay for a labourer’s day in first-century Palestine. [c2]",
+      "The owner’s closing question uses the Jewish idiom of the evil eye, an image for begrudging another’s good fortune. [c3] Matthew has already set the sound eye against the evil eye in the Sermon on the Mount. [c4]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "evil-eye",
+      "verse": "20:15",
+      "anchor": "envious",
+      "original": {
+        "text": "ὀφθαλμός σου πονηρός",
+        "lang": "grc",
+        "translit": "ophthalmos sou ponēros",
+        "gloss": "your eye evil"
+      },
+      "summary": "Greek asks “is your eye evil?”, an idiom for begrudging another’s good.",
+      "body": "The evil eye was a familiar image for stinginess and resentment (Deut 15:9; Prov 28:22). English trades the image for an abstract feeling and loses the echo of Mt 6:22-23. [c3][c4]"
+    },
+    {
+      "id": "agathos",
+      "verse": "20:15",
+      "anchor": "generous",
+      "original": {
+        "text": "ἀγαθός",
+        "lang": "grc",
+        "translit": "agathos",
+        "gloss": "good"
+      },
+      "summary": "The landowner calls himself “good”, not merely “generous”.",
+      "body": "Agathos is the word Jesus reserves for God in Mt 19:17, a few verses earlier. The parable is about who the owner is, not only what he pays. [c5]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The parable of the labourers in the vineyard appears only in Matthew.",
+      "sourceIds": [],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "A denarius was a usual day’s wage for a labourer.",
+      "sourceIds": ["mt-20-2", "davies-allison"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "An “evil eye” was a Jewish idiom for stinginess or begrudging another’s good.",
+      "sourceIds": ["dt-15-9", "lsj-ophthalmos"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Mt 6:22-23 contrasts the sound eye with the evil eye.",
+      "sourceIds": ["mt-6-22"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "In Mt 19:17 Jesus says that only one is good, using agathos.",
+      "sourceIds": ["mt-19-17"],
+      "sensitive": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "mt-20-2",
+      "type": "scripture",
+      "citation": "Matthew 20:2",
+      "ref": "Mt 20:2"
+    },
+    {
+      "id": "mt-6-22",
+      "type": "scripture",
+      "citation": "Matthew 6:22-23",
+      "ref": "Mt 6:22-23"
+    },
+    {
+      "id": "mt-19-17",
+      "type": "scripture",
+      "citation": "Matthew 19:17",
+      "ref": "Mt 19:17",
+      "excerpt": "εἷς ἐστιν ὁ ἀγαθός",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "dt-15-9",
+      "type": "scripture",
+      "citation": "Deuteronomy 15:9",
+      "ref": "Dt 15:9"
+    },
+    {
+      "id": "lsj-ophthalmos",
+      "type": "web",
+      "citation": "Liddell, Scott, Jones, A Greek-English Lexicon, s.v. ὀφθαλμός (Perseus Digital Library)",
+      "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0057:entry=o)fqalmo/s",
+      "archivedUrl": "https://web.archive.org/web/2026/https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0057:entry=o)fqalmo/s",
+      "retrievedAt": "2026-09-01T08:30:00Z"
+    },
+    {
+      "id": "davies-allison",
+      "type": "print",
+      "citation": "W. D. Davies and Dale C. Allison, The Gospel According to Saint Matthew, vol. 3 (ICC), T&T Clark, 1997, pp. 66-79"
+    }
+  ],
+  "provenance": {
+    "generator": "research-cli",
+    "runId": "2026-09-01-mt-20-1-16-a1b2c3",
+    "models": ["claude-opus-5-5"],
+    "promptVersion": "research-v1",
+    "createdAt": "2026-09-01T08:42:10Z",
+    "costUsd": 0.84
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
