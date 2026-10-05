@@ -55,6 +55,21 @@ describe('NoteCard', () => {
     expect(html).toContain('two independent AI verifiers');
     expect(html).not.toContain('Last reviewed');
     expect(html).toContain('Report an issue');
+    expect(html).not.toContain('note__permalink');
+  });
+
+  it('links to the note permalink when given one', async () => {
+    const html = await container.renderToString(NoteCard, {
+      props: {
+        note: hebrewNote,
+        method: 'auto',
+        lastReviewedAt: null,
+        permalink: '/2026-09-20/first-reading/notes/v8/',
+      },
+    });
+    expect(html).toMatch(
+      /<a class="note__permalink"[^>]*href="\/2026-09-20\/first-reading\/notes\/v8\/"[^>]*aria-label="Link to this note: verse 8, “thoughts”"[^>]*>\s*Link to this note\s*<\/a>/,
+    );
   });
 });
 
@@ -81,6 +96,19 @@ describe('Verification', () => {
     expect(html).toContain('Verified · 2 sources');
     expect(html).toMatch(/<time datetime="2026-09-03T17:05:00Z"[^>]*>Last reviewed 3 September 2026<\/time>/);
     expect(html).toContain('href="https://x.test/"');
+  });
+
+  it('starts closed, and open when asked', async () => {
+    const props = {
+      sources: [hebrewSource],
+      method: 'human',
+      lastReviewedAt: null,
+      reportUrl: 'https://x.test/',
+    } as const;
+    const closed = await container.renderToString(Verification, { props });
+    expect(closed).toMatch(/<details class="verification__details"(?![^>]*\bopen\b)[^>]*>/);
+    const open = await container.renderToString(Verification, { props: { ...props, open: true } });
+    expect(open).toMatch(/<details class="verification__details"[^>]*\bopen\b[^>]*>/);
   });
 });
 

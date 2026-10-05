@@ -16,6 +16,7 @@ import Seo from '../../../components/seo/Seo.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { dayPath, slotLabel } from '../../../lib/day.ts';
+import { insightPath } from '../../../lib/insight.ts';
 import { linkoutSource, readingPage, readingStaticPaths } from '../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../lib/site.ts';
 
@@ -113,7 +114,13 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
         ) : (
           <div class="notes">
             {notes.translationNotes.map((note) => (
-              <NoteCard note={note} method={notes.method} lastReviewedAt={notes.lastReviewedAt} lang={lang} />
+              <NoteCard
+                note={note}
+                method={notes.method}
+                lastReviewedAt={notes.lastReviewedAt}
+                lang={lang}
+                permalink={withBase(base, localePath(lang, insightPath(view.date, view.slot, note.id)))}
+              />
             ))}
           </div>
         )

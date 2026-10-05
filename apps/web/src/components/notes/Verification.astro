@@ -5,7 +5,8 @@
  *
  * With no sources (unreachable for schema-valid content, whose prose always cites claims) it says "Not yet verified"
  * instead of showing the mark. Only ever rendered for an approved passage: pages build it from `notesView()`, which
- * exists only for approved passages (src/lib/reading.ts).
+ * exists only for approved passages (src/lib/reading.ts). With `open` the sources start expanded (the Insight
+ * permalink page, where the sources are the point).
  */
 import { DEFAULT_LOCALE, formatDate, t } from '../../i18n/index.ts';
 import type { SourceView } from '../../lib/reading.ts';
@@ -17,9 +18,11 @@ export interface Props {
   lastReviewedAt: string | null;
   reportUrl: string;
   lang?: string;
+  /** Start with the sources expanded. */
+  open?: boolean;
 }
 
-const { sources, method, lastReviewedAt, reportUrl, lang = DEFAULT_LOCALE } = Astro.props;
+const { sources, method, lastReviewedAt, reportUrl, lang = DEFAULT_LOCALE, open = false } = Astro.props;
 const reviewed =
   lastReviewedAt === null
     ? null
@@ -31,7 +34,7 @@ const reviewed =
     sources.length === 0 ? (
       <p class="unverified">{t(lang, 'reading.unverified')}</p>
     ) : (
-      <details class="verification__details">
+      <details class="verification__details" open={open}>
         <summary class="verified">
           <svg class="verified__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
             <path

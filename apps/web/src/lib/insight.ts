@@ -3,13 +3,13 @@
  * one translation note of a reading as its own static page, so a link can point at a single insight.
  *
  * Built on `readingPage()` (src/lib/reading.ts), which hands over notes only for an approved passage, so a page
- * exists only for an approved note and nothing of a pending passage is ever rendered. The leading underscore keeps
- * this module out of Astro's routes.
+ * exists only for an approved note and nothing of a pending passage is ever rendered.
  */
 import type { ContentRepo } from '@lectio/content';
+import type { TranslationNote } from '@lectio/schema/passage';
 
-import { readingPage, readingStaticPaths, reportIssueUrl } from '../../../../lib/reading.ts';
-import type { NoteView, NotesView, ReadingView } from '../../../../lib/reading.ts';
+import { readingPage, readingsBySlot, reportIssueUrl } from './reading.ts';
+import type { NoteView, NotesView, ReadingView } from './reading.ts';
 
 /** The page path of one insight, relative to the base path: `2026-09-20/gospel/notes/v15-evil-eye/`. */
 export function insightPath(date: string, slot: string, noteId: string): string {
@@ -44,11 +44,20 @@ export function insightPage(repo: ContentRepo, date: string, slot: string, noteI
   };
 }
 
-/** Static paths for `notes/[noteId]/index.astro`: one per approved translation note of every reading page. */
+/**
+ * Static paths for `pages/[date]/[slot]/notes/[noteId]/index.astro`: one per approved note of every reading. Each
+ * day is resolved once (the same days and slots as `readingStaticPaths()`).
+ */
 export function insightStaticPaths(repo: ContentRepo): { params: { date: string; slot: string; noteId: string } }[] {
-  return readingStaticPaths(repo).flatMap(({ params: { date, slot } }) =>
-    (readingPage(repo, date, slot)?.notes?.translationNotes ?? []).map((note) => ({
-      params: { date, slot, noteId: note.id },
-    })),
+  return repo.years().flatMap((year) =>
+    repo.listDays(`${String(year)}-01-01`, `${String(year)}-12-31`).flatMap((day) =>
+      [...readingsBySlot(day)].flatMap(([slot, reading]) =>
+        reading.approved && reading.passage !== null
+          ? reading.passage.translationNotes.map((note: TranslationNote) => ({
+              params: { date: day.date, slot, noteId: note.id },
+            }))
+          : [],
+      ),
+    ),
   );
 }

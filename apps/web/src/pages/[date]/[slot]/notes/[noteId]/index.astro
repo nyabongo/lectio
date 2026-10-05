@@ -1,21 +1,21 @@
 ---
 /**
  * The Insight permalink page, `/[date]/[slot]/notes/[noteId]/` (e.g. `/2026-09-20/gospel/notes/v15-evil-eye/`): one
- * approved translation note on its own page, with the original words, the note, its sources, how it was reviewed, a
- * report link and a link back to the reading. The canonical URL is this page and the note's summary is the page
+ * approved translation note on its own page, with the original words, the note, and the same verification footer
+ * as the reading page (`Verification`, with its sources expanded), and a link back to the reading. The canonical URL is this page and the note's summary is the page
  * description. The reading text is never shown.
  *
- * Pages exist only for approved notes: `insightStaticPaths()` and `insightPage()` (../_insight.ts) build on
+ * Pages exist only for approved notes: `insightStaticPaths()` and `insightPage()` (src/lib/insight.ts) build on
  * `readingPage()`, which returns no notes for a pending passage.
  */
 import MarkedText from '../../../../../components/notes/MarkedText.astro';
-import SourceList from '../../../../../components/notes/SourceList.astro';
+import Verification from '../../../../../components/notes/Verification.astro';
 import Seo from '../../../../../components/seo/Seo.astro';
-import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../../../i18n/index.ts';
+import { DEFAULT_LOCALE, localePath, t } from '../../../../../i18n/index.ts';
 import BaseLayout from '../../../../../layouts/BaseLayout.astro';
 import { readingPath } from '../../../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../../../lib/site.ts';
-import { insightPage, insightStaticPaths } from '../_insight.ts';
+import { insightPage, insightStaticPaths } from '../../../../../lib/insight.ts';
 
 export function getStaticPaths() {
   return insightStaticPaths(siteContext().repo);
@@ -33,10 +33,6 @@ const title = t(lang, 'insight.pageTitle', { anchor: note.anchor, ref: reading.r
 const description = note.summary;
 // Back to the note's card on the reading page: the fragment opens the Original tab there.
 const readingHref = `${withBase(base, localePath(lang, readingPath(reading.date, reading.slot)))}#${note.anchorId}`;
-const reviewed =
-  lastReviewedAt === null
-    ? null
-    : formatDate(lang, new Date(lastReviewedAt), { day: 'numeric', month: 'long', year: 'numeric' });
 const headingId = `${note.anchorId}-heading`;
 ---
 
@@ -75,24 +71,14 @@ const headingId = `${note.anchorId}-heading`;
     <p class="insight__summary">{note.summary}</p>
     <p class="insight__body"><MarkedText segments={note.body} lang={lang} /></p>
 
-    <section class="insight__sources" aria-labelledby="sources-heading">
-      <h2 id="sources-heading">{t(lang, 'insight.sources')}</h2>
-      <SourceList sources={note.sources} lang={lang} />
-      <p class="insight__meta">
-        {t(lang, 'insight.verified', { count: note.sources.length })}
-        {' '}
-        {method === 'auto' ? t(lang, 'reading.method.auto') : t(lang, 'reading.method.human')}
-        {
-          reviewed !== null && (
-            <>
-              {' '}
-              <time datetime={lastReviewedAt}>{t(lang, 'reading.lastReviewed', { date: reviewed })}</time>
-            </>
-          )
-        }
-      </p>
-      <a class="insight__report" href={note.reportUrl} rel="noopener external">{t(lang, 'reading.report')}</a>
-    </section>
+    <Verification
+      sources={note.sources}
+      method={method}
+      lastReviewedAt={lastReviewedAt}
+      reportUrl={note.reportUrl}
+      lang={lang}
+      open
+    />
 
     <p class="insight__disclaimer">{t(lang, 'reading.disclaimer')}</p>
   </article>
@@ -103,8 +89,7 @@ const headingId = `${note.anchorId}-heading`;
     max-width: 46rem;
   }
 
-  .insight__back,
-  .insight__report {
+  .insight__back {
     display: inline-flex;
     align-items: center;
     gap: var(--space-3xs);
@@ -119,8 +104,7 @@ const headingId = `${note.anchorId}-heading`;
     text-decoration: none;
   }
 
-  .insight__back:hover,
-  .insight__report:hover {
+  .insight__back:hover {
     color: var(--colour-link);
   }
 
@@ -177,22 +161,6 @@ const headingId = `${note.anchorId}-heading`;
     font-size: var(--step-1);
     font-weight: var(--weight-strong);
     line-height: var(--leading-snug);
-  }
-
-  .insight__sources {
-    margin-top: var(--space-m);
-    padding-top: var(--space-s);
-    border-top: var(--rule-width) solid var(--colour-rule);
-  }
-
-  .insight__sources h2 {
-    font-size: var(--step-1);
-  }
-
-  .insight__meta {
-    margin: var(--space-xs) 0 0;
-    font-size: var(--step--1);
-    color: var(--colour-muted);
   }
 
   .insight__disclaimer {
