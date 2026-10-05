@@ -1,0 +1,62 @@
+{
+  "pageTitle": "{title}, {date}",
+  "description": "{date}: {title}. {season}. Masomo: {refs}. Madokezo kuhusu historia yake na maneno yake asilia, kila andiko likiwa kwa kubofya mara moja.",
+  "descriptionNoReadings": "{date}: {title}. {season}. Masomo ya siku hii bado hayajaorodheshwa.",
+  "todayHeading": "Leo",
+  "todayMissing": "Bado hakuna siku ya kalenda kwa leo. Kalenda inaorodhesha kila siku iliyo tayari.",
+  "upcomingHeading": "Siku zijazo",
+  "readingsHeading": "Masomo",
+  "massOptions": {
+    "one": "Siku hii ina Misa {count} ya kuchagua.",
+    "other": "Siku hii ina Misa {count} za kuchagua."
+  },
+  "lectionaryMissing": "Masomo ya siku hii bado hayajaorodheshwa.",
+  "notesInPreparation": "Madokezo yanaandaliwa",
+  "linkout": {
+    "text": "Andiko",
+    "detail": "{ref} kwenye {source} (hufunguka kwenye kichupo kipya)"
+  },
+  "listen": "Sikiliza madokezo",
+  "dayNav": "Siku nyingine",
+  "previousDay": "Siku iliyotangulia",
+  "nextDay": "Siku inayofuata",
+  "colourLabel": "Rangi ya liturujia: {colour}",
+  "cycles": "Mzunguko wa Dominika {sunday} · Mzunguko wa siku za juma {weekday}",
+  "seasonWeek": "{season} · Juma la {week}",
+  "season": {
+    "advent": "Majilio",
+    "christmas": "Kipindi cha Noeli",
+    "ordinaryTime": "Kipindi cha Kawaida",
+    "lent": "Kwaresima",
+    "paschalTriduum": "Siku Tatu Kuu za Pasaka",
+    "easter": "Kipindi cha Pasaka"
+  },
+  "rank": {
+    "solemnity": "Sherehe",
+    "sunday": "Dominika",
+    "feast": "Sikukuu",
+    "memorial": "Kumbukumbu",
+    "optionalMemorial": "Kumbukumbu ya hiari",
+    "commemoration": "Ukumbusho",
+    "weekday": "Siku ya juma"
+  },
+  "colour": {
+    "white": "Nyeupe",
+    "red": "Nyekundu",
+    "green": "Kijani",
+    "violet": "Zambarau",
+    "rose": "Waridi",
+    "black": "Nyeusi",
+    "gold": "Dhahabu"
+  },
+  "slot": {
+    "firstReading": "Somo la kwanza",
+    "psalm": "Zaburi",
+    "secondReading": "Somo la pili",
+    "gospel": "Injili",
+    "epistle": "Waraka",
+    "readingN": "Somo {n}",
+    "psalmN": "Zaburi {n}",
+    "other": "Somo"
+  }
+}
