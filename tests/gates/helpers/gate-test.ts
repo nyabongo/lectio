@@ -72,7 +72,7 @@ const runs = new Map<string, Promise<GateResult>>();
 
 /** The gate's result over `files`, computed once per gate and file list. */
 export function gateResult(gate: Gate, files?: readonly string[]): Promise<GateResult> {
-  const key = `${gate.id}\0${(files ?? []).join('\0')}`;
+  const key = `${gate.id}\0${files === undefined ? '*' : JSON.stringify(files)}`;
   let run = runs.get(key);
   if (run === undefined) {
     run = runGates([gate], contentContext(files)).then((report) => report.results[0] as GateResult);
