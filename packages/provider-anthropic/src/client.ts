@@ -61,6 +61,12 @@ export interface AnthropicLlmClientOptions {
   readonly jsonRetries?: number;
   /** `pause_turn` continuations of a long server-tool turn. Default 4. */
   readonly maxContinuations?: number;
+  /**
+   * Output tokens added to `maxTokens` for thinking, so callers size `maxTokens` for the answer
+   * alone (Claude Opus 5.5 and Sonnet 5.5 always think, and thinking counts against `max_tokens`).
+   * Default {@link DEFAULT_THINKING_TOKENS}.
+   */
+  readonly thinkingTokens?: number;
   /** Per-request timeout in ms. Default 10 minutes. */
   readonly timeoutMs?: number;
   /** Waits between retries (injected in tests). */
@@ -68,6 +74,9 @@ export interface AnthropicLlmClientOptions {
 }
 
 const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000;
+
+/** Default thinking allowance added to `maxTokens`. */
+export const DEFAULT_THINKING_TOKENS = 4096;
 
 const realSleep = (ms: number): Promise<void> =>
   new Promise((resolve) => {
@@ -128,6 +137,7 @@ export class AnthropicLlmClient implements LlmClient {
   readonly #jsonRetries: number;
   readonly #maxContinuations: number;
   readonly #timeoutMs: number;
+  readonly #thinkingTokens: number;
   readonly #sleep: (ms: number) => Promise<void>;
 
   constructor(options: AnthropicLlmClientOptions) {
@@ -138,6 +148,7 @@ export class AnthropicLlmClient implements LlmClient {
     this.#jsonRetries = checkCount('jsonRetries', options.jsonRetries ?? 1, 0);
     this.#maxContinuations = checkCount('maxContinuations', options.maxContinuations ?? 4, 0);
     this.#timeoutMs = checkCount('timeoutMs', options.timeoutMs ?? DEFAULT_TIMEOUT_MS, 1);
+    this.#thinkingTokens = checkCount('thinkingTokens', options.thinkingTokens ?? DEFAULT_THINKING_TOKENS, 0);
     this.#sleep = options.sleep ?? realSleep;
     if (options.client) {
       this.#client = options.client;
@@ -159,8 +170,9 @@ export class AnthropicLlmClient implements LlmClient {
 
   async generate(request: LlmRequest): Promise<LlmResponse> {
     validateRequest(request);
-    // Fail before spending money when the meter cannot price the model.
+    // Fail before spending money when the meter cannot price the model or nothing is left.
     this.#meter.price(request.model, { inputTokens: 0, outputTokens: 0 });
+    this.#meter.assertWithinBudget();
 
     const tally: Tally = { usage: undefined, model: request.model };
     let response: LlmResponse;
@@ -176,6 +188,25 @@ export class AnthropicLlmClient implements LlmClient {
 
   #charge(request: LlmRequest, tally: Tally): void {
     if (tally.usage) this.#meter.chargeUsage(tally.model, tally.usage, `anthropic:${request.role}:${tally.model}`);
+  }
+
+  /**
+   * The id to bill and report: the answering model when it is priced, else the requested one
+   * (which `generate` checked). An alias or a snapshot id the API echoes back never leaves a
+   * spend unrecorded.
+   */
+  #billedModel(answered: string, requested: string): string {
+    try {
+      this.#meter.price(answered, { inputTokens: 0, outputTokens: 0 });
+      return answered;
+    } catch {
+      return requested;
+    }
+  }
+
+  #tallyUsage(tally: Tally, usage: Anthropic.Usage, requested: string, answered: string): void {
+    tally.usage = tally.usage ? addUsage(tally.usage, usageOf(usage)) : usageOf(usage);
+    tally.model = this.#billedModel(answered, requested);
   }
 
   async #answer(request: LlmRequest, tally: Tally): Promise<LlmResponse> {
@@ -229,9 +260,9 @@ export class AnthropicLlmClient implements LlmClient {
     const content: Anthropic.ContentBlock[] = [];
     const messages = [...conversation];
     for (let continuation = 0; ; continuation += 1) {
-      const message = await this.#send(this.#params(request, messages, tools));
-      tally.usage = tally.usage ? addUsage(tally.usage, usageOf(message.usage)) : usageOf(message.usage);
-      tally.model = message.model;
+      const params = this.#params(request, messages, tools);
+      const message = await this.#send(params, request, tally);
+      this.#tallyUsage(tally, message.usage, request.model, message.model);
       content.push(...message.content);
 
       switch (message.stop_reason) {
@@ -251,6 +282,14 @@ export class AnthropicLlmClient implements LlmClient {
           throw new ProviderError('unsupported', `Anthropic declined the request${category ? ` (${category})` : ''}`, {
             retryable: false,
           });
+        }
+        case 'max_tokens': {
+          // Truncated: a repair turn with the same budget would be cut off again, so fail at once.
+          const thinking = message.usage.output_tokens_details?.thinking_tokens ?? 0;
+          throw new LlmOutputError(
+            `Anthropic answer truncated at ${String(params.max_tokens)} output tokens (thinking used ${String(thinking)}); raise maxTokens or thinkingTokens`,
+            answerText(content),
+          );
         }
         case 'model_context_window_exceeded':
           throw new ProviderError('invalid-request', 'the request exceeds the model context window');
@@ -275,7 +314,7 @@ export class AnthropicLlmClient implements LlmClient {
     };
     return {
       model: request.model,
-      max_tokens: request.maxTokens,
+      max_tokens: request.maxTokens + this.#thinkingTokens,
       system: request.system,
       messages,
       ...(tools.length > 0 ? { tools: tools.map((tool) => this.#tool(tool, format !== undefined)) } : {}),
@@ -300,12 +339,19 @@ export class AnthropicLlmClient implements LlmClient {
     } as Anthropic.ToolUnion;
   }
 
-  /** Streams one request (long research turns would time out unstreamed), retrying transient failures. */
-  async #send(params: Anthropic.MessageStreamParams): Promise<Anthropic.Message> {
+  /**
+   * Streams one request (long research turns would time out unstreamed), retrying transient
+   * failures. An attempt that fails after the stream started has been billed for what it
+   * generated, so its partial usage goes into the tally too.
+   */
+  async #send(params: Anthropic.MessageStreamParams, request: LlmRequest, tally: Tally): Promise<Anthropic.Message> {
     for (let attempt = 0; ; attempt += 1) {
+      const stream = this.#client.messages.stream(params, { timeout: this.#timeoutMs });
       try {
-        return await this.#client.messages.stream(params, { timeout: this.#timeoutMs }).finalMessage();
+        return await stream.finalMessage();
       } catch (error) {
+        const partial = stream.currentMessage;
+        if (partial) this.#tallyUsage(tally, partial.usage, request.model, partial.model);
         const mapped = toProviderError(error);
         if (!mapped.retryable || attempt >= this.#maxRetries) throw mapped;
         await this.#sleep(retryDelayMs(error, attempt));
