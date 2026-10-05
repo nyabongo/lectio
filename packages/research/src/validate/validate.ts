@@ -11,7 +11,8 @@ import { join } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
 import { ContentError, formatIssue } from '@lectio/content';
-import type { GateReport } from '@lectio/gates';
+import { allRules, formatFinding } from '@lectio/gates';
+import type { GateReport, GateResultItem } from '@lectio/gates';
 import { BudgetExceededError, LlmOutputError, ProviderError, validateAgainstSchema } from '@lectio/providers';
 import type { CostMeter, LlmClient, LlmTool } from '@lectio/providers';
 import type { Passage } from '@lectio/schema/passage';
@@ -40,6 +41,13 @@ export interface Draft {
   /** The research output (parsed JSON, or raw text when the model did not return valid JSON). */
   readonly output: unknown;
   readonly meta: DraftMeta;
+  /**
+   * Findings already known against this draft that the local gates cannot see, for example the
+   * verifier (gate 4) findings from a pull request's gate comment. They count as failures of the
+   * draft as given, so at least one repair round runs (or, without repairs, the drop step traces
+   * them); a repaired draft is judged by the local gates alone, and CI re-runs the rest.
+   */
+  readonly knownProblems?: readonly GateResultItem[];
 }
 
 export interface ValidateDeps extends DraftGateDeps {
@@ -57,10 +65,17 @@ export interface ValidateDeps extends DraftGateDeps {
 }
 
 /** Why an attempt did not reach the gates, or what the gates said. */
-export type AttemptStage = 'invalid-json' | 'invalid-output' | 'invalid-passage' | 'gates-failed' | 'passed';
+export type AttemptStage =
+  | 'invalid-json'
+  | 'invalid-output'
+  | 'invalid-passage'
+  | 'gates-failed'
+  | 'passed'
+  /** The repair answer was unusable (malformed or cut off); the draft before it stays current. */
+  | 'malformed-repair';
 
 export interface Attempt {
-  /** 0 for the research draft, n for the draft after repair n. */
+  /** 0 for the research draft, n for the draft after (or, when malformed, the answer of) repair n. */
   readonly attempt: number;
   readonly stage: AttemptStage;
   readonly problems: readonly string[];
@@ -105,10 +120,15 @@ export interface AbandonedValidation extends ResultBase {
 export type ValidationResult = ReadyValidation | ReadyWithDropsValidation | AbandonedValidation;
 
 type Evaluation =
-  | { readonly stage: Exclude<AttemptStage, 'gates-failed' | 'passed'>; readonly problems: readonly string[] }
+  | {
+      readonly stage: Exclude<AttemptStage, 'gates-failed' | 'passed' | 'malformed-repair'>;
+      readonly problems: readonly string[];
+    }
   | {
       readonly stage: 'gates-failed' | 'passed';
       readonly problems: readonly string[];
+      /** The error findings: the gates' own plus any known problems that still apply. */
+      readonly errors: readonly GateResultItem[];
       readonly passage: Passage;
       readonly text: string;
       readonly run: Awaited<ReturnType<typeof runDraftGates>>;
@@ -135,17 +155,25 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
   const models = [...draft.meta.models];
   let fake = draft.meta.family === 'fake';
 
-  const gate = async (passage: Passage): Promise<Gated> => {
+  const knownItems = draft.knownProblems ?? [];
+  const rules = allRules();
+  const knownText = knownItems.map((item) => formatFinding(item, rules));
+
+  /** Known problems apply to the draft as given, until a repair answers them. */
+  const gate = async (passage: Passage, known: readonly GateResultItem[] = []): Promise<Gated> => {
     const text = await format(`${JSON.stringify(passage, null, 2)}\n`, join(deps.root, path));
     const run = await runDraftGates(path, text, deps);
-    return { stage: run.passed ? 'passed' : 'gates-failed', problems: run.problems, passage, text, run };
+    const errors = [...run.errors, ...known];
+    const problems = [...run.problems, ...known.map((item) => formatFinding(item, rules))];
+    return { stage: errors.length === 0 ? 'passed' : 'gates-failed', problems, errors, passage, text, run };
   };
 
-  const evaluate = async (output: unknown): Promise<Evaluation> => {
+  const evaluate = async (output: unknown, known: boolean): Promise<Evaluation> => {
+    const extra = known ? knownText : [];
     const value = parsed(output);
-    if ('problem' in value) return { stage: 'invalid-json', problems: [value.problem] };
+    if ('problem' in value) return { stage: 'invalid-json', problems: [value.problem, ...extra] };
     const schemaProblems = validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, value.value);
-    if (schemaProblems.length > 0) return { stage: 'invalid-output', problems: schemaProblems };
+    if (schemaProblems.length > 0) return { stage: 'invalid-output', problems: [...schemaProblems, ...extra] };
     let passage: Passage;
     try {
       passage = assemblePassage(value.value as ResearchOutput, {
@@ -158,9 +186,10 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
       });
     } catch (error) {
       if (!(error instanceof ContentError)) throw error;
-      return { stage: 'invalid-passage', problems: error.issues.map((issue) => formatIssue(error.file, issue)) };
+      const issues = error.issues.map((issue) => formatIssue(error.file, issue));
+      return { stage: 'invalid-passage', problems: [...issues, ...extra] };
     }
-    return gate(passage);
+    return gate(passage, known ? knownItems : []);
   };
 
   const attempts: Attempt[] = [];
@@ -177,9 +206,11 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
     repairCostUsd: repairCost(),
   });
 
+  /** Problems about the last repair answer itself, shown to the model before the draft's own. */
+  let carried: string[] = [];
+  last = await evaluate(output, true);
+  attempts.push({ attempt: 0, stage: last.stage, problems: last.problems });
   for (;;) {
-    last = await evaluate(output);
-    attempts.push({ attempt: repairs, stage: last.stage, problems: last.problems });
     if ('passage' in last) {
       lastGated = last;
       if (last.stage === 'passed') {
@@ -188,13 +219,14 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
     }
     if (repairs >= maxRepairs) break;
     const request = buildRepairRequest(
-      { key: draft.key, ref: draft.ref, output, problems: last.problems, attempt: repairs + 1 },
+      { key: draft.key, ref: draft.ref, output, problems: [...carried, ...last.problems], attempt: repairs + 1 },
       {
         config: deps.config,
         ...(deps.tools === undefined ? {} : { tools: deps.tools }),
         ...(deps.maxTokens === undefined ? {} : { maxTokens: deps.maxTokens }),
       },
     );
+    const spentBefore = repairCost();
     try {
       const response = await deps.llm.generate(request);
       repairs += 1;
@@ -203,13 +235,17 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
       fake ||= response.family === 'fake';
     } catch (error) {
       if (error instanceof LlmOutputError) {
-        // Malformed after the client's own retries: the next attempt reports it and the model sees its text.
+        // Malformed or cut off after the client's own retries: keep the last draft as the current one,
+        // so nothing past a truncation is lost, and tell the model what went wrong with its answer.
         repairs += 1;
-        output = error.rawText;
+        const problem = `repair ${String(repairs)} was not usable and was discarded (${error.message}); answer again with the whole corrected draft`;
+        attempts.push({ attempt: repairs, stage: 'malformed-repair', problems: [problem] });
+        carried = [problem];
         continue;
       }
       if (error instanceof BudgetExceededError) {
-        repairs += 1; // the call was made and charged
+        // Live clients check the budget before calling; only a call that was charged counts.
+        if (repairCost() > spentBefore) repairs += 1;
         repairStopped = `budget: ${error.message}`;
         break;
       }
@@ -219,6 +255,9 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
       }
       throw error;
     }
+    carried = [];
+    last = await evaluate(output, false);
+    attempts.push({ attempt: repairs, stage: last.stage, problems: last.problems });
   }
 
   if (lastGated === undefined) {
@@ -229,7 +268,7 @@ export async function preValidate(draft: Draft, deps: ValidateDeps): Promise<Val
       problems: last.problems,
     };
   }
-  const plan = planDrops(lastGated.passage, lastGated.run.errors);
+  const plan = planDrops(lastGated.passage, lastGated.errors);
   if (!plan.ok) {
     return {
       ...base(),

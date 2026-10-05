@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
 import { openRepo } from '@lectio/content';
+import type { Gate } from '@lectio/gates';
 import { describe, expect, it } from 'vitest';
 
 import { assemblePassage } from '../agent/assemble.ts';
@@ -48,6 +49,35 @@ describe('runDraftGates', () => {
     expect(run.problems).toEqual([]);
     expect(run.report.changedFiles).toEqual(['passages/MT.20.1-16.json']);
     expect(run.report.results.map((result) => result.status)).not.toContain('skipped');
+  });
+
+  it('hands the gates the given content repository and reads other files through readText', async () => {
+    const repo = openRepo(join(REPO_ROOT, '.'));
+    const seen: { repo?: unknown; draft?: string | null; other?: string | null } = {};
+    const probe: Gate = {
+      id: 'schema',
+      title: 'probe',
+      rules: [],
+      run(context) {
+        seen.repo = context.repo;
+        seen.draft = context.readFile('passages/MT.20.1-16.json');
+        seen.other = context.readFile('calendar/2026.json');
+        return { gate: 'schema', status: 'pass', items: [], meta: {} };
+      },
+    };
+    const read: string[] = [];
+    const run = await runDraftGates('passages/MT.20.1-16.json', text, {
+      ...deps,
+      repo,
+      gates: [probe],
+      readText: (absolute) => {
+        read.push(absolute);
+        return 'other text';
+      },
+    });
+    expect(run.passed).toBe(true);
+    expect(seen).toEqual({ repo, draft: text, other: 'other text' });
+    expect(read).toEqual([join(REPO_ROOT, 'calendar/2026.json')]);
   });
 
   it('compares with the base version when there is one', async () => {

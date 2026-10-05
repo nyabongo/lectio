@@ -14,6 +14,7 @@ describe('validate barrel', () => {
       'contentPrefix',
       'draftFromResult',
       'draftPath',
+      'fenceFor',
       'formatValidationReport',
       'outputOfPassage',
       'planDrops',

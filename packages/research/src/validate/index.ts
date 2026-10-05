@@ -12,6 +12,7 @@ export {
   DEFAULT_REPAIR_TOOLS,
   REPAIR_PROMPT_VERSION,
   buildRepairRequest,
+  fenceFor,
   repairSystemPrompt,
   repairUserMessage,
 } from './prompt.ts';

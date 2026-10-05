@@ -6,6 +6,7 @@ import {
   DEFAULT_REPAIR_MAX_TOKENS,
   DEFAULT_REPAIR_TOOLS,
   buildRepairRequest,
+  fenceFor,
   repairSystemPrompt,
   repairUserMessage,
 } from './prompt.ts';
@@ -44,6 +45,15 @@ describe('repair prompt', () => {
       ].join('\n'),
     );
     expect(repairUserMessage({ ...input, output: '{"raw' })).toContain('```json\n{"raw\n```');
+  });
+
+  it('fences the draft with more backticks than it contains', () => {
+    expect(fenceFor('no ticks')).toBe('```');
+    expect(fenceFor('a `b` c')).toBe('```');
+    expect(fenceFor('```json\n{}\n```')).toBe('````');
+    expect(fenceFor('x ````` y')).toBe('``````');
+    const message = repairUserMessage({ ...input, output: 'text\n```\nmore' });
+    expect(message).toContain('Current draft:\n````json\ntext\n```\nmore\n````');
   });
 
   it('builds a repair-role request with the research response schema', () => {

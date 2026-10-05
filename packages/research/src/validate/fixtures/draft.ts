@@ -152,11 +152,13 @@ export function fixtureProviders(): ProviderSet {
 /**
  * The fake LLM answering `repair` calls with `script`, reporting `family`. The fake itself reports
  * `fake`, which the schema gate rightly rejects as provenance, so repair-loop tests pose as the
- * configured family to let a repaired draft pass.
+ * configured family to let a repaired draft pass. With a meter it checks the budget before each
+ * call, as the live clients do.
  */
 export class RepairLlm implements LlmClient {
   readonly fake: FakeLlmClient;
   readonly family: LlmFamily;
+  readonly #meter: CostMeter | undefined;
 
   constructor(script: FakeLlmScriptEntry, options: { family?: LlmFamily; meter?: CostMeter } = {}) {
     this.fake = new FakeLlmClient({
@@ -164,6 +166,7 @@ export class RepairLlm implements LlmClient {
       ...(options.meter === undefined ? {} : { costMeter: options.meter }),
     });
     this.family = options.family ?? 'anthropic';
+    this.#meter = options.meter;
   }
 
   get calls(): readonly LlmRequest[] {
@@ -171,6 +174,8 @@ export class RepairLlm implements LlmClient {
   }
 
   async generate(request: LlmRequest): Promise<LlmResponse> {
+    // Like the live clients: refuse to call once the budget is spent, before any charge.
+    this.#meter?.assertWithinBudget();
     const response = await this.fake.generate(request);
     return { ...response, family: this.family };
   }

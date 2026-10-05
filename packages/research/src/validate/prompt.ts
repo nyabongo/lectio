@@ -58,8 +58,16 @@ function draftText(output: unknown): string {
   return typeof output === 'string' ? output : JSON.stringify(output, null, 2);
 }
 
+/** A backtick fence longer than any backtick run in `text`, so the draft cannot close it early. */
+export function fenceFor(text: string): string {
+  const longest = Math.max(0, ...[...text.matchAll(/`+/gu)].map((match) => match[0].length));
+  return '`'.repeat(Math.max(3, longest + 1));
+}
+
 /** The user message of a repair call. */
 export function repairUserMessage(input: RepairInput): string {
+  const draft = draftText(input.output);
+  const fence = fenceFor(draft);
   return [
     `Passage ${input.key} (${input.ref}), repair ${String(input.attempt)}.`,
     '',
@@ -67,9 +75,9 @@ export function repairUserMessage(input: RepairInput): string {
     ...input.problems.map((problem) => `- ${problem.replace(/\n/gu, '\n  ')}`),
     '',
     'Current draft:',
-    '```json',
-    draftText(input.output),
-    '```',
+    `${fence}json`,
+    draft,
+    fence,
   ].join('\n');
 }
 

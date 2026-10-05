@@ -1,4 +1,5 @@
 import { DEFAULT_CONFIG } from '@lectio/config';
+import type { GateResultItem } from '@lectio/gates';
 import type { LectioConfig } from '@lectio/config';
 import { createCostMeter } from '@lectio/providers';
 import type { CostMeter } from '@lectio/providers';
@@ -94,6 +95,18 @@ function misspeltThirdNote(): EditableOutput {
   return output;
 }
 
+/** A gate-4 finding from a pull request's gate comment. */
+function verifierFinding(): GateResultItem {
+  return {
+    ruleId: 'verifiers/claim-not-refuted',
+    severity: 'error',
+    file: 'passages/MT.20.1-16.json',
+    pointer: '/claims/1',
+    claimId: 'c2',
+    message: 'refuted',
+  };
+}
+
 const stages = (result: ValidationResult): string[] => result.attempts.map((attempt) => attempt.stage);
 
 describe('preValidate', () => {
@@ -150,12 +163,21 @@ describe('preValidate', () => {
     expect(llm.calls[0]?.messages[0]?.content).toContain('{"summary": ');
   });
 
-  it('counts a repair whose answer is malformed and shows the model its own text next time', async () => {
+  it('counts a malformed repair answer but keeps the last draft as the current one', async () => {
     const llm = new RepairLlm([{ text: '{"oops' }, { output: VALID_OUTPUT }]);
     const result = ready(await preValidate(draftOf(wrongEyeExcerpt()), deps(llm)));
     expect(result.repairs).toBe(2);
-    expect(stages(result)).toEqual(['gates-failed', 'invalid-json', 'passed']);
-    expect(llm.calls[1]?.messages[0]?.content).toContain('{"oops');
+    expect(stages(result)).toEqual(['gates-failed', 'malformed-repair', 'passed']);
+    expect(result.attempts[1]).toMatchObject({ attempt: 1 });
+    const second = llm.calls[1]?.messages[0]?.content ?? '';
+    expect(second).not.toContain('{"oops');
+    expect(second).toContain('a stingy and miserly heart');
+    expect(second).toContain('- repair 1 was not usable and was discarded (repair: model output is not valid JSON)');
+    expect(second).toContain('evidence/');
+    // The note about the malformed answer goes to the next request only.
+    const third = new RepairLlm([{ text: '{"oops' }, { output: wrongEyeExcerpt() }]);
+    await preValidate(draftOf(wrongEyeExcerpt()), deps(third, { maxRepairs: 3 }));
+    expect(third.calls[2]?.messages[0]?.content).not.toContain('was not usable');
   });
 
   it('drops a failing claim, its sentence and its source when repairs run out', async () => {
@@ -211,7 +233,7 @@ describe('preValidate', () => {
     const llm = new RepairLlm({ text: JSON.stringify(output) });
     const result = abandoned(await preValidate(draftOf(output), deps(llm, { maxRepairs: 1 })));
     expect(result.repairs).toBe(1);
-    expect(stages(result)).toEqual(['invalid-output', 'invalid-output']);
+    expect(stages(result)).toEqual(['invalid-output', 'malformed-repair']);
     expect(result.reason).toMatch(/no draft could be assembled/);
     expect(result.report).toBeUndefined();
   });
@@ -234,6 +256,16 @@ describe('preValidate', () => {
     expect(result.passage.provenance.costUsd).toBeCloseTo(0.5 + result.repairCostUsd, 10);
   });
 
+  it('does not count a repair the client refused because the budget was already spent', async () => {
+    const spent = meter(0);
+    const llm = new RepairLlm({ output: VALID_OUTPUT }, { meter: spent });
+    const result = withDrops(await preValidate(draftOf(unsupportedThirdClaim()), deps(llm, { meter: spent })));
+    expect(result.repairs).toBe(0);
+    expect(result.repairCostUsd).toBe(0);
+    expect(result.repairStopped).toMatch(/^budget: /);
+    expect(llm.calls).toHaveLength(0);
+  });
+
   it('stops repairing when the provider fails', async () => {
     const result = withDrops(
       await preValidate(draftOf(unsupportedThirdClaim()), deps(new RepairLlm({ fail: 'unavailable' }))),
@@ -246,6 +278,41 @@ describe('preValidate', () => {
     const llm = new RepairLlm({ output: VALID_OUTPUT });
     await preValidate(draftOf(wrongEyeExcerpt()), deps(llm, { tools: [], maxTokens: 123 }));
     expect(llm.calls[0]).toMatchObject({ tools: [], maxTokens: 123 });
+  });
+
+  it('repairs known problems the local gates cannot see, then judges the repair locally', async () => {
+    const llm = new RepairLlm({ output: VALID_OUTPUT });
+    const draft = { ...draftOf(validOutput()), knownProblems: [verifierFinding()] };
+    const result = ready(await preValidate(draft, deps(llm)));
+    expect(result.repairs).toBe(1);
+    expect(stages(result)).toEqual(['gates-failed', 'passed']);
+    expect(result.attempts[0]?.problems).toHaveLength(1);
+    expect(llm.calls[0]?.messages[0]?.content).toContain('[c2] verifiers/claim-not-refuted (error): refuted');
+    expect(llm.calls[0]?.messages[0]?.content).toContain('Rule: ');
+  });
+
+  it('drops what known problems are about when there are no repairs', async () => {
+    const draft = { ...draftOf(validOutput()), knownProblems: [verifierFinding()] };
+    const result = withDrops(await preValidate(draft, deps(new RepairLlm({}), { maxRepairs: 0 })));
+    expect(result.dropped.map((item) => `${item.kind} ${item.id}`)).toEqual([
+      'note ophthalmos-sou-poneros',
+      'claim c2',
+      'source dt-15-9',
+      'source commentary-eye',
+    ]);
+    expect(result.dropped[1]?.reason).toBe('verifiers/claim-not-refuted: refuted');
+  });
+
+  it('lists known problems with a draft that does not reach the gates', async () => {
+    const noRepairs = deps(new RepairLlm({}), { maxRepairs: 0 });
+    const known = { knownProblems: [verifierFinding()] };
+    const notJson = abandoned(await preValidate({ ...draftOf('{"x'), ...known }, noRepairs));
+    expect(notJson.problems).toHaveLength(2);
+    const badOutput = abandoned(await preValidate({ ...draftOf({}), ...known }, noRepairs));
+    expect(badOutput.problems.at(-1)).toMatch(/verifiers\/claim-not-refuted/);
+    const meta = { ...draftOf(null).meta, models: [] };
+    const badPassage = abandoned(await preValidate({ ...draftOf(validOutput()), meta, ...known }, noRepairs));
+    expect(badPassage.problems.at(-1)).toMatch(/verifiers\/claim-not-refuted/);
   });
 
   it('rethrows unexpected errors', async () => {
@@ -295,6 +362,7 @@ describe('preValidateRun', () => {
     expect(meters[0]?.ceilingUsd).toBeCloseTo(config.research.budget.perPassageUsd - 0.5, 10);
     expect(meters[2]?.ceilingUsd).toBe(0);
     expect(report.results[2]?.repairStopped).toMatch(/^budget: /);
+    expect(report.results[2]?.repairs).toBe(0);
     expect(runMeter.spentUsd()).toBeGreaterThan(0);
   });
 });
