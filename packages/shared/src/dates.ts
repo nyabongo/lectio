@@ -16,7 +16,9 @@ export function isIsoDate(value: unknown): value is IsoDate {
   const match = ISO_DATE.exec(value);
   if (!match) return false;
   const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
-  const date = new Date(Date.UTC(year, month - 1, day));
+  // setUTCFullYear, unlike Date.UTC, does not map years 0–99 to 1900–1999.
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
   return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 

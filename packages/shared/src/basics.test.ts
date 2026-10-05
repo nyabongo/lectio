@@ -77,6 +77,10 @@ describe('ISO dates', () => {
   it.each([
     ['2026-09-20', true],
     ['2024-02-29', true],
+    ['0001-01-01', true],
+    ['0099-12-31', true],
+    ['0000-02-29', true],
+    ['0100-02-29', false],
     ['2026-02-29', false],
     ['2026-13-01', false],
     ['2026-09-31', false],
@@ -95,6 +99,7 @@ describe('ISO dates', () => {
     expect(addDays('2024-02-28', 1)).toBe('2024-02-29');
     expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
     expect(addDays('2026-09-20', 0)).toBe('2026-09-20');
+    expect(addDays('0099-12-31', 1)).toBe('0100-01-01');
   });
 
   it('rejects invalid input', () => {
