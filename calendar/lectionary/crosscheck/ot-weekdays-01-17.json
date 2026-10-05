@@ -1,0 +1,2555 @@
+{
+  "$comment": "Second source for block ot-weekdays-01-17 (L-066, 011 amendment 5). OLM 1981 for the readings imported from LitCal (Year II weeks 1-11 and their gospels), in OLM numbering (Nova Vulgata psalms; lectionary:crosscheck converts them). LitCal, as printed, for 8-sat, which is filled from OLM 1981 because LitCal's first reading does not parse, and LitCal, as printed, for the 9-sat Year II psalm (Ps 78, which the block corrects to Ps 71 from OLM 1981; kept here so the LitCal error stays visible as a disagreement). Sir 47 and 48 are compared through a hand `canonical`. Chapter-crossing ranges are written as the primary splits them when they cover the same verses. LitCal has no data for the other OLM-filled readings (all of Year I; Year II and gospels of weeks 12-17) at the pinned revision in any language (en, fr, hr, it, la, nl); `consulted` records the leaves checked, so those readings are listed as single-source in disputes/ot-weekdays-01-17.md, together with the readings a person should check first. Psalm strophe divisions follow OLM; verse letters are dropped before comparing.",
+  "block": "ot-weekdays-01-17",
+  "entries": [
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 1:1-8",
+      "source": "olm-1981 p?#305"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 115:12-13, 14-17, 18-19",
+      "source": "olm-1981 p?#305"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 1:14-20",
+      "source": "olm-1981 p?#305"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 1:9-20",
+      "source": "olm-1981 p?#306"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "1 Sm 2:1, 4-5, 6-7, 8",
+      "source": "olm-1981 p?#306"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 1:21-28",
+      "source": "olm-1981 p?#306"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 3:1-10, 19-20",
+      "source": "olm-1981 p?#307"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 39:2, 5, 7-8, 8-9, 10",
+      "source": "olm-1981 p?#307"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 1:29-39",
+      "source": "olm-1981 p?#307"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 4:1-11",
+      "source": "olm-1981 p?#308"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 43:10-11, 14-15, 24-25",
+      "source": "olm-1981 p?#308"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 1:40-45",
+      "source": "olm-1981 p?#308"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 8:4-7, 10-22",
+      "source": "olm-1981 p?#309"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 88:16-17, 18-19",
+      "source": "olm-1981 p?#309"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 2:1-12",
+      "source": "olm-1981 p?#309"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 9:1-4, 17-19; 10:1",
+      "source": "olm-1981 p?#310"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 20:2-3, 4-5, 6-7",
+      "source": "olm-1981 p?#310"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 2:13-17",
+      "source": "olm-1981 p?#310"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 15:16-23",
+      "source": "olm-1981 p?#311"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 49:8-9, 16-17, 21, 23",
+      "source": "olm-1981 p?#311"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 2:18-22",
+      "source": "olm-1981 p?#311"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 16:1-13",
+      "source": "olm-1981 p?#312"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 88:20, 21-22, 27-28",
+      "source": "olm-1981 p?#312"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 2:23-28",
+      "source": "olm-1981 p?#312"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 17:32-33, 37, 40-51",
+      "source": "olm-1981 p?#313"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 143:1, 2, 9-10",
+      "source": "olm-1981 p?#313"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 3:1-6",
+      "source": "olm-1981 p?#313"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 18:6-9; 19:1-7",
+      "source": "olm-1981 p?#314"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 55:2-3, 9-10, 10-11, 12-13",
+      "source": "olm-1981 p?#314"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 3:7-12",
+      "source": "olm-1981 p?#314"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Sm 24:3-21",
+      "source": "olm-1981 p?#315"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 56:2, 3-4, 6, 11",
+      "source": "olm-1981 p?#315"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 3:13-19",
+      "source": "olm-1981 p?#315"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 1:1-4, 11-12, 19, 23-27",
+      "source": "olm-1981 p?#316"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 79:2-3, 5-7",
+      "source": "olm-1981 p?#316"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 3:20-21",
+      "source": "olm-1981 p?#316"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 5:1-7, 10",
+      "source": "olm-1981 p?#317"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 88:20, 21-22, 25-26",
+      "source": "olm-1981 p?#317"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 3:22-30",
+      "source": "olm-1981 p?#317"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 6:12-15, 17-19",
+      "source": "olm-1981 p?#318"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 23:7, 8, 9, 10",
+      "source": "olm-1981 p?#318"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 3:31-35",
+      "source": "olm-1981 p?#318"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 7:4-17",
+      "source": "olm-1981 p?#319"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 88:4-5, 27-28, 29-30",
+      "source": "olm-1981 p?#319"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 4:1-20",
+      "source": "olm-1981 p?#319"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 7:18-19, 24-29",
+      "source": "olm-1981 p?#320"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 131:1-2, 3-5, 11, 12, 13-14",
+      "source": "olm-1981 p?#320"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 4:21-25",
+      "source": "olm-1981 p?#320"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 11:1-4, 5-10, 13-17",
+      "source": "olm-1981 p?#321"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 50:3-4, 5-6, 6-7, 10-11",
+      "source": "olm-1981 p?#321"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 4:26-34",
+      "source": "olm-1981 p?#321"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 12:1-7, 10-17",
+      "source": "olm-1981 p?#322"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 50:12-13, 14-15, 16-17",
+      "source": "olm-1981 p?#322"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 4:35-41",
+      "source": "olm-1981 p?#322"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 15:13-14, 30; 16:5-13",
+      "source": "olm-1981 p?#323"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 3:2-3, 4-5, 6-7",
+      "source": "olm-1981 p?#323"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 5:1-20",
+      "source": "olm-1981 p?#323"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 18:9-10, 14, 24-25, 30-32; 19:1-3",
+      "source": "olm-1981 p?#324"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 85:1-2, 3-4, 5-6",
+      "source": "olm-1981 p?#324"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 5:21-43",
+      "source": "olm-1981 p?#324"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Sm 24:2, 9-17",
+      "source": "olm-1981 p?#325"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 31:1-2, 5, 6, 7",
+      "source": "olm-1981 p?#325"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 6:1-6",
+      "source": "olm-1981 p?#325"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 2:1-4, 10-12",
+      "source": "olm-1981 p?#326"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "1 Chr 29:10, 11, 11-12, 12",
+      "source": "olm-1981 p?#326"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 6:7-13",
+      "source": "olm-1981 p?#326"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Sir 47:2-11",
+      "canonical": "Sir 47:2-11",
+      "source": "olm-1981 p?#327"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 17:31, 47, 50, 51",
+      "source": "olm-1981 p?#327"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 6:14-29",
+      "source": "olm-1981 p?#327"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 3:4-13",
+      "source": "olm-1981 p?#328"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 118:9, 10, 11, 12, 13, 14",
+      "source": "olm-1981 p?#328"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 6:30-34",
+      "source": "olm-1981 p?#328"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 8:1-7, 9-13",
+      "source": "olm-1981 p?#329"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 131:6-7, 8-10",
+      "source": "olm-1981 p?#329"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 6:53-56",
+      "source": "olm-1981 p?#329"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 8:22-23, 27-30",
+      "source": "olm-1981 p?#330"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 83:3, 4, 5, 10, 11",
+      "source": "olm-1981 p?#330"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 7:1-13",
+      "source": "olm-1981 p?#330"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 10:1-10",
+      "source": "olm-1981 p?#331"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 36:5-6, 30-31, 39-40",
+      "source": "olm-1981 p?#331"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 7:14-23",
+      "source": "olm-1981 p?#331"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 11:4-13",
+      "source": "olm-1981 p?#332"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 105:3-4, 35-36, 37, 40",
+      "source": "olm-1981 p?#332"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 7:24-30",
+      "source": "olm-1981 p?#332"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 11:29-32; 12:19",
+      "source": "olm-1981 p?#333"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 80:10-11, 12-13, 14-15",
+      "source": "olm-1981 p?#333"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 7:31-37",
+      "source": "olm-1981 p?#333"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 12:26-32; 13:33-34",
+      "source": "olm-1981 p?#334"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 105:6-7, 19-20, 21-22",
+      "source": "olm-1981 p?#334"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 8:1-10",
+      "source": "olm-1981 p?#334"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 1:1-11",
+      "source": "olm-1981 p?#335"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 118:67, 68, 71, 72, 75, 76",
+      "source": "olm-1981 p?#335"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 8:11-13",
+      "source": "olm-1981 p?#335"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 1:12-18",
+      "source": "olm-1981 p?#336"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 93:12-13, 14-15, 18-19",
+      "source": "olm-1981 p?#336"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 8:14-21",
+      "source": "olm-1981 p?#336"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 1:19-27",
+      "source": "olm-1981 p?#337"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 14:2-3, 3-4, 5",
+      "source": "olm-1981 p?#337"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 8:22-26",
+      "source": "olm-1981 p?#337"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 2:1-9",
+      "source": "olm-1981 p?#338"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 33:2-3, 4-5, 6-7",
+      "source": "olm-1981 p?#338"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 8:27-33",
+      "source": "olm-1981 p?#338"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 2:14-24, 26",
+      "source": "olm-1981 p?#339"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 111:1-2, 3-4, 5-6",
+      "source": "olm-1981 p?#339"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 8:34-38; 9:1",
+      "source": "olm-1981 p?#339"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 3:1-10",
+      "source": "olm-1981 p?#340"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 11:2-3, 4-5, 7-8",
+      "source": "olm-1981 p?#340"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 9:2-13",
+      "source": "olm-1981 p?#340"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 3:13-18",
+      "source": "olm-1981 p?#341"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 18:8, 9, 10, 15",
+      "source": "olm-1981 p?#341"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 9:14-29",
+      "source": "olm-1981 p?#341"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 4:1-10",
+      "source": "olm-1981 p?#342"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 54:7-8, 9-10, 10-11, 23",
+      "source": "olm-1981 p?#342"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 9:30-37",
+      "source": "olm-1981 p?#342"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 4:13-17",
+      "source": "olm-1981 p?#343"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 48:2-3, 6-7, 8-10, 11",
+      "source": "olm-1981 p?#343"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 9:38-40",
+      "source": "olm-1981 p?#343"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 5:1-6",
+      "source": "olm-1981 p?#344"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 48:14-15, 15-16, 17-18, 19-20",
+      "source": "olm-1981 p?#344"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 9:41-50",
+      "source": "olm-1981 p?#344"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 5:9-12",
+      "source": "olm-1981 p?#345"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 102:1-2, 3-4, 8-9, 11-12",
+      "source": "olm-1981 p?#345"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 10:1-12",
+      "source": "olm-1981 p?#345"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jas 5:13-20",
+      "source": "olm-1981 p?#346"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 140:1-2, 3, 8",
+      "source": "olm-1981 p?#346"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 10:13-16",
+      "source": "olm-1981 p?#346"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Pt 1:3-9",
+      "source": "olm-1981 p?#347"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 110:1-2, 5-6, 9, 10",
+      "source": "olm-1981 p?#347"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 10:17-27",
+      "source": "olm-1981 p?#347"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Pt 1:10-16",
+      "source": "olm-1981 p?#348"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 97:1, 2-3, 3-4",
+      "source": "olm-1981 p?#348"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 10:28-31",
+      "source": "olm-1981 p?#348"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Pt 1:18-25",
+      "source": "olm-1981 p?#349"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 147:12-13, 14-15, 19-20",
+      "source": "olm-1981 p?#349"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 10:32-45",
+      "source": "olm-1981 p?#349"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Pt 2:2-5, 9-12",
+      "source": "olm-1981 p?#350"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 99:2, 3, 4, 5",
+      "source": "olm-1981 p?#350"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 10:46-52",
+      "source": "olm-1981 p?#350"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Pt 4:7-13",
+      "source": "olm-1981 p?#351"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 95:10, 11-12, 13",
+      "source": "olm-1981 p?#351"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 11:11-26",
+      "source": "olm-1981 p?#351"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Jude 17:20b-25",
+      "canonical": "Jude 17, 20-25",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday8Saturday"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Psalm 63:2, 3-4, 5-6",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday8Saturday"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mark 11:27-33",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday8Saturday"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Pt 1:2-7",
+      "source": "olm-1981 p?#353"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 90:1-2, 14-15, 15-16",
+      "source": "olm-1981 p?#353"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 12:1-12",
+      "source": "olm-1981 p?#353"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Pt 3:12-15, 17-18",
+      "source": "olm-1981 p?#354"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 89:2, 3-4, 10, 14, 16",
+      "source": "olm-1981 p?#354"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 12:13-17",
+      "source": "olm-1981 p?#354"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Tm 1:1-3, 6-12",
+      "source": "olm-1981 p?#355"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 122:1-2, 2",
+      "source": "olm-1981 p?#355"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 12:18-27",
+      "source": "olm-1981 p?#355"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Tm 2:8-15",
+      "source": "olm-1981 p?#356"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 24:4-5, 8-9, 10, 14",
+      "source": "olm-1981 p?#356"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 12:28-34",
+      "source": "olm-1981 p?#356"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Tm 3:10-17",
+      "source": "olm-1981 p?#357"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 118:157, 160, 161, 165, 166, 168",
+      "source": "olm-1981 p?#357"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 12:35-37",
+      "source": "olm-1981 p?#357"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Tm 4:1-8",
+      "source": "olm-1981 p?#358"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Psalm 78:8-9, 14-15ab, 16-17, 22",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday9Saturday"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mk 12:38-44",
+      "source": "olm-1981 p?#358"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 17:1-6",
+      "source": "olm-1981 p?#359"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 120:1-2, 3-4, 5-6, 7-8",
+      "source": "olm-1981 p?#359"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:1-12",
+      "source": "olm-1981 p?#359"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 17:7-16",
+      "source": "olm-1981 p?#360"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 4:2-3, 4-5, 7-8",
+      "source": "olm-1981 p?#360"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:13-16",
+      "source": "olm-1981 p?#360"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 18:20-39",
+      "source": "olm-1981 p?#361"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 15:1-2, 4, 5, 8, 11",
+      "source": "olm-1981 p?#361"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:17-19",
+      "source": "olm-1981 p?#361"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 18:41-46",
+      "source": "olm-1981 p?#362"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 64:10, 11, 12-13",
+      "source": "olm-1981 p?#362"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:20-26",
+      "source": "olm-1981 p?#362"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 19:9, 11-16",
+      "source": "olm-1981 p?#363"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 26:7-8, 8-9, 13-14",
+      "source": "olm-1981 p?#363"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:27-32",
+      "source": "olm-1981 p?#363"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 19:19-21",
+      "source": "olm-1981 p?#364"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 15:1-2, 5, 7-8, 9-10",
+      "source": "olm-1981 p?#364"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:33-37",
+      "source": "olm-1981 p?#364"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-mon",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 21:1-16",
+      "source": "olm-1981 p?#365"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-mon",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 5:2-3, 4-6, 6-7",
+      "source": "olm-1981 p?#365"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-mon",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:38-42",
+      "source": "olm-1981 p?#365"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-tue",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "1 Kgs 21:17-29",
+      "source": "olm-1981 p?#366"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-tue",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 50:3-4, 5-6, 11, 16",
+      "source": "olm-1981 p?#366"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-tue",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 5:43-48",
+      "source": "olm-1981 p?#366"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-wed",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Kgs 2:1, 6-14",
+      "source": "olm-1981 p?#367"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-wed",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 30:20, 21, 24",
+      "source": "olm-1981 p?#367"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-wed",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 6:1-6, 16-18",
+      "source": "olm-1981 p?#367"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "Sir 48:1-14",
+      "canonical": "Sir 48:1-14",
+      "source": "olm-1981 p?#368"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-thu",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 96:1-2, 3-4, 5-6, 7",
+      "source": "olm-1981 p?#368"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-thu",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 6:7-15",
+      "source": "olm-1981 p?#368"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-fri",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Kgs 11:1-4, 9-18, 20",
+      "source": "olm-1981 p?#369"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-fri",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 131:11, 12, 13-14, 17-18",
+      "source": "olm-1981 p?#369"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-fri",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 6:19-23",
+      "source": "olm-1981 p?#369"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-sat",
+      "mass": "day",
+      "slot": "first-reading",
+      "cycle": "II",
+      "ref": "2 Chr 24:17-25",
+      "source": "olm-1981 p?#370"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-sat",
+      "mass": "day",
+      "slot": "psalm",
+      "cycle": "II",
+      "ref": "Ps 88:4-5, 29-30, 31-32, 33-34",
+      "source": "olm-1981 p?#370"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-sat",
+      "mass": "day",
+      "slot": "gospel",
+      "ref": "Mt 6:24-34",
+      "source": "olm-1981 p?#370"
+    }
+  ],
+  "consulted": [
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday1Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday1Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday1Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday1Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday1Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-1-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday1Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday2Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday2Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday2Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday2Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday2Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-2-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday2Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday3Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday3Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday3Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday3Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday3Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-3-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday3Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-4-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday4Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday5Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday5Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday5Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday5Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday5Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-5-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday5Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday6Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday6Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday6Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday6Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday6Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-6-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday6Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-7-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday7Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Monday",
+      "note": "empty at the pinned revision. To check: Year I Sirach: Sir 17:24-29 in NABRE/Greek numbering (the US Lectionary, after the 1970 NAB, prints 17:20-24)"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Tuesday",
+      "note": "empty at the pinned revision. To check: Year I Sirach: Sir 35:1-13 is the NABRE numbering of the US Lectionary's 35:1-12 (1970 NAB), worked out by hand; the RSV numbers the same passage 35:1-11, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Wednesday",
+      "note": "empty at the pinned revision. To check: Year I Sirach: Sir 36:1-2, 5-6, 13-22 is the NABRE numbering of the US Lectionary's 36:1, 4-5a, 10-17 (1970 NAB), worked out by hand; check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-8-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday8Saturday",
+      "note": "empty at the pinned revision. To check: Year I Sirach: the US Lectionary prints 51:12cd-20; verses 13-20 are numbered the same in NABRE, check where verse 12 starts"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday9Monday",
+      "note": "empty at the pinned revision. To check: Year I Tobit: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata (Vulgate tradition) numbers Tobit differently, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday9Tuesday",
+      "note": "empty at the pinned revision. To check: Year I Tobit: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata (Vulgate tradition) numbers Tobit differently, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday9Wednesday",
+      "note": "empty at the pinned revision. To check: Year I Tobit: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata (Vulgate tradition) numbers Tobit differently, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday9Thursday",
+      "note": "empty at the pinned revision. To check: Year I Tobit: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata (Vulgate tradition) numbers Tobit differently, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday9Friday",
+      "note": "empty at the pinned revision. To check: Year I Tobit: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata (Vulgate tradition) numbers Tobit differently, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-9-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday9Saturday",
+      "note": "empty at the pinned revision. To check: Year I Tobit: the ref gives the US/NAB verse numbers as recalled; the Nova Vulgata (Vulgate tradition) numbers Tobit differently, so check the verse range"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday10Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday10Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday10Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday10Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday10Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-10-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday10Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-11-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday11Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday12Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday12Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday12Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday12Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday12Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday12Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday12Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday12Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday12Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday12Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday12Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-12-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday12Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday13Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday13Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday13Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday13Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday13Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday13Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday13Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday13Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday13Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday13Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday13Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-13-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday13Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday14Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday14Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday14Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday14Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday14Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday14Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday14Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday14Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday14Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday14Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday14Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-14-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday14Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday15Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday15Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday15Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday15Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday15Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday15Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday15Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday15Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday15Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday15Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday15Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-15-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday15Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday16Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday16Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday16Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday16Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday16Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday16Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday16Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday16Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday16Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday16Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday16Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-16-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday16Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday17Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-mon",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday17Monday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday17Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-tue",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday17Tuesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday17Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-wed",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday17Wednesday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday17Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-thu",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday17Thursday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday17Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-fri",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday17Friday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_I/en.json#OrdWeekday17Saturday",
+      "note": "empty at the pinned revision"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "ot-weekday-17-sat",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_per_annum_II/en.json#OrdWeekday17Saturday",
+      "note": "empty at the pinned revision"
+    }
+  ]
+}
