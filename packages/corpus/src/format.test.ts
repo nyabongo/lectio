@@ -40,13 +40,21 @@ describe('parseSource', () => {
     [{ ...source, language: 'eng' }, '"language" must be one of grc, hbo, arc, lat'],
     [{ ...source, sha256: 'A'.repeat(64) }, '"sha256" must be 64 lower-case hex digits'],
   ])('rejects %j', (value, message) => {
-    expect(() => parseSource(value, 'corpus/x/SOURCE.json')).toThrow(new CorpusError(`corpus/x/SOURCE.json: ${message}`));
+    expect(() => parseSource(value, 'corpus/x/SOURCE.json')).toThrow(
+      new CorpusError(`corpus/x/SOURCE.json: ${message}`),
+    );
   });
 });
 
 describe('parseChapter', () => {
   it('accepts tokens with and without morphology', () => {
-    const chapter = { '1': [['a', 'b'], ['c', '', 'M']], '2': [] };
+    const chapter = {
+      '1': [
+        ['a', 'b'],
+        ['c', '', 'M'],
+      ],
+      '2': [],
+    };
     expect(parseChapter(chapter, 'f')).toBe(chapter);
   });
 
@@ -56,7 +64,15 @@ describe('parseChapter', () => {
     [{ '07': [] }, 'invalid verse key "07"'],
     [{ '1': 'x' }, 'verse 1 must be an array of tokens'],
     [{ '1': [['only']] }, 'verse 1 token 0 must be [surface, lemma, morph?]'],
-    [{ '1': [['a', 'b'], ['a', 'b', 'c', 'd']] }, 'verse 1 token 1 must be [surface, lemma, morph?]'],
+    [
+      {
+        '1': [
+          ['a', 'b'],
+          ['a', 'b', 'c', 'd'],
+        ],
+      },
+      'verse 1 token 1 must be [surface, lemma, morph?]',
+    ],
     [{ '1': [['a', 1]] }, 'verse 1 token 0 must be [surface, lemma, morph?]'],
     [{ '1': [['', 'b']] }, 'verse 1 token 0 must be [surface, lemma, morph?]'],
     [{ '1': ['ab'] }, 'verse 1 token 0 must be [surface, lemma, morph?]'],

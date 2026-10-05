@@ -47,7 +47,11 @@ async function readIfPresent(path: string): Promise<Uint8Array | undefined> {
  * reused without downloading; otherwise the archive is downloaded, verified, and only then written (atomically,
  * via a temporary file), so a bad download never leaves a file behind.
  */
-export async function downloadPinned(downloader: Downloader, archive: PinnedArchive, dest: string): Promise<Uint8Array> {
+export async function downloadPinned(
+  downloader: Downloader,
+  archive: PinnedArchive,
+  dest: string,
+): Promise<Uint8Array> {
   assertSha256(archive.sha256, archive.url);
   const existing = await readIfPresent(dest);
   if (existing !== undefined && sha256Hex(existing) === archive.sha256) return existing;

@@ -187,7 +187,8 @@ export function parseOsisBook(xml: string, osis: string): OsisBook {
       }
       const id = attribute(node, 'osisID') ?? '';
       const match = VERSE_ID.exec(id);
-      if (match === null || match[1] !== osis) throw new CorpusError(`${osis}: unexpected verse id ${JSON.stringify(id)}`);
+      if (match === null || match[1] !== osis)
+        throw new CorpusError(`${osis}: unexpected verse id ${JSON.stringify(id)}`);
       const chapter = Number(match[2]);
       const verse = match[3] as string;
       const verses = chapters.get(chapter) ?? {};

@@ -375,7 +375,10 @@ export interface ImportCliIo {
 export async function runImportVulgate(
   corpusRoot: string,
   io: ImportCliIo,
-  { downloader = fetchDownloader(), archive }: { downloader?: Downloader; archive?: ImportVulgateOptions['archive'] } = {},
+  {
+    downloader = fetchDownloader(),
+    archive,
+  }: { downloader?: Downloader; archive?: ImportVulgateOptions['archive'] } = {},
 ): Promise<number> {
   try {
     const cacheDir = join(dirname(corpusRoot), '.cache', 'corpus');

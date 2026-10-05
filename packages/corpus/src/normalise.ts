@@ -79,33 +79,114 @@ export function normaliserFor(language: Language): (text: string) => string {
 }
 
 /**
- * The normalised forms a corpus token (surface or lemma) matches. Hebrew and Aramaic editions such as OSHB mark
- * morpheme boundaries with "/" (`הַ/שָּׁמַ֖יִם`, lemma `d/8064`): the token matches every contiguous run of its
- * segments, so the whole word (`השמים`), the bare word without its prefixes (`שמים`, `8064`) and any prefix run all
- * match. Other languages have one form: the whole normalised token. An empty token matches nothing.
+ * A Strong's number with an OSHB homograph letter, after any prefix codes: `1254 a`, `6213a`, `c6213 a`. Group 1 is
+ * the number with its prefixes, group 2 the letter.
  */
-export function tokenForms(language: Language, text: string): string[] {
-  const normalise = normaliserFor(language);
-  const raw = language === 'hbo' || language === 'arc' ? text.split('/') : [text];
-  const segments = raw.map((part) => normalise(part)).filter((part) => part !== '');
-  const forms: string[] = [];
-  for (let start = 0; start < segments.length; start += 1) {
-    for (let end = start + 1; end <= segments.length; end += 1) {
-      forms.push(segments.slice(start, end).join(''));
-    }
+const HOMOGRAPH = /^([A-Za-z]*[0-9]+) ?([A-Za-z])$/u;
+/** A query word that is a (prefixed) Strong's number, or a lone Latin letter that may be its homograph letter. */
+const STRONGS_NUMBER = /^[A-Za-z]*[0-9]+$/u;
+const LATIN_LETTER = /^[A-Za-z]$/u;
+
+/**
+ * The canonical spelling of a normalised lemma or lemma query: a homograph letter is joined to its number and
+ * lower-cased (`1254 a`, `1254A` and `1254a` all become `1254a`; `c6213 a` becomes `c6213a`). Any other word is
+ * returned unchanged. Corpus lemmas and lemma queries are both compared in this form.
+ */
+export function lemmaKey(word: string): string {
+  return word.replace(HOMOGRAPH, (_match, number: string, letter: string) => `${number}${letter.toLowerCase()}`);
+}
+
+/** Whether a token field is the surface form or the lemma. */
+export type TokenField = 'surface' | 'lemma';
+
+export interface TokenFormsOptions {
+  /** Default `'surface'`. Lemmas get the homograph rule; surfaces use `morph` to find the stem. */
+  readonly field?: TokenField;
+  /** The token's OSHB morphology code (its third element), e.g. `HR/Ncmsc/Sp3ms`. Used for Hebrew/Aramaic surfaces. */
+  readonly morph?: string;
+}
+
+/** A morph segment after the stem: a pronominal or paragogic suffix (`S…`), or the Aramaic postfixed article (`Td`). */
+function isSuffixCode(code: string): boolean {
+  return code.startsWith('S') || code === 'Td';
+}
+
+/**
+ * The index of the stem among `count` "/" segments. OSHB morph codes have one segment per surface segment; the stem
+ * is the last segment that is not a suffix. Without a morph, or when the counts differ, the stem is the last segment.
+ */
+function stemIndex(count: number, morph: string | undefined): number {
+  const codes = morph === undefined ? [] : morph.split('/');
+  let stem = count - 1;
+  if (codes.length !== count) return stem;
+  while (stem > 0 && isSuffixCode(codes[stem] as string)) stem -= 1;
+  return stem;
+}
+
+/** Every contiguous run of `segments` that contains `stem`, joined, without empties or duplicates. */
+function runsContaining(segments: readonly string[], stem: number, into: Set<string>): void {
+  for (let start = 0; start <= stem; start += 1) {
+    for (let end = stem + 1; end <= segments.length; end += 1) into.add(segments.slice(start, end).join(''));
   }
-  return forms;
+}
+
+/**
+ * The normalised forms a corpus token (surface or lemma) matches.
+ *
+ * Hebrew and Aramaic editions such as OSHB split a word with "/" into prefixes, a stem and suffixes: `הַ/שָּׁמַ֖יִם`
+ * (morph `HTd/Ncmpa`, lemma `d/8064`), `לְ/מִינ֔/וֹ` (morph `HR/Ncmsc/Sp3ms`, lemma `l/4327`). The token matches every
+ * contiguous run of its segments that contains the stem: `מין`, `למין`, `מינו` and `למינו` all match `לְ/מִינ֔/וֹ`.
+ * A prefix or suffix never matches on its own (`ל` and `ו` do not match it, `ה` does not match `הַ/שָּׁמַ֖יִם`), so a
+ * query cannot pass on an article, a conjunction or a pronominal suffix alone.
+ *
+ * The stem is found from `morph` (see stemIndex): trailing segments coded `S…` (suffixes) or `Td` (the Aramaic
+ * postfixed article, as in `מַלְכָּ/א` `ANcmsd/Td`) are suffixes; everything before the stem is a prefix. Without a
+ * morph, or when its segment count differs from the surface's, the stem is the last segment. OSHB lemmas list no
+ * suffixes, so a lemma's stem is always its last segment: lemma `d` does not match `d/8064`, `8064` and `d8064` do.
+ *
+ * Lemmas only: OSHB writes some Strong's numbers with a homograph letter (`1254 a`, `c/6213 a`). Lemma forms use the
+ * lemmaKey spelling (`1254a`) and also include the bare number, so `1254` matches `1254 a`, and `6213` matches
+ * `c/6213 a`. Queries must be passed through lemmaKey too (`openCorpus` does this), so `1254a`, `1254 a` and `1254A`
+ * all match only that homograph: `1254 b` does not match `1254 a`.
+ *
+ * Other languages have one segment: the whole normalised token. An empty token matches nothing.
+ */
+export function tokenForms(language: Language, text: string, options: TokenFormsOptions = {}): string[] {
+  const field = options.field ?? 'surface';
+  const normalise = normaliserFor(language);
+  const hebrew = language === 'hbo' || language === 'arc';
+  const segments = (hebrew ? text.split('/') : [text]).map((part) => normalise(part));
+  const last = segments.length - 1;
+  const forms = new Set<string>();
+  if (field === 'surface') {
+    runsContaining(segments, hebrew ? stemIndex(segments.length, options.morph) : last, forms);
+  } else {
+    segments[last] = lemmaKey(segments[last] as string);
+    runsContaining(segments, last, forms);
+    const bare = HOMOGRAPH.exec(segments[last] as string)?.[1];
+    if (bare !== undefined) runsContaining([...segments.slice(0, last), bare], last, forms);
+  }
+  forms.delete('');
+  return [...forms];
 }
 
 /**
  * Splits a phrase into normalised words at whitespace and at the Hebrew maqaf, which joins words in writing but
  * separates tokens in the corpus. A "/" morpheme separator inside a query word is stripped, so the word compares
- * as a whole.
+ * as a whole. A Strong's number followed by a lone Latin letter is one word in its lemmaKey spelling, so the lemma
+ * phrase `7225 1254 a 430` has three words (`7225`, `1254a`, `430`).
  */
 export function phraseWords(language: Language, phrase: string): string[] {
   const normalise = normaliserFor(language);
-  return phrase
-    .split(/[\s\u05BE]+/u)
-    .map((word) => normalise(word))
-    .filter((word) => word !== '');
+  const words: string[] = [];
+  for (const part of phrase.split(/[\s־]+/u)) {
+    const word = normalise(part);
+    const previous = words.at(-1);
+    if (previous !== undefined && LATIN_LETTER.test(word) && STRONGS_NUMBER.test(previous)) {
+      words[words.length - 1] = lemmaKey(`${previous} ${word}`);
+    } else if (word !== '') {
+      words.push(word);
+    }
+  }
+  return words;
 }
