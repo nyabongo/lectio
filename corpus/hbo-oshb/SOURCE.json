@@ -1,0 +1,10 @@
+{
+  "name": "Open Scriptures Hebrew Bible (Westminster Leningrad Codex with lemmas and morphology)",
+  "language": "hbo",
+  "upstreamUrl": "https://github.com/openscriptures/morphhb/archive/3d15126fb1ef74867fc1434be1942e837932691f.tar.gz",
+  "version": "3d15126fb1ef74867fc1434be1942e837932691f",
+  "sha256": "f979b5357fb18391928cd42ee1b95594db6e4f71d8da4e893c6c18f2688093a6",
+  "licence": "CC-BY-4.0 AND LicenseRef-PublicDomain",
+  "attribution": "Original work of the Open Scriptures Hebrew Bible available at https://github.com/openscriptures/morphhb. Hebrew text: The Westminster Leningrad Codex (public domain). Lemmas and morphology: Open Scriptures Hebrew Bible, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).",
+  "versification": "original"
+}
