@@ -28,7 +28,7 @@ import { join } from 'node:path';
 import type { LicenceGuardConfig } from '@lectio/config';
 import { checkPassage, issuesFromAjv, parseJson } from '@lectio/content';
 import type { ContentError } from '@lectio/content';
-import { localeSchema } from '@lectio/schema/common';
+import { PASSAGE_KEY_PATTERN, localeSchema } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
 import {
   SOURCE_LOCALE_PATTERN,
@@ -84,6 +84,7 @@ const PASSAGES = 'passages/';
 const I18N = 'i18n/';
 const LOCALE = new RegExp(localeSchema.pattern);
 const SOURCE_LOCALE = new RegExp(SOURCE_LOCALE_PATTERN);
+const KEY = new RegExp(PASSAGE_KEY_PATTERN);
 
 /** Why a path under passages/i18n/ (spelled correctly) is not a translation path. */
 function translationPathProblem(rest: string): string {
@@ -98,7 +99,7 @@ function translationPathProblem(rest: string): string {
 
 /**
  * Why a file is misplaced under passages/ (matched in any letter case), or `null` when it is not
- * under passages/, is a file directly in it, or is a canonical translation path. `path` is
+ * under passages/, is a passage (`passages/<key>.json`) or is a canonical translation path. `path` is
  * repository-relative; `prefix` is the content-root prefix (`""` or `"content/"`).
  */
 export function misplacedContentFile(path: string, prefix: string): string | null {
@@ -108,8 +109,12 @@ export function misplacedContentFile(path: string, prefix: string): string | nul
   const rest = path.slice(base.length);
   const slash = rest.indexOf('/');
   if (slash < 0) {
-    const json = rest.toLowerCase().endsWith('.json') && !rest.endsWith('.json');
-    return json ? 'a passage is a .json file (lower-case extension)' : null;
+    // Only <key>.json may sit directly in passages/: anything else (notes.md, x.json.bak, a trailing
+    // dot or space) would be read by no gate and could ride along in an auto-merged PR.
+    if (!rest.endsWith('.json'))
+      return `only passage files (<key>.json, lower-case extension) may sit directly in ${base}`;
+    const key = rest.slice(0, -'.json'.length);
+    return KEY.test(key) ? null : `"${key}" is not a passage key`;
   }
   const dir = rest.slice(0, slash);
   if (dir.toLowerCase() !== 'i18n')

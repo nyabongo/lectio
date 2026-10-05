@@ -45,6 +45,11 @@ Translations (`passages/i18n/<locale>/<key>.json`) are scanned too, with the che
 Paths are matched in any letter case, and every file in a subdirectory of `passages/` counts as a translation here, so
 a misplaced file (`passages/I18N/sw/…`, `passages/i18n/sw/nested/…`, `passages/other/…`) is still scanned. Gate 1
 rejects such paths (`schema/translation-path`) and the merge rule holds them for a person.
+Gate 1 also rejects any file directly in `passages/` that is not `<key>.json`, so nothing there escapes both gates.
+
+Commentary overlap on a translation fetches the English passage's sources again (once per run, shared with the English
+file). A long run shared between a translation and an English commentary is unlikely unless English was pasted in,
+so on an offline run this mostly adds `licence/commentary-unchecked` flags to PRs that already need a person.
 
 What this does **not** cover: the public-domain index holds English Bibles only (WEB, Douay-Rheims). A modern Bible
 translation in another language, such as a Kiswahili Bible, pasted without quotation marks is caught by nothing

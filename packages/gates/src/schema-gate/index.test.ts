@@ -109,7 +109,7 @@ describe('schemaGate', () => {
       changed: [
         { path: 'calendar/lectionary/sundays/a.json', status: 'added' },
         { path: 'docs/notes.md', status: 'modified' },
-        { path: 'passages/README.md', status: 'added' },
+        { path: 'passages/README.md', status: 'deleted' },
         { path: 'calendar/2025.json', status: 'deleted' },
         { path: 'passages/IS.55.6-9.json', status: 'added' },
       ],

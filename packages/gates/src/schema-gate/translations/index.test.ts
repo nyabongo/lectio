@@ -323,8 +323,7 @@ describe('misplacedContentFile', () => {
       'passages/i18n/pt-BR/MT.20.1-16.json',
       'passages/i18n/zh-Hant/MT.20.1-16.json',
       PASSAGE_PATH,
-      'passages/notes.md',
-      'passages/README',
+      'passages/PS.119.1_119.27_119.30_119.34_119.35_119.44.json',
       'calendar/2026.json',
       'docs/passages/i18n/x.md',
       'passage/i18n/sw/MT.20.1-16.json',
@@ -336,8 +335,37 @@ describe('misplacedContentFile', () => {
   it.each([
     ['Passages/i18n/sw/MT.20.1-16.json', 'the directory must be spelled passages/ exactly, in lower case'],
     ['PASSAGES/MT.20.1-16.json', 'the directory must be spelled passages/ exactly, in lower case'],
-    ['passages/MT.20.1-16.JSON', 'a passage is a .json file (lower-case extension)'],
-    ['passages/MT.20.1-16.Json', 'a passage is a .json file (lower-case extension)'],
+    ['passages/MT.20.1-16.JSON', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/MT.20.1-16.Json', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    [
+      'passages/MT.20.1-16.json.',
+      'only passage files (<key>.json, lower-case extension) may sit directly in passages/',
+    ],
+    [
+      'passages/MT.20.1-16.json ',
+      'only passage files (<key>.json, lower-case extension) may sit directly in passages/',
+    ],
+    [
+      'passages/MT.20.1-16.json\t',
+      'only passage files (<key>.json, lower-case extension) may sit directly in passages/',
+    ],
+    ['passages/x.json.bak', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    [
+      'passages/MT.20.1-16.json.txt',
+      'only passage files (<key>.json, lower-case extension) may sit directly in passages/',
+    ],
+    ['passages/notes.txt', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/notes.md', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/README', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/README.md', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/.hidden', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/.gitattributes', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/MT.20.1-16', 'only passage files (<key>.json, lower-case extension) may sit directly in passages/'],
+    ['passages/x.json', '"x" is not a passage key'],
+    ['passages/.json', '"" is not a passage key'],
+    ['passages/MT.20.1-16 .json', '"MT.20.1-16 " is not a passage key'],
+    ['passages/mt.20.1-16.json', '"mt.20.1-16" is not a passage key'],
+    ['passages/MT.20.1-16.json.json', '"MT.20.1-16.json" is not a passage key'],
     [
       'passages/I18N/sw/MT.20.1-16.json',
       'the translation directory must be spelled passages/i18n/ exactly, in lower case',
@@ -463,6 +491,27 @@ describe('schema/translation-path', () => {
       'Content/passages/i18n/sw/MT.20.1-16.json',
       'content/passages/I18N/sw/MT.20.1-16.json',
     ]);
+  });
+
+  it('fails the schema gate for a stray file next to a valid passage, which no other gate reads', async () => {
+    for (const stray of [
+      'passages/MT.20.1-16.json.',
+      'passages/MT.20.1-16.json ',
+      'passages/x.json.bak',
+      'passages/notes.txt',
+      'passages/.hidden',
+    ]) {
+      const pr: PullRequestFixture = {
+        head: { [PASSAGE_PATH]: JSON.stringify(validPassage()), [stray]: JSON.stringify(validPassage()) },
+        changed: [
+          { path: PASSAGE_PATH, status: 'added' },
+          { path: stray, status: 'added' },
+        ],
+      };
+      const result = (await runGates([schemaGate], contextFor(pr))).results[0];
+      expect(result?.status, stray).toBe('fail');
+      expect(result?.items.map((item) => [item.ruleId, item.file])).toEqual([['schema/translation-path', stray]]);
+    }
   });
 
   it('fails the schema gate', async () => {
