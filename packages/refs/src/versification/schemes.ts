@@ -22,11 +22,15 @@ import type { BookCode } from '../books.ts';
  *
  *   It is **not** the Nova Vulgata of the OLM. The Nova Vulgata follows the
  *   Hebrew chapter divisions (Joel 3:1-5, Malachi 3:19-24, Hosea 14:2-10,
- *   1 Kings 5:1-14; decision 011) and differs only in its psalm numbers. So
- *   convert OLM / Nova Vulgata citations with `mapRef(ref, 'vulgate', 'original')`
- *   for the Psalms only, and read every other book as `original`. Tobit, Sirach
- *   and Esther still need checking entry by entry (decision 011). No separate
- *   Nova Vulgata scheme exists, because no openly licensed NV table was found.
+ *   1 Kings 5:1-14; decision 011) and differs only in its psalm numbers, while
+ *   its verse numbers follow the Hebrew. The Stuttgart text counts a few psalm
+ *   verses its own way (its Ps 145:2 is Hebrew 146:1, and its Ps 10, 12, 14,
+ *   15, 43 and 55 split or merge verses), so take only the psalm number from
+ *   this scheme, mapping verse by verse only in the split psalms (9, 113-115,
+ *   146-147), and read every other book as `original`; `toCanonical` in
+ *   `@lectio/lectionary` does this. Tobit, Sirach and Esther still need
+ *   checking entry by entry (decision 011). No separate Nova Vulgata scheme
+ *   exists, because no openly licensed NV table was found.
  * - `lxx`: Rahlfs Septuagint (`lxx.vrs`), with Greek Daniel, Greek Esther and
  *   Nehemiah cited as Ezra-Nehemiah chapters 11-23 of the LXX's single book.
  *   Some verses are lost on the way, as expected: the LXX omits verses (for
