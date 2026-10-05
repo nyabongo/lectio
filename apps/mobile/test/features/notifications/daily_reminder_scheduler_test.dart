@@ -162,19 +162,22 @@ void main() {
       );
     });
 
-    test('turning the reminder on asks for permission, then schedules', () async {
-      final settings = _settingsWith(reminder: false);
-      final scheduler = schedulerFor(settings);
-      await scheduler.start();
-      platform.calls.clear();
+    test(
+      'turning the reminder on asks for permission, then schedules',
+      () async {
+        final settings = _settingsWith(reminder: false);
+        final scheduler = schedulerFor(settings);
+        await scheduler.start();
+        platform.calls.clear();
 
-      await settings.update(settings.settings.copyWith(dailyReminder: true));
-      await scheduler.idle;
+        await settings.update(settings.settings.copyWith(dailyReminder: true));
+        await scheduler.idle;
 
-      expect(platform.calls, ['requestPermission', ..._scheduleAll]);
-      expect(platform.scheduled.first.at, DateTime(2026, 9, 20, 7));
-      expect(settings.settings.dailyReminder, isTrue);
-    });
+        expect(platform.calls, ['requestPermission', ..._scheduleAll]);
+        expect(platform.scheduled.first.at, DateTime(2026, 9, 20, 7));
+        expect(settings.settings.dailyReminder, isTrue);
+      },
+    );
 
     test('a refused permission switches the reminder back off', () async {
       final settings = _settingsWith(reminder: false);
@@ -200,9 +203,8 @@ void main() {
       platform
         ..calls.clear()
         ..grantPermission = false
-        ..whileAsking = () => settings.update(
-          settings.settings.copyWith(dailyReminder: false),
-        );
+        ..whileAsking = () =>
+            settings.update(settings.settings.copyWith(dailyReminder: false));
 
       await settings.update(settings.settings.copyWith(dailyReminder: true));
       await scheduler.idle;
@@ -314,10 +316,9 @@ void main() {
     expect(platform.calls.first, 'initialize');
     expect(platform.pending, hasLength(reminderDays));
     // The fake API publishes no days, so every title falls back.
-    expect(
-      platform.scheduled.map((reminder) => reminder.title).toSet(),
-      {ReminderStrings.fallbackTitle},
-    );
+    expect(platform.scheduled.map((reminder) => reminder.title).toSet(), {
+      ReminderStrings.fallbackTitle,
+    });
     expect(api.paths, hasLength(reminderDays));
   });
 }

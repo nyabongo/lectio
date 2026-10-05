@@ -59,8 +59,7 @@ class LocalNotificationsPlatform implements ReminderPlatform {
             IOSFlutterLocalNotificationsPlugin
           >();
       if (ios != null) {
-        return await ios.requestPermissions(alert: true, sound: true) ??
-            false;
+        return await ios.requestPermissions(alert: true, sound: true) ?? false;
       }
       return false;
     } on PlatformException {
