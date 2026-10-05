@@ -493,12 +493,10 @@ class _OriginalPanelState extends State<OriginalPanel> {
   void _reveal() {
     final context = _target.currentContext;
     if (context != null) {
-      unawaited(
-        Scrollable.ensureVisible(
-          context,
-          duration: const Duration(milliseconds: 300),
-          alignment: 0.1,
-        ),
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 300),
+        alignment: 0.1,
       );
     }
   }
