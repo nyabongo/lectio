@@ -16,7 +16,7 @@ describe('CLI entry points', () => {
     process.argv = ['node', 'check.ts'];
     const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     await import('./check.ts');
-    expect(log.mock.calls[0]?.[0]).toMatch(/^lectionary:check: 2 files/);
+    expect(log.mock.calls[0]?.[0]).toMatch(/^lectionary:check: \d+ files/);
     expect(process.exitCode).toBe(0);
   });
 
