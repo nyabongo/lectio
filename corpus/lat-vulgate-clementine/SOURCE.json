@@ -1,0 +1,10 @@
+{
+  "name": "Clementine Vulgate (Clementine Vulgate Project)",
+  "language": "lat",
+  "upstreamUrl": "https://bitbucket.org/clementinetextproject/text/get/edc85da058be630183d26e4deb6714ade80e600c.tar.gz",
+  "version": "edc85da058be630183d26e4deb6714ade80e600c",
+  "sha256": "bd7c226655a51424fdb195f38000e7a215d48ec8c88391227c85418b7e7db0c7",
+  "licence": "LicenseRef-PublicDomain",
+  "attribution": "Latin text of the Clementine Vulgate from the Clementine Vulgate Project (https://vulsearch.sourceforge.net/, source https://bitbucket.org/clementinetextproject/text), released into the public domain. Modified for Lectio: markup and speaker labels removed and the text split into words; the prologues of Lamentations and Sirach are stored as verse \"prologue\" of chapter 1.",
+  "versification": "vulgate"
+}
