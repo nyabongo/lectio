@@ -11,7 +11,7 @@ import { join } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
 import { Lectionary, loadLectionary, refKey, resolveDay } from '@lectio/lectionary';
-import type { ResolvedReading } from '@lectio/lectionary';
+import type { ResolveOptions, ResolvedReading } from '@lectio/lectionary';
 import { VersificationError, linkoutUrl } from '@lectio/refs';
 import { validateCalendarYear } from '@lectio/schema/calendar';
 import type { CalendarDay, CalendarYear, Mass, Reading } from '@lectio/schema/calendar';
@@ -69,8 +69,8 @@ function keyOf(ref: string): string | undefined {
 
 /**
  * The citation the calendar shows: as printed (letters kept) when the source records it and it
- * names the same passage as the key, else the canonical ref. A printed form such as Greek Esther's
- * `Est 4:17n, p-r, aa-bb, gg-hh` (OLM numbering for Est C:12, 14-16, 23-25) does not parse, so it falls back.
+ * names the same passage as the key, else the canonical ref: a printed form that does not parse
+ * (an OLM numbering such as `Est 4:17n, p-r`, a dual psalm number such as `Psalm 66 (67)`) falls back.
  */
 function displayRef(reading: ResolvedReading, date: string, warnings: string[]): string {
   const { printed } = reading;
@@ -97,16 +97,18 @@ function toReading(reading: ResolvedReading, date: string, linkout: LinkoutFor, 
  * One day with its Masses. `lectionaryMissing` is true when the lectionary has no data for the
  * day (`masses: []`), when a Mass lacks a slot it needs (L-070 reports those days) or when a
  * reading was left out for want of a link-out; Masses left without any reading are dropped.
+ * `options` carry what the resolver needs from the rest of the year (the Epiphany's date).
  */
 export function assembleDay(
   day: DetailedDay,
   lectionary: Lectionary,
   linkout: LinkoutFor,
   warnings: string[],
+  options: ResolveOptions = {},
 ): CalendarDay {
   let incomplete = false;
   const masses: Mass[] = [];
-  for (const mass of resolveDay(day, lectionary).masses) {
+  for (const mass of resolveDay(day, lectionary, options).masses) {
     const readings = mass.readings.flatMap((reading) => toReading(reading, day.date, linkout, warnings));
     if (mass.missingSlots.length > 0 || readings.length < mass.readings.length) incomplete = true;
     if (readings.length > 0) masses.push({ id: mass.id, label: mass.label, readings });
@@ -114,12 +116,22 @@ export function assembleDay(
   return toCalendarDay({ ...day, masses, lectionaryMissing: masses.length === 0 || incomplete });
 }
 
-/** The calendar year file for already generated days. Pure: no I/O. */
+/** The date of the Epiphany among the days, if they include it. */
+export function epiphanyDate(days: readonly DetailedDay[]): ResolveOptions['epiphany'] {
+  return days.find((day) => day.celebrations.some((c) => c.id === 'epiphany-of-the-lord'))?.date;
+}
+
+/**
+ * The calendar year file for already generated days. Pure: no I/O. The resolver learns the
+ * Epiphany's date from the days, so 7–12 January follow the region's Epiphany rule.
+ */
 export function assembleYear(input: AssembleInput): BuildResult {
   const warnings: string[] = [];
+  const epiphany = epiphanyDate(input.days);
+  const options: ResolveOptions = epiphany === undefined ? {} : { epiphany };
   const days = [...input.days]
     .sort((a, b) => a.date.localeCompare(b.date))
-    .map((day) => assembleDay(day, input.lectionary, input.linkout, warnings));
+    .map((day) => assembleDay(day, input.lectionary, input.linkout, warnings, options));
   return {
     calendar: { year: input.year, region: input.region, generatedBy: input.generatedBy, days },
     warnings,

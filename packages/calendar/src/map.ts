@@ -172,15 +172,25 @@ export function mapCelebration(day: RomcalDayInput, season: Season, demoted = fa
 }
 
 /**
- * One date from romcal's list for it. Non-optional entries are ranked by precedence (stable),
- * so on Holy Thursday the Mass of the Lord's Supper (level 1) comes before the Lenten weekday
- * (level 9). The first entry is the celebration of the day and decides season, week and
- * cycles; optional memorials follow it as options.
+ * romcal days that another celebration of the same date replaces: on Holy Thursday the Lenten
+ * weekday (violet) gives way to the Evening Mass of the Lord's Supper, which opens the Triduum and
+ * is the only Mass of the day with readings (the Chrism Mass is not part of the calendar).
+ */
+export const SUPERSEDED_BY: Readonly<Record<string, string>> = Object.freeze({
+  holy_thursday: 'thursday_of_the_lords_supper',
+});
+
+/**
+ * One date from romcal's list for it. A day {@link SUPERSEDED_BY} another of the date is left out.
+ * Non-optional entries are ranked by precedence (stable). The first entry is the celebration of
+ * the day and decides season, week and cycles; optional memorials follow it as options.
  *
  * When two obligatory memorials coincide (romcal reports both as memorials, e.g. 2026-06-13),
  * both become optional memorials and the weekday is the celebration of the day.
  */
-export function mapDay(date: string, romcalDays: readonly RomcalDayInput[]): DetailedDay {
+export function mapDay(date: string, all: readonly RomcalDayInput[]): DetailedDay {
+  const ids = new Set(all.map((d) => d.id));
+  const romcalDays = all.filter((d) => !ids.has(SUPERSEDED_BY[d.id] as string));
   let main = romcalDays
     .filter((d) => !d.isOptional)
     .sort((a, b) => precedenceLevel(a.precedence) - precedenceLevel(b.precedence));

@@ -1,5 +1,5 @@
 {
-  "$comment": "Seasonal weekdays (L-068), proper of time: Advent weeks 1-3, Ash Wednesday to Wednesday of Holy Week (Ash Wednesday and the days after it are week 0; Holy Week is week 6), Easter weeks 2-7. Imported from LitCal (import/litcal/seasonal-weekdays.json); Thursday of Lent week 1 and Monday of Lent week 3 are filled from the OLM 1981 structure because their LitCal strings do not parse (Greek Esther lettered chapter; two psalms in one string). That Greek Esther first reading is keyed by its NABRE lettered chapter, Est C:12, 14-16, 23-25 (L-049), with the OLM's Vulgate-style verses in \"printed\". Where OLM gives a second reading for one Sunday cycle, the OLM reading and its alternative replace LitCal's: Monday of Advent week 1 (Is 2:1-5; Is 4:2-6 in Year A), Monday of Lent week 5 (Jn 8:1-11; Jn 8:12-20 in Year C) and Monday of Easter week 4 (Jn 10:1-10; Jn 10:11-18 in Year A). Every other entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "$comment": "Seasonal weekdays (L-068), proper of time: Advent weeks 1-3, Ash Wednesday to Wednesday of Holy Week (Ash Wednesday and the days after it are week 0; Holy Week is week 6), Easter weeks 2-7. Imported from LitCal (import/litcal/seasonal-weekdays.json); Thursday of Lent week 1 and Monday of Lent week 3 are filled from the OLM 1981 structure because their LitCal strings do not parse (Greek Esther lettered chapter; two psalms in one string). That Greek Esther first reading is keyed by its NABRE lettered chapter, Est C:12, 14-16, 23-25 (L-049), printed the same way (the OLM's Vulgate-style \"Est 4:17n, p-r, aa-bb, gg-hh\" does not parse). Where OLM gives another reading for one Sunday cycle, the OLM reading and that cycle's substitute (a reading with that `cycle`) replace LitCal's: Monday of Advent week 1 (Is 2:1-5; Is 4:2-6 in Year A), Monday of Lent week 5 (Jn 8:1-11; Jn 8:12-20 in Year C) and Monday of Easter week 4 (Jn 10:1-10; Jn 10:11-18 in Year A). Every other entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
   "kind": "proper-of-time",
   "entries": [
     {
@@ -11,11 +11,13 @@
             {
               "slot": "first-reading",
               "ref": "Is 2:1-5",
-              "alternatives": [
-                {
-                  "ref": "Is 4:2-6"
-                }
-              ],
+              "source": "olm-1981 p?#175",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "A",
+              "ref": "Is 4:2-6",
               "source": "olm-1981 p?#175",
               "status": "provisional"
             },
@@ -766,7 +768,7 @@
             {
               "slot": "first-reading",
               "ref": "Est C:12, 14-16, 23-25",
-              "printed": "Est 4:17n, p-r, aa-bb, gg-hh",
+              "printed": "Est C:12, 14-16, 23-25",
               "source": "olm-1981 p?#227",
               "status": "provisional"
             },
@@ -1432,11 +1434,13 @@
             {
               "slot": "gospel",
               "ref": "Jn 8:1-11",
-              "alternatives": [
-                {
-                  "ref": "Jn 8:12-20"
-                }
-              ],
+              "source": "olm-1981 p?#251",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Jn 8:12-20",
               "source": "olm-1981 p?#251",
               "status": "provisional"
             }
@@ -2087,11 +2091,13 @@
             {
               "slot": "gospel",
               "ref": "Jn 10:1-10",
-              "alternatives": [
-                {
-                  "ref": "Jn 10:11-18"
-                }
-              ],
+              "source": "olm-1981 p?#279",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "A",
+              "ref": "Jn 10:11-18",
               "source": "olm-1981 p?#279",
               "status": "provisional"
             }

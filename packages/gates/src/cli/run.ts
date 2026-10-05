@@ -5,7 +5,9 @@
  *                      [--root <dir>] [--config <file>] [--json out/gates.json] [--markdown out/comment.md]
  *     lectio-gates decide --results out/gates.json [--pr pr.json | --pr-number <n>] [--json out/decision.json]
  *
- * `run` reads files from the working tree at `--root`, so `--head` must be the commit checked out
+ * The changed files are `git diff <base>...<head>`, committed changes only: a file edited but not
+ * committed is not checked (the verifier gate then reports no passage files changed relative to
+ * `--base`). `run` reads files from the working tree at `--root`, so `--head` must be the commit checked out
  * there (it is refused otherwise). `--pr` is a JSON file of `PullRequestFacts` (core/pull-request.ts);
  * without it the facts come from the git diff (renames and review blocks set to approved included),
  * with PR number `--pr-number` (0: no PR, a local run). `decide` reads the changed passages from
@@ -45,6 +47,9 @@ export const USAGE = [
   '                        [--json <file>] [--markdown <file>]',
   '       lectio-gates decide --results <gates.json> [--pr <pr.json>] [--base <ref>] [--head <ref>] [--root <dir>]',
   '                           [--pr-number <n>] [--config <file>] [--json <file>]',
+  '',
+  'The changed files are `git diff <base>...<head>` (default origin/main...HEAD), so commits only: commit',
+  'your changes first. A file edited but not committed is not checked, and a gate may report no changed files.',
 ].join('\n');
 
 export interface GatesCliOptions {
