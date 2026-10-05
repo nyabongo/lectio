@@ -17,7 +17,7 @@ import { SOURCE_FIXTURES_ENV, createProviders } from '@lectio/providers';
 
 import { labelFor, renderDecisionComment } from '../../packages/gates/src/ci/merge-rule-job.ts';
 import { changedClaims, factsFromChanges } from '../../packages/gates/src/merge-rule/index.ts';
-import { BAD_WEEK_DIR, EXPECTED, NOT_SHOWN, badWeekFiles } from './helpers/bad-week.ts';
+import { BAD_WEEK_DIR, EXPECTED, NOT_SHOWN, badWeekFiles, diskPath, prPath } from './helpers/bad-week.ts';
 import { REPO_ROOT } from './helpers/gate-test.ts';
 
 /** The head sha the comment names (the fixture has no commit). */
@@ -31,13 +31,13 @@ function filesUnder(dir: string): string[] {
 }
 
 const read = (dir: string, path: string): string | null => {
-  const file = join(BAD_WEEK_DIR, dir, path);
+  const file = join(BAD_WEEK_DIR, dir, diskPath(path));
   return existsSync(file) ? readFileSync(file, 'utf8') : null;
 };
 
 /** The bad-week PR: the head files over the repository (corpus, guard index), the base file on the base branch. */
 function badWeekContext(): GateContext {
-  const head = filesUnder(join(BAD_WEEK_DIR, 'head'));
+  const head = filesUnder(join(BAD_WEEK_DIR, 'head')).map(prPath);
   const changed: ChangedFile[] = head.map((path) => ({
     path,
     status: read('base', path) === null ? 'added' : 'modified',

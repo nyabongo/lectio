@@ -5,6 +5,10 @@
  *
  *     head/<path>        the files at the PR head (all added, except the one in base/)
  *     base/<path>        a file as it was on the base branch (the PR modifies it)
+ *
+ * On disk the content directories are `_passages/` and `_calendar/` (see {@link diskPath}), so the
+ * tools that find content files by directory name anywhere in a PR (the merge rule's review-block
+ * check among them) do not take the fixtures for real content.
  *     pages/index.json   the source pages the fetcher serves (FixtureSourceFetcher)
  *     comment.md         the rendered PR comment (a file snapshot, see bad-week.test.ts)
  *
@@ -224,14 +228,24 @@ function buildBadWeek(): BadWeek {
   return { head, base, expected };
 }
 
+/** Where a PR path (`passages/…`, `calendar/…`) is stored under head/ or base/. */
+export function diskPath(path: string): string {
+  return path.replace(/^(passages|calendar)\//u, '_$1/');
+}
+
+/** The PR path of a file stored at `path` under head/ or base/. */
+export function prPath(path: string): string {
+  return path.replace(/^_(passages|calendar)\//u, '$1/');
+}
+
 const text = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`;
 
 /** Every committed file of the bad week, by path under {@link BAD_WEEK_DIR}. */
 export function badWeekFiles(): Record<string, string> {
   const { head, base } = buildBadWeek();
   const files: Record<string, string> = {};
-  for (const [file, value] of Object.entries(head)) files[`head/${file}`] = text(value);
-  for (const [file, value] of Object.entries(base)) files[`base/${file}`] = text(value);
+  for (const [file, value] of Object.entries(head)) files[`head/${diskPath(file)}`] = text(value);
+  for (const [file, value] of Object.entries(base)) files[`base/${diskPath(file)}`] = text(value);
   files['pages/index.json'] = text({ [PAGE_URL]: { file: 'matthew-20.txt' } });
   files['pages/matthew-20.txt'] = PAGE_TEXT;
   return files;
