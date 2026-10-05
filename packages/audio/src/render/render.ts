@@ -6,7 +6,7 @@
 import { ProviderError, systemClock } from '@lectio/providers';
 import type { Clock, ObjectStorage, TtsProvider } from '@lectio/providers';
 
-import { MANIFEST_VERSION, writeManifest } from './manifest.ts';
+import { MANIFEST_VERSION, serializeManifest, writeManifest } from './manifest.ts';
 import type { AudioManifest, ManifestEntry } from './manifest.ts';
 import type { RenderPlan, RenderPlanItem } from './plan.ts';
 
@@ -92,8 +92,10 @@ function positiveInt(name: string, value: number): number {
 /**
  * Renders every item of `plan`: an object already in storage is adopted, anything else is
  * synthesized with `tts` and stored. A failure is recorded and the rest carry on; the manifest is
- * written once at the end with whatever succeeded. Throws {@link CharacterBudgetError} before
- * any call when the plan exceeds `maxCharacters`.
+ * written once at the end with whatever succeeded. A stale entry (its object went missing) that
+ * fails again is dropped, so the manifest never points at a missing file, and the characters of a
+ * synthesis whose upload failed are kept in `billedWithoutFile`. Throws
+ * {@link CharacterBudgetError} before any call when the plan exceeds `maxCharacters`.
  */
 export async function render(
   plan: RenderPlan,
@@ -116,6 +118,8 @@ export async function render(
   }
 
   const entries: Record<string, ManifestEntry> = { ...options.manifest.entries };
+  const billedWithoutFile: Record<string, number> = { ...options.manifest.billedWithoutFile };
+  const stale = new Set(plan.stale);
   const rendered: string[] = [];
   const adopted: string[] = [];
   const failed: RenderFailure[] = [];
@@ -149,9 +153,16 @@ export async function render(
   const synthesize = async (item: RenderPlanItem): Promise<void> => {
     const result = await withRetries(() => tts.synthesize({ text: item.text, voice: item.voice, format: plan.format }));
     characters += result.characters;
-    await withRetries(() =>
-      storage.put(item.key, result.audio, { contentType: result.contentType, cacheControl: AUDIO_CACHE_CONTROL }),
-    );
+    try {
+      await withRetries(() =>
+        storage.put(item.key, result.audio, { contentType: result.contentType, cacheControl: AUDIO_CACHE_CONTROL }),
+      );
+    } catch (error) {
+      // The text was billed but no file exists: record it so the monthly budget still counts it.
+      const month = clock.now().toISOString().slice(0, 7);
+      billedWithoutFile[month] = (billedWithoutFile[month] ?? 0) + result.characters;
+      throw error;
+    }
     entries[item.key] = entry(item, {
       bytes: result.audio.length,
       durationMs: result.durationMs,
@@ -181,11 +192,20 @@ export async function render(
     try {
       if (!(await adopt(item))) await synthesize(item);
     } catch (error) {
+      // An entry whose object is gone and could not be rendered again must not keep pointing at nothing.
+      if (stale.has(item.key)) delete entries[item.key];
       failed.push({ key: item.key, error: error instanceof Error ? error : new Error(String(error)) });
     }
   });
 
-  const manifest: AudioManifest = { version: MANIFEST_VERSION, entries };
-  if (rendered.length + adopted.length > 0) await writeManifest(storage, manifest);
+  const unfiled = Object.keys(billedWithoutFile).length > 0;
+  const manifest: AudioManifest = {
+    version: MANIFEST_VERSION,
+    entries,
+    ...(unfiled ? { billedWithoutFile } : {}),
+  };
+  const droppedStale = plan.stale.some((key) => entries[key] === undefined);
+  const billedChanged = unfiled && serializeManifest(manifest) !== serializeManifest(options.manifest);
+  if (rendered.length + adopted.length > 0 || droppedStale || billedChanged) await writeManifest(storage, manifest);
   return { rendered: rendered.sort(), adopted: adopted.sort(), failed, characters, manifest };
 }

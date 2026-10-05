@@ -27,9 +27,12 @@ export function escapeXml(text: string): string {
 }
 
 /** An Azure neural voice name: `<language>-<region>-<Name>`, for example `en-KE-AsiliaNeural`. */
-const VOICE_NAME = /^([a-z]{2,3}-[A-Z]{2})-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/;
+const VOICE_NAME = /^([a-z]{2,3}(?:-[A-Z][a-z]{3})?-[A-Z]{2})-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/;
 
-/** The BCP 47 locale of an Azure voice name (`en-KE-AsiliaNeural` → `en-KE`). */
+/**
+ * The BCP 47 locale of an Azure voice name (`en-KE-AsiliaNeural` → `en-KE`), with its script
+ * subtag when it has one (`sr-Latn-RS-NicholasNeural` → `sr-Latn-RS`).
+ */
 export function voiceLocale(voice: string): string {
   const match = VOICE_NAME.exec(voice);
   if (!match) {

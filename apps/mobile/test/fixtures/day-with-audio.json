@@ -76,7 +76,8 @@
                 "summary": "Greek asks “is your eye evil?”, an idiom for begrudging another’s good.",
                 "body": "The evil eye was a familiar image for stinginess and resentment (Deut 15:9; Prov 28:22). English trades the image for an abstract feeling and loses the echo of Mt 6:22-23. [c3][c4]",
                 "audio": {
-                  "url": "https://audio.example/audio/v1/4567ef.mp3"
+                  "url": "https://audio.example/audio/v1/4567ef.mp3",
+                  "durationSeconds": null
                 }
               },
               {

@@ -156,14 +156,33 @@ describe.skipIf(live)('AzureTtsProvider (msw)', () => {
     expect(result.audio.length).toBeGreaterThan(0);
   });
 
-  it('honours Retry-After, capped at maxDelayMs', async () => {
+  it('honours a Retry-After within maxDelayMs', async () => {
     serveSequence([
       { status: 429, headers: { 'Retry-After': '2' } },
-      { status: 429, headers: { 'Retry-After': '60' } },
+      { status: 429, headers: { 'Retry-After': '5' } },
     ]);
     const delays: number[] = [];
     await provider({ maxDelayMs: 5000 }, delays).synthesize({ text: 'Hi.', voice: VOICE, format: 'mp3' });
     expect(delays).toEqual([2000, 5000]);
+  });
+
+  it('stops, without retrying, when Retry-After is above maxDelayMs', async () => {
+    const seen = serveSequence([
+      { status: 429, headers: { 'Retry-After': '2' } },
+      { status: 429, headers: { 'Retry-After': '60' } },
+    ]);
+    const delays: number[] = [];
+    const error = await rejection(
+      provider({ maxDelayMs: 5000 }, delays).synthesize({ text: 'Hi.', voice: VOICE, format: 'mp3' }),
+    );
+    expect(seen).toEqual([429, 429]);
+    expect(delays).toEqual([2000]);
+    expect(error.code).toBe('rate-limited');
+    expect(error.retryable).toBe(false);
+    expect(error.message).toBe(
+      'Azure Speech rate limit (429); Retry-After of 60 s exceeds the 5000 ms retry cap, giving up',
+    );
+    expect(error.cause).toBeInstanceOf(ProviderError);
   });
 
   it('caps exponential backoff at maxDelayMs', async () => {
@@ -308,6 +327,22 @@ describe('AzureTtsProvider options', () => {
     );
     expect(() => new AzureTtsProvider({ key: 'k', region: 'westeurope', maxAttempts: 0 })).toThrow(RangeError);
     expect(() => new AzureTtsProvider({ key: 'k', region: 'westeurope', timeoutMs: 1.5 })).toThrow(RangeError);
+    expect(() => new AzureTtsProvider({ key: 'k', region: 'westeurope', baseDelayMs: -1 })).toThrow(
+      'baseDelayMs must be an integer from 0 to',
+    );
+    expect(() => new AzureTtsProvider({ key: 'k', region: 'westeurope', baseDelayMs: Number.NaN })).toThrow(RangeError);
+    expect(() => new AzureTtsProvider({ key: 'k', region: 'westeurope', baseDelayMs: 100, maxDelayMs: 50 })).toThrow(
+      'maxDelayMs must be an integer from 100 to',
+    );
+    expect(new AzureTtsProvider({ key: 'k', region: 'westeurope', baseDelayMs: 0, maxDelayMs: 0 }).formats).toEqual([
+      'mp3',
+    ]);
+    expect(() => new AzureTtsProvider({ key: 'k', endpoint: 'http://speech.example.test/tts' })).toThrow(
+      'Azure Speech endpoint must use https: "http://speech.example.test/tts"',
+    );
+    expect(() => new AzureTtsProvider({ key: 'k', endpoint: 'speech.example.test/tts' })).toThrow(
+      'Azure Speech endpoint is not a URL: "speech.example.test/tts"',
+    );
     expect(new AzureTtsProvider({ key: 'k', region: 'westeurope' }).formats).toEqual(['mp3']);
   });
 });
