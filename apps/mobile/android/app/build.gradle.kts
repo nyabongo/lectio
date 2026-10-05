@@ -31,11 +31,10 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         // L-107: the App Links intent filter's host and path prefix, from
-        // lectioSiteUrl (gradle.properties or -PlectioSiteUrl=...).
-        val siteUrl = URI(
-            (project.findProperty("lectioSiteUrl") as String?)
-                ?: "https://nyabongo.github.io/lectio/",
-        )
+        // lectioSiteUrl in gradle.properties (or -PlectioSiteUrl=...), the
+        // one place Android reads the site from; a Dart test checks it
+        // matches the site the app derives from LECTIO_API_BASE_URL.
+        val siteUrl = URI(project.property("lectioSiteUrl") as String)
         manifestPlaceholders["appLinkHost"] = siteUrl.host
         manifestPlaceholders["appLinkPathPrefix"] =
             siteUrl.path.trimEnd('/') + "/"

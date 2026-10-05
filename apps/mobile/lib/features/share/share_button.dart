@@ -20,6 +20,10 @@ abstract final class ShareStrings {
 
   /// Shown when neither sharing nor copying worked.
   static const String failed = 'Could not share or copy the link.';
+
+  /// Shown when a link opened Today because the app has no page for it.
+  static const String linkNotRecognised =
+      'Lectio has no page for that link, so it opened Today.';
 }
 
 /// Writes [text] to the clipboard.

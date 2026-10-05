@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/data/api_client.dart';
 import 'package:lectio/features/share/site_links.dart';
@@ -56,6 +58,8 @@ void main() {
         'about/',
         'search',
         '2026-9-20/',
+        '2026-02-31/',
+        '2026-13-01/gospel/',
         '2026-09-20/Gospel/',
         '2026-09-20/gospel/notes/',
         '2026-09-20/gospel/notes/a b/',
@@ -117,7 +121,33 @@ void main() {
   test('a reminder opens its day', () {
     expect(reminderLocation('2026-09-20'), '/today?date=2026-09-20');
     expect(reminderLocation('tomorrow'), isNull);
+    expect(reminderLocation('2026-02-30'), isNull);
     expect(reminderLocation(null), isNull);
+  });
+
+  test('isCalendarDate accepts only real dates, never rolled over', () {
+    expect(isCalendarDate('2026-02-28'), isTrue);
+    expect(isCalendarDate('2028-02-29'), isTrue);
+    expect(isCalendarDate('2026-02-29'), isFalse);
+    expect(isCalendarDate('2026-02-31'), isFalse);
+    expect(isCalendarDate('2026-13-01'), isFalse);
+    expect(isCalendarDate('2026-00-10'), isFalse);
+    expect(isCalendarDate('20260920'), isFalse);
+  });
+
+  test('sitePathOf is the path under the site root, or null', () {
+    final page = _site.resolve('about/');
+    expect(sitePathOf(page, site: _site), ['about', '']);
+    expect(sitePathOf(Uri.parse('https://example.org/about/')), isNull);
+  });
+
+  test('the Android App Links host is the site of this build', () {
+    // android/gradle.properties feeds the App Links intent filter; it must
+    // name the same site the app derives from LECTIO_API_BASE_URL.
+    final properties = File('android/gradle.properties').readAsLinesSync();
+    const key = 'lectioSiteUrl=';
+    final line = properties.singleWhere((line) => line.startsWith(key));
+    expect(Uri.parse(line.substring(key.length)), siteBaseUrl);
   });
 
   test('noteLocation keeps the reading location and adds the note', () {

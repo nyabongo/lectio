@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
 import 'package:lectio/features/share/deep_links.dart';
+import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/src/app.dart';
 import 'package:lectio/src/routing/router.dart';
 
@@ -77,6 +78,7 @@ void main() {
       ('/2026-09-20/gospel', '/reading?date=2026-09-20&slot=gospel'),
       ('/2026-09-20/gospel/notes/v15-evil-eye', _note),
       ('/sw/2026-09-20', '/today?date=2026-09-20'),
+      ('/2026-02-31', '/today'),
       ('/sw/2026-09-20/gospel/notes/v15-evil-eye', _note),
     ]) {
       testWidgets('$path opens $expected', (tester) async {
@@ -109,6 +111,24 @@ void main() {
         location(appRouter(tester)),
         '/reading?date=2026-09-20&slot=gospel',
       );
+    });
+
+    testWidgets('a link it has no page for opens Today and says so', (
+      tester,
+    ) async {
+      final links = DeepLinks(site: _site)..openLink(_site.resolve('about/'));
+      await tester.pumpWidget(LectioApp(links: links));
+      await tester.pump();
+      await tester.pump();
+      expect(location(appRouter(tester)), '/today');
+      expect(find.text(ShareStrings.linkNotRecognised), findsOneWidget);
+
+      appRouter(tester).go('/settings');
+      await tester.pump();
+      expect(links.openLink(Uri.parse('lectio://2026-02-31/')), isTrue);
+      await tester.pump();
+      await tester.pump();
+      expect(location(appRouter(tester)), '/today');
     });
 
     testWidgets('opens later links and reminder taps', (tester) async {

@@ -91,7 +91,7 @@ Touches; say so in the PR.
   vector in `packages/schema/fixtures/share-text.json`, so change both together. `share_sheet.dart` opens share_plus's
   sheet (one share at a time: a second tap while it is open is `busy`); when sharing fails, `ShareButton` copies the
   text and says so. Shared links point at the site root derived from `LECTIO_API_BASE_URL` (`site_links.dart`).
-- `site_links.dart` maps a site URL, a `lectio://` link or a reminder payload (the ISO date) to an app location;
+- `site_links.dart` maps a site URL, a `lectio://` link or a reminder payload (a real calendar date) to an app location;
   `deep_links.dart` (`DeepLinks`) listens to app_links and reminder taps and opens it; the link that launched the app
   becomes the router's initial location. `deepLinkRoutes()` lets `context.go('/2026-09-20/gospel/notes/<id>')` work
   inside the app too.
@@ -105,8 +105,11 @@ Native configuration:
   `CFBundleURLTypes` entry with the `lectio` scheme; for universal links, the Associated Domains entitlement
   `applinks:<domain>` in `Runner.entitlements`.
 
-Verified links (open in the app without asking) need files at the **domain root**, which a GitHub Pages project site
-(`nyabongo.github.io/lectio/`) cannot serve. Once a custom domain is chosen (decision L-206), the owner:
+Verified links (open in the app without asking) need files at the **domain root**: Android checks
+`https://<host>/.well-known/assetlinks.json` and iOS `https://<host>/.well-known/apple-app-site-association`. The
+project site (`nyabongo.github.io/lectio/`) cannot serve them, but there are two ways to do it. One is a user-site
+repository, `nyabongo/nyabongo.github.io`, which serves the root of `nyabongo.github.io`: put both files there and keep
+the current URLs. The other is a custom domain. For a custom domain (decision L-206), the owner:
 
 1. Sets `site.customDomain` and `site.baseUrl` in `config/lectio.config.json`, builds the app with
    `--dart-define=LECTIO_API_BASE_URL=https://<domain>/api/v1/`, and sets `lectioSiteUrl=https://<domain>/` in
@@ -116,5 +119,7 @@ Verified links (open in the app without asking) need files at the **domain root*
    with `<TeamID>.io.github.nyabongo.lectio` and the paths `/*`), served as `application/json`.
 3. Adds `applinks:<domain>` to the iOS Associated Domains entitlement.
 
-Until then site links open in the browser (Android asks only if the reader allows the link under the app's "Open by
+Generating the two files from config when `site.customDomain` is set is tracked in #239. Links the
+app has no page for (`/lectio/about/`, a date not on the calendar) open Today with a short notice. Until then site
+links open in the browser (Android asks only if the reader allows the link under the app's "Open by
 default" settings), and `lectio://` links and reminder taps open the app.

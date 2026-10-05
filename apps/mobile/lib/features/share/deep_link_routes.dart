@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:lectio/features/share/site_links.dart';
+import 'package:lectio/src/routing/app_route.dart';
 
 const String _date = r':date(\d{4}-\d{2}-\d{2})';
 const String _slot = ':slot([a-z][a-z0-9-]*)';
@@ -16,7 +17,8 @@ const List<String> _sitePaths = [
 /// `/2026-09-20`, `/2026-09-20/gospel` and `/2026-09-20/gospel/notes/<id>`,
 /// also under a locale prefix (`/sw/2026-09-20`).
 ///
-/// Each redirects to the app's page for it ([locationForSitePath]), so
+/// Each redirects to the app's page for it ([locationForSitePath]; Today
+/// for a date that is not on the calendar, such as `2026-02-31`), so
 /// `context.go('/2026-09-20/gospel/notes/v15-evil-eye')` opens that note.
 /// Links from outside the app go through `DeepLinks`, which strips the
 /// site's host and base path first. The router appends these routes after
@@ -28,7 +30,8 @@ List<RouteBase> deepLinkRoutes() {
         GoRoute(
           path: '$prefix$path',
           redirect: (context, state) =>
-              locationForSitePath(state.uri.pathSegments),
+              locationForSitePath(state.uri.pathSegments) ??
+              AppRoute.today.path,
         ),
   ];
 }

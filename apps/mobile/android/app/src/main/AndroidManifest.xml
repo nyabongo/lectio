@@ -41,11 +41,12 @@
                 android:value="false" />
             <!-- L-107: site links (App Links). The host and path prefix come
                  from lectioSiteUrl in android/gradle.properties. They open
-                 in the app without asking only once the site serves
-                 /.well-known/assetlinks.json at its domain root, which needs
-                 a custom domain (decision L-206); until then Android opens
-                 them in the browser unless the reader allows the link in
-                 the app's "Open by default" settings. -->
+                 in the app without asking only once the host serves
+                 /.well-known/assetlinks.json at its root: a custom domain
+                 (decision L-206), or for nyabongo.github.io a
+                 nyabongo/nyabongo.github.io user-site repository. Until
+                 then Android opens them in the browser unless the reader
+                 allows the link in the app's "Open by default" settings. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

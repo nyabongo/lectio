@@ -7,6 +7,7 @@ import 'package:lectio/features/notifications/daily_reminder_scheduler.dart';
 import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
 import 'package:lectio/features/share/deep_links.dart';
+import 'package:lectio/features/share/share_button.dart';
 import 'package:lectio/src/routing/router.dart';
 import 'package:lectio/src/theme/lectio_theme.dart';
 import 'package:lectio/src/theme/liturgical_colour.dart';
@@ -72,10 +73,19 @@ class _LectioAppState extends State<LectioApp> {
   @override
   void initState() {
     super.initState();
-    widget.links?.attach(_router);
+    widget.links?.attach(_router, onUnrecognised: _linkNotRecognised);
     _refusals = widget.reminders?.permissionRefusals.listen(
       (_) => _messenger.currentState?.showSnackBar(
         const SnackBar(content: Text(ReminderStrings.permissionRefused)),
+      ),
+    );
+  }
+
+  /// Says that a link opened Today because the app has no page for it.
+  void _linkNotRecognised() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _messenger.currentState?.showSnackBar(
+        const SnackBar(content: Text(ShareStrings.linkNotRecognised)),
       ),
     );
   }

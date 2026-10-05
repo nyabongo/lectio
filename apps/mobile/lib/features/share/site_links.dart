@@ -29,6 +29,13 @@ Uri siteBaseFor(String apiBaseUrl) => Uri.parse(apiBaseUrl).resolve('../../');
 /// setting.
 final Uri siteBaseUrl = siteBaseFor(defaultApiBaseUrl);
 
+/// Whether [date] is a real calendar date written `yyyy-mm-dd`:
+/// `2026-02-28` is, `2026-02-31` and `2026-13-01` are not (never rolled
+/// over to another day).
+bool isCalendarDate(String date) {
+  return _isoDate.hasMatch(date) && parseIsoDate(date) == date;
+}
+
 /// The site path of a day, relative to the site root: `2026-09-20/`.
 String dayPagePath(String date) => '$date/';
 
@@ -77,7 +84,7 @@ String? locationForSitePath(List<String> segments) {
   final date = parts.first;
   if (date == 'calendar') return AppRoute.calendar.path;
   if (date == 'settings') return AppRoute.settings.path;
-  if (!_isoDate.hasMatch(date)) return null;
+  if (!isCalendarDate(date)) return null;
   return switch (parts.sublist(1)) {
     [] => dayLocation(date),
     ['listen'] => listenLocation(date),
@@ -95,16 +102,15 @@ bool _isNote(String slot, String id) {
   return _slot.hasMatch(slot) && _noteId.hasMatch(id);
 }
 
-/// The app location [link] opens, or `null` when it is not a Lectio link.
+/// The path segments of [link] relative to the site root, or `null` when
+/// it is not a Lectio link.
 ///
 /// A Lectio link is a page under [site] (default: [siteBaseUrl]; http or
 /// https, same host and explicit port) or an [appLinkScheme] link, whose
 /// host is the first path segment (`lectio://2026-09-20/gospel`, or
-/// `lectio:///2026-09-20/gospel`). See [locationForSitePath].
-String? locationForLink(Uri link, {Uri? site}) {
-  if (link.scheme == appLinkScheme) {
-    return locationForSitePath([link.host, ...link.pathSegments]);
-  }
+/// `lectio:///2026-09-20/gospel`).
+List<String>? sitePathOf(Uri link, {Uri? site}) {
+  if (link.scheme == appLinkScheme) return [link.host, ...link.pathSegments];
   final root = site ?? siteBaseUrl;
   if ((link.scheme != 'https' && link.scheme != 'http') ||
       link.host != root.host ||
@@ -117,15 +123,22 @@ String? locationForLink(Uri link, {Uri? site}) {
   for (final (index, segment) in base.indexed) {
     if (path[index] != segment) return null;
   }
-  return locationForSitePath(path.sublist(base.length));
+  return path.sublist(base.length);
+}
+
+/// The app location [link] opens, or `null` when it is not a Lectio link
+/// ([sitePathOf]) or the app has no such page ([locationForSitePath]).
+String? locationForLink(Uri link, {Uri? site}) {
+  final path = sitePathOf(link, site: site);
+  return path == null ? null : locationForSitePath(path);
 }
 
 /// The port written in [uri], or `null` for the scheme's default.
 int? _port(Uri uri) => uri.hasPort ? uri.port : null;
 
 /// The location a daily-reminder tap opens: the Today tab of the ISO date
-/// in its payload, or `null` when the payload is not a date.
+/// in its payload, or `null` when the payload is not a calendar date.
 String? reminderLocation(String? payload) {
-  if (payload == null || !_isoDate.hasMatch(payload)) return null;
+  if (payload == null || !isCalendarDate(payload)) return null;
   return dayLocation(payload);
 }
