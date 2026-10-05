@@ -113,10 +113,10 @@ measures `packages/*/src/**` at the 96% floor.
 
 - [Operator handbook](docs/operator-handbook.md): owner setup (repository settings, Pages, secrets, domain), workflows
   and schedules, the weekly research routine, approving content, budgets, and where each owner decision lands.
-- [Research CLI runbook](docs/runbooks/research-cli.md#no-such-section): every flag, the weekly routine, fix-ups, back-fill, costs.
+- [Research CLI runbook](docs/runbooks/research-cli.md): every flag, the weekly routine, fix-ups, back-fill, costs.
 - [Architecture](docs/architecture.md): how research, gates, approval, deploy and the apps fit together.
 - [Static JSON API v1](docs/api.md) and the [content model](docs/content-model.md).
-- [Configuration](config/MISSING.md): every config key, its default and the decision behind it.
+- [Configuration](config/README.md): every config key, its default and the decision behind it.
 - [CONTRIBUTING.md](CONTRIBUTING.md): branch and PR conventions, the coverage rule, providers, workflows, lockfile
   conflicts. [AGENTS.md](AGENTS.md) is the condensed version for AI agents; [CLAUDE.md](CLAUDE.md) points to it.
 - Owner decisions: [001 Link-out provider](docs/decisions/001-linkout.md) ·
