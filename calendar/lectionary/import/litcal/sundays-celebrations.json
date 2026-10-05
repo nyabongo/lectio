@@ -1,0 +1,43 @@
+{
+  "$comment": "LitCal leaves imported into the sundays block (L-065), solemnities and feasts of the Lord in the proper of time. Readings the same every year are imported without a cycle. Not listed, because the importer cannot read them (see the $comment of sundays/celebrations.json): PalmSun (palm_gospel slot), EasterVigil (numbered slots), MaryMotherOfGod (psalm \"Psalm 66 (67)\" does not parse). Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts sundays-celebrations",
+  "target": "sundays/celebrations.json",
+  "kind": "celebrations",
+  "imports": [
+    { "key": "nativity-of-the-lord", "mass": "vigil", "locator": "dominicale_et_festivum_A/en.json#Christmas.vigil" },
+    { "key": "nativity-of-the-lord", "mass": "night", "locator": "dominicale_et_festivum_A/en.json#Christmas.night" },
+    { "key": "nativity-of-the-lord", "mass": "dawn", "locator": "dominicale_et_festivum_A/en.json#Christmas.dawn" },
+    { "key": "nativity-of-the-lord", "mass": "day", "locator": "dominicale_et_festivum_A/en.json#Christmas.day" },
+    {
+      "key": "holy-family-of-jesus-mary-and-joseph",
+      "cycle": "A",
+      "locator": "dominicale_et_festivum_A/en.json#HolyFamily"
+    },
+    { "key": "second-sunday-after-christmas", "locator": "dominicale_et_festivum_A/en.json#Christmas2" },
+    { "key": "epiphany-of-the-lord", "locator": "dominicale_et_festivum_A/en.json#Epiphany" },
+    { "key": "baptism-of-the-lord", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#BaptismLord" },
+    { "key": "thursday-of-the-lords-supper", "locator": "dominicale_et_festivum_A/en.json#HolyThurs" },
+    { "key": "friday-of-the-passion-of-the-lord", "locator": "dominicale_et_festivum_A/en.json#GoodFri" },
+    { "key": "easter-sunday", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#Easter.day" },
+    { "key": "easter-sunday", "mass": "evening", "locator": "dominicale_et_festivum_A/en.json#Easter.evening" },
+    { "key": "ascension-of-the-lord", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#Ascension" },
+    { "key": "pentecost-sunday", "mass": "vigil", "locator": "dominicale_et_festivum_A/en.json#Pentecost.vigil" },
+    { "key": "pentecost-sunday", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#Pentecost.day" },
+    { "key": "most-holy-trinity", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#Trinity" },
+    {
+      "key": "most-holy-body-and-blood-of-christ",
+      "cycle": "A",
+      "locator": "dominicale_et_festivum_A/en.json#CorpusChristi"
+    },
+    { "key": "most-sacred-heart-of-jesus", "cycle": "A", "locator": "dominicale_et_festivum_A/en.json#SacredHeart" },
+    {
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "cycle": "A",
+      "locator": "dominicale_et_festivum_A/en.json#ChristKing"
+    },
+    {
+      "key": "our-lord-jesus-christ-king-of-the-universe",
+      "cycle": "C",
+      "locator": "dominicale_et_festivum_C/en.json#ChristKing"
+    }
+  ]
+}
