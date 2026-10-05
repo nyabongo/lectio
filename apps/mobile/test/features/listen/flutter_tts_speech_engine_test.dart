@@ -157,7 +157,7 @@ void main() {
         ..onComplete!()
         ..onError!('interrupted');
       await engine.speak('Two.', locale: 'en', speed: 1);
-      tts.onError!('interrupted');
+      tts.onComplete!();
       await Future<void>.delayed(Duration.zero);
       expect(completed, 0);
       expect(failures, isEmpty);
@@ -165,9 +165,36 @@ void main() {
       tts
         ..onStart!()
         ..onComplete!()
-        ..onComplete!();
+        ..onComplete!()
+        ..onError!('late');
       await Future<void>.delayed(Duration.zero);
       expect(completed, 1);
+      expect(failures, isEmpty);
+    });
+
+    test('an error before the start fails the utterance, once', () async {
+      tts
+        ..onError!('synthesis')
+        ..onError!('again');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, ['synthesis']);
+
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      await engine.stop();
+      tts.onError!('stopped');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, ['synthesis']);
+    });
+
+    test('an utterance the device refuses expects no error', () async {
+      tts.speakResult = 0;
+      await expectLater(
+        engine.speak('Two.', locale: 'en', speed: 1),
+        throwsException,
+      );
+      tts.onError!('refused');
+      await Future<void>.delayed(Duration.zero);
+      expect(failures, isEmpty);
     });
   });
 

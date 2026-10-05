@@ -44,7 +44,10 @@ double speechRate(double speed, {TargetPlatform? platform}) {
 ///
 /// Events count only for the utterance that is playing: after [stop], a late
 /// completion or error of the stopped utterance is dropped until the next
-/// utterance has started (flutter_tts's start handler).
+/// utterance has started (flutter_tts's start handler). An error that comes
+/// after [speak] handed the next utterance to the device but before it
+/// started counts as that utterance failing: Android can report one without
+/// ever starting, and the queue would otherwise wait on it.
 class FlutterTtsSpeechEngine implements SpeechEngine {
   /// Creates the engine; [create] builds the plugin (default:
   /// `FlutterTts()`) and [platform] tells which platform runs (default:
@@ -61,6 +64,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   Future<void>? _session;
   String? _language;
   bool _live = false;
+  bool _queued = false;
 
   @override
   Stream<void> get completed => _completed.stream;
@@ -72,19 +76,25 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   /// no audio session.
   FlutterTts get _plugin {
     return _tts ??= _create()
-      ..setStartHandler(() => _live = true)
+      ..setStartHandler(() {
+        _live = true;
+        _queued = false;
+      })
       ..setCompletionHandler(() {
         if (_take()) _completed.add(null);
       })
       ..setErrorHandler((message) {
-        if (_take()) _failed.add((message as Object?) ?? 'error');
+        final queued = _queued;
+        if (_take() || queued) _failed.add((message as Object?) ?? 'error');
       });
   }
 
-  /// Whether an event belongs to the utterance playing, which it ends.
+  /// Whether an event belongs to the utterance playing, which it ends (as
+  /// it does an utterance not started yet).
   bool _take() {
     final live = _live;
     _live = false;
+    _queued = false;
     return live;
   }
 
@@ -117,6 +127,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   }) async {
     final tts = _plugin;
     _live = false;
+    _queued = false;
     await _takeSession(tts);
     if (locale != _language) {
       // The best voice for the language (sw-KE, then sw-TZ …), else an
@@ -134,14 +145,20 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
       }
     }
     await tts.setSpeechRate(speechRate(speed, platform: _platform()));
+    // From here an error before the start event is this utterance's.
+    _queued = true;
     // flutter_tts answers 1 when the utterance was queued, 0 when not.
     final Object? queued = await tts.speak(text);
-    if (queued == 0) throw Exception('The device could not speak');
+    if (queued == 0) {
+      _queued = false;
+      throw Exception('The device could not speak');
+    }
   }
 
   @override
   Future<void> stop() async {
     _live = false;
+    _queued = false;
     await _tts?.stop();
   }
 
