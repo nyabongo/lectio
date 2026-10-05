@@ -30,6 +30,7 @@ import {
   MAX_PNG_BYTES,
   cardAltText,
   cardCacheKey,
+  cardTemplate,
   loadFonts,
   renderCard,
 } from '@lectio/sharecards';
@@ -176,6 +177,20 @@ export function insightCard(context: OgContext, date: string, slot: string, note
   };
 }
 
+/**
+ * Whether the card's original-language line can be drawn: `false` when the endpoint will fall back to a card
+ * without it ({@link renderWithFallback}), so the alt text can leave it out too.
+ */
+export function canDrawOriginal(card: ShareCard): boolean {
+  try {
+    cardTemplate(card);
+    return true;
+  } catch (error) {
+    if (error instanceof HebrewLayoutError) return false;
+    throw error;
+  }
+}
+
 /** The card an image target renders, or `null` when the content has none. */
 export function ogCard(context: OgContext, target: OgTarget): ShareCard | null {
   switch (target.kind) {
@@ -203,7 +218,7 @@ export function ogImageForPage(context: OgContext, path: string): SeoImage | nul
         src: withBase(context.base, ogImagePath(candidate)),
         width: OG_WIDTH,
         height: OG_HEIGHT,
-        alt: cardAltText(card),
+        alt: cardAltText(card, { omitOriginal: !canDrawOriginal(card) }),
       };
     }
   }
@@ -359,23 +374,40 @@ export function pngSize(png: Uint8Array): { width: number; height: number } | nu
   return { width: view.getUint32(16), height: view.getUint32(20) };
 }
 
+/** `&quot;`, `&#39;`, `&lt;`, `&gt;` and `&amp;` decoded (what an HTML serialiser escapes in attributes). */
+function unescapeAttribute(value: string): string {
+  return value
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&');
+}
+
+/** The `property`/`name` to `content` pairs of every `<meta>` element (the first wins), whatever the attribute order. */
+export function metaContents(html: string): Map<string, string> {
+  const contents = new Map<string, string>();
+  for (const [element] of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const attributes = new Map<string, string>();
+    for (const match of element.matchAll(/([a-zA-Z:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
+      attributes.set((match[1] as string).toLowerCase(), unescapeAttribute(match[2] ?? match[3] ?? ''));
+    }
+    const key = attributes.get('property') ?? attributes.get('name');
+    const content = attributes.get('content');
+    if (key !== undefined && content !== undefined && !contents.has(key)) contents.set(key, content);
+  }
+  return contents;
+}
+
 /** The Open Graph image tags of an HTML document (attribute values unescaped), or `null` without `og:image`. */
 export function ogImageMeta(html: string): { url: string; width?: string; height?: string; alt?: string } | null {
-  const value = (property: string): string | undefined => {
-    const match = new RegExp(`<meta property="${property}" content="([^"]*)"`).exec(html);
-    return match?.[1]
-      ?.replaceAll('&quot;', '"')
-      .replaceAll('&#39;', "'")
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&amp;', '&');
-  };
-  const url = value('og:image');
+  const contents = metaContents(html);
+  const url = contents.get('og:image');
   if (url === undefined) return null;
   const meta: { url: string; width?: string; height?: string; alt?: string } = { url };
-  const width = value('og:image:width');
-  const height = value('og:image:height');
-  const alt = value('og:image:alt');
+  const width = contents.get('og:image:width');
+  const height = contents.get('og:image:height');
+  const alt = contents.get('og:image:alt');
   if (width !== undefined) meta.width = width;
   if (height !== undefined) meta.height = height;
   if (alt !== undefined) meta.alt = alt;

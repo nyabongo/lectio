@@ -4,8 +4,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { ContentRepo } from '@lectio/content';
-import { DEFAULT_FONTS_DIR, HebrewLayoutError, cardCacheKey, loadFonts } from '@lectio/sharecards';
-import type { DayCard, RenderOptions, ShareCard } from '@lectio/sharecards';
+import { DEFAULT_FONTS_DIR, HebrewLayoutError, cardCacheKey, loadFonts, renderCard } from '@lectio/sharecards';
+import type { DayCard, InsightCard, RenderOptions, ShareCard } from '@lectio/sharecards';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { formatDate, t } from '../i18n/index.ts';
@@ -16,9 +16,11 @@ import {
   OG_HEIGHT,
   OG_MAX_BYTES,
   OG_WIDTH,
+  canDrawOriginal,
   checkOgDist,
   dayCard,
   insightCard,
+  metaContents,
   noteVerseLabel,
   ogCard,
   ogDayPaths,
@@ -186,6 +188,13 @@ describe('ogImageForPage', () => {
     );
   });
 
+  it('describes the original phrase in the insight alt text', () => {
+    expect(ogImageForPage(context, '2026-09-20/gospel/notes/v15-evil-eye/')?.alt).toBe(
+      'Lectio card for Sunday 20 September 2026: “envious”. Greek: ophthalmos sou ponēros. ' +
+        'What the Greek of today’s Gospel really says — Matthew 20:15',
+    );
+  });
+
   it('gives a pending reading the day image', () => {
     expect(ogImageForPage(context, '2026-09-20/first-reading/')?.src).toBe('/lectio/og/2026-09-20.png');
   });
@@ -219,6 +228,21 @@ describe('rendering', () => {
 
   afterEach(async () => {
     await rm(cacheDir, { recursive: true, force: true });
+  });
+
+  it('falls back with the real renderer when a mixed-script Hebrew phrase has no transliteration', async () => {
+    const insight = insightCard(context, SUNDAY, 'gospel', 'v15-evil-eye') as InsightCard;
+    const mixed: InsightCard = { ...insight, original: { text: 'רָעָה 15:9', language: 'hbo' } };
+    expect(canDrawOriginal(mixed)).toBe(false);
+    await expect(renderCard(mixed, { fonts: await loadFonts() })).rejects.toBeInstanceOf(HebrewLayoutError);
+    const png = await renderWithFallback(mixed, { fonts: await loadFonts() });
+    expect(pngSize(png)).toEqual({ width: OG_WIDTH, height: OG_HEIGHT });
+    expect(png.equals(await renderCard(mixed, { fonts: await loadFonts(), omitOriginal: true }))).toBe(true);
+  });
+
+  it('only treats a Hebrew layout failure as an undrawable original', () => {
+    expect(canDrawOriginal(card)).toBe(true);
+    expect(() => canDrawOriginal({ ...card, kind: 'poster' } as unknown as ShareCard)).toThrow(/Unexpected value/);
   });
 
   it('falls back to a card without the original line when the Hebrew cannot be drawn', async () => {
@@ -330,6 +354,16 @@ describe('ogImageMeta', () => {
     });
     expect(ogImageMeta('<meta property="og:image" content="https://x/a.png">')).toEqual({ url: 'https://x/a.png' });
     expect(ogImageMeta('<title>x</title>')).toBeNull();
+  });
+
+  it('does not depend on the attribute order or quoting', () => {
+    const html =
+      `<meta content="https://x/b.png" property="og:image"><META CONTENT='630' PROPERTY='og:image:height'>` +
+      '<meta data-x="1" content="Alt" property="og:image:alt" /><meta property="og:image" content="https://x/2.png">' +
+      '<meta charset="utf-8"><meta name="twitter:card" content="summary_large_image">';
+    expect(ogImageMeta(html)).toEqual({ url: 'https://x/b.png', height: '630', alt: 'Alt' });
+    expect(metaContents(html).get('twitter:card')).toBe('summary_large_image');
+    expect(metaContents(html).has('charset')).toBe(false);
   });
 });
 
