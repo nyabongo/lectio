@@ -1,45 +1,44 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+// render.ts is wiring only: it hands argv, the working directory, the environment and console
+// to runRender (logic and tests: ./run.test.ts). runRender is mocked so importing the entry point
+// does not load config, content and providers on first use. That cold import took several
+// seconds under coverage on a loaded machine and timed the test out.
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+const { runRender } = vi.hoisted(() => ({ runRender: vi.fn<(...args: unknown[]) => Promise<number>>() }));
+vi.mock('./run.ts', () => ({ runRender }));
 
 describe('audio:render entry point', () => {
   const argv = process.argv;
-  let dir: string;
 
-  beforeEach(async () => {
-    dir = await mkdtemp(join(tmpdir(), 'lectio-audio-entry-'));
-    // An empty content root: nothing to render, but the whole pipeline runs.
-    await writeFile(join(dir, 'lectio.config.json'), JSON.stringify({ content: { root: dir } }));
-    vi.stubEnv('LECTIO_CONFIG', join(dir, 'lectio.config.json'));
-  });
-
-  afterEach(async () => {
+  afterEach(() => {
     process.argv = argv;
     process.exitCode = undefined;
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
+    runRender.mockReset();
     vi.resetModules();
-    await rm(dir, { recursive: true, force: true });
   });
 
   it('runs relative to INIT_CWD and sets the exit code', async () => {
-    vi.stubEnv('INIT_CWD', dir);
+    vi.stubEnv('INIT_CWD', '/from/init-cwd');
     process.argv = ['node', 'render.ts', '--storage', 'memory'];
-    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    runRender.mockResolvedValue(0);
     await import('./render.ts');
-    expect(log).toHaveBeenCalledWith(expect.stringMatching(/^audio:render: 0 segments/));
+    expect(runRender).toHaveBeenCalledWith(['--storage', 'memory'], {
+      cwd: '/from/init-cwd',
+      env: process.env,
+      io: { out: console.log, err: console.error },
+    });
     expect(process.exitCode).toBe(0);
   });
 
-  it('falls back to the working directory and reports usage errors', async () => {
+  it('falls back to the working directory and passes the exit code through', async () => {
     vi.stubEnv('INIT_CWD', undefined);
-    vi.spyOn(process, 'cwd').mockReturnValue(dir);
+    vi.spyOn(process, 'cwd').mockReturnValue('/from/cwd');
     process.argv = ['node', 'render.ts', '--bogus'];
-    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    runRender.mockResolvedValue(2);
     await import('./render.ts');
-    expect(error).toHaveBeenCalledWith(expect.stringContaining('unknown or incomplete argument "--bogus"'));
+    expect(runRender).toHaveBeenCalledWith(['--bogus'], expect.objectContaining({ cwd: '/from/cwd' }));
     expect(process.exitCode).toBe(2);
   });
 });
