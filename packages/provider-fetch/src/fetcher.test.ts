@@ -15,6 +15,9 @@ import { USER_AGENT } from './http.ts';
 import { RobotsDisallowedError } from './robots.ts';
 
 const SITE = 'https://source.test';
+
+/** Resolves every host to a public address, so msw-served `*.test` hosts pass the SSRF guard offline. */
+const PUBLIC = async (): Promise<string[]> => ['93.184.215.14'];
 const ARCHIVE = 'https://archive.test';
 
 const dirs: string[] = [];
@@ -40,6 +43,7 @@ function robots(origin: string, body = 'User-agent: *\nDisallow:\n') {
 function fetcher(options: LiveSourceFetcherOptions = {}): { fetcher: LiveSourceFetcher; sleeps: number[] } {
   const sleeps: number[] = [];
   const instance = new LiveSourceFetcher({
+    resolveHost: PUBLIC,
     clock: new FakeClock(),
     cacheDir: false,
     sleep: async (ms) => {
@@ -191,6 +195,78 @@ describe('LiveSourceFetcher', () => {
       http.get(`${SITE}/a`, () => HttpResponse.text('a')),
     );
     await expect(fetcher({ retries: 0 }).fetcher.fetch(`${SITE}/a`)).rejects.toBeInstanceOf(RobotsDisallowedError);
+  });
+
+  it('treats a rate-limited robots.txt as disallowing for now, and asks again next time', async () => {
+    let robotsCalls = 0;
+    server.use(
+      http.get(`${SITE}/robots.txt`, () => {
+        robotsCalls += 1;
+        return robotsCalls === 1 ? new HttpResponse(null, { status: 429 }) : HttpResponse.text('');
+      }),
+      http.get(`${SITE}/a`, () => HttpResponse.text('a')),
+    );
+    const live = fetcher({ retries: 0 }).fetcher;
+    await expect(live.fetch(`${SITE}/a`)).rejects.toBeInstanceOf(RobotsDisallowedError);
+    expect((await live.fetch(`${SITE}/a`)).text).toBe('a');
+    expect(robotsCalls).toBe(2);
+  });
+
+  it('parses only the first 500 KiB of robots.txt', async () => {
+    const padding = `# ${'x'.repeat(500 * 1024)}\n`;
+    server.use(
+      robots(SITE, `User-agent: *\nDisallow: /early\n${padding}Disallow: /late\n`),
+      http.get(`${SITE}/late`, () => HttpResponse.text('late')),
+    );
+    const live = fetcher().fetcher;
+    await expect(live.fetch(`${SITE}/early`)).rejects.toBeInstanceOf(RobotsDisallowedError);
+    expect((await live.fetch(`${SITE}/late`)).text).toBe('late');
+  });
+
+  it('refuses a page larger than maxBytes', async () => {
+    server.use(
+      robots(SITE),
+      http.get(`${SITE}/huge`, () => HttpResponse.text('x'.repeat(2048))),
+    );
+    await expect(fetcher({ maxBytes: 1024 }).fetcher.fetch(`${SITE}/huge`)).rejects.toMatchObject({
+      code: 'unsupported',
+    });
+  });
+
+  it('refuses private hosts, also behind a redirect, before asking their robots.txt', async () => {
+    let robotsAsked = false;
+    server.use(
+      robots(SITE),
+      http.get('http://10.0.0.1/robots.txt', () => {
+        robotsAsked = true;
+        return HttpResponse.text('');
+      }),
+      http.get(
+        `${SITE}/jump`,
+        () => new HttpResponse(null, { status: 302, headers: { location: 'http://10.0.0.1/' } }),
+      ),
+    );
+    const live = fetcher().fetcher;
+    await expect(live.fetch(`${SITE}/jump`)).rejects.toMatchObject({ code: 'invalid-request' });
+    await expect(live.fetch('http://[::1]:8080/')).rejects.toMatchObject({ code: 'invalid-request' });
+    expect(robotsAsked).toBe(false);
+  });
+
+  it('treats a redirect without Location as a failure: archive fallback, nothing cached', async () => {
+    const cacheDir = await tempDir();
+    server.use(
+      robots(SITE),
+      robots(ARCHIVE),
+      http.get(`${SITE}/odd`, () => new HttpResponse('moved somewhere', { status: 302 })),
+      http.get(`${ARCHIVE}/odd`, () => HttpResponse.text('archived')),
+    );
+    const live = fetcher({ cacheDir }).fetcher;
+    await expect(live.fetch(`${SITE}/odd`)).rejects.toMatchObject({ code: 'unavailable', retryable: false });
+    expect(await readdir(cacheDir)).toEqual([]);
+    expect(await live.fetch(`${SITE}/odd`, { archivedUrl: `${ARCHIVE}/odd` })).toMatchObject({
+      text: 'archived',
+      fromArchive: true,
+    });
   });
 
   it('ignores robots.txt when told to', async () => {

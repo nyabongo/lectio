@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { USER_AGENT } from './http.ts';
-import { ALLOW_ALL, DISALLOW_ALL, parseRobots, productToken } from './robots.ts';
+import { ALLOW_ALL, DISALLOW_ALL, parseRobots, patternMatches, productToken } from './robots.ts';
 
 describe('productToken', () => {
   it('is the User-Agent up to the first space or slash, lower case', () => {
@@ -71,5 +71,29 @@ describe('ALLOW_ALL and DISALLOW_ALL', () => {
     expect(ALLOW_ALL.allows('/a')).toBe(true);
     expect(DISALLOW_ALL.allows('/a')).toBe(false);
     expect(DISALLOW_ALL.allows('/robots.txt')).toBe(true);
+  });
+});
+
+describe('patternMatches', () => {
+  it('matches prefixes, wildcards in order, and the $ anchor', () => {
+    expect(patternMatches('/a', '/abc')).toBe(true);
+    expect(patternMatches('/a$', '/a')).toBe(true);
+    expect(patternMatches('/a$', '/ab')).toBe(false);
+    expect(patternMatches('/b', '/abc')).toBe(false);
+    expect(patternMatches('/*/x/*.pdf', '/docs/x/y/file.pdf')).toBe(true);
+    expect(patternMatches('/*/x/*.pdf', '/docs/y/file.pdf')).toBe(false);
+    expect(patternMatches('/**a', '/zza')).toBe(true);
+    expect(patternMatches('/*', '/')).toBe(true);
+    expect(patternMatches('/*a*b$', '/xaxb')).toBe(true);
+    expect(patternMatches('/*ab*ba$', '/aba')).toBe(false);
+    expect(patternMatches('/*.pdf$', '/a.pdf.html')).toBe(false);
+  });
+
+  it('stays fast on a hostile pattern against a long path', () => {
+    const pattern = `/${'*a'.repeat(200)}b`;
+    const path = `/${'a'.repeat(20_000)}`;
+    const started = performance.now();
+    expect(patternMatches(pattern, path)).toBe(false);
+    expect(performance.now() - started).toBeLessThan(500);
   });
 });

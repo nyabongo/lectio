@@ -7,6 +7,7 @@ import { LiveDownloader } from './downloader.ts';
 import { USER_AGENT } from './http.ts';
 
 const URL_A = 'https://downloads.test/archive.tar.gz';
+const PUBLIC = async (): Promise<string[]> => ['93.184.215.14'];
 
 describe('LiveDownloader', () => {
   it('returns the body bytes after redirects, as LectioBot, without consulting robots.txt', async () => {
@@ -18,7 +19,7 @@ describe('LiveDownloader', () => {
         return HttpResponse.arrayBuffer(Uint8Array.from([1, 2, 3]).buffer);
       }),
     );
-    expect(await new LiveDownloader().fetchBytes(URL_A)).toEqual(Uint8Array.from([1, 2, 3]));
+    expect(await new LiveDownloader({ resolveHost: PUBLIC }).fetchBytes(URL_A)).toEqual(Uint8Array.from([1, 2, 3]));
     expect(agent).toBe(USER_AGENT);
   });
 
@@ -28,16 +29,19 @@ describe('LiveDownloader', () => {
     [429, 'rate-limited'],
     [503, 'unavailable'],
     [403, 'invalid-request'],
-    [304, 'invalid-request'],
   ])('rejects HTTP %i as %s', async (status, code) => {
     server.use(http.get(URL_A, () => new HttpResponse(null, { status })));
-    const error = await new LiveDownloader({ retries: 0 }).fetchBytes(URL_A).catch((e: unknown) => e);
+    const error = await new LiveDownloader({ retries: 0, resolveHost: PUBLIC })
+      .fetchBytes(URL_A)
+      .catch((e: unknown) => e);
     expect(error).toBeInstanceOf(ProviderError);
     expect(error).toMatchObject({ code, message: `GET ${URL_A}: HTTP ${status}` });
   });
 
   it('rejects a network failure', async () => {
     server.use(http.get(URL_A, () => HttpResponse.error()));
-    await expect(new LiveDownloader({ retries: 0 }).fetchBytes(URL_A)).rejects.toMatchObject({ code: 'unavailable' });
+    await expect(new LiveDownloader({ retries: 0, resolveHost: PUBLIC }).fetchBytes(URL_A)).rejects.toMatchObject({
+      code: 'unavailable',
+    });
   });
 });

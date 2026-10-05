@@ -14,6 +14,15 @@ import type { LiveFetchedSource } from './types.ts';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** Default body cap for source pages: 10 MB. */
+export const PAGE_MAX_BYTES = 10 * 1024 * 1024;
+
+/**
+ * Only a 2xx page counts as fetched (1xx never surfaces, and the HTTP core follows or rejects every 3xx): it is cached
+ * and stops the archive fallback.
+ */
+const fetched = (status: number): boolean => status < 300;
+
 const ACCEPT = 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8';
 
 export interface LiveSourceFetcherOptions extends HttpOptions {
@@ -33,8 +42,9 @@ export interface LiveSourceFetcherOptions extends HttpOptions {
 }
 
 /**
- * Fetches public source pages as LectioBot: one User-Agent, a timeout per attempt (default 20 s), retries with
- * backoff for 408/429/5xx and network failures, redirects followed (each hop checked against robots.txt), the body
+ * Fetches public source pages as LectioBot: one User-Agent, a timeout per attempt (default 20 s), a body cap
+ * (default 10 MB), retries with backoff for 408/429/5xx and network failures, redirects followed (each hop checked
+ * by the SSRF guard, then against robots.txt), the body
  * decoded with its charset, HTML reduced to its main text, PDFs and other binary bodies flagged `unsupported`,
  * successful pages cached on disk, and `archivedUrl` tried when the page is missing, failing, disallowed by
  * robots.txt or unreachable.
@@ -46,7 +56,7 @@ export class LiveSourceFetcher implements SourceFetcher {
   readonly #robots: RobotsCache | undefined;
 
   constructor(options: LiveSourceFetcherOptions = {}) {
-    this.#http = new HttpClient(options, 20_000);
+    this.#http = new HttpClient(options, { timeoutMs: 20_000, maxBytes: PAGE_MAX_BYTES });
     this.#clock = options.clock ?? systemClock;
     const cacheDir = options.cacheDir ?? defaultSourceCacheDir(process.env, process.cwd());
     this.#cache = cacheDir === false ? undefined : new SourceCache(cacheDir, options.cacheTtlMs ?? DAY_MS, this.#clock);
@@ -59,14 +69,14 @@ export class LiveSourceFetcher implements SourceFetcher {
     let failure: unknown;
     try {
       page = await this.#fetchOne(url);
-      if (page.status < 400) return page;
+      if (fetched(page.status)) return page;
     } catch (error) {
       failure = error;
     }
     if (options.archivedUrl !== undefined) {
       try {
         const archived = await this.#fetchOne(options.archivedUrl);
-        if (archived.status < 400) return { ...archived, fromArchive: true };
+        if (fetched(archived.status)) return { ...archived, fromArchive: true };
       } catch {
         // The archive failed too: report the page's own result below.
       }
@@ -100,7 +110,7 @@ export class LiveSourceFetcher implements SourceFetcher {
       const decoded = decodeBody(result.body, contentType, kind);
       page = { ...base, text: kind === 'html' ? htmlToText(decoded) : tidyText(decoded) };
     }
-    if (page.status < 400) await this.#cache?.put(url, page);
+    if (fetched(page.status)) await this.#cache?.put(url, page);
     return page;
   }
 }

@@ -1,6 +1,6 @@
 /**
  * On-disk cache of fetched pages (`.cache/sources`, git-ignored): one JSON file per URL, named by the URL's sha256,
- * reused for a time-to-live. Only successful pages (status < 400) are stored, so a failure is retried next time.
+ * reused for a time-to-live. Only successful pages (2xx) are stored, so a failure is retried next time.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';

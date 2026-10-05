@@ -9,6 +9,9 @@ import { packageName } from './index.ts';
 
 const URL_A = 'https://http.test/a';
 
+/** Resolves every host to a public address, so msw-served `*.test` hosts pass the SSRF guard offline. */
+const PUBLIC = async (): Promise<string[]> => ['93.184.215.14'];
+
 function client(options: HttpOptions = {}): { client: HttpClient; sleeps: number[] } {
   const sleeps: number[] = [];
   const instance = new HttpClient(
@@ -16,9 +19,10 @@ function client(options: HttpOptions = {}): { client: HttpClient; sleeps: number
       sleep: async (ms) => {
         sleeps.push(ms);
       },
+      resolveHost: PUBLIC,
       ...options,
     },
-    1000,
+    { timeoutMs: 1000, maxBytes: 1024 },
   );
   return { client: instance, sleeps };
 }
@@ -43,9 +47,86 @@ describe('HttpClient', () => {
     expect(result.url).toBe(URL_A);
   });
 
-  it('returns a redirect without a Location as is', async () => {
+  it('rejects a redirect without a Location, without retrying', async () => {
     server.use(http.get(URL_A, () => new HttpResponse(null, { status: 302 })));
-    expect((await client().client.get(URL_A)).status).toBe(302);
+    await expect(client().client.get(URL_A)).rejects.toMatchObject({
+      code: 'unavailable',
+      retryable: false,
+      message: `GET ${URL_A}: HTTP 302 without a Location header`,
+    });
+  });
+
+  describe('maxBytes', () => {
+    const big = new Uint8Array(3000).fill(65);
+
+    it('refuses an oversized Content-Length before reading the body, without retrying', async () => {
+      let calls = 0;
+      server.use(
+        http.get(URL_A, () => {
+          calls += 1;
+          return new HttpResponse(big, { headers: { 'content-length': String(big.length) } });
+        }),
+      );
+      await expect(client().client.get(URL_A)).rejects.toMatchObject({
+        code: 'unsupported',
+        retryable: false,
+        message: `GET ${URL_A}: response larger than 1024 bytes`,
+      });
+      expect(calls).toBe(1);
+    });
+
+    it('cancels a body that streams past the cap without a Content-Length', async () => {
+      server.use(
+        http.get(URL_A, () => {
+          let sent = 0;
+          const stream = new ReadableStream<Uint8Array>({
+            pull(controller) {
+              sent += 1;
+              if (sent > 5) controller.close();
+              else controller.enqueue(new Uint8Array(600).fill(66));
+            },
+          });
+          return new HttpResponse(stream);
+        }),
+      );
+      await expect(client().client.get(URL_A)).rejects.toMatchObject({ code: 'unsupported' });
+    });
+
+    it('truncates instead when asked, and takes a per-request cap', async () => {
+      server.use(http.get(URL_A, () => new HttpResponse(big, { headers: { 'content-length': String(big.length) } })));
+      const truncated = await client().client.get(URL_A, { overflow: 'truncate' });
+      expect(truncated.body.length).toBe(1024);
+      expect((await client().client.get(URL_A, { maxBytes: 5000 })).body.length).toBe(3000);
+      expect((await client().client.get(URL_A, { maxBytes: 3000 })).body.length).toBe(3000);
+    });
+
+    it('reads an empty body', async () => {
+      server.use(http.get(URL_A, () => new HttpResponse(null, { status: 204 })));
+      expect((await client().client.get(URL_A)).body).toEqual(new Uint8Array());
+    });
+  });
+
+  describe('SSRF guard', () => {
+    it('checks the first URL and every redirect target', async () => {
+      server.use(
+        http.get(
+          URL_A,
+          () => new HttpResponse(null, { status: 302, headers: { location: 'http://169.254.169.254/x' } }),
+        ),
+      );
+      await expect(client().client.get(URL_A)).rejects.toMatchObject({
+        code: 'invalid-request',
+        retryable: false,
+        message: 'refusing to fetch http://169.254.169.254/x: non-public address 169.254.169.254',
+      });
+      const resolved = client({ resolveHost: async () => ['10.0.0.5'] }).client;
+      await expect(resolved.get(URL_A)).rejects.toThrow('http.test resolves to non-public address 10.0.0.5');
+    });
+
+    it('can be turned off', async () => {
+      server.use(http.get('http://127.0.0.1:8080/a', () => HttpResponse.text('local')));
+      expect((await client({ allowPrivateHosts: true }).client.get('http://127.0.0.1:8080/a')).status).toBe(200);
+    });
   });
 
   it('retries network errors with backoff capped at maxBackoffMs, then rejects as unavailable', async () => {
@@ -94,7 +175,7 @@ describe('HttpClient', () => {
         return calls === 1 ? new HttpResponse(null, { status: 500 }) : HttpResponse.text('ok');
       }),
     );
-    const c = new HttpClient({ backoffMs: 1 }, 1000);
+    const c = new HttpClient({ backoffMs: 1, resolveHost: PUBLIC }, { timeoutMs: 1000, maxBytes: 1024 });
     expect((await c.get(URL_A)).status).toBe(200);
   });
 

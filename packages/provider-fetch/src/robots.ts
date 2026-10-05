@@ -3,8 +3,9 @@
  *
  * The group for the fetcher's product token (`lectiobot`) applies if there is one, otherwise the `*` group. The
  * longest matching `Allow`/`Disallow` pattern wins and `Allow` wins a tie; `*` matches any run of characters and a
- * trailing `$` anchors the end. Following the RFC, a robots.txt that answers 4xx allows everything and one that
- * answers 5xx (after retries) disallows everything.
+ * trailing `$` anchors the end (matched without regular expressions, so a hostile file cannot cause backtracking).
+ * Following the RFC, a robots.txt that answers 4xx allows everything, one that answers 5xx or 429 (after retries)
+ * disallows everything for now (not cached, so the next fetch asks again), and only the first 500 KiB are parsed.
  */
 import type { Clock } from '@lectio/providers';
 import { ProviderError } from '@lectio/providers';
@@ -14,7 +15,6 @@ import type { HttpClient } from './http.ts';
 interface Rule {
   readonly allow: boolean;
   readonly pattern: string;
-  readonly regex: RegExp;
 }
 
 export interface RobotsRules {
@@ -30,14 +30,30 @@ export function productToken(userAgent: string): string {
   return (userAgent.split(/[\s/]/u)[0] as string).toLowerCase();
 }
 
-function patternRegex(pattern: string): RegExp {
+/**
+ * Whether a robots.txt path pattern matches `path`: literal text between `*`s must appear in order, the first part at
+ * the start and, with a trailing `$`, the last part at the end. Greedy leftmost matching is exact for `*`-only
+ * patterns and runs in O(pattern × path) at worst, without backtracking.
+ */
+export function patternMatches(pattern: string, path: string): boolean {
   const anchored = pattern.endsWith('$');
-  const body = (anchored ? pattern.slice(0, -1) : pattern)
-    .split('*')
-    .map((part) => part.replace(/[.+?^${}()|[\]\\]/gu, '\\$&'))
-    .join('.*');
-  return new RegExp(`^${body}${anchored ? '$' : ''}`, 'u');
+  const parts = (anchored ? pattern.slice(0, -1) : pattern).split('*');
+  const first = parts[0] as string;
+  if (!path.startsWith(first)) return false;
+  if (parts.length === 1) return !anchored || path.length === first.length;
+  const last = parts[parts.length - 1] as string;
+  let position = first.length;
+  for (const part of parts.slice(1, -1)) {
+    const at = path.indexOf(part, position);
+    if (at < 0) return false;
+    position = at + part.length;
+  }
+  if (anchored) return path.length - last.length >= position && path.endsWith(last);
+  return path.indexOf(last, position) >= 0;
 }
+
+/** RFC 9309 asks crawlers to parse at least the first 500 KiB of a robots.txt; the rest is ignored. */
+export const ROBOTS_MAX_BYTES = 500 * 1024;
 
 interface Group {
   readonly agents: string[];
@@ -65,7 +81,7 @@ export function parseRobots(text: string, userAgent: string): RobotsRules {
     } else if (key === 'allow' || key === 'disallow') {
       inAgentLines = false;
       if (current !== undefined && value !== '') {
-        current.rules.push({ allow: key === 'allow', pattern: value, regex: patternRegex(value) });
+        current.rules.push({ allow: key === 'allow', pattern: value });
       }
     }
   }
@@ -78,7 +94,7 @@ export function parseRobots(text: string, userAgent: string): RobotsRules {
       if (pathAndQuery === '/robots.txt') return true;
       let best: Rule | undefined;
       for (const rule of rules) {
-        if (!rule.regex.test(pathAndQuery)) continue;
+        if (!patternMatches(rule.pattern, pathAndQuery)) continue;
         const longer = best === undefined || rule.pattern.length > best.pattern.length;
         const tieAllow = best !== undefined && rule.pattern.length === best.pattern.length && rule.allow;
         if (longer || tieAllow) best = rule;
@@ -127,17 +143,27 @@ export class RobotsCache {
     const now = this.#clock.now().getTime();
     const cached = this.#origins.get(origin);
     if (cached !== undefined && cached.expiresAt > now) return cached.rules;
-    const rules = this.#load(origin);
+    const loaded = this.#load(origin);
+    const rules = loaded.then((result) => result.rules);
     this.#origins.set(origin, { rules, expiresAt: now + this.#ttlMs });
-    // A network failure is not cached: the next fetch asks again.
-    rules.catch(() => this.#origins.delete(origin));
+    // Network failures and temporary refusals (429, 5xx) are not cached: the next fetch asks again.
+    loaded.then(
+      (result) => {
+        if (result.temporary) this.#origins.delete(origin);
+      },
+      () => this.#origins.delete(origin),
+    );
     return rules;
   }
 
-  async #load(origin: string): Promise<RobotsRules> {
-    const result = await this.#http.get(`${origin}/robots.txt`, { accept: 'text/plain' });
-    if (result.status >= 500) return DISALLOW_ALL;
-    if (result.status >= 300) return ALLOW_ALL;
-    return parseRobots(new TextDecoder().decode(result.body), this.#http.userAgent);
+  async #load(origin: string): Promise<{ readonly rules: RobotsRules; readonly temporary: boolean }> {
+    const result = await this.#http.get(`${origin}/robots.txt`, {
+      accept: 'text/plain',
+      maxBytes: ROBOTS_MAX_BYTES,
+      overflow: 'truncate',
+    });
+    if (result.status === 429 || result.status >= 500) return { rules: DISALLOW_ALL, temporary: true };
+    if (result.status >= 400) return { rules: ALLOW_ALL, temporary: false };
+    return { rules: parseRobots(new TextDecoder().decode(result.body), this.#http.userAgent), temporary: false };
   }
 }
