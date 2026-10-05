@@ -91,6 +91,10 @@ describe('quotedSpans', () => {
     expect(quotedSpans(text)).toEqual([{ start: 9, end: text.length, unterminated: true }]);
   });
 
+  it('runs an unclosed guillemet to the end of the text', () => {
+    expect(quotedSpans('Il dit « va à la vigne')).toEqual([{ start: 8, end: 22, unterminated: true }]);
+  });
+
   it('pairs mismatched and regional double quotes', () => {
     expect(inner('He said “why stand idle" and left.')).toEqual(['why stand idle']);
     expect(inner('Luther: „one two three“ and Swedish ”a b c d e f g h i j k l” end.')).toEqual([
