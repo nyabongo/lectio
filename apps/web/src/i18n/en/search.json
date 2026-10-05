@@ -1,0 +1,22 @@
+{
+  "title": "Search",
+  "description": "Search Lectio’s notes on the history and original words of the daily Mass readings, by book and season.",
+  "intro": "Search the notes on every reading that has them. Narrow the results by book or season.",
+  "loading": "Loading search…",
+  "unavailable": "Search is not available right now. Try again later, or browse the calendar.",
+  "noscript": "Search needs JavaScript. You can still browse every day from the calendar.",
+  "calendarLink": "Open the calendar",
+  "ui": {
+    "placeholder": "Search the notes",
+    "clearSearch": "Clear",
+    "loadMore": "Load more results",
+    "searchLabel": "Search the notes",
+    "filtersLabel": "Filters",
+    "zeroResults": "No notes match [SEARCH_TERM]",
+    "manyResults": "[COUNT] readings match [SEARCH_TERM]",
+    "oneResult": "[COUNT] reading matches [SEARCH_TERM]",
+    "altSearch": "No notes match [SEARCH_TERM]. Showing results for [DIFFERENT_TERM] instead",
+    "searchSuggestion": "No notes match [SEARCH_TERM]. Try one of these searches:",
+    "searching": "Searching for [SEARCH_TERM]…"
+  }
+}
