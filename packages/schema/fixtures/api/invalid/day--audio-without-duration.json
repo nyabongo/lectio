@@ -58,8 +58,7 @@
                 "The owner’s closing question uses the Jewish idiom of the evil eye, an image for begrudging another’s good fortune. [c3] Matthew has already set the sound eye against the evil eye in the Sermon on the Mount. [c4]"
               ],
               "audio": {
-                "url": "https://audio.example/audio/v1/0123abcd.mp3",
-                "durationSeconds": 74.5
+                "url": "https://audio.example/audio/v1/0123abcd.mp3"
               }
             },
             "translationNotes": [
@@ -174,6 +173,44 @@
               "lastReviewedAt": "2026-09-03T17:05:00Z"
             }
           }
+        }
+      ],
+      "segments": [
+        {
+          "id": "MT.20.1-16/context",
+          "kind": "context",
+          "slot": "gospel",
+          "passageKey": "MT.20.1-16",
+          "locale": "en",
+          "title": "Labourers in the vineyard",
+          "script": "Context for Matthew chapter 20, verses 1 to 16. Labourers in the vineyard. Matthew alone records this parable.",
+          "audio": {
+            "url": "https://audio.example/audio/v1/0123abcd.mp3",
+            "durationSeconds": 74.5
+          }
+        },
+        {
+          "id": "MT.20.1-16/note/v15-evil-eye",
+          "kind": "translation-note",
+          "slot": "gospel",
+          "passageKey": "MT.20.1-16",
+          "locale": "en",
+          "title": "envious · ophthalmos sou ponēros",
+          "script": "Translation note on Matthew chapter 20, verse 15, the word “envious”. Greek asks “is your eye evil?”, an idiom for begrudging another’s good.",
+          "audio": {
+            "url": "https://audio.example/audio/v1/4567ef.mp3",
+            "durationSeconds": null
+          }
+        },
+        {
+          "id": "MT.20.1-16/note/v15-agathos",
+          "kind": "translation-note",
+          "slot": "gospel",
+          "passageKey": "MT.20.1-16",
+          "locale": "en",
+          "title": "generous · agathos",
+          "script": "Translation note on Matthew chapter 20, verse 15, the word “generous”. The landowner calls himself “good”, not merely “generous”.",
+          "audio": null
         }
       ]
     }

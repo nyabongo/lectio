@@ -26,10 +26,20 @@ describe('voiceLocale', () => {
     expect(voiceLocale('sw-KE-ZuriNeural')).toBe('sw-KE');
     expect(voiceLocale('fil-PH-BlessicaNeural')).toBe('fil-PH');
     expect(voiceLocale('en-US-AvaMultilingualNeural-HD')).toBe('en-US');
+    expect(voiceLocale('sr-Latn-RS-NicholasNeural')).toBe('sr-Latn-RS');
+    expect(voiceLocale('iu-Cans-CA-SiqiniqNeural')).toBe('iu-Cans-CA');
   });
 
   it('rejects names that are not Azure voices', () => {
-    for (const voice of ['', 'Asilia', 'en-ke-Asilia', 'en-KE-', 'en-KE-x"y']) {
+    for (const voice of [
+      '',
+      'Asilia',
+      'en-ke-Asilia',
+      'en-KE-',
+      'en-KE-x"y',
+      'sr-latn-RS-NicholasNeural',
+      'sr-Latn-NicholasNeural',
+    ]) {
       const error = (() => {
         try {
           voiceLocale(voice);

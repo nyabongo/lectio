@@ -29,6 +29,7 @@ import {
   localeSchema,
   nonEmptyStringSchema,
   passageKeySchema,
+  readingSlotSchema,
   schemaId,
   urlSchema,
 } from '../common/index.ts';
@@ -68,8 +69,8 @@ export function localisedEndpoints(locale: string): Record<LocalisedEndpoint, st
 const apiVersionSchema = { const: API_VERSION } as const;
 
 /**
- * A rendered narration file. Every `audio` field is `null` until the narration pipeline (Phase 2, L-082) fills it;
- * clients fall back to device text-to-speech when it is `null`.
+ * A rendered narration file, or `null` when there is none (not rendered yet, or no live voice configured); clients
+ * fall back to device text-to-speech then. `durationSeconds` is always present and `null` when the length is unknown.
  */
 const audioSchema = {
   anyOf: [
@@ -77,13 +78,34 @@ const audioSchema = {
     {
       type: 'object',
       additionalProperties: false,
-      required: ['url'],
+      required: ['url', 'durationSeconds'],
       properties: {
         url: urlSchema,
-        durationSeconds: { type: 'number', minimum: 0 },
+        durationSeconds: { anyOf: [{ type: 'null' }, { type: 'number', minimum: 0 }] },
       },
     },
   ],
+} as const;
+
+/**
+ * One item of a Mass's Listen queue (L-082): the context note or a translation note of a reading's approved passage,
+ * in play order, with what the voice reads (`script`: Lectio's commentary in spoken form, never the reading text) and
+ * its rendered file. `id` is `<passage key>/context` or `<passage key>/note/<note id>`, stable across days.
+ */
+const apiSegmentSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['id', 'kind', 'slot', 'passageKey', 'locale', 'title', 'script', 'audio'],
+  properties: {
+    id: nonEmptyStringSchema,
+    kind: { type: 'string', enum: ['context', 'translation-note'] },
+    slot: readingSlotSchema,
+    passageKey: passageKeySchema,
+    locale: localeSchema,
+    title: nonEmptyStringSchema,
+    script: nonEmptyStringSchema,
+    audio: audioSchema,
+  },
 } as const;
 
 const passageProps = passageSchema.properties;
@@ -201,6 +223,14 @@ function massSchema<const R extends object>(readings: R) {
   } as const;
 }
 
+const dayMassBase = massSchema(apiDayReadingSchema);
+
+/** A Mass in a day document: its readings with their notes, and the Listen queue built from them. */
+const apiDayMassSchema = {
+  ...dayMassBase,
+  properties: { ...dayMassBase.properties, segments: { type: 'array', items: apiSegmentSchema } },
+} as const;
+
 /** A day in `calendar/{year}.json` and `upcoming.json`: everything but the notes themselves. */
 const apiDaySummarySchema = {
   type: 'object',
@@ -305,7 +335,7 @@ export const apiDaySchema = {
   properties: {
     apiVersion: apiVersionSchema,
     ...dayHeaderProperties,
-    masses: { type: 'array', items: massSchema(apiDayReadingSchema) },
+    masses: { type: 'array', items: apiDayMassSchema },
   },
 } as const;
 
@@ -413,6 +443,8 @@ export type ApiUpcoming = FromSchema<typeof apiUpcomingSchema>;
 export type ApiNotes = ApiPassage['passage'];
 export type ApiAudio = ApiNotes['context']['audio'];
 export type ApiDayReading = ApiDay['masses'][number]['readings'][number];
+export type ApiDayMass = ApiDay['masses'][number];
+export type ApiSegment = NonNullable<ApiDayMass['segments']>[number];
 export type ApiDaySummary = ApiCalendar['days'][number];
 export type ApiReadingSummary = ApiDaySummary['masses'][number]['readings'][number];
 export type ApiPassageIndexEntry = ApiPassageIndex['passages'][number];
