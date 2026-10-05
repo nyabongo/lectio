@@ -39,6 +39,23 @@ export type HebrewMode = 'visual' | 'transliteration';
 
 export interface TemplateOptions {
   readonly hebrew?: HebrewMode;
+  /**
+   * Leave the original-language line off an insight card (the caption still names the language). The site build
+   * uses it when the phrase cannot be drawn ({@link HebrewLayoutError}) rather than failing the build.
+   */
+  readonly omitOriginal?: boolean;
+}
+
+/** A Hebrew phrase that cannot be drawn right to left on a card and has no transliteration to fall back on. */
+export class HebrewLayoutError extends Error {
+  override readonly name = 'HebrewLayoutError';
+  /** The phrase that could not be drawn. */
+  readonly text: string;
+
+  constructor(text: string) {
+    super(`Hebrew phrase ${JSON.stringify(text)} cannot be drawn right to left here; give a transliteration`);
+    this.text = text;
+  }
 }
 
 type Style = Readonly<Record<string, string | number>>;
@@ -197,9 +214,7 @@ export function originalNode(original: OriginalPhrase, mode: HebrewMode = 'visua
     );
   }
   if (original.transliteration === undefined) {
-    throw new Error(
-      `Hebrew phrase ${JSON.stringify(original.text)} cannot be drawn right to left here; give a transliteration`,
-    );
+    throw new HebrewLayoutError(original.text);
   }
   return text(truncate(original.transliteration, LIMITS.original), {
     ...base,
@@ -234,7 +249,7 @@ export function insightTemplate(card: InsightCard, options: TemplateOptions = {}
       },
       3,
     ),
-    originalNode(card.original, options.hebrew),
+    ...(options.omitOriginal === true ? [] : [originalNode(card.original, options.hebrew)]),
     text(
       truncate(card.caption ?? insightCaption(card), LIMITS.caption),
       { fontSize: 30, lineHeight: 1.3, color: PALETTE.muted, marginTop: 'auto', paddingBottom: 24 },

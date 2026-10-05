@@ -65,6 +65,28 @@ describe('Seo', () => {
   });
 });
 
+describe('page share images', () => {
+  const dayImage = new RegExp(`<meta property="og:image" content="https?://[^"]+${base}og/2026-09-20\\.png">`);
+
+  it('gives a day page its own card with size and alt text', async () => {
+    const html = await render({ title: 'Sunday', path: '2026-09-20/' });
+    expect(html).toMatch(dayImage);
+    expect(html).toContain('<meta property="og:image:width" content="1200">');
+    expect(html).toContain('<meta property="og:image:height" content="630">');
+    expect(html).toMatch(/<meta property="og:image:alt" content="Lectio card for Sunday 20 September 2026: [^"]+">/);
+  });
+
+  it('gives a reading page without approved notes its day card', async () => {
+    expect(await render({ path: '2026-09-20/first-reading/' })).toMatch(dayImage);
+  });
+
+  it('keeps the brand card for a date without a calendar day, and an explicit image wins', async () => {
+    expect(await render({ path: '1999-01-01/' })).toMatch(/og:image" content="[^"]+brand-card/);
+    const html = await render({ path: '2026-09-20/', image: { src: 'https://cdn.example/x.png', alt: 'X' } });
+    expect(html).toContain('<meta property="og:image" content="https://cdn.example/x.png">');
+  });
+});
+
 describe('title', () => {
   it('matches the title the base layout renders', async () => {
     for (const title of ['Calendar', 'Lectio']) {

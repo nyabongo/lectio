@@ -1,0 +1,12 @@
+{
+  "button": "Share",
+  "buttonLabel": "Share {what}",
+  "options": "Ways to share",
+  "copy": "Copy link",
+  "copied": "Copied the link with its reference.",
+  "copyFailed": "Could not copy. Select the link below and copy it.",
+  "whatsapp": "WhatsApp",
+  "whatsappLabel": "Share on WhatsApp (opens in a new tab)",
+  "email": "Email",
+  "link": "Link to share"
+}

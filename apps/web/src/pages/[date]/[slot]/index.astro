@@ -13,6 +13,7 @@ import NoteCard from '../../../components/notes/NoteCard.astro';
 import MarkedText from '../../../components/notes/MarkedText.astro';
 import Verification from '../../../components/notes/Verification.astro';
 import Seo from '../../../components/seo/Seo.astro';
+import ShareButton from '../../../components/share/ShareButton.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { dayPath, slotLabel } from '../../../lib/day.ts';
@@ -60,6 +61,7 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
       <p class="eyebrow">{slotText}</p>
       <h1 class="reading__ref">{view.ref}</h1>
       {notes !== null && <p class="reading__summary">{notes.summary}</p>}
+      <ShareButton title={title} shareRef={view.ref} insight={notes?.summary ?? null} path={view.path} lang={lang} />
     </header>
 
     <div class="tabs" data-tabs>
@@ -238,6 +240,7 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
   }
 
   .reading__summary {
+    margin-bottom: var(--space-xs);
     font-size: var(--step-1);
     color: var(--colour-muted);
     line-height: var(--leading-snug);
@@ -248,8 +251,9 @@ const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
     top: 0;
     z-index: 2;
     display: flex;
+    flex-wrap: wrap;
     align-items: stretch;
-    gap: var(--space-2xs);
+    gap: 0 var(--space-2xs);
     margin: var(--space-m) 0 var(--space-m);
     background: var(--colour-bg);
     border-bottom: var(--rule-width) solid var(--colour-rule);

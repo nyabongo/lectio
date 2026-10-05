@@ -59,6 +59,16 @@ describe('DayView', () => {
     expect(html).not.toContain('listen-button');
   });
 
+  it('shows the liturgical colour as visible text next to the rank, not only as a swatch (#202)', async () => {
+    const html = clean(await container.renderToString(DayView, { props: { view: view('2026-09-21') } }));
+    expect(html).toMatch(
+      /<span class="swatch" aria-hidden="true">\s*<\/span>\s*<span>Feast <span aria-hidden="true">· Red<\/span>/,
+    );
+    expect(html).toContain('<span aria-hidden="true">· Red</span>');
+    expect(html).toContain('<span class="visually-hidden">Liturgical colour: Red</span>');
+    expect(html).not.toContain('role="img"');
+  });
+
   it('still shows the references and link-outs on a day with no notes', async () => {
     const html = await container.renderToString(DayView, { props: { view: view('2026-09-19') } });
     expect(html).toContain('Luke 8:4–15');
