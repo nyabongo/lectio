@@ -52,6 +52,11 @@ abstract interface class SpeechEngine {
   /// Fires when the device cannot read an utterance.
   Stream<Object> get failed;
 
+  /// Fires when an utterance did not start in time although the device has
+  /// spoken before: a temporary stall. The utterance is stopped; the queue
+  /// pauses where it is.
+  Stream<void> get stalled;
+
   /// Reads [text] in [locale] at [speed] (`1` is normal), replacing any
   /// utterance in progress. Completes once speaking has started.
   Future<void> speak(

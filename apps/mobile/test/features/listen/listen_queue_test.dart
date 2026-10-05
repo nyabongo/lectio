@@ -290,6 +290,23 @@ void main() {
       expect(speech.calls.last, 'speak en 2.0 Script 1.');
     });
 
+    test(
+      'a stalled voice pauses at the segment; play reads it again',
+      () async {
+        await queue.load('a', spoken);
+        await queue.play();
+        speech.stall();
+        await settle();
+        expect(queue.status, ListenStatus.paused);
+        expect(queue.index, 0);
+
+        speech.stall();
+        await queue.play();
+        expect(queue.status, ListenStatus.playing);
+        expect(speech.calls.last, 'speak en 1.0 Script 0.');
+      },
+    );
+
     test('an utterance the device cannot read is skipped', () async {
       await queue.load('a', spoken);
       await queue.play();

@@ -40,6 +40,12 @@ class FakeTts extends Fake implements FlutterTts {
   @override
   void setErrorHandler(ErrorHandler handler) => onError = handler;
 
+  /// The cancel handler the engine set.
+  VoidCallback? onCancel;
+
+  @override
+  void setCancelHandler(VoidCallback callback) => onCancel = callback;
+
   @override
   Future<dynamic> setSharedInstance(bool sharedSession) async {
     calls.add('shared $sharedSession');

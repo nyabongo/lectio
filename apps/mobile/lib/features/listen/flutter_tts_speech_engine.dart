@@ -17,6 +17,13 @@ const double normalSpeechRate = 0.5;
 /// fast).
 const double iosRateStep = 0.2;
 
+/// How long an utterance may take to start before the engine gives up on it
+/// (the web's `SPEECH_START_TIMEOUT`).
+const Duration speechStartTimeout = Duration(seconds: 5);
+
+/// Error messages that report an interruption or a cancel, not a failure.
+final RegExp _cancelError = RegExp('interrupted|cancel', caseSensitive: false);
+
 /// The flutter_tts rate for a playing [speed] (`1` is normal) on
 /// [platform], capped at the plugin's maximum of `1`.
 ///
@@ -42,29 +49,61 @@ double speechRate(double speed, {TargetPlatform? platform}) {
 /// locked, as files do. [canSpeak] only asks the plugin about voices, so
 /// opening Listen never interrupts other apps' audio.
 ///
-/// Events count only for the utterance that is playing: after [stop], a late
-/// completion or error of the stopped utterance is dropped until the next
-/// utterance has started (flutter_tts's start handler). An error that comes
-/// after [speak] handed the next utterance to the device but before it
-/// started counts as that utterance failing: Android can report one without
-/// ever starting, and the queue would otherwise wait on it.
+/// Events are matched to utterances, which flutter_tts does not name:
+///
+/// - Stopping or replacing an utterance that was queued or speaking leaves
+///   it one terminal event (completion, error or cancel) still to come. The
+///   first such events before the next start event pay those debts and are
+///   dropped, so a late event of a stopped utterance never ends the next one
+///   (which would skip a segment that never played). The next start event
+///   clears what is still owed.
+/// - An error that reports an interruption or a cancel (`interrupted`,
+///   `cancel…`) is never a failure, as on the web.
+/// - Any other error after [speak] handed the utterance to the device, with
+///   no debt outstanding, fails it even before it started: Android can
+///   report one without ever starting, and the queue would wait on it.
+/// - A start watchdog: an utterance that neither starts nor fails within
+///   [startTimeout] is stopped. When no utterance has started yet, the
+///   device cannot speak and the utterance fails (the queue skips it);
+///   after one has, the stall is temporary and the engine reports
+///   [stalled] (the queue pauses and keeps the place), as the web does
+///   (L-085).
 class FlutterTtsSpeechEngine implements SpeechEngine {
   /// Creates the engine; [create] builds the plugin (default:
-  /// `FlutterTts()`) and [platform] tells which platform runs (default:
-  /// [defaultTargetPlatform]).
-  new({FlutterTts Function()? create, TargetPlatform Function()? platform})
-    : _create = create ?? FlutterTts.new,
-      _platform = platform ?? (() => defaultTargetPlatform);
+  /// `FlutterTts()`), [platform] tells which platform runs (default:
+  /// [defaultTargetPlatform]) and [startTimeout] is the watchdog's wait.
+  new({
+    FlutterTts Function()? create,
+    TargetPlatform Function()? platform,
+    this.startTimeout = speechStartTimeout,
+  }) : _create = create ?? FlutterTts.new,
+       _platform = platform ?? (() => defaultTargetPlatform);
+
+  /// How long an utterance may take to start before the watchdog stops it.
+  final Duration startTimeout;
 
   final FlutterTts Function() _create;
   final TargetPlatform Function() _platform;
   final StreamController<void> _completed = StreamController.broadcast();
   final StreamController<Object> _failed = StreamController.broadcast();
+  final StreamController<void> _stalled = StreamController.broadcast();
   FlutterTts? _tts;
   Future<void>? _session;
   String? _language;
+
+  /// The current utterance has started and not ended.
   bool _live = false;
+
+  /// The current utterance was handed to the device and has not started.
   bool _queued = false;
+
+  /// Terminal events still to come from stopped or replaced utterances.
+  int _owed = 0;
+
+  /// Whether the device has started an utterance since the engine was made.
+  bool _heard = false;
+
+  Timer? _watchdog;
 
   @override
   Stream<void> get completed => _completed.stream;
@@ -72,30 +111,81 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   @override
   Stream<Object> get failed => _failed.stream;
 
+  @override
+  Stream<void> get stalled => _stalled.stream;
+
   /// The plugin, created with its handlers on first use. Creating it touches
   /// no audio session.
   FlutterTts get _plugin {
     return _tts ??= _create()
       ..setStartHandler(() {
+        _calm();
         _live = true;
         _queued = false;
+        _owed = 0;
+        _heard = true;
       })
-      ..setCompletionHandler(() {
-        if (_take()) _completed.add(null);
-      })
+      ..setCompletionHandler(() => _ended(completed: true))
+      ..setCancelHandler(_ended)
       ..setErrorHandler((message) {
-        final queued = _queued;
-        if (_take() || queued) _failed.add((message as Object?) ?? 'error');
+        final error = (message as Object?) ?? 'error';
+        if (_cancelError.hasMatch('$error')) {
+          _ended();
+        } else {
+          _ended(error: error);
+        }
       });
   }
 
-  /// Whether an event belongs to the utterance playing, which it ends (as
-  /// it does an utterance not started yet).
-  bool _take() {
-    final live = _live;
+  /// A terminal event: it pays a stopped utterance's debt first, else ends
+  /// the current utterance (an [error] also before it started). A cancel
+  /// (neither [completed] nor [error]) never ends one.
+  void _ended({bool completed = false, Object? error}) {
+    if (_owed > 0) {
+      _owed--;
+      return;
+    }
+    if (_live && (completed || error != null)) {
+      _live = false;
+      _calm();
+      if (error == null) {
+        _completed.add(null);
+      } else {
+        _failed.add(error);
+      }
+    } else if (_queued && error != null) {
+      _queued = false;
+      _calm();
+      _failed.add(error);
+    }
+  }
+
+  /// Leaves the current utterance, if any, one terminal event to come.
+  void _retire() {
+    _calm();
+    if (_live || _queued) _owed++;
     _live = false;
     _queued = false;
-    return live;
+  }
+
+  void _calm() {
+    _watchdog?.cancel();
+    _watchdog = null;
+  }
+
+  /// No start in time: stop the utterance, and fail it when the device has
+  /// never spoken, else report a stall.
+  void _bark(FlutterTts tts) {
+    _watchdog = null;
+    if (!_queued) return;
+    _retire();
+    unawaited(tts.stop());
+    if (_failed.isClosed) return;
+    if (_heard) {
+      _stalled.add(null);
+    } else {
+      _failed.add('The device voice did not start');
+    }
   }
 
   /// Takes the audio session for speaking, once: on iOS, the app's shared
@@ -126,8 +216,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     required double speed,
   }) async {
     final tts = _plugin;
-    _live = false;
-    _queued = false;
+    _retire();
     await _takeSession(tts);
     if (locale != _language) {
       // The best voice for the language (sw-KE, then sw-TZ …), else an
@@ -145,11 +234,14 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
       }
     }
     await tts.setSpeechRate(speechRate(speed, platform: _platform()));
-    // From here an error before the start event is this utterance's.
+    // From here an error before the start event is this utterance's,
+    // unless a stopped one still owes its end.
     _queued = true;
+    _watchdog = Timer(startTimeout, () => _bark(tts));
     // flutter_tts answers 1 when the utterance was queued, 0 when not.
     final Object? queued = await tts.speak(text);
     if (queued == 0) {
+      _calm();
       _queued = false;
       throw Exception('The device could not speak');
     }
@@ -157,8 +249,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
 
   @override
   Future<void> stop() async {
-    _live = false;
-    _queued = false;
+    _retire();
     await _tts?.stop();
   }
 
@@ -167,5 +258,6 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     await stop();
     await _completed.close();
     await _failed.close();
+    await _stalled.close();
   }
 }

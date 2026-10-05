@@ -107,6 +107,9 @@ class FakeSpeechEngine implements SpeechEngine {
   final StreamController<Object> _failed = StreamController.broadcast(
     sync: true,
   );
+  final StreamController<void> _stalled = StreamController.broadcast(
+    sync: true,
+  );
 
   /// Every call, in order, for example `speak en 1.0 …` or `stop`.
   final List<String> calls = [];
@@ -139,6 +142,12 @@ class FakeSpeechEngine implements SpeechEngine {
   void fail() => _failed.add('synthesis failed');
 
   @override
+  Stream<void> get stalled => _stalled.stream;
+
+  /// The current utterance did not start in time.
+  void stall() => _stalled.add(null);
+
+  @override
   Future<void> speak(
     String text, {
     required String locale,
@@ -163,6 +172,7 @@ class FakeSpeechEngine implements SpeechEngine {
     disposed = true;
     await _completed.close();
     await _failed.close();
+    await _stalled.close();
   }
 }
 
