@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
@@ -45,6 +46,15 @@ Future<void> reveal(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
+/// Tells the app it moved to [state], as the engine does.
+Future<void> sendLifecycle(WidgetTester tester, AppLifecycleState state) {
+  return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    SystemChannels.lifecycle.name,
+    SystemChannels.lifecycle.codec.encodeMessage(state.toString()),
+    (_) {},
+  );
+}
+
 /// The location [router] shows.
 String location(GoRouter router) {
   return router.routerDelegate.currentConfiguration.uri.toString();
@@ -60,8 +70,11 @@ void main() {
   late FakeApi api;
   late LectioRepository repository;
   late List<Uri> opened;
+  // The device time the screen sees; tests move it to roll the date over.
+  late DateTime now;
 
   setUp(() {
+    now = clock();
     api = FakeApi();
     repository = LectioRepository(
       client: ApiClient(httpClient: api.client, baseUrl: FakeApi.baseUrl),
@@ -91,7 +104,7 @@ void main() {
           routes: [
             todayRoute(
               repository: repository,
-              clock: clock,
+              clock: () => now,
               openUrl: openUrl ?? openSucceeds,
             ),
             GoRoute(
@@ -335,6 +348,83 @@ void main() {
       await tester.pumpWidget(screen('2026-09-19'));
       await tester.pumpAndSettle();
       expect(api.paths, ['days/$seedDate.json', 'days/2026-09-19.json']);
+    });
+  });
+
+  group('date rollover', () {
+    setUp(() {
+      api
+        ..serveFixture('days/$seedDate.json', 'day')
+        ..serveFixture('days/2026-09-21.json', 'day');
+    });
+
+    /// Pulls down to refresh, which rebuilds the screen.
+    Future<void> pullToRefresh(WidgetTester tester) async {
+      final refresh = tester.state<RefreshIndicatorState>(
+        find.byType(RefreshIndicator),
+      );
+      unawaited(refresh.show());
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Back to today reloads /today in place the next day', (
+      tester,
+    ) async {
+      final router = await pumpToday(tester);
+      now = DateTime(2026, 9, 21, 7);
+      await pullToRefresh(tester);
+      expect(find.text(TodayStrings.backToToday), findsOneWidget);
+
+      await tester.tap(find.text(TodayStrings.backToToday));
+      await tester.pumpAndSettle();
+
+      expect(location(router), '/today');
+      expect(api.paths.last, 'days/2026-09-21.json');
+      expect(find.text('Monday 21 September 2026'), findsOneWidget);
+      expect(find.text('TODAY'), findsOneWidget);
+    });
+
+    testWidgets('picking the new today in the picker reloads in place', (
+      tester,
+    ) async {
+      final router = await pumpToday(tester);
+      now = DateTime(2026, 9, 21, 7);
+
+      await tester.tap(find.byTooltip(TodayStrings.chooseDate));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('21'));
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(location(router), '/today');
+      expect(api.paths.last, 'days/2026-09-21.json');
+      expect(find.text('TODAY'), findsOneWidget);
+    });
+
+    testWidgets('resuming the next day moves to the new date', (tester) async {
+      await pumpToday(tester);
+      now = DateTime(2026, 9, 21, 7);
+
+      await sendLifecycle(tester, AppLifecycleState.inactive);
+      await sendLifecycle(tester, AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(api.paths.last, 'days/2026-09-21.json');
+      expect(find.text('Monday 21 September 2026'), findsOneWidget);
+      expect(find.text('TODAY'), findsOneWidget);
+    });
+
+    testWidgets('resuming keeps a date opened by link', (tester) async {
+      await pumpToday(tester, location: '/today?date=$seedDate');
+      final requests = api.requests.length;
+      now = DateTime(2026, 9, 21, 7);
+
+      await sendLifecycle(tester, AppLifecycleState.inactive);
+      await sendLifecycle(tester, AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(api.requests.length, requests);
+      expect(find.text('Sunday 20 September 2026'), findsOneWidget);
     });
   });
 

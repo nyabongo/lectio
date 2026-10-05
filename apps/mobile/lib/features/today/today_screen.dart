@@ -111,6 +111,7 @@ class _TodayScreenState extends State<TodayScreen> {
   StreamSubscription<DataSnapshot<ApiDay>>? _subscription;
   DataSnapshot<ApiDay>? _snapshot;
   Object? _error;
+  late final AppLifecycleListener _lifecycle;
 
   DateTime _now() => (widget.clock ?? DateTime.now)();
 
@@ -121,6 +122,7 @@ class _TodayScreenState extends State<TodayScreen> {
   @override
   void initState() {
     super.initState();
+    _lifecycle = AppLifecycleListener(onResume: _followToday);
     unawaited(_listen());
   }
 
@@ -135,6 +137,7 @@ class _TodayScreenState extends State<TodayScreen> {
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     unawaited(_subscription?.cancel());
     super.dispose();
   }
@@ -148,6 +151,25 @@ class _TodayScreenState extends State<TodayScreen> {
   void _show(String date) {
     setState(() => _reset(date));
     unawaited(_listen());
+  }
+
+  /// Shows [date]: through the location when that changes it, so the day
+  /// can be restored and shared, or in place when the location already says
+  /// so (for example `/today` after the device date rolled over).
+  void _goTo(String date) {
+    final today = _today;
+    if ((date == today ? null : date) == widget.date) {
+      _show(date);
+    } else {
+      context.go(todayLocation(date, today: today));
+    }
+  }
+
+  /// On resume, moves to the device's new date when the screen follows it
+  /// (no valid `?date=`) and the date rolled over while in the background.
+  void _followToday() {
+    final today = _today;
+    if (parseIsoDate(widget.date) == null && _date != today) _show(today);
   }
 
   /// Watches the day; completes when the repository has nothing more to say.
@@ -180,7 +202,7 @@ class _TodayScreenState extends State<TodayScreen> {
       helpText: TodayStrings.chooseDate,
     );
     if (picked == null || !mounted) return;
-    context.go(todayLocation(isoDate(picked), today: _today));
+    _goTo(isoDate(picked));
   }
 
   Future<bool> _tryOpen(Uri url) async {
@@ -213,9 +235,7 @@ class _TodayScreenState extends State<TodayScreen> {
       date: _date,
       day: snapshot?.value,
       onPickDate: () => unawaited(_pickDate()),
-      onToday: _date == today
-          ? null
-          : () => context.go(todayLocation(today, today: today)),
+      onToday: _date == today ? null : () => _goTo(today),
     );
     final Widget body;
     if (snapshot != null) {
