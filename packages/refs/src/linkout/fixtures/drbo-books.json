@@ -170,10 +170,10 @@
       "douayRheimsNumber": 19,
       "siteName": "Esther",
       "drboChapters": 16,
-      "vulgateChapters": 10,
+      "vulgateChapters": 16,
       "firstChapterUrl": "https://www.drbo.org/chapter/19001.htm",
       "lastChapterUrl": "https://www.drbo.org/chapter/19016.htm",
-      "note": "drbo.org also has the Greek additions as chapters 11-16; L-006 does not support Greek Esther, so the builder only produces chapters 1-10."
+      "note": "drbo.org has the Greek additions as 10:4-16:24 (Clementine); since L-049 the vulgate scheme does too, and the NABRE lettered chapters (Est C:12) link to chapters 10-16."
     },
     {
       "code": "1MC",

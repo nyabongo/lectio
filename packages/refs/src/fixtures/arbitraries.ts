@@ -6,15 +6,21 @@ import type { Point, Ref, Segment } from '../types.ts';
 
 const number = fc.integer({ min: 1, max: 150 });
 const part = fc.option(fc.constantFrom('a', 'b', 'c', 'ab', 'abc', 'bcd', 'abcd', 'g'), { nil: undefined });
-const ordered = fc.tuple(number, number).map(([a, b]): [number, number] => (a <= b ? [a, b] : [b, a]));
-const strictlyOrdered = ordered.filter(([a, b]) => a !== b);
+const orderedFrom = (values: fc.Arbitrary<number>): fc.Arbitrary<[number, number]> =>
+  fc.tuple(values, values).map(([a, b]): [number, number] => (a <= b ? [a, b] : [b, a]));
+const ordered = orderedFrom(number);
+/** Esther's chapters 101-106 stand for the lettered chapters A-F, which a range never mixes with numbered ones. */
+const LETTERED = fc.integer({ min: 101, max: 106 });
+const NUMBERED_ESTHER = number.filter((c) => c < 101 || c > 106);
 
 function point(c: number, v?: number, p?: string): Point {
   return { c, ...(v === undefined ? {} : { v }), ...(p === undefined ? {} : { part: p }) };
 }
 
-function segment(singleChapter: boolean): fc.Arbitrary<Segment> {
-  const chapter = singleChapter ? fc.constant(1) : number;
+function segment(
+  singleChapter: boolean,
+  chapter: fc.Arbitrary<number> = singleChapter ? fc.constant(1) : number,
+): fc.Arbitrary<Segment> {
   const verse = fc.tuple(chapter, number, part).map(([c, v, p]) => {
     const at = point(c, v, p);
     return { start: at, end: at };
@@ -28,9 +34,15 @@ function segment(singleChapter: boolean): fc.Arbitrary<Segment> {
         : { start: point(c, from, p), end: point(c, to, q) },
     );
   if (singleChapter) return fc.oneof(verse, verses);
-  const chapters = ordered.map(([from, to]) => ({ start: point(from), end: point(to) }));
+  const chapters = orderedFrom(chapter).map(([from, to]) => ({ start: point(from), end: point(to) }));
   const cross = fc
-    .tuple(strictlyOrdered, number, number, part, part)
+    .tuple(
+      orderedFrom(chapter).filter(([a, b]) => a !== b),
+      number,
+      number,
+      part,
+      part,
+    )
     .map(([[from, to], v, w, p, q]) => ({ start: point(from, v, p), end: point(to, w, q) }));
   return fc.oneof(verse, verses, chapters, cross);
 }
@@ -40,7 +52,12 @@ export const refArbitrary: fc.Arbitrary<Ref> = fc
   .constantFrom(...BOOKS)
   .chain((book) =>
     fc
-      .array(segment(book.singleChapter), { minLength: 1, maxLength: 4 })
+      .array(
+        book.code === 'EST'
+          ? fc.oneof(segment(false, NUMBERED_ESTHER), segment(false, LETTERED))
+          : segment(book.singleChapter),
+        { minLength: 1, maxLength: 4 },
+      )
       .map((segments): Ref => ({ book: book.code, segments })),
   );
 

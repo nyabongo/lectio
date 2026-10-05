@@ -40,6 +40,19 @@ describe('linkoutUrl with the default drbo provider', () => {
     expect(linkoutUrl('Jude 17, 20b-25', undefined, DEFAULT_CONFIG).url).toBe('https://www.drbo.org/chapter/72001.htm');
   });
 
+  it('links Greek Esther lettered chapters to Vulgate chapters 10-16 (L-049)', () => {
+    expect(linkoutUrl('Est C:12, 14-16, 23-25', undefined, DEFAULT_CONFIG).url).toBe(
+      'https://www.drbo.org/chapter/19014.htm',
+    );
+    expect(linkoutUrl('EST.C.12_C.14-16_C.23-25', undefined, DEFAULT_CONFIG).url).toBe(
+      'https://www.drbo.org/chapter/19014.htm',
+    );
+    expect(linkoutUrl('Est A:1-11', undefined, DEFAULT_CONFIG).url).toBe('https://www.drbo.org/chapter/19011.htm');
+    expect(linkoutUrl('Est F', undefined, DEFAULT_CONFIG).url).toBe('https://www.drbo.org/chapter/19010.htm');
+    expect(linkoutUrl('Est E:1-6', undefined, DEFAULT_CONFIG).url).toBe('https://www.drbo.org/chapter/19016.htm');
+    expect(linkoutUrl('Est 4:17', undefined, DEFAULT_CONFIG).url).toBe('https://www.drbo.org/chapter/19004.htm');
+  });
+
   it('links a reference spanning chapters to its first chapter', () => {
     expect(linkoutUrl('Is 52:13-53:12', undefined, DEFAULT_CONFIG).url).toBe('https://www.drbo.org/chapter/27052.htm');
   });
@@ -99,6 +112,8 @@ describe('linkoutUrl with template providers', () => {
       'https://bible.usccb.org/bible/1corinthians/12?31',
     );
     expect(linkoutUrl('Ps 23', undefined, config).url).toBe('https://bible.usccb.org/bible/psalms/23?');
+    // The NABRE numbers Esther's additions by letter, and so does the template's {chapter}.
+    expect(linkoutUrl('Est C:12, 14-16', undefined, config).url).toBe('https://bible.usccb.org/bible/esther/C?12');
   });
 
   it('fills the shipped universalis example from the date', () => {

@@ -1,5 +1,5 @@
 {
-  "$comment": "Second source for the seasonal-weekdays block (011, amendment 5). Readings imported from LitCal are checked against OLM 1981, written in OLM numbering (Nova Vulgata psalm numbers; lectionary:crosscheck converts them). For Sirach the canonical form is given by hand. Where OLM gives a second reading for one Sunday cycle (first reading of Monday of Advent week 1; gospels of Monday of Lent week 5 and Monday of Easter week 4), the block takes the OLM reading with its alternative and the LitCal leaf is the second source. The Esther reading of Thursday of Lent week 1 is disputed and not compared (see `consulted`). Readings filled from OLM 1981 are checked against the LitCal leaf where it has usable data; `consulted` records the leaves that do not, so those readings are listed as single-source in disputes/seasonal-weekdays.md. OLM lectionary numbers follow the seed block; pages are recorded by the verifier (p?).",
+  "$comment": "Second source for the seasonal-weekdays block (011, amendment 5). Readings imported from LitCal are checked against OLM 1981, written in OLM numbering (Nova Vulgata psalm numbers; lectionary:crosscheck converts them). For Sirach the canonical form is given by hand. Where OLM gives a second reading for one Sunday cycle (first reading of Monday of Advent week 1; gospels of Monday of Lent week 5 and Monday of Easter week 4), the block takes the OLM reading with its alternative and the LitCal leaf is the second source. The Esther reading of Thursday of Lent week 1 is compared by its NABRE lettered chapter (Esther C:12, 14-16, 23-25, L-049). Readings filled from OLM 1981 are checked against the LitCal leaf where it has usable data; `consulted` records the leaves that do not, so those readings are listed as single-source in disputes/seasonal-weekdays.md. OLM lectionary numbers follow the seed block; pages are recorded by the verifier (p?).",
   "block": "seasonal-weekdays",
   "entries": [
     {
@@ -980,6 +980,14 @@
       "slot": "gospel",
       "ref": "Lk 11:29-32",
       "source": "olm-1981 p?#226"
+    },
+    {
+      "kind": "proper-of-time",
+      "key": "lent-weekday-1-thu",
+      "mass": "day",
+      "slot": "first-reading",
+      "ref": "Esther C:12, 14-16, 23-25",
+      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Thursday"
     },
     {
       "kind": "proper-of-time",
@@ -2776,12 +2784,6 @@
       "key": "saturday-after-epiphany",
       "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanySaturday",
       "note": "psalm given only as the whole \"Psalm 149\", no verses"
-    },
-    {
-      "kind": "proper-of-time",
-      "key": "lent-weekday-1-thu",
-      "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Thursday",
-      "note": "first reading status disputed: \"Est 4:17\" keys Hebrew Esther 4:17, not Esther's prayer (OLM Est 4:17n, p-r, aa-bb, gg-hh; LitCal Esther C:12, 14-16, 23-25); @lectio/refs cannot key Greek Esther yet, and L-049 (#144) will re-key it as Est C:12, 14-16, 23-25"
     }
   ]
 }

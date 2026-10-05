@@ -226,13 +226,22 @@ describe('mapVerse', () => {
     expect(map('PS', 51, 1, 'english', 'vulgate')).toBe('PS 50:3');
   });
 
-  it('refuses verses that do not exist and Greek Esther', () => {
+  it('refuses verses that do not exist, and Greek Esther where verse numbers cannot hold it', () => {
     expect(code(() => mapVerse(v('MT', 20, 35), 'original', 'vulgate'))).toBe('UNKNOWN_VERSE');
     expect(code(() => mapVerse(v('GN', 31, 51), 'original', 'lxx'))).toBe('NO_COUNTERPART');
-    expect(code(() => mapVerse(v('EST', 4, 20), 'vulgate', 'original'))).toBe('UNSUPPORTED_GREEK_ESTHER');
-    expect(code(() => mapVerse(v('EST', 14, 1), 'english', 'original'))).toBe('UNSUPPORTED_GREEK_ESTHER');
+    expect(() => mapVerse(v('GN', 31, 51), 'original', 'lxx')).toThrow(
+      'GN 31:51 (original) has no counterpart in the lxx scheme',
+    );
+    expect(code(() => mapVerse(v('EST', 4, 20), 'vulgate', 'original'))).toBe('UNKNOWN_VERSE');
+    expect(code(() => mapVerse(v('EST', 14, 1), 'english', 'original'))).toBe('UNKNOWN_VERSE');
+    expect(code(() => mapVerse(v('EST', 11, 2), 'original', 'vulgate'))).toBe('UNKNOWN_VERSE');
     expect(map('EST', 4, 17, 'original', 'lxx')).toBe('EST 4:17');
-    expect(() => mapVerse(v('EST', 11, 2), 'original', 'vulgate')).toThrow(/Greek additions to Esther/);
+    expect(code(() => mapVerse(v('EST', 103, 12), 'original', 'lxx'))).toBe('UNSUPPORTED_GREEK_ESTHER');
+    expect(code(() => mapVerse(v('EST', 103, 12), 'original', 'english'))).toBe('UNSUPPORTED_GREEK_ESTHER');
+    expect(code(() => mapVerse(v('EST', 14, 1), 'vulgate', 'lxx'))).toBe('UNSUPPORTED_GREEK_ESTHER');
+    expect(() => mapVerse(v('EST', 103, 12), 'original', 'lxx')).toThrow(
+      /EST C:12 \(original\): the lxx scheme .* greekEstherLxx/,
+    );
   });
 });
 
@@ -273,7 +282,8 @@ describe('mapRef', () => {
   it('refuses references that do not exist in the source scheme', () => {
     expect(code(() => mapRef(parseRef('Mt 20:30-40'), 'original', 'vulgate'))).toBe('UNKNOWN_VERSE');
     expect(code(() => mapRef(parseRef('Ps 151'), 'original', 'vulgate'))).toBe('UNKNOWN_VERSE');
-    expect(code(() => mapRef(parseRef('Est 4:30'), 'original', 'vulgate'))).toBe('UNSUPPORTED_GREEK_ESTHER');
+    expect(code(() => mapRef(parseRef('Est 4:30'), 'original', 'vulgate'))).toBe('UNKNOWN_VERSE');
+    expect(() => mapRef(parseRef('Est F:12'), 'original', 'vulgate')).toThrow('EST F:12 does not exist');
     expect(() => mapRef(parseRef('Ps 151'), 'original', 'vulgate')).toThrow('PS 151 does not exist');
     expect(code(() => mapRef(parseRef('Ps 23'), 'original', 'nabre' as Scheme))).toBe('UNKNOWN_SCHEME');
   });

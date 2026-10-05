@@ -68,6 +68,16 @@ const VALID: readonly (readonly [string, string])[] = [
   ['1st Cor 1:1', '1COR.1.1'],
   ['2nd Kings 5:14', '2KGS.5.14'],
   ['3rd John 5', '3JN.1.5'],
+  ['Est C:12, 14-16, 23-25', 'EST.C.12_C.14-16_C.23-25'],
+  ['Esther F:1', 'EST.F.1'],
+  ['Est. c:1-11', 'EST.C.1-11'],
+  ['Est C', 'EST.C'],
+  ['Est A-B', 'EST.A-B'],
+  ['Est C:30–D:2', 'EST.C.30-D.2'],
+  ['Est 4:17; C:1-2, 5', 'EST.4.17_C.1-2_C.5'],
+  ['Est B:1; 3:14', 'EST.B.1_3.14'],
+  ['Est 4:17c', 'EST.4.17'],
+  ['Est 10:4', 'EST.10.4'],
 ];
 
 const INVALID: readonly (readonly [string, RefErrorCode])[] = [
@@ -89,9 +99,16 @@ const INVALID: readonly (readonly [string, RefErrorCode])[] = [
   ['Is 40 41', 'MALFORMED'],
   ['Mt 20:1 16', 'MALFORMED'],
   ['Mt 5:3b-3a', 'DESCENDING'],
-  ['Est C:12, 14-16, 23-25', 'UNSUPPORTED_GREEK_ESTHER_CHAPTER'],
-  ['Esther F:1', 'UNSUPPORTED_GREEK_ESTHER_CHAPTER'],
   ['Mt C:12', 'UNKNOWN_BOOK'],
+  ['Est G:1', 'UNKNOWN_BOOK'],
+  ['Mt 1; C:12', 'MALFORMED'],
+  ['Jude 3, a', 'MALFORMED'],
+  ['Est 103:12', 'MALFORMED'],
+  ['Est 4:17-C:2', 'MIXED_RANGE'],
+  ['Est C:2-5:1', 'MIXED_RANGE'],
+  ['Est C:1-B', 'MIXED_RANGE'],
+  ['Est 1:16a-b', 'MIXED_RANGE'],
+  ['Est D:1-C:30', 'DESCENDING'],
   ['Mt 0:1', 'ZERO'],
   ['Mt 20:0', 'ZERO'],
   ['Mt 20:16-1', 'DESCENDING'],
@@ -156,7 +173,25 @@ describe('parseRef', () => {
     expect(() => parseRef('')).toThrow('The reference is empty');
     expect(() => parseRef('Mt 5:3b-3a')).toThrow('The range ends at 5:3a, before its start at 5:3b');
     expect(() => parseRef('Ps 2 3')).toThrow('Unexpected space in "2 3"');
-    expect(() => parseRef('Est C:12')).toThrow("Greek Esther's lettered chapter C is not supported");
+    expect(() => parseRef('Mt 1; c:12')).toThrow('"C" is not a chapter of Matthew; only Esther has lettered chapters');
+    expect(() => parseRef('Est 103:12')).toThrow('Esther has no chapter 103; cite the Greek additions by letter');
+    expect(() => parseRef('Est 4:17-C:2')).toThrow('A range cannot run from 4:17 to C:2');
+    expect(() => parseRef('Est D:1-C:30')).toThrow('The range ends at C:30, before its start at D:1');
+  });
+
+  it('reads Greek Esther lettered chapters as chapters 101-106 (L-049)', () => {
+    expect(parseRef('Est C:12, 14-16, 23-25')).toEqual({
+      book: 'EST',
+      segments: [
+        { start: { c: 103, v: 12 }, end: { c: 103, v: 12 } },
+        { start: { c: 103, v: 14 }, end: { c: 103, v: 16 } },
+        { start: { c: 103, v: 23 }, end: { c: 103, v: 25 } },
+      ],
+    });
+    expect(parseRef('Esther F').segments).toEqual([{ start: { c: 106 }, end: { c: 106 } }]);
+    expect(parseRef('Est A:1b').segments).toEqual([
+      { start: { c: 101, v: 1, part: 'b' }, end: { c: 101, v: 1, part: 'b' } },
+    ]);
   });
 
   it('returns ok from tryParseRef on success', () => {

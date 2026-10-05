@@ -70,14 +70,18 @@ export const nonEmptyStringSchema = {
  * `chapter.verse`, `chapter.verse-verse` or `chapter.verse-chapter.verse` (the grammar `toKey`
  * in `@lectio/refs` writes). Examples: `MT.20.1-16`, `PHIL.1.20-24_1.27`, `ECCL.11.9-12.8`,
  * `PS.23` (whole chapter), `IS.40-41` (chapter range), `PS.23_24.1-3` (mixed segments).
- * A range never mixes a whole chapter with a verse (`MT.1-2.3` fails).
+ * A range never mixes a whole chapter with a verse (`MT.1-2.3` fails). Esther alone may also
+ * name the NABRE lettered chapters of its Greek additions, `A`–`F` (L-049): `EST.C.12_C.14-16`.
  *
  * This checks shape only. Whether the book code exists and the verses are real is the reference
  * parser's job (`@lectio/refs`, L-005), applied by gate 1 (L-024).
  */
 const KEY_NUMBER = '[1-9][0-9]{0,2}';
-const KEY_SEGMENT = `${KEY_NUMBER}(-${KEY_NUMBER}|\\.${KEY_NUMBER}(-(${KEY_NUMBER}\\.)?${KEY_NUMBER})?)?`;
-export const PASSAGE_KEY_PATTERN = `^[1-3]?[A-Z]{2,5}\\.${KEY_SEGMENT}(_${KEY_SEGMENT})*$`;
+const keySegment = (chapter: string): string =>
+  `${chapter}(-${chapter}|\\.${KEY_NUMBER}(-(${chapter}\\.)?${KEY_NUMBER})?)?`;
+const KEY_SEGMENT = keySegment(KEY_NUMBER);
+const ESTHER_SEGMENT = keySegment(`(${KEY_NUMBER}|[A-F])`);
+export const PASSAGE_KEY_PATTERN = `^([1-3]?[A-Z]{2,5}\\.${KEY_SEGMENT}(_${KEY_SEGMENT})*|EST\\.${ESTHER_SEGMENT}(_${ESTHER_SEGMENT})*)$`;
 
 /** A claim id, `c1`, `c2`, …; context paragraphs cite claims with `[c1]` markers. */
 export const CLAIM_ID_PATTERN = '^c[1-9][0-9]*$';

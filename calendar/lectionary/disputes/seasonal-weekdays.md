@@ -3,10 +3,10 @@
 Written by `npm run lectionary:crosscheck -- --block seasonal-weekdays`. Do not edit by hand; fix the data or
 `calendar/lectionary/crosscheck/seasonal-weekdays.json` and run it again.
 
-- Readings compared with a second source: 337
-- Agreements: 330
+- Readings compared with a second source: 338
+- Agreements: 331
 - Disagreements: 7
-- Single-source readings: 21
+- Single-source readings: 20
 
 ## Disagreements
 
@@ -35,4 +35,3 @@ against the Kenyan _Lectionary_ (docs/decisions/011-lectionary-source.md).
 - `celebrations:thursday-after-epiphany`: day psalm `Ps 72:1-2, 14, 15, 17`. Source: `olm-1981 p?#215`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanyThursday (psalm given only as the whole "Psalm 71 (72)", no verses)`.
 - `celebrations:tuesday-after-epiphany`: day psalm `Ps 72:1-2, 3-4, 7-8`. Source: `olm-1981 p?#213`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanyTuesday (psalm given only as the whole "Psalm 71 (72)", no verses)`.
 - `celebrations:wednesday-after-epiphany`: day psalm `Ps 72:1-2, 10, 12-13`. Source: `olm-1981 p?#214`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_nativitatis/en.json#DayAfterEpiphanyWednesday (psalm given only as the whole "Psalm 71 (72)", no verses)`.
-- `proper-of-time:lent-weekday-1-thu`: day first-reading `Est 4:17`. Source: `olm-1981 p?#227`. Consulted without result: `litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 feriale_tempus_quadragesimae/en.json#LentWeekday1Thursday (first reading status disputed: "Est 4:17" keys Hebrew Esther 4:17, not Esther's prayer (OLM Est 4:17n, p-r, aa-bb, gg-hh; LitCal Esther C:12, 14-16, 23-25); @lectio/refs cannot key Greek Esther yet, and L-049 (#144) will re-key it as Est C:12, 14-16, 23-25)`.

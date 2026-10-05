@@ -17,10 +17,11 @@ export type RefErrorCode =
   | 'SINGLE_CHAPTER'
   /** A sub-verse letter on a whole chapter (`Ps 23a`). */
   | 'PART_ON_CHAPTER'
-  /** A range mixing a whole chapter and a verse (`Is 40-41:5`). */
+  /**
+   * A range mixing a whole chapter and a verse (`Is 40-41:5`), or one of Esther's
+   * lettered chapters and a numbered chapter (`Est 4:17-C:2`).
+   */
   | 'MIXED_RANGE'
-  /** Greek Esther's lettered chapters (`Est C:12`), which have no chapter number to key on. */
-  | 'UNSUPPORTED_GREEK_ESTHER_CHAPTER'
   /** A string that is not a canonical passage key. */
   | 'INVALID_KEY'
   /** A `Ref` object that breaks the shape rules (bad numbers, unknown book, no segments). */

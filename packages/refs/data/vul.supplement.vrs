@@ -1,4 +1,4 @@
-# Lectio supplement to vul.vrs (mapping and exclusion lines, same format as vul.vrs).
+# Lectio supplement to vul.vrs (book, mapping and exclusion lines, same format as vul.vrs).
 # Lines here take precedence over vul.vrs. Maintained by Lectio, not by SIL.
 #
 # vul.vrs's chapter table gives Jonah 1:16 2:11, the Hebrew division that the
@@ -14,3 +14,31 @@ JON 2:1-11 = JON 2:1-11
 # do not exist in this numbering.
 -PSA 115:1-9
 -PSA 147:1-11
+#
+# Esther (L-049). vul.vrs's active EST line is the Nova Vulgata's (additions
+# inside chapters 1-10); its comment gives the Stuttgart (VUL83) table, which
+# has the Clementine / Douay-Rheims chapters: Hebrew 1:1-10:3, then the Greek
+# additions as 10:4-16:24. This book line replaces vul.vrs's EST line.
+EST 1:22 2:23 3:15 4:17 5:14 6:14 7:10 8:17 9:32 10:13 11:12 12:6 13:18 14:19 15:19 16:24
+#
+# The additions, mapped onto org.vrs's ESG (Greek Esther with the additions
+# counted as verses), which the `original` scheme uses for the NABRE lettered
+# chapters: A = ESG 1:1-17, B = 3:14-20, C = 4:18-47, D = 5:1-16, E = 8:13-36,
+# F = 10:4-14. The lettered-to-Vulgate correspondences are STEPBible TVTMS's
+# (CC BY 4.0, Tyndale House Cambridge): its Esther "Latin" (lettered chapters)
+# and "Latin2" (Vulgate 10:4-16:24) columns. See SOURCE.json.
+EST 10:4-13 = ESG 10:4-13
+EST 11:1 = ESG 10:14
+EST 11:2-12 = ESG 1:1-11
+EST 12:1-6 = ESG 1:12-17
+EST 13:1-7 = ESG 3:14-20
+EST 13:8-18 = ESG 4:18-28
+EST 14:1-19 = ESG 4:29-47
+# TVTMS gives Vulgate 15:1-4 for D:1 (15:1-3 expand Mordecai's charge of 4:8).
+# 15:4 comes first, so D:1 maps to 15:4 and D runs on to 15:19 without a gap.
+EST 15:4 = ESG 5:1
+EST 15:1 = ESG 5:1
+EST 15:2 = ESG 5:1
+EST 15:3 = ESG 5:1
+EST 15:5-19 = ESG 5:2-16
+EST 16:1-24 = ESG 8:13-36
