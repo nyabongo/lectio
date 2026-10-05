@@ -333,6 +333,21 @@ describe('malformed corpora', () => {
     expect(await openCorpus(root).editions()).toEqual([]);
     expect(await openCorpus(join(root, 'absent')).editions()).toEqual([]);
   });
+
+  it('skips a folder whose SOURCE.json is an object without a language, but keeps malformed ones', async () => {
+    const root = await tempDir();
+    const source = async (name: string, text: string) => {
+      await mkdir(join(root, name));
+      await writeFile(join(root, name, 'SOURCE.json'), text);
+    };
+    await source('guard', '{"description":"hash index"}');
+    await source('broken', '{');
+    await source('nothing', 'null');
+    await source('number', '1');
+    const corpus = openCorpus(root);
+    expect(await corpus.editions()).toEqual(['broken', 'nothing', 'number']);
+    await expect(corpus.source('broken')).rejects.toThrow(/invalid JSON/);
+  });
 });
 
 describe('fs helpers', () => {

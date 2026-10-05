@@ -47,6 +47,26 @@ describe('listLicences / formatLicences', () => {
     expect(formatLicences(await listLicences(join(fixtureRoot, 'absent')))).toBe('No corpus editions found.\n');
   });
 
+  it('skips folders that are not editions, such as the licence guard index', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'lectio-licences-'));
+    try {
+      await mkdir(join(root, 'a-ok'));
+      await writeFile(join(root, 'a-ok', 'SOURCE.json'), await readFile(join(fixtureRoot, 'lat-test', 'SOURCE.json')));
+      await mkdir(join(root, 'guard'));
+      await writeFile(join(root, 'guard', 'SOURCE.json'), JSON.stringify({ description: 'hash index', file: 'x.bin' }));
+      await mkdir(join(root, 'notes'));
+      expect((await listLicences(root)).map((entry) => entry.edition)).toEqual(['a-ok']);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it('lists the committed corpus, whose guard folder is not an edition', async () => {
+    const entries = await listLicences(fileURLToPath(new URL('../../../corpus', import.meta.url)));
+    expect(entries.map((entry) => entry.edition)).not.toContain('guard');
+    expect(entries.length).toBeGreaterThan(0);
+  });
+
   it('fails on an invalid SOURCE.json rather than printing a partial list', async () => {
     const root = await mkdtemp(join(tmpdir(), 'lectio-licences-'));
     try {
