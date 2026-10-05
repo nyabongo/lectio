@@ -6,7 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
+import 'package:lectio/features/notifications/daily_reminder_scheduler.dart';
 import 'package:lectio/features/reading/reading_screen.dart';
+import 'package:lectio/features/settings/key_value_store.dart';
+import 'package:lectio/features/settings/settings_controller.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
 import 'package:lectio/features/today/today_screen.dart';
@@ -15,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/fake_api.dart';
 import '../../data/fixtures.dart';
+import '../notifications/fake_reminder_platform.dart';
 
 /// The date of the seed day fixture, and the device's date in these tests.
 const String seedDate = '2026-09-20';
@@ -96,6 +100,7 @@ void main() {
     WidgetTester tester, {
     String location = '/today',
     UrlOpener? openUrl,
+    DailyReminderScheduler? reminders,
   }) async {
     final router = GoRouter(
       initialLocation: location,
@@ -121,7 +126,12 @@ void main() {
       ],
     );
     addTearDown(router.dispose);
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    final app = MaterialApp.router(routerConfig: router);
+    await tester.pumpWidget(
+      reminders == null
+          ? app
+          : DailyReminderScope(scheduler: reminders, child: app),
+    );
     await tester.pumpAndSettle();
     return router;
   }
@@ -250,6 +260,45 @@ void main() {
         expect(find.text(TodayStrings.linkFailed), findsOneWidget);
       });
     }
+
+    testWidgets('pulling down reschedules the daily reminders', (
+      tester,
+    ) async {
+      final platform = FakeReminderPlatform();
+      final reminders = DailyReminderScheduler(
+        settings: SettingsController(
+          MemoryKeyValueStore({
+            SettingsController.storageKey: '{"version":1,"dailyReminder":true}',
+          }),
+        ),
+        platform: platform,
+        celebrations: FakeCelebrations({
+          seedDate: 'Twenty-fifth Sunday in Ordinary Time',
+        }),
+        clock: () => DateTime(2026, 9, 20, 6),
+      );
+      await reminders.start();
+      platform.calls.clear();
+      await pumpToday(tester, reminders: reminders);
+      expect(platform.calls, isEmpty);
+
+      final refresh = tester.state<RefreshIndicatorState>(
+        find.byType(RefreshIndicator),
+      );
+      unawaited(refresh.show());
+      await tester.pumpAndSettle();
+      await reminders.idle;
+
+      expect(platform.calls, hasLength(reminderDays));
+      expect(
+        platform.calls.every((call) => call.startsWith('schedule')),
+        isTrue,
+      );
+      expect(
+        platform.scheduled.first.title,
+        'Twenty-fifth Sunday in Ordinary Time',
+      );
+    });
 
     testWidgets('pulling down while offline keeps the saved day', (
       tester,
