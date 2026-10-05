@@ -122,14 +122,26 @@ export function excerptLongEnough(excerpt: string): boolean {
 }
 
 /**
+ * Work done by one {@link excerptOccurs} call, counted so tests can check how it grows with the
+ * page and the excerpt without timing it.
+ */
+export interface MatchWork {
+  /** Characters of page text handed to substring searches (each search window counted once). */
+  scanned: number;
+  /** Visits to an `(index, end)` pair: calls of the memoised search for the rest of the pieces. */
+  visits: number;
+}
+
+/**
  * Positions where `piece` occurs in `text` as whole words, starting at `from` or later and at
  * `last` or earlier. Only that stretch of the text is searched (plus the piece's length and one
  * boundary character), so a bounded search costs the size of the window, not of the page.
  */
-function* occurrences(text: string, piece: string, from: number, last = Infinity): Generator<number> {
+function* occurrences(text: string, piece: string, from: number, work: MatchWork, last = Infinity): Generator<number> {
   const needsStart = WORD_CHAR.test(piece.charAt(0));
   const needsEnd = WORD_CHAR.test(piece.charAt(piece.length - 1));
   const window = text.slice(from, last + piece.length + 1);
+  work.scanned += window.length;
   for (let rel = window.indexOf(piece); rel >= 0; rel = window.indexOf(piece, rel + 1)) {
     const at = from + rel;
     if (at > last) return;
@@ -148,13 +160,21 @@ function* occurrences(text: string, piece: string, from: number, last = Infinity
  * (Taking the earliest occurrence of each piece greedily is not enough: a later occurrence moves
  * the window for the next piece and can be the only one that reaches it.)
  */
-function restFollows(text: string, pieces: readonly string[], index: number, end: number, dead: Set<string>): boolean {
+function restFollows(
+  text: string,
+  pieces: readonly string[],
+  index: number,
+  end: number,
+  dead: Set<string>,
+  work: MatchWork,
+): boolean {
+  work.visits += 1;
   const piece = pieces[index];
   if (piece === undefined) return true;
   const key = `${String(index)}:${String(end)}`;
   if (dead.has(key)) return false;
-  for (const at of occurrences(text, piece, end, end + MAX_PIECE_GAP)) {
-    if (restFollows(text, pieces, index + 1, at + piece.length, dead)) return true;
+  for (const at of occurrences(text, piece, end, work, end + MAX_PIECE_GAP)) {
+    if (restFollows(text, pieces, index + 1, at + piece.length, dead, work)) return true;
   }
   dead.add(key);
   return false;
@@ -167,16 +187,18 @@ function restFollows(text: string, pieces: readonly string[], index: number, end
  *
  * The page is read twice, with inline tags glued (`Ἑ<i>ταῖρε</i>` → `Ἑταῖρε`) and spaced
  * (`<sup>1</sup>The` → `1 The`); the excerpt matches if it occurs in either reading.
+ *
+ * Pass `work` to have the search add up what it did (see {@link MatchWork}).
  */
-export function excerptOccurs(excerpt: string, page: string): boolean {
+export function excerptOccurs(excerpt: string, page: string, work: MatchWork = { scanned: 0, visits: 0 }): boolean {
   const pieces = excerptPieces(excerpt);
   const [first] = pieces;
   if (first === undefined) return false;
   return [true, false].some((glue) => {
     const text = normaliseText(page, glue);
     const dead = new Set<string>();
-    for (const at of occurrences(text, first, 0)) {
-      if (restFollows(text, pieces, 1, at + first.length, dead)) return true;
+    for (const at of occurrences(text, first, 0, work)) {
+      if (restFollows(text, pieces, 1, at + first.length, dead, work)) return true;
     }
     return false;
   });
