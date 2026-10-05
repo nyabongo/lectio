@@ -1,0 +1,2593 @@
+{
+  "locale": "sw",
+  "language": "Kiswahili",
+  "description": "Kiswahili names for the liturgical seasons, colours and every celebration id the calendar can produce (General Roman Calendar plus regional overrides). Read by @lectio/calendar (packages/calendar/src/i18n) and written into calendar/<year>.json as names.sw. Each entry has a status: \"provisional\" (drafted, waiting for review by a native speaker against the KCCB Kiswahili Ordo), \"reviewed\" (checked by a native speaker) or \"fallback\" (no Kiswahili name yet: \"name\" is null and the English name is shown instead).",
+  "sources": [
+    {
+      "title": "Common Kiswahili Catholic liturgical usage in Kenya and Tanzania",
+      "notes": "Seasons and days follow the usage of Kiswahili missals, Ordos and parish booklets: Dominika (Sunday), Juma (week), Majilio (Advent), Noeli (Christmas), Kwaresima (Lent), Pasaka (Easter), Mwaka (Ordinary Time), Juma Kuu (Holy Week), Mtakatifu (Saint), Mwenyeheri (Blessed). The KCCB Kiswahili Ordo is not published online, so no entry has been checked against it yet."
+    }
+  ],
+  "seasons": {
+    "advent": {
+      "name": "Majilio",
+      "status": "provisional"
+    },
+    "christmas": {
+      "name": "Kipindi cha Noeli",
+      "status": "provisional"
+    },
+    "ordinary-time": {
+      "name": "Kipindi cha Kawaida cha Mwaka",
+      "status": "provisional"
+    },
+    "lent": {
+      "name": "Kwaresima",
+      "status": "provisional"
+    },
+    "paschal-triduum": {
+      "name": "Siku Tatu Kuu za Pasaka",
+      "status": "provisional"
+    },
+    "easter": {
+      "name": "Kipindi cha Pasaka",
+      "status": "provisional"
+    }
+  },
+  "colours": {
+    "white": {
+      "name": "Nyeupe",
+      "status": "provisional"
+    },
+    "red": {
+      "name": "Nyekundu",
+      "status": "provisional"
+    },
+    "green": {
+      "name": "Kijani",
+      "status": "provisional"
+    },
+    "violet": {
+      "name": "Zambarau",
+      "status": "provisional"
+    },
+    "rose": {
+      "name": "Waridi",
+      "status": "provisional"
+    },
+    "black": {
+      "name": "Nyeusi",
+      "status": "provisional"
+    },
+    "gold": {
+      "name": "Dhahabu",
+      "status": "provisional"
+    }
+  },
+  "celebrations": {
+    "adalbert-of-prague-bishop": {
+      "name": "Mtakatifu Adalbert, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "adrian-of-canterbury-abbot": {
+      "name": "Mtakatifu Adrian wa Canterbury, Abati",
+      "status": "provisional"
+    },
+    "advent-1-friday": {
+      "name": "Ijumaa ya Juma la Kwanza la Majilio",
+      "status": "provisional"
+    },
+    "advent-1-monday": {
+      "name": "Jumatatu ya Juma la Kwanza la Majilio",
+      "status": "provisional"
+    },
+    "advent-1-saturday": {
+      "name": "Jumamosi ya Juma la Kwanza la Majilio",
+      "status": "provisional"
+    },
+    "advent-1-sunday": {
+      "name": "Dominika ya Kwanza ya Majilio",
+      "status": "provisional"
+    },
+    "advent-1-thursday": {
+      "name": "Alhamisi ya Juma la Kwanza la Majilio",
+      "status": "provisional"
+    },
+    "advent-1-tuesday": {
+      "name": "Jumanne ya Juma la Kwanza la Majilio",
+      "status": "provisional"
+    },
+    "advent-1-wednesday": {
+      "name": "Jumatano ya Juma la Kwanza la Majilio",
+      "status": "provisional"
+    },
+    "advent-2-friday": {
+      "name": "Ijumaa ya Juma la Pili la Majilio",
+      "status": "provisional"
+    },
+    "advent-2-monday": {
+      "name": "Jumatatu ya Juma la Pili la Majilio",
+      "status": "provisional"
+    },
+    "advent-2-saturday": {
+      "name": "Jumamosi ya Juma la Pili la Majilio",
+      "status": "provisional"
+    },
+    "advent-2-sunday": {
+      "name": "Dominika ya Pili ya Majilio",
+      "status": "provisional"
+    },
+    "advent-2-thursday": {
+      "name": "Alhamisi ya Juma la Pili la Majilio",
+      "status": "provisional"
+    },
+    "advent-2-tuesday": {
+      "name": "Jumanne ya Juma la Pili la Majilio",
+      "status": "provisional"
+    },
+    "advent-2-wednesday": {
+      "name": "Jumatano ya Juma la Pili la Majilio",
+      "status": "provisional"
+    },
+    "advent-3-friday": {
+      "name": "Ijumaa ya Juma la Tatu la Majilio",
+      "status": "provisional"
+    },
+    "advent-3-monday": {
+      "name": "Jumatatu ya Juma la Tatu la Majilio",
+      "status": "provisional"
+    },
+    "advent-3-sunday": {
+      "name": "Dominika ya Tatu ya Majilio",
+      "status": "provisional"
+    },
+    "advent-3-thursday": {
+      "name": "Alhamisi ya Juma la Tatu la Majilio",
+      "status": "provisional"
+    },
+    "advent-3-tuesday": {
+      "name": "Jumanne ya Juma la Tatu la Majilio",
+      "status": "provisional"
+    },
+    "advent-3-wednesday": {
+      "name": "Jumatano ya Juma la Tatu la Majilio",
+      "status": "provisional"
+    },
+    "advent-4-sunday": {
+      "name": "Dominika ya Nne ya Majilio",
+      "status": "provisional"
+    },
+    "advent-december-17": {
+      "name": "Tarehe 17 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-18": {
+      "name": "Tarehe 18 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-19": {
+      "name": "Tarehe 19 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-20": {
+      "name": "Tarehe 20 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-21": {
+      "name": "Tarehe 21 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-22": {
+      "name": "Tarehe 22 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-23": {
+      "name": "Tarehe 23 Desemba",
+      "status": "provisional"
+    },
+    "advent-december-24": {
+      "name": "Tarehe 24 Desemba",
+      "status": "provisional"
+    },
+    "agatha-of-sicily-virgin": {
+      "name": "Mtakatifu Agata, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "agnes-of-rome-virgin": {
+      "name": "Mtakatifu Agnes, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "albert-the-great-bishop": {
+      "name": "Mtakatifu Alberto Mkuu, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "alexander-of-alexandria-bishop": {
+      "name": "Mtakatifu Aleksanda wa Aleksandria, Askofu",
+      "status": "provisional"
+    },
+    "all-saints": {
+      "name": "Watakatifu Wote",
+      "status": "provisional"
+    },
+    "all-saints-of-africa": {
+      "name": "Watakatifu Wote wa Afrika",
+      "status": "provisional"
+    },
+    "aloysius-gonzaga-religious": {
+      "name": "Mtakatifu Aloisi Gonzaga, Mtawa",
+      "status": "provisional"
+    },
+    "alphonsus-mary-liguori-bishop": {
+      "name": "Mtakatifu Alfonso Maria wa Liguori, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "ambrose-of-milan-bishop": {
+      "name": "Mtakatifu Ambrosi, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "andrew-apostle": {
+      "name": "Mtakatifu Andrea, Mtume",
+      "status": "provisional"
+    },
+    "andrew-dung-lac-priest-and-companions-martyrs": {
+      "name": "Mtakatifu Andrea Dũng-Lạc, Padre, na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "andrew-kim-tae-gon-paul-chong-ha-sang-and-companions-martyrs": {
+      "name": "Watakatifu Andrea Kim Tae-gŏn, Padre, Paulo Chŏng Ha-sang na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "angela-merici-virgin": {
+      "name": "Mtakatifu Angela Merici, Bikira",
+      "status": "provisional"
+    },
+    "annunciation-of-the-lord": {
+      "name": "Kupashwa Habari kwa Bwana",
+      "status": "provisional"
+    },
+    "anselm-of-canterbury-bishop": {
+      "name": "Mtakatifu Anselmo, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "ansgar-of-hamburg-bishop": {
+      "name": "Mtakatifu Ansgar, Askofu",
+      "status": "provisional"
+    },
+    "anthony-mary-claret-bishop": {
+      "name": "Mtakatifu Antoni Maria Claret, Askofu",
+      "status": "provisional"
+    },
+    "anthony-of-egypt-abbot": {
+      "name": "Mtakatifu Antoni, Abati",
+      "status": "provisional"
+    },
+    "anthony-of-padua-priest": {
+      "name": "Mtakatifu Antoni wa Padua, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "anthony-zaccaria-priest": {
+      "name": "Mtakatifu Antoni Zaccaria, Padre",
+      "status": "provisional"
+    },
+    "apollinaris-of-ravenna-bishop": {
+      "name": "Mtakatifu Apolinari, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "ascension-of-the-lord": {
+      "name": "Kupaa kwa Bwana",
+      "status": "provisional"
+    },
+    "ash-wednesday": {
+      "name": "Jumatano ya Majivu",
+      "status": "provisional"
+    },
+    "assumption-of-the-blessed-virgin-mary": {
+      "name": "Kupalizwa Mbinguni kwa Bikira Maria",
+      "status": "provisional"
+    },
+    "athanasius-of-alexandria-bishop": {
+      "name": "Mtakatifu Atanasi, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "augustine-of-canterbury-bishop": {
+      "name": "Mtakatifu Augustino wa Canterbury, Askofu",
+      "status": "provisional"
+    },
+    "augustine-of-hippo-bishop": {
+      "name": "Mtakatifu Augustino, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "augustine-zhao-rong-priest-and-companions-martyrs": {
+      "name": "Mtakatifu Augustino Zhao Rong, Padre, na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "baptism-of-the-lord": {
+      "name": "Ubatizo wa Bwana",
+      "status": "provisional"
+    },
+    "barnabas-apostle": {
+      "name": "Mtakatifu Barnaba, Mtume",
+      "status": "provisional"
+    },
+    "bartholomew-apostle": {
+      "name": "Mtakatifu Bartolomayo, Mtume",
+      "status": "provisional"
+    },
+    "basil-the-great-and-gregory-nazianzen-bishops": {
+      "name": "Watakatifu Basili Mkuu na Gregori wa Nazianzi, Maaskofu na Walimu wa Kanisa",
+      "status": "provisional"
+    },
+    "bede-the-venerable-priest": {
+      "name": "Mtakatifu Beda Mheshimiwa, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "benedict-of-nursia-abbot": {
+      "name": "Mtakatifu Benedikto, Abati",
+      "status": "provisional"
+    },
+    "benedict-the-moor-religious": {
+      "name": "Mtakatifu Benedikto Mmoori, Mtawa",
+      "status": "provisional"
+    },
+    "bernard-of-clairvaux-abbot": {
+      "name": "Mtakatifu Bernardo, Abati na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "bernardine-of-siena-priest": {
+      "name": "Mtakatifu Bernardino wa Siena, Padre",
+      "status": "provisional"
+    },
+    "blaise-of-sebaste-bishop": {
+      "name": "Mtakatifu Blasi, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "bonaventure-of-bagnoregio-bishop": {
+      "name": "Mtakatifu Bonaventura, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "boniface-of-mainz-bishop": {
+      "name": "Mtakatifu Bonifasi, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "bridget-of-sweden-religious": {
+      "name": "Mtakatifu Brigita, Mtawa",
+      "status": "provisional"
+    },
+    "bruno-of-cologne-priest": {
+      "name": "Mtakatifu Bruno, Padre",
+      "status": "provisional"
+    },
+    "cajetan-of-thiene-priest": {
+      "name": "Mtakatifu Kajetani, Padre",
+      "status": "provisional"
+    },
+    "callistus-i-pope": {
+      "name": "Mtakatifu Kalisto I, Papa na Shahidi",
+      "status": "provisional"
+    },
+    "camillus-de-lellis-priest": {
+      "name": "Mtakatifu Kamili wa Lellis, Padre",
+      "status": "provisional"
+    },
+    "casimir-of-poland": {
+      "name": "Mtakatifu Kasimiri",
+      "status": "provisional"
+    },
+    "catherine-of-alexandria-virgin": {
+      "name": "Mtakatifu Katarina wa Aleksandria, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "catherine-of-siena-virgin": {
+      "name": "Mtakatifu Katarina wa Siena, Bikira na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "cecilia-of-rome-virgin": {
+      "name": "Mtakatifu Sesilia, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "chair-of-saint-peter-the-apostle": {
+      "name": "Ukulu wa Mtakatifu Petro, Mtume",
+      "status": "provisional"
+    },
+    "charles-borromeo-bishop": {
+      "name": "Mtakatifu Karoli Borromeo, Askofu",
+      "status": "provisional"
+    },
+    "charles-lwanga-and-companions-martyrs": {
+      "name": "Watakatifu Karoli Lwanga na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "christmas-octave-day-2": {
+      "name": "Siku ya Pili katika Oktava ya Noeli",
+      "status": "provisional"
+    },
+    "christmas-octave-day-3": {
+      "name": "Siku ya Tatu katika Oktava ya Noeli",
+      "status": "provisional"
+    },
+    "christmas-octave-day-4": {
+      "name": "Siku ya Nne katika Oktava ya Noeli",
+      "status": "provisional"
+    },
+    "christmas-octave-day-5": {
+      "name": "Siku ya Tano katika Oktava ya Noeli",
+      "status": "provisional"
+    },
+    "christmas-octave-day-6": {
+      "name": "Siku ya Sita katika Oktava ya Noeli",
+      "status": "provisional"
+    },
+    "christmas-octave-day-7": {
+      "name": "Siku ya Saba katika Oktava ya Noeli",
+      "status": "provisional"
+    },
+    "christmas-time-january-2": {
+      "name": "Tarehe 2 Januari",
+      "status": "provisional"
+    },
+    "christmas-time-january-3": {
+      "name": "Tarehe 3 Januari",
+      "status": "provisional"
+    },
+    "christmas-time-january-4": {
+      "name": "Tarehe 4 Januari",
+      "status": "provisional"
+    },
+    "christmas-time-january-5": {
+      "name": "Tarehe 5 Januari",
+      "status": "provisional"
+    },
+    "christmas-time-january-6": {
+      "name": "Tarehe 6 Januari",
+      "status": "provisional"
+    },
+    "christmas-time-january-7": {
+      "name": "Tarehe 7 Januari",
+      "status": "provisional"
+    },
+    "christmas-time-january-8": {
+      "name": "Tarehe 8 Januari",
+      "status": "provisional"
+    },
+    "christopher-magallanes-priest-and-companions-martyrs": {
+      "name": "Mtakatifu Kristofa Magallanes, Padre, na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "clare-of-assisi-virgin": {
+      "name": "Mtakatifu Klara, Bikira",
+      "status": "provisional"
+    },
+    "clement-i-pope": {
+      "name": "Mtakatifu Klementi I, Papa na Shahidi",
+      "status": "provisional"
+    },
+    "columban-of-luxeuil-abbot": {
+      "name": "Mtakatifu Kolumbani, Abati",
+      "status": "provisional"
+    },
+    "commemoration-of-all-the-faithful-departed": {
+      "name": "Kumbukumbu ya Marehemu Wote (Siku ya Wafu Wote)",
+      "status": "provisional"
+    },
+    "conversion-of-saint-paul-the-apostle": {
+      "name": "Kuongoka kwa Mtakatifu Paulo, Mtume",
+      "status": "provisional"
+    },
+    "cornelius-i-pope-and-cyprian-of-carthage-bishop-martyrs": {
+      "name": "Watakatifu Kornelio, Papa, na Sipriani, Askofu, Mashahidi",
+      "status": "provisional"
+    },
+    "cosmas-of-cilicia-and-damian-of-cilicia-martyrs": {
+      "name": "Watakatifu Kosma na Damiani, Mashahidi",
+      "status": "provisional"
+    },
+    "cyprian-michael-tansi-priest": {
+      "name": "Mwenyeheri Sipriani Mikaeli Tansi, Padre",
+      "status": "provisional"
+    },
+    "cyril-monk-and-methodius-bishop": {
+      "name": "Watakatifu Sirili, Mmonaki, na Methodi, Askofu",
+      "status": "provisional"
+    },
+    "cyril-of-alexandria-bishop": {
+      "name": "Mtakatifu Sirili wa Aleksandria, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "cyril-of-jerusalem-bishop": {
+      "name": "Mtakatifu Sirili wa Yerusalemu, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "damasus-i-pope": {
+      "name": "Mtakatifu Damaso I, Papa",
+      "status": "provisional"
+    },
+    "daniel-comboni-bishop": {
+      "name": "Mtakatifu Danieli Comboni, Askofu",
+      "status": "provisional"
+    },
+    "daudi-okelo-and-jildo-irwa-martyrs": {
+      "name": "Wenyeheri Daudi Okelo na Jildo Irwa, Mashahidi",
+      "status": "provisional"
+    },
+    "dedication-of-the-basilica-of-saint-mary-major": {
+      "name": "Kutabarukiwa kwa Basilika ya Mtakatifu Maria Mkuu",
+      "status": "provisional"
+    },
+    "dedication-of-the-basilicas-of-saints-peter-and-paul-apostles": {
+      "name": "Kutabarukiwa kwa Basilika za Watakatifu Petro na Paulo, Mitume",
+      "status": "provisional"
+    },
+    "dedication-of-the-lateran-basilica": {
+      "name": "Kutabarukiwa kwa Basilika ya Laterani",
+      "status": "provisional"
+    },
+    "denis-of-paris-bishop-and-companions-martyrs": {
+      "name": "Mtakatifu Dionisi, Askofu, na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "divine-mercy-sunday": {
+      "name": "Dominika ya Pili ya Pasaka au Dominika ya Huruma ya Mungu",
+      "status": "provisional"
+    },
+    "dominic-de-guzman-priest": {
+      "name": "Mtakatifu Dominiko, Padre",
+      "status": "provisional"
+    },
+    "easter-friday": {
+      "name": "Ijumaa katika Oktava ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-monday": {
+      "name": "Jumatatu katika Oktava ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-saturday": {
+      "name": "Jumamosi katika Oktava ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-sunday": {
+      "name": "Dominika ya Pasaka ya Ufufuko wa Bwana",
+      "status": "provisional"
+    },
+    "easter-thursday": {
+      "name": "Alhamisi katika Oktava ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-2-friday": {
+      "name": "Ijumaa ya Juma la Pili la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-2-monday": {
+      "name": "Jumatatu ya Juma la Pili la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-2-saturday": {
+      "name": "Jumamosi ya Juma la Pili la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-2-thursday": {
+      "name": "Alhamisi ya Juma la Pili la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-2-tuesday": {
+      "name": "Jumanne ya Juma la Pili la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-2-wednesday": {
+      "name": "Jumatano ya Juma la Pili la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-friday": {
+      "name": "Ijumaa ya Juma la Tatu la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-monday": {
+      "name": "Jumatatu ya Juma la Tatu la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-saturday": {
+      "name": "Jumamosi ya Juma la Tatu la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-sunday": {
+      "name": "Dominika ya Tatu ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-thursday": {
+      "name": "Alhamisi ya Juma la Tatu la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-tuesday": {
+      "name": "Jumanne ya Juma la Tatu la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-3-wednesday": {
+      "name": "Jumatano ya Juma la Tatu la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-friday": {
+      "name": "Ijumaa ya Juma la Nne la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-monday": {
+      "name": "Jumatatu ya Juma la Nne la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-saturday": {
+      "name": "Jumamosi ya Juma la Nne la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-sunday": {
+      "name": "Dominika ya Nne ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-thursday": {
+      "name": "Alhamisi ya Juma la Nne la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-tuesday": {
+      "name": "Jumanne ya Juma la Nne la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-4-wednesday": {
+      "name": "Jumatano ya Juma la Nne la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-friday": {
+      "name": "Ijumaa ya Juma la Tano la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-monday": {
+      "name": "Jumatatu ya Juma la Tano la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-saturday": {
+      "name": "Jumamosi ya Juma la Tano la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-sunday": {
+      "name": "Dominika ya Tano ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-thursday": {
+      "name": "Alhamisi ya Juma la Tano la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-tuesday": {
+      "name": "Jumanne ya Juma la Tano la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-5-wednesday": {
+      "name": "Jumatano ya Juma la Tano la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-friday": {
+      "name": "Ijumaa ya Juma la Sita la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-monday": {
+      "name": "Jumatatu ya Juma la Sita la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-saturday": {
+      "name": "Jumamosi ya Juma la Sita la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-sunday": {
+      "name": "Dominika ya Sita ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-thursday": {
+      "name": "Alhamisi ya Juma la Sita la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-tuesday": {
+      "name": "Jumanne ya Juma la Sita la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-6-wednesday": {
+      "name": "Jumatano ya Juma la Sita la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-friday": {
+      "name": "Ijumaa ya Juma la Saba la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-monday": {
+      "name": "Jumatatu ya Juma la Saba la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-saturday": {
+      "name": "Jumamosi ya Juma la Saba la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-sunday": {
+      "name": "Dominika ya Saba ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-thursday": {
+      "name": "Alhamisi ya Juma la Saba la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-tuesday": {
+      "name": "Jumanne ya Juma la Saba la Pasaka",
+      "status": "provisional"
+    },
+    "easter-time-7-wednesday": {
+      "name": "Jumatano ya Juma la Saba la Pasaka",
+      "status": "provisional"
+    },
+    "easter-tuesday": {
+      "name": "Jumanne katika Oktava ya Pasaka",
+      "status": "provisional"
+    },
+    "easter-wednesday": {
+      "name": "Jumatano katika Oktava ya Pasaka",
+      "status": "provisional"
+    },
+    "elizabeth-of-hungary-religious": {
+      "name": "Mtakatifu Elizabeti wa Hungaria, Mtawa",
+      "status": "provisional"
+    },
+    "elizabeth-of-portugal": {
+      "name": "Mtakatifu Elizabeti wa Ureno",
+      "status": "provisional"
+    },
+    "ephrem-the-syrian-deacon": {
+      "name": "Mtakatifu Efremu, Shemasi na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "epiphany-of-the-lord": {
+      "name": "Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "eusebius-of-vercelli-bishop": {
+      "name": "Mtakatifu Eusebio wa Vercelli, Askofu",
+      "status": "provisional"
+    },
+    "exaltation-of-the-holy-cross": {
+      "name": "Kutukuka kwa Msalaba Mtakatifu",
+      "status": "provisional"
+    },
+    "fabian-i-pope": {
+      "name": "Mtakatifu Fabiani, Papa na Shahidi",
+      "status": "provisional"
+    },
+    "faustina-kowalska-virgin": {
+      "name": "Mtakatifu Faustina Kowalska, Bikira",
+      "status": "provisional"
+    },
+    "fidelis-of-sigmaringen-priest": {
+      "name": "Mtakatifu Fideli wa Sigmaringen, Padre na Shahidi",
+      "status": "provisional"
+    },
+    "first-martyrs-of-the-holy-roman-church": {
+      "name": "Mashahidi wa Kwanza wa Kanisa Takatifu la Roma",
+      "status": "provisional"
+    },
+    "frances-of-rome-religious": {
+      "name": "Mtakatifu Fransiska wa Roma, Mtawa",
+      "status": "provisional"
+    },
+    "francis-de-sales-bishop": {
+      "name": "Mtakatifu Fransisko wa Sales, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "francis-of-assisi": {
+      "name": "Mtakatifu Fransisko wa Asizi",
+      "status": "provisional"
+    },
+    "francis-of-paola-hermit": {
+      "name": "Mtakatifu Fransisko wa Paola, Mkaapweke",
+      "status": "provisional"
+    },
+    "francis-xavier-priest": {
+      "name": "Mtakatifu Fransisko Saveri, Padre",
+      "status": "provisional"
+    },
+    "friday-after-ash-wednesday": {
+      "name": "Ijumaa baada ya Jumatano ya Majivu",
+      "status": "provisional"
+    },
+    "friday-after-epiphany": {
+      "name": "Ijumaa baada ya Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "friday-of-the-passion-of-the-lord": {
+      "name": "Ijumaa Kuu ya Mateso ya Bwana",
+      "status": "provisional"
+    },
+    "george-of-lydda-martyr": {
+      "name": "Mtakatifu Georgi, Shahidi",
+      "status": "provisional"
+    },
+    "gertrude-the-great-virgin": {
+      "name": "Mtakatifu Gertruda, Bikira",
+      "status": "provisional"
+    },
+    "gregory-i-the-great-pope": {
+      "name": "Mtakatifu Gregori Mkuu, Papa na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "gregory-of-narek-abbot": {
+      "name": "Mtakatifu Gregori wa Narek, Abati na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "gregory-vii-pope": {
+      "name": "Mtakatifu Gregori VII, Papa",
+      "status": "provisional"
+    },
+    "hedwig-of-silesia-religious": {
+      "name": "Mtakatifu Hedvigi, Mtawa",
+      "status": "provisional"
+    },
+    "henry-ii-emperor": {
+      "name": "Mtakatifu Henri",
+      "status": "provisional"
+    },
+    "hilary-of-poitiers-bishop": {
+      "name": "Mtakatifu Hilari, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "hildegard-of-bingen-abbess": {
+      "name": "Mtakatifu Hildegarda wa Bingen, Abesi na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "holy-family-of-jesus-mary-and-joseph": {
+      "name": "Familia Takatifu ya Yesu, Maria na Yosefu",
+      "status": "provisional"
+    },
+    "holy-guardian-angels": {
+      "name": "Malaika Walinzi Watakatifu",
+      "status": "provisional"
+    },
+    "holy-innocents-martyrs": {
+      "name": "Watoto Mashahidi Watakatifu",
+      "status": "provisional"
+    },
+    "holy-monday": {
+      "name": "Jumatatu Kuu",
+      "status": "provisional"
+    },
+    "holy-saturday": {
+      "name": "Jumamosi Kuu / Kesha la Pasaka",
+      "status": "provisional"
+    },
+    "holy-thursday": {
+      "name": "Alhamisi Kuu",
+      "status": "provisional"
+    },
+    "holy-tuesday": {
+      "name": "Jumanne Kuu",
+      "status": "provisional"
+    },
+    "holy-wednesday": {
+      "name": "Jumatano Kuu",
+      "status": "provisional"
+    },
+    "ignatius-of-antioch-bishop": {
+      "name": "Mtakatifu Ignasi wa Antiokia, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "ignatius-of-loyola-priest": {
+      "name": "Mtakatifu Ignasi wa Loyola, Padre",
+      "status": "provisional"
+    },
+    "immaculate-conception-of-the-blessed-virgin-mary": {
+      "name": "Bikira Maria Mkingiwa Dhambi ya Asili",
+      "status": "provisional"
+    },
+    "immaculate-heart-of-mary": {
+      "name": "Moyo Safi wa Bikira Maria",
+      "status": "provisional"
+    },
+    "irenaeus-of-lyon-bishop": {
+      "name": "Mtakatifu Ireneo, Askofu, Shahidi na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "isidore-bakanja-martyr": {
+      "name": "Mwenyeheri Isidori Bakanja, Shahidi",
+      "status": "provisional"
+    },
+    "isidore-of-seville-bishop": {
+      "name": "Mtakatifu Isidori, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "james-apostle": {
+      "name": "Mtakatifu Yakobo, Mtume",
+      "status": "provisional"
+    },
+    "jane-frances-de-chantal-religious": {
+      "name": "Mtakatifu Yoana Fransiska wa Chantal, Mtawa",
+      "status": "provisional"
+    },
+    "januarius-i-of-benevento-bishop": {
+      "name": "Mtakatifu Januari, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "jerome-emiliani": {
+      "name": "Mtakatifu Jeromu Emiliani",
+      "status": "provisional"
+    },
+    "jerome-of-stridon-priest": {
+      "name": "Mtakatifu Jeromu, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "joachim-and-anne-parents-of-mary": {
+      "name": "Watakatifu Yoakimu na Anna, Wazazi wa Bikira Maria",
+      "status": "provisional"
+    },
+    "john-apostle": {
+      "name": "Mtakatifu Yohane, Mtume na Mwinjili",
+      "status": "provisional"
+    },
+    "john-baptist-de-la-salle-priest": {
+      "name": "Mtakatifu Yohane Mbatizaji wa La Salle, Padre",
+      "status": "provisional"
+    },
+    "john-bosco-priest": {
+      "name": "Mtakatifu Yohane Bosko, Padre",
+      "status": "provisional"
+    },
+    "john-chrysostom-bishop": {
+      "name": "Mtakatifu Yohane Krisostomo, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "john-damascene-priest": {
+      "name": "Mtakatifu Yohane wa Damasko, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "john-de-brebeuf-isaac-jogues-priests-and-companions-martyrs": {
+      "name": "Watakatifu Yohane wa Brébeuf na Isaka Jogues, Mapadre, na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "john-eudes-priest": {
+      "name": "Mtakatifu Yohane Eudes, Padre",
+      "status": "provisional"
+    },
+    "john-fisher-bishop-and-thomas-more-martyrs": {
+      "name": "Watakatifu Yohane Fisher, Askofu, na Tomaso More, Mashahidi",
+      "status": "provisional"
+    },
+    "john-henry-newman-priest": {
+      "name": "Mtakatifu Yohane Henri Newman, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "john-i-pope": {
+      "name": "Mtakatifu Yohane I, Papa na Shahidi",
+      "status": "provisional"
+    },
+    "john-leonardi-priest": {
+      "name": "Mtakatifu Yohane Leonardi, Padre",
+      "status": "provisional"
+    },
+    "john-mary-vianney-priest": {
+      "name": "Mtakatifu Yohane Maria Vianney, Padre",
+      "status": "provisional"
+    },
+    "john-of-avila-priest": {
+      "name": "Mtakatifu Yohane wa Ávila, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "john-of-capistrano-priest": {
+      "name": "Mtakatifu Yohane wa Kapistrano, Padre",
+      "status": "provisional"
+    },
+    "john-of-god-duarte-cidade-religious": {
+      "name": "Mtakatifu Yohane wa Mungu, Mtawa",
+      "status": "provisional"
+    },
+    "john-of-kanty-priest": {
+      "name": "Mtakatifu Yohane wa Kanty, Padre",
+      "status": "provisional"
+    },
+    "john-of-the-cross-priest": {
+      "name": "Mtakatifu Yohane wa Msalaba, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "john-paul-ii-pope": {
+      "name": "Mtakatifu Yohane Paulo II, Papa",
+      "status": "provisional"
+    },
+    "john-xxiii-pope": {
+      "name": "Mtakatifu Yohane XXIII, Papa",
+      "status": "provisional"
+    },
+    "josaphat-kuntsevych-bishop": {
+      "name": "Mtakatifu Yosafati, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "joseph-of-calasanz-priest": {
+      "name": "Mtakatifu Yosefu wa Kalasanzi, Padre",
+      "status": "provisional"
+    },
+    "joseph-spouse-of-mary": {
+      "name": "Mtakatifu Yosefu, Mume wa Bikira Maria",
+      "status": "provisional"
+    },
+    "joseph-the-worker": {
+      "name": "Mtakatifu Yosefu Mfanyakazi",
+      "status": "provisional"
+    },
+    "josephine-bakhita-virgin": {
+      "name": "Mtakatifu Josefina Bakhita, Bikira",
+      "status": "provisional"
+    },
+    "juan-diego-cuauhtlatoatzin": {
+      "name": "Mtakatifu Juan Diego Cuauhtlatoatzin",
+      "status": "provisional"
+    },
+    "justin-de-jacobis-bishop": {
+      "name": "Mtakatifu Justino wa Jacobis, Askofu",
+      "status": "provisional"
+    },
+    "justin-martyr": {
+      "name": "Mtakatifu Justino, Shahidi",
+      "status": "provisional"
+    },
+    "lawrence-of-brindisi-priest": {
+      "name": "Mtakatifu Laurenti wa Brindisi, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "lawrence-of-rome-deacon": {
+      "name": "Mtakatifu Laurenti, Shemasi na Shahidi",
+      "status": "provisional"
+    },
+    "lawrence-ruiz-and-companions-martyrs": {
+      "name": "Mtakatifu Laurenti Ruiz na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "lent-1-friday": {
+      "name": "Ijumaa ya Juma la Kwanza la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-1-monday": {
+      "name": "Jumatatu ya Juma la Kwanza la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-1-saturday": {
+      "name": "Jumamosi ya Juma la Kwanza la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-1-sunday": {
+      "name": "Dominika ya Kwanza ya Kwaresima",
+      "status": "provisional"
+    },
+    "lent-1-thursday": {
+      "name": "Alhamisi ya Juma la Kwanza la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-1-tuesday": {
+      "name": "Jumanne ya Juma la Kwanza la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-1-wednesday": {
+      "name": "Jumatano ya Juma la Kwanza la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-friday": {
+      "name": "Ijumaa ya Juma la Pili la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-monday": {
+      "name": "Jumatatu ya Juma la Pili la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-saturday": {
+      "name": "Jumamosi ya Juma la Pili la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-sunday": {
+      "name": "Dominika ya Pili ya Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-thursday": {
+      "name": "Alhamisi ya Juma la Pili la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-tuesday": {
+      "name": "Jumanne ya Juma la Pili la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-2-wednesday": {
+      "name": "Jumatano ya Juma la Pili la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-friday": {
+      "name": "Ijumaa ya Juma la Tatu la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-monday": {
+      "name": "Jumatatu ya Juma la Tatu la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-saturday": {
+      "name": "Jumamosi ya Juma la Tatu la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-sunday": {
+      "name": "Dominika ya Tatu ya Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-thursday": {
+      "name": "Alhamisi ya Juma la Tatu la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-tuesday": {
+      "name": "Jumanne ya Juma la Tatu la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-3-wednesday": {
+      "name": "Jumatano ya Juma la Tatu la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-friday": {
+      "name": "Ijumaa ya Juma la Nne la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-monday": {
+      "name": "Jumatatu ya Juma la Nne la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-saturday": {
+      "name": "Jumamosi ya Juma la Nne la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-sunday": {
+      "name": "Dominika ya Nne ya Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-thursday": {
+      "name": "Alhamisi ya Juma la Nne la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-tuesday": {
+      "name": "Jumanne ya Juma la Nne la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-4-wednesday": {
+      "name": "Jumatano ya Juma la Nne la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-friday": {
+      "name": "Ijumaa ya Juma la Tano la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-monday": {
+      "name": "Jumatatu ya Juma la Tano la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-saturday": {
+      "name": "Jumamosi ya Juma la Tano la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-sunday": {
+      "name": "Dominika ya Tano ya Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-thursday": {
+      "name": "Alhamisi ya Juma la Tano la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-tuesday": {
+      "name": "Jumanne ya Juma la Tano la Kwaresima",
+      "status": "provisional"
+    },
+    "lent-5-wednesday": {
+      "name": "Jumatano ya Juma la Tano la Kwaresima",
+      "status": "provisional"
+    },
+    "leo-i-the-great-pope": {
+      "name": "Mtakatifu Leo Mkuu, Papa na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "louis-grignion-de-montfort-priest": {
+      "name": "Mtakatifu Lui Grignion wa Montfort, Padre",
+      "status": "provisional"
+    },
+    "louis-ix-of-france": {
+      "name": "Mtakatifu Lui",
+      "status": "provisional"
+    },
+    "lucy-of-syracuse-virgin": {
+      "name": "Mtakatifu Lusia, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "luke-evangelist": {
+      "name": "Mtakatifu Luka, Mwinjili",
+      "status": "provisional"
+    },
+    "marcellinus-of-embrun-bishop": {
+      "name": "Mtakatifu Marselino wa Embrun, Askofu",
+      "status": "provisional"
+    },
+    "marcellinus-of-rome-and-peter-the-exorcist-martyrs": {
+      "name": "Watakatifu Marselino na Petro, Mashahidi",
+      "status": "provisional"
+    },
+    "margaret-mary-alacoque-virgin": {
+      "name": "Mtakatifu Margareta Maria Alacoque, Bikira",
+      "status": "provisional"
+    },
+    "margaret-of-scotland": {
+      "name": "Mtakatifu Margareta wa Uskoti",
+      "status": "provisional"
+    },
+    "maria-goretti-virgin": {
+      "name": "Mtakatifu Maria Goretti, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "marie-clementine-anuarite-nengapeta-virgin-and-martyr": {
+      "name": "Mwenyeheri Maria Klementina Anuarite Nengapeta, Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "mark-evangelist": {
+      "name": "Mtakatifu Marko, Mwinjili",
+      "status": "provisional"
+    },
+    "martha-of-bethany-mary-of-bethany-and-lazarus-of-bethany": {
+      "name": "Watakatifu Marta, Maria na Lazaro",
+      "status": "provisional"
+    },
+    "martin-de-porres-religious": {
+      "name": "Mtakatifu Martino wa Porres, Mtawa",
+      "status": "provisional"
+    },
+    "martin-i-pope": {
+      "name": "Mtakatifu Martino I, Papa na Shahidi",
+      "status": "provisional"
+    },
+    "martin-of-tours-bishop": {
+      "name": "Mtakatifu Martino wa Tours, Askofu",
+      "status": "provisional"
+    },
+    "mary-magdalene": {
+      "name": "Mtakatifu Maria Magdalena",
+      "status": "provisional"
+    },
+    "mary-magdalene-de-pazzi-virgin": {
+      "name": "Mtakatifu Maria Magdalena wa Pazzi, Bikira",
+      "status": "provisional"
+    },
+    "mary-mother-of-god": {
+      "name": "Siku ya Nane ya Noeli: Sherehe ya Maria Mtakatifu, Mama wa Mungu",
+      "status": "provisional"
+    },
+    "mary-mother-of-the-church": {
+      "name": "Bikira Maria, Mama wa Kanisa",
+      "status": "provisional"
+    },
+    "matthew-apostle": {
+      "name": "Mtakatifu Mathayo, Mtume na Mwinjili",
+      "status": "provisional"
+    },
+    "matthias-apostle": {
+      "name": "Mtakatifu Mathia, Mtume",
+      "status": "provisional"
+    },
+    "maurice-of-agaune-and-companions-martyrs": {
+      "name": "Mtakatifu Maurisi wa Agaune na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "maximilian-mary-raymund-kolbe-priest": {
+      "name": "Mtakatifu Maksimiliani Maria Kolbe, Padre na Shahidi",
+      "status": "provisional"
+    },
+    "michael-gabriel-and-raphael-archangels": {
+      "name": "Watakatifu Mikaeli, Gabrieli na Rafaeli, Malaika Wakuu",
+      "status": "provisional"
+    },
+    "monday-after-epiphany": {
+      "name": "Jumatatu baada ya Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "monica-of-hippo": {
+      "name": "Mtakatifu Monika",
+      "status": "provisional"
+    },
+    "most-holy-body-and-blood-of-christ": {
+      "name": "Mwili na Damu Takatifu Kabisa ya Kristo",
+      "status": "provisional"
+    },
+    "most-holy-name-of-jesus": {
+      "name": "Jina Takatifu Kabisa la Yesu",
+      "status": "provisional"
+    },
+    "most-holy-name-of-mary": {
+      "name": "Jina Takatifu Kabisa la Maria",
+      "status": "provisional"
+    },
+    "most-holy-trinity": {
+      "name": "Utatu Mtakatifu Kabisa",
+      "status": "provisional"
+    },
+    "most-sacred-heart-of-jesus": {
+      "name": "Moyo Mtakatifu Kabisa wa Yesu",
+      "status": "provisional"
+    },
+    "nativity-of-john-the-baptist": {
+      "name": "Kuzaliwa kwa Mtakatifu Yohane Mbatizaji",
+      "status": "provisional"
+    },
+    "nativity-of-the-blessed-virgin-mary": {
+      "name": "Kuzaliwa kwa Bikira Maria",
+      "status": "provisional"
+    },
+    "nativity-of-the-lord": {
+      "name": "Kuzaliwa kwa Bwana (Noeli)",
+      "status": "provisional"
+    },
+    "nereus-of-terracina-and-achilleus-of-terracina-martyrs": {
+      "name": "Watakatifu Nereo na Akile, Mashahidi",
+      "status": "provisional"
+    },
+    "nicholas-of-myra-bishop": {
+      "name": "Mtakatifu Nikolaus, Askofu",
+      "status": "provisional"
+    },
+    "norbert-of-xanten-bishop": {
+      "name": "Mtakatifu Norberto, Askofu",
+      "status": "provisional"
+    },
+    "onuphrius-abbot": {
+      "name": "Mtakatifu Onufri, Abati",
+      "status": "provisional"
+    },
+    "ordinary-time-1-friday": {
+      "name": "Ijumaa ya Juma la Kwanza la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-1-monday": {
+      "name": "Jumatatu ya Juma la Kwanza la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-1-saturday": {
+      "name": "Jumamosi ya Juma la Kwanza la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-1-thursday": {
+      "name": "Alhamisi ya Juma la Kwanza la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-1-tuesday": {
+      "name": "Jumanne ya Juma la Kwanza la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-1-wednesday": {
+      "name": "Jumatano ya Juma la Kwanza la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-friday": {
+      "name": "Ijumaa ya Juma la Kumi la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-monday": {
+      "name": "Jumatatu ya Juma la Kumi la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-saturday": {
+      "name": "Jumamosi ya Juma la Kumi la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-sunday": {
+      "name": "Dominika ya Kumi ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-thursday": {
+      "name": "Alhamisi ya Juma la Kumi la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-tuesday": {
+      "name": "Jumanne ya Juma la Kumi la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-10-wednesday": {
+      "name": "Jumatano ya Juma la Kumi la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-sunday": {
+      "name": "Dominika ya Kumi na Moja ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-11-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-sunday": {
+      "name": "Dominika ya Kumi na Mbili ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-12-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-sunday": {
+      "name": "Dominika ya Kumi na Tatu ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-13-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-sunday": {
+      "name": "Dominika ya Kumi na Nne ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-14-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-sunday": {
+      "name": "Dominika ya Kumi na Tano ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-15-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-sunday": {
+      "name": "Dominika ya Kumi na Sita ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-16-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-sunday": {
+      "name": "Dominika ya Kumi na Saba ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-17-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-sunday": {
+      "name": "Dominika ya Kumi na Nane ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-18-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-friday": {
+      "name": "Ijumaa ya Juma la Kumi na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-monday": {
+      "name": "Jumatatu ya Juma la Kumi na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-saturday": {
+      "name": "Jumamosi ya Juma la Kumi na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-sunday": {
+      "name": "Dominika ya Kumi na Tisa ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-thursday": {
+      "name": "Alhamisi ya Juma la Kumi na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-tuesday": {
+      "name": "Jumanne ya Juma la Kumi na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-19-wednesday": {
+      "name": "Jumatano ya Juma la Kumi na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-friday": {
+      "name": "Ijumaa ya Juma la Pili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-monday": {
+      "name": "Jumatatu ya Juma la Pili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-saturday": {
+      "name": "Jumamosi ya Juma la Pili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-sunday": {
+      "name": "Dominika ya Pili ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-thursday": {
+      "name": "Alhamisi ya Juma la Pili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-tuesday": {
+      "name": "Jumanne ya Juma la Pili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-2-wednesday": {
+      "name": "Jumatano ya Juma la Pili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-friday": {
+      "name": "Ijumaa ya Juma la Ishirini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-monday": {
+      "name": "Jumatatu ya Juma la Ishirini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-sunday": {
+      "name": "Dominika ya Ishirini ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-20-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-sunday": {
+      "name": "Dominika ya Ishirini na Moja ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-21-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-sunday": {
+      "name": "Dominika ya Ishirini na Mbili ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-22-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-sunday": {
+      "name": "Dominika ya Ishirini na Tatu ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-23-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-sunday": {
+      "name": "Dominika ya Ishirini na Nne ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-24-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-sunday": {
+      "name": "Dominika ya Ishirini na Tano ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-25-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-sunday": {
+      "name": "Dominika ya Ishirini na Sita ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-26-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-sunday": {
+      "name": "Dominika ya Ishirini na Saba ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-27-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-sunday": {
+      "name": "Dominika ya Ishirini na Nane ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-28-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-friday": {
+      "name": "Ijumaa ya Juma la Ishirini na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-monday": {
+      "name": "Jumatatu ya Juma la Ishirini na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-saturday": {
+      "name": "Jumamosi ya Juma la Ishirini na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-sunday": {
+      "name": "Dominika ya Ishirini na Tisa ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-thursday": {
+      "name": "Alhamisi ya Juma la Ishirini na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-tuesday": {
+      "name": "Jumanne ya Juma la Ishirini na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-29-wednesday": {
+      "name": "Jumatano ya Juma la Ishirini na Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-3-friday": {
+      "name": "Ijumaa ya Juma la Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-3-monday": {
+      "name": "Jumatatu ya Juma la Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-3-saturday": {
+      "name": "Jumamosi ya Juma la Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-3-thursday": {
+      "name": "Alhamisi ya Juma la Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-3-tuesday": {
+      "name": "Jumanne ya Juma la Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-3-wednesday": {
+      "name": "Jumatano ya Juma la Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-friday": {
+      "name": "Ijumaa ya Juma la Thelathini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-monday": {
+      "name": "Jumatatu ya Juma la Thelathini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-saturday": {
+      "name": "Jumamosi ya Juma la Thelathini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-sunday": {
+      "name": "Dominika ya Thelathini ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-thursday": {
+      "name": "Alhamisi ya Juma la Thelathini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-tuesday": {
+      "name": "Jumanne ya Juma la Thelathini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-30-wednesday": {
+      "name": "Jumatano ya Juma la Thelathini la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-friday": {
+      "name": "Ijumaa ya Juma la Thelathini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-monday": {
+      "name": "Jumatatu ya Juma la Thelathini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-saturday": {
+      "name": "Jumamosi ya Juma la Thelathini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-sunday": {
+      "name": "Dominika ya Thelathini na Moja ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-thursday": {
+      "name": "Alhamisi ya Juma la Thelathini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-tuesday": {
+      "name": "Jumanne ya Juma la Thelathini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-31-wednesday": {
+      "name": "Jumatano ya Juma la Thelathini na Moja la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-friday": {
+      "name": "Ijumaa ya Juma la Thelathini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-monday": {
+      "name": "Jumatatu ya Juma la Thelathini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-saturday": {
+      "name": "Jumamosi ya Juma la Thelathini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-sunday": {
+      "name": "Dominika ya Thelathini na Mbili ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-thursday": {
+      "name": "Alhamisi ya Juma la Thelathini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-tuesday": {
+      "name": "Jumanne ya Juma la Thelathini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-32-wednesday": {
+      "name": "Jumatano ya Juma la Thelathini na Mbili la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-friday": {
+      "name": "Ijumaa ya Juma la Thelathini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-monday": {
+      "name": "Jumatatu ya Juma la Thelathini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-saturday": {
+      "name": "Jumamosi ya Juma la Thelathini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-sunday": {
+      "name": "Dominika ya Thelathini na Tatu ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-thursday": {
+      "name": "Alhamisi ya Juma la Thelathini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-tuesday": {
+      "name": "Jumanne ya Juma la Thelathini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-33-wednesday": {
+      "name": "Jumatano ya Juma la Thelathini na Tatu la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-34-friday": {
+      "name": "Ijumaa ya Juma la Thelathini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-34-monday": {
+      "name": "Jumatatu ya Juma la Thelathini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-34-saturday": {
+      "name": "Jumamosi ya Juma la Thelathini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-34-thursday": {
+      "name": "Alhamisi ya Juma la Thelathini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-34-tuesday": {
+      "name": "Jumanne ya Juma la Thelathini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-34-wednesday": {
+      "name": "Jumatano ya Juma la Thelathini na Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-friday": {
+      "name": "Ijumaa ya Juma la Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-monday": {
+      "name": "Jumatatu ya Juma la Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-saturday": {
+      "name": "Jumamosi ya Juma la Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-sunday": {
+      "name": "Dominika ya Nne ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-thursday": {
+      "name": "Alhamisi ya Juma la Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-tuesday": {
+      "name": "Jumanne ya Juma la Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-4-wednesday": {
+      "name": "Jumatano ya Juma la Nne la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-friday": {
+      "name": "Ijumaa ya Juma la Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-monday": {
+      "name": "Jumatatu ya Juma la Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-saturday": {
+      "name": "Jumamosi ya Juma la Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-sunday": {
+      "name": "Dominika ya Tano ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-thursday": {
+      "name": "Alhamisi ya Juma la Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-tuesday": {
+      "name": "Jumanne ya Juma la Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-5-wednesday": {
+      "name": "Jumatano ya Juma la Tano la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-friday": {
+      "name": "Ijumaa ya Juma la Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-monday": {
+      "name": "Jumatatu ya Juma la Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-saturday": {
+      "name": "Jumamosi ya Juma la Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-sunday": {
+      "name": "Dominika ya Sita ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-thursday": {
+      "name": "Alhamisi ya Juma la Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-tuesday": {
+      "name": "Jumanne ya Juma la Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-6-wednesday": {
+      "name": "Jumatano ya Juma la Sita la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-friday": {
+      "name": "Ijumaa ya Juma la Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-monday": {
+      "name": "Jumatatu ya Juma la Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-saturday": {
+      "name": "Jumamosi ya Juma la Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-sunday": {
+      "name": "Dominika ya Saba ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-thursday": {
+      "name": "Alhamisi ya Juma la Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-tuesday": {
+      "name": "Jumanne ya Juma la Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-7-wednesday": {
+      "name": "Jumatano ya Juma la Saba la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-friday": {
+      "name": "Ijumaa ya Juma la Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-monday": {
+      "name": "Jumatatu ya Juma la Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-saturday": {
+      "name": "Jumamosi ya Juma la Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-sunday": {
+      "name": "Dominika ya Nane ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-thursday": {
+      "name": "Alhamisi ya Juma la Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-tuesday": {
+      "name": "Jumanne ya Juma la Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-8-wednesday": {
+      "name": "Jumatano ya Juma la Nane la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-friday": {
+      "name": "Ijumaa ya Juma la Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-monday": {
+      "name": "Jumatatu ya Juma la Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-saturday": {
+      "name": "Jumamosi ya Juma la Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-sunday": {
+      "name": "Dominika ya Tisa ya Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-thursday": {
+      "name": "Alhamisi ya Juma la Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-tuesday": {
+      "name": "Jumanne ya Juma la Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "ordinary-time-9-wednesday": {
+      "name": "Jumatano ya Juma la Tisa la Mwaka",
+      "status": "provisional"
+    },
+    "our-lady-help-of-christians": {
+      "name": "Bikira Maria Msaada wa Wakristo",
+      "status": "provisional"
+    },
+    "our-lady-mother-of-africa": {
+      "name": "Bikira Maria Mama wa Afrika",
+      "status": "provisional"
+    },
+    "our-lady-of-fatima": {
+      "name": "Bikira Maria wa Fatima",
+      "status": "provisional"
+    },
+    "our-lady-of-guadalupe": {
+      "name": "Bikira Maria wa Guadalupe",
+      "status": "provisional"
+    },
+    "our-lady-of-loreto": {
+      "name": "Bikira Maria wa Loreto",
+      "status": "provisional"
+    },
+    "our-lady-of-lourdes": {
+      "name": "Bikira Maria wa Lurdi",
+      "status": "provisional"
+    },
+    "our-lady-of-mount-carmel": {
+      "name": "Bikira Maria wa Mlima Karmeli",
+      "status": "provisional"
+    },
+    "our-lady-of-sorrows": {
+      "name": "Bikira Maria wa Mateso",
+      "status": "provisional"
+    },
+    "our-lady-of-the-rosary": {
+      "name": "Bikira Maria wa Rozari",
+      "status": "provisional"
+    },
+    "our-lord-jesus-christ-king-of-the-universe": {
+      "name": "Bwana Wetu Yesu Kristo, Mfalme wa Ulimwengu",
+      "status": "provisional"
+    },
+    "palm-sunday-of-the-passion-of-the-lord": {
+      "name": "Dominika ya Matawi ya Mateso ya Bwana",
+      "status": "provisional"
+    },
+    "pancras-of-rome-martyr": {
+      "name": "Mtakatifu Pankrasi, Shahidi",
+      "status": "provisional"
+    },
+    "passion-of-saint-john-the-baptist": {
+      "name": "Mateso ya Mtakatifu Yohane Mbatizaji",
+      "status": "provisional"
+    },
+    "patrick-of-ireland-bishop": {
+      "name": "Mtakatifu Patriki, Askofu",
+      "status": "provisional"
+    },
+    "paul-miki-and-companions-martyrs": {
+      "name": "Mtakatifu Paulo Miki na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "paul-of-the-cross-priest": {
+      "name": "Mtakatifu Paulo wa Msalaba, Padre",
+      "status": "provisional"
+    },
+    "paul-vi-pope": {
+      "name": "Mtakatifu Paulo VI, Papa",
+      "status": "provisional"
+    },
+    "paulinus-of-nola-bishop": {
+      "name": "Mtakatifu Paulino wa Nola, Askofu",
+      "status": "provisional"
+    },
+    "pentecost-sunday": {
+      "name": "Dominika ya Pentekoste",
+      "status": "provisional"
+    },
+    "perpetua-of-carthage-and-felicity-of-carthage-martyrs": {
+      "name": "Watakatifu Perpetua na Felista, Mashahidi",
+      "status": "provisional"
+    },
+    "peter-and-paul-apostles": {
+      "name": "Watakatifu Petro na Paulo, Mitume",
+      "status": "provisional"
+    },
+    "peter-canisius-priest": {
+      "name": "Mtakatifu Petro Kanisio, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "peter-chanel-priest": {
+      "name": "Mtakatifu Petro Chanel, Padre na Shahidi",
+      "status": "provisional"
+    },
+    "peter-chrysologus-bishop": {
+      "name": "Mtakatifu Petro Krisologo, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "peter-claver-priest": {
+      "name": "Mtakatifu Petro Klaveri, Padre",
+      "status": "provisional"
+    },
+    "peter-damian-bishop": {
+      "name": "Mtakatifu Petro Damiani, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "peter-julian-eymard-priest": {
+      "name": "Mtakatifu Petro Juliani Eymard, Padre",
+      "status": "provisional"
+    },
+    "philip-and-james-apostles": {
+      "name": "Watakatifu Filipo na Yakobo, Mitume",
+      "status": "provisional"
+    },
+    "philip-neri-priest": {
+      "name": "Mtakatifu Filipo Neri, Padre",
+      "status": "provisional"
+    },
+    "pius-francesco-forgione-priest": {
+      "name": "Mtakatifu Pio wa Pietrelcina, Padre",
+      "status": "provisional"
+    },
+    "pius-v-pope": {
+      "name": "Mtakatifu Pio V, Papa",
+      "status": "provisional"
+    },
+    "pius-x-pope": {
+      "name": "Mtakatifu Pio X, Papa",
+      "status": "provisional"
+    },
+    "polycarp-of-smyrna-bishop": {
+      "name": "Mtakatifu Polikarpo, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "pontian-i-pope-and-hippolytus-of-rome-priest": {
+      "name": "Watakatifu Ponsiano, Papa, na Hipolito, Padre, Mashahidi",
+      "status": "provisional"
+    },
+    "presentation-of-the-blessed-virgin-mary": {
+      "name": "Kutolewa kwa Bikira Maria Hekaluni",
+      "status": "provisional"
+    },
+    "presentation-of-the-lord": {
+      "name": "Kutolewa kwa Bwana Hekaluni",
+      "status": "provisional"
+    },
+    "queenship-of-the-blessed-virgin-mary": {
+      "name": "Bikira Maria Malkia",
+      "status": "provisional"
+    },
+    "raymond-of-penyafort-priest": {
+      "name": "Mtakatifu Raimundo wa Penyafort, Padre",
+      "status": "provisional"
+    },
+    "rita-of-cascia-religious": {
+      "name": "Mtakatifu Rita wa Kashia, Mtawa",
+      "status": "provisional"
+    },
+    "robert-bellarmine-bishop": {
+      "name": "Mtakatifu Roberto Bellarmino, Askofu na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "romuald-of-ravenna-abbot": {
+      "name": "Mtakatifu Romualdo, Abati",
+      "status": "provisional"
+    },
+    "rose-of-lima-virgin": {
+      "name": "Mtakatifu Roza wa Lima, Bikira",
+      "status": "provisional"
+    },
+    "saturday-after-ash-wednesday": {
+      "name": "Jumamosi baada ya Jumatano ya Majivu",
+      "status": "provisional"
+    },
+    "saturday-after-epiphany": {
+      "name": "Jumamosi baada ya Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "scholastica-of-nursia-virgin": {
+      "name": "Mtakatifu Skolastika, Bikira",
+      "status": "provisional"
+    },
+    "sebastian-of-milan-martyr": {
+      "name": "Mtakatifu Sebastiani, Shahidi",
+      "status": "provisional"
+    },
+    "second-sunday-after-christmas": {
+      "name": "Dominika ya Pili baada ya Noeli",
+      "status": "provisional"
+    },
+    "seven-holy-founders-of-the-servite-order": {
+      "name": "Waanzilishi Saba Watakatifu wa Shirika la Watumishi wa Maria",
+      "status": "provisional"
+    },
+    "sharbel-makhluf-priest": {
+      "name": "Mtakatifu Sharbel Makhlūf, Padre",
+      "status": "provisional"
+    },
+    "simon-and-jude-apostles": {
+      "name": "Watakatifu Simoni na Yuda, Mitume",
+      "status": "provisional"
+    },
+    "sixtus-ii-pope-and-companions-martyrs": {
+      "name": "Mtakatifu Sisto II, Papa, na Wenzake, Mashahidi",
+      "status": "provisional"
+    },
+    "stanislaus-of-szczepanow-bishop": {
+      "name": "Mtakatifu Stanislaus, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "stephen-i-of-hungary": {
+      "name": "Mtakatifu Stefano wa Hungaria",
+      "status": "provisional"
+    },
+    "stephen-the-first-martyr": {
+      "name": "Mtakatifu Stefano, Shahidi wa Kwanza",
+      "status": "provisional"
+    },
+    "sunday-of-the-word-of-god": {
+      "name": "Dominika ya Tatu ya Mwaka, au Dominika ya Neno la Mungu",
+      "status": "provisional"
+    },
+    "sylvester-i-pope": {
+      "name": "Mtakatifu Silvesta I, Papa",
+      "status": "provisional"
+    },
+    "teresa-benedicta-of-the-cross-stein-virgin": {
+      "name": "Mtakatifu Teresa Benedikta wa Msalaba (Edith Stein), Bikira na Shahidi",
+      "status": "provisional"
+    },
+    "teresa-of-calcutta-virgin": {
+      "name": "Mtakatifu Teresa wa Kalkuta, Bikira",
+      "status": "provisional"
+    },
+    "teresa-of-jesus-of-avila-virgin": {
+      "name": "Mtakatifu Teresa wa Yesu, Bikira na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "therese-of-the-child-jesus-and-the-holy-face-of-lisieux-virgin": {
+      "name": "Mtakatifu Teresa wa Mtoto Yesu, Bikira na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "thomas-apostle": {
+      "name": "Mtakatifu Tomaso, Mtume",
+      "status": "provisional"
+    },
+    "thomas-aquinas-priest": {
+      "name": "Mtakatifu Tomaso wa Akwino, Padre na Mwalimu wa Kanisa",
+      "status": "provisional"
+    },
+    "thomas-becket-bishop": {
+      "name": "Mtakatifu Tomaso Becket, Askofu na Shahidi",
+      "status": "provisional"
+    },
+    "thursday-after-ash-wednesday": {
+      "name": "Alhamisi baada ya Jumatano ya Majivu",
+      "status": "provisional"
+    },
+    "thursday-after-epiphany": {
+      "name": "Alhamisi baada ya Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "thursday-of-the-lords-supper": {
+      "name": "Alhamisi Kuu: Karamu ya Bwana",
+      "status": "provisional"
+    },
+    "timothy-of-ephesus-and-titus-of-crete-bishops": {
+      "name": "Watakatifu Timotheo na Tito, Maaskofu",
+      "status": "provisional"
+    },
+    "transfiguration-of-the-lord": {
+      "name": "Kugeuka Sura kwa Bwana",
+      "status": "provisional"
+    },
+    "tuesday-after-epiphany": {
+      "name": "Jumanne baada ya Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "turibius-of-mogrovejo-bishop": {
+      "name": "Mtakatifu Toribio wa Mogrovejo, Askofu",
+      "status": "provisional"
+    },
+    "victor-i-pope": {
+      "name": "Mtakatifu Viktor I, Papa na Shahidi",
+      "status": "provisional"
+    },
+    "victoria-rasoamanarivo": {
+      "name": "Mwenyeheri Viktoria Rasoamanarivo",
+      "status": "provisional"
+    },
+    "vincent-de-paul-priest": {
+      "name": "Mtakatifu Vinsenti wa Paulo, Padre",
+      "status": "provisional"
+    },
+    "vincent-ferrer-priest": {
+      "name": "Mtakatifu Vinsenti Ferreri, Padre",
+      "status": "provisional"
+    },
+    "vincent-of-saragossa-deacon": {
+      "name": "Mtakatifu Vinsenti, Shemasi na Shahidi",
+      "status": "provisional"
+    },
+    "visitation-of-mary": {
+      "name": "Bikira Maria Kumtembelea Elizabeti",
+      "status": "provisional"
+    },
+    "wednesday-after-epiphany": {
+      "name": "Jumatano baada ya Tokeo la Bwana",
+      "status": "provisional"
+    },
+    "wenceslaus-i-of-bohemia-martyr": {
+      "name": "Mtakatifu Venseslaus, Shahidi",
+      "status": "provisional"
+    },
+    "zeno-of-verona-bishop": {
+      "name": "Mtakatifu Zeno wa Verona, Askofu",
+      "status": "provisional"
+    }
+  }
+}
