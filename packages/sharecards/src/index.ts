@@ -9,9 +9,10 @@
 export const packageName = '@lectio/sharecards';
 
 export { cardAltText } from './alt.ts';
+export type { AltTextLabels, AltTextOptions } from './alt.ts';
 export { TEMPLATE_VERSION, canonicalJson, cardCacheKey, fontsFingerprint, rendererVersions } from './cache.ts';
 export type { CacheKeyOptions, RendererVersions } from './cache.ts';
-export { LANGUAGE_NAMES, insightCaption } from './cards.ts';
+export { LANGUAGE_NAMES, cardDate, insightCaption } from './cards.ts';
 export type {
   CardKind,
   DayCard,

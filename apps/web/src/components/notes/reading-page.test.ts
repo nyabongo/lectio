@@ -12,7 +12,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
 const passagesDir = resolve(webRoot, 'test/fixtures/content/passages');
 
-let render: (date: string, slot: string) => Promise<string>;
+let render: (date: string, slot: string, path?: string) => Promise<string>;
 let staticPaths: { params: { date: string; slot: string } }[];
 let mt: Passage;
 let is: Passage;
@@ -30,7 +30,11 @@ beforeAll(async () => {
   staticPaths = (page as unknown as { getStaticPaths: () => typeof staticPaths }).getStaticPaths();
   const container = await AstroContainer.create();
   const Page = page.default as unknown as Parameters<AstroContainer['renderToString']>[0];
-  render = (date, slot) => container.renderToString(Page, { params: { date, slot } });
+  render = (date, slot, path) =>
+    container.renderToString(Page, {
+      params: { date, slot },
+      ...(path === undefined ? {} : { request: new Request(`https://example.org${path}`) }),
+    });
 });
 
 afterAll(() => {
@@ -110,6 +114,24 @@ describe('Reading page', () => {
     expect(html).not.toContain('Verified');
     expect(html).not.toContain('class="note"');
     expect(html).not.toContain('issues/new');
+  });
+
+  it('shows the reviewed Kiswahili notes on /sw/, with English sources and no English-only badge (L-113)', async () => {
+    const html = await render('2026-09-20', 'gospel', '/sw/2026-09-20/gospel/');
+    expect(html).toContain('<html lang="sw"');
+    expect(html).toContain('Mwenye shamba anawalipa walioajiriwa mwisho');
+    expect(html).toContain('Wafanyakazi katika shamba la mizabibu');
+    expect(html).toContain('“wivu”');
+    expect(html).toContain('jicho lako ovu');
+    expect(html).not.toContain(mt.summary);
+    expect(html).not.toContain('Kiingereza pekee');
+    expect(html).not.toMatch(/class="reading__summary"[^>]*lang="en"/);
+    // Sources and original words stay the English file's.
+    expect(html).toContain('id="context-source-davies-allison"');
+    expect(html).toContain('ὀφθαλμός σου πονηρός');
+    expect(html).toContain('href="/sw/2026-09-20/gospel/notes/v15-evil-eye/"');
+    // The share card is the Kiswahili one.
+    expect(html).toContain('/og/sw/2026-09-20/gospel.png');
   });
 
   it('throws for a reading the calendar does not have', async () => {

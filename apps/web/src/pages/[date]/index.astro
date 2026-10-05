@@ -9,6 +9,7 @@ import ShareButton from '../../components/share/ShareButton.astro';
 import { formatDate, localeOf, localePath, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { dayPagePaths, dayPageView, dayPath } from '../../lib/day.ts';
+import { siteRepo } from '../../lib/notes-locale.ts';
 import { dayShareInsight } from '../../lib/share.ts';
 import type { DayEnv } from '../../lib/day.ts';
 import { siteContext, withBase } from '../../lib/site.ts';
@@ -25,7 +26,8 @@ const env: DayEnv = {
   messages: { t, formatDate: (locale, day) => formatDate(locale, day) },
   paths: (path) => withBase(base, localePath(lang, path)),
 };
-const view = dayPageView(env, siteContext(), date);
+// Reading summaries come from approved, up-to-date translations in the page's language, else English (L-113).
+const view = dayPageView(env, { config: siteContext().config, repo: siteRepo(lang) }, date);
 if (view === null) throw new Error(`No calendar day for ${date}`);
 ---
 

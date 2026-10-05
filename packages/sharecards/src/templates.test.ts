@@ -41,6 +41,20 @@ describe('cardTemplate', () => {
     ]);
   });
 
+  it('a card in another language writes its own date and Gospel label (L-113)', () => {
+    const sw = { dateLabel: 'Jumapili 20 Septemba 2026' };
+    expect(texts(cardTemplate({ ...dayFixture, ...sw, gospelLabel: 'Injili' })).slice(0, 4)).toEqual([
+      'Jumapili 20 Septemba 2026',
+      'Twenty-fifth Sunday in Ordinary Time',
+      'Year A · Ordinary Time, week 25',
+      'Injili · Matthew 20:1–16',
+    ]);
+    expect(texts(cardTemplate({ ...readingFixture, ...sw, slotLabel: 'Injili' }))[0]).toBe(
+      'Injili · Jumapili 20 Septemba 2026',
+    );
+    expect(texts(cardTemplate({ ...insightFixture, ...sw }))[0]).toBe('Jumapili 20 Septemba 2026');
+  });
+
   it('day: shorter celebrations are set larger', () => {
     const size = (celebration: string) =>
       JSON.stringify(cardTemplate({ ...dayFixture, celebration })).match(/"fontSize":(9\d|7\d|6\d)/)?.[1];

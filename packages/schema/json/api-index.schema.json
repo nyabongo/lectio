@@ -55,7 +55,23 @@
         "passages": { "const": "passages/index.json" },
         "passage": { "const": "passages/{key}.json" },
         "calendar": { "const": "calendar/{year}.json" },
-        "upcoming": { "const": "upcoming.json" }
+        "upcoming": { "const": "upcoming.json" },
+        "locales": {
+          "type": "object",
+          "propertyNames": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-([A-Z]{2}|[0-9]{3}))?$" },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["day", "passages", "passage", "calendar", "upcoming"],
+            "properties": {
+              "day": { "type": "string", "pattern": "^[A-Za-z0-9-]+/days/\\{date\\}\\.json$" },
+              "passages": { "type": "string", "pattern": "^[A-Za-z0-9-]+/passages/index\\.json$" },
+              "passage": { "type": "string", "pattern": "^[A-Za-z0-9-]+/passages/\\{key\\}\\.json$" },
+              "calendar": { "type": "string", "pattern": "^[A-Za-z0-9-]+/calendar/\\{year\\}\\.json$" },
+              "upcoming": { "type": "string", "pattern": "^[A-Za-z0-9-]+/upcoming\\.json$" }
+            }
+          }
+        }
       }
     }
   }
