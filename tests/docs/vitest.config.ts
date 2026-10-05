@@ -1,4 +1,5 @@
-// Docs link check (L-091): every relative link and heading anchor in README.md and docs/**/*.md resolves.
+// Docs link check (L-091): every relative link and heading anchor in README.md, CONTRIBUTING.md, config/README.md
+// and docs/**/*.md resolves.
 // Offline (nothing is fetched). Picked up by the root `tests/*` project glob; not part of unit coverage.
 import { fileURLToPath } from 'node:url';
 

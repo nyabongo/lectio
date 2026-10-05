@@ -10,13 +10,13 @@ research once a week on their own machine, approve what the gates send to review
 
 ## At a glance
 
-| What                         | Where it runs                       | When                                 | Needs                                        |
-| ---------------------------- | ----------------------------------- | ------------------------------------ | -------------------------------------------- |
-| Research (new notes)         | owner's machine, `npm run research` | weekly, by hand                      | `ANTHROPIC_API_KEY` in the shell, `gh` login |
-| Content gates and merge rule | GitHub Actions                      | every content PR, `/approve` comment | verifier keys in the `llm-verifiers` env     |
-| Build and deploy             | GitHub Actions                      | every merge to `main`, daily 00:05   | Pages enabled (source: GitHub Actions)       |
-| Runway monitor               | GitHub Actions                      | daily 07:17                          | nothing (the job's own token)                |
-| Narration audio              | GitHub Actions (deploy, L-082)      | with each deploy, once wired         | TTS and storage secrets                      |
+| What                         | Where it runs                       | When                                 | Needs                                                |
+| ---------------------------- | ----------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| Research (new notes)         | owner's machine, `npm run research` | weekly, by hand                      | `ANTHROPIC_API_KEY` in the shell, `gh` login         |
+| Content gates and merge rule | GitHub Actions                      | every content PR, `/approve` comment | verifier keys in the `llm-verifiers` env             |
+| Build and deploy             | GitHub Actions                      | every merge to `main`, daily 00:05   | Pages enabled (source: GitHub Actions)               |
+| Runway monitor               | GitHub Actions                      | daily 07:17                          | nothing (the job's own token)                        |
+| Narration audio              | deploy's "Render narration" step    | with each deploy                     | TTS and storage secrets, `tts.storage.publicBaseUrl` |
 
 Times are in `Africa/Nairobi` (`site.timezone`).
 
@@ -53,14 +53,14 @@ answer, so `site.baseUrl` and `site.basePath` must match the real Pages URL.
 Never commit a key. Local keys live in the shell (for example an untracked `.env` loaded by direnv); CI keys live in
 GitHub secrets.
 
-| Secret                                                  | Where                                    | Used by                                                       | Without it                                                     |
-| ------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- |
-| `ANTHROPIC_API_KEY`                                     | owner's shell                            | research CLI (`run`, `fixup`, `translate`, back-fill batches) | live research stops; `plan` and back-fill estimates still work |
-| `ANTHROPIC_API_KEY`                                     | environment `llm-verifiers`              | `verifiers` job in `content-gates.yml` (confirmer)            | verifiers are skipped and every content PR goes to review      |
-| `OPENAI_API_KEY`                                        | environment `llm-verifiers`              | `verifiers` job in `content-gates.yml` (refuter)              | as above                                                       |
-| `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`               | repository secrets (deploy audio, L-082) | `@lectio/provider-azure-tts`                                  | narration is rendered with the fake TTS and not uploaded       |
-| `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | repository secrets (deploy audio, L-082) | `@lectio/provider-s3`                                         | as above                                                       |
-| `R2_ACCOUNT_ID` or `S3_ENDPOINT`; optional `S3_REGION`  | repository secrets (deploy audio, L-082) | `@lectio/provider-s3` (endpoint; region defaults to `auto`)   | as above                                                       |
+| Secret                                                  | Where                       | Used by                                                                       | Without it                                                         |
+| ------------------------------------------------------- | --------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `ANTHROPIC_API_KEY`                                     | owner's shell               | research CLI (`run`, `fixup`, `translate`, back-fill batches)                 | live research stops; `plan` and back-fill estimates still work     |
+| `ANTHROPIC_API_KEY`                                     | environment `llm-verifiers` | `verifiers` job in `content-gates.yml` (confirmer)                            | verifiers are skipped and every content PR goes to review          |
+| `OPENAI_API_KEY`                                        | environment `llm-verifiers` | `verifiers` job in `content-gates.yml` (refuter)                              | as above                                                           |
+| `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`               | repository secrets          | deploy's "Render narration" step (`@lectio/provider-azure-tts`)               | narration is rendered with the fake voice and nothing is published |
+| `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | repository secrets          | deploy's "Render narration" step (`@lectio/provider-s3`)                      | as above                                                           |
+| `R2_ACCOUNT_ID` or `S3_ENDPOINT`                        | repository secrets          | deploy's "Render narration" step (`@lectio/provider-s3`, the bucket endpoint) | as above                                                           |
 
 **Move the LLM keys into `llm-verifiers`.** The setup script creates the environment and limits it to `main`, but it
 does not move secrets. The `verifiers` job is the only job that runs in that environment, so keys kept there cannot
@@ -78,9 +78,11 @@ gh secret delete OPENAI_API_KEY --repo nyabongo/lectio
 never auto-merges (`autoMerge.requireBothVerifiers`), so missing keys make everything wait for a person rather than
 pass unchecked.
 
-**TTS and storage secrets** are for the audio step that L-082 ([#73](https://github.com/nyabongo/lectio/issues/73))
-adds to `deploy.yml`; until it lands nothing reads them. Create them once decision L-205
-([#102](https://github.com/nyabongo/lectio/issues/102)) settles the vendor; see [Narration audio](#narration-audio).
+**TTS and storage secrets** are read only by the "Render narration" step of `deploy.yml` (L-082), which runs only on
+`main`. Create them once decision L-205 ([#102](https://github.com/nyabongo/lectio/issues/102)) settles the vendor;
+see [Narration audio](#narration-audio). The deploy passes no region to the storage client, so it uses `auto`, which
+is what R2 expects. `S3_REGION` is read only from a local shell (a manual `audio:render` or `npm run test:live`), for
+a bucket that needs another region.
 
 `npm run test:live` (provider contract suites against real services) reads the same variables from your shell. It
 never runs in CI.
@@ -103,31 +105,43 @@ Config changes always go through human review; they never auto-merge.
 
 ### Narration audio
 
-Narration is rendered in CI (decision L-205, [#102](https://github.com/nyabongo/lectio/issues/102), open). The
-default plan is Azure AI Speech with Kenyan English and Kiswahili voices, stored in a public Cloudflare R2 bucket
-through its S3 API. To turn it on, once L-082 has landed:
+Narration is rendered on every deploy, before the site build, by the "Render narration" step of `deploy.yml`
+(L-082): `npm run audio:render -- --auto`. Under `--auto`, two things alone decide whether audio goes live: the
+secrets above (both the Azure and the storage set) and `tts.storage.publicBaseUrl` in the config. `tts.provider` and
+`tts.storage.provider` do not matter to the deploy; they only set the defaults for a manual `audio:render` run.
 
-1. Create the Azure Speech resource and the R2 bucket (public read, with a public URL) and an R2 API token.
+- **Live** (all present): the Azure voice renders the missing narration into the bucket and the build publishes the
+  audio URLs in the pages and the API. Audio is keyed by a hash of the text, voice and engine version, so only new
+  or changed notes are billed, within `tts.monthlyCharBudget` (1,000,000 characters by default).
+- **Not live** (anything missing): the fake voice renders into `.audio-out`, uploaded as the workflow artifact
+  `narration-fake` for inspection only. Nothing is published and every `audio` stays `null`.
+
+The step never fails the deploy (`continue-on-error`); the job summary says which case ran, what it rendered and what
+is missing. The decision itself is L-205 ([#102](https://github.com/nyabongo/lectio/issues/102), open); the default
+plan is Azure AI Speech with Kenyan English and Kiswahili voices, stored in a public Cloudflare R2 bucket through its
+S3 API. To turn it on:
+
+1. Create the Azure Speech resource, the R2 bucket (public read, with a public URL) and an R2 API token.
 2. Add the secrets in the table above.
-3. In a config PR: `tts.provider: "azure"`, `tts.storage.provider: "s3"`, `tts.storage.publicBaseUrl` (the bucket's
-   public URL), check `tts.voices` and `tts.monthlyCharBudget` (1,000,000 characters by default), and
-   `site.features.listen: true` to show the Listen button.
+3. In a config PR: set `tts.storage.publicBaseUrl` to the bucket's public URL, check `tts.voices` and
+   `tts.monthlyCharBudget`, and set `site.features.listen: true` to show the Listen button.
+4. After the next deploy, read the "Render narration" job summary.
 
 To try the pipeline locally without any account: `npm run audio:render -- --provider fake --storage fs:.audio-out
---dry-run`. Audio is keyed by a hash of the text, so only changed notes are rendered again.
+--dry-run`.
 
 ## Workflows and schedules
 
-| Workflow                                                                             | Trigger                                               | Secrets                 | What it does                                                                                                  |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [`ci.yml`](../.github/workflows/ci.yml)                                              | push, PR                                              | none                    | lint and format, typecheck, unit tests with the 96% coverage floor, lockfile sync, actionlint, check registry |
-| [`content-checks.yml`](../.github/workflows/content-checks.yml)                      | PR                                                    | none                    | deterministic gates (schema, evidence, licence) on content PRs; read-only                                     |
-| [`content-gates.yml`](../.github/workflows/content-gates.yml)                        | after `Content checks`, `/approve` comments, dispatch | `llm-verifiers` env     | trusted re-run of the gates, the two verifiers, the merge rule, approval commit and merge                     |
-| [`calendar.yml`](../.github/workflows/calendar.yml)                                  | push, PR                                              | none                    | `calendar:check` (committed calendars are current) and `calendar:report` (no undocumented gaps)               |
-| [`web.yml`](../.github/workflows/web.yml), [`e2e.yml`](../.github/workflows/e2e.yml) | push, PR                                              | none                    | site build from fixture content; end-to-end tests                                                             |
-| [`flutter.yml`](../.github/workflows/flutter.yml)                                    | push, PR (`ios-build` label for the iOS build)        | none                    | Flutter analyse, tests and builds                                                                             |
-| [`deploy.yml`](../.github/workflows/deploy.yml)                                      | push to `main`, dispatch, daily 21:05 UTC             | none yet (audio: L-082) | builds the site, API, share cards and search index; deploys to Pages; smoke-checks the live URL               |
-| [`runway.yml`](../.github/workflows/runway.yml)                                      | daily 04:17 UTC, dispatch                             | none                    | the content runway monitor, below                                                                             |
+| Workflow                                                                             | Trigger                                               | Secrets                                       | What it does                                                                                                            |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [`ci.yml`](../.github/workflows/ci.yml)                                              | push, PR                                              | none                                          | lint and format, typecheck, unit tests with the 96% coverage floor, lockfile sync, actionlint, check registry           |
+| [`content-checks.yml`](../.github/workflows/content-checks.yml)                      | PR                                                    | none                                          | deterministic gates (schema, evidence, licence) on content PRs; read-only                                               |
+| [`content-gates.yml`](../.github/workflows/content-gates.yml)                        | after `Content checks`, `/approve` comments, dispatch | `llm-verifiers` env                           | trusted re-run of the gates, the two verifiers, the merge rule, approval commit and merge                               |
+| [`calendar.yml`](../.github/workflows/calendar.yml)                                  | push, PR                                              | none                                          | `calendar:check` (committed calendars are current) and `calendar:report` (no undocumented gaps)                         |
+| [`web.yml`](../.github/workflows/web.yml), [`e2e.yml`](../.github/workflows/e2e.yml) | push, PR                                              | none                                          | site build from fixture content; end-to-end tests                                                                       |
+| [`flutter.yml`](../.github/workflows/flutter.yml)                                    | push, PR (`ios-build` label for the iOS build)        | none                                          | Flutter analyse, tests and builds                                                                                       |
+| [`deploy.yml`](../.github/workflows/deploy.yml)                                      | push to `main`, dispatch, daily 21:05 UTC             | Azure and S3/R2 secrets (narration step only) | renders narration, then builds the site, API, share cards and search index; deploys to Pages; smoke-checks the live URL |
+| [`runway.yml`](../.github/workflows/runway.yml)                                      | daily 04:17 UTC, dispatch                             | none                                          | the content runway monitor, below                                                                                       |
 
 Merges made by the merge-rule job use the Actions token, which does not fire `push`, so that job dispatches
 `deploy.yml` itself. The daily deploy at 00:05 Nairobi time moves `/` to the new day. You can re-run any of these
@@ -215,7 +229,7 @@ Every decision is a config value with a default, so nothing waits on the owner; 
 | ----------------------------------------------------- | ------------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [#100](https://github.com/nyabongo/lectio/issues/100) | L-201 link-out, auto-merge, research runner | recorded (some items open) | `linkout.*`, `autoMerge.*`, `research.*`                                                           | [001](decisions/001-linkout.md), [003](decisions/003-auto-merge.md), [004](decisions/004-research-runner.md); `packages/refs`, `packages/gates/src/merge-rule`, `packages/research`                                         |
 | [#101](https://github.com/nyabongo/lectio/issues/101) | L-202 reviewer and weekly capacity          | open                       | `reviewer.githubHandles`, `weeklyCapacity`, `maxOpenReviewPrs`, `approvalLabel`, `approvalCommand` | merge rule and approvals (`packages/gates/src/merge-rule`, `src/review`, `content-gates.yml`); research planner throttle (`packages/research/src/plan`); translation review (`packages/gates/src/schema-gate/translations`) |
-| [#102](https://github.com/nyabongo/lectio/issues/102) | L-205 TTS vendor, voices, audio storage     | open                       | `tts.*`, `site.features.listen`                                                                    | `packages/audio`, `packages/providers` (`createProviders`), `provider-azure-tts`, `provider-s3`, the deploy audio step (L-082), the Listen UI (`apps/web/src/lib/day.ts`, L-085)                                            |
+| [#102](https://github.com/nyabongo/lectio/issues/102) | L-205 TTS vendor, voices, audio storage     | open                       | `tts.*`, `site.features.listen`                                                                    | `packages/audio`, `packages/providers` (`createProviders`), `provider-azure-tts`, `provider-s3`, the deploy's "Render narration" step (L-082), the Listen UI (`apps/web/src/lib/day.ts`, L-085)                             |
 | [#103](https://github.com/nyabongo/lectio/issues/103) | L-206 domain and hosting                    | open                       | `site.baseUrl`, `site.basePath`, `site.customDomain`                                               | `apps/web/src/lib/site.ts`, `deploy.yml` (CNAME, smoke check), the API root ([api.md](api.md#base-url)), the Flutter `LECTIO_API_BASE_URL` default                                                                          |
 | [#104](https://github.com/nyabongo/lectio/issues/104) | L-207 verifier model families               | open                       | `verifiers.confirmer`, `verifiers.refuter`, `verifiers.mode`, `pricing`                            | `packages/gates/src/verifier-gate`, `packages/gates/src/ci/providers.ts`, `provider-openai`, the `verifiers` job and its `llm-verifiers` secrets, the About page                                                            |
 | [#105](https://github.com/nyabongo/lectio/issues/105) | L-208 Kiswahili reviewer, glossary, policy  | open                       | `site.locales`, `reviewer.githubHandles`                                                           | `npm run research -- translate` (L-112), translation schema gate (never auto-merges), `passages/i18n/sw/`, the `sw/` site and API mirror (L-110, L-113)                                                                     |

@@ -131,7 +131,8 @@ measures `packages/*/src/**` at the 96% floor.
   [0005 Providers behind interfaces](docs/adr/0005-providers-behind-interfaces.md) ·
   [0006 96% coverage floor](docs/adr/0006-coverage-floor.md) · [0007 romcal](docs/adr/0007-romcal.md)
 
-`tests/docs/links.test.ts` checks that every relative link and heading anchor in this file and in `docs/` resolves.
+`tests/docs/links.test.ts` checks that every relative link and heading anchor in this file, CONTRIBUTING.md,
+`config/README.md` and `docs/` resolves.
 
 ## Licence
 
@@ -139,21 +140,22 @@ The code in this repository is released under the [MIT Licence](LICENSE).
 
 Content and data keep their own licences, recorded next to them (`npm run corpus:licences` lists the corpora):
 
-| Data                                                                                   | Licence                      | Record                                                                                                                   |
-| -------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Greek New Testament (SBLGNT, MorphGNT edition)                                         | CC BY 4.0 and CC BY-SA 3.0   | [corpus/grc-sblgnt](corpus/grc-sblgnt/LICENSE.md)                                                                        |
-| Hebrew Bible (Open Scriptures Hebrew Bible, Westminster Leningrad Codex)               | CC BY 4.0; WLC public domain | [corpus/hbo-oshb](corpus/hbo-oshb/LICENSE.md)                                                                            |
-| Clementine Vulgate                                                                     | public domain                | [corpus/lat-vulgate-clementine](corpus/lat-vulgate-clementine/LICENSE.md)                                                |
-| Septuagint, deuterocanonical books (Swete, via LXX-Swete-1930)                         | **GPL-3.0-only**             | [corpus/grc-lxx](corpus/grc-lxx/LICENSE.md)                                                                              |
-| Licence-guard index (hashes of public-domain English texts, no text)                   | public-domain sources        | [corpus/guard](corpus/guard/SOURCE.json)                                                                                 |
-| Versification data (SIL libpalaso, STEPBible TVTMS)                                    | MIT; CC BY 4.0               | [packages/refs/data](packages/refs/data/SOURCE.json)                                                                     |
-| Fonts (Cormorant Garamond, Gentium Plus, Noto Serif Hebrew, Noto Serif, Source Sans 3) | SIL Open Font Licence        | `OFL-*.txt` in [apps/web/public/fonts](apps/web/public/fonts) and [packages/sharecards/fonts](packages/sharecards/fonts) |
+| Data                                                                                   | Licence                                                              | Record                                                                                                                   |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Greek New Testament (SBLGNT, MorphGNT edition)                                         | CC BY-SA 3.0 as a whole (text CC BY 4.0, MorphGNT data CC BY-SA 3.0) | [corpus/grc-sblgnt](corpus/grc-sblgnt/LICENSE.md)                                                                        |
+| Hebrew Bible (Open Scriptures Hebrew Bible, Westminster Leningrad Codex)               | CC BY 4.0; WLC public domain                                         | [corpus/hbo-oshb](corpus/hbo-oshb/LICENSE.md)                                                                            |
+| Clementine Vulgate                                                                     | public domain                                                        | [corpus/lat-vulgate-clementine](corpus/lat-vulgate-clementine/LICENSE.md)                                                |
+| Septuagint, deuterocanonical books (Swete, via LXX-Swete-1930)                         | **GPL-3.0-only**                                                     | [corpus/grc-lxx](corpus/grc-lxx/LICENSE.md)                                                                              |
+| Licence-guard index (hashes of public-domain English texts, no text)                   | public-domain sources                                                | [corpus/guard](corpus/guard/SOURCE.json)                                                                                 |
+| Versification data (SIL libpalaso, STEPBible TVTMS)                                    | MIT; CC BY 4.0                                                       | [packages/refs/data](packages/refs/data/SOURCE.json)                                                                     |
+| Fonts (Cormorant Garamond, Gentium Plus, Noto Serif Hebrew, Noto Serif, Source Sans 3) | SIL Open Font Licence                                                | `OFL-*.txt` in [apps/web/public/fonts](apps/web/public/fonts) and [packages/sharecards/fonts](packages/sharecards/fonts) |
 
 **The Swete Septuagint is copyleft.** Swete's edition (1907–1912) is in the public domain, but the digitised database
 Lectio imports is published under the GNU GPL version 3, and `corpus/grc-lxx` is a modified version of it distributed
 under the same licence ([decision 012](docs/decisions/012-lxx-source.md)). Anyone redistributing those files, or a
-work built from them, takes on the GPL's terms; the MIT licence of the code does not cover them. MorphGNT's CC BY-SA
-3.0 likewise carries share-alike terms.
+work built from them, takes on the GPL's terms; the MIT licence of the code does not cover them. Likewise,
+`corpus/grc-sblgnt` as a whole is distributed under CC BY-SA 3.0 (text CC BY 4.0, MorphGNT data CC BY-SA 3.0),
+which carries share-alike terms.
 
 Lectio never stores the text of a copyrighted modern Bible translation; readings link out to a public-domain or
 licensed source instead ([ADR 0003](docs/adr/0003-never-store-reading-text.md)). The notes in `passages/` are

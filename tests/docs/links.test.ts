@@ -1,4 +1,4 @@
-// Every relative link and heading anchor in README.md and docs/**/*.md resolves (L-091). Offline: external links
+// Every relative link and heading anchor in README.md, CONTRIBUTING.md, config/README.md and docs/**/*.md resolves (L-091). Offline: external links
 // are not fetched. The fixtures prove the checker catches a missing file, a missing anchor (in another file and in
 // the same file), an HTML link and a reference definition.
 import { join } from 'node:path';
@@ -12,11 +12,22 @@ const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
 const fixtures = fileURLToPath(new URL('fixtures', import.meta.url));
 
 describe('repository docs', () => {
-  const files = [join(repoRoot, 'README.md'), ...markdownFiles(join(repoRoot, 'docs'))];
+  const files = [
+    ...['README.md', 'CONTRIBUTING.md', 'config/README.md'].map((file) => join(repoRoot, file)),
+    ...markdownFiles(join(repoRoot, 'docs')),
+  ];
 
-  it('covers README.md, the operator handbook and the API reference', () => {
+  it('covers README.md, CONTRIBUTING.md, config/README.md, the operator handbook and the API reference', () => {
     const shown = files.map((file) => file.slice(repoRoot.length));
-    expect(shown).toEqual(expect.arrayContaining(['README.md', 'docs/operator-handbook.md', 'docs/api.md']));
+    expect(shown).toEqual(
+      expect.arrayContaining([
+        'README.md',
+        'CONTRIBUTING.md',
+        'config/README.md',
+        'docs/operator-handbook.md',
+        'docs/api.md',
+      ]),
+    );
   });
 
   it.each(files.map((file) => [file.slice(repoRoot.length), file]))('%s: every relative link resolves', (_, file) => {
