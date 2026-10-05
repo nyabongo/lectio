@@ -1,0 +1,593 @@
+{
+  "key": "PS.144.1_144.2_144.3-4",
+  "ref": "Ps 144:1, 2, 3-4",
+  "locale": "en",
+  "summary": "A royal psalm borrows David’s victory song to bless God as rock and steadfast love, then marvels that God heeds a mere breath.",
+  "context": {
+    "title": "Rock, steadfast love and a breath",
+    "paragraphs": [
+      "Psalm 144 is numbered 143 in the Latin Bible; the Hebrew heading reads of David, and the Latin adds against Goliath. [c1][c2] Its opening strophe imitates David’s song of thanksgiving in Psalm 18, borrowing its titles for God and its image of hands trained for battle. [c3] The Pulpit Commentary still finds original touches pointing to an author, not a copyist. [c4]",
+      "Verses 3-4 turn from praise to wonder that God cares for so slight and passing a creature. [c5] Keil and Delitzsch call verse 3 a variation of Psalm 8, using other verbs, and verse 4 a miniature of Psalm 39. [c6] Ellicott suggests the reflection may voice a warrior’s humility, a lament over fallen comrades, or perhaps a blending of the two. [c7]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "tsuri",
+      "verse": "144:1",
+      "anchor": "my rock",
+      "original": {
+        "text": "צוּרִי",
+        "lang": "hbo",
+        "translit": "ṣûrî",
+        "gloss": "my rock"
+      },
+      "summary": "Hebrew calls God tsuri, “my rock”, a title taken from Psalm 18; the Greek and Latin read “my God”.",
+      "body": "Tsur means a rock or cliff, and calling God my rock repeats a title from Psalm 18. [c8] The Septuagint and Vulgate render it my God, and the King James Version reads my strength, keeping rock in its margin. [c9][c10] John Gill pictures the rock as the place to which the psalmist fled for shelter when in distress. [c11]"
+    },
+    {
+      "id": "hasdi",
+      "verse": "144:2",
+      "anchor": "My mercy",
+      "original": {
+        "text": "חַסְדִּי",
+        "lang": "hbo",
+        "translit": "ḥasdî",
+        "gloss": "my steadfast love"
+      },
+      "summary": "God is called hasdi, “my steadfast love”: a bold title that the Pulpit Commentary says occurs nowhere else.",
+      "body": "Hesed means goodness or kindness, and here God is called simply my hesed. [c12] Keil and Delitzsch and Ellicott take it as a bold shortening of the God of my hesed in Psalm 59:18. [c13] The Pulpit Commentary notes that the expression occurs nowhere else, though Kirkpatrick finds a partial parallel in Jonah 2:8. [c14][c23] Kirkpatrick, in the Cambridge Bible, wonders whether the text first read my strength or my cliff, as in Psalm 18. [c15]"
+    },
+    {
+      "id": "yada",
+      "verse": "144:3",
+      "anchor": "notice",
+      "original": {
+        "text": "וַתֵּדָעֵהוּ",
+        "lang": "hbo",
+        "translit": "wattēdāʿēhû",
+        "gloss": "that you know him"
+      },
+      "summary": "Hebrew asks why God should “know” a human being, using yadaʿ, the ordinary verb for knowing.",
+      "body": "The verb is yadaʿ, to know, which Keil and Delitzsch take here in the sense of loving intimacy. [c16] Barnes reads it more plainly as taking notice of someone and regarding them. [c17] Its partner verb hashab properly means to count or compute, so the line asks why God should take account of a creature so insignificant. [c18]"
+    },
+    {
+      "id": "hebel",
+      "verse": "144:4",
+      "anchor": "a breath",
+      "original": {
+        "text": "הֶבֶל",
+        "lang": "hbo",
+        "translit": "hebel",
+        "gloss": "breath, vapour"
+      },
+      "summary": "A human being is likened to hebel, a breath: the same word Ecclesiastes uses for “vanity”.",
+      "body": "Hebel means vapour or breath, and figuratively whatever is evanescent and unsubstantial. [c19] Kirkpatrick prefers a breath to the older rendering vanity here. [c20] It is the word Qoheleth makes his refrain in Ecclesiastes 1:2, the book from which today’s first reading is taken. [c21] The passing shadow in the same verse uses the same figure as Psalm 102:12. [c22]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Psalm 144 in the Hebrew numbering is Psalm 143 in the Douay-Rheims and Vulgate numbering.",
+      "sourceIds": ["drbo-ps-143", "drbo-ps-143-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The Hebrew heading of Psalm 144 assigns it to David, and the Vulgate heading adds “against Goliath”.",
+      "sourceIds": ["ps-144-1-david", "vulgate-ps-144-1-goliath", "drbo-ps-143"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The first strophe of Psalm 144 imitates Psalm 18, borrowing its title “my rock” and its line about God training the psalmist’s hands for war.",
+      "sourceIds": ["kd-ps-144-1", "ps-18-3", "ps-18-35", "ps-144-1-trains"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "The Pulpit Commentary holds that Psalm 144:2 has peculiar and original touches that indicate an author rather than a copyist.",
+      "sourceIds": ["pulpit-ps-144-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "In verses 3-4 the psalmist turns from praise to reflect that human insignificance and transitoriness enhance the marvel of God’s care.",
+      "sourceIds": ["cambridge-ps-144-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Keil and Delitzsch describe Psalm 144:3 as a variation of Psalm 8:5 with other verbs and Psalm 144:4 as a miniature of Psalm 39.",
+      "sourceIds": ["kd-ps-144-3", "kd-ps-144-3-miniature", "ps-8-5", "ps-39-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Ellicott suggests that the reflection of Psalm 144:4 may express a warrior’s humility, a lament over fallen comrades, or both.",
+      "sourceIds": ["ellicott-ps-144-4-humility", "ellicott-ps-144-4-comrades"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "צוּר (tsur) means rock or cliff, and the title “my rock” (צוּרִי) also appears in Psalm 18:3.",
+      "sourceIds": ["bdb-tsur", "ps-18-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "The Septuagint and the Vulgate render צוּרִי in Psalm 144:1 as “my God”.",
+      "sourceIds": ["gill-ps-144-1", "vulgate-ps-144-1-deus"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "The King James Version reads “my strength” in Psalm 144:1, with “my rock”, as in the Hebrew, in its margin.",
+      "sourceIds": ["barnes-ps-144-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "John Gill describes the rock as the one to whom the psalmist fled for shelter when in distress.",
+      "sourceIds": ["gill-ps-144-1-shelter"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "חֶסֶד (hesed) means goodness or kindness, and in Psalm 144:2 God is called חַסְדִּי, “my hesed”.",
+      "sourceIds": ["bdb-hesed", "ps-144-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Keil and Delitzsch and Ellicott take “my hesed” as a shortened form of “God of my hesed” in Psalm 59:18.",
+      "sourceIds": ["kd-ps-144-1-abbreviation", "ellicott-ps-144-2", "ps-59-18"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "The Pulpit Commentary states that the expression “my goodness” in Psalm 144:2 occurs nowhere else.",
+      "sourceIds": ["pulpit-ps-144-2-nowhere"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Kirkpatrick in the Cambridge Bible considers it not improbable that Psalm 144:2 should be read as in Psalm 18, “my strength” or “my cliff”.",
+      "sourceIds": ["cambridge-ps-144-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Keil and Delitzsch take the verb יָדַע in Psalm 144:3 in the sense of loving intimacy.",
+      "sourceIds": ["kd-ps-144-3-yada", "ps-144-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Barnes understands the verb in Psalm 144:3 to mean taking notice of someone or regarding them.",
+      "sourceIds": ["barnes-ps-144-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The parallel verb חָשַׁב in Psalm 144:3 properly means to count or compute, and the verse marvels at God’s regard for so insignificant a creature.",
+      "sourceIds": ["kd-ps-144-3-hashab", "pulpit-ps-144-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "הֶבֶל (hebel) means vapour or breath, and figuratively what is evanescent, unsubstantial or worthless.",
+      "sourceIds": ["bdb-hebel", "bdb-hebel-figurative"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "The Cambridge Bible renders הֶבֶל in Psalm 144:4 as “a breath, unsubstantial and evanescent” rather than “vanity”.",
+      "sourceIds": ["cambridge-ps-144-4"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "הֶבֶל is the refrain word of Ecclesiastes, beginning in Ecclesiastes 1:2, the book from which the first reading on the same day as this psalm (Ecclesiastes 3:1-11) is taken.",
+      "sourceIds": ["eccl-1-2", "bdb-hebel-ecclesiastes"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "The image of days like a passing shadow in Psalm 144:4 is the same figure as in Psalm 102:12.",
+      "sourceIds": ["ps-144-4-shadow", "ps-102-12", "kd-ps-144-3-shadow"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Kirkpatrick in the Cambridge Bible finds a partial parallel to “my hesed” in Jonah 2:8 (Hebrew 2:9), where idolaters forsake חַסְדָּם, “their hesed”.",
+      "sourceIds": ["cambridge-ps-144-2-jonah", "jon-2-9"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "ps-144-1-david",
+      "type": "scripture",
+      "citation": "Psalm 144:1",
+      "ref": "Ps 144:1",
+      "excerpt": "לְדָוִד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-144-1-trains",
+      "type": "scripture",
+      "citation": "Psalm 144:1",
+      "ref": "Ps 144:1",
+      "excerpt": "הַמְלַמֵּד יָדַי לַקְרָב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-144-2",
+      "type": "scripture",
+      "citation": "Psalm 144:2",
+      "ref": "Ps 144:2",
+      "excerpt": "חַסְדִּי וּמְצוּדָתִי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-144-3",
+      "type": "scripture",
+      "citation": "Psalm 144:3",
+      "ref": "Ps 144:3",
+      "excerpt": "מָה אָדָם וַתֵּדָעֵהוּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-144-4-shadow",
+      "type": "scripture",
+      "citation": "Psalm 144:4",
+      "ref": "Ps 144:4",
+      "excerpt": "כְּצֵל עוֹבֵר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "vulgate-ps-144-1-goliath",
+      "type": "scripture",
+      "citation": "Psalm 144:1 (Vulgate Psalm 143:1)",
+      "ref": "Ps 144:1",
+      "excerpt": "Adversus Goliath",
+      "excerptLang": "lat"
+    },
+    {
+      "id": "vulgate-ps-144-1-deus",
+      "type": "scripture",
+      "citation": "Psalm 144:1 (Vulgate Psalm 143:1)",
+      "ref": "Ps 144:1",
+      "excerpt": "Benedictus Dominus Deus meus",
+      "excerptLang": "lat"
+    },
+    {
+      "id": "ps-18-3",
+      "type": "scripture",
+      "citation": "Psalm 18:3",
+      "ref": "Ps 18:3",
+      "excerpt": "צוּרִי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-18-35",
+      "type": "scripture",
+      "citation": "Psalm 18:35",
+      "ref": "Ps 18:35",
+      "excerpt": "מְלַמֵּד יָדַי לַמִּלְחָמָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-59-18",
+      "type": "scripture",
+      "citation": "Psalm 59:18",
+      "ref": "Ps 59:18",
+      "excerpt": "אֱלֹהֵי חַסְדִּי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jon-2-9",
+      "type": "scripture",
+      "citation": "Jonah 2:9 (English 2:8)",
+      "ref": "Jon 2:9",
+      "excerpt": "חַסְדָּם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-8-5",
+      "type": "scripture",
+      "citation": "Psalm 8:5",
+      "ref": "Ps 8:5",
+      "excerpt": "מָה אֱנוֹשׁ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-39-6",
+      "type": "scripture",
+      "citation": "Psalm 39:6",
+      "ref": "Ps 39:6",
+      "excerpt": "כָּל הֶבֶל כָּל אָדָם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-102-12",
+      "type": "scripture",
+      "citation": "Psalm 102:12",
+      "ref": "Ps 102:12",
+      "excerpt": "כְּצֵל",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-2",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:2",
+      "ref": "Eccl 1:2",
+      "excerpt": "הֲבֵל הֲבָלִים",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "drbo-ps-143",
+      "type": "web",
+      "citation": "Douay-Rheims Bible, Psalm 143 (drbo.org)",
+      "url": "https://www.drbo.org/chapter/21143.htm",
+      "excerpt": "A psalm of David against Goliath.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
+    },
+    {
+      "id": "drbo-ps-143-1",
+      "type": "web",
+      "citation": "Douay-Rheims Bible, Psalm 143:1 (drbo.org)",
+      "url": "https://www.drbo.org/chapter/21143.htm",
+      "excerpt": "who teacheth my hands to fight",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
+    },
+    {
+      "id": "kd-ps-144-1",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-1.htm",
+      "excerpt": "an imitation of David's great song of thanksgiving",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-ps-144-1-abbreviation",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-1.htm",
+      "excerpt": "is a bold abbreviation of",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "gill-ps-144-1",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 144:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-1.htm",
+      "excerpt": "The Septuagint, Vulgate Latin, Ethiopic, and Arabic versions, render it",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "gill-ps-144-1-shelter",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Psalm 144:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-1.htm",
+      "excerpt": "to whom the psalmist fled for shelter, when in distress",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-ps-144-1",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Psalm 144:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-1.htm",
+      "excerpt": "Margin, as in Hebrew, \"my rock.\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-ps-144-2",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 144:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-2.htm",
+      "excerpt": "a shortened form of “God of my grace”",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-ps-144-2",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 144:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-2.htm",
+      "excerpt": "peculiar and original touches which indicate the author, not the copyist",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-ps-144-2-nowhere",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 144:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-2.htm",
+      "excerpt": "\"my goodness,\" occurs nowhere else",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-ps-144-2",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 144:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-2.htm",
+      "excerpt": "it seems not improbable that we should read as in Psalm",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-ps-144-2-jonah",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 144:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-2.htm",
+      "excerpt": "A partial parallel may be found in Jonah 2:8",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:40:00Z"
+    },
+    {
+      "id": "cambridge-ps-144-3",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "Man’s insignificance and transitoriness enhance the marvel of God’s gracious care",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-ps-144-3",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "is a variation of Psalm 8:5 with the use of other verbs",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-ps-144-3-miniature",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "is just such another imitation, like a miniature of Psalm",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-ps-144-3-yada",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "in the sense of loving intimacy",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-ps-144-3-hashab",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "properly to count, compute",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "kd-ps-144-3-shadow",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1871), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "The figure of the shadow is the same as in Psalm",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "barnes-ps-144-3",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "means here to take notice of; to regard",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "pulpit-ps-144-3",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Psalm 144:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-3.htm",
+      "excerpt": "the insignificance and unworthiness of the creatures on whom he bestows",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-ps-144-4-humility",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 144:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-4.htm",
+      "excerpt": "the humility of the warrior who ascribes all success to God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "ellicott-ps-144-4-comrades",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Psalm 144:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-4.htm",
+      "excerpt": "a reflection uttered over the corpses of comrades",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "cambridge-ps-144-4",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 144:4 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/144-4.htm",
+      "excerpt": "Or, a breath, unsubstantial and evanescent",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-tsur",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. צוּר (Bible Hub, Strong's 6697)",
+      "url": "https://biblehub.com/hebrew/6697.htm",
+      "excerpt": "rock, cliff",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-hesed",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חֶסֶד (Bible Hub, Strong's 2617)",
+      "url": "https://biblehub.com/hebrew/2617.htm",
+      "excerpt": "goodness, kindness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-hebel",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "vapour, breath",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-hebel-figurative",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "figurative of what is evanescent, unsubstantial, worthless, vanity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    },
+    {
+      "id": "bdb-hebel-ecclesiastes",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. הֶבֶל (Bible Hub, Strong's 1892)",
+      "url": "https://biblehub.com/hebrew/1892.htm",
+      "excerpt": "especially in Ecclesiastes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:20:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021e-ps-144",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:45:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

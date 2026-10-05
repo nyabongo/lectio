@@ -1,0 +1,4 @@
+{
+  "workflow": "e2e.yml",
+  "jobs": ["e2e"]
+}

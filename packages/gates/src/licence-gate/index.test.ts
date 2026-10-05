@@ -508,6 +508,18 @@ describe('licence/excerpt-length', () => {
     expect(item?.message).toMatch(/^the excerpt of source s1 is 1 word long \(limit 0\)\./u);
   });
 
+  it('counts a pointed Hebrew excerpt by its words, not by the runs of letters between its marks', async () => {
+    // Psalm 1:1 from the committed OSHB corpus (corpus/hbo-oshb/PS/1.json), morpheme slashes removed: 15 words.
+    const psalm =
+      'אַ֥שְֽׁרֵי הָאִ֗ישׁ אֲשֶׁ֤ר לֹ֥א הָלַךְ֮ בַּעֲצַ֪ת רְשָׁ֫עִ֥ים וּבְדֶ֣רֶךְ חַ֭טָּאִים לֹ֥א עָמָ֑ד וּבְמוֹשַׁ֥ב לֵ֝צִ֗ים לֹ֣א יָשָֽׁב';
+    expect(findings(await check(withExcerpt(psalm)), LICENCE_RULES.excerptLength)).toEqual([]);
+    const [item] = findings(
+      await check(withExcerpt(psalm), { limits: { maxExcerptWords: 14 } }),
+      LICENCE_RULES.excerptLength,
+    );
+    expect(item?.message).toMatch(/^the excerpt of source s1 is 15 words long \(limit 14\)\./u);
+  });
+
   it('reads the limit from config', async () => {
     expect(
       findings(await check(withExcerpt(words(5)), { limits: { maxExcerptWords: 5 } }), LICENCE_RULES.excerptLength),
