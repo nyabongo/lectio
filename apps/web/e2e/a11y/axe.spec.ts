@@ -3,7 +3,7 @@
  * A serious or critical violation of WCAG 2.0/2.1/2.2 A and AA fails the test; minor and moderate findings are
  * attached to the report for review but do not fail it.
  */
-import AxeBuilder from '@axe-core/playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 
 import { expect, test } from '../fixtures.ts';
 import { openPage, pageTypes } from './pages.ts';
