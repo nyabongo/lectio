@@ -20,8 +20,6 @@ name: Mobile release
 on:
   push:
     tags: ['mobile-v*']
-    # TEMPORARY (L-109 PR only): dispatch needs the file on main, so the dry run runs on this branch's push.
-    branches: ['L-109/mobile-release-pipelines-play-internal-t']
   workflow_dispatch:
 
 permissions:
