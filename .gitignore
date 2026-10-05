@@ -15,6 +15,9 @@ apps/web/e2e/__screenshots__/
 .cache/
 .audio-out/
 
+# corpus importer staging and backup directories (left behind only if an import is interrupted)
+corpus/.staging-*
+
 # env and secrets
 .env
 .env.*

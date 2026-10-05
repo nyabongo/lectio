@@ -344,6 +344,14 @@ describe('fs helpers', () => {
     await expect(readTextFile(root)).rejects.toThrow(/EISDIR/);
   });
 
+  it('listSubdirectories skips files and dot-folders such as a leftover staging directory', async () => {
+    const root = await tempDir();
+    await mkdir(join(root, 'grc-test'));
+    await mkdir(join(root, '.staging-grc-test-abc123'));
+    await writeFile(join(root, 'README.md'), 'x');
+    expect(await listSubdirectories(root)).toEqual(['grc-test']);
+  });
+
   it('listSubdirectories rethrows unexpected errors', async () => {
     const root = await tempDir();
     await writeFile(join(root, 'file'), 'x');

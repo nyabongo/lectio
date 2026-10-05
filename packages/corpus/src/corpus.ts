@@ -89,10 +89,14 @@ export async function readTextFile(path: string): Promise<string | undefined> {
   }
 }
 
+/**
+ * The names of the directories in `path` (none if it does not exist). Dot-folders are skipped, so an importer's
+ * leftover `.staging-*` directory is never taken for an edition.
+ */
 export async function listSubdirectories(path: string): Promise<string[]> {
   try {
     const entries = await readdir(path, { withFileTypes: true });
-    return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+    return entries.filter((entry) => entry.isDirectory() && !entry.name.startsWith('.')).map((entry) => entry.name);
   } catch (error) {
     if (isNotFound(error)) return [];
     throw error;
