@@ -93,7 +93,7 @@ original-language words only, never an English translation of the passage:
         "gloss": "your eye evil"
       },
       "summary": "Greek asks “is your eye evil?”, an idiom for begrudging another’s good.",
-      "body": "The evil eye was a familiar image for stinginess and resentment (Deut 15:9). English trades the image for an abstract feeling. [c2]"
+      "body": "The evil eye was a familiar image for stinginess and resentment (Deut 15:9). [c2] English trades the image for an abstract feeling. [c2]"
     }
   ],
   "claims": [

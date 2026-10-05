@@ -1,0 +1,10 @@
+{
+  "name": "Sample Greek New Testament",
+  "language": "grc",
+  "upstreamUrl": "https://github.com/example/greek-sample/archive/0123456789abcdef0123456789abcdef01234567.tar.gz",
+  "version": "0123456789abcdef0123456789abcdef01234567",
+  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "licence": "CC-BY-4.0 AND CC-BY-SA-3.0",
+  "attribution": "Text: Sample Greek text, licensed under CC BY 4.0.\nMorphology: Example, A., ed. (2017) _Sample Morphology_. Licensed under CC BY-SA 3.0.",
+  "versification": "original"
+}

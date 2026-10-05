@@ -1,0 +1,52 @@
+---
+/**
+ * An SPDX licence expression as the About page shows it: each part linked to its SPDX page when it has one,
+ * "Public domain" for `LicenseRef-PublicDomain`, parts joined with "+". The leading underscore keeps this file out
+ * of the routes.
+ */
+import { t } from '../../i18n/index.ts';
+import type { LicencePart } from '../../lib/attributions.ts';
+
+export interface Props {
+  parts: readonly LicencePart[];
+  lang: string;
+}
+
+const { parts, lang } = Astro.props;
+---
+
+<span class="licence">
+  <span class="licence__label">{t(lang, 'about.licences.label')}</span>
+  {
+    parts.map((part, index) => (
+      <>
+        {index > 0 && <span aria-hidden="true"> + </span>}
+        {part.publicDomain ? (
+          <span>{t(lang, 'about.licences.publicDomain')}</span>
+        ) : part.url !== null ? (
+          <a href={part.url} rel="license noopener">
+            {part.id}
+          </a>
+        ) : (
+          <span>{part.id}</span>
+        )}
+      </>
+    ))
+  }
+</span>
+
+<style>
+  .licence {
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .licence__label {
+    font-weight: var(--weight-strong);
+    margin-inline-end: var(--space-3xs);
+  }
+
+  .licence a {
+    color: var(--colour-link);
+  }
+</style>

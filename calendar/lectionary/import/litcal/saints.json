@@ -1,0 +1,26 @@
+{
+  "$comment": "LitCal leaves imported into the saints block (L-069), keyed by Lectio celebration id. Run: npm exec -w @lectio/lectionary -- tsx src/cli/import-litcal.ts saints. Only celebrations with readings of their own are listed (see the $comment of saints/celebrations.json): the sanctorum leaves of memorials whose readings come from a Common are left out, so the resolver keeps the weekday. Left out because their strings cannot be imported as they are, and filled from OLM 1981 instead, with LitCal as the second source: Presentation, NativityJohnBaptist, StsPeterPaulAp, DedicationLateran, ConversionStPaul, StsTimothyTitus, ChairStPeter, StJoseph, Annunciation, StMarkEvangelist, StJosephWorker, StsPhilipJames, StMatthiasAp, Visitation, StBarnabasAp and StThomasAp (psalms without verses or in \"116 (117)\" form, misspelt book names such as \"Hewbrews\" and \"Marc\"). StFaustinaKowalska and MaryMotherChurch are converted by hand from the same leaves. Empty at the pinned revision (in en, la and it), so filled from OLM 1981: AllSaints, AllSouls, Transfiguration, ExaltationCross, ImmaculateHeart, StMaryMagdalene, StJamesAp, StMartha, StLawrenceDeacon, StBartholomewAp, BeheadingJohnBaptist, NativityVirginMary, OurLadyOfSorrows, StsArchangels, GuardianAngels, StLukeEvangelist, StSimonStJudeAp, DedicationStsPeterPaul, StAndrewAp; StJohnNewman (decrees) is empty and has no entry.",
+  "target": "saints/celebrations.json",
+  "kind": "celebrations",
+  "imports": [
+    { "key": "most-holy-name-of-jesus", "locator": "sanctorum/en.json#NameJesus" },
+    {
+      "key": "assumption-of-the-blessed-virgin-mary",
+      "mass": "vigil",
+      "locator": "sanctorum/en.json#Assumption.vigil"
+    },
+    { "key": "assumption-of-the-blessed-virgin-mary", "mass": "day", "locator": "sanctorum/en.json#Assumption.day" },
+    { "key": "immaculate-conception-of-the-blessed-virgin-mary", "locator": "sanctorum/en.json#ImmaculateConception" },
+    { "key": "stephen-the-first-martyr", "locator": "sanctorum/en.json#StStephenProtomartyr" },
+    { "key": "john-apostle", "locator": "sanctorum/en.json#StJohnEvangelist" },
+    { "key": "holy-innocents-martyrs", "locator": "sanctorum/en.json#HolyInnocents" },
+    { "key": "gregory-of-narek-abbot", "locator": "decrees/lectionary/en.json#StGregoryNarek" },
+    { "key": "john-of-avila-priest", "locator": "decrees/lectionary/en.json#StJohnAvila" },
+    { "key": "paul-vi-pope", "locator": "decrees/lectionary/en.json#StPaulVI" },
+    { "key": "teresa-of-calcutta-virgin", "locator": "decrees/lectionary/en.json#StMotherTeresa" },
+    { "key": "hildegard-of-bingen-abbess", "locator": "decrees/lectionary/en.json#StHildegardBingen" },
+    { "key": "john-xxiii-pope", "locator": "decrees/lectionary/en.json#StJohnXXIII" },
+    { "key": "john-paul-ii-pope", "locator": "decrees/lectionary/en.json#StJohnPaulII" },
+    { "key": "our-lady-of-loreto", "locator": "decrees/lectionary/en.json#OurLadyOfLoreto" }
+  ]
+}

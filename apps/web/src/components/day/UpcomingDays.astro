@@ -1,0 +1,68 @@
+---
+/**
+ * A short list of day pages (date and celebration), shown on `/` inside `<noscript>` so a reader without
+ * JavaScript whose device is on another date than the build can still reach the right day. Built by
+ * `upcomingDays` in src/lib/day.ts.
+ */
+import type { UpcomingDayView } from '../../lib/day.ts';
+
+export interface Props {
+  heading: string;
+  days: readonly UpcomingDayView[];
+}
+
+const { heading, days } = Astro.props;
+---
+
+{
+  days.length > 0 && (
+    <section class="upcoming" aria-labelledby="upcoming-heading">
+      <h2 id="upcoming-heading">{heading}</h2>
+      <ul>
+        {days.map((day) => (
+          <li>
+            <a href={day.href}>
+              <time datetime={day.date}>{day.dateLabel}</time>
+            </a>
+            <span class="upcoming__title">{day.title}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .upcoming {
+    max-width: 44rem;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-m);
+    border-top: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .upcoming h2 {
+    font-size: var(--step-2);
+  }
+
+  .upcoming ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .upcoming li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-s);
+  }
+
+  .upcoming a {
+    font-weight: var(--weight-strong);
+  }
+
+  .upcoming__title {
+    color: var(--colour-muted);
+  }
+</style>

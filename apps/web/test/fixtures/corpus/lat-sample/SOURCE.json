@@ -1,0 +1,10 @@
+{
+  "name": "Sample Latin Vulgate",
+  "language": "lat",
+  "upstreamUrl": "https://bitbucket.org/example/latin-sample/get/fedcba9876543210fedcba9876543210fedcba98.tar.gz",
+  "version": "fedcba9876543210fedcba9876543210fedcba98",
+  "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "licence": "LicenseRef-PublicDomain",
+  "attribution": "Latin sample text, released into the public domain.",
+  "versification": "vulgate"
+}
