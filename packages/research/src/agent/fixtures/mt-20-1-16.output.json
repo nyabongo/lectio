@@ -1,0 +1,587 @@
+{
+  "summary": "A landowner pays the last hired the same as the first, then asks whether his goodness gives anyone cause for an evil eye.",
+  "context": {
+    "title": "Labourers in the vineyard",
+    "paragraphs": [
+      "Only Matthew tells this parable. [c1] He places it straight after Peter asks what the disciples will receive for leaving everything, so its first hearers are the disciples. [c2] The saying about the last and the first closes chapter 19 and closes the parable too, framing it on both sides. [c3]",
+      "A vineyard was a familiar picture of Israel, most clearly in Isaiah’s song of the vineyard. [c4] Some interpreters, for example Matthew Henry, have read the first hired as Israel and the latecomers as the Gentiles. [c5] Within Matthew, though, the parable first answers the disciples. [c2]",
+      "The workers are day-labourers waiting in the market-place for hire: free men, engaged for a time only and paid by the day, in a form of labour in some respects lower than that of the household slaves. [c6] The day was counted in twelve hours from sunrise, so the third hour is mid-morning and the eleventh is late afternoon. [c7] Those hired at the eleventh hour had about one hour of work left. [c8]",
+      "The agreed pay, a denarius, was a Roman silver coin and the usual wage for a day’s work. [c9] It was an adequate and just payment for the work. [c10] Paying everyone at evening keeps the Mosaic rule that a day-labourer’s wage is not held back overnight. [c11]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "verse": "20:15",
+      "anchor": "envious",
+      "original": {
+        "text": "ὀφθαλμός σου πονηρός",
+        "lang": "grc",
+        "translit": "ophthalmos sou ponēros",
+        "gloss": "your eye evil"
+      },
+      "summary": "Greek asks “is your eye evil?”, a Jewish idiom for begrudging another’s good.",
+      "body": "An evil eye was the Hebrew Bible’s image for stinginess and grudging, as in Deut 15:9 and Prov 28:22. [c12] Jewish writings set it against the good eye of the generous giver. [c13] English trades the image for an abstract feeling and loses the echo of Mt 6:22-23, where the same Greek phrase appears. [c14]"
+    },
+    {
+      "verse": "20:15",
+      "anchor": "generous",
+      "original": {
+        "text": "ἀγαθός",
+        "lang": "grc",
+        "translit": "agathos",
+        "gloss": "good"
+      },
+      "summary": "The landowner calls himself agathos, the ordinary Greek word for “good”, not specifically a word for generosity.",
+      "body": "Agathos is the everyday word for good. [c15] Thayer’s lexicon allows the narrower sense kind or generous in this verse. [c16] In the previous chapter, Mt 19:17, Jesus uses the same word when he says that only one is good. [c17] Here goodness means giving more than justice requires. [c18] Read as a picture of the kingdom, the householder stands for God, so the parable is about who God is, not only what he pays. [c22]"
+    },
+    {
+      "verse": "20:2",
+      "anchor": "daily wage",
+      "original": {
+        "text": "δηναρίου",
+        "lang": "grc",
+        "translit": "dēnariou",
+        "gloss": "a denarius"
+      },
+      "summary": "Greek names the coin: a denarius, the Roman silver piece usually paid for a day’s labour.",
+      "body": "The Greek names a denarius, a Latin loanword for a Roman silver coin, which was the usual pay for a day’s work. [c9] A daily wage is the right sense, but the coin also anchors the later scene in which each worker receives the same piece. [c19]"
+    },
+    {
+      "verse": "20:13",
+      "anchor": "Friend",
+      "original": {
+        "text": "Ἑταῖρε",
+        "lang": "grc",
+        "translit": "hetaire",
+        "gloss": "comrade"
+      },
+      "summary": "Hetaire means “comrade”: a neutral address that elsewhere in Matthew carries reproof.",
+      "body": "Hetairos means comrade or companion and does not imply affectionate friendship. [c20] Readings of its tone here differ: Thayer files this verse as a kindly address, while Ellicott hears reproof whenever Jesus uses the word. [c23][c24] Matthew uses the same address for the guest without a wedding garment and for Judas, where the rebuke is clear. [c21]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The parable of the labourers in the vineyard is recorded only in Matthew.",
+      "sourceIds": ["jfb-mt-20-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The parable is spoken in response to Peter’s question in Mt 19:27 about what the disciples will receive.",
+      "sourceIds": ["mt-19-27", "jfb-mt-20-1-peter"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The saying that the last will be first appears both at Mt 19:30 and at Mt 20:16.",
+      "sourceIds": ["mt-19-30", "mt-20-16"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "In Isaiah 5:7 the vineyard of the Lord is the house of Israel, and commentators read the vineyard of Mt 20:1 against that background.",
+      "sourceIds": ["is-5-7", "ellicott-mt-20-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Some interpreters, for example Matthew Henry, take the parable as the admission of the Gentiles to equal privileges with the Jews.",
+      "sourceIds": ["henry-mt-20-1"],
+      "sensitive": true
+    },
+    {
+      "id": "c6",
+      "text": "The labourers hired in the market-place were free day-labourers, engaged for a time only and paid by the day, a form of labour in some respects lower than that of household slaves.",
+      "sourceIds": ["meyer-mt-20-3", "ellicott-mt-20-1-labour", "ellicott-mt-20-1-hired"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "The Jewish day from sunrise to sunset was divided into twelve hours, so the third hour was about nine in the morning.",
+      "sourceIds": ["barnes-mt-20-3", "pulpit-mt-20-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The eleventh hour was about five in the afternoon, with about one working hour of the day left.",
+      "sourceIds": ["barnes-mt-20-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "The denarius (Greek δηνάριον, a Latin loanword) was a Roman silver coin and the usual wage for a day’s work.",
+      "sourceIds": ["mt-20-2", "thayer-denarion", "meyer-mt-20-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "A denarius for a day’s work was an adequate and just payment.",
+      "sourceIds": ["ellicott-mt-20-2"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "The Mosaic law required a hired labourer to be paid on the day of his work (Deut 24:15), and the owner pays at evening.",
+      "sourceIds": ["dt-24-15", "ellicott-mt-20-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "In the Hebrew Bible an evil eye denotes stinginess, envy or grudging, as in Deut 15:9 and Prov 28:22.",
+      "sourceIds": [
+        "dt-15-9",
+        "prv-28-22",
+        "barnes-mt-20-15",
+        "ellicott-mt-20-15",
+        "geneva-mt-20-15",
+        "thayer-ophthalmos"
+      ],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Jewish writings frequently oppose the evil eye to the good eye, which signifies generosity.",
+      "sourceIds": ["gill-mt-20-15"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Mt 6:23 uses the same Greek phrase, ὀφθαλμός σου πονηρός, contrasting the evil eye with the sound eye of Mt 6:22.",
+      "sourceIds": ["mt-6-22-23", "geneva-mt-20-15-same-word"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The general sense of ἀγαθός is good, excellent in any respect.",
+      "sourceIds": ["thayer-agathos"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Thayer’s lexicon lists Mt 20:15 under the narrower sense of ἀγαθός: benevolent, kind, generous.",
+      "sourceIds": ["thayer-agathos-narrower"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "In Mt 19:17 Jesus says that only one is good, using ἀγαθός.",
+      "sourceIds": ["mt-19-17"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "In Mt 20:15 the one who is good is the one who gives more than justice requires.",
+      "sourceIds": ["bengel-mt-20-15", "expositors-mt-20-15"],
+      "sensitive": true
+    },
+    {
+      "id": "c19",
+      "text": "In Mt 20:9-10 each worker, first and last alike, receives a denarius.",
+      "sourceIds": ["mt-20-9-10"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Ἑταῖρος means comrade or companion, used of a temporary connection without the idea of affectionate friendship.",
+      "sourceIds": ["thayer-hetairos", "cambridge-mt-20-13"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Matthew uses the address ἑταῖρε also in Mt 22:12 (the king to the guest without a wedding garment) and Mt 26:50 (Jesus to Judas), where it is a term of reproachful rebuke.",
+      "sourceIds": ["mt-22-12", "mt-26-50", "cambridge-mt-20-13-rebuke"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "In the interpretation of the parable the householder stands for God.",
+      "sourceIds": ["ellicott-mt-20-15-householder"],
+      "sensitive": true
+    },
+    {
+      "id": "c23",
+      "text": "Thayer’s lexicon lists ἑταῖρε in Mt 20:13 under the vocative in kindly address, “my good friend”.",
+      "sourceIds": ["thayer-hetairos-kindly"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "Ellicott holds that the word always carries a tone of reproof when Jesus uses it.",
+      "sourceIds": ["ellicott-mt-20-13"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "mt-19-27",
+      "type": "scripture",
+      "citation": "Matthew 19:27",
+      "ref": "Mt 19:27",
+      "excerpt": "Πέτρος",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-19-30",
+      "type": "scripture",
+      "citation": "Matthew 19:30",
+      "ref": "Mt 19:30",
+      "excerpt": "ἔσχατοι πρῶτοι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-20-16",
+      "type": "scripture",
+      "citation": "Matthew 20:16",
+      "ref": "Mt 20:16",
+      "excerpt": "ἔσχατοι πρῶτοι",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-20-2",
+      "type": "scripture",
+      "citation": "Matthew 20:2",
+      "ref": "Mt 20:2",
+      "excerpt": "ἐκ δηναρίου τὴν ἡμέραν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-20-9-10",
+      "type": "scripture",
+      "citation": "Matthew 20:9-10",
+      "ref": "Mt 20:9-10"
+    },
+    {
+      "id": "mt-6-22-23",
+      "type": "scripture",
+      "citation": "Matthew 6:22-23",
+      "ref": "Mt 6:22-23",
+      "excerpt": "ὀφθαλμός σου πονηρὸς",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-19-17",
+      "type": "scripture",
+      "citation": "Matthew 19:17",
+      "ref": "Mt 19:17",
+      "excerpt": "εἷς ἐστιν ὁ ἀγαθός",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-22-12",
+      "type": "scripture",
+      "citation": "Matthew 22:12",
+      "ref": "Mt 22:12",
+      "excerpt": "Ἑταῖρε",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-26-50",
+      "type": "scripture",
+      "citation": "Matthew 26:50",
+      "ref": "Mt 26:50",
+      "excerpt": "Ἑταῖρε",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "dt-15-9",
+      "type": "scripture",
+      "citation": "Deuteronomy 15:9",
+      "ref": "Dt 15:9",
+      "excerpt": "וְרָעָה עֵינְךָ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-28-22",
+      "type": "scripture",
+      "citation": "Proverbs 28:22",
+      "ref": "Prv 28:22",
+      "excerpt": "רַע עָיִן",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "dt-24-15",
+      "type": "scripture",
+      "citation": "Deuteronomy 24:15",
+      "ref": "Dt 24:15",
+      "excerpt": "בְּיוֹמוֹ תִתֵּן שְׂכָרוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-5-7",
+      "type": "scripture",
+      "citation": "Isaiah 5:7",
+      "ref": "Is 5:7",
+      "excerpt": "כֶרֶם יְהוָה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jfb-mt-20-1",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Matthew 20:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "This parable, recorded only by Matthew",
+      "excerptLang": "en"
+    },
+    {
+      "id": "jfb-mt-20-1-peter",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Matthew 20:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "being spoken with reference to Peter's question",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-1",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "the house of Israel, which the Anointed of the Lord",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-1-labour",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "a form of labour in some respects lower than",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "henry-mt-20-1",
+      "type": "web",
+      "citation": "Matthew Henry, Concise Commentary on the Whole Bible, on Matthew 20:1-16 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "though the Jews were first called into the vineyard",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "meyer-mt-20-2",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospel of Matthew (English translation, 1884), on Matthew 20:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-2.htm",
+      "excerpt": "A denarius was the usual wages for a day’s work",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-2",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:2 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-2.htm",
+      "excerpt": "It was, that is, in itself, an adequate and just payment",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "meyer-mt-20-3",
+      "type": "web",
+      "citation": "Heinrich A. W. Meyer, Critical and Exegetical Handbook to the Gospel of Matthew (English translation, 1884), on Matthew 20:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-3.htm",
+      "excerpt": "The men in question belonged to the class of free labourers",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "barnes-mt-20-3",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Matthew 20:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-3.htm",
+      "excerpt": "divided their days into twelve equal parts, or hours",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "pulpit-mt-20-3",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Matthew 20:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-3.htm",
+      "excerpt": "the sixth hour corresponding to our noon",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "barnes-mt-20-6",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Matthew 20:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-6.htm",
+      "excerpt": "when there was but one working hour of the day left",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-8",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-8.htm",
+      "excerpt": "the day-labourer was to be paid by the day",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:44:00Z"
+    },
+    {
+      "id": "cambridge-mt-20-13",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 20:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-13.htm",
+      "excerpt": "used of any temporary connection, without the idea of affectionate friendship",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-13",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-13.htm",
+      "excerpt": "always carries, with it in our Lord’s lips a tone of reproof",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "barnes-mt-20-15",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "when applied to the eye, to denote one envious and malicious",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-15",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "looked with envy and ill will at the prosperity of others",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "geneva-mt-20-15",
+      "type": "web",
+      "citation": "Geneva Study Bible notes (1599), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "For by an evil eye the Hebrews mean envy",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "geneva-mt-20-15-same-word",
+      "type": "web",
+      "citation": "Geneva Study Bible notes (1599), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "the word being the same in that place as it is here",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "gill-mt-20-15",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "is opposed to a good eye, frequently in Jewish writings",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "bengel-mt-20-15",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "who grants more than justice",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "expositors-mt-20-15",
+      "type": "web",
+      "citation": "A. B. Bruce, The Synoptic Gospels, Expositor's Greek Testament (1897), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "doing more than justice demands",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "thayer-denarion",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δηνάριον (Bible Hub, Strong's 1220)",
+      "url": "https://biblehub.com/greek/1220.htm",
+      "excerpt": "a Latin word, a denarius, a silver coin",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "thayer-ophthalmos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ὀφθαλμός (Bible Hub, Strong's 3788)",
+      "url": "https://biblehub.com/greek/3788.htm",
+      "excerpt": "Since the eye is the index of the mind",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "thayer-agathos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀγαθός (Bible Hub, Strong's 18)",
+      "url": "https://biblehub.com/greek/18.htm",
+      "excerpt": "excelling in any respect, distinguished, good",
+      "excerptLang": "en"
+    },
+    {
+      "id": "thayer-agathos-narrower",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀγαθός (Bible Hub, Strong's 18)",
+      "url": "https://biblehub.com/greek/18.htm",
+      "excerpt": "In a narrower sense, benevolent, kind, generous",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:42:00Z"
+    },
+    {
+      "id": "thayer-hetairos",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἑταῖρος (Bible Hub, Strong's 2083)",
+      "url": "https://biblehub.com/greek/2083.htm",
+      "excerpt": "a comrade, mate, partner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-1-hired",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-1.htm",
+      "excerpt": "engaged for a time only, and paid by the day",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "ellicott-mt-20-15-householder",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers (1878), on Matthew 20:15 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-15.htm",
+      "excerpt": "In the interpretation of the parable, God was Himself the Householder",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "cambridge-mt-20-13-rebuke",
+      "type": "web",
+      "citation": "A. Carr, The Gospel According to St Matthew, Cambridge Bible for Schools and Colleges (1893), on Matthew 20:13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/matthew/20-13.htm",
+      "excerpt": "where it is a term of reproachful rebuke",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    },
+    {
+      "id": "thayer-hetairos-kindly",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἑταῖρος (Bible Hub, Strong's 2083)",
+      "url": "https://biblehub.com/greek/2083.htm",
+      "excerpt": "vocative in kindly address, friend (my good friend)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T07:57:00Z"
+    }
+  ]
+}
