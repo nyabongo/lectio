@@ -93,7 +93,7 @@ describe('mapCelebration', () => {
         precedence: 'GENERAL_FEAST_7',
         colors: ['RED'],
         cycles: { properCycle: 'PROPER_OF_SAINTS', sundayCycle: 'YEAR_A', weekdayCycle: 'YEAR_2' },
-        weekday: { id: 'ordinary_time_25_monday', colors: ['GREEN'] },
+        weekday: romcalDay(),
       }),
       'ordinary-time',
     );
@@ -131,7 +131,7 @@ describe('mapCelebration', () => {
         rank: 'OPTIONAL_MEMORIAL',
         colors: [],
         isOptional: true,
-        weekday: { id: 'lent_2_wednesday', colors: ['PURPLE'] },
+        weekday: romcalDay({ id: 'lent_2_wednesday', colors: ['PURPLE'] }),
       }),
       'lent',
     );
@@ -141,10 +141,10 @@ describe('mapCelebration', () => {
   it('falls back to the season colour when neither the day nor its weekday has one', () => {
     expect(mapCelebration(romcalDay({ colors: [] }), 'paschal-triduum')).toMatchObject({
       rank: 'weekday',
-      colour: 'white',
+      colour: 'violet',
     });
     expect(
-      mapCelebration(romcalDay({ colors: [], weekday: { id: 'advent_4_monday', colors: [] } }), 'advent'),
+      mapCelebration(romcalDay({ colors: [], weekday: romcalDay({ id: 'advent_4_monday', colors: [] }) }), 'advent'),
     ).toMatchObject({ rank: 'commemoration', colour: 'violet' });
     for (const [season, colour] of [
       ['christmas', 'white'],
@@ -157,7 +157,72 @@ describe('mapCelebration', () => {
   });
 });
 
+describe('names', () => {
+  it('corrects known romcal name errors', () => {
+    const allSouls = romcalDay({
+      id: 'commemoration_of_all_the_faithful_departed',
+      name: 'The Commemoration of All the Faithful Departed (All Soul’s Day)',
+    });
+    expect(mapCelebration(allSouls, 'ordinary-time').name).toBe(
+      'The Commemoration of All the Faithful Departed (All Souls’ Day)',
+    );
+  });
+});
+
 describe('mapDay', () => {
+  it('ranks main celebrations by precedence (Holy Thursday: the Lord’s Supper first)', () => {
+    const holyThursday = romcalDay({
+      id: 'holy_thursday',
+      precedence: 'PRIVILEGED_WEEKDAY_9',
+      colors: ['PURPLE'],
+      seasons: ['LENT'],
+      calendar: { weekOfSeason: 6 },
+    });
+    const lordsSupper = romcalDay({
+      id: 'thursday_of_the_lords_supper',
+      precedence: 'TRIDUUM_1',
+      colors: ['WHITE'],
+      seasons: ['PASCHAL_TRIDUUM'],
+      calendar: { weekOfSeason: 1 },
+    });
+    const day = mapDay('2026-04-02', [holyThursday, lordsSupper]);
+    expect(day.celebrations.map((c) => [c.id, c.colour])).toEqual([
+      ['thursday-of-the-lords-supper', 'white'],
+      ['holy-thursday', 'violet'],
+    ]);
+    expect(day).toMatchObject({ season: 'paschal-triduum', seasonWeek: 0 });
+  });
+
+  it('makes two coinciding obligatory memorials optional, with the weekday as the day', () => {
+    const weekday = romcalDay({ id: 'ordinary_time_10_saturday', calendar: { weekOfSeason: 10 } });
+    const memorial = (id: string) =>
+      romcalDay({ id, rank: 'MEMORIAL', precedence: 'GENERAL_MEMORIAL_10', colors: ['WHITE'], weekday });
+    const day = mapDay('2026-06-13', [memorial('immaculate_heart_of_mary'), memorial('anthony_of_padua_priest')]);
+    expect(day.celebrations.map((c) => [c.id, c.rank, c.optional])).toEqual([
+      ['ordinary-time-10-saturday', 'weekday', false],
+      ['immaculate-heart-of-mary', 'optional-memorial', true],
+      ['anthony-of-padua-priest', 'optional-memorial', true],
+    ]);
+    expect(day.seasonWeek).toBe(10);
+  });
+
+  it('keeps coinciding memorials when romcal gives no weekday', () => {
+    const memorial = (id: string) => romcalDay({ id, rank: 'MEMORIAL', precedence: 'GENERAL_MEMORIAL_10' });
+    const day = mapDay('2026-06-13', [memorial('a_one'), memorial('b_two')]);
+    expect(day.celebrations.map((c) => c.rank)).toEqual(['memorial', 'memorial']);
+  });
+
+  it('uses an option as the day when romcal lists only options', () => {
+    const day = mapDay('2026-06-13', [romcalDay({ isOptional: true, rank: 'OPTIONAL_MEMORIAL' })]);
+    expect(day.celebrations).toHaveLength(1);
+  });
+
+  it('gives Christmas Time week 0', () => {
+    expect(
+      mapDay('2026-01-11', [romcalDay({ seasons: ['CHRISTMAS_TIME'], calendar: { weekOfSeason: 4 } })]),
+    ).toMatchObject({ season: 'christmas', seasonWeek: 0 });
+  });
+
   it('puts optional memorials after the celebration of the day', () => {
     const optional = romcalDay({
       id: 'januarius_bishop',

@@ -27,7 +27,7 @@ export interface RomcalDayInput {
   readonly calendar: { readonly weekOfSeason: number };
   readonly cycles: { readonly properCycle: string; readonly sundayCycle: string; readonly weekdayCycle: string };
   /** For a celebration that replaces or sits on a weekday: that weekday. */
-  readonly weekday?: { readonly id: string; readonly colors: readonly string[] } | undefined;
+  readonly weekday?: RomcalDayInput | undefined;
 }
 
 /** A celebration with everything the overrides (L-015) and the lectionary resolver (L-016) need. */
@@ -73,14 +73,15 @@ const SEASONS: Readonly<Record<string, Season>> = {
   EASTER_TIME: 'easter',
 };
 
-/** Colour of a day without a colour of its own (Holy Saturday): the season's. */
+/** Colour of a day without a colour of its own: the season's (only Holy Saturday reaches this in practice). */
 const SEASON_COLOURS: Readonly<Record<Season, LiturgicalColour>> = {
   advent: 'violet',
   christmas: 'white',
   'ordinary-time': 'green',
   lent: 'violet',
-  // Holy Saturday has no Mass of the day; the evening Mass is the Easter Vigil.
-  'paschal-triduum': 'white',
+  // Holy Saturday has no Mass and no colour of its own; the Easter Vigil belongs to Easter Sunday.
+  // The schema requires a colour, so Lectio shows the violet of the Office of the day (ADR 0007).
+  'paschal-triduum': 'violet',
   easter: 'white',
 };
 
@@ -129,8 +130,14 @@ function daySeason(day: RomcalDayInput): Season {
   return mapSeason(last);
 }
 
-function capitalise(name: string): string {
-  const trimmed = name.trim();
+/** Corrections to romcal's English names, keyed by romcal id. */
+export const NAME_CORRECTIONS: Readonly<Record<string, string>> = Object.freeze({
+  commemoration_of_all_the_faithful_departed: 'The Commemoration of All the Faithful Departed (All Souls’ Day)',
+});
+
+function displayName(day: RomcalDayInput): string {
+  if (Object.hasOwn(NAME_CORRECTIONS, day.id)) return NAME_CORRECTIONS[day.id] as string;
+  const trimmed = day.name.trim();
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
@@ -139,9 +146,9 @@ function capitalise(name: string): string {
  * last days of Advent, the Christmas octave) without a colour: those are commemorations
  * (GIRM 355) and take the weekday's colour.
  */
-export function mapCelebration(day: RomcalDayInput, season: Season): CelebrationDetail {
+export function mapCelebration(day: RomcalDayInput, season: Season, demoted = false): CelebrationDetail {
   let colours = day.colors.map(mapColour);
-  let rank = mapRank(day.rank);
+  let rank = demoted ? 'optional-memorial' : mapRank(day.rank);
   if (colours.length === 0) {
     if (day.weekday) {
       rank = 'commemoration';
@@ -151,13 +158,13 @@ export function mapCelebration(day: RomcalDayInput, season: Season): Celebration
   }
   return {
     id: toLectioId(day.id),
-    name: capitalise(day.name),
+    name: displayName(day),
     rank,
     colour: colours[0] as LiturgicalColour,
     romcalId: day.id,
     colours,
     precedence: day.precedence,
-    optional: day.isOptional,
+    optional: demoted || day.isOptional,
     holyDayOfObligation: day.isHolyDayOfObligation,
     properCycle: mapProperCycle(day.cycles.properCycle),
     ...(day.weekday ? { weekdayId: toLectioId(day.weekday.id) } : {}),
@@ -165,22 +172,41 @@ export function mapCelebration(day: RomcalDayInput, season: Season): Celebration
 }
 
 /**
- * One date from romcal's list for it. The first non-optional entry is the celebration of the
- * day and decides season, week and cycles; optional memorials follow it as options.
+ * One date from romcal's list for it. Non-optional entries are ranked by precedence (stable),
+ * so on Holy Thursday the Mass of the Lord's Supper (level 1) comes before the Lenten weekday
+ * (level 9). The first entry is the celebration of the day and decides season, week and
+ * cycles; optional memorials follow it as options.
+ *
+ * When two obligatory memorials coincide (romcal reports both as memorials, e.g. 2026-06-13),
+ * both become optional memorials and the weekday is the celebration of the day.
  */
 export function mapDay(date: string, romcalDays: readonly RomcalDayInput[]): DetailedDay {
-  const ordered = [...romcalDays.filter((d) => !d.isOptional), ...romcalDays.filter((d) => d.isOptional)];
-  const primary = ordered[0];
+  let main = romcalDays
+    .filter((d) => !d.isOptional)
+    .sort((a, b) => precedenceLevel(a.precedence) - precedenceLevel(b.precedence));
+  let demoted: RomcalDayInput[] = [];
+  const weekday = main[0]?.weekday;
+  if (main.length >= 2 && main.every((d) => d.rank === 'MEMORIAL') && weekday) {
+    demoted = main;
+    main = [weekday];
+  }
+  const options = romcalDays.filter((d) => d.isOptional);
+  const primary = main[0] ?? options[0];
   if (primary === undefined) throw new Error(`romcal returned no celebration for ${date}`);
   const season = daySeason(primary);
   return {
     date,
     season,
-    // The Triduum is three days, not a week; the schema keeps 0 for days outside a numbered week.
-    seasonWeek: season === 'paschal-triduum' ? 0 : primary.calendar.weekOfSeason,
+    // The Triduum is three days, not a week, and romcal's Christmas-season week numbers are not
+    // liturgical weeks; the schema keeps 0 for days outside a numbered week.
+    seasonWeek: season === 'paschal-triduum' || season === 'christmas' ? 0 : primary.calendar.weekOfSeason,
     sundayCycle: mapSundayCycle(primary.cycles.sundayCycle),
     weekdayCycle: mapWeekdayCycle(primary.cycles.weekdayCycle),
-    celebrations: ordered.map((d) => mapCelebration(d, season)),
+    celebrations: [
+      ...main.map((d) => mapCelebration(d, season)),
+      ...demoted.map((d) => mapCelebration(d, season, true)),
+      ...options.map((d) => mapCelebration(d, season)),
+    ],
     masses: [],
     lectionaryMissing: true,
   };

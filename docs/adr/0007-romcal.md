@@ -33,15 +33,29 @@ Calendar. Two lines were candidates:
   the lectionary resolver (L-016). `options` exposes `epiphanyOnSunday`, `ascensionOnSunday` and
   `corpusChristiOnSunday`; when left out, the General Roman rule applies (6 January, Thursday, Thursday).
 - Mapping rules:
-  - Celebrations keep romcal's order with optional memorials after the celebration of the day. The first one decides
-    season, week and cycles.
-  - A day in two seasons (Easter Sunday: Triduum, then Easter Time) is filed under the later season. Triduum days have
-    `seasonWeek` 0. Other weeks are romcal's `weekOfSeason`.
+  - Non-optional celebrations are ranked by precedence level (stable sort), then optional memorials follow as
+    options. The first celebration decides season, week and cycles.
+  - **Holy Thursday** (2026-04-02): the Mass of the Lord's Supper (level 1, white) comes before the Lenten weekday
+    (level 9, violet). No violet Mass is said that day: the Chrism Mass and the Lord's Supper are both white. The
+    day is filed under `paschal-triduum`, week 0, because its celebration is the Lord's Supper. Lent formally runs
+    until that evening Mass, but a date can have only one season, and Lectio chose the season of the day's
+    celebration.
+  - **Coinciding obligatory memorials** (2026-06-13: Immaculate Heart and St Anthony): when two obligatory memorials
+    fall on the same day, both may be celebrated as optional memorials. Lectio marks both `optional-memorial`, and the
+    weekday becomes the celebration of the day. romcal itself reports both as `memorial`.
+  - A day in two seasons (Easter Sunday: Triduum, then Easter Time) is filed under the later season.
+  - `seasonWeek` is 0 in the Triduum and throughout Christmas Time. romcal numbers Christmas Time weeks (for
+    example, the Baptism of the Lord as week 4), but those are not liturgical weeks, and the lectionary does not use
+    them. Other seasons use romcal's `weekOfSeason`, which matches the liturgical week (0 for Ash Wednesday to
+    Saturday).
   - Colours: `PURPLE` becomes `violet`; the first colour is the celebration's `colour`. romcal gives no colour to
     memorials impeded by a privileged season (Lent, 17–24 December, the Christmas octave). Lectio ranks those
-    `commemoration` (GIRM 355) and gives them the weekday's colour. Holy Saturday, which has no colour, gets white,
-    the colour of its only Mass, the Easter Vigil.
-  - Names are romcal's English names with the first letter capitalised.
+    `commemoration` (GIRM 355) and gives them the weekday's colour.
+  - **Holy Saturday** has no Mass and no colour of its own. The Easter Vigil belongs to Easter Sunday (white). The
+    schema requires a colour, so Lectio shows **violet**, the colour of the day's Office, as a placeholder.
+    The owner can revisit this (for example, a "no Mass" flag in the schema).
+  - Names are romcal's English names with the first letter capitalised. `NAME_CORRECTIONS` fixes romcal's errors,
+    for example "All Soul’s Day" becomes "All Souls’ Day".
   - Unknown romcal values (colour, season, rank, cycle) throw, so a romcal upgrade cannot slip in values the schema
     does not know.
 - **Stable ids.** A Lectio celebration id is the romcal id in kebab-case (`matthew_apostle` → `matthew-apostle`),
@@ -55,6 +69,5 @@ Calendar. Two lines were candidates:
 - romcal is a prerelease, so an upgrade can change ids, names or precedence. Upgrades are deliberate: bump both
   packages together, run the tests (the id snapshot and the acceptance dates), and record the bump in the PR.
 - Kenya is not in romcal. L-015 layers overrides on `generateDetailedDays` output and sets the transfer options.
-- romcal reports two coinciding obligatory memorials (for example 13 June 2026) both as `memorial`. Lectio passes this
-  through; L-015 may refine it.
+- Overrides (L-015) that add an obligatory memorial must apply the same coinciding-memorials rule.
 - `calendar/<year>.json` records the romcal version in `generatedBy` (`romcalVersion()`, L-017).

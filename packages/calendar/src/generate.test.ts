@@ -100,7 +100,32 @@ describe('generateDays: the whole year', () => {
       seasonWeek: 0,
       celebrations: [{ id: 'friday-of-the-passion-of-the-lord', colour: 'red' }],
     });
-    expect(day('2026-04-04')).toMatchObject({ celebrations: [{ id: 'holy-saturday', colour: 'white' }] });
+    expect(day('2026-04-04')).toMatchObject({ celebrations: [{ id: 'holy-saturday', colour: 'violet' }] });
+  });
+
+  it('puts the Mass of the Lord’s Supper first on Holy Thursday 2026-04-02', () => {
+    const thursday = day('2026-04-02');
+    expect(thursday.celebrations.map((c) => c.id)).toEqual(['thursday-of-the-lords-supper', 'holy-thursday']);
+    expect(thursday.celebrations[0]?.colour).toBe('white');
+    expect(thursday).toMatchObject({ season: 'paschal-triduum', seasonWeek: 0 });
+  });
+
+  it('makes the coinciding memorials of 2026-06-13 optional', () => {
+    expect(day('2026-06-13').celebrations.map((c) => [c.id, c.rank])).toEqual([
+      ['ordinary-time-10-saturday', 'weekday'],
+      ['immaculate-heart-of-mary', 'optional-memorial'],
+      ['anthony-of-padua-priest', 'optional-memorial'],
+    ]);
+  });
+
+  it('spells All Souls’ Day correctly', () => {
+    expect(day('2026-11-02').celebrations[0]?.name).toBe(
+      'The Commemoration of All the Faithful Departed (All Souls’ Day)',
+    );
+  });
+
+  it('uses week 0 throughout Christmas Time', () => {
+    expect(days2026.filter((d) => d.season === 'christmas').every((d) => d.seasonWeek === 0)).toBe(true);
   });
 
   it('includes a leap day in leap years', async () => {
