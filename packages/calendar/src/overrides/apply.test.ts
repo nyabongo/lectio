@@ -701,3 +701,71 @@ describe('applyOverrides: celebrations romcal left out of the year', () => {
     expect(ids(result, '2026-06-04')).toEqual([['lwanga', 'memorial', false]]);
   });
 });
+
+describe('applyOverrides: entries win over restored and commemorated celebrations', () => {
+  const ephremDefinition = { celebration: option('ephrem'), date: '2029-06-09' };
+  const remove = (id: string): OverrideEntry => ({ action: 'remove', id, source, confidence: 'probable' });
+  const setupHeart = () =>
+    setup(
+      { '2029-06-09': [memorial('immaculate-heart', 'ot-9-sat')], '2029-06-12': [weekday('ot-10-tue')] },
+      { '2029-06-09': weekday('ot-9-sat') },
+    );
+  const suppressed = (date: string) => (date === '2029-06-09' ? [option('ephrem')] : []);
+  const definition = (id: string) => (id === 'ephrem' ? ephremDefinition : undefined);
+
+  it('a suppressed celebration that is moved appears only on its new date', () => {
+    const { days, base } = setupHeart();
+    const move: OverrideEntry = { action: 'move', id: 'ephrem', date: '06-12', source, confidence: 'probable' };
+    const result = applyOverrides(days, overrides(remove('immaculate-heart'), move), {
+      ...base,
+      suppressed,
+      definition,
+    });
+    expect(ids(result, '2029-06-09')).toEqual([['ot-9-sat', 'weekday', false]]);
+    expect(ids(result, '2029-06-12')).toEqual([
+      ['ot-10-tue', 'weekday', false],
+      ['ephrem', 'optional-memorial', true],
+    ]);
+  });
+
+  it('a suppressed celebration that is removed is not restored', () => {
+    const { days, base } = setupHeart();
+    const result = applyOverrides(days, overrides(remove('immaculate-heart'), remove('ephrem')), {
+      ...base,
+      suppressed,
+      definition,
+    });
+    expect(ids(result, '2029-06-09')).toEqual([['ot-9-sat', 'weekday', false]]);
+    expect(result.events.map((e) => [e.id, e.outcome])).toEqual([
+      ['immaculate-heart', 'removed'],
+      ['ephrem', 'absent'],
+    ]);
+  });
+
+  it('a Lenten commemoration moved out of Lent gets its own colours back', () => {
+    const { days, base } = setup({
+      '2026-03-07': [
+        lentWeekday('lent-2-sat'),
+        cel('perpetua', 'commemoration', 'GENERAL_MEMORIAL_10', { colours: ['violet'] }),
+        cel('canisius', 'commemoration', 'OPTIONAL_MEMORIAL_12', { colours: ['violet'] }),
+      ],
+      '2026-06-15': [weekday('ot-11-mon')],
+      '2026-06-16': [weekday('ot-11-tue')],
+    });
+    const move = (id: string, date: string): OverrideEntry => ({
+      action: 'move',
+      id,
+      date,
+      source,
+      confidence: 'probable',
+    });
+    const ownColours = (id: string) => (id === 'perpetua' ? (['red'] as const) : ([] as const));
+    const result = applyOverrides(days, overrides(move('perpetua', '06-15'), move('canisius', '06-16')), {
+      ...base,
+      ownColours,
+    });
+    expect(celebration(result, '2026-06-15', 'perpetua')).toMatchObject({ rank: 'memorial', colour: 'red' });
+    // No colours in the definition: the reported ones stay.
+    expect(celebration(result, '2026-06-16', 'canisius').colour).toBe('violet');
+  });
+});

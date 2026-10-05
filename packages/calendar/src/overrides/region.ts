@@ -8,11 +8,12 @@ import { join } from 'node:path';
 import { GeneralRoman_En } from '@romcal/calendar.general-roman';
 import { Romcal } from 'romcal';
 import type { RomcalConfigInput } from 'romcal';
+import type { LiturgicalColour } from '@lectio/schema/common';
 
 import { MAX_YEAR, MIN_YEAR } from '../generate.ts';
 import type { GenerateOptions } from '../generate.ts';
 import { toLectioId } from '../ids.ts';
-import { mapCalendar, mapCelebration } from '../map.ts';
+import { mapCalendar, mapCelebration, mapColour } from '../map.ts';
 import type { CelebrationDetail, DetailedDay, RomcalDayInput } from '../map.ts';
 import { applyOverrides } from './apply.ts';
 import type { ApplyResult, DatedCelebration } from './apply.ts';
@@ -33,15 +34,26 @@ function romcal(options: GenerateOptions = {}): Romcal {
   return new Romcal(config);
 }
 
-/** romcal's definitions, keyed by Lectio id: the romcal id and the fixed date (`MM-DD`) if it has one. */
-async function romcalDefinitions(): Promise<Map<string, { romcalId: string; monthDay?: string }>> {
+interface DefinitionSummary {
+  readonly romcalId: string;
+  /** Fixed date (`MM-DD`) of a celebration of the saints, if it has one. */
+  readonly monthDay?: string;
+  readonly colours: readonly LiturgicalColour[];
+}
+
+/** romcal's definitions, keyed by Lectio id. */
+async function romcalDefinitions(): Promise<Map<string, DefinitionSummary>> {
   const definitions = await romcal().getAllDefinitions();
   const pad = (n: number): string => String(n).padStart(2, '0');
   return new Map(
     Object.entries(definitions).map(([romcalId, definition]) => {
       const { month, date } = definition.dateDef as { month?: number; date?: number };
       const fixed = month !== undefined && date !== undefined && definition.cycles.properCycle === 'PROPER_OF_SAINTS';
-      return [toLectioId(romcalId), fixed ? { romcalId, monthDay: `${pad(month)}-${pad(date)}` } : { romcalId }];
+      const colours = definition.colors.map(mapColour);
+      const summary: DefinitionSummary = fixed
+        ? { romcalId, monthDay: `${pad(month)}-${pad(date)}`, colours }
+        : { romcalId, colours };
+      return [toLectioId(romcalId), summary];
     }),
   );
 }
@@ -155,7 +167,9 @@ export async function generateRegionalDays(year: number, overrides: RegionalOver
     );
   }
 
+  const colours = new Map([...definitions].map(([id, definition]) => [id, definition.colours]));
   return applyOverrides(days, overrides, {
+    ownColours: (id) => colours.get(id),
     baseDay: (date) => bases.get(date),
     definition: (id) => missing.get(id),
     // The engine asks only about dates of targets it took off, all of them set above.

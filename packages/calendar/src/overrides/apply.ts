@@ -26,6 +26,8 @@
  * so a lower-ranked one always meets the final state of the day. Optional memorials that keep
  * a memorial's precedence (the coinciding-memorials rule) are given level 12 at the end.
  */
+import type { LiturgicalColour } from '@lectio/schema/common';
+
 import type { CelebrationDetail, DetailedDay } from '../map.ts';
 import { precedenceLevel } from '../map.ts';
 import type { MoveEntry, OverrideEntry, OverrideRank, RankEntry, RegionalOverrides, RemoveEntry } from './schema.ts';
@@ -64,6 +66,11 @@ export interface ApplyContext {
   readonly definition?: (id: string) => DatedCelebration | undefined;
   /** Celebrations romcal left out of `date` because the celebration of that day impeded them. */
   readonly suppressed?: (date: string) => readonly CelebrationDetail[];
+  /**
+   * A romcal celebration's own colours (from its definition). romcal reports a memorial impeded in
+   * Lent as a commemoration in the weekday's colour; moved or re-ranked, it gets its own back.
+   */
+  readonly ownColours?: (id: string) => readonly LiturgicalColour[] | undefined;
 }
 
 export type OverrideOutcome =
@@ -165,6 +172,8 @@ export function applyOverrides(
   const { baseDay } = context;
   const events: OverrideEvent[] = [];
   const pending: Pending[] = [];
+  /** Ids that an entry takes away or changes: never restored as suppressed celebrations. */
+  const targets = new Set(overrides.entries.filter((e) => e.action !== 'add').map((e) => e.id));
   /** Ids of obligatory memorials currently demoted by the coinciding-memorials rule. */
   const demoted = new Set(days.flatMap((day) => day.celebrations.filter(demotedByMapping).map((c) => c.id)));
   const isDemoted = (c: CelebrationDetail): boolean => demoted.has(c.id);
@@ -205,14 +214,22 @@ export function applyOverrides(
         throw new Error(`${id} on ${date} is a day of the Proper of Time; overrides change celebrations only`);
       }
       const wasPrimary = list.findIndex((c) => !c.optional) === index;
-      const intrinsic = { ...celebration, rank: intrinsicRank(celebration) };
+      const own = celebration.rank === 'commemoration' ? context.ownColours?.(id) : undefined;
+      const colours = own !== undefined && own.length > 0 ? own : celebration.colours;
+      const intrinsic = {
+        ...celebration,
+        rank: intrinsicRank(celebration),
+        colours,
+        colour: colours[0] as CelebrationDetail['colour'],
+      };
       demoted.delete(id);
       let rest = list.filter((_, i) => i !== index);
       if (wasPrimary && !rest.some((c) => !c.optional)) {
         rest.unshift(requireBase(date, id));
         // What this celebration impeded can be celebrated again (placed with the others).
         for (const s of context.suppressed?.(date) ?? []) {
-          if (!rest.some((c) => c.id === s.id)) pending.push({ celebration: withoutWeekday(s), date });
+          if (!targets.has(s.id) && !rest.some((c) => c.id === s.id))
+            pending.push({ celebration: withoutWeekday(s), date });
         }
       }
       const lonely = rest.filter(isDemoted);

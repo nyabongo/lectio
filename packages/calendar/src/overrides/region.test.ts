@@ -315,6 +315,43 @@ describe('fallbacks with real romcal', () => {
   });
 });
 
+describe('entries win over restored and commemorated celebrations (real romcal)', () => {
+  const source = kenya.entries[0]!.source;
+  const remove = (id: string) => ({ action: 'remove' as const, id, source, confidence: 'uncertain' as const });
+  const on = (days: DetailedDay[], date: string) => days.find((d) => d.date === date)?.celebrations.map((c) => c.id);
+
+  it('2029: remove the Immaculate Heart and move St Ephrem to 12 June: Ephrem only on 12 June', async () => {
+    const { days } = await generateRegionalDays(2029, {
+      ...kenya,
+      entries: [
+        remove('immaculate-heart-of-mary'),
+        { action: 'move', id: 'ephrem-the-syrian-deacon', date: '06-12', source, confidence: 'uncertain' },
+      ],
+    });
+    expect(on(days, '2029-06-09')).toEqual(['ordinary-time-9-saturday']);
+    expect(on(days, '2029-06-12')).toContain('ephrem-the-syrian-deacon');
+    expect(days.flatMap((d) => d.celebrations).filter((c) => c.id === 'ephrem-the-syrian-deacon')).toHaveLength(1);
+  });
+
+  it('2029: remove the Immaculate Heart and St Ephrem: no Ephrem', async () => {
+    const { days } = await generateRegionalDays(2029, {
+      ...kenya,
+      entries: [remove('immaculate-heart-of-mary'), remove('ephrem-the-syrian-deacon')],
+    });
+    expect(days.flatMap((d) => d.celebrations).some((c) => c.id === 'ephrem-the-syrian-deacon')).toBe(false);
+  });
+
+  it('a memorial commemorated in Lent and moved out of it is red again', async () => {
+    const id = 'perpetua-of-carthage-and-felicity-of-carthage-martyrs';
+    const { days } = await generateRegionalDays(2026, {
+      ...kenya,
+      entries: [{ action: 'move', id, date: '06-04', source, confidence: 'uncertain' }],
+    });
+    const moved = days.find((d) => d.date === '2026-06-04')?.celebrations.find((c) => c.id === id);
+    expect(moved).toMatchObject({ rank: 'memorial', colour: 'red' });
+  });
+});
+
 describe('romcalLectioIds and datedCelebration', () => {
   it('lists every romcal celebration by Lectio id', async () => {
     const known = await romcalLectioIds();
