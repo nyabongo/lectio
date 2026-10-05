@@ -1,0 +1,658 @@
+{
+  "key": "PRV.30.5-9",
+  "ref": "Prv 30:5-9",
+  "locale": "en",
+  "summary": "Agur trusts God’s refined word and asks for two things: freedom from falsehood, and neither poverty nor riches.",
+  "context": {
+    "title": "Agur’s prayer for enough",
+    "paragraphs": [
+      "These verses belong to the words of Agur son of Jakeh, an appendix to the proverbs of Solomon. [c1] Some Jewish and Christian interpreters took Agur for Solomon himself, but Ellicott and Poole judge him a separate sage, and Ellicott calls him otherwise unknown. [c2] His sayings open with a confession of how little he knows of God. [c3]",
+      "Verse 5 depends closely on Psalm 18:31, and verse 6 on the warning of Deut 4:2 against adding to God’s words. [c4] The name for God here, Eloah, occurs nowhere else in Proverbs, though it is the usual name in Job. [c5] The prayer that follows is the first of Agur’s numerical sayings, built on the number two. [c6]",
+      "Agur asks two things before he dies: to be kept from falsehood, and to be spared both poverty and riches. [c7] He gives the reason himself: plenty can breed a proud denial of God, and want can push a person to steal. [c8] The two requests belong together, the first against the sins themselves and the second against their occasions. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "tseruphah",
+      "verse": "30:5",
+      "anchor": "proves true",
+      "original": {
+        "text": "צְרוּפָה",
+        "lang": "hbo",
+        "translit": "ṣĕrûpâ",
+        "gloss": "refined"
+      },
+      "summary": "The Hebrew is a smelter’s word: God’s speech is like metal refined in the furnace.",
+      "body": "The verb behind ṣĕrûpâ means to smelt or refine metal, and from there to test. [c10] Psalm 12:7 uses the same word of silver refined in a furnace, the picture Agur’s line assumes. [c11] The Greek translators rendered it as tried in the fire. [c12] The point is less that God’s word passes an examination than that it holds no dross: it has proved true in use. [c13]"
+    },
+    {
+      "id": "shaw",
+      "verse": "30:8",
+      "anchor": "falsehood",
+      "original": {
+        "text": "שָׁוְא",
+        "lang": "hbo",
+        "translit": "šāwĕʾ",
+        "gloss": "emptiness"
+      },
+      "summary": "Šāwĕʾ means emptiness or worthlessness; the lie it is paired with is that emptiness spoken aloud.",
+      "body": "Šāwĕʾ first means emptiness or nothingness, and the lexicon files this verse under empty speech paired with lying. [c14] The Pulpit Commentary reads the pair as inward hollowness and its outward expression in words. [c15] The same noun stands in the commandment against taking up God’s name in vain, Ex 20:7, a name Agur fears to wrong in verse 9. [c16]"
+    },
+    {
+      "id": "lechem-chuqqi",
+      "verse": "30:8",
+      "anchor": "food",
+      "original": {
+        "text": "לֶחֶם חֻקִּי",
+        "lang": "hbo",
+        "translit": "leḥem ḥuqqî",
+        "gloss": "bread of my portion"
+      },
+      "summary": "Literally “the bread of my portion”: food allotted, like a fixed ration, neither more nor less.",
+      "body": "Ḥōq means something prescribed, and the lexicon lists this verse under a prescribed portion or allowance of food. [c17] The same noun names the fixed allowance of the Egyptian priests in Gen 47:22. [c18] Agur asks for neither surplus nor scarcity, only what is apportioned to him. [c19] Christian readers hear the daily bread of the Lord’s Prayer, though the Pulpit Commentary notes that the idea is not the same. [c20]"
+    },
+    {
+      "id": "taphas-name",
+      "verse": "30:9",
+      "anchor": "profane",
+      "original": {
+        "text": "וְתָפַשְׂתִּי שֵׁם אֱלֹהָי",
+        "lang": "hbo",
+        "translit": "wĕtāpaśtî šēm ʾĕlōhāy",
+        "gloss": "and I lay hold of the name of my God"
+      },
+      "summary": "The verb tāpaś means to seize or handle roughly: want might drive Agur to lay violent hands on God’s name.",
+      "body": "Tāpaś means to lay hold of or seize, and the lexicon glosses this verse as doing violence to the name of God. [c21] It is not the verb of the commandment about the name, but one of rough seizing. [c22] The Pulpit Commentary reads it either of a false oath sworn to cover a theft, or of bitter complaint against God’s providence in hardship. [c23]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Proverbs 30 begins the words of Agur son of Jakeh, part of the appendices that follow the proverbs of Solomon.",
+      "sourceIds": ["prv-30-1", "ellicott-prv-30-1-appendix"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Some Jewish writers (Rashi, Gersonides) and some Christian writers identified Agur with Solomon, while Ellicott and Poole judge him to be a different sage, whom Ellicott calls otherwise unknown.",
+      "sourceIds": ["gill-prv-30-1", "ellicott-prv-30-1-sage", "poole-prv-30-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "In Prv 30:2-3 Agur acknowledges his own ignorance.",
+      "sourceIds": ["prv-30-2-3", "poole-prv-30-1-ignorance"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Prv 30:5 depends on Psalm 18:31 (2 Sam 22:31), and Prv 30:6 on Deut 4:2.",
+      "sourceIds": ["ps-18-31", "dt-4-2", "kd-prv-30-5"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "The divine name Eloah (אֱלוֹהַּ) in Prv 30:5 occurs nowhere else in Proverbs, while in Job it is the prevailing name of God.",
+      "sourceIds": ["prv-30-5-eloah", "kd-prv-30-5-only", "kd-prv-30-5-job", "pulpit-prv-30-5-eloah"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Prv 30:7-9 is the first of Agur’s numerical proverbs.",
+      "sourceIds": ["prv-30-7", "pulpit-prv-30-7", "ellicott-prv-30-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Agur’s two requests are to be kept from falsehood and from the extremes of poverty and riches.",
+      "sourceIds": ["prv-30-8", "jfb-prv-30-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Prv 30:9 gives the reason: wealth tempts to pride and denial of God, poverty to theft.",
+      "sourceIds": ["prv-30-9", "barnes-prv-30-9", "pulpit-prv-30-9-dishonesty"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "The first petition is against the sins themselves, the second against the occasions of them.",
+      "sourceIds": ["poole-prv-30-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "The verb צָרַף means to smelt, refine or test.",
+      "sourceIds": ["bdb-tsaraph"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Psalm 12:7 uses the same Hebrew word of silver refined in a furnace.",
+      "sourceIds": ["ps-12-7", "cambridge-prv-30-5"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "The Septuagint renders the line as the words of God being tried in the fire.",
+      "sourceIds": ["pulpit-prv-30-5-lxx"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "God’s word is called pure in the sense of tested and proved, free from falsehood and error.",
+      "sourceIds": ["ellicott-prv-30-5", "gill-prv-30-5"],
+      "sensitive": true
+    },
+    {
+      "id": "c14",
+      "text": "שָׁוְא means emptiness, nothingness or vanity, and in Prv 30:8 it is empty speech paired with lying.",
+      "sourceIds": ["bdb-shaw", "bdb-shaw-speech"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "The Pulpit Commentary takes שָׁוְא as inward hollowness and worthlessness, and the lies as its expression in words.",
+      "sourceIds": ["pulpit-prv-30-8-hollowness", "pulpit-prv-30-8-words"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Exodus 20:7 uses שָׁוְא in the commandment against taking up the name of God in vain, and Prv 30:9 also concerns the name of God.",
+      "sourceIds": ["ex-20-7", "bdb-shaw-name", "prv-30-9-name"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "חֹק means something prescribed, and in Prv 30:8 a prescribed portion or allowance of food.",
+      "sourceIds": ["bdb-choq", "ellicott-prv-30-8-portion"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Gen 47:22 uses חֹק of the portion assigned for the support of the Egyptian priests.",
+      "sourceIds": ["gn-47-22", "pulpit-prv-30-8-priests"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "Agur asks for the food apportioned to him as suitable.",
+      "sourceIds": ["ellicott-prv-30-8-apportioned"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Interpreters compare the request with the daily bread of the Lord’s Prayer (Mt 6:11), though the Pulpit Commentary holds that the idea is not the same.",
+      "sourceIds": ["pulpit-prv-30-8-lords-prayer", "pulpit-prv-30-8-not-same", "henry-prv-30-7"],
+      "sensitive": true
+    },
+    {
+      "id": "c21",
+      "text": "תָּפַשׂ means to lay hold of or seize, and in Prv 30:9 to do violence to the name of God.",
+      "sourceIds": ["bdb-taphas", "bdb-taphas-name"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "Prv 30:9 does not use the verb of the commandment in Ex 20:7; its verb denotes laying violent hold on something.",
+      "sourceIds": ["jfb-prv-30-9", "jfb-prv-30-9-violent"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "The sin feared in Prv 30:9 may be false swearing to deny a theft or an arraignment of God’s providence.",
+      "sourceIds": ["pulpit-prv-30-9-swearing", "pulpit-prv-30-9-providence"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "prv-30-1",
+      "type": "scripture",
+      "citation": "Proverbs 30:1",
+      "ref": "Prv 30:1",
+      "excerpt": "אָגוּר בִּן יָקֶה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-30-2-3",
+      "type": "scripture",
+      "citation": "Proverbs 30:2-3",
+      "ref": "Prv 30:2-3"
+    },
+    {
+      "id": "prv-30-5-eloah",
+      "type": "scripture",
+      "citation": "Proverbs 30:5",
+      "ref": "Prv 30:5",
+      "excerpt": "אִמְרַת אֱלוֹהַּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-30-7",
+      "type": "scripture",
+      "citation": "Proverbs 30:7",
+      "ref": "Prv 30:7",
+      "excerpt": "שְׁתַּיִם שָׁאַלְתִּי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-30-8",
+      "type": "scripture",
+      "citation": "Proverbs 30:8",
+      "ref": "Prv 30:8",
+      "excerpt": "רֵאשׁ וָעֹשֶׁר",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-30-9",
+      "type": "scripture",
+      "citation": "Proverbs 30:9",
+      "ref": "Prv 30:9",
+      "excerpt": "וְגָנַבְתִּי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "prv-30-9-name",
+      "type": "scripture",
+      "citation": "Proverbs 30:9",
+      "ref": "Prv 30:9",
+      "excerpt": "שֵׁם אֱלֹהָי",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-18-31",
+      "type": "scripture",
+      "citation": "Psalm 18:31",
+      "ref": "Ps 18:31",
+      "excerpt": "צְרוּפָה מָגֵן הוּא לְכֹל הַחֹסִים בּוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "dt-4-2",
+      "type": "scripture",
+      "citation": "Deuteronomy 4:2",
+      "ref": "Dt 4:2",
+      "excerpt": "לֹא תֹסִפוּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-12-7",
+      "type": "scripture",
+      "citation": "Psalm 12:7",
+      "ref": "Ps 12:7",
+      "excerpt": "כֶּסֶף צָרוּף",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ex-20-7",
+      "type": "scripture",
+      "citation": "Exodus 20:7",
+      "ref": "Ex 20:7",
+      "excerpt": "לַשָּׁוְא",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "gn-47-22",
+      "type": "scripture",
+      "citation": "Genesis 47:22",
+      "ref": "Gn 47:22",
+      "excerpt": "חֹק",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ellicott-prv-30-1-appendix",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 30:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-1.htm",
+      "excerpt": "THE PROVERBS OF SOLOMON END HERE",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-prv-30-1-sage",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 30:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-1.htm",
+      "excerpt": "belong to some otherwise unknown sage",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "gill-prv-30-1",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Proverbs 30:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-1.htm",
+      "excerpt": "some of the Jewish writers, as Jarchi and Gersom",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "poole-prv-30-1",
+      "type": "web",
+      "citation": "Matthew Poole, Annotations upon the Holy Bible (1683-1685), on Proverbs 30:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-1.htm",
+      "excerpt": "may easily be supposed, but cannot be proved",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "poole-prv-30-1-ignorance",
+      "type": "web",
+      "citation": "Matthew Poole, Annotations upon the Holy Bible (1683-1685), on Proverbs 30:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-1.htm",
+      "excerpt": "wherein he acknowledgeth his own ignorance",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-prv-30-5",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Proverbs 30:5-6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-6.htm",
+      "excerpt": "In the dependent relation of Proverbs 30:5 to Psalm 18:31",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-prv-30-5-only",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Proverbs 30:5-6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-6.htm",
+      "excerpt": "it occurs only in the passage before us",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "kd-prv-30-5-job",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1866-1891), on Proverbs 30:5-6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-6.htm",
+      "excerpt": "is the prevailing name of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-5-eloah",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-5.htm",
+      "excerpt": "which is the case also with Eloah",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-7",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-7.htm",
+      "excerpt": "It is the first of Agur's numerical proverbs.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-prv-30-7",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 30:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-7.htm",
+      "excerpt": "The commencement of a series of numerical proverbs.",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-prv-30-7",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Proverbs 30:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-7.htm",
+      "excerpt": "the extremes of poverty and riches, the two things mentioned",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "barnes-prv-30-9",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Proverbs 30:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-9.htm",
+      "excerpt": "Wealth tempts to pride, unbelief, and a scorn like that of Pharaoh",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-9-dishonesty",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-9.htm",
+      "excerpt": "lest my necessities lead to dishonesty",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "poole-prv-30-8",
+      "type": "web",
+      "citation": "Matthew Poole, Annotations upon the Holy Bible (1683-1685), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "so this latter is against the occasions of them",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-tsaraph",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. צָרַף (Bible Hub, Strong's 6884)",
+      "url": "https://biblehub.com/hebrew/6884.htm",
+      "excerpt": "verb smelt, refine, test",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "cambridge-prv-30-5",
+      "type": "web",
+      "citation": "T. T. Perowne, The Proverbs, Cambridge Bible for Schools and Colleges (1899), on Proverbs 30:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-5.htm",
+      "excerpt": "as silver tried (same Hebrew word as here)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-5-lxx",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-5.htm",
+      "excerpt": "All the words of God are tried in the fire",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-prv-30-5",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 30:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-5.htm",
+      "excerpt": "tested and proved in the furnace of experience",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "gill-prv-30-5",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Proverbs 30:5 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-5.htm",
+      "excerpt": "free from all falsehood and error",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-shaw",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שָׁוְא (Bible Hub, Strong's 7723)",
+      "url": "https://biblehub.com/hebrew/7723.htm",
+      "excerpt": "emptiness, nothingness, vanity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-shaw-speech",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שָׁוְא (Bible Hub, Strong's 7723)",
+      "url": "https://biblehub.com/hebrew/7723.htm",
+      "excerpt": "emptiness of speech",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-shaw-name",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שָׁוְא (Bible Hub, Strong's 7723)",
+      "url": "https://biblehub.com/hebrew/7723.htm",
+      "excerpt": "take up name of God in vain",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-8-hollowness",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "is inward hollowness and worthlessness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-8-words",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "are the expression of this in words",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-choq",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. חֹק (Bible Hub, Strong's 2706)",
+      "url": "https://biblehub.com/hebrew/2706.htm",
+      "excerpt": "or allowance of food",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-prv-30-8-portion",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "Literally, bread of my portion",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-8-priests",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "the portion assigned for the support of the priests",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "ellicott-prv-30-8-apportioned",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "such as is apportioned to me as suitable",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-8-lords-prayer",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "of the Lord's Prayer",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-8-not-same",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "but the idea is not the same",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "henry-prv-30-7",
+      "type": "web",
+      "citation": "Matthew Henry, Concise Commentary on the Whole Bible, on Proverbs 30:7-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-8.htm",
+      "excerpt": "a remarkable similarity between this prayer and several clauses",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-taphas",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. תָּפַשׂ (Bible Hub, Strong's 8610)",
+      "url": "https://biblehub.com/hebrew/8610.htm",
+      "excerpt": "verb lay hold of, wield",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "bdb-taphas-name",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. תָּפַשׂ (Bible Hub, Strong's 8610)",
+      "url": "https://biblehub.com/hebrew/8610.htm",
+      "excerpt": "seize (do violence to) the name",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-prv-30-9",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Proverbs 30:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-9.htm",
+      "excerpt": "This is not (Hebrew) the form (compare Ex 20:7)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "jfb-prv-30-9-violent",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Proverbs 30:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-9.htm",
+      "excerpt": "rather denotes laying violent hold on any thing",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-9-swearing",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-9.htm",
+      "excerpt": "either false swearing in denial of his theft",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    },
+    {
+      "id": "pulpit-prv-30-9-providence",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Proverbs 30:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/proverbs/30-9.htm",
+      "excerpt": "the arraignment of God's providence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T12:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021c-prv-30-5-9",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T12:40:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
