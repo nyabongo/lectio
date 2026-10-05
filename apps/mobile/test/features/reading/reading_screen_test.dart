@@ -257,10 +257,7 @@ void main() {
     await pumpReading(tester, harness);
 
     await tapAndSettle(tester, find.text('Original'));
-    expect(
-      shownText('echoes $hebrewWord\u200E [4, 5]'),
-      findsOneWidget,
-    );
+    expect(shownText('echoes $hebrewWord\u200E [4, 5]'), findsOneWidget);
     expect(
       find.textContaining('echoes $hebrewWord Sources 4, 5'),
       findsOneWidget,

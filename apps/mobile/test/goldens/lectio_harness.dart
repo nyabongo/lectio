@@ -142,9 +142,7 @@ Future<void> pumpScreen(
       ),
     }),
   );
-  final bookmarks = screen == Screen.bookmarks
-      ? await savedBookmarks()
-      : null;
+  final bookmarks = screen == Screen.bookmarks ? await savedBookmarks() : null;
   await tester.pumpWidget(
     LectioApp(
       initialLocation: screen.location,
@@ -173,16 +171,10 @@ Directory materialFontsDirectory() {
 /// of the test font's boxes. The same SDK in CI draws the same pixels.
 Future<void> loadGoldenFonts() async {
   final directory = materialFontsDirectory();
-  final files =
-      directory
-          .listSync()
-          .whereType<File>()
-          .where((file) {
-            final name = file.uri.pathSegments.last;
-            return name.startsWith('Roboto-') && name.endsWith('.ttf');
-          })
-          .toList()
-        ..sort((a, b) => a.path.compareTo(b.path));
+  final files = directory.listSync().whereType<File>().where((file) {
+    final name = file.uri.pathSegments.last;
+    return name.startsWith('Roboto-') && name.endsWith('.ttf');
+  }).toList()..sort((a, b) => a.path.compareTo(b.path));
   if (files.isEmpty) {
     throw StateError('No Roboto fonts in ${directory.path}');
   }
@@ -192,9 +184,9 @@ Future<void> loadGoldenFonts() async {
   }
   await roboto.load();
 
-  final manifest =
-      jsonDecode(await rootBundle.loadString('FontManifest.json'))
-          as List<Object?>;
+  final manifest = jsonDecode(
+    await rootBundle.loadString('FontManifest.json'),
+  ) as List<Object?>;
   for (final entry in manifest.cast<Map<String, Object?>>()) {
     final loader = FontLoader(entry['family']! as String);
     final fonts = entry['fonts']! as List<Object?>;

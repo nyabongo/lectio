@@ -82,10 +82,7 @@ void main() {
 
     test('standard keeps the device scaler itself', () {
       const data = MediaQueryData(textScaler: _AndroidNonLinear());
-      expect(
-        identical(withTextSize(data, TextSize.standard), data),
-        isTrue,
-      );
+      expect(identical(withTextSize(data, TextSize.standard), data), isTrue);
     });
 
     test('composes with non-linear device scaling at 200%', () {
