@@ -1,13 +1,4 @@
 {
-  "slot": {
-    "firstReading": "First reading",
-    "psalm": "Responsorial psalm",
-    "secondReading": "Second reading",
-    "gospel": "Gospel",
-    "epistle": "Epistle",
-    "readingN": "Reading {n}",
-    "psalmN": "Psalm {n}"
-  },
   "pageTitle": "{ref} · {slot}",
   "description": "Context and original-language notes for {ref}, a reading for {date}.",
   "backToDay": "All readings for {date}",

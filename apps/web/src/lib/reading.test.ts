@@ -27,7 +27,6 @@ import {
   readingsBySlot,
   reportIssueUrl,
   segments,
-  slotName,
   sourcesForClaims,
   tabKeyTarget,
   textDirection,
@@ -48,21 +47,6 @@ const is = repo.passage(PENDING) as Passage;
 function passageWith(patch: Partial<Passage>): Passage {
   return { ...structuredClone(mt), ...patch } as Passage;
 }
-
-describe('slotName', () => {
-  it('names the fixed slots and numbers the Easter Vigil slots', () => {
-    expect(slotName('gospel')).toEqual({ name: 'gospel' });
-    expect(slotName('first-reading')).toEqual({ name: 'first-reading' });
-    expect(slotName('epistle')).toEqual({ name: 'epistle' });
-    expect(slotName('reading-4')).toEqual({ name: 'reading-n', n: 4 });
-    expect(slotName('psalm-7')).toEqual({ name: 'psalm-n', n: 7 });
-  });
-
-  it('rejects anything else', () => {
-    expect(() => slotName('homily')).toThrow(/Not a reading slot/);
-    expect(() => slotName('reading-10')).toThrow(RangeError);
-  });
-});
 
 describe('language and direction', () => {
   it('maps the schema tags to HTML lang values', () => {
@@ -264,7 +248,6 @@ describe('reading pages from the fixture content root', () => {
     expect(view).toMatchObject({
       date: '2026-09-20',
       slot: 'gospel',
-      slotName: { name: 'gospel' },
       ref: 'Mt 20:1-16a',
       key: APPROVED,
       linkout: expect.stringMatching(/^https:\/\/www\.drbo\.org\//),

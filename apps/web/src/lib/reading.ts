@@ -30,30 +30,6 @@ export const CONTENT_ISSUE_FIELDS = ['passage', 'note', 'page'] as const;
  */
 export const CONTEXT_NOTE_ID = '_context';
 
-/** How a reading slot is named on the page; numbered slots carry `n`. */
-export type SlotName =
-  | { readonly name: 'first-reading' | 'psalm' | 'second-reading' | 'gospel' | 'epistle' }
-  | { readonly name: 'reading-n' | 'psalm-n'; readonly n: number };
-
-/** `first-reading` → `{ name: 'first-reading' }`, `psalm-3` → `{ name: 'psalm-n', n: 3 }`. */
-export function slotName(slot: string): SlotName {
-  const numbered = /^(reading|psalm)-([1-9])$/.exec(slot);
-  if (numbered !== null) {
-    const [, kind, n] = numbered;
-    return { name: kind === 'reading' ? 'reading-n' : 'psalm-n', n: Number(n) };
-  }
-  switch (slot) {
-    case 'first-reading':
-    case 'psalm':
-    case 'second-reading':
-    case 'gospel':
-    case 'epistle':
-      return { name: slot };
-    default:
-      throw new RangeError(`Not a reading slot: ${JSON.stringify(slot)}`);
-  }
-}
-
 /** The HTML `lang` for an original-language tag: the schema's `lat` is BCP 47 `la`; the others are already tags. */
 export function htmlLang(lang: string): string {
   return lang === 'lat' ? 'la' : lang;
@@ -250,7 +226,6 @@ export function readingPath(date: string, slot: string): string {
 export interface ReadingView {
   readonly date: string;
   readonly slot: string;
-  readonly slotName: SlotName;
   readonly ref: string;
   readonly key: string;
   readonly linkout: string;
@@ -270,7 +245,6 @@ export function readingView(day: ResolvedDay, reading: ResolvedReading): Reading
   return {
     date: day.date,
     slot,
-    slotName: slotName(slot),
     ref,
     key,
     linkout,

@@ -23,7 +23,7 @@ body:
     id: note
     attributes:
       label: Note id
-      description: The note you are reporting (filled in from the page); `context` means the Context panel.
+      description: The note you are reporting (filled in from the page); `_context` means the Context panel.
       placeholder: v15-evil-eye
     validations:
       required: true

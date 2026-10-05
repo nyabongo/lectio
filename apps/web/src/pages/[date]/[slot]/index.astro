@@ -15,6 +15,7 @@ import Verification from '../../../components/notes/Verification.astro';
 import Seo from '../../../components/seo/Seo.astro';
 import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { dayPath, slotLabel } from '../../../lib/day.ts';
 import { linkoutSource, readingPage, readingStaticPaths } from '../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../lib/site.ts';
 
@@ -29,24 +30,15 @@ if (view === null) throw new Error(`no reading for ${date}/${slot}`);
 
 const lang = DEFAULT_LOCALE;
 const base = import.meta.env.BASE_URL;
-const { notes, slotName: name } = view;
-const slotLabel =
-  name.name === 'reading-n'
-    ? t(lang, 'reading.slot.readingN', { n: name.n })
-    : name.name === 'psalm-n'
-      ? t(lang, 'reading.slot.psalmN', { n: name.n })
-      : {
-          'first-reading': t(lang, 'reading.slot.firstReading'),
-          psalm: t(lang, 'reading.slot.psalm'),
-          'second-reading': t(lang, 'reading.slot.secondReading'),
-          gospel: t(lang, 'reading.slot.gospel'),
-          epistle: t(lang, 'reading.slot.epistle'),
-        }[name.name];
+const { notes } = view;
+// Slot names are shared with the day pages (`day.slot.*`), so both say the same thing.
+const dayEnv = { lang, messages: { t, formatDate }, paths: (path: string) => withBase(base, localePath(lang, path)) };
+const slotText = slotLabel(dayEnv, view.slot);
 const dateText = formatDate(lang, view.date);
-const title = t(lang, 'reading.pageTitle', { ref: view.ref, slot: slotLabel });
+const title = t(lang, 'reading.pageTitle', { ref: view.ref, slot: slotText });
 const description = notes?.summary ?? t(lang, 'reading.description', { ref: view.ref, date: dateText });
 const source = linkoutSource(config, view.linkout);
-const dayHref = withBase(base, localePath(lang, `${view.date}/`));
+const dayHref = withBase(base, localePath(lang, dayPath(view.date)));
 ---
 
 <BaseLayout
@@ -64,7 +56,7 @@ const dayHref = withBase(base, localePath(lang, `${view.date}/`));
       {t(lang, 'reading.backToDay', { date: dateText })}
     </a>
     <header class="reading__header">
-      <p class="eyebrow">{slotLabel}</p>
+      <p class="eyebrow">{slotText}</p>
       <h1 class="reading__ref">{view.ref}</h1>
       {notes !== null && <p class="reading__summary">{notes.summary}</p>}
     </header>
