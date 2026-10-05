@@ -274,13 +274,13 @@ async function decideCommand(args: readonly string[], options: GatesCliOptions):
   let changedFiles: readonly ChangedFile[];
   if (values.pr === undefined) {
     changedFiles = git.changedFiles(values.base, values.head);
-    const view = { changedFiles, readFile, readBase: (file: string) => git.show(values.base, file) };
+    const view = { changedFiles, readFile, readBase: (file: string) => git.show(values.base, file), config };
     pr = factsFromChanges(view, prNumber);
   } else {
     pr = readPullRequestFacts(read(path(values.pr)), values.pr);
     changedFiles = pr.files.map((file): ChangedFile => ({ path: file, status: 'modified' }));
   }
-  const outcome = decide({ results, config, pr, claims: changedClaims({ changedFiles, readFile }) });
+  const outcome = decide({ results, config, pr, claims: changedClaims({ changedFiles, readFile, config }) });
   options.log(`decision: ${outcome.decision}`);
   for (const reason of outcome.reasons) options.log(`  - ${reason}`);
   if (values.json !== undefined) write(path(values.json), `${JSON.stringify(outcome, null, 2)}\n`);
