@@ -1,5 +1,5 @@
 # Deploy (L-062). Builds the Astro site from the repository content (pages, the static JSON API, share cards and
-# the Pagefind index) and publishes it to GitHub Pages.
+# the Pagefind index) and publishes it to GitHub Pages. Narration is rendered first (L-082, see "Render narration").
 #
 # Triggers:
 # - `push` to main: human merges.
@@ -71,6 +71,53 @@ jobs:
       - name: Content validates
         run: npm run content:validate
 
+      # Narration (L-082): `audio:render --auto` renders the missing narration before the site build.
+      # - With the TTS and storage secrets below and `tts.storage.publicBaseUrl` in the config, it renders the live
+      #   voice into the bucket and writes the manifest the build reads (LECTIO_AUDIO_MANIFEST), so the API carries
+      #   audio URLs. Live audio is keyed by text hash, so only new or changed notes are billed; the monthly character
+      #   budget is `tts.monthlyCharBudget`.
+      # - Without them (the TTS provider is not chosen yet, #102) it renders the fake voice into .audio-out, which is
+      #   uploaded as a workflow artifact for inspection only. Nothing is published and every `audio` stays null.
+      # It never fails the deploy (continue-on-error); the job summary says which case ran and what it rendered.
+      # The secrets reach this step only, and this workflow runs only on main, never on pull-request code.
+      - name: Render narration
+        id: audio
+        continue-on-error: true
+        env:
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          SITE_MANIFEST: ${{ runner.temp }}/audio-manifest.json
+        run: npm run audio:render -- --auto --site-manifest "$SITE_MANIFEST" --summary "$GITHUB_STEP_SUMMARY"
+
+      # The build reads the manifest only when the render step wrote one (live audio). A failed render still deploys,
+      # with whatever audio it managed to record, or none.
+      - name: Narration manifest
+        id: audio-manifest
+        env:
+          SITE_MANIFEST: ${{ runner.temp }}/audio-manifest.json
+          OUTCOME: ${{ steps.audio.outcome }}
+        run: |
+          if [ -f "$SITE_MANIFEST" ]; then
+            echo "path=$SITE_MANIFEST" >> "$GITHUB_OUTPUT"
+          fi
+          if [ "$OUTCOME" != "success" ]; then
+            echo "::warning::Narration render ${OUTCOME}; deploying with the audio already recorded (see the job summary)"
+            printf '\n> [!WARNING]\n> The narration render step ended with %s. The site deploys anyway.\n' "$OUTCOME" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload the fake narration
+        if: hashFiles('.audio-out/**') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: narration-fake
+          path: .audio-out
+          retention-days: 7
+
       # Same share-card cache as web.yml (L-088): PNGs cached by content hash in apps/web/.cache/og. The key carries
       # TEMPLATE_VERSION (packages/sharecards/src/cache.ts) and a hash of what the cards are made from; entries are
       # keyed by cardCacheKey(), so a restored older cache is only reused card by card.
@@ -96,6 +143,8 @@ jobs:
         run: npm run build -w apps/web
         env:
           LECTIO_DATE: ${{ steps.site.outputs.date }}
+          # Empty (no audio) unless the render step wrote the manifest; see apps/web/src/lib/audio.ts.
+          LECTIO_AUDIO_MANIFEST: ${{ steps.audio-manifest.outputs.path }}
 
       # Only when a custom domain is configured (L-206). With the "GitHub Actions" Pages source the domain itself
       # is set in the repository's Pages settings; the file keeps the artifact self-describing.
