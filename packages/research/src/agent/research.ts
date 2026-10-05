@@ -15,7 +15,7 @@ import type { LectioConfig } from '@lectio/config';
 import { ContentError, formatIssue } from '@lectio/content';
 import type { ContentRepo } from '@lectio/content';
 import type { Corpus } from '@lectio/corpus';
-import { BudgetExceededError, ProviderError, validateAgainstSchema } from '@lectio/providers';
+import { BudgetExceededError, LlmOutputError, ProviderError, validateAgainstSchema } from '@lectio/providers';
 import type { Clock, CostMeter, LlmClient, LlmRequest, LlmTool } from '@lectio/providers';
 import type { Passage } from '@lectio/schema/passage';
 import { format, resolveConfig } from 'prettier';
@@ -27,7 +27,7 @@ import { formatOriginalText, loadOriginalText } from './original.ts';
 import type { LoadOriginalOptions } from './original.ts';
 import { loadPromptTemplate, renderTemplate } from './prompt.ts';
 import type { PromptTemplate } from './prompt.ts';
-import { MAX_EXCERPT_WORDS, RESEARCH_RESPONSE_SCHEMA } from './schema.ts';
+import { MAX_TRANSLATION_NOTES, RESEARCH_RESPONSE_SCHEMA, excerptWordLimit } from './schema.ts';
 import type { ResearchOutput } from './schema.ts';
 
 /** Server-side tools the research call offers the model. */
@@ -46,7 +46,7 @@ export interface ResearchDeps {
   readonly meter: CostMeter;
   readonly corpus: Corpus;
   readonly repo: Pick<ContentRepo, 'calendarYear'>;
-  readonly config: Pick<LectioConfig, 'research' | 'site'>;
+  readonly config: Pick<LectioConfig, 'research' | 'site' | 'licenceGuard'>;
   readonly clock: Clock;
   /** Content repository root: passage files are written to `<contentRoot>/passages/<key>.json`. */
   readonly contentRoot: string;
@@ -140,7 +140,8 @@ export async function buildResearchRequest(
     locale: deps.locale ?? deps.config.site.defaultLocale,
     calendar: formatCalendarContext(context),
     originalText: formatOriginalText(original),
-    maxExcerptWords: MAX_EXCERPT_WORDS,
+    maxExcerptWords: excerptWordLimit(deps.config.licenceGuard),
+    maxNotes: MAX_TRANSLATION_NOTES,
   };
   return {
     role: 'generator',
@@ -214,8 +215,16 @@ export async function researchPassage(item: WorkItem, deps: ResearchDeps): Promi
       };
     }
     // A provider failure (malformed output after the client's retries, an outage) ends this passage only.
+    // The issue list always names it, and malformed output keeps the raw text for repair (L-036).
     if (error instanceof ProviderError) {
-      return { status: 'failed', key: item.key, costUsd: spent(), error: error.message, issues: [] };
+      return {
+        status: 'failed',
+        key: item.key,
+        costUsd: spent(),
+        error: error.message,
+        issues: [`${error.code}: ${error.message}`],
+        ...(error instanceof LlmOutputError ? { output: error.rawText } : {}),
+      };
     }
     throw error;
   }

@@ -1,8 +1,9 @@
+import { DEFAULT_CONFIG } from '@lectio/config';
 import { generateFromSchema, validateAgainstSchema } from '@lectio/providers';
 import { describe, expect, it } from 'vitest';
 
 import { MT_20_OUTPUT } from './fixtures/fake-research.ts';
-import { MAX_EXCERPT_WORDS, RESEARCH_RESPONSE_SCHEMA, wordsPattern } from './schema.ts';
+import { MAX_TRANSLATION_NOTES, RESEARCH_RESPONSE_SCHEMA, excerptWordLimit } from './schema.ts';
 
 const source = MT_20_OUTPUT.sources.find((s) => s.type === 'web')!;
 
@@ -44,18 +45,24 @@ describe('RESEARCH_RESPONSE_SCHEMA', () => {
     );
   });
 
-  it(`caps excerpts at ${String(MAX_EXCERPT_WORDS)} words`, () => {
-    const words = (n: number): string => Array.from({ length: n }, (_, i) => `w${String(i)}`).join(' ');
-    expect(validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, withSource({ excerpt: words(12) }))).toEqual([]);
-    expect(validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, withSource({ excerpt: words(13) }))).not.toEqual([]);
+  it('leaves the excerpt word limit to the prompt and the licence gate', () => {
+    const words = Array.from({ length: 20 }, (_, i) => `w${String(i)}`).join(' ');
+    expect(validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, withSource({ excerpt: words }))).toEqual([]);
     expect(validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, withSource({ excerpt: ' padded' }))).not.toEqual([]);
+  });
+
+  it(`allows at most ${String(MAX_TRANSLATION_NOTES)} translation notes`, () => {
+    const [note] = MT_20_OUTPUT.translationNotes;
+    const notes = (n: number) => ({ ...MT_20_OUTPUT, translationNotes: Array.from({ length: n }, () => note) });
+    expect(validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, notes(MAX_TRANSLATION_NOTES))).toEqual([]);
+    expect(validateAgainstSchema(RESEARCH_RESPONSE_SCHEMA, notes(MAX_TRANSLATION_NOTES + 1))).not.toEqual([]);
   });
 });
 
-describe('wordsPattern', () => {
-  it('matches one to n single-spaced words', () => {
-    const re = new RegExp(wordsPattern(3), 'u');
-    expect(['a', 'a b', 'a b c'].every((s) => re.test(s))).toBe(true);
-    expect(['', 'a b c d', 'a  b', 'a '].some((s) => re.test(s))).toBe(false);
+describe('excerptWordLimit', () => {
+  it('is the tightest of the licence guard limits', () => {
+    expect(excerptWordLimit(DEFAULT_CONFIG.licenceGuard)).toBe(12);
+    expect(excerptWordLimit({ maxExcerptWords: 9, maxCommentaryRunWords: 12, maxBibleRunWords: 12 })).toBe(9);
+    expect(excerptWordLimit({ maxExcerptWords: 25, maxCommentaryRunWords: 12, maxBibleRunWords: 7 })).toBe(7);
   });
 });

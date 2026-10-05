@@ -78,9 +78,10 @@ const CALENDAR = {
   ],
 } as unknown as CalendarYear;
 
-function config(perPassageUsd = 1.5): Pick<LectioConfig, 'research' | 'site'> {
+function config(perPassageUsd = 1.5): Pick<LectioConfig, 'research' | 'site' | 'licenceGuard'> {
   return {
     site: DEFAULT_CONFIG.site,
+    licenceGuard: DEFAULT_CONFIG.licenceGuard,
     research: { ...DEFAULT_CONFIG.research, budget: { ...DEFAULT_CONFIG.research.budget, perPassageUsd } },
   };
 }
@@ -163,6 +164,7 @@ describe('researchPassage with the fake LLM', () => {
     });
     expect(request?.system).toContain('Never reproduce Bible translation text');
     expect(request?.system).toContain('12 words or fewer');
+    expect(request?.system).toContain('at most 5 notes');
     const user = request?.messages[0]?.content ?? '';
     expect(request?.messages).toHaveLength(1);
     expect(user).toContain('Passage key: `MT.20.1-16`');
@@ -195,6 +197,16 @@ describe('researchPassage with the fake LLM', () => {
     expect(request?.messages[0]?.content).toContain('No calendar context is available');
     expect(request?.messages[0]?.content).toContain('- 1:27 (grc-sblgnt): ');
     expect(result).toMatchObject({ status: 'written', passage: { key: 'PHIL.1.20-24_1.27', locale: 'en-KE' } });
+  });
+
+  it('takes the excerpt limit from the licence guard configuration', async () => {
+    const llm = fakeResearchLlm();
+    const base = config();
+    await researchPassage(
+      MT20,
+      deps({ llm, config: { ...base, licenceGuard: { ...base.licenceGuard, maxCommentaryRunWords: 8 } } }),
+    );
+    expect(llm.clients[0]?.calls[0]?.system).toContain('8 words or fewer');
   });
 
   it('assembles the fake’s schema-generated default answer too', async () => {
@@ -278,14 +290,23 @@ describe('budget', () => {
 describe('failures', () => {
   it('reports malformed model output without writing', async () => {
     const result = await researchPassage(MT20, deps({ llm: fakeResearchLlm({ text: '{"oops' }) }));
-    expect(result).toMatchObject({ status: 'failed', issues: [], error: expect.stringContaining('not valid JSON') });
-    expect(result).not.toHaveProperty('output');
+    expect(result).toMatchObject({
+      status: 'failed',
+      issues: [expect.stringMatching(/^malformed-output: .*not valid JSON/)],
+      error: expect.stringContaining('not valid JSON'),
+      output: '{"oops',
+    });
     expect(await exists(join(dir, 'passages'))).toBe(false);
   });
 
   it('reports a provider outage', async () => {
     const result = await researchPassage(MT20, deps({ llm: fakeResearchLlm({ fail: 'unavailable' }) }));
-    expect(result).toMatchObject({ status: 'failed', error: 'scripted unavailable failure for generator' });
+    expect(result).toMatchObject({
+      status: 'failed',
+      error: 'scripted unavailable failure for generator',
+      issues: ['unavailable: scripted unavailable failure for generator'],
+    });
+    expect(result).not.toHaveProperty('output');
   });
 
   it('re-checks the output against the research schema', async () => {
