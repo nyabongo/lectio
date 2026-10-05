@@ -117,6 +117,25 @@ describe('whole-word, windowed matching', () => {
     expect(excerptOccurs('1The kingdom of', '<p><sup>1</sup> The kingdom of</p>')).toBe(false);
   });
 
+  it('searches only the gap window for each later piece, so time grows with the page, not its square', () => {
+    const page = 'The owner of the house went out at the third hour and saw the others standing in the market. '.repeat(
+      6500,
+    );
+    expect(page.length).toBeGreaterThan(600_000);
+    const start = performance.now();
+    expect(excerptOccurs('the … unicorn', page)).toBe(false);
+    expect(excerptOccurs('the … others standing in … the market', page)).toBe(true);
+    expect(performance.now() - start).toBeLessThan(500);
+  });
+
+  it('finds a later piece exactly at the edge of the gap window and not beyond it', () => {
+    // The gap runs from the end of one piece to the start of the next; spaces collapse, so pad with words.
+    const page = (filler: string) => `alpha beta gamma ${filler}${' x'.repeat(198)} delta epsilon zeta`;
+    expect(page('xx').indexOf('delta') - 'alpha beta gamma'.length).toBe(400);
+    expect(excerptOccurs('alpha beta gamma … delta epsilon zeta', page('xx'))).toBe(true);
+    expect(excerptOccurs('alpha beta gamma … delta epsilon zeta', page('xxx'))).toBe(false);
+  });
+
   it('drops pieces with no letter or digit', () => {
     expect(excerptPieces('— … ·')).toEqual([]);
     expect(excerptOccurs('—', 'a — b')).toBe(false);
