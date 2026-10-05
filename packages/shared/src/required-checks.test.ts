@@ -107,6 +107,19 @@ describe('check names', () => {
     ]);
   });
 
+  it('does not count a matrix job sharing a plain job name as a duplicate', () => {
+    const source = workflow(
+      '  test:\n    name: Test\n  unit:\n    name: Test\n    strategy:\n      matrix:\n        node: [22, 24]\n  other:\n    name: Test\n    strategy:\n      matrix:\n        os: [a]\n',
+    );
+    expect(checkWorkflow('a.yml', source, ['Test'])).toEqual([]);
+    const matrixOnly = workflow(
+      '  a:\n    name: M\n    strategy: { matrix: { x: [1] } }\n  b:\n    name: M\n    strategy: { matrix: { x: [2] } }\n',
+    );
+    expect(checkWorkflow('a.yml', matrixOnly, ['M'])).toEqual([
+      "a.yml: job 'a' uses strategy.matrix, so it never reports a check named 'M'",
+    ]);
+  });
+
   it('fails validateRequiredChecks when display names collide', () => {
     const source = `${GOOD_WORKFLOW}  e2e:\n    name: test\n    runs-on: ubuntu-latest\n`;
     expect(validateRequiredChecks([registry(['lint', 'test'])], () => source)).toEqual([
