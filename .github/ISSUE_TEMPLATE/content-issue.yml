@@ -1,0 +1,56 @@
+# Opened from the "Report an issue" link on every note of the Reading page (apps/web/src/lib/reading.ts,
+# `reportIssueUrl`), which prefills `passage`, `note` and `page` by field id. Keep those ids in sync with
+# CONTENT_ISSUE_FIELDS there; the reading tests check it.
+name: Content issue
+description: Report a mistake or a concern in a published note (context, translation note or source).
+title: 'Content issue: '
+labels: ['content-issue']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping keep Lectio's notes accurate. Notes are a study aid, not Church teaching.
+        Please do not include personal information: this issue is public.
+  - type: input
+    id: passage
+    attributes:
+      label: Passage key
+      description: The passage the note belongs to (filled in from the page), for example `MT.20.1-16`.
+      placeholder: MT.20.1-16
+    validations:
+      required: true
+  - type: input
+    id: note
+    attributes:
+      label: Note id
+      description: The note you are reporting (filled in from the page); `context` means the Context panel.
+      placeholder: v15-evil-eye
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The Reading page you were on (filled in from the page).
+      placeholder: 2026-09-20/gospel/
+    validations:
+      required: false
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of issue is it?
+      options:
+        - A claim is wrong or not supported by its source
+        - A source is missing, broken or misquoted
+        - Greek, Hebrew or Latin is wrong
+        - Doctrinally misleading
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What is wrong, and what should it say? Links to sources help a reviewer check it quickly.
+    validations:
+      required: true
