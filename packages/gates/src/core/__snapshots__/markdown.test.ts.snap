@@ -1,0 +1,68 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderComment > groups by file then claim, orders severities and escapes text 1`] = `
+"<!-- lectio-gates -->
+## Lectio gates: a gate failed
+
+| Gate | Status | Details |
+| --- | --- | --- |
+| Dummy gate (\`dummy\`) | Fail | 6 errors, 2 warnings, 1 note |
+| other (\`other\`) | Fail | 1 error, 1 warning |
+
+### Findings
+
+#### Pull request
+
+- **error** · \`dummy/file-count\` (Dummy gate): whole &lt;!-- lectio-gates --&gt; PR second line
+  - Rule: A content PR changes at most one passage.
+  - Fix: Split the PR so each passage is reviewed on its own.
+
+#### \`passages/A.json\`
+
+**Claim \`c1\`**
+
+- **error** · \`dummy/claim-cites-source\` (Dummy gate) at \`/x'y\`: a &amp; b
+  - Rule: Every claim cites at least one source.
+  - Fix: Add the id of a supporting source to the claim’s sourceIds.
+- **error** · \`dummy/file-count\` (Dummy gate) at \`/x'y\`: y
+  - Rule: A content PR changes at most one passage.
+  - Fix: Split the PR so each passage is reviewed on its own.
+- **error** · \`dummy/summary-short\` (Dummy gate) at \`/x'y\`: z
+  - Rule: A passage summary stays under 100 characters.
+  - Fix: Shorten the summary to one plain sentence.
+
+#### \`passages/B.json\`
+
+**Whole file**
+
+- **warning** · \`dummy/summary-short\` (Dummy gate) at \`/a\`: w
+  - Rule: A passage summary stays under 100 characters.
+  - Fix: Shorten the summary to one plain sentence.
+- **warning** · \`dummy/summary-short\` (Dummy gate) at \`/b\`: w
+  - Rule: A passage summary stays under 100 characters.
+  - Fix: Shorten the summary to one plain sentence.
+- **info** · \`dummy/summary-short\` (Dummy gate): note
+  - Rule: A passage summary stays under 100 characters.
+  - Fix: Shorten the summary to one plain sentence.
+
+**Claim \`c2\`**
+
+- **error** · \`dummy/claim-cites-source\` (Dummy gate): two
+  - Rule: Every claim cites at least one source.
+  - Fix: Add the id of a supporting source to the claim’s sourceIds.
+- **error** · \`dummy/claim-cites-source\` (other): same claim, later gate
+  - Rule: Every claim cites at least one source.
+  - Fix: Add the id of a supporting source to the claim’s sourceIds.
+- **warning** · \`other/rule\` (other): m|n
+  - Rule: Other &lt;rule&gt; holds.
+  - Fix: Fix | it.
+
+**Claim \`c10\`**
+
+- **error** · \`dummy/claim-cites-source\` (Dummy gate): ten
+  - Rule: Every claim cites at least one source.
+  - Fix: Add the id of a supporting source to the claim’s sourceIds.
+
+<sub>Base \`origin/main\` · head \`HEAD\` · 1 changed file. Each finding names its rule; the fix says what to change.</sub>
+"
+`;

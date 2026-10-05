@@ -15,5 +15,8 @@
   "dependencies": {
     "@lectio/shared": "0.0.0",
     "@lectio/config": "0.0.0"
+  },
+  "devDependencies": {
+    "@lectio/schema": "0.0.0"
   }
 }
