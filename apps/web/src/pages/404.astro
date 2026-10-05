@@ -4,22 +4,25 @@
  * results and the sitemap; its links are absolute and base-aware, so they work from any depth.
  */
 import Seo from '../components/seo/Seo.astro';
-import strings from '../i18n/en/seo.json' with { type: 'json' };
+import { DEFAULT_LOCALE, localePath, t } from '../i18n/index.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../lib/site.ts';
 
 const base = import.meta.env.BASE_URL;
+const lang = DEFAULT_LOCALE;
+const title = t(lang, 'seo.notFoundTitle');
+const description = t(lang, 'seo.notFoundDescription');
 ---
 
-<BaseLayout title={strings.notFoundTitle} description={strings.notFoundDescription}>
-  <Seo slot="head" title={strings.notFoundTitle} description={strings.notFoundDescription} path="404.html" noindex />
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path="404.html" noindex />
   <section class="not-found" aria-labelledby="not-found-heading">
-    <p class="eyebrow">{strings.notFoundEyebrow}</p>
-    <h1 id="not-found-heading">{strings.notFoundHeading}</h1>
-    <p>{strings.notFoundBody}</p>
+    <p class="eyebrow">{t(lang, 'seo.notFoundEyebrow')}</p>
+    <h1 id="not-found-heading">{t(lang, 'seo.notFoundHeading')}</h1>
+    <p>{t(lang, 'seo.notFoundBody')}</p>
     <ul class="not-found__links">
-      <li><a class="button" href={withBase(base)}>{strings.notFoundHome}</a></li>
-      <li><a href={withBase(base, 'calendar/')}>{strings.notFoundCalendar}</a></li>
+      <li><a class="button" href={withBase(base, localePath(lang))}>{t(lang, 'seo.notFoundHome')}</a></li>
+      <li><a href={withBase(base, localePath(lang, 'calendar/'))}>{t(lang, 'seo.notFoundCalendar')}</a></li>
     </ul>
   </section>
 </BaseLayout>

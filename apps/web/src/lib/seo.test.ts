@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { absoluteAssetUrl, absoluteUrl, formatTitle, ogLocale, seoTags, stripBase } from './seo.ts';
+import { absoluteAssetUrl, absoluteUrl, ogLocale, seoTags, stripBase } from './seo.ts';
 import type { HeadTag, SeoInput } from './seo.ts';
 
 describe('absoluteUrl', () => {
@@ -56,25 +56,6 @@ describe('stripBase', () => {
   });
 });
 
-describe('formatTitle', () => {
-  const template = '{title} · Lectio';
-
-  it('applies the template', () => {
-    expect(formatTitle('Calendar', 'Lectio', template)).toBe('Calendar · Lectio');
-    expect(formatTitle('  Calendar ', 'Lectio', template)).toBe('Calendar · Lectio');
-  });
-
-  it('gives the site name for a missing, empty or site-name title', () => {
-    expect(formatTitle(undefined, 'Lectio', template)).toBe('Lectio');
-    expect(formatTitle('', 'Lectio', template)).toBe('Lectio');
-    expect(formatTitle('Lectio', 'Lectio', template)).toBe('Lectio');
-  });
-
-  it('replaces every token', () => {
-    expect(formatTitle('A', 'S', '{title} | {title}')).toBe('A | A');
-  });
-});
-
 describe('ogLocale', () => {
   it.each([
     ['en', 'en_GB'],
@@ -90,14 +71,13 @@ describe('ogLocale', () => {
 
 describe('seoTags', () => {
   const input: SeoInput = {
-    title: 'Calendar',
+    title: 'Calendar · Lectio',
     description: 'Every day of the liturgical year.',
     path: 'calendar/',
     site: 'https://nyabongo.github.io/lectio/',
     base: '/lectio/',
     locale: 'en',
     siteName: 'Lectio',
-    titleTemplate: '{title} · Lectio',
     image: { src: '/lectio/_astro/brand-card.abc.png', width: 1200, height: 630, alt: 'Lectio' },
   };
 

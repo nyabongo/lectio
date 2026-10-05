@@ -3,7 +3,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import strings from '../../i18n/en/seo.json' with { type: 'json' };
-import { formatTitle } from '../../lib/seo.ts';
 import Seo from './Seo.astro';
 
 let container: AstroContainer;
@@ -66,11 +65,14 @@ describe('Seo', () => {
   });
 });
 
-describe('title template', () => {
+describe('title', () => {
   it('matches the title the base layout renders', async () => {
-    for (const title of ['Calendar', strings.siteName]) {
-      const html = await container.renderToString(BaseLayout, { props: { title } });
-      expect(html).toContain(`<title>${formatTitle(title, strings.siteName, strings.titleTemplate)}</title>`);
+    for (const title of ['Calendar', 'Lectio']) {
+      const layout = await container.renderToString(BaseLayout, { props: { title } });
+      const seo = await render({ title, path: '' });
+      const documentTitle = /<title>([^<]*)<\/title>/.exec(layout)?.[1];
+      expect(documentTitle).toBeDefined();
+      expect(seo).toContain(`<meta property="og:title" content="${documentTitle}">`);
     }
   });
 });

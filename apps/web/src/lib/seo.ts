@@ -1,5 +1,5 @@
 /**
- * Search and social metadata for a page: absolute URLs under the base path, the title template, Open Graph and
+ * Search and social metadata for a page: absolute URLs under the base path, Open Graph and
  * Twitter tags, the canonical link and hreflang alternates. `src/components/seo/Seo.astro` renders the tags
  * `seoTags()` returns, so everything a crawler or a link preview sees is decided (and tested) here.
  *
@@ -37,16 +37,6 @@ export function stripBase(base: string, pathname: string): string {
   return pathname.replace(/^\/+/, '');
 }
 
-/**
- * The document title from the template: `formatTitle('Calendar', 'Lectio', '{title} · Lectio')` is
- * `Calendar · Lectio`. A missing title, or the site name itself, gives just the site name.
- */
-export function formatTitle(title: string | undefined, siteName: string, template: string): string {
-  const trimmed = title?.trim() ?? '';
-  if (trimmed === '' || trimmed === siteName) return siteName;
-  return template.replaceAll('{title}', trimmed);
-}
-
 /** Territories used for `og:locale` when a site locale is a bare language (British English, Kenyan Kiswahili). */
 const OG_TERRITORIES: Readonly<Record<string, string>> = { en: 'GB', sw: 'KE' };
 
@@ -77,8 +67,8 @@ export interface HreflangAlternate {
 }
 
 export interface SeoInput {
-  /** The page title, before the template is applied. */
-  readonly title?: string;
+  /** The full document title (`Calendar · Lectio`), as the base layout's `<title>` has it. */
+  readonly title: string;
   readonly description: string;
   /** The page path relative to the base path (`''` for the home page, `calendar/`). */
   readonly path: string;
@@ -89,8 +79,6 @@ export interface SeoInput {
   /** The page's site locale (`en`). */
   readonly locale: string;
   readonly siteName: string;
-  /** Title template with a `{title}` token. */
-  readonly titleTemplate: string;
   readonly image: SeoImage;
   /** `website` for the home page and listings, `article` for a reading or a note. */
   readonly type?: 'website' | 'article';
@@ -111,8 +99,7 @@ const link = (attrs: Record<string, string>): HeadTag => ({ tag: 'link', attrs }
 
 /** The head tags for one page, in a stable order. */
 export function seoTags(input: SeoInput): HeadTag[] {
-  const { site, base, image } = input;
-  const title = formatTitle(input.title, input.siteName, input.titleTemplate);
+  const { site, base, image, title } = input;
   const url = absoluteUrl(site, base, input.path);
   const tags: HeadTag[] = [];
 
