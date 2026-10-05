@@ -1,0 +1,109 @@
+{
+  "title": "About Lectio",
+  "description": "How Lectio’s notes are researched and checked, what “Verified” means, and the openly licensed texts, data and fonts it is built on.",
+  "eyebrow": "About and methodology",
+  "heading": "How Lectio works",
+  "intro": "Lectio is a companion to the daily Mass readings. For each reading it gives the historical context and notes on what the Hebrew, Greek or Latin says that English cannot. It carries commentary only: the readings themselves open at a licensed source.",
+  "studyAid": {
+    "title": "A study aid, not Church teaching",
+    "body": "Lectio’s notes are an aid to reading Scripture, not teaching of the Church and not a substitute for the Church’s own lectionary, catechesis or homily. They are researched with AI and checked before they appear, but they can still be wrong. Where a note touches doctrine, read it alongside the Church’s teaching, and ask a priest when in doubt."
+  },
+  "steps": {
+    "heading": "Four steps before a note appears",
+    "intro": "Nothing is published on one AI’s say-so. Every note goes through these steps, ahead of time, as a pull request to the project’s public repository; readers never trigger an AI.",
+    "research": {
+      "title": "Research",
+      "body": "An AI with web search studies the passage in its original language, its history and the commentaries. Every sentence must cite a source."
+    },
+    "tests": {
+      "title": "Automatic tests",
+      "body": "Software confirms that each cited excerpt really appears in its source, and that each Greek, Hebrew or Latin word really occurs in that verse."
+    },
+    "crossExamine": {
+      "title": "Cross-examine",
+      "body": "Two independent AI models from different families re-read the sources: one confirms each claim, the other tries to disprove it."
+    },
+    "human": {
+      "title": "Human gate",
+      "body": "Anything flagged or doctrinally sensitive waits for a human reviewer. Only approved notes reach the site."
+    }
+  },
+  "gates": {
+    "heading": "The five checks on every change",
+    "intro": "Technically, the steps above are five checks that every pull request must pass. The cheap, exact tests run first; the AI verifiers run only when those pass. A failed check never publishes anything.",
+    "schema": {
+      "title": "Schema tests",
+      "body": "Every file is well formed, every claim has a source, and every reference points to a verse that exists."
+    },
+    "evidence": {
+      "title": "Evidence tests",
+      "body": "Each cited excerpt appears in the fetched source, and each quoted Greek, Hebrew or Latin word occurs in that verse of the original-language texts listed below."
+    },
+    "licence": {
+      "title": "Licence guard",
+      "body": "No long verbatim run from an English Bible translation or from a cited commentary. Lectio never stores the text of a copyrighted modern Bible translation.",
+      "index": "The guard compares notes against an index built from {editions}. The index holds only hashes of short word sequences, never the text.",
+      "limitation": "Known limitation:"
+    },
+    "verifiers": {
+      "title": "AI verifiers",
+      "body": "Two models from different families see only the claims and their sources: one confirms that each claim is supported, the other tries to refute it."
+    },
+    "merge": {
+      "title": "Merge rule",
+      "body": "When every check is green with high confidence, the change is published. Anything flagged, refuted or doctrinally sensitive waits for a human reviewer."
+    }
+  },
+  "verified": {
+    "heading": "What “Verified” means",
+    "body": "A note marked “Verified” passed the schema, evidence and licence tests, and was then either confirmed by both AI verifiers with high confidence or, where a verifier flagged a claim or the subject is doctrinally sensitive, approved by a human reviewer. It lists its sources and the date it was last reviewed, so you can check it yourself.",
+    "limits": "“Verified” means checked against the sources it cites. It does not mean infallible, and it is not an ecclesiastical approval."
+  },
+  "readings": {
+    "heading": "The readings themselves",
+    "body": "Lectio never stores the text of a copyrighted modern Bible translation; the original-language and ancient-version texts it keeps are listed below. Each reading opens at {provider}, which Lectio links to and thanks for making the text freely available."
+  },
+  "report": {
+    "heading": "Found a mistake?",
+    "body": "If a note is wrong, unclear or out of place, please tell us. Reports are public GitHub issues and are reviewed by a person.",
+    "link": "Report an issue"
+  },
+  "sources": {
+    "heading": "Sources and licences",
+    "intro": "Lectio is built on openly licensed work. This list is generated from the project’s data files every time the site is built.",
+    "own": "Lectio’s own code is released under the {licence}; the texts, data and fonts below keep their own licences.",
+    "ownLicence": "MIT Licence"
+  },
+  "corpora": {
+    "heading": "Original-language texts",
+    "intro": "The evidence tests check every quoted original-language word against these editions, which the repository holds as word lists with lemmas.",
+    "empty": "No original-language editions are installed yet.",
+    "project": "Project",
+    "licenceText": "Licence text",
+    "version": "Version {version}"
+  },
+  "versification": {
+    "heading": "Versification tables",
+    "intro": "Chapter and verse counts and the mappings between numbering systems (for example Hebrew and Latin psalm numbers) come from:"
+  },
+  "lectionary": {
+    "heading": "Lectionary data",
+    "intro": "The list of readings for each day is imported from:"
+  },
+  "fonts": {
+    "heading": "Fonts",
+    "intro": "Every typeface is self-hosted and licensed under the SIL Open Font License 1.1.",
+    "licence": "Licence (OFL 1.1)",
+    "reserved": "Reserved Font Name “{name}”."
+  },
+  "licences": {
+    "label": "Licence:",
+    "publicDomain": "Public domain"
+  },
+  "languages": {
+    "grc": "Greek",
+    "hbo": "Hebrew",
+    "arc": "Aramaic",
+    "lat": "Latin"
+  }
+}
