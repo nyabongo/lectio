@@ -80,6 +80,54 @@ void main() {
       expect(standard.textScaler.scale(10), closeTo(15, 1e-9));
     });
 
+    test('standard keeps the device scaler itself', () {
+      const data = MediaQueryData(textScaler: _AndroidNonLinear());
+      expect(
+        identical(withTextSize(data, TextSize.standard), data),
+        isTrue,
+      );
+    });
+
+    test('composes with non-linear device scaling at 200%', () {
+      const device = _AndroidNonLinear();
+      const data = MediaQueryData(textScaler: device);
+      final scaler = withTextSize(data, TextSize.larger).textScaler;
+
+      // The reader's size enlarges the font, then the device's curve applies.
+      expect(scaler.scale(14), closeTo(device.scale(14 * 1.25), 1e-9));
+      expect(scaler.scale(28), closeTo(device.scale(28 * 1.25), 1e-9));
+      // Large text keeps growing less than body text, as on Android 14+; a
+      // single linear factor would scale both by the same amount.
+      expect(scaler.scale(28) / 28, lessThan(scaler.scale(14) / 14));
+      expect(scaler.scale(14), greaterThan(device.scale(14)));
+      expect(scaler.scale(0), 0);
+    });
+
+    test('over a linear device scale it is the product', () {
+      const TextScaler scaler = ReaderTextScaler(TextScaler.linear(2), 0.9);
+      expect(scaler.scale(10), closeTo(18, 1e-9));
+      // Older widgets still read the deprecated factor.
+      // ignore: deprecated_member_use
+      expect(scaler.textScaleFactor, closeTo(1.8, 1e-9));
+    });
+
+    test('is a value', () {
+      const device = TextScaler.linear(2);
+      const scaler = ReaderTextScaler(device, 1.25);
+      expect(scaler, const ReaderTextScaler(TextScaler.linear(2), 1.25));
+      expect(scaler.hashCode, ReaderTextScaler(device, 1.25).hashCode);
+      expect(scaler, isNot(const ReaderTextScaler(device, 0.9)));
+      expect(scaler, isNot(const ReaderTextScaler(_AndroidNonLinear(), 1.25)));
+      expect(scaler, isNot(device));
+      expect(scaler.toString(), contains('1.25x'));
+    });
+
+    test('clamps like any scaler', () {
+      const scaler = ReaderTextScaler(TextScaler.linear(2), 1.25);
+      expect(scaler.clamp(maxScaleFactor: 2).scale(10), closeTo(20, 1e-9));
+      expect(identical(scaler.clamp(), scaler), isTrue);
+    });
+
     testWidgets('applyTextSize uses the scope settings', (tester) async {
       final controller = SettingsController(MemoryKeyValueStore());
       late TextScaler scaler;
@@ -135,4 +183,19 @@ void main() {
     );
     expect(() => SettingsScope.of(captured), throwsAssertionError);
   });
+}
+
+/// A device scaler shaped like Android 14's non-linear 200% font scale: body
+/// text nearly doubles, larger text grows less, and 100sp text is not scaled.
+class _AndroidNonLinear extends TextScaler {
+  const _AndroidNonLinear();
+
+  @override
+  double scale(double fontSize) {
+    if (fontSize >= 100) return fontSize;
+    return fontSize + fontSize * (1 - fontSize / 100);
+  }
+
+  @override
+  double get textScaleFactor => scale(14) / 14;
 }
