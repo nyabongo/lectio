@@ -1,0 +1,145 @@
+---
+/**
+ * `/passages/`: the passage library. Every passage with approved notes, grouped by book in canonical order, with
+ * note counts. View model: `passageLibrary` in src/lib/calendar-view.ts.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import { passageLibrary } from '../../lib/calendar-view.ts';
+import { siteContext, withBase } from '../../lib/site.ts';
+
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const href = (path: string) => withBase(base, localePath(lang, path));
+const view = passageLibrary(siteContext().repo);
+const testaments = [
+  { code: 'OT', label: t(lang, 'calendar.library.testament.OT') },
+  { code: 'NT', label: t(lang, 'calendar.library.testament.NT') },
+]
+  .map(({ code, label }) => ({ code, label, books: view.books.filter((book) => book.testament === code) }))
+  .filter((testament) => testament.books.length > 0);
+---
+
+<BaseLayout title={t(lang, 'calendar.library.title')} description={t(lang, 'calendar.library.description')} lang={lang}>
+  <p class="eyebrow">{t(lang, 'common.site.name')}</p>
+  <h1>{t(lang, 'calendar.library.title')}</h1>
+  <p class="lead">{t(lang, 'calendar.library.lead')}</p>
+
+  {
+    view.passageCount === 0 ? (
+      <p class="empty">{t(lang, 'calendar.library.empty')}</p>
+    ) : (
+      <>
+        <p class="totals">
+          {t(lang, 'calendar.library.passages', { count: view.passageCount })} ·{' '}
+          {t(lang, 'calendar.library.notes', { count: view.noteCount })}
+        </p>
+        {testaments.map((testament) => (
+          <section class="testament" aria-labelledby={`testament-${testament.code}`}>
+            <h2 id={`testament-${testament.code}`}>{testament.label}</h2>
+            {testament.books.map((book) => (
+              <section class="book" aria-labelledby={`book-${book.code}`}>
+                <h3 id={`book-${book.code}`}>
+                  {book.name}
+                  <span class="count">{t(lang, 'calendar.library.notes', { count: book.noteCount })}</span>
+                </h3>
+                <ul>
+                  {book.passages.map((passage) => (
+                    <li>
+                      <a href={href(passage.path)}>
+                        <span class="ref">{passage.ref}</span>
+                        <span class="title">{passage.contextTitle}</span>
+                        <span class="meta">
+                          {t(lang, 'calendar.library.notes', { count: passage.noteCount })} ·{' '}
+                          {t(lang, 'calendar.library.dates', { count: passage.dateCount })}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </section>
+        ))}
+      </>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .lead {
+    color: var(--colour-muted);
+    font-size: var(--step-1);
+    max-width: var(--measure);
+  }
+
+  .totals {
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+  }
+
+  .testament {
+    margin-top: var(--space-l);
+  }
+
+  .book {
+    margin-top: var(--space-m);
+    max-width: var(--measure);
+  }
+
+  .book h3 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+    border-bottom: var(--rule-width) solid var(--colour-rule);
+    padding-bottom: var(--space-3xs);
+  }
+
+  .count {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: var(--weight-regular);
+    color: var(--colour-muted);
+  }
+
+  .book ul {
+    list-style: none;
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .book a {
+    display: grid;
+    gap: var(--space-3xs);
+    padding: var(--space-s);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-left: var(--band-height) solid var(--colour-accent);
+    border-radius: var(--radius-m);
+    color: var(--colour-ink);
+    text-decoration: none;
+    transition: background-color var(--duration-quick) var(--ease-out);
+  }
+
+  .book a:hover {
+    background: var(--colour-wash);
+  }
+
+  .ref {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+  }
+
+  .meta {
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .empty {
+    color: var(--colour-muted);
+  }
+</style>

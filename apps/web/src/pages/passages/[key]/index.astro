@@ -1,0 +1,238 @@
+---
+/**
+ * `/passages/<key>/`: one passage's note titles and every date it is read, each linking to that day's Reading
+ * page. No note bodies here (the Reading pages carry them, so search engines see each note once). View model:
+ * `passageView` in src/lib/calendar-view.ts.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../../i18n/index.ts';
+import { colourDotCss, passageStaticPaths, passageView } from '../../../lib/calendar-view.ts';
+import { siteContext, siteDate, withBase } from '../../../lib/site.ts';
+
+export function getStaticPaths() {
+  return passageStaticPaths(siteContext().repo);
+}
+
+const { key } = Astro.params;
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const href = (path: string) => withBase(base, localePath(lang, path));
+const { config, repo } = siteContext();
+const found = passageView(repo, key, siteDate(config));
+if (found === null) throw new Error(`passages/${key}: no approved notes`);
+const view = found;
+const colourLabel: Record<string, string> = {
+  green: t(lang, 'calendar.colour.green'),
+  violet: t(lang, 'calendar.colour.violet'),
+  white: t(lang, 'calendar.colour.white'),
+  gold: t(lang, 'calendar.colour.gold'),
+  red: t(lang, 'calendar.colour.red'),
+  rose: t(lang, 'calendar.colour.rose'),
+  black: t(lang, 'calendar.colour.black'),
+};
+---
+
+<BaseLayout
+  title={view.ref}
+  description={t(lang, 'calendar.passage.description', { ref: view.ref, summary: view.summary })}
+  lang={lang}
+>
+  <style slot="head" is:inline set:html={colourDotCss()} />
+  <p class="eyebrow"><a href={href('passages/')}>{t(lang, 'calendar.passage.eyebrow')}</a></p>
+  <h1>{view.ref}</h1>
+  <p class="summary">{view.summary}</p>
+  {
+    view.lastReviewedAt !== null && (
+      <p class="reviewed">
+        {t(lang, 'calendar.passage.reviewed', { date: formatDate(lang, view.lastReviewedAt.slice(0, 10)) })}
+      </p>
+    )
+  }
+
+  <section aria-labelledby="notes">
+    <h2 id="notes">
+      {t(lang, 'calendar.passage.notes')}
+      <span class="count">{t(lang, 'calendar.library.notes', { count: view.noteCount })}</span>
+    </h2>
+    <ul class="notes">
+      <li>
+        <span class="kind">{t(lang, 'calendar.passage.context')}</span>
+        <span class="title">{view.contextTitle}</span>
+      </li>
+      {
+        view.notes.map((note) => (
+          <li>
+            <span class="kind">{t(lang, 'calendar.passage.verse', { verse: note.verse })}</span>
+            <span class="title">
+              “{note.anchor}”
+              <span class="original" lang={note.original.lang}>
+                {note.original.text}
+              </span>
+              <span class="translit">{note.original.translit}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="dates">
+    <h2 id="dates">{t(lang, 'calendar.passage.dates')}</h2>
+    {
+      view.appearances.length === 0 ? (
+        <p class="empty">{t(lang, 'calendar.passage.noDates')}</p>
+      ) : (
+        <>
+          <p class="hint">{t(lang, 'calendar.passage.datesLead')}</p>
+          <ul class="dates">
+            {view.appearances.map((item) => (
+              <li>
+                <a href={href(item.path)} aria-current={item.today ? 'date' : undefined}>
+                  <time datetime={item.date}>{formatDate(lang, item.date)}</time>
+                  {item.celebration !== null && <span class="celebration">{item.celebration}</span>}
+                  <span class="colour">
+                    <span class="colour-dot" data-colour={item.colour} aria-hidden="true" />
+                    {colourLabel[item.colour] ?? item.colour}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </section>
+
+  <p class="back"><a href={href('passages/')}>← {t(lang, 'calendar.passage.back')}</a></p>
+</BaseLayout>
+
+<style>
+  .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .summary {
+    font-size: var(--step-1);
+    max-width: var(--measure);
+  }
+
+  .reviewed,
+  .hint,
+  .empty {
+    color: var(--colour-muted);
+    font-size: var(--step--1);
+  }
+
+  section {
+    margin-top: var(--space-l);
+    max-width: var(--measure);
+  }
+
+  h2 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+
+  .count {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: var(--weight-regular);
+    color: var(--colour-muted);
+  }
+
+  ul {
+    list-style: none;
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .notes li {
+    display: grid;
+    gap: var(--space-3xs);
+    padding: var(--space-s);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+  }
+
+  .kind {
+    font-size: var(--step--2);
+    font-weight: var(--weight-strong);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    color: var(--colour-accent-ink);
+  }
+
+  .title {
+    font-weight: var(--weight-strong);
+  }
+
+  .original {
+    margin-inline-start: var(--space-2xs);
+    font-weight: var(--weight-regular);
+  }
+
+  .translit {
+    margin-inline-start: var(--space-2xs);
+    font-weight: var(--weight-regular);
+    font-style: italic;
+    color: var(--colour-muted);
+  }
+
+  .dates a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-3xs) var(--space-s);
+    min-height: var(--tap-target);
+    padding: var(--space-s);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+    color: var(--colour-ink);
+    text-decoration: none;
+  }
+
+  .dates a:hover {
+    background: var(--colour-wash);
+  }
+
+  .dates a[aria-current] {
+    border-color: var(--colour-accent);
+  }
+
+  .dates time {
+    font-weight: var(--weight-strong);
+  }
+
+  .celebration {
+    grid-column: 1;
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .colour {
+    grid-row: 1;
+    grid-column: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .colour-dot {
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    border: var(--rule-width) solid var(--colour-muted);
+  }
+
+  .back {
+    margin-top: var(--space-l);
+  }
+</style>
