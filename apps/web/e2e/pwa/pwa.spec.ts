@@ -90,6 +90,8 @@ test.describe('Service worker', () => {
     // The shell is precached, the offline page with it.
     const shell = await page.evaluate(async () => (await caches.keys()).filter((name) => name.startsWith('lectio-')));
     expect(shell.some((name) => name.startsWith('lectio-shell-'))).toBe(true);
+    // Hashed bundles live in the shared asset cache, so pages cached by an older build keep their CSS and JS.
+    expect(shell).toContain('lectio-assets');
     expect(await isCached(page, new URL('offline/', scope).href)).toBe(true);
     expect(await isCached(page, new URL('manifest.webmanifest', scope).href)).toBe(true);
   });

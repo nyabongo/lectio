@@ -121,8 +121,9 @@ describe('install and activate', () => {
   it('swallows a failed pruning', async () => {
     const { caches, worker } = setup();
     await caches.open(ASSETS);
-    await worker.activate();
+    // activate itself never opens a cache; the pruning it starts does, and fails.
     caches.open = () => Promise.reject(new Error('quota'));
+    await worker.activate();
     await expect(worker.takeBackground()).resolves.toBeUndefined();
   });
 });
@@ -183,6 +184,38 @@ describe('deploys', () => {
     // Once no cached page needs build A's files, they are pruned.
     expect(await b.pruneAssets()).toBe(3);
     expect(caches.get(ASSETS)?.urls()).toEqual([url('_astro/b.css')]);
+  });
+
+  it('follows only pages, CSS and JS, and skips what it cannot read', async () => {
+    const page =
+      '<img src="/lectio/_astro/photo.1.png"><script src="/lectio/_astro/gone.2.js"></script>' +
+      '<link rel="stylesheet" href="/lectio/_astro/kept.3.css">';
+    const network = site()
+      .route(url('2026-09-19/'), page)
+      .route(url('_astro/photo.1.png'), 'png')
+      .route(url('_astro/kept.3.css'), 'css')
+      .route(url('_astro/stray.4.css'), 'stray');
+    const { caches, worker } = setup(network);
+    await worker.install();
+    for (const path of [
+      '2026-09-19/',
+      'api/v1/index.json',
+      '_astro/photo.1.png',
+      '_astro/kept.3.css',
+      '_astro/stray.4.css',
+    ])
+      await worker.respond(fakeRequest(url(path)), noWait);
+    // A listed entry that can no longer be read is skipped.
+    const visited = caches.get(VISITED);
+    await visited?.put(url('vanished/'), new Response('x'));
+    const match = visited?.match.bind(visited);
+    if (visited !== undefined && match !== undefined)
+      visited.match = (input) =>
+        String((input as Request).url) === url('vanished/') ? Promise.resolve(undefined) : match(input);
+    expect(await worker.pruneAssets()).toBe(1);
+    expect(caches.get(ASSETS)?.urls().sort()).toEqual(
+      [url('_astro/app.css'), url('_astro/kept.3.css'), url('_astro/photo.1.png')].sort(),
+    );
   });
 
   it('prunes nothing when there is no asset cache yet', async () => {
@@ -395,6 +428,12 @@ describe('respond', () => {
     expect(await (await worker.respond(fakeRequest(url('a/')), waitUntil))?.text()).toBe('a');
     await Promise.all(waits);
     expect(caches.get(VISITED)?.urls()).toEqual([url('b/'), url('a/')]);
+
+    // A failed touch (storage full) still serves the page.
+    caches.open = () => Promise.reject(new Error('quota'));
+    const again = waiter();
+    expect(await (await worker.respond(fakeRequest(url('b/')), again.waitUntil))?.text()).toBe('b');
+    await expect(Promise.all(again.waits)).resolves.toEqual([undefined]);
   });
 
   it('does not keep error pages or redirected responses', async () => {

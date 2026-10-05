@@ -41,7 +41,6 @@ import {
   referencedAssets,
   requestStrategy,
   scopeUrl,
-  scopedPath,
   shouldPrefetch,
   upcomingDates,
 } from '../lib/sw-policy.ts';
@@ -116,8 +115,6 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
   let background: Promise<void> | null = null;
   // Prefetch runs one at a time, so one run never prunes what another just stored.
   let queue: Promise<unknown> = Promise.resolve();
-
-  const isHashed = (url: string): boolean => isHashedAsset(scopedPath(url, root) ?? '');
 
   /** A copy of `response` that records the build which stored it. */
   async function stamp(response: Response): Promise<Response> {
@@ -199,19 +196,20 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
   }
 
   async function install(): Promise<void> {
-    const urls = config.precache.map((path) => scopeUrl(root, path));
+    const urls = (hashed: boolean): string[] =>
+      config.precache.filter((path) => isHashedAsset(path) === hashed).map((path) => scopeUrl(root, path));
     const assets = await env.caches.open(names.assets);
     const missing: string[] = [];
-    for (const url of urls.filter(isHashed)) if ((await assets.match(url)) === undefined) missing.push(url);
+    for (const url of urls(true)) if ((await assets.match(url)) === undefined) missing.push(url);
     await assets.addAll(missing);
-    await (await env.caches.open(names.shell)).addAll(urls.filter((url) => !isHashed(url)));
+    await (await env.caches.open(names.shell)).addAll(urls(false));
   }
 
   async function pruneAssets(): Promise<number> {
     const existing = new Set(await env.caches.keys());
     if (!existing.has(names.assets)) return 0;
     const assets = await env.caches.open(names.assets);
-    const keep = new Set(config.precache.map((path) => scopeUrl(root, path)).filter(isHashed));
+    const keep = new Set(config.precache.filter(isHashedAsset).map((path) => scopeUrl(root, path)));
     const pending = [...keep];
     const follow = (text: string, url: string): void => {
       for (const ref of referencedAssets(text, url, root))
@@ -223,7 +221,7 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
     for (const name of [names.shell, ...dataCaches].filter((cache) => existing.has(cache))) {
       const cache = await env.caches.open(name);
       for (const request of await cache.keys()) {
-        if (!isPagePath(scopedPath(request.url, root) ?? '.')) continue;
+        if (!isPagePath(new URL(request.url).pathname)) continue;
         const page = await cache.match(request);
         if (page !== undefined) follow(await page.text(), request.url);
       }
@@ -293,8 +291,8 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
     return response;
   }
 
-  async function asset(request: Request): Promise<Response> {
-    const cache = await env.caches.open(isHashed(request.url) ? names.assets : names.shell);
+  async function asset(request: Request, hashed: boolean): Promise<Response> {
+    const cache = await env.caches.open(hashed ? names.assets : names.shell);
     const hit = await cache.match(request.url);
     if (hit !== undefined) return hit;
     try {
@@ -308,7 +306,7 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
 
   async function staleWhileRevalidate(
     request: Request,
-    strategy: Exclude<Strategy, 'asset' | 'network'>,
+    strategy: Exclude<Strategy, 'hashed' | 'asset' | 'network'>,
     waitUntil: (promise: Promise<unknown>) => void,
   ): Promise<Response> {
     const search = strategy === 'search';
@@ -346,7 +344,8 @@ export function createWorker(scope: WorkerScope, config: ServiceWorkerConfig, en
   function respond(request: Request, waitUntil: (promise: Promise<unknown>) => void): Promise<Response> | null {
     const strategy = requestStrategy({ url: request.url, method: request.method, mode: request.mode }, root);
     if (strategy === 'network') return null;
-    return strategy === 'asset' ? asset(request) : staleWhileRevalidate(request, strategy, waitUntil);
+    if (strategy === 'hashed' || strategy === 'asset') return asset(request, strategy === 'hashed');
+    return staleWhileRevalidate(request, strategy, waitUntil);
   }
 
   return {

@@ -70,7 +70,7 @@ describe('requestStrategy', () => {
   const get = (path: string, mode = 'cors') => ({ url: new URL(path, SCOPE).href, method: 'GET', mode });
 
   it.each([
-    ['_astro/index.abc.css', 'asset'],
+    ['_astro/index.abc.css', 'hashed'],
     ['fonts/source.woff2', 'asset'],
     ['icons/icon-192.png', 'asset'],
     ['manifest.webmanifest', 'asset'],

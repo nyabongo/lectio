@@ -95,7 +95,9 @@ export function isOfflineDataCache(name: string): boolean {
 
 /** How the worker answers a request. `network` means it does not answer at all (the browser fetches as usual). */
 export type Strategy =
-  /** Cache first from the shell cache, filled at run time if missing (hashed assets, fonts, icons, manifest). */
+  /** Cache first from the shared asset cache, filled at run time if missing (Astro's content-hashed bundles). */
+  | 'hashed'
+  /** Cache first from the shell cache, filled at run time if missing (fonts, icons, manifest). */
   | 'asset'
   /** Stale-while-revalidate over the data caches and the shell; a miss goes to the network, then the offline page. */
   | 'page'
@@ -113,7 +115,7 @@ export interface RequestInfo {
   readonly mode: string;
 }
 
-const ASSET_PATTERN = /^(?:_astro\/|fonts\/|icons\/|manifest\.webmanifest$)/;
+const ASSET_PATTERN = /^(?:fonts\/|icons\/|manifest\.webmanifest$)/;
 
 /** The path of `url` relative to `scope` (an absolute URL ending in `/`), or `null` when it is outside it. */
 export function scopedPath(url: string, scope: string): string | null {
@@ -141,6 +143,7 @@ export function requestStrategy(request: RequestInfo, scope: string): Strategy {
   if (request.method !== 'GET') return 'network';
   const path = scopedPath(request.url, scope);
   if (path === null || path === SERVICE_WORKER_FILE) return 'network';
+  if (isHashedAsset(path)) return 'hashed';
   if (ASSET_PATTERN.test(path)) return 'asset';
   if (path.startsWith(PAGEFIND_PREFIX)) return 'search';
   if (path.startsWith(API_PREFIX)) return path.endsWith('.json') ? 'data' : 'network';
