@@ -76,6 +76,7 @@ void main() {
         expect(snapshot.origin, DataOrigin.network);
         expect(snapshot.value.date, '2026-09-20');
         expect(snapshot.fetchedAt, now);
+        expect(snapshot.revalidated, isTrue);
         expect(snapshot.refreshError, isNull);
         final entry = await cache.read('days/2026-09-20.json');
         expect(entry!.etag, '"d1"');
@@ -107,6 +108,7 @@ void main() {
       expect(snapshots.single.origin, DataOrigin.cache);
       expect(snapshots.single.value.date, '2026-09-20');
       expect(snapshots.single.fetchedAt, DateTime(2026, 9, 20, 7));
+      expect(snapshots.single.revalidated, isFalse);
       expect(api.requests, hasLength(1));
     });
 
@@ -115,11 +117,32 @@ void main() {
       await warmUp();
       now = now.add(const Duration(hours: 2));
       final snapshots = await repository.watchDay('2026-09-20').toList();
-      expect(snapshots.map((s) => s.origin), [DataOrigin.cache]);
+      expect(snapshots.map((s) => s.origin), [
+        DataOrigin.cache,
+        DataOrigin.cache,
+      ]);
+      expect(snapshots.first.revalidated, isFalse);
+      expect(snapshots.first.fetchedAt, DateTime(2026, 9, 20, 7));
+      expect(snapshots.last.revalidated, isTrue);
+      expect(snapshots.last.fetchedAt, now);
+      expect(snapshots.last.refreshError, isNull);
+      expect(snapshots.last.value.date, '2026-09-20');
       expect(api.requests.last.headers['If-None-Match'], '"d1"');
       final entry = await cache.read('days/2026-09-20.json');
       expect(entry!.fetchedAt, now);
       expect(entry.etag, '"d1"');
+    });
+
+    test('a cache entry dated in the future is stale', () async {
+      api.serveFixture('days/2026-09-20.json', 'day', etag: '"d1"');
+      await warmUp();
+      // The device clock was a day ahead when the entry was stored.
+      now = now.subtract(const Duration(days: 1));
+      final snapshots = await repository.watchDay('2026-09-20').toList();
+      expect(snapshots.last.revalidated, isTrue);
+      expect(api.requests, hasLength(2));
+      final entry = await cache.read('days/2026-09-20.json');
+      expect(entry!.fetchedAt, now);
     });
 
     test('a stale cached day is shown, then replaced when changed', () async {

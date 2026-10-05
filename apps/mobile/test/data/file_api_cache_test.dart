@@ -38,6 +38,18 @@ void main() {
     expect(read.lastModified, isNull);
   });
 
+  test('two instances can write the same path at once', () async {
+    final other = FileApiCache(cache.directory);
+    await Future.wait([
+      for (var i = 0; i < 10; i++) ...[
+        cache.write('index.json', entry),
+        other.write('index.json', entry),
+      ],
+    ]);
+    expect((await other.read('index.json'))!.body, entry.body);
+    expect(cache.directory.listSync(), hasLength(1));
+  });
+
   test('keeps one flat file per path and no temporary files', () async {
     await cache.write('days/2026-09-20.json', entry);
     await cache.write('days/2026-09-20.json', entry);

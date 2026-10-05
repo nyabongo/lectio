@@ -61,7 +61,8 @@ class ApiIndex {
       dates: dates == null ? null : DateRange.fromJson(dates),
       passageCount: object.integer('passageCount'),
       endpoints: Map.unmodifiable({
-        for (final name in endpoints.keys) name: endpoints.string(name),
+        for (final MapEntry(:key, :value) in endpoints.entries)
+          if (value is String) key: value,
       }),
     );
   }
@@ -90,7 +91,8 @@ class ApiIndex {
   /// How many passages have approved notes.
   final int passageCount;
 
-  /// Endpoint templates by name, relative to [apiRoot].
+  /// Endpoint templates by name, relative to [apiRoot]. Members that are not
+  /// strings (a possible future addition) are left out.
   final Map<String, String> endpoints;
 }
 

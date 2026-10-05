@@ -108,6 +108,32 @@ void main() {
       expect(notes.source('nowhere'), isNull);
     });
 
+    test('ignores unknown fields at every level (v1 is additive)', () {
+      final json = fixtureObject('day-with-audio');
+      Map<String, Object?> at(Object? value) => value! as Map<String, Object?>;
+      List<Object?> list(Object? value) => value! as List<Object?>;
+      final mass = at(list(json['masses']).single);
+      final reading = at(list(mass['readings']).last)..['segments'] = [1];
+      final passage = at(reading['passage'])..['provenanceV2'] = {'x': 1};
+      at(at(passage['context'])['audio'])['segments'] = <Object?>[];
+      final note = at(list(passage['translationNotes']).first)
+        ..['emphasis'] = 'strong';
+      at(note['audio'])['voice'] = 'alto';
+      at(note['original'])['strongs'] = 'G4190';
+      at(list(passage['claims']).first)['confidence'] = 0.9;
+      at(list(passage['sources']).first)['isbn'] = '978';
+      at(passage['review'])['reviewers'] = 2;
+      mass['rite'] = 'roman';
+
+      final notes = parseApiDay(json).readings.last.passage!;
+      expect(notes.context.audio!.durationSeconds, 74.5);
+      expect(notes.translationNotes.first.audio!.durationSeconds, isNull);
+      expect(notes.translationNotes.first.original.gloss, 'your eye evil');
+      expect(notes.claims.first.id, 'c1');
+      expect(notes.sources.first.id, 'mt-20-2');
+      expect(notes.review.method, 'human');
+    });
+
     test('a null review date is unknown', () {
       final review = Review.fromJson({
         'status': 'approved',

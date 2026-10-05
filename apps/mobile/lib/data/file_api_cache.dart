@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:lectio/data/api_cache.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,7 +23,7 @@ class FileApiCache implements ApiCache {
   /// Where the entries are.
   final Directory directory;
 
-  int _writes = 0;
+  static final Random _random = Random();
 
   File _file(String path) {
     return File('${directory.path}/${Uri.encodeComponent(path)}');
@@ -44,7 +45,9 @@ class FileApiCache implements ApiCache {
   Future<void> write(String path, CachedResponse entry) async {
     await directory.create(recursive: true);
     final file = _file(path);
-    final temporary = File('${file.path}.${_writes++}.tmp');
+    // Unique across instances and isolates sharing the directory.
+    final suffix = '$pid-${_random.nextInt(1 << 32)}';
+    final temporary = File('${file.path}.$suffix.tmp');
     await temporary.writeAsString(jsonEncode(entry.toJson()), flush: true);
     await temporary.rename(file.path);
   }

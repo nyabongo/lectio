@@ -30,9 +30,12 @@ void main() {
       expect(index.passageCount, 0);
     });
 
-    test('rejects a non-string endpoint', () {
-      final json = fixtureObject('index')..['endpoints'] = {'day': 1};
-      expect(() => ApiIndex.fromJson(json), throwsFormatException);
+    test('skips endpoint members that are not strings', () {
+      final json = fixtureObject('index');
+      (json['endpoints']! as Map<String, Object?>)['future'] = {'v': 2};
+      final index = ApiIndex.fromJson(json);
+      expect(index.endpoints, hasLength(6));
+      expect(index.endpoints.containsKey('future'), isFalse);
     });
   });
 

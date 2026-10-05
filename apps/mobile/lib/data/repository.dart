@@ -24,6 +24,7 @@ class DataSnapshot<T> {
     required this.value,
     required this.origin,
     required this.fetchedAt,
+    this.revalidated = false,
     this.refreshError,
   });
 
@@ -36,6 +37,11 @@ class DataSnapshot<T> {
   /// When [value] was fetched or last confirmed unchanged.
   final DateTime fetchedAt;
 
+  /// Whether the network confirmed [value] during this stream: a new
+  /// document (`origin` is network) or an unchanged one (HTTP 304, `origin`
+  /// is cache). False for a cached value that was not checked.
+  final bool revalidated;
+
   /// Why refreshing a cached [value] failed (for example offline), or `null`.
   final Exception? refreshError;
 
@@ -45,6 +51,7 @@ class DataSnapshot<T> {
       value: value,
       origin: origin,
       fetchedAt: fetchedAt,
+      revalidated: revalidated,
       refreshError: error,
     );
   }
@@ -78,8 +85,10 @@ typedef _Cached<T> = ({CachedResponse entry, T value});
 /// Offline-first access to the API: cached documents first, then the network.
 ///
 /// Every `watch…` stream emits the cached document at once when there is one,
-/// then refreshes it with a conditional request and emits the new document
-/// if it changed. A cached document younger than [freshFor] is not refreshed
+/// then refreshes it with a conditional request: it emits the new document
+/// when it changed, or the cached one again with a new `fetchedAt` when the
+/// server confirms it is unchanged (both with [DataSnapshot.revalidated]).
+/// A cached document younger than [freshFor] is not refreshed
 /// unless `refresh` is true. When the refresh fails, the stream emits the
 /// cached document again with [DataSnapshot.refreshError] set; with nothing
 /// cached, the stream fails with the error ([ApiException] or
@@ -214,8 +223,7 @@ class LectioRepository {
       if (!refresh && _isFresh(cached.entry)) return;
     }
     try {
-      final fresh = await _refresh(path, parse, cached);
-      if (fresh != null) yield fresh;
+      yield await _refresh(path, parse, cached);
     } on Exception catch (error) {
       if (fromCache == null) rethrow;
       yield fromCache.withRefreshError(error);
@@ -223,7 +231,10 @@ class LectioRepository {
   }
 
   bool _isFresh(CachedResponse entry) {
-    return _clock().difference(entry.fetchedAt) < freshFor;
+    // A fetch time in the future means the device clock was ahead when it
+    // was stored: the age is unknown, so the entry is stale.
+    final age = _clock().difference(entry.fetchedAt);
+    return !age.isNegative && age < freshFor;
   }
 
   Future<_Cached<T>?> _readCached<T>(
@@ -240,9 +251,9 @@ class LectioRepository {
     }
   }
 
-  /// Fetches [path], conditionally when [cached]. Returns the new snapshot,
-  /// or `null` when the cached document is unchanged.
-  Future<DataSnapshot<T>?> _refresh<T>(
+  /// Fetches [path], conditionally when [cached], and returns the confirmed
+  /// snapshot: the new document, or the cached one when it is unchanged.
+  Future<DataSnapshot<T>> _refresh<T>(
     String path,
     T Function(Object? json) parse,
     _Cached<T>? cached,
@@ -256,15 +267,21 @@ class LectioRepository {
     final body = response.body;
     if (body == null) {
       // 304 only answers a conditional request, so there is a cached entry.
+      final unchanged = cached!;
       await _store(
         path,
-        cached!.entry.revalidated(
+        unchanged.entry.revalidated(
           at: now,
           etag: response.etag,
           lastModified: response.lastModified,
         ),
       );
-      return null;
+      return DataSnapshot(
+        value: unchanged.value,
+        origin: DataOrigin.cache,
+        fetchedAt: now,
+        revalidated: true,
+      );
     }
     final value = parse(jsonDecode(body));
     await _store(
@@ -280,6 +297,7 @@ class LectioRepository {
       value: value,
       origin: DataOrigin.network,
       fetchedAt: now,
+      revalidated: true,
     );
   }
 
