@@ -20,6 +20,7 @@ import { addDays } from '@lectio/shared';
 import type { IsoDate } from '@lectio/shared';
 
 import type { MessageParams } from './i18n.ts';
+import { linkoutSource, principalFirst, readingPath } from './reading.ts';
 import { dayColour } from './theme.ts';
 
 /** The translation functions a page hands to the builders (`t` and `formatDate` from src/i18n/index.ts). */
@@ -138,11 +139,6 @@ export function dayPath(date: IsoDate): string {
   return `${date}/`;
 }
 
-/** The site path of a Reading page (L-054), relative to the locale root. */
-export function readingPath(date: IsoDate, slot: string): string {
-  return `${date}/${slot}/`;
-}
-
 /** The site path of the Listen page (L-085), relative to the locale root. */
 export function listenPath(date: IsoDate): string {
   return `${date}/listen/`;
@@ -252,29 +248,6 @@ export function refLabel(ref: string): string {
   return parsed.ok ? formatRef(parsed.value, { style: 'long' }) : ref;
 }
 
-/** The display label of the active link-out provider (`config.linkout`), e.g. `Douay-Rheims (drbo.org)`. */
-export function linkoutLabel(config: Pick<LectioConfig, 'linkout'>): string {
-  const { provider, providers } = config.linkout;
-  return providers[provider]?.label ?? provider;
-}
-
-// TODO(L-054 #177): once #177 merges, import PRINCIPAL_MASS_ID and principalFirst from ./reading.ts (and its
-// readingPath and slot keys) and delete these local copies; the rule below is identical to #177's.
-
-/** The id of the Mass during the Day, the principal Mass of a day with several (Vigil, Night, Dawn, Day). */
-export const PRINCIPAL_MASS_ID = 'day';
-
-/**
- * `masses` with the principal Mass (`id === 'day'`) first and the others in calendar order. The lectionary lists a
- * solemnity's Masses Vigil first, so ordering by this decides which Mass "owns" a shared slot.
- */
-export function principalFirst<M extends { readonly id: string }>(masses: readonly M[]): M[] {
-  return [
-    ...masses.filter((mass) => mass.id === PRINCIPAL_MASS_ID),
-    ...masses.filter((mass) => mass.id !== PRINCIPAL_MASS_ID),
-  ];
-}
-
 /** The parts of a Mass `slotOwners` reads (spelled out: `astro check` cannot resolve the schema types). */
 export interface SlotMass {
   readonly id: string;
@@ -297,7 +270,7 @@ export function slotOwners(masses: readonly SlotMass[]): Map<string, string> {
 function readingView(
   env: DayEnv,
   date: IsoDate,
-  source: string,
+  config: Pick<LectioConfig, 'linkout'>,
   reading: ResolvedReading,
   ownsPage: boolean,
 ): ReadingView {
@@ -307,6 +280,7 @@ function readingView(
   const { slot, ref, linkout }: Reading = reading;
   const label = refLabel(ref);
   const approved = isApproved(reading.passage);
+  const source = linkoutSource(config, linkout);
   return {
     slot,
     slotLabel: slotLabel(env, slot),
@@ -356,7 +330,6 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
   const { lang } = env;
   const { date } = day;
   const { season, seasonWeek, sundayCycle, weekdayCycle, celebrations, lectionaryMissing }: CalendarDay = day.day;
-  const source = linkoutLabel(options.config);
   const owners = slotOwners(
     day.masses.map((mass) => ({
       id: mass.id,
@@ -367,7 +340,7 @@ export function dayView(env: DayEnv, resolved: ResolvedDay, options: DayViewOpti
     id: mass.id,
     label: mass.label,
     readings: mass.readings.map((reading) =>
-      readingView(env, date, source, reading, owners.get((reading as Reading).slot) === mass.id),
+      readingView(env, date, options.config, reading, owners.get((reading as Reading).slot) === mass.id),
     ),
   }));
   const celebrationViews = celebrations.map(({ name, rank, colour }: Celebration) => ({

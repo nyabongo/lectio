@@ -1,0 +1,54 @@
+---
+/**
+ * Prose with claim markers rendered as superscript source links: `segments` comes from `segments()` in
+ * src/lib/reading.ts, where each `[cN]` run became the numbers of the sources behind those claims. Each number
+ * links to the source's entry in the nearest sources list.
+ */
+import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import type { Segment } from '../../lib/reading.ts';
+
+export interface Props {
+  segments: readonly Segment[];
+  lang?: string;
+}
+
+const { segments, lang = DEFAULT_LOCALE } = Astro.props;
+---
+
+{
+  segments.map((segment) =>
+    segment.kind === 'text' ? (
+      <Fragment>{segment.text}</Fragment>
+    ) : (
+      <sup class="cite">
+        {segment.sources.map((source, index) => (
+          <Fragment>
+            {index > 0 && ','}
+            <a href={`#${source.anchorId}`} aria-label={t(lang, 'reading.cite', { n: source.number })}>
+              {source.number}
+            </a>
+          </Fragment>
+        ))}
+      </sup>
+    ),
+  )
+}
+
+<style>
+  .cite {
+    font-size: 0.68em;
+    line-height: 0;
+    margin-inline-start: 0.1em;
+    font-weight: var(--weight-strong);
+  }
+
+  .cite a {
+    color: var(--colour-accent-ink);
+    text-decoration: none;
+    padding-inline: 0.12em;
+  }
+
+  .cite a:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -8,8 +8,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { formatDate, t } from '../i18n/index.ts';
 import {
-  PRINCIPAL_MASS_ID,
-  principalFirst,
   TODAY_DAYS_AHEAD,
   TODAY_DAYS_BEFORE,
   UPCOMING_LIST_DAYS,
@@ -20,10 +18,8 @@ import {
   dayPageView,
   dayPath,
   dayView,
-  linkoutLabel,
   listenPath,
   rankLabel,
-  readingPath,
   refLabel,
   seasonLabel,
   slotLabel,
@@ -61,9 +57,8 @@ beforeAll(() => {
 });
 
 describe('paths', () => {
-  it('builds day, reading and listen paths relative to the locale root', () => {
+  it('builds day and listen paths relative to the locale root', () => {
     expect(dayPath('2026-09-20')).toBe('2026-09-20/');
-    expect(readingPath('2026-09-20', 'gospel')).toBe('2026-09-20/gospel/');
     expect(listenPath('2026-09-20')).toBe('2026-09-20/listen/');
   });
 });
@@ -121,11 +116,6 @@ describe('labels', () => {
     expect(refLabel('Mt 20:1-16a')).toBe('Matthew 20:1–16a');
     expect(refLabel('Ps 145:2-3, 8-9, 17-18')).toBe('Psalm 145:2–3, 8–9, 17–18');
     expect(refLabel('Nowhere 1:1')).toBe('Nowhere 1:1');
-  });
-
-  it('labels the active link-out provider, or falls back to its name', () => {
-    expect(linkoutLabel(DEFAULT_CONFIG)).toBe('Douay-Rheims (drbo.org)');
-    expect(linkoutLabel({ linkout: { ...DEFAULT_CONFIG.linkout, provider: 'gone' } })).toBe('gone');
   });
 });
 
@@ -288,12 +278,6 @@ describe('dayView edge cases', () => {
       'second-reading': 'night',
     });
     expect(Object.fromEntries(slotOwners([mass('a', ['gospel']), mass('b', ['gospel'])]))).toEqual({ gospel: 'a' });
-    expect(PRINCIPAL_MASS_ID).toBe('day');
-    expect(principalFirst([{ id: 'vigil' }, { id: 'night' }, { id: 'day' }]).map((m) => m.id)).toEqual([
-      'day',
-      'vigil',
-      'night',
-    ]);
   });
 
   it('drops an unapproved passage even when the reading claims to have one', () => {

@@ -1,0 +1,149 @@
+---
+/**
+ * The trust footer every note carries: the "Verified · N sources" mark (a disclosure that opens the sources with
+ * their excerpts), how and when it was reviewed, and a "Report an issue" link to the content issue form.
+ *
+ * With no sources (unreachable for schema-valid content, whose prose always cites claims) it says "Not yet verified"
+ * instead of showing the mark. Only ever rendered for an approved passage: pages build it from `notesView()`, which
+ * exists only for approved passages (src/lib/reading.ts).
+ */
+import { DEFAULT_LOCALE, formatDate, t } from '../../i18n/index.ts';
+import type { SourceView } from '../../lib/reading.ts';
+import SourceList from './SourceList.astro';
+
+export interface Props {
+  sources: readonly SourceView[];
+  method: 'human' | 'auto';
+  lastReviewedAt: string | null;
+  reportUrl: string;
+  lang?: string;
+}
+
+const { sources, method, lastReviewedAt, reportUrl, lang = DEFAULT_LOCALE } = Astro.props;
+const reviewed =
+  lastReviewedAt === null
+    ? null
+    : formatDate(lang, new Date(lastReviewedAt), { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<div class="verification">
+  {
+    sources.length === 0 ? (
+      <p class="unverified">{t(lang, 'reading.unverified')}</p>
+    ) : (
+      <details class="verification__details">
+        <summary class="verified">
+          <svg class="verified__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+            <path
+              d="M8 1.2 9.9 2.6l2.3-.1.7 2.2 1.9 1.4-.8 2.2.8 2.2-1.9 1.4-.7 2.2-2.3-.1L8 15.4l-1.9-1.4-2.3.1-.7-2.2-1.9-1.4.8-2.2-.8-2.2 1.9-1.4.7-2.2 2.3.1Z"
+              fill="currentColor"
+            />
+            <path
+              d="m5.3 8.3 1.9 1.9 3.6-3.9"
+              fill="none"
+              stroke="var(--colour-surface)"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>{t(lang, 'reading.verified', { count: sources.length })}</span>
+        </summary>
+        <div class="verification__body">
+          <SourceList sources={sources} lang={lang} />
+          <p class="verification__meta">
+            {method === 'auto' ? t(lang, 'reading.method.auto') : t(lang, 'reading.method.human')}
+            {reviewed !== null && (
+              <>
+                {' '}
+                <time datetime={lastReviewedAt}>{t(lang, 'reading.lastReviewed', { date: reviewed })}</time>
+              </>
+            )}
+          </p>
+        </div>
+      </details>
+    )
+  }
+  <a class="report" href={reportUrl} rel="noopener external">{t(lang, 'reading.report')}</a>
+</div>
+
+<style>
+  .verification {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3xs) var(--space-s);
+    margin-top: var(--space-xs);
+    padding-top: var(--space-2xs);
+    border-top: var(--rule-width) solid var(--colour-rule);
+    font-size: var(--step--1);
+  }
+
+  .verification__details,
+  .unverified {
+    flex: 1 1 16rem;
+  }
+
+  .unverified {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    margin: 0;
+    color: var(--colour-muted);
+  }
+
+  .verified {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .verified::-webkit-details-marker {
+    display: none;
+  }
+
+  .verified::after {
+    content: '';
+    width: 0.45em;
+    height: 0.45em;
+    margin-inline-start: 0.2em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-0.15em) rotate(45deg);
+    transition: transform var(--duration-quick) var(--ease-out);
+  }
+
+  details[open] > .verified::after {
+    transform: translateY(0.1em) rotate(225deg);
+  }
+
+  .verified__icon {
+    flex: none;
+  }
+
+  .verification__body {
+    padding-block: var(--space-3xs) var(--space-2xs);
+  }
+
+  .verification__meta {
+    margin: var(--space-2xs) 0 0;
+    color: var(--colour-muted);
+  }
+
+  .report {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    color: var(--colour-muted);
+  }
+
+  .report:hover {
+    color: var(--colour-link);
+  }
+</style>
