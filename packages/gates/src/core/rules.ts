@@ -69,4 +69,9 @@ export const RUNNER_RULES = {
     'Every finding must name a rule that its gate declares.',
     'Declare the rule in the gate with defineRule, or correct the rule id in the finding.',
   ),
+  regularFiles: defineRule(
+    'runner/regular-files',
+    'Every file a PR adds or changes is a regular file: symbolic links and submodules are refused, and no gate reads them.',
+    'Replace the link or submodule with the file itself, or remove it from the PR.',
+  ),
 } as const;

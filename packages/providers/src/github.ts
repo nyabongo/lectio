@@ -35,6 +35,11 @@ export interface CommitFilesInput {
   readonly files: readonly FileChange[];
   /** Rejects with a `conflict` error when the branch head is not this sha. */
   readonly expectedHeadSha?: string;
+  /**
+   * Allows `files: []`: a commit with the head's tree that changes nothing (an approval commit on a
+   * PR without a review block to write). Default false.
+   */
+  readonly allowEmpty?: boolean;
 }
 
 export type PrState = 'open' | 'closed' | 'merged';
@@ -133,6 +138,16 @@ export interface RequiredChecksResult {
   readonly checks: readonly CheckRun[];
 }
 
+/** A completed check run to publish on a commit (Checks API). */
+export interface CreateCheckRunInput {
+  readonly name: string;
+  readonly headSha: string;
+  readonly conclusion: CheckConclusion;
+  readonly title: string;
+  /** Markdown; GitHub truncates above 65,535 characters. */
+  readonly summary: string;
+}
+
 export interface WorkflowRun {
   readonly id: number;
   /** Workflow file name, for example `content-gates.yml`. */
@@ -150,6 +165,14 @@ export interface WorkflowRun {
   readonly status: 'queued' | 'in_progress' | 'completed';
   readonly conclusion: CheckConclusion | null;
   readonly actor: string;
+  /**
+   * The run's title (`display_title`): the workflow's `run-name:` when it sets one. content-gates.yml
+   * names its runs after the PR, which is how an `issue_comment` or `workflow_dispatch` run (no
+   * `prNumbers`) is tied to its PR.
+   */
+  readonly displayTitle: string;
+  /** Server timestamp (ISO) of when GitHub created the run; never a commit date. */
+  readonly createdAt: string;
 }
 
 export interface Issue {
@@ -223,6 +246,24 @@ export interface GitHubClient {
   /** One issue per marker: updates the issue whose body contains `markerComment(marker)`, or creates it. */
   upsertIssue(marker: string, input: UpsertIssueInput): Promise<{ readonly issue: Issue; readonly created: boolean }>;
   getWorkflowRun(id: number): Promise<WorkflowRun>;
+  /**
+   * Every workflow run for head commit `sha` (any workflow, any event), oldest first, with server
+   * timestamps and events. The merge-rule job (L-031) builds head observations from the
+   * `pull_request` runs of content-gates.yml (`headObservationsFromRuns`).
+   */
+  listRunsForSha(sha: string): Promise<readonly WorkflowRun[]>;
+  /**
+   * Publishes a completed check run on `headSha` (Checks API, `checks: write`). The trusted
+   * content-gates workflow (L-031) reports `merge-rule` on the PR head this way, because its own
+   * jobs report on main.
+   */
+  createCheckRun(input: CreateCheckRunInput): Promise<CheckRun>;
+  /**
+   * Names of the artifacts workflow run `id` uploaded (expired ones included), sorted. Only a run's
+   * own jobs can upload to it, so an artifact name is evidence of what that run did: the trusted
+   * merge-rule job (L-031) names one after the PR and head it approves before writing the commit.
+   */
+  listRunArtifacts(id: number): Promise<readonly string[]>;
 }
 
 /** The hidden HTML comment that marks a sticky comment or issue. */
