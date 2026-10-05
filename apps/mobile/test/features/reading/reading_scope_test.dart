@@ -1,53 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lectio/data/api_cache.dart';
+import 'package:lectio/data/app_repository.dart';
 import 'package:lectio/features/reading/reading_scope.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'reading_harness.dart';
 
-/// What a failing cache opener throws.
-class OpenFailed implements Exception {
-  /// Creates the exception.
-  const new();
-}
-
 void main() {
-  group('LazyApiCache', () {
-    test('opens once and delegates reads and writes', () async {
-      final memory = MemoryApiCache();
-      var opened = 0;
-      final cache = LazyApiCache(() async {
-        opened++;
-        return memory;
-      });
-      expect(opened, 0);
-      expect(await cache.read('a.json'), isNull);
-      final entry = CachedResponse(body: '{}', fetchedAt: DateTime(2026));
-      await cache.write('a.json', entry);
-      expect((await cache.read('a.json'))!.body, '{}');
-      expect(memory.paths, ['a.json']);
-      expect(opened, 1);
-    });
-
-    test('a failed open fails reads and writes', () async {
-      final cache = LazyApiCache(() async => throw const OpenFailed());
-      await expectLater(cache.read('a.json'), throwsA(isA<OpenFailed>()));
-      await expectLater(
-        cache.write(
-          'a.json',
-          CachedResponse(body: '{}', fetchedAt: DateTime(2026)),
-        ),
-        throwsA(isA<OpenFailed>()),
-      );
-    });
-  });
-
-  test('the default repository is created once', () {
-    expect(
-      identical(defaultReadingRepository(), defaultReadingRepository()),
-      isTrue,
-    );
+  test("the default repository is the app's shared one", () {
+    expect(defaultReadingRepository(), same(appRepository));
   });
 
   testWidgets('without a scope, the defaults apply', (tester) async {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
+import 'package:lectio/features/reading/reading_screen.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
 import 'package:lectio/src/routing/app_route.dart';
@@ -51,16 +52,6 @@ String todayLocation(String date, {required String today}) {
   return Uri(
     path: AppRoute.today.path,
     queryParameters: {'date': date},
-  ).toString();
-}
-
-/// The location of the Reading tab for the reading in [slot] of the Mass
-/// [mass] (its `masses[].id`, as `day` or `vigil`) on [date]. The Mass
-/// tells apart a slot that two Masses of one day share.
-String readingLocation(String date, String mass, String slot) {
-  return Uri(
-    path: AppRoute.reading.path,
-    queryParameters: {'date': date, 'mass': mass, 'slot': slot},
   ).toString();
 }
 

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
+import 'package:lectio/features/reading/reading_screen.dart';
 import 'package:lectio/features/today/day_view.dart';
 import 'package:lectio/features/today/today_labels.dart';
 import 'package:lectio/features/today/today_screen.dart';
