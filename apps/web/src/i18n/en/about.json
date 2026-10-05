@@ -41,7 +41,7 @@
     },
     "licence": {
       "title": "Licence guard",
-      "body": "No long verbatim run from an English Bible translation or from a cited commentary. Lectio never stores the text of any translation.",
+      "body": "No long verbatim run from an English Bible translation or from a cited commentary. Lectio never stores the text of a copyrighted modern Bible translation.",
       "index": "The guard compares notes against an index built from {editions}. The index holds only hashes of short word sequences, never the text.",
       "limitation": "Known limitation:"
     },
@@ -56,12 +56,12 @@
   },
   "verified": {
     "heading": "What “Verified” means",
-    "body": "A note marked “Verified” passed all five checks: either automatically, with both AI verifiers in agreement, or with a human reviewer’s approval. It lists its sources and the date it was last reviewed, so you can check it yourself.",
+    "body": "A note marked “Verified” passed the schema, evidence and licence tests, and was then either confirmed by both AI verifiers with high confidence or, where a verifier flagged a claim or the subject is doctrinally sensitive, approved by a human reviewer. It lists its sources and the date it was last reviewed, so you can check it yourself.",
     "limits": "“Verified” means checked against the sources it cites. It does not mean infallible, and it is not an ecclesiastical approval."
   },
   "readings": {
     "heading": "The readings themselves",
-    "body": "Lectio does not reproduce the text of any Bible translation. Each reading opens at {provider}, which Lectio links to and thanks for making the text freely available."
+    "body": "Lectio never stores the text of a copyrighted modern Bible translation; the original-language and ancient-version texts it keeps are listed below. Each reading opens at {provider}, which Lectio links to and thanks for making the text freely available."
   },
   "report": {
     "heading": "Found a mistake?",
@@ -70,7 +70,9 @@
   },
   "sources": {
     "heading": "Sources and licences",
-    "intro": "Lectio is built on openly licensed work. This list is generated from the project’s data files every time the site is built."
+    "intro": "Lectio is built on openly licensed work. This list is generated from the project’s data files every time the site is built.",
+    "own": "Lectio’s own code is released under the {licence}; the texts, data and fonts below keep their own licences.",
+    "ownLicence": "MIT Licence"
   },
   "corpora": {
     "heading": "Original-language texts",

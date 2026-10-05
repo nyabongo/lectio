@@ -11,7 +11,7 @@
 import Seo from '../../components/seo/Seo.astro';
 import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { REPORT_ISSUE_URL, linkoutCredit, loadAttributions, siteAttributionPaths } from '../../lib/attributions.ts';
+import { LICENSE_URL, REPORT_ISSUE_URL, linkoutCredit, loadAttributions, siteAttributionPaths } from '../../lib/attributions.ts';
 import { intlLocale } from '../../lib/i18n.ts';
 import { siteContext, withBase } from '../../lib/site.ts';
 import Licence from './_Licence.astro';
@@ -23,6 +23,8 @@ const description = t(lang, 'about.description');
 const { corpora, guard, fonts, versification, lectionary } = await loadAttributions(siteAttributionPaths());
 const linkout = linkoutCredit(siteContext().config.linkout);
 const [readingsBefore = '', readingsAfter = ''] = t(lang, 'about.readings.body', { provider: '\u0000' }).split('\u0000');
+
+const [ownBefore = '', ownAfter = ''] = t(lang, 'about.sources.own', { licence: '\u0000' }).split('\u0000');
 
 const languages: Record<string, string> = {
   grc: t(lang, 'about.languages.grc'),
@@ -128,6 +130,9 @@ const shortVersion = (version: string): string => (/^[0-9a-f]{40}$/.test(version
     <section class="sources" aria-labelledby="sources">
       <h2 id="sources">{t(lang, 'about.sources.heading')}</h2>
       <p>{t(lang, 'about.sources.intro')}</p>
+      <p>
+        {ownBefore}<a href={LICENSE_URL} rel="license noopener">{t(lang, 'about.sources.ownLicence')}</a>{ownAfter}
+      </p>
 
       <h3 id="corpora">{t(lang, 'about.corpora.heading')}</h3>
       <p>{t(lang, 'about.corpora.intro')}</p>
@@ -156,7 +161,7 @@ const shortVersion = (version: string): string => (/^[0-9a-f]{40}$/.test(version
                   <a href={entry.licenceFileUrl} rel="noopener">
                     {t(lang, 'about.corpora.licenceText')}
                   </a>
-                  <a href={entry.upstreamUrl} rel="noopener" class="muted">
+                  <a href={entry.versionUrl} rel="noopener" class="muted">
                     {t(lang, 'about.corpora.version', { version: shortVersion(entry.version) })}
                   </a>
                 </p>

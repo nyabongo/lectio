@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import {
   GUARD_DIR,
+  LICENSE_URL,
   REPO_URL,
   REPORT_ISSUE_URL,
   attributionParagraphs,
@@ -26,6 +27,8 @@ import {
   readLectionarySources,
   readVersification,
   siteAttributionPaths,
+  spdxId,
+  versionUrl,
 } from './attributions.ts';
 import type { AttributionFs } from './attributions.ts';
 
@@ -74,12 +77,16 @@ describe('readCorpora', () => {
       name: 'Sample Greek New Testament',
       licence: 'CC-BY-4.0 AND CC-BY-SA-3.0',
       projectUrl: 'https://github.com/example/greek-sample',
+      versionUrl: 'https://github.com/example/greek-sample/commit/0123456789abcdef0123456789abcdef01234567',
       version: '0123456789abcdef0123456789abcdef01234567',
       licenceFileUrl: `${REPO_URL}/blob/main/corpus/grc-sample/LICENSE.md`,
     });
     expect(greek?.licenceParts.map((part) => part.id)).toEqual(['CC-BY-4.0', 'CC-BY-SA-3.0']);
     expect(greek?.attribution).toHaveLength(2);
     expect(corpora[2]?.projectUrl).toBe('https://bitbucket.org/example/latin-sample');
+    expect(corpora[2]?.versionUrl).toBe(
+      'https://bitbucket.org/example/latin-sample/commits/fedcba9876543210fedcba9876543210fedcba98',
+    );
   });
 
   it('adds an entry for a new SOURCE.json with no code change', async () => {
@@ -159,6 +166,27 @@ describe('attributionParagraphs', () => {
   it('leaves underscores inside words alone', () => {
     expect(attributionParagraphs('see snake_case_name here')).toEqual([
       [{ text: 'see snake_case_name here', em: false }],
+    ]);
+  });
+});
+
+describe('versionUrl', () => {
+  it('links the commit page on known forges and falls back to the archive', () => {
+    expect(versionUrl('https://gitlab.com/o/r/-/archive/v1/r-v1.tar.gz', 'v1')).toBe(
+      'https://gitlab.com/o/r/-/commit/v1',
+    );
+    expect(versionUrl('https://example.org/x.zip', '1.0')).toBe('https://example.org/x.zip');
+  });
+});
+
+describe('spdxId', () => {
+  it('maps free-text Creative Commons names to SPDX ids', () => {
+    expect(spdxId('CC BY 4.0')).toBe('CC-BY-4.0');
+    expect(spdxId('cc by-sa 3.0')).toBe('CC-BY-SA-3.0');
+    expect(spdxId('CC BY NC ND 4.0')).toBe('CC-BY-NC-ND-4.0');
+    expect(spdxId('MIT')).toBe('MIT');
+    expect(licenceParts('CC BY 4.0')).toEqual([
+      { id: 'CC-BY-4.0', publicDomain: false, url: 'https://spdx.org/licenses/CC-BY-4.0.html' },
     ]);
   });
 });
@@ -243,6 +271,10 @@ describe('fonts', () => {
       ),
     ).toEqual({ copyright: 'Copyright (c) 2003 SIL', reservedName: 'Gentium' });
     expect(oflCopyright('')).toEqual({ copyright: '', reservedName: null });
+    expect(oflCopyright("Copyright 2010 Adobe, with Reserved Font Name 'Source'.\n\nOFL")).toEqual({
+      copyright: "Copyright 2010 Adobe, with Reserved Font Name 'Source'.",
+      reservedName: null,
+    });
   });
 
   it('lists every OFL file in the fonts directory, sorted by family', async () => {
@@ -283,7 +315,9 @@ describe('fonts', () => {
       'Noto Serif Hebrew',
       'Source Sans 3',
     ]);
-    expect(fonts.find((font) => font.family === 'Source Sans 3')?.reservedName).toBe('Source');
+    const sourceSans = fonts.find((font) => font.family === 'Source Sans 3');
+    expect(sourceSans?.copyright).toContain("Reserved Font Name 'Source'");
+    expect(sourceSans?.reservedName).toBeNull();
     expect(fonts.every((font) => font.upstream?.startsWith('https://') === true)).toBe(true);
   });
 });
@@ -484,5 +518,6 @@ describe('nodeFs', () => {
 describe('constants', () => {
   it('points issue reports at the repository', () => {
     expect(REPORT_ISSUE_URL.startsWith(`${REPO_URL}/issues/`)).toBe(true);
+    expect(LICENSE_URL).toBe(`${REPO_URL}/blob/main/LICENSE`);
   });
 });

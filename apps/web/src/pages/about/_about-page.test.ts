@@ -2,7 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import strings from '../../i18n/en/about.json' with { type: 'json' };
-import { REPORT_ISSUE_URL, loadAttributions, siteAttributionPaths } from '../../lib/attributions.ts';
+import { LICENSE_URL, REPORT_ISSUE_URL, loadAttributions, siteAttributionPaths } from '../../lib/attributions.ts';
 import About from './index.astro';
 
 let html: string;
@@ -36,6 +36,8 @@ describe('About page', () => {
   it('credits the link-out provider and links to issue reports', () => {
     expect(html).toContain('href="https://www.drbo.org/"');
     expect(html).toContain(`href="${REPORT_ISSUE_URL}"`);
+    expect(html).toContain(`href="${LICENSE_URL}"`);
+    expect(html).not.toContain('never stores the text of any translation');
   });
 
   it('lists every corpus edition, the guard limitation, versification, lectionary and font sources from data', async () => {
@@ -48,5 +50,7 @@ describe('About page', () => {
     for (const source of [...versification, ...lectionary]) expect(html).toContain(escape(source.name));
     for (const font of fonts) expect(html).toContain(`href="${base}fonts/${font.file}"`);
     expect(html).toContain('href="https://spdx.org/licenses/Apache-2.0.html"');
+    expect(html).not.toMatch(/href="[^"]*\.tar\.gz"/);
+    expect(html.match(/Reserved Font Name/g)).toHaveLength(1);
   });
 });

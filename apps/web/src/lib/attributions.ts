@@ -28,6 +28,9 @@ export const REPO_URL = 'https://github.com/nyabongo/lectio';
 /** Where a reader reports a problem with a note or the site. */
 export const REPORT_ISSUE_URL = `${REPO_URL}/issues/new/choose`;
 
+/** Lectio's own licence (MIT). */
+export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
+
 /** The corpus directory that holds the licence guard's index rather than an edition. */
 export const GUARD_DIR = 'guard';
 
@@ -102,6 +105,15 @@ export interface LicencePart {
 }
 
 const SPDX_ID = /^[A-Za-z0-9][A-Za-z0-9.+-]*$/;
+const CC_FREE_TEXT = /^CC[ -]BY((?:[ -](?:SA|NC|ND))*)[ -](\d\.\d)$/i;
+
+/** Free-text Creative Commons names (`CC BY 4.0`, `CC BY-SA 3.0`) as SPDX ids; anything else unchanged. */
+export function spdxId(text: string): string {
+  const match = CC_FREE_TEXT.exec(text);
+  if (match === null) return text;
+  const [, variants = '', version = ''] = match;
+  return `CC-BY${variants.toUpperCase().replace(/ /g, '-')}-${version}`;
+}
 
 /** The parts of an SPDX expression such as `CC-BY-4.0 AND LicenseRef-PublicDomain`, in order. */
 export function licenceParts(expression: string): LicencePart[] {
@@ -110,6 +122,7 @@ export function licenceParts(expression: string): LicencePart[] {
     .split(/\s+(?:AND|OR|WITH)\s+/)
     .map((part) => part.trim())
     .filter((part) => part !== '')
+    .map(spdxId)
     .map((id) => {
       const publicDomain = /^(?:LicenseRef-PublicDomain|public domain)$/i.test(id);
       const url = !publicDomain && !id.startsWith('LicenseRef-') && SPDX_ID.test(id) ? spdxUrl(id) : null;
@@ -157,6 +170,21 @@ export function projectUrl(upstreamUrl: string): string {
   return match?.[1] ?? upstreamUrl;
 }
 
+/**
+ * A browsable page for `version` of the project behind `upstreamUrl`: the commit page on GitHub, GitLab or
+ * Bitbucket; otherwise `upstreamUrl` itself.
+ */
+export function versionUrl(upstreamUrl: string, version: string): string {
+  const project = projectUrl(upstreamUrl);
+  if (project === upstreamUrl) return upstreamUrl;
+  const path = project.startsWith('https://bitbucket.org/')
+    ? 'commits'
+    : project.startsWith('https://gitlab.com/')
+      ? '-/commit'
+      : 'commit';
+  return `${project}/${path}/${encodeURIComponent(version)}`;
+}
+
 /** One corpus edition as the About page lists it. */
 export interface CorpusAttribution {
   readonly edition: string;
@@ -169,6 +197,8 @@ export interface CorpusAttribution {
   readonly projectUrl: string;
   /** The pinned upstream archive and its version. */
   readonly upstreamUrl: string;
+  /** A page for the pinned version (the commit on its forge), else the archive URL. */
+  readonly versionUrl: string;
   readonly version: string;
   /** The edition's LICENSE.md in the Lectio repository. */
   readonly licenceFileUrl: string;
@@ -184,6 +214,7 @@ export function corpusAttribution(entry: LicenceEntry): CorpusAttribution {
     attribution: attributionParagraphs(entry.attribution),
     projectUrl: projectUrl(entry.upstreamUrl),
     upstreamUrl: entry.upstreamUrl,
+    versionUrl: versionUrl(entry.upstreamUrl, entry.version),
     version: entry.version,
     licenceFileUrl: `${REPO_URL}/blob/main/corpus/${entry.edition}/LICENSE.md`,
   };
@@ -276,7 +307,7 @@ export interface FontAttribution {
   readonly file: string;
   /** The copyright line of the licence file. */
   readonly copyright: string;
-  /** A Reserved Font Name the licence declares, or null. */
+  /** A Reserved Font Name the licence declares that the copyright line does not already name, or null. */
   readonly reservedName: string | null;
   /** The family's upstream project, from the fonts README, or null. */
   readonly upstream: string | null;
@@ -334,7 +365,8 @@ export function parseFontsReadme(markdown: string): Map<string, { family: string
 export function oflCopyright(text: string): { copyright: string; reservedName: string | null } {
   const first = text.split('\n').find((line) => line.trim() !== '') ?? '';
   const copyright = (first.split(/\s+\S+\.(?:ttf|otf|woff2?):\s+/)[0] as string).trim();
-  const reservedName = /Reserved Font Names? ['"“‘]([^'"”’]+)['"”’]/.exec(text)?.[1] ?? null;
+  const declared = /Reserved Font Names? ['"“‘]([^'"”’]+)['"”’]/.exec(text)?.[1] ?? null;
+  const reservedName = /Reserved Font Name/i.test(copyright) ? null : declared;
   return { copyright, reservedName };
 }
 
