@@ -38,6 +38,8 @@ export const pageTypes: readonly PageType[] = [
   // Kiswahili mirrors (L-110): the same page types under /sw/.
   { name: 'sw-today', path: 'sw/' },
   { name: 'sw-day', path: `sw/${BUILD_DATE}/` },
+  // The Gospel has a reviewed Kiswahili translation in the fixture (L-113): Kiswahili notes on both tabs.
+  { name: 'sw-reading-context', path: `sw/${BUILD_DATE}/gospel/` },
   { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },
   { name: 'sw-insight', path: `sw/${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
   { name: 'sw-calendar', path: 'sw/calendar/' },
