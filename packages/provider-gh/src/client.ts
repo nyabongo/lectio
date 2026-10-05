@@ -220,6 +220,8 @@ function toWorkflowRun(value: Json): WorkflowRun {
     status: statusOf(str(run, 'status')),
     conclusion: conclusionOf(optStr(run, 'conclusion')),
     actor: login(run, 'actor'),
+    displayTitle: optStr(run, 'display_title') ?? '',
+    createdAt: str(run, 'created_at'),
   };
 }
 
@@ -710,5 +712,15 @@ export class GhGitHubClient implements GitHubClient {
 
   async getWorkflowRun(id: number): Promise<WorkflowRun> {
     return toWorkflowRun(await this.#api('GET', `/actions/runs/${id}`));
+  }
+
+  async listRunsForSha(sha: string): Promise<readonly WorkflowRun[]> {
+    if (!/^[0-9a-f]{7,64}$/i.test(sha)) throw new ProviderError('invalid-request', `invalid commit sha: "${sha}"`);
+    const path = `/actions/runs?head_sha=${sha}&per_page=100`;
+    const pages = asArray(await this.#api('GET', path, undefined, ['--paginate', '--slurp']), 'pages');
+    return pages
+      .flatMap((page) => arr(asObject(page, 'workflow runs page'), 'workflow_runs'))
+      .map(toWorkflowRun)
+      .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt) || a.id - b.id);
   }
 }

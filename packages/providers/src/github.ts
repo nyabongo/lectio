@@ -150,6 +150,14 @@ export interface WorkflowRun {
   readonly status: 'queued' | 'in_progress' | 'completed';
   readonly conclusion: CheckConclusion | null;
   readonly actor: string;
+  /**
+   * The run's title (`display_title`): the workflow's `run-name:` when it sets one. content-gates.yml
+   * names its runs after the PR, which is how an `issue_comment` or `workflow_dispatch` run (no
+   * `prNumbers`) is tied to its PR.
+   */
+  readonly displayTitle: string;
+  /** Server timestamp (ISO) of when GitHub created the run; never a commit date. */
+  readonly createdAt: string;
 }
 
 export interface Issue {
@@ -223,6 +231,12 @@ export interface GitHubClient {
   /** One issue per marker: updates the issue whose body contains `markerComment(marker)`, or creates it. */
   upsertIssue(marker: string, input: UpsertIssueInput): Promise<{ readonly issue: Issue; readonly created: boolean }>;
   getWorkflowRun(id: number): Promise<WorkflowRun>;
+  /**
+   * Every workflow run for head commit `sha` (any workflow, any event), oldest first, with server
+   * timestamps and events. The merge-rule job (L-031) builds head observations from the
+   * `pull_request` runs of content-gates.yml (`headObservationsFromRuns`).
+   */
+  listRunsForSha(sha: string): Promise<readonly WorkflowRun[]>;
 }
 
 /** The hidden HTML comment that marks a sticky comment or issue. */

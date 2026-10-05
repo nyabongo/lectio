@@ -366,8 +366,42 @@ describe('FakeGitHubClient checks and workflows', () => {
       actor: OWNER,
     });
     expect(await bot.getWorkflowRun(added.id)).toEqual(added);
+    expect(added.displayTitle).toBe('content-gates.yml');
+    expect(Number.isNaN(Date.parse(added.createdAt))).toBe(false);
     const pinned = bot.addWorkflowRun({ ...added, id: 42 });
     expect(pinned.id).toBe(42);
+  });
+
+  it('lists the runs of a head sha, oldest first, with titles and server timestamps', async () => {
+    const { bot } = setup();
+    const fake = new FakeGitHubClient({
+      workflows: { 'content-gates.yml': { runName: (inputs) => `Content gates · PR #${inputs['pr'] ?? '?'}` } },
+    });
+    await fake.dispatchWorkflow('content-gates.yml', 'main', { pr: '7' });
+    await fake.dispatchWorkflow('content-gates.yml', 'main');
+    const sha = fake.headOf('main');
+    const later = fake.addWorkflowRun({
+      id: 1,
+      workflowFile: 'ci.yml',
+      event: 'pull_request',
+      headSha: sha,
+      headBranch: 'main',
+      prNumbers: [7],
+      status: 'completed',
+      conclusion: 'success',
+      actor: OWNER,
+      createdAt: '2026-10-05T10:00:00Z',
+      displayTitle: 'CI',
+    });
+    fake.addWorkflowRun({ ...later, id: 2, headSha: 'other' });
+    const runs = await fake.listRunsForSha(sha);
+    expect(runs.map((run) => [run.id, run.displayTitle])).toEqual([
+      [1, 'CI'],
+      [1000, 'Content gates · PR #7'],
+      [1001, 'Content gates · PR #?'],
+    ]);
+    expect(runs[0]?.createdAt).toBe('2026-10-05T10:00:00Z');
+    expect(await bot.listRunsForSha('none')).toEqual([]);
   });
 
   it('produces identical histories across runs', async () => {

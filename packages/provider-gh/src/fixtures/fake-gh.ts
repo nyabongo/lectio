@@ -69,6 +69,8 @@ export interface FakeRun {
   readonly status: string;
   readonly conclusion: string | null;
   readonly actor: { readonly login: string } | null;
+  readonly display_title?: string | null;
+  readonly created_at: string;
 }
 
 export interface FakeGhOptions {
@@ -257,8 +259,8 @@ export class FakeGh {
     this.#modes.set(path, mode);
   }
 
-  addRun(run: Omit<FakeRun, 'id'> & { readonly id?: number }): FakeRun {
-    const stored = { ...run, id: run.id ?? this.#nextRunId++ };
+  addRun(run: Omit<FakeRun, 'id' | 'created_at'> & { readonly id?: number; readonly created_at?: string }): FakeRun {
+    const stored = { ...run, id: run.id ?? this.#nextRunId++, created_at: run.created_at ?? this.#stamp().at };
     this.#runs.set(stored.id, stored);
     return stored;
   }
@@ -800,6 +802,12 @@ export class FakeGh {
     }
     if ((match = /^GET \/issues\/(\d+)\/timeline$/.exec(route))) {
       return paged(this.#timelineOf(this.#thread(Number(match[1]))));
+    }
+    if ((match = /^GET \/actions\/runs\?head_sha=(\w+)&per_page=100$/.exec(route))) {
+      const runs = [...this.#runs.values()].filter((run) => run.head_sha === match?.[1]).reverse();
+      // Two pages, newest first, like the API.
+      const page = (items: unknown[]) => ({ total_count: runs.length, workflow_runs: items });
+      return [page(runs.slice(0, 1)), page(runs.slice(1))];
     }
     if ((match = /^GET \/actions\/runs\/(\d+)$/.exec(route))) {
       const run = this.#runs.get(Number(match[1]));

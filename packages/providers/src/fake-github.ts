@@ -71,6 +71,8 @@ export interface FakeWorkflow {
   readonly jobs?: readonly string[];
   /** Conclusion of the run and its check runs. Default `success`. */
   readonly conclusion?: CheckConclusion;
+  /** The run title (`run-name:`) for the dispatch inputs. Default: the workflow file. */
+  readonly runName?: (inputs: Readonly<Record<string, string>>) => string;
 }
 
 /** A recorded `workflow_dispatch`. */
@@ -359,9 +361,23 @@ export class FakeGitHubClient implements GitHubClient {
     this.#repo.setCheck({ name, headSha: sha, status: conclusion === null ? 'in_progress' : 'completed', conclusion });
   }
 
-  /** Records a workflow run that was not dispatched (for example a `pull_request` run). */
-  addWorkflowRun(run: Omit<WorkflowRun, 'id'> & { readonly id?: number }): WorkflowRun {
-    const stored: WorkflowRun = { ...run, id: run.id ?? this.#repo.nextRunId() };
+  /**
+   * Records a workflow run that was not dispatched (for example a `pull_request` run). `createdAt`
+   * defaults to the next timestamp, `displayTitle` to the workflow file.
+   */
+  addWorkflowRun(
+    run: Omit<WorkflowRun, 'id' | 'createdAt' | 'displayTitle'> & {
+      readonly id?: number;
+      readonly createdAt?: string;
+      readonly displayTitle?: string;
+    },
+  ): WorkflowRun {
+    const stored: WorkflowRun = {
+      ...run,
+      id: run.id ?? this.#repo.nextRunId(),
+      displayTitle: run.displayTitle ?? run.workflowFile,
+      createdAt: run.createdAt ?? this.#repo.stamp().at,
+    };
     this.#repo.runs.set(stored.id, stored);
     return stored;
   }
@@ -615,6 +631,7 @@ export class FakeGitHubClient implements GitHubClient {
     const sha = repo.branch(ref).head;
     const conclusion = workflow.conclusion ?? 'success';
     const run = this.addWorkflowRun({
+      ...(workflow.runName === undefined ? {} : { displayTitle: workflow.runName(inputs) }),
       workflowFile: file,
       event: 'workflow_dispatch',
       headSha: sha,
@@ -679,5 +696,9 @@ export class FakeGitHubClient implements GitHubClient {
     const run = this.#repo.runs.get(id);
     if (!run) throw new ProviderError('not-found', `no workflow run ${id}`);
     return run;
+  }
+
+  async listRunsForSha(sha: string): Promise<readonly WorkflowRun[]> {
+    return [...this.#repo.runs.values()].filter((run) => run.headSha === sha).sort((a, b) => a.id - b.id);
   }
 }
