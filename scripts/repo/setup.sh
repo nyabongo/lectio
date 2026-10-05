@@ -26,7 +26,7 @@
 #   main is guarded by the PR requirement, the pinned checks and the collaborator list (keep it to
 #   the owner). Admins are not enforced, so the owner can still merge by hand (fork PRs and
 #   .github/** PRs, which the merge rule never merges).
-# - Repo: "Allow auto-merge" and "Automatically delete head branches" on.
+# - Repo: "Allow auto-merge" and "Automatically delete head branches" on; squash merges only.
 # - Labels: every roadmap and runtime label (including `approved` and `ios-build`), created or
 #   updated in place.
 # - Pages: source set to GitHub Actions (the deploy workflow itself is L-062).
@@ -160,7 +160,9 @@ NODE
 )"
 write "$protection" api --method PUT "repos/$repo/branches/$BRANCH/protection" --input -
 
-write "" api --method PATCH "repos/$repo" -F allow_auto_merge=true -F delete_branch_on_merge=true
+# Squash merges only (the merge job squashes; linear history forbids merge commits anyway).
+write "" api --method PATCH "repos/$repo" -F allow_auto_merge=true -F delete_branch_on_merge=true \
+  -F allow_squash_merge=true -F allow_merge_commit=false -F allow_rebase_merge=false
 
 # Labels: name|color|description. `--force` updates an existing label in place.
 while IFS='|' read -r name color description; do
@@ -177,6 +179,7 @@ type:test|FBCA04|Tests and quality gates
 decision|D93F0B|Owner decision; default lives in config so engineering is not blocked
 needs-secrets|B60205|Needs API keys or signing secrets that do not exist yet; everything else runs on fakes
 needs-owner|E99695|Needs a repo admin or product-owner action
+accessibility|F143AB|Barrier affecting people with disabilities
 # Roadmap: area
 area:ci|C5DEF5|GitHub Actions and repo automation
 area:config|C5DEF5|packages/config and config/

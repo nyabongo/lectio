@@ -80,6 +80,8 @@ function listedChecks(stdout: string): string[] {
     .map((line) => line.slice(4));
 }
 
+const ENVIRONMENT_PATH = 'repos/nyabongo/lectio/environments/llm-verifiers';
+
 const isWrite = (call: Call) => call.args.includes('--method') || call.args[0] === 'label';
 
 describe('setup.sh --dry-run', () => {
@@ -107,7 +109,8 @@ describe('setup.sh --dry-run', () => {
     const { stdout } = run(['--dry-run']);
     expect(stdout).toContain('+ gh api --method PUT repos/nyabongo/lectio/branches/main/protection --input -');
     expect(stdout).toContain(
-      '+ gh api --method PATCH repos/nyabongo/lectio -F allow_auto_merge=true -F delete_branch_on_merge=true',
+      '+ gh api --method PATCH repos/nyabongo/lectio -F allow_auto_merge=true -F delete_branch_on_merge=true ' +
+        '-F allow_squash_merge=true -F allow_merge_commit=false -F allow_rebase_merge=false',
     );
     expect(stdout).toContain('+ gh api --method PUT repos/nyabongo/lectio/pages -f build_type=workflow');
     expect(stdout).toContain('+ gh api --method PUT repos/nyabongo/lectio/environments/llm-verifiers --input -');
@@ -145,6 +148,11 @@ describe('setup.sh (applying, against the fake gh)', () => {
     const { status, calls, stdout } = run([]);
     expect(status).toBe(0);
     expect(stdout).toContain('Done. Settings applied to nyabongo/lectio.');
+    const environment = calls.find((c) => c.args.includes(ENVIRONMENT_PATH));
+    expect(environment?.args).toEqual(['api', '--method', 'PUT', ENVIRONMENT_PATH, '--input', '-']);
+    expect(JSON.parse(environment?.stdin ?? 'null')).toEqual({
+      deployment_branch_policy: { protected_branches: true, custom_branch_policies: false },
+    });
     const body = protectionBody(calls);
     const checks = (
       body['required_status_checks'] as { strict: boolean; checks: { context: string; app_id: number }[] }
@@ -178,7 +186,7 @@ describe('setup.sh (applying, against the fake gh)', () => {
 
   it('creates the labels with their colours and descriptions', () => {
     const labels = run([]).calls.filter((c) => c.args[0] === 'label');
-    expect(labels).toHaveLength(33);
+    expect(labels).toHaveLength(34);
     expect(labels.map((c) => c.args[2])).toEqual(
       expect.arrayContaining([
         'needs-review',
@@ -188,6 +196,7 @@ describe('setup.sh (applying, against the fake gh)', () => {
         'gates-failed',
         'ios-build',
         'content-issue',
+        'accessibility',
       ]),
     );
     expect(labels.find((c) => c.args[2] === 'ios-build')?.args).toEqual([
@@ -221,7 +230,7 @@ describe('setup.sh (applying, against the fake gh)', () => {
     const { status, stderr, calls } = run([], { FAKE_GH_PAGES: 'error' });
     expect(status).toBe(1);
     expect(stderr).toContain('could not read the Pages settings');
-    expect(calls.some((c) => c.args.includes('environments/llm-verifiers'))).toBe(false);
+    expect(calls.some((c) => c.args.includes(ENVIRONMENT_PATH))).toBe(false);
   });
 });
 
