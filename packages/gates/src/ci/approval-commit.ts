@@ -10,7 +10,7 @@
 import { join } from 'node:path';
 
 import type { LectioConfig } from '@lectio/config';
-import { contentKindOf } from '@lectio/content';
+import { contentKindOf, translationPlaceOf } from '@lectio/content';
 import type { FileChange, GitCommit, GitHubClient } from '@lectio/providers';
 import { format, resolveConfig } from 'prettier';
 
@@ -59,10 +59,17 @@ export function memoryReviewFs(readFile: (path: string) => string | null): Revie
   };
 }
 
-/** The changed passage files the review block is written to (deleted files excluded), sorted. */
+/**
+ * The changed passage and translation (`passages/i18n/<locale>/<key>.json`) files the review block
+ * is written to (deleted files excluded), sorted. Translations only ever reach the human path:
+ * `decide` never auto-merges them and `approveAuto` refuses them.
+ */
 export function approvedPassages(changedFiles: readonly ChangedFile[]): string[] {
   return changedFiles
-    .filter((file) => file.status !== 'deleted' && contentKindOf(file.path) === 'passage')
+    .filter(
+      (file) =>
+        file.status !== 'deleted' && (contentKindOf(file.path) === 'passage' || translationPlaceOf(file.path) !== null),
+    )
     .map((file) => file.path)
     .sort();
 }

@@ -340,10 +340,11 @@ describe('approval commit', () => {
       approvedPassages([
         { path: 'passages/b.json', status: 'modified' },
         { path: 'passages/a.json', status: 'added' },
+        { path: 'passages/i18n/sw/MT.20.1-16.json', status: 'added' },
         { path: 'passages/c.json', status: 'deleted' },
         { path: 'docs/x.md', status: 'added' },
       ]),
-    ).toEqual(['passages/a.json', 'passages/b.json']);
+    ).toEqual(['passages/a.json', 'passages/b.json', 'passages/i18n/sw/MT.20.1-16.json']);
     const verifiers = (meta: Record<string, unknown>): GateResult[] => [
       { gate: 'verifiers', status: 'pass', items: [], meta },
     ];
