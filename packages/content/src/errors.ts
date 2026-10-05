@@ -35,11 +35,14 @@ export function pointerSegment(key: string): string {
   return key.replaceAll('~', '~0').replaceAll('/', '~1');
 }
 
+const UNKNOWN = 'unknown field';
+const FORBIDDEN = 'field name is not allowed';
+
 function toIssue(error: ErrorObject): ContentIssue {
   const { params } = error;
   if (error.keyword === 'additionalProperties') {
     const key = String(params.additionalProperty);
-    return { pointer: `${error.instancePath}/${pointerSegment(key)}`, message: 'unknown field' };
+    return { pointer: `${error.instancePath}/${pointerSegment(key)}`, message: UNKNOWN };
   }
   if (error.keyword === 'required') {
     const key = String(params.missingProperty);
@@ -47,7 +50,7 @@ function toIssue(error: ErrorObject): ContentIssue {
   }
   if (error.keyword === 'propertyNames') {
     const key = String(params.propertyName);
-    return { pointer: `${error.instancePath}/${pointerSegment(key)}`, message: 'field name is not allowed' };
+    return { pointer: `${error.instancePath}/${pointerSegment(key)}`, message: FORBIDDEN };
   }
   if (error.keyword === 'enum') {
     const allowed = (params.allowedValues as unknown[]).map((value) => JSON.stringify(value)).join(', ');
@@ -57,7 +60,8 @@ function toIssue(error: ErrorObject): ContentIssue {
 }
 
 /**
- * ajv errors as content issues, one per distinct pointer and message. Errors that only restate
+ * ajv errors as content issues, one per distinct pointer and message (a forbidden field is
+ * reported once, not also as an unknown field). Errors that only restate
  * another are dropped: `if` (a conditional branch failed; the branch's own error is kept) and
  * the inner errors of `propertyNames` (the outer one names the field). Never empty: with
  * nothing left it reports the whole file as invalid.
@@ -73,6 +77,9 @@ export function issuesFromAjv(errors: readonly ErrorObject[] | null | undefined)
     seen.add(id);
     issues.push(issue);
   }
-  const [first = { pointer: '', message: 'does not match the schema' }, ...rest] = issues;
+  // A forbidden field is also an unknown one: report it once, as forbidden.
+  const forbidden = new Set(issues.filter((issue) => issue.message === FORBIDDEN).map((issue) => issue.pointer));
+  const kept = issues.filter((issue) => issue.message !== UNKNOWN || !forbidden.has(issue.pointer));
+  const [first = { pointer: '', message: 'does not match the schema' }, ...rest] = kept;
   return [first, ...rest];
 }

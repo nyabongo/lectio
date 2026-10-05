@@ -66,6 +66,17 @@ describe('checkCalendarYear', () => {
     );
     expect(thrown(() => checkCalendarYear(json('repo/calendar/2026.json'), 'c.json', 2027)).pointer).toBe('/year');
   });
+
+  it('rejects every day outside the year', () => {
+    const value = json('repo/calendar/2026.json') as { days: { date: string }[] };
+    value.days.forEach((day, index) => {
+      if (index > 0) day.date = day.date.replace('2026', '2025');
+    });
+    expect(thrown(() => checkCalendarYear(value, 'c.json')).issues).toEqual([
+      { pointer: '/days/1/date', message: 'must fall in 2026' },
+      { pointer: '/days/2/date', message: 'must fall in 2026' },
+    ]);
+  });
 });
 
 describe('file names', () => {
