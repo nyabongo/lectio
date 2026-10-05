@@ -48,5 +48,24 @@
   "share": {
     "failed": "Could not share or copy the link.",
     "linkNotRecognised": "Lectio has no page for that link, so it opened Today."
+  },
+  "listen": {
+    "emptyDay": "There is no calendar day for this date yet.",
+    "loadFailed": "The day could not be loaded. Check your connection and try again.",
+    "nothingToPlay": "There are no notes to listen to for this day yet. Notes are narrated once they have been checked and approved.",
+    "offline": "Offline: notes without a saved recording are read by the device voice.",
+    "play": "Play",
+    "pause": "Pause",
+    "next": "Next note",
+    "previous": "Previous note",
+    "speed": "Playback speed",
+    "deviceVoice": "Device voice",
+    "inEnglish": "In English",
+    "noVoice": "This device has no Kiswahili voice, so notes without a Kiswahili recording play in English.",
+    "queue": "Queue",
+    "finished": "Finished. Play to start again.",
+    "kindContext": "Context",
+    "kindNote": "Translation note",
+    "position": "{index} of {count}"
   }
 }

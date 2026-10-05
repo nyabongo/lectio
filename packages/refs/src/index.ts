@@ -17,9 +17,11 @@ export {
   GREEK_ESTHER_LETTERS,
   chapterLabel,
   chapterLetter,
+  comparePoints,
   isLetteredChapter,
   letteredChapter,
   readChapter,
+  readingOrder,
 } from './greek-esther.ts';
 export type { GreekEstherLetter } from './greek-esther.ts';
 export type { FormatOptions, RefStyle } from './format.ts';

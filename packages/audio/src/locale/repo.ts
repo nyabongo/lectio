@@ -19,9 +19,15 @@ function isMissing(error: unknown): boolean {
 
 /**
  * Every translation in `passages/i18n/<locale>/` under the repository root, validated against
- * its schema and path, in key order. A locale without a directory has none.
+ * its schema and path, in key order. A locale without a directory has none. An invalid file
+ * throws, or, with `onInvalid`, is reported there (with the key its path names) and left out.
  */
-export function loadTranslations(repo: ContentRepo, locale: string, fs: ContentFs = nodeFs): TranslatedPassage[] {
+export function loadTranslations(
+  repo: ContentRepo,
+  locale: string,
+  fs: ContentFs = nodeFs,
+  onInvalid?: (key: string, error: unknown) => void,
+): TranslatedPassage[] {
   const dir = `${TRANSLATIONS_DIR}/${locale}`;
   let names: string[];
   try {
@@ -35,8 +41,13 @@ export function loadTranslations(repo: ContentRepo, locale: string, fs: ContentF
     const file = `${dir}/${name}`;
     const place = translationPlaceOf(file);
     if (place?.locale !== locale) continue;
-    const value = parseJson(fs.readFile(join(repo.root, file)), file);
-    translations.push(checkTranslatedPassage(value, file, place));
+    try {
+      const value = parseJson(fs.readFile(join(repo.root, file)), file);
+      translations.push(checkTranslatedPassage(value, file, place));
+    } catch (error) {
+      if (onInvalid === undefined) throw error;
+      onInvalid(place.key, error);
+    }
   }
   return translations;
 }
@@ -45,7 +56,10 @@ export function loadTranslations(repo: ContentRepo, locale: string, fs: ContentF
 export interface SkippedTranslation {
   readonly key: string;
   readonly locale: string;
-  readonly reason: SkipReason;
+  /** A {@link SkipReason}, or `invalid` for a file (or its English passage) that does not read. */
+  readonly reason: SkipReason | 'invalid';
+  /** What is wrong with an `invalid` one. */
+  readonly message?: string;
 }
 
 export interface LocaleSegmentsResult {
@@ -61,7 +75,9 @@ export interface LocaleSegmentsOptions extends NarratableOptions {
 /**
  * Segments for every narratable translation in `locale` (approved, fresh, of an approved English
  * passage), each passage under the `gospel` slot: the slot only labels the Listen queue and is not
- * part of the audio key. Translations that may not be narrated are listed with their reason.
+ * part of the audio key. Translations that may not be narrated are listed with their reason; one
+ * that does not read (or whose English passage does not) is listed as `invalid` and the rest are
+ * still narrated, as the English path skips a passage it cannot narrate.
  */
 export function localeSegments(
   repo: ContentRepo,
@@ -71,17 +87,24 @@ export function localeSegments(
   const narration = options.narration ?? localeNarration(locale);
   const segments: NarrationSegment[] = [];
   const skipped: SkippedTranslation[] = [];
-  for (const translation of loadTranslations(repo, locale, options.fs)) {
+  const invalid = (key: string, error: unknown): void => {
+    skipped.push({ key, locale, reason: 'invalid', message: (error as Error).message });
+  };
+  for (const translation of loadTranslations(repo, locale, options.fs, invalid)) {
     const key = translation.translationOf;
-    const english = repo.passage(key);
-    const reason = skipReason(english, translation, options);
-    if (reason !== null) {
-      skipped.push({ key, locale, reason });
-      continue;
+    try {
+      const english = repo.passage(key);
+      const reason = skipReason(english, translation, options);
+      if (reason !== null) {
+        skipped.push({ key, locale, reason });
+        continue;
+      }
+      segments.push(
+        ...translationSegments(english as NonNullable<typeof english>, translation, 'gospel', locale, narration),
+      );
+    } catch (error) {
+      invalid(key, error);
     }
-    segments.push(
-      ...translationSegments(english as NonNullable<typeof english>, translation, 'gospel', locale, narration),
-    );
   }
   return { segments, skipped };
 }

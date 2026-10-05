@@ -108,13 +108,13 @@ function toMap(passages: PassageLookup): ReadonlyMap<string, Passage | null | un
 }
 
 /** The passage's reference as printed (`Mt 20:1-16a`), or its key when that does not parse. */
-function passageRef(passage: Passage): Ref {
+export function passageRef(passage: Passage): Ref {
   const parsed = tryParseRef(passage.ref);
   return parsed.ok ? parsed.value : fromKey(passage.key);
 }
 
-/** `20:15` in `book` → `Matthew chapter 20, verse 15` (in English). */
-function spokenVerse(book: Ref['book'], verse: string, strings: NarrationStrings): string {
+/** A note's verse, `20:15` in `book` → `Matthew chapter 20, verse 15` (in the language of `strings`). */
+export function spokenVerse(book: Ref['book'], verse: string, strings: NarrationStrings): string {
   const [c, v] = verse.split(':').map(Number);
   const point = { c: Number(c), v: Number(v) };
   return strings.spokenRef({ book, segments: [{ start: point, end: point }] });
