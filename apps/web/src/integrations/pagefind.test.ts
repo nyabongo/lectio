@@ -43,6 +43,7 @@ const base = normaliseBase(config.site.basePath);
 let outDir: string;
 const logged: string[] = [];
 let pagefindJs: PagefindModule;
+let pagefindSw: PagefindModule;
 
 beforeAll(async () => {
   outDir = await mkdtemp(join(tmpdir(), 'lectio-pagefind-'));
@@ -58,8 +59,22 @@ beforeAll(async () => {
     const file = join(bundle, path.slice(`${base}${PAGEFIND_DIR}/`.length));
     return new Response(await readFile(file));
   });
-  pagefindJs = (await import(/* @vite-ignore */ pathToFileURL(join(bundle, 'pagefind.js')).href)) as PagefindModule;
-  await pagefindJs.options({ basePath: `${base}${PAGEFIND_DIR}/`, baseUrl: base });
+  // Pagefind picks the index of the page's <html lang>, as the search page in each locale does (L-113).
+  const load = async (lang: string): Promise<PagefindModule> => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('location', new URL(`http://site.test${base}`));
+    vi.stubGlobal('document', { querySelector: () => ({ getAttribute: () => lang }) });
+    const url = `${pathToFileURL(join(bundle, 'pagefind.js')).href}?lang=${lang}`;
+    const module = (await import(/* @vite-ignore */ url)) as PagefindModule;
+    await module.options({ basePath: `${base}${PAGEFIND_DIR}/`, baseUrl: base });
+    await module.filters();
+    return module;
+  };
+  pagefindJs = await load('en');
+  pagefindSw = await load('sw');
+  vi.stubGlobal('window', undefined);
+  vi.stubGlobal('document', undefined);
+  vi.stubGlobal('location', undefined);
 }, 60_000);
 
 afterAll(async () => {
@@ -71,7 +86,7 @@ describe('Pagefind on the fixture build', () => {
   it('writes the index and the Pagefind UI into <outDir>/pagefind', () => {
     for (const file of ['pagefind.js', 'pagefind-entry.json', 'pagefind-ui.js', 'pagefind-ui.css'])
       expect(existsSync(join(outDir, PAGEFIND_DIR, file)), file).toBe(true);
-    expect(logged).toEqual(['Pagefind indexed 1 reading page']);
+    expect(logged).toEqual(['Pagefind indexed 2 reading pages']);
   });
 
   it("finds the 2026-09-20 Gospel page for 'evil eye'", async () => {
@@ -103,6 +118,24 @@ describe('Pagefind on the fixture build', () => {
   });
 });
 
+describe('Pagefind in Kiswahili (L-113)', () => {
+  it('finds the /sw/ Gospel page by its Kiswahili notes', async () => {
+    const { results } = await pagefindSw.search('jicho ovu');
+    expect(results.length).toBeGreaterThan(0);
+    const first = await results[0]?.data();
+    expect(first?.url).toBe(`${base}sw/2026-09-20/gospel/`);
+    expect(first?.filters).toEqual({ book: ['Mathayo'], season: [expect.any(String) as string] });
+    expect(first?.meta.date).toBe('Jumapili 20 Septemba 2026');
+  });
+
+  it('keeps the two languages apart: each index holds only its own pages', async () => {
+    const urls = async (module: PagefindModule, term: string): Promise<string[]> =>
+      Promise.all((await module.search(term)).results.map(async (result) => (await result.data()).url));
+    expect(await urls(pagefindJs, 'evil')).toEqual([`${base}2026-09-20/gospel/`]);
+    expect(await urls(pagefindSw, 'jicho')).toEqual([`${base}sw/2026-09-20/gospel/`]);
+  });
+});
+
 describe('buildSearchIndex', () => {
   it('writes to <outDir>/pagefind through the given API', async () => {
     const writeFiles = vi.fn(() => Promise.resolve({ errors: [] }));
@@ -111,7 +144,7 @@ describe('buildSearchIndex', () => {
         Promise.resolve({ errors: [], index: { addHTMLFile: () => Promise.resolve({ errors: [] }), writeFiles } }),
       close: () => Promise.resolve(null),
     };
-    await expect(buildSearchIndex(options, '/site/dist', api)).resolves.toBe(1);
+    await expect(buildSearchIndex(options, '/site/dist', api)).resolves.toBe(2);
     expect(writeFiles).toHaveBeenCalledWith({ outputPath: join('/site/dist', PAGEFIND_DIR) });
   });
 });
@@ -125,5 +158,12 @@ describe('searchLabels', () => {
     expect(labels.season('lent')).toBe('Lent');
     expect(labels.slot('first-reading')).toBe('First reading');
     expect(labels.date('2026-09-20')).toBe('Sunday 20 September 2026');
+  });
+
+  it('names books in Kiswahili for the /sw/ documents (L-113)', () => {
+    const sw = searchLabels(options, 'sw');
+    expect(sw.book('MT')).toBe('Mathayo');
+    expect(sw.slot('gospel')).toBe('Injili');
+    expect(sw.date('2026-09-20')).toBe('Jumapili 20 Septemba 2026');
   });
 });
