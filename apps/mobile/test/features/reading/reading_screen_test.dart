@@ -526,12 +526,7 @@ void main() {
       final screen = tester.view.physicalSize / tester.view.devicePixelRatio;
       expect(rect.top, greaterThanOrEqualTo(0));
       expect(rect.top, lessThan(screen.height));
-      final scrollable = tester.state<ScrollableState>(
-        find.descendant(
-          of: find.byType(SingleChildScrollView),
-          matching: find.byType(Scrollable),
-        ),
-      );
+      final scrollable = Scrollable.of(tester.element(highlightedCards()));
       expect(scrollable.position.pixels, greaterThan(0));
       expect(
         find.byWidgetPredicate(
@@ -550,13 +545,8 @@ void main() {
 
       expect(find.text('VERSE 15 · “envious”'), findsOneWidget);
       expect(highlightedCards(), findsNothing);
-      final scrollable = tester.state<ScrollableState>(
-        find.descendant(
-          of: find.byType(SingleChildScrollView),
-          matching: find.byType(Scrollable),
-        ),
-      );
-      expect(scrollable.position.pixels, 0);
+      final card = tester.element(find.byType(NoteCard).first);
+      expect(Scrollable.of(card).position.pixels, 0);
     });
 
     testWidgets('/reading?date&slot for a reading without notes', (
