@@ -25,7 +25,8 @@
 #   so a PR that edits `decide` or a gate cannot change its own decision. The config, the registry
 #   and the Prettier config come from main.
 # - Permissions are per job and default to none. `resolve` and `gates-trusted` read; `verifiers`
-#   reads and is the only job with secrets (the two verifier LLM keys, never for a fork PR);
+#   reads and is the only job with secrets (the two verifier LLM keys from the `llm-verifiers`
+#   environment, which only main can use; never for a fork PR);
 #   `decide` and `merge` write. Checkouts never persist the token; GH_TOKEN goes only to the
 #   tooling steps that need it.
 # - The approval commit names this run (`Lectio-Approval: <kind> run=<id> head=<sha>`). It counts only
@@ -182,6 +183,9 @@ jobs:
     needs: [resolve, gates-trusted]
     # Only on a new head that is not an approval commit, and never for a fork PR.
     if: ${{ needs.gates-trusted.result == 'success' && needs.resolve.outputs.verifiers == 'true' }}
+    # The LLM keys live in this environment, deployable only from protected branches (main);
+    # scripts/repo/setup.sh (L-032) creates it. Without the keys the gate is skipped.
+    environment: llm-verifiers
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
