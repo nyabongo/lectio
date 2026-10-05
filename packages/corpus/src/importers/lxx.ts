@@ -9,9 +9,10 @@
  *
  * The upstream format: `00-Swete_versification.csv` has one line per verse, `<first word id>\t<Book>.<c>:<v>`;
  * `01-Swete_word_with_punctuations.csv` has one line per word, `<id>\t<word>` (ids 1, 2, 3…). A verse the edition
- * lacks (Sirach 1:5, Tobit S 4:7-18…) has one empty word. Verses mostly follow Rahlfs' numbering, the `lxx` scheme of
- * `@lectio/refs`: Theodotion's Daniel 3:98–6:28 and Sirach 30:25–36:16 (in the Greek manuscripts' order upstream) are
- * moved into that scheme's order, and the importer checks every verse against it (see OUTSIDE_LXX).
+ * lacks (Sirach 1:5, Tobit S 4:7-18…) has one empty word. Swete's numbering is mostly Rahlfs', the `lxx` scheme of
+ * `@lectio/refs`. Theodotion's Daniel 3:98–6:28 and Sirach 30:25–36:16 (in the Greek manuscripts' order upstream) are
+ * moved into that scheme's chapters, and each book is then re-divided into the scheme's verses: where Swete divides
+ * differently enough to shift verses, LXX_VERSE_STARTS says where each lxx verse starts in Swete's text.
  *
  * Output: `corpus/grc-lxx/<BOOK>/<chapter>.json` under the NABRE book codes of ADR 0004, `lxx` versification:
  * Tobit is the Sinaiticus text (the one the NABRE translates); Daniel is Theodotion's, with Susanna as chapter 13
@@ -25,7 +26,7 @@ import { mkdir, mkdtemp, readFile, rename, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-import { isRealVerse } from '@lectio/refs';
+import { chapterCount, chapterLength, isRealVerse } from '@lectio/refs';
 import type { BookCode } from '@lectio/refs';
 
 import { CorpusError } from '../format.ts';
@@ -226,33 +227,159 @@ export const SIRACH_ORDER: readonly Relocation[] = [
 
 /**
  * Theodotion's Daniel is numbered upstream as in Hebrew and English Bibles from 3:98 to 6:28; the `lxx` scheme
- * (Rahlfs) starts chapter 4 at Hebrew 3:31 and chapter 6 at Hebrew 5:31.
+ * (Rahlfs) starts chapter 4 at Hebrew 3:31 and chapter 6 at Hebrew 5:31, and swaps 3:54 and 3:55.
  */
 export const DANIEL_ORDER: readonly Relocation[] = [
   { c: 3, v: 98, count: 3, toC: 4, toV: 1 },
   { c: 4, v: 1, count: 34, toC: 4, toV: 4 },
   { c: 5, v: 31, count: 1, toC: 6, toV: 1 },
   { c: 6, v: 1, count: 28, toC: 6, toV: 2 },
+  // Swete prints 3:54 and 3:55 in the order of Codex B; Rahlfs swaps them.
+  { c: 3, v: 54, count: 1, toC: 3, toV: 55 },
+  { c: 3, v: 55, count: 1, toC: 3, toV: 54 },
 ];
 
 /**
- * Verses Swete has that the `lxx` scheme lacks or marks as absent. They are stored under Swete's numbers; any other
- * verse outside the scheme stops the import, so a changed upstream cannot slip through.
+ * Where Swete's verse divisions differ from the `lxx` scheme (Rahlfs) enough to shift whole verses, the verses of the
+ * scheme that start elsewhere: `'BOOK c'` → lxx verse → the Swete position it starts at, `'c:v'` or `'c:v+w'` (word
+ * `w`, counted from 0, of Swete's verse `c:v`, numbered as placed by {@link placeVerse}). Every other lxx verse starts
+ * at the Swete verse with its number. A verse runs to the start of the next one, so Swete verses merged by Rahlfs are
+ * joined and split ones are cut. The starts were found by aligning Swete's words with the verse divisions of a Rahlfs
+ * word list (eliranwong/LXX-Rahlfs-1935, used for research only) and checked by hand; only these positions are kept,
+ * no Rahlfs text. Elsewhere Swete's and Rahlfs' divisions can still differ by a few words at a verse boundary.
  */
-export const OUTSIDE_LXX: ReadonlySet<string> = new Set([
-  'TB 13:10',
-  'EST 9:30',
-  'WIS 17:21',
-  'SIR 6:1',
-  'SIR 17:9',
-  'SIR 22:7',
-  'SIR 22:8',
-  ...[34, 35, 36, 37, 38, 39, 40].map((v) => `SIR 33:${v}`),
-  ...[27, 28, 29, 30, 31].map((v) => `SIR 34:${v}`),
-  'SIR 35:25',
-  'SIR 35:26',
-  ...[28, 29, 30, 31].map((v) => `SIR 36:${v}`),
-]);
+export const LXX_VERSE_STARTS: Readonly<Record<string, Readonly<Record<number, string>>>> = {
+  'TB 5': { 10: '5:9+47', 16: '5:15+18', 17: '5:16+5', 22: '5:21+30', 23: '6:1' },
+  'TB 6': { 1: '6:2', 2: '6:3', 3: '6:4', 4: '6:5', 5: '6:6', 6: '6:6+26', 18: '6:18+15', 19: '6:18+73' },
+  'TB 7': { 5: '7:4+14', 7: '7:8', 8: '7:9', 9: '7:9+9', 12: '7:11+27', 13: '7:12', 14: '7:13' },
+  'TB 8': { 10: '8:9+4' },
+  'TB 10': { 8: '10:7+46', 9: '10:8', 13: '10:12+36', 14: '10:13' },
+  'TB 11': {
+    2: '11:2+2',
+    11: '11:10+13',
+    12: '11:13',
+    13: '11:13+12',
+    14: '11:14+13',
+    15: '11:15+11',
+    17: '11:17+16',
+    18: '11:17+73',
+    19: '11:18',
+  },
+  'TB 13': {
+    2: '13:1+2',
+    7: '13:6+33',
+    11: '13:10',
+    12: '13:10+9',
+    13: '13:11',
+    14: '13:12',
+    15: '13:13',
+    16: '13:14+12',
+    17: '13:16',
+  },
+  'EST 9': { 31: '9:30', 32: '9:31' },
+  'WIS 17': {
+    10: '17:11',
+    11: '17:12',
+    12: '17:13',
+    13: '17:14',
+    14: '17:15',
+    15: '17:16',
+    16: '17:17',
+    17: '17:18+6',
+    18: '17:19+5',
+    19: '17:20',
+    20: '17:21',
+  },
+  'SIR 17': { 4: '17:4+1', 10: '17:9' },
+  'SIR 20': { 3: '20:2+5', 17: '20:16+13' },
+  'SIR 22': { 9: '22:7', 10: '22:8' },
+  'SIR 23': { 8: '23:7+12', 17: '23:16+9' },
+  'SIR 29': { 17: '29:18', 18: '29:18+10' },
+  'SIR 33': {
+    17: '33:25+4',
+    ...run(18, '33', 26, 11),
+    29: '33:38',
+    30: '33:38+13',
+    31: '33:39',
+    32: '33:39+12',
+    33: '33:40',
+  },
+  'SIR 34': {
+    ...run(11, '34', 12, 3),
+    14: '34:16',
+    15: '34:17',
+    16: '34:19',
+    17: '34:20',
+    18: '34:21',
+    ...run(19, '34', 23, 4),
+    ...run(23, '34', 28, 4),
+  },
+  'SIR 35': {
+    2: '35:3',
+    3: '35:5',
+    4: '35:6',
+    ...run(5, '35', 8, 7),
+    12: '35:15+5',
+    13: '35:16',
+    14: '35:17',
+    15: '35:18',
+    16: '35:20',
+    17: '35:21',
+    18: '35:21+10',
+    19: '35:22+6',
+    20: '35:22+17',
+    21: '35:23+5',
+    ...run(22, '35', 24, 3),
+  },
+  'SIR 36': {
+    ...run(2, '36', 3, 4),
+    6: '36:8',
+    ...run(7, '36', 10, 4),
+    ...run(11, '36', 17, 6),
+    17: '36:22+14',
+    ...run(18, '36', 23, 9),
+    27: '36:31+10',
+  },
+  'SIR 41': {
+    19: '41:18+12',
+    20: '41:19+8',
+    21: '41:19+19',
+    22: '41:20+5',
+    23: '41:21+5',
+    24: '41:22',
+    25: '41:22+11',
+    26: '42:1',
+    27: '42:1+10',
+  },
+  'SIR 37': { 18: '37:18+3' },
+  'SIR 38': { 34: '38:33+15' },
+  'SIR 42': { 1: '42:1+20' },
+  'SIR 51': { 11: '51:11+9', 12: '51:12+11' },
+  'BAR 6': {
+    9: '6:9+8',
+    10: '6:10+10',
+    11: '6:11+8',
+    12: '6:13',
+    13: '6:14',
+    14: '6:14+14',
+    16: '6:16+10',
+    26: '6:26+11',
+    28: '6:28+7',
+    47: '6:47+8',
+    54: '6:54+10',
+    57: '6:56+8',
+    62: '6:62+12',
+  },
+  'DN 14': { 5: '14:4+18', 9: '14:9+14', 10: '14:10+10', 12: '14:13', 13: '14:14', 14: '14:14+13', 26: '14:26+14' },
+};
+
+/** `count` lxx verses from `first` that start at Swete verses `from`, `from + 1`, … of chapter `c`. */
+function run(first: number, c: string, from: number, count: number): Record<number, string> {
+  return Object.fromEntries(Array.from({ length: count }, (_, i) => [first + i, `${c}:${from + i}`]));
+}
+
+/** Swete verses outside the `lxx` scheme, in chapters without starts above, that Rahlfs prints with the verse before. */
+export const MERGED_WITH_PREVIOUS: ReadonlySet<string> = new Set(['SIR 6:1']);
 
 function relocate(table: readonly Relocation[], c: number, v: number): [number, number] {
   const run = table.find((r) => r.c === c && r.v <= v && v < r.v + r.count);
@@ -271,8 +398,9 @@ function splitAt(words: readonly string[], isBoundary: (piece: LxxPiece, index: 
 }
 
 /**
- * Where one upstream verse of `part` goes, in the `lxx` scheme: Esther's additions to their lettered chapters, Sirach
- * and Daniel into the scheme's order, one-chapter books into their chapter. Parts without words are left out.
+ * Where one upstream verse of `part` goes: Esther's additions to their lettered chapters, Sirach and Daniel into the
+ * scheme's chapter order, one-chapter books into their chapter. Parts without words are left out. Verse divisions
+ * are adjusted afterwards, book by book ({@link reversify}).
  */
 export function placeVerse(
   part: LxxBookPart,
@@ -313,27 +441,91 @@ export function placeVerse(
 export type LxxBooks = Map<string, Map<string, Record<string, Token[]>>>;
 
 const NUMBER = /^[1-9][0-9]*$/u;
+const POSITION = /^([1-9][0-9]*):([1-9][0-9]*)(?:\+([1-9][0-9]*))?$/u;
 
 function put(books: LxxBooks, book: BookCode, at: Placement, where: string): void {
-  const label = `${book} ${at.chapter}:${at.verse}`;
-  if (NUMBER.test(at.chapter) && !OUTSIDE_LXX.has(label)) {
-    if (!isRealVerse({ book, c: Number(at.chapter), v: Number(at.verse) }, 'lxx')) {
-      throw new CorpusError(`${where}: ${label} is not a verse of the lxx scheme`);
-    }
-  }
   const chapters = books.get(book) ?? new Map<string, Record<string, Token[]>>();
   books.set(book, chapters);
   const verses = chapters.get(at.chapter) ?? {};
   chapters.set(at.chapter, verses);
-  if (at.verse in verses) throw new CorpusError(`${where}: ${label} written twice`);
+  if (at.verse in verses) throw new CorpusError(`${where}: ${book} ${at.chapter}:${at.verse} written twice`);
   verses[at.verse] = at.tokens;
 }
 
+const byNumber = (a: string, b: string): number => Number(a) - Number(b);
+
 /**
- * Builds the edition from the parsed upstream files. Verses without words are skipped; every other verse must exist
- * in the `lxx` scheme of `@lectio/refs`, be listed in {@link OUTSIDE_LXX}, or be in one of Esther's lettered chapters.
+ * Re-divides one book's numbered chapters into the verses of the `lxx` scheme: each lxx verse starts where
+ * `starts` says (by default at the Swete verse with its number) and runs to the start of the next. Swete verses the
+ * scheme lacks must be covered by `starts` or listed in `merged`; Esther's lettered chapters are kept as they are.
  */
-export function buildLxxBooks(verses: readonly LxxVerseStart[], words: readonly string[]): LxxBooks {
+export function reversify(
+  book: BookCode,
+  chapters: ReadonlyMap<string, Record<string, Token[]>>,
+  starts: Readonly<Record<string, Readonly<Record<number, string>>>> = LXX_VERSE_STARTS,
+  merged: ReadonlySet<string> = MERGED_WITH_PREVIOUS,
+): Map<string, Record<string, Token[]>> {
+  const stream: Token[] = [];
+  const index = new Map<string, readonly [at: number, length: number]>();
+  const numbered = [...chapters.keys()].filter((c) => NUMBER.test(c)).sort(byNumber);
+  for (const c of numbered) {
+    const verses = chapters.get(c) as Record<string, Token[]>;
+    for (const v of Object.keys(verses).sort(byNumber)) {
+      const tokens = verses[v] as Token[];
+      const label = `${book} ${c}:${v}`;
+      if (
+        !isRealVerse({ book, c: Number(c), v: Number(v) }, 'lxx') &&
+        !merged.has(label) &&
+        !(`${book} ${c}` in starts)
+      ) {
+        throw new CorpusError(`${label} is not a verse of the lxx scheme`);
+      }
+      index.set(`${c}:${v}`, [stream.length, tokens.length]);
+      stream.push(...tokens);
+    }
+  }
+  const position = (spec: string, label: string): number => {
+    const match = POSITION.exec(spec);
+    const found = match === null ? undefined : index.get(`${match[1]}:${match[2]}`);
+    const offset = Number(match?.[3] ?? 0);
+    if (found === undefined || offset >= found[1]) throw new CorpusError(`${label}: no Swete position ${spec}`);
+    return found[0] + offset;
+  };
+  const verses: { c: string; v: string; at: number }[] = [];
+  for (let c = 1; c <= chapterCount(book, 'lxx'); c += 1) {
+    const table = starts[`${book} ${c}`];
+    for (let v = 1; v <= (chapterLength(book, c, 'lxx') as number); v += 1) {
+      if (!isRealVerse({ book, c, v }, 'lxx')) continue;
+      const label = `${book} ${c}:${v}`;
+      const spec = table?.[v];
+      const at = spec === undefined ? index.get(`${c}:${v}`)?.[0] : position(spec, label);
+      if (at === undefined) continue;
+      const previous = verses.at(-1);
+      if ((previous?.at ?? -1) >= at || (previous === undefined && at !== 0)) {
+        throw new CorpusError(`${label}: starts out of order in the Swete text`);
+      }
+      verses.push({ c: String(c), v: String(v), at });
+    }
+  }
+  const out = new Map<string, Record<string, Token[]>>();
+  verses.forEach(({ c, v, at }, i) => {
+    const chapter = out.get(c) ?? {};
+    out.set(c, chapter);
+    chapter[v] = stream.slice(at, verses[i + 1]?.at ?? stream.length);
+  });
+  for (const [c, lettered] of chapters) if (!NUMBER.test(c)) out.set(c, lettered);
+  return out;
+}
+
+/**
+ * Builds the edition from the parsed upstream files: verses without words are skipped, the rest are placed
+ * ({@link placeVerse}) and each book is re-divided into the verses of the `lxx` scheme ({@link reversify}).
+ */
+export function buildLxxBooks(
+  verses: readonly LxxVerseStart[],
+  words: readonly string[],
+  starts: Readonly<Record<string, Readonly<Record<number, string>>>> = LXX_VERSE_STARTS,
+): LxxBooks {
   const parts = new Map(LXX_BOOKS.map((part) => [part.upstream, part]));
   const books: LxxBooks = new Map();
   const seen = new Set<string>();
@@ -351,6 +543,7 @@ export function buildLxxBooks(verses: readonly LxxVerseStart[], words: readonly 
   });
   const missing = LXX_BOOKS.filter((part) => !seen.has(part.upstream)).map((part) => part.upstream);
   if (missing.length > 0) throw new CorpusError(`missing upstream book(s): ${missing.join(', ')}`);
+  for (const [book, chapters] of books) books.set(book, reversify(book as BookCode, chapters, starts));
   return books;
 }
 
@@ -374,8 +567,8 @@ export function lxxSource(archive: PinnedArchive & { readonly version: string })
       '(https://github.com/eliranwong/LXX-Swete-1930) under the GNU General Public License v3. Modified for Lectio: ' +
       'deuterocanonical books and Greek Esther and Daniel only, split into words, text-critical signs and bracketed ' +
       'verse numbers removed, Greek Esther additions stored as chapters A-F, the Letter of Jeremiah as Baruch 6, ' +
-      'Susanna and Bel as Daniel 13 and 14, Sirach 30-36 in the Latin chapter order and Daniel 3:98-6:28 renumbered ' +
-      'to the lxx scheme.',
+      'Susanna and Bel as Daniel 13 and 14, Sirach 30-36 in the Latin chapter order, Daniel 3:98-6:28 renumbered ' +
+      'and the verses re-divided where they shift against the lxx scheme.',
     versification: 'lxx',
   };
 }
@@ -402,10 +595,13 @@ function licenceText(archive: PinnedArchive & { readonly version: string }, read
     "Letter of Jeremiah and Theodotion's Daniel, Susanna and Bel; stored the Letter of Jeremiah as Baruch 6 and",
     'Susanna and Bel as Daniel 13 and 14; split each verse into words; removed the text-critical signs (⸂ ⸃ ⸆) and the',
     "bracketed verse numbers; and stored Greek Esther's additions as chapters A-F, numbered by those brackets. Sirach",
-    "30:25-36:16, in the Greek manuscripts' order upstream, is stored in the Latin chapter order Swete prints, with his",
-    "verse numbers; Theodotion's Daniel 3:98-6:28 is renumbered to Rahlfs' chapters (3:98 is 4:1, 4:1 is 4:4, 5:31 is",
-    '6:1, 6:1 is 6:2). Verses the upstream leaves empty are not stored. Every other word is unchanged (normalised to',
-    'Unicode NFC).',
+    "30:25-36:16, in the Greek manuscripts' order upstream, is stored in the Latin chapter order of the lxx scheme;",
+    "Theodotion's Daniel 3:98-6:28 is renumbered to Rahlfs' chapters (3:98 is 4:1, 4:1 is 4:4, 5:31 is 6:1, 6:1 is 6:2)",
+    'and 3:54-55 swapped. Where Swete divides verses differently enough to shift them (Sirach 17, 20, 22, 23, 29,',
+    '33-38, 41, 42, 51; Tobit 5-8, 10, 11, 13; Wisdom 17; Esther 9; Baruch 6; Bel), the text is re-divided into the verses of the',
+    'lxx scheme, joining or cutting Swete verses. Verses the upstream leaves empty are not stored: in this edition that',
+    'includes Tobit 4:7-18 and 13:7-10 (lacunae of Sinaiticus), Daniel 3:67-68 and the Sirach prologue. Every other',
+    'word is unchanged (normalised to Unicode NFC).',
     '',
     `## Upstream README.md (commit ${archive.version})`,
     '',
@@ -430,6 +626,8 @@ export interface ImportLxxOptions {
   readonly archive?: PinnedArchive & { readonly version: string };
   /** Renames a directory. Defaults to node:fs `rename`; injectable so tests can make the final swap fail. */
   readonly renameDir?: (from: string, to: string) => Promise<void>;
+  /** Where lxx verses start in Swete's text. Defaults to LXX_VERSE_STARTS; tests with a tiny archive pass `{}`. */
+  readonly verseStarts?: Readonly<Record<string, Readonly<Record<number, string>>>>;
 }
 
 export interface ImportSummary {
@@ -493,7 +691,7 @@ export async function importLxx(options: ImportLxxOptions): Promise<ImportSummar
     const words = parseWords(await readUpstream(work, WORDS_FILE));
     const readme = await readUpstream(work, 'README.md');
     const licence = await readUpstream(work, 'LICENSE');
-    const books = buildLxxBooks(verses, words);
+    const books = buildLxxBooks(verses, words, options.verseStarts);
     await mkdir(options.corpusRoot, { recursive: true });
     const staging = await mkdtemp(join(options.corpusRoot, '.staging-lxx-'));
     try {
@@ -535,11 +733,15 @@ export interface ImportCliIo {
 export async function runImportLxx(
   corpusRoot: string,
   io: ImportCliIo,
-  { downloader = fetchDownloader(), archive }: { downloader?: Downloader; archive?: ImportLxxOptions['archive'] } = {},
+  {
+    downloader = fetchDownloader(),
+    archive,
+    verseStarts,
+  }: Partial<Pick<ImportLxxOptions, 'downloader' | 'archive' | 'verseStarts'>> = {},
 ): Promise<number> {
   try {
     const cacheDir = join(dirname(corpusRoot), '.cache', 'corpus');
-    const summary = await importLxx({ downloader, corpusRoot, cacheDir, ...(archive && { archive }) });
+    const summary = await importLxx({ downloader, corpusRoot, cacheDir, archive, verseStarts });
     io.out(
       `${summary.edition}: ${summary.books} books, ${summary.chapters} chapters, ${summary.verses} verses ` +
         `written to ${join(corpusRoot, summary.edition)}`,

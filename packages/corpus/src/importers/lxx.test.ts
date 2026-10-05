@@ -21,13 +21,15 @@ import {
   importLxx,
   LXX_BOOKS,
   LXX_EDITION,
+  LXX_VERSE_STARTS,
   lxxSource,
-  OUTSIDE_LXX,
+  MERGED_WITH_PREVIOUS,
   parseVersification,
   parseWords,
   placeVerse,
   PROVENANCE_STATEMENT,
   readPiece,
+  reversify,
   runImportLxx,
   SIRACH_ORDER,
   splitEstherVerse,
@@ -64,8 +66,9 @@ const SYNTHETIC: Verses = [
   ['1Ma.1:1', ['πρῶτον', 'βιβλίον.']],
   ['2Ma.1:1', ['δεύτερον', 'βιβλίον.']],
   ['Wis.1:1', ['ἀγαπήσατε', '⸂⸆⸃', 'δικαιοσύνην,']],
-  ['Wis.17:21', ['νὺξ', 'βαρεῖα.']],
   ['Sir.1:1', ['πᾶσα', 'σοφία.']],
+  ['Sir.5:15', ['μὴ', 'ἀγνόει,']],
+  ['Sir.6:1', ['μὴ', 'γίνου', 'ἐχθρός.']],
   ['Sir.30:24', ['ζῆλος', 'πολύς.', '[13]', 'λαμπρὰ', 'καρδία.']],
   ['Sir.30:25', ['⸂⸆⸃', 'καλαμώμενος', 'ὀπίσω.']],
   ['Sir.34:1', ['ἀγρυπνία', 'πλούτου.']],
@@ -153,7 +156,7 @@ function capture() {
 
 function build(verses: Verses) {
   const { versification, words } = upstreamFiles(verses);
-  return buildLxxBooks(parseVersification(versification), parseWords(words));
+  return buildLxxBooks(parseVersification(versification), parseWords(words), {});
 }
 
 const testUrl = 'https://example.test/lxx.tar.gz';
@@ -174,7 +177,9 @@ describe('tables', () => {
       'DN',
     ]);
     expect(new Set(Object.values(ESTHER_ADDITIONS))).toEqual(new Set(['A', 'B', 'C', 'D', 'E', 'F']));
-    expect(OUTSIDE_LXX.has('SIR 33:40')).toBe(true);
+    expect(MERGED_WITH_PREVIOUS.has('SIR 6:1')).toBe(true);
+    expect(LXX_VERSE_STARTS['SIR 34']?.[21]).toBe('34:25');
+    expect(LXX_VERSE_STARTS['TB 5']?.[23]).toBe('6:1');
     expect(SWETE_LXX.url).toContain(SWETE_LXX.version);
   });
 
@@ -345,7 +350,16 @@ describe('buildLxxBooks', () => {
       ],
     });
     expect([...(books.get('DN')?.keys() ?? [])]).toEqual(['1', '4', '13', '14']);
-    expect(books.get('WIS')?.get('17')).toHaveProperty('21');
+    expect(sir?.get('5')).toEqual({
+      '15': [
+        ['μὴ', ''],
+        ['ἀγνόει,', ''],
+        ['μὴ', ''],
+        ['γίνου', ''],
+        ['ἐχθρός.', ''],
+      ],
+    });
+    expect(sir?.has('6')).toBe(false);
   });
 
   it.each([
@@ -353,7 +367,7 @@ describe('buildLxxBooks', () => {
     [
       'a verse outside the lxx scheme',
       [...SYNTHETIC, ['Jdt.16:26', ['α']] as const],
-      'Jdt.16:26: JDT 16:26 is not a verse of the lxx scheme',
+      'JDT 16:26 is not a verse of the lxx scheme',
     ],
     ['a repeated verse', [...SYNTHETIC, ['Jdt.1:1', ['α']] as const], 'Jdt.1:1: JDT 1:1 written twice'],
   ])('refuses %s', (_what, verses, message) => {
@@ -365,6 +379,53 @@ describe('buildLxxBooks', () => {
     expect(() => buildLxxBooks(verses, ['α', 'β'])).toThrow(
       new CorpusError(`Jdt.1:1: word ids beyond the end of ${WORDS_FILE}`),
     );
+  });
+});
+
+describe('reversify', () => {
+  const tokens = (...words: string[]) => words.map((w): [string, string] => [w, '']);
+  const chapters = (entries: Record<string, Record<string, string[]>>) =>
+    new Map(
+      Object.entries(entries).map(([c, verses]) => [
+        c,
+        Object.fromEntries(Object.entries(verses).map(([v, words]) => [v, tokens(...words)])),
+      ]),
+    );
+
+  it('keeps Swete verses by default and lettered chapters as they are', () => {
+    const out = reversify('JDT', chapters({ '1': { '1': ['α'], '2': ['β'] }, A: { '1': ['γ'] } }));
+    expect([...out]).toEqual([
+      ['1', { '1': tokens('α'), '2': tokens('β') }],
+      ['A', { '1': tokens('γ') }],
+    ]);
+  });
+
+  it('joins and cuts verses where the starts say, across chapters', () => {
+    const swete = chapters({
+      '1': { '1': ['α', 'β'], '2': ['γ', 'δ', 'ε'] },
+      '2': { '1': ['ζ'], '2': ['η', 'θ'] },
+    });
+    const starts = { 'JDT 1': { 2: '1:2+1', 3: '2:1' }, 'JDT 2': { 1: '2:2', 2: '2:2+1' } };
+    const out = reversify('JDT', swete, starts, new Set());
+    expect(out.get('1')).toEqual({ '1': tokens('α', 'β', 'γ'), '2': tokens('δ', 'ε'), '3': tokens('ζ') });
+    expect(out.get('2')).toEqual({ '1': tokens('η'), '2': tokens('θ') });
+  });
+
+  it('merges a listed Swete plus into the verse before and accepts pluses in chapters with starts', () => {
+    const swete = chapters({ '16': { '25': ['α'], '26': ['β'] } });
+    expect(reversify('JDT', swete, {}, new Set(['JDT 16:26'])).get('16')).toEqual({ '25': tokens('α', 'β') });
+    expect(reversify('JDT', swete, { 'JDT 16': {} }, new Set()).get('16')).toEqual({ '25': tokens('α', 'β') });
+  });
+
+  it.each([
+    [{ 'JDT 1': { 2: '1:3' } }, 'JDT 1:2: no Swete position 1:3'],
+    [{ 'JDT 1': { 2: '1:2+2' } }, 'JDT 1:2: no Swete position 1:2+2'],
+    [{ 'JDT 1': { 2: 'x' } }, 'JDT 1:2: no Swete position x'],
+    [{ 'JDT 1': { 2: '1:1' } }, 'JDT 1:2: starts out of order in the Swete text'],
+    [{ 'JDT 1': { 1: '1:1+1' } }, 'JDT 1:1: starts out of order in the Swete text'],
+  ])('refuses starts %j', (starts, message) => {
+    const swete = chapters({ '1': { '1': ['α', 'β'], '2': ['γ', 'δ'] } });
+    expect(() => reversify('JDT', swete, starts, new Set())).toThrow(new CorpusError(message));
   });
 });
 
@@ -388,7 +449,12 @@ describe('importLxx', () => {
     const archive = { url: testUrl, sha256: sha256Hex(bytes), version: 'test-1' };
     const corpusRoot = join(dir, 'corpus');
     const downloader = fakeDownloader({ [testUrl]: bytes });
-    return { dir, bytes, corpusRoot, base: { corpusRoot, cacheDir: join(dir, 'cache'), archive, downloader } };
+    return {
+      dir,
+      bytes,
+      corpusRoot,
+      base: { corpusRoot, cacheDir: join(dir, 'cache'), archive, downloader, verseStarts: {} },
+    };
   }
   async function oldEdition(corpusRoot: string): Promise<void> {
     await mkdir(join(corpusRoot, LXX_EDITION), { recursive: true });
@@ -504,7 +570,8 @@ describe('runImportLxx', () => {
     const archive = { url: testUrl, sha256: sha256Hex(bytes), version: 'test-1' };
     const corpusRoot = join(dir, 'corpus');
     const { out, err, io } = capture();
-    expect(await runImportLxx(corpusRoot, io, { downloader: fakeDownloader({ [testUrl]: bytes }), archive })).toBe(0);
+    const downloader = fakeDownloader({ [testUrl]: bytes });
+    expect(await runImportLxx(corpusRoot, io, { downloader, archive, verseStarts: {} })).toBe(0);
     expect(out).toEqual([
       `${LXX_EDITION}: 9 books, 23 chapters, 26 verses written to ${join(corpusRoot, LXX_EDITION)}`,
     ]);
