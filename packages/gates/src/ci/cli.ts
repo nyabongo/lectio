@@ -6,7 +6,8 @@
  *     lectio-gates ci changes --root pr-head --base <ref> [--head <sha>]   writes relevant=true|false;
  *                                                     exits 1 for a changed symlink or submodule
  *     lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root pr-head
- *                                [--results <gates.json>]… [--phase decide|approve]
+ *                                [--results <gates.json>]… [--phase decide|approve|dispatch]
+ *                                [--approval-commit <sha>]   (phase dispatch)
  *                                                     writes decision, manual-merge, write, approval-artifact
  *     lectio-gates ci skip --head-sha <sha> --reason <text>   a green merge-rule check (nothing relevant)
  *     lectio-gates ci merge --pr <n> --sha <sha>
@@ -44,7 +45,7 @@ export const CI_USAGE = [
   'usage: lectio-gates ci resolve',
   '       lectio-gates ci changes --root <dir> --base <ref> [--head <ref>]',
   '       lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root <dir> [--results <file>]…',
-  '                                  [--phase decide|approve]',
+  '                                  [--phase decide|approve|dispatch] [--approval-commit <sha>]',
   '       lectio-gates ci skip --head-sha <sha> --reason <text>',
   '       lectio-gates ci merge --pr <n> --sha <sha>',
 ].join('\n');
@@ -128,7 +129,8 @@ function io(options: CiCliOptions): Io {
         options.github ??
         new GhGitHubClient({
           viewer: ACTIONS_BOT,
-          requiredChecks: getRegistry().checks,
+          // The registry's checks plus merge-rule, which the trusted workflow publishes on the head.
+          requiredChecks: [...getRegistry().checks, MERGE_RULE_CHECK],
           env,
           ...(env['GITHUB_REPOSITORY'] ? { repo: env['GITHUB_REPOSITORY'] } : {}),
         })),
@@ -237,10 +239,12 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
     root: { type: 'string' },
     results: { type: 'string', multiple: true },
     phase: { type: 'string', default: 'decide' },
+    'approval-commit': { type: 'string' },
   });
   const phase = values.phase;
-  if (phase !== 'decide' && phase !== 'approve')
-    throw new CiUsageError(`--phase must be decide or approve (got "${phase}")`);
+  if (phase !== 'decide' && phase !== 'approve' && phase !== 'dispatch')
+    throw new CiUsageError(`--phase must be decide, approve or dispatch (got "${phase}")`);
+  const approvalCommit = phase === 'dispatch' ? sha('approval-commit', required(values, 'approval-commit')) : undefined;
   const number = prNumber(required(values, 'pr'));
   const headSha = sha('head-sha', required(values, 'head-sha'));
   const base = required(values, 'base');
@@ -260,6 +264,7 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
     base,
     runId,
     results,
+    ...(approvalCommit === undefined ? {} : { approvalCommitSha: approvalCommit }),
     ...(offline ? { note: 'the deterministic gates ran with the offline fake fetcher' } : {}),
     format: options.format ?? toolPrettierJson(ctx.toolRoot),
     now: options.now ?? (() => new Date()),
@@ -269,8 +274,14 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
   if (outcome.report !== undefined)
     (options.writeFile ?? writeText)(ctx.path(REPORT_FILE), `${JSON.stringify(outcome.report, null, 2)}\n`);
   if (outcome.approvalArtifact !== undefined) {
-    // Uploaded by the next workflow step, from inside this run, before `--phase approve` commits.
-    const record = { pr: number, head: headSha, run: runId, decision: outcome.decision };
+    // Uploaded by the next workflow step, from inside this run, before `--phase dispatch`.
+    const record = {
+      pr: number,
+      head: headSha,
+      commit: outcome.approvalCommitSha,
+      run: runId,
+      decision: outcome.decision,
+    };
     (options.writeFile ?? writeText)(ctx.path(APPROVAL_RECORD), `${JSON.stringify(record, null, 2)}\n`);
   }
   ctx.output({

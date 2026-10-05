@@ -26,6 +26,7 @@ import {
   newRepo,
   openPr,
   pushContent,
+  REQUIRED_CHECKS,
   registryJobs,
   simulateRun,
 } from './fixtures/content-gates.ts';
@@ -87,7 +88,7 @@ describe('content gates: a pending passage reaches main approved', () => {
     expect(labeled.mergeRule).toMatchObject({ decision: 'human-approved', exitCode: 0, label: 'auto-merge-candidate' });
     const approvalSha = bot.headOf(BRANCH);
     expect(labeled.mergeRule.approvalCommitSha).toBe(approvalSha);
-    expect(await bot.listRunArtifacts(labeled.run.id)).toEqual([approvalArtifactName(number, labeled.headSha)]);
+    expect(await bot.listRunArtifacts(labeled.run.id)).toEqual([approvalArtifactName(number, approvalSha)]);
     expect(mergeRuleCheck(bot, labeled.headSha)).toMatchObject({ conclusion: 'success', actor: ACTIONS_BOT });
 
     // One signed bot commit on the decided head, with the review block and the trailer.
@@ -103,10 +104,11 @@ describe('content gates: a pending passage reaches main approved', () => {
       approvedVia: 'label',
     });
 
-    // Every registered workflow dispatched once: on the head branch, except the trusted one on main.
-    expect(bot.dispatches.map((dispatch) => [dispatch.file, dispatch.ref])).toEqual(
-      REGISTRY.workflows.map((workflow) => [workflow, workflow === APPROVAL_WORKFLOW ? 'main' : BRANCH]),
-    );
+    // Every registered workflow dispatched once on the head branch, then the trusted one on main.
+    expect(bot.dispatches.map((dispatch) => [dispatch.file, dispatch.ref])).toEqual([
+      ...REGISTRY.workflows.map((workflow) => [workflow, BRANCH]),
+      [APPROVAL_WORKFLOW, 'main'],
+    ]);
     expect(bot.dispatches.find((dispatch) => dispatch.file === APPROVAL_WORKFLOW)?.inputs).toEqual({
       pr: String(number),
     });
@@ -192,7 +194,7 @@ describe('content gates: a pending passage reaches main approved', () => {
     const number = await openPr(bot, 'research-bot');
     await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
     const round = bot.dispatches.length;
-    expect(round).toBe(REGISTRY.workflows.length);
+    expect(round).toBe(REGISTRY.workflows.length + 1);
     dispatchedChecksReport(bot, bot.headOf(BRANCH));
     const run = await lastDispatchedGatesRun(bot);
     // Even with fresh green verifier results, the approval commit is not decided again.
@@ -211,12 +213,17 @@ describe('content gates: a pending passage reaches main approved', () => {
 });
 
 describe('content gates: approval commits', () => {
-  type Writer = (bot: FakeGitHubClient, number: number, parent: string) => WorkflowRun;
+  /** Names the artifact the writer run uploads for the pushed commit (none when absent). */
+  type Artifact = (number: number, commit: string) => string;
+  interface Writer {
+    readonly run: (bot: FakeGitHubClient, number: number, parent: string) => WorkflowRun;
+    readonly artifact?: Artifact;
+  }
 
   /** A trusted-looking run of content-gates.yml, `overrides` applied, with no artifact unless given. */
-  const writerRun =
-    (overrides: Partial<WorkflowRun> = {}, artifact?: (number: number, parent: string) => string): Writer =>
-    (bot, number, parent) => {
+  const writerRun = (overrides: Partial<WorkflowRun> = {}, artifact?: Artifact): Writer => ({
+    ...(artifact === undefined ? {} : { artifact }),
+    run: (bot) => {
       const run = bot.addWorkflowRun({
         workflowFile: APPROVAL_WORKFLOW,
         event: 'workflow_run',
@@ -228,10 +235,10 @@ describe('content gates: approval commits', () => {
         actor: 'someone',
         ...overrides,
       });
-      if (artifact !== undefined) bot.addRunArtifact(run.id, artifact(number, parent));
       return run;
-    };
-  const validArtifact = (number: number, parent: string) => approvalArtifactName(number, parent);
+    },
+  });
+  const validArtifact: Artifact = (number, commit) => approvalArtifactName(number, commit);
 
   /** A PR whose head is a commit with an approval trailer naming `writer`'s run, pushed by `author`. */
   async function forged(writer: Writer, options: { author?: string; verified?: boolean; head?: string } = {}) {
@@ -239,19 +246,20 @@ describe('content gates: approval commits', () => {
     const number = await openPr(bot, 'research-bot');
     await simulateRun(bot, number, { event: 'workflow_run', results: FLAGGED_RESULTS });
     const parent = bot.headOf(BRANCH);
-    const run = writer(bot, number, parent);
-    await bot.as(options.author ?? ACTIONS_BOT).pushCommit({
+    const run = writer.run(bot, number, parent);
+    const commit = await bot.as(options.author ?? ACTIONS_BOT).pushCommit({
       branch: BRANCH,
       message: `Approve\n\n${formatApprovalTrailer({ kind: 'auto', runId: String(run.id), head: options.head ?? parent })}\n`,
       files: [{ path: 'passages/notes.txt', content: 'x' }],
       verified: options.verified ?? true,
     });
+    if (writer.artifact !== undefined) bot.addRunArtifact(run.id, writer.artifact(number, commit.sha));
     return { bot, number };
   }
 
-  it('accepts a trusted run that uploaded the approval artifact for this PR and parent', async () => {
+  it('accepts a trusted run that uploaded the approval artifact for this PR and this commit', async () => {
     const { bot, number } = await forged(writerRun({}, validArtifact));
-    for (const check of REGISTRY.checks) bot.setCheck(bot.headOf(BRANCH), check, 'success');
+    for (const check of REQUIRED_CHECKS) bot.setCheck(bot.headOf(BRANCH), check, 'success');
     const outcome = await simulateRun(bot, number, { event: 'workflow_dispatch', results: DETERMINISTIC_PASS });
     expect(outcome.mergeRule.decision).toBe('approved-commit');
     expect(outcome.merge?.merged).toBe(true);
@@ -273,28 +281,30 @@ describe('content gates: approval commits', () => {
       () => forged(writerRun({}, validArtifact), { head: 'f'.repeat(40) }),
       /is not the commit's parent/,
     ],
-    ['a run id that does not exist', () => forged(() => ({ id: 123456789 }) as WorkflowRun), /no such run/],
+    ['a run id that does not exist', () => forged({ run: () => ({ id: 123456789 }) as WorkflowRun }), /no such run/],
     ['a trusted run without the approval artifact', () => forged(writerRun()), /belongs to PR #0/],
     [
       'a trusted run whose artifact names another PR',
-      () => forged(writerRun({}, (_n, parent) => approvalArtifactName(999, parent))),
+      () => forged(writerRun({}, (_n, commit) => approvalArtifactName(999, commit))),
       /belongs to PR #0/,
     ],
     [
-      'a trusted run whose artifact names another head',
+      'a trusted run whose artifact names another commit',
       () => forged(writerRun({}, (n) => approvalArtifactName(n, 'e'.repeat(40)))),
       /belongs to PR #0/,
     ],
     [
       'a pull_request run of a PR copy of content-gates.yml, even with the artifact and the PR listed',
       () =>
-        forged((bot, number, parent) =>
-          writerRun({ event: 'pull_request', prNumbers: [number], headSha: parent, headBranch: BRANCH }, validArtifact)(
-            bot,
-            number,
-            parent,
-          ),
-        ),
+        forged({
+          artifact: validArtifact,
+          run: (bot, number, parent) =>
+            writerRun({ event: 'pull_request', prNumbers: [number], headSha: parent, headBranch: BRANCH }).run(
+              bot,
+              number,
+              parent,
+            ),
+        }),
       /belongs to PR #0/,
     ],
     [
@@ -334,18 +344,50 @@ describe('content gates: approval commits', () => {
     await simulateRun(bot, victim, { event: 'workflow_run', results: FLAGGED_RESULTS });
     const other = await openPr(bot, 'research-bot', { 'passages/other.json': '{}' }, 'research/other');
     // A legitimate trusted run for the other PR, whose title claims the victim.
-    const run = writerRun({ displayTitle: `Content gates · PR #${String(victim)}` }, (_n, parent) =>
-      approvalArtifactName(other, parent),
-    )(bot, victim, bot.headOf(BRANCH));
-    await bot.pushCommit({
+    const run = writerRun({ displayTitle: `Content gates · PR #${String(victim)}` }).run(bot, victim, '');
+    const commit = await bot.pushCommit({
       branch: BRANCH,
       message: `x\n\n${formatApprovalTrailer({ kind: 'auto', runId: String(run.id), head: bot.headOf(BRANCH) })}\n`,
       files: [{ path: 'passages/notes.txt', content: 'x' }],
       verified: true,
     });
+    bot.addRunArtifact(run.id, approvalArtifactName(other, commit.sha));
     const outcome = await simulateRun(bot, victim, { event: 'workflow_run', results: AUTO_RESULTS });
     expect(outcome.mergeRule.decision).toBe('blocked');
     expect(outcome.mergeRule.summary).toContain(`belongs to PR #0, not #${String(victim)}`);
+  });
+
+  it('blocks a forged commit with the same parent and run id but another tree, force-pushed over the approval', async () => {
+    const bot = newRepo();
+    const number = await openPr(bot, 'research-bot');
+    const approved = await simulateRun(bot, number, { event: 'workflow_run', results: AUTO_RESULTS });
+    const legit = await bot.getCommit(bot.headOf(BRANCH));
+    expect(await bot.listRunArtifacts(approved.run.id)).toEqual([approvalArtifactName(number, legit.sha)]);
+
+    // A collaborator's own workflow token writes a bot-signed commit on the same parent with the same
+    // trailer and other content, and force-pushes the branch to it.
+    await bot.createBranch({ name: 'forge', from: approved.headSha });
+    const forgedCommit = await bot.commitFiles({
+      branch: 'forge',
+      message: legit.message,
+      files: [{ path: PASSAGE, content: PASSAGE_TEXT.replace('"summary": "', '"summary": "Unreviewed. ') }],
+    });
+    expect(forgedCommit).toMatchObject({ parents: [approved.headSha], author: ACTIONS_BOT, verified: true });
+    expect(forgedCommit.sha).not.toBe(legit.sha);
+    bot.forcePush(BRANCH, forgedCommit.sha);
+    for (const check of REQUIRED_CHECKS) bot.setCheck(forgedCommit.sha, check, 'success');
+
+    const outcome = await simulateRun(bot, number, { event: 'workflow_dispatch', results: DETERMINISTIC_PASS });
+    expect(outcome.headSha).toBe(forgedCommit.sha);
+    expect(outcome.mergeRule.decision).toBe('blocked');
+    expect(outcome.mergeRule.summary).toContain(`belongs to PR #0, not #${String(number)}`);
+    expect(outcome.merge).toBeNull();
+    // And the merge job, asked for the legitimate approval commit, refuses the moved head.
+    expect(await runMergeJob({ github: bot, prNumber: number, sha: legit.sha, log: () => undefined })).toMatchObject({
+      merged: false,
+      exitCode: 1,
+    });
+    expect(bot.merges).toEqual([]);
   });
 
   it('flagged → a reviewer comments /approve (issue_comment run) → a valid trailer → merged', async () => {

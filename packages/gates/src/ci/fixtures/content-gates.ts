@@ -40,6 +40,9 @@ export const CONFIG: LectioConfig = DEFAULT_CONFIG;
 /** The real registry, read from `.github/required-checks/` of this checkout. */
 export const REGISTRY: RequiredChecksRegistry = readRequiredChecks(REPO_ROOT);
 
+/** What the merge job waits for: the registry's checks and the merge-rule check (Checks API). */
+export const REQUIRED_CHECKS: readonly string[] = [...REGISTRY.checks, 'merge-rule'];
+
 /** Jobs each registered workflow reports, from the registry files themselves. */
 export function registryJobs(): Record<string, readonly string[]> {
   const dir = join(REPO_ROOT, '.github/required-checks');
@@ -60,14 +63,14 @@ export function newRepo(files: Readonly<Record<string, string>> = { 'README.md':
     Object.entries(registryJobs()).map(([workflow, jobs]) => [
       workflow,
       // The content workflows report their checks from the simulated runs, not on dispatch.
-      workflow === APPROVAL_WORKFLOW || workflow === CHECKS_WORKFLOW ? {} : { jobs },
+      workflow === CHECKS_WORKFLOW ? {} : { jobs },
     ]),
   );
   return new FakeGitHubClient({
     actor: ACTIONS_BOT,
     files,
-    requiredChecks: REGISTRY.checks,
-    workflows: { ...workflows, 'deploy.yml': {} },
+    requiredChecks: REQUIRED_CHECKS,
+    workflows: { ...workflows, [APPROVAL_WORKFLOW]: {}, 'deploy.yml': {} },
   });
 }
 
@@ -237,8 +240,8 @@ export function contentChecksRun(bot: FakeGitHubClient, number: number, headSha:
 
 /**
  * One run of the trusted content-gates.yml (main's copy) for PR `number` on its current head, as the
- * workflow plays it: (for `workflow_run`, the PR-side run first) merge-rule `decide`, the approval
- * artifact upload when an approval commit is due, merge-rule `approve`, and the merge job when the
+ * workflow plays it: (for `workflow_run`, the PR-side run first) merge-rule `decide`, then, when an
+ * approval commit is due, `approve`, the artifact upload naming that commit and `dispatch`, and the merge job when the
  * head is a valid approval commit. Its jobs report on main's tip; `merge-rule` reaches the PR head
  * through the Checks API.
  */
@@ -279,8 +282,17 @@ export async function simulateRun(
   };
   let mergeRule = await runMergeRuleJob({ ...input, phase: 'decide' });
   if (mergeRule.write) {
-    bot.addRunArtifact(run.id, mergeRule.approvalArtifact as string);
     mergeRule = await runMergeRuleJob({ ...input, phase: 'approve' });
+    if (mergeRule.approvalArtifact !== undefined) {
+      bot.addRunArtifact(run.id, mergeRule.approvalArtifact);
+      const approve = mergeRule;
+      const dispatched = await runMergeRuleJob({
+        ...input,
+        phase: 'dispatch',
+        approvalCommitSha: approve.approvalCommitSha as string,
+      });
+      mergeRule = { ...approve, exitCode: dispatched.exitCode, dispatched: dispatched.dispatched };
+    }
   }
   const merge =
     mergeRule.decision === 'approved-commit' && !mergeRule.manualMerge

@@ -49,6 +49,7 @@ describe('content-checks.yml (PR side)', () => {
     expect(checks).toContain('types: [opened, synchronize, reopened, labeled]');
     expect(checks).toMatch(/^ {2}workflow_dispatch:$/m);
     expect(checks).not.toMatch(/issue_comment|workflow_run|pull_request_target/);
+    expect(checks).toContain('run-name: Content checks (${{ github.event.action || github.event_name }})');
     expect(checks).toMatch(/^permissions:\n {2}contents: read$/m);
     expect(checks).not.toMatch(/:\s*write/);
     expect(checks).not.toContain('secrets.');
@@ -60,7 +61,8 @@ describe('content-checks.yml (PR side)', () => {
 
 describe('content-gates.yml (trusted side)', () => {
   it('runs only main’s copy: workflow_run, /approve comments, and dispatches on the default branch', () => {
-    expect(Object.keys(GATES)).toEqual(['resolve', 'deterministic', 'verifiers', 'merge-rule', 'merge']);
+    // Job names never equal a check name: these jobs report on main, merge-rule is a Checks API run.
+    expect(Object.keys(GATES)).toEqual(['resolve', 'gates-trusted', 'verifiers', 'decide', 'merge']);
     expect(gates).toMatch(/workflow_run:\n {4}workflows: \[Content checks\]\n {4}types: \[completed\]/);
     expect(gates).toMatch(/issue_comment:\n {4}types: \[created\]/);
     expect(gates).toMatch(/workflow_dispatch:\n {4}inputs:\n {6}pr:/);
@@ -70,7 +72,7 @@ describe('content-gates.yml (trusted side)', () => {
       "github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)",
     );
     // Every other job needs resolve, so nothing runs when resolve is skipped.
-    for (const id of ['deterministic', 'verifiers', 'merge-rule', 'merge'])
+    for (const id of ['gates-trusted', 'verifiers', 'decide', 'merge'])
       expect(job(GATES, id)).toMatch(/needs: .*resolve/);
     expect(gates).not.toContain('run-name: Content gates · PR');
   });
@@ -83,14 +85,14 @@ describe('content-gates.yml (trusted side)', () => {
     );
     expect(group).toContain("&& format('unrelated-{0}', github.run_id)");
     expect(gates).toMatch(/^ {2}cancel-in-progress: false$/m);
-    expect(job(GATES, 'merge-rule')).toContain('group: content-gates-merge-rule-${{ needs.resolve.outputs.pr }}');
+    expect(job(GATES, 'decide')).toContain('group: content-gates-merge-rule-${{ needs.resolve.outputs.pr }}');
     expect(job(GATES, 'merge')).toContain('group: content-gates-merge-${{ needs.resolve.outputs.pr }}');
   });
 
-  it('grants nothing by default and writes only in merge-rule and merge', () => {
+  it('grants nothing by default and writes only in decide and merge', () => {
     expect(gates).toMatch(/^permissions: \{\}$/m);
-    for (const id of ['resolve', 'deterministic', 'verifiers']) expect(job(GATES, id), id).not.toMatch(/:\s*write/);
-    expect(job(GATES, 'merge-rule')).toMatch(
+    for (const id of ['resolve', 'gates-trusted', 'verifiers']) expect(job(GATES, id), id).not.toMatch(/:\s*write/);
+    expect(job(GATES, 'decide')).toMatch(
       /contents: write[\s\S]*pull-requests: write[\s\S]*issues: write[\s\S]*actions: write[\s\S]*checks: write/,
     );
     expect(job(GATES, 'merge')).toMatch(/contents: write[\s\S]*pull-requests: write[\s\S]*actions: write/);
@@ -100,29 +102,32 @@ describe('content-gates.yml (trusted side)', () => {
     const secrets = [...gates.matchAll(/secrets\.(\w+)/g)].map((match) => match[1]);
     expect(secrets).toEqual(['ANTHROPIC_API_KEY', 'OPENAI_API_KEY']);
     for (const [id, text] of Object.entries(GATES)) expect(text.includes('secrets.'), id).toBe(id === 'verifiers');
-    for (const id of ['deterministic', 'verifiers']) expect(job(GATES, id)).not.toContain('GH_TOKEN');
+    for (const id of ['gates-trusted', 'verifiers']) expect(job(GATES, id)).not.toContain('GH_TOKEN');
     for (const line of gates.split('\n').filter((text) => text.includes('GH_TOKEN')))
       expect(line.trim()).toBe('GH_TOKEN: ${{ github.token }}');
   });
 
-  it('re-runs the deterministic gates itself and uploads the approval artifact before approving', () => {
-    expect(job(GATES, 'deterministic')).toContain('--gates schema,evidence,licence --fetch live');
+  it('re-runs the deterministic gates itself and uploads the artifact naming the commit before dispatching', () => {
+    expect(job(GATES, 'gates-trusted')).toContain('--gates schema,evidence,licence --fetch live');
     expect(job(GATES, 'verifiers')).toContain('--gates verifiers --fetch live --llm live');
-    const mergeRule = job(GATES, 'merge-rule');
+    const mergeRule = job(GATES, 'decide');
     const decide = mergeRule.indexOf('--phase decide');
-    const upload = mergeRule.indexOf('name: ${{ steps.decide.outputs.approval-artifact }}');
     const approve = mergeRule.indexOf('--phase approve');
+    const upload = mergeRule.indexOf('name: ${{ steps.approve.outputs.approval-artifact }}');
+    const dispatch = mergeRule.indexOf('--phase dispatch');
     expect(decide).toBeGreaterThan(0);
-    expect(upload).toBeGreaterThan(decide);
-    expect(approve).toBeGreaterThan(upload);
+    expect(approve).toBeGreaterThan(decide);
+    expect(upload).toBeGreaterThan(approve);
+    expect(dispatch).toBeGreaterThan(upload);
+    expect(mergeRule).toContain('--approval-commit "$APPROVAL_COMMIT"');
     expect(mergeRule).toContain('ci skip --head-sha');
     expect(mergeRule).toContain('name: gates-report');
   });
 
   it('merges only after approved-commit, never for a manual-merge or fork PR', () => {
     const merge = job(GATES, 'merge');
-    expect(merge).toContain("needs.merge-rule.outputs.decision == 'approved-commit'");
-    expect(merge).toContain("needs.merge-rule.outputs.manual-merge != 'true'");
+    expect(merge).toContain("needs.decide.outputs.decision == 'approved-commit'");
+    expect(merge).toContain("needs.decide.outputs.manual-merge != 'true'");
     expect(merge).toContain("needs.resolve.outputs.fork != 'true'");
   });
 });
@@ -173,7 +178,7 @@ describe('both workflows', () => {
       }
   });
 
-  it('are registered (changes, deterministic; merge-rule) and the registry validates', () => {
+  it('register the PR side (changes, deterministic) and the registry validates', () => {
     const dir = join(REPO_ROOT, '.github/required-checks');
     const files = readdirSync(dir)
       .filter((file) => file.endsWith('.json'))
@@ -184,7 +189,8 @@ describe('both workflows', () => {
       workflow: 'content-checks.yml',
       jobs: ['changes', 'deterministic'],
     });
-    expect(entry('content-gates.json')).toEqual({ workflow: 'content-gates.yml', jobs: ['merge-rule'] });
+    // merge-rule is a Checks API run from the trusted workflow, not a job: not in the registry.
+    expect(files.map((file) => file.file)).not.toContain('content-gates.json');
     expect(validateRequiredChecks(files, (workflow) => read(workflow))).toEqual([]);
   });
 });

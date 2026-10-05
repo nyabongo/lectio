@@ -11,8 +11,8 @@
  * - `workflow_dispatch` (input `pr`): only on the default branch (main's copy); the PR's current
  *   head is read from GitHub. The merge-rule job dispatches this after an approval commit.
  *
- * The verifiers run on a new head from a `pull_request` run or a dispatch that is not an approval
- * commit, and never for a fork PR (no LLM spend on PRs from outside). The changes diff starts from
+ * The verifiers run on a new head from a `pull_request` run (not a `labeled` one) or a dispatch that
+ * is not an approval commit, and never for a fork PR (no LLM spend on PRs from outside). The changes diff starts from
  * `origin/<base>`. Relevance: passages/, calendar/, corpus/ or config/ changed.
  */
 import type { LectioConfig } from '@lectio/config';
@@ -105,7 +105,11 @@ async function fromWorkflowRun(event: Json, github: GitHubClient): Promise<Targe
   const pr = candidates.find((candidate) => candidate.state === 'open' && candidate.headSha === headSha);
   if (pr === undefined) return skip(`no open PR has head ${headSha} any more; a newer run decides`);
   const reason = `workflow_run (${text(run['event'])}) on #${String(pr.number)} at ${headSha}`;
-  return targetOf(github, pr, reason, run['event'] === 'pull_request');
+  // The PR-side run names its action (`run-name: Content checks (<action>)`). A label adds no
+  // content, so it does not re-run the verifiers. The title is PR-controlled, but it only decides
+  // whether the verifiers run: hiding a new head behind "(labeled)" just means needs-review.
+  const labeled = text(run['display_title']).endsWith('(labeled)');
+  return targetOf(github, pr, reason, run['event'] === 'pull_request' && !labeled);
 }
 
 /** The target of a trusted content-gates.yml run from its event name and payload. */

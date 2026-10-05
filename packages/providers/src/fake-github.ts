@@ -385,6 +385,12 @@ export class FakeGitHubClient implements GitHubClient {
     return stored;
   }
 
+  /** Moves a branch to `sha`, as a force push does (no fast-forward check). */
+  forcePush(branch: string, sha: string): void {
+    this.#repo.getCommit(sha);
+    this.#repo.branch(branch).head = sha;
+  }
+
   /** Closes a PR without merging. */
   async closePr(number: number): Promise<void> {
     const thread = this.#repo.thread(number, 'pr');

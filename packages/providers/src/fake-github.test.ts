@@ -372,6 +372,16 @@ describe('FakeGitHubClient checks and workflows', () => {
     expect(pinned.id).toBe(42);
   });
 
+  it('force-pushes a branch to any known commit', async () => {
+    const { bot } = setup();
+    const root = bot.headOf('main');
+    await bot.createBranch({ name: 'x' });
+    await bot.commitFiles({ branch: 'x', message: 'm', files: [{ path: 'a', content: 'a' }] });
+    bot.forcePush('x', root);
+    expect(bot.headOf('x')).toBe(root);
+    expect(() => bot.forcePush('x', 'nope')).toThrow(/no commit/);
+  });
+
   it('lists the artifacts a run uploaded', async () => {
     const { bot } = setup();
     const run = bot.addWorkflowRun({

@@ -2,9 +2,14 @@
 # verifier keys (owner exception for going online, L-201).
 #
 #   content-checks.yml (pull_request, read-only)  ──workflow_run──▶  this file (main's copy only)
-#   /approve comment ──issue_comment──▶ this file;  merge-rule ──workflow_dispatch on main──▶ this file
+#   /approve comment ──issue_comment──▶ this file;  decide ──workflow_dispatch on main──▶ this file
 #
-#   resolve → deterministic → verifiers → merge-rule (decide → approval artifact → approve) → merge
+#   resolve → gates-trusted → verifiers → decide (decide → approve → artifact → dispatch) → merge
+#
+# The job names differ from the check names on purpose: these jobs report on main's tip, and the
+# `decide` job publishes the `merge-rule` check on the PR head through the Checks API. That check is
+# not a job, so it is not in .github/required-checks/; branch protection (L-032) requires it by name
+# next to content-checks.json, and the merge job waits for it with the registry's checks.
 #
 # Every trigger runs the default branch's copy of this file: `workflow_run` and `issue_comment`
 # always do, and a `workflow_dispatch` off the default branch does nothing (every job requires
@@ -19,13 +24,16 @@
 #   a changed symbolic link or submodule fails the run, and nothing from the PR is installed or run,
 #   so a PR that edits `decide` or a gate cannot change its own decision. The config, the registry
 #   and the Prettier config come from main.
-# - Permissions are per job and default to none. `resolve` and `deterministic` read; `verifiers`
+# - Permissions are per job and default to none. `resolve` and `gates-trusted` read; `verifiers`
 #   reads and is the only job with secrets (the two verifier LLM keys, never for a fork PR);
-#   `merge-rule` and `merge` write. Checkouts never persist the token; GH_TOKEN goes only to the
+#   `decide` and `merge` write. Checkouts never persist the token; GH_TOKEN goes only to the
 #   tooling steps that need it.
 # - The approval commit names this run (`Lectio-Approval: <kind> run=<id> head=<sha>`). It counts only
-#   if that run executed main's copy and uploaded the artifact `lectio-approval-pr<n>-<sha>` for this
-#   PR and parent (only a run's own jobs can upload to it). Run titles are never trusted.
+#   if that run executed main's copy and uploaded the artifact `lectio-approval-pr<n>-<commit sha>`
+#   naming this PR and this exact commit (only a run's own jobs can upload to it; a commit sha fixes
+#   the parent and the whole tree). A forged commit with the same parent and trailer but other
+#   content has another sha and is blocked. The merge uses --match-head-commit on that sha. Run
+#   titles are never trusted.
 # - Fork PRs are report-only: a red `merge-rule` check and the job summary, no labels, comments,
 #   commits or verifiers; a maintainer merges them by hand. A `.github/**` PR gets no approval
 #   commit, no dispatch and no merge from here; a maintainer merges it by hand after approval.
@@ -116,7 +124,7 @@ jobs:
           git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head" "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
           git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || git fetch --no-tags origin "$HEAD_SHA"
           git worktree add --detach pr-head "$HEAD_SHA"
-      # A changed symbolic link or submodule fails this step; merge-rule then reports it as blocked.
+      # A changed symbolic link or submodule fails this step; decide then reports it as blocked.
       - name: Detect relevant changes
         id: changes
         if: steps.resolve.outputs.run == 'true'
@@ -126,7 +134,7 @@ jobs:
           HEAD_SHA: ${{ steps.resolve.outputs.head-sha }}
         run: npm run --silent -w @lectio/gates gates -- ci changes --root pr-head --base "origin/$BASE_REF" --head "$HEAD_SHA"
 
-  deterministic:
+  gates-trusted:
     needs: resolve
     if: ${{ needs.resolve.outputs.run == 'true' && needs.resolve.outputs.relevant == 'true' }}
     runs-on: ubuntu-latest
@@ -171,9 +179,9 @@ jobs:
           retention-days: 14
 
   verifiers:
-    needs: [resolve, deterministic]
+    needs: [resolve, gates-trusted]
     # Only on a new head that is not an approval commit, and never for a fork PR.
-    if: ${{ needs.deterministic.result == 'success' && needs.resolve.outputs.verifiers == 'true' }}
+    if: ${{ needs.gates-trusted.result == 'success' && needs.resolve.outputs.verifiers == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -218,8 +226,8 @@ jobs:
           path: out/verifiers/
           retention-days: 14
 
-  merge-rule:
-    needs: [resolve, deterministic, verifiers]
+  decide:
+    needs: [resolve, gates-trusted, verifiers]
     if: ${{ !cancelled() && needs.resolve.result == 'success' && needs.resolve.outputs.run == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -283,15 +291,9 @@ jobs:
           npm run --silent -w @lectio/gates gates -- ci merge-rule --phase decide --pr "$PR" --head-sha "$HEAD_SHA"
           --base "origin/$BASE_REF" --root pr-head
           --results out/deterministic/gates.json --results out/verifiers/gates.json
-      # The evidence that this run approves this PR at this head, uploaded before any commit exists.
-      - uses: actions/upload-artifact@v7
-        if: steps.decide.outputs.write == 'true'
-        with:
-          name: ${{ steps.decide.outputs.approval-artifact }}
-          path: out/approval/approval.json
-          retention-days: 90
-      # Writes the review block and the approval commit, dispatches, and reports the check.
+      # Writes the review block and the approval commit.
       - name: Merge rule (approve)
+        id: approve
         if: steps.decide.outputs.write == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -303,7 +305,27 @@ jobs:
           npm run --silent -w @lectio/gates gates -- ci merge-rule --phase approve --pr "$PR" --head-sha "$HEAD_SHA"
           --base "origin/$BASE_REF" --root pr-head
           --results out/deterministic/gates.json --results out/verifiers/gates.json
-
+      # The evidence that this run wrote this exact approval commit for this PR, uploaded before
+      # anything is dispatched on it.
+      - uses: actions/upload-artifact@v7
+        if: steps.approve.outputs.approval-artifact != ''
+        with:
+          name: ${{ steps.approve.outputs.approval-artifact }}
+          path: out/approval/approval.json
+          retention-days: 90
+      # Dispatches the required-check workflows on the approval commit and reports the check.
+      - name: Merge rule (dispatch)
+        if: steps.approve.outputs.approval-commit != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PR: ${{ needs.resolve.outputs.pr }}
+          HEAD_SHA: ${{ needs.resolve.outputs.head-sha }}
+          BASE_REF: ${{ needs.resolve.outputs.base-ref }}
+          APPROVAL_COMMIT: ${{ steps.approve.outputs.approval-commit }}
+        run: >-
+          npm run --silent -w @lectio/gates gates -- ci merge-rule --phase dispatch --pr "$PR" --head-sha "$HEAD_SHA"
+          --base "origin/$BASE_REF" --root pr-head --approval-commit "$APPROVAL_COMMIT"
       # The full report (every result, the head and the decision) for readers of a truncated comment.
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() && hashFiles('out/report/gates.json') != '' }}
@@ -313,8 +335,8 @@ jobs:
           retention-days: 90
 
   merge:
-    needs: [resolve, merge-rule]
-    if: ${{ needs.merge-rule.result == 'success' && needs.merge-rule.outputs.decision == 'approved-commit' && needs.merge-rule.outputs.manual-merge != 'true' && needs.resolve.outputs.fork != 'true' }}
+    needs: [resolve, decide]
+    if: ${{ needs.decide.result == 'success' && needs.decide.outputs.decision == 'approved-commit' && needs.decide.outputs.manual-merge != 'true' && needs.resolve.outputs.fork != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:

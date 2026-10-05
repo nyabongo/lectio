@@ -36,6 +36,7 @@ import {
   PASSAGE_TEXT,
   REGISTRY,
   REPO_ROOT,
+  REQUIRED_CHECKS,
   REVIEWER,
   fakeCheckout,
   newRepo,
@@ -66,9 +67,12 @@ function override(client: GitHubClient, methods: Partial<Record<keyof GitHubClie
 }
 
 describe('registry', () => {
-  it('reads every workflow and check of the real registry, content-gates included', () => {
-    expect(REGISTRY.workflows).toContain('content-gates.yml');
-    expect(REGISTRY.checks).toEqual(expect.arrayContaining(['changes', 'deterministic', 'merge-rule']));
+  it('reads every workflow and check of the real registry, content-checks included', () => {
+    expect(REGISTRY.workflows).toContain('content-checks.yml');
+    // The trusted workflow publishes merge-rule through the Checks API: it is not a registered job.
+    expect(REGISTRY.workflows).not.toContain('content-gates.yml');
+    expect(REGISTRY.checks).toEqual(expect.arrayContaining(['changes', 'deterministic']));
+    expect(REGISTRY.checks).not.toContain('merge-rule');
     expect(REGISTRY.checks).not.toContain('merge');
   });
 
@@ -305,6 +309,11 @@ describe('target', () => {
       verifiers: false,
     });
     expect(await resolveTarget('workflow_run', runEvent(head), context(bot))).toMatchObject({ prNumber: number });
+    // A label brings no content: the verifiers are not run again.
+    const labeled = {
+      workflow_run: { ...runEvent(head, [{ number }]).workflow_run, display_title: 'Content checks (labeled)' },
+    };
+    expect(await resolveTarget('workflow_run', labeled, context(bot))).toMatchObject({ run: true, verifiers: false });
     // The head moved on, or the listed PR is not at this head: nothing to do here.
     expect(
       await resolveTarget('workflow_run', runEvent(SHA_A, [{ number }, { number: 'x' }]), context(bot)),
@@ -477,7 +486,7 @@ describe('merge job', () => {
     expect(await runMergeJob({ github: bot, prNumber: number, sha: SHA_A, log })).toMatchObject({ merged: false });
     expect(logs.at(-1)).toContain('not the approval commit');
 
-    for (const check of REGISTRY.checks) bot.setCheck(head, check, check === 'lint' ? 'failure' : 'success');
+    for (const check of REQUIRED_CHECKS) bot.setCheck(head, check, check === 'lint' ? 'failure' : 'success');
     expect(await runMergeJob({ github: bot, prNumber: number, sha: head, log, timeoutMs: 1 })).toMatchObject({
       merged: false,
       exitCode: 1,
@@ -527,7 +536,7 @@ describe('merge job', () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
     const head = bot.headOf('research/mt-20');
-    for (const check of REGISTRY.checks) bot.setCheck(head, check, 'success');
+    for (const check of REQUIRED_CHECKS) bot.setCheck(head, check, 'success');
     const failing = override(bot, {
       dispatchWorkflow: () => Promise.reject(new ProviderError('rate-limited', 'slow down')),
     });
@@ -606,14 +615,14 @@ describe('merge-rule job', () => {
     expect(await bot.listComments(fork.number)).toEqual([]);
   });
 
-  it('asks for the artifact in phase decide and commits only in phase approve', async () => {
+  it('commits only in phase approve, names the artifact after the commit, and dispatches only in phase dispatch', async () => {
     const bot = newRepo();
     const number = await openPr(bot, 'research-bot');
     const head = bot.headOf('research/mt-20');
     await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
     const decided = await runMergeRuleJob(await input(bot, number));
     expect(decided).toMatchObject({ decision: 'auto-merge', exitCode: 0, write: true });
-    expect(decided.approvalArtifact).toBe(`lectio-approval-pr${String(number)}-${head}`);
+    expect(decided.approvalArtifact).toBeUndefined();
     expect(bot.headOf('research/mt-20')).toBe(head);
     expect(bot.publishedChecks.filter((check) => check.headSha === head && check.conclusion === 'success')).toEqual([]);
 
@@ -622,17 +631,37 @@ describe('merge-rule job', () => {
     expect(changed).toMatchObject({ decision: 'needs-review', exitCode: 1, write: false });
     expect(changed.summary).toContain('no approval commit: the decision changed');
     expect(bot.headOf('research/mt-20')).toBe(head);
+
+    const approved = await runMergeRuleJob(await input(bot, number, { phase: 'approve' }));
+    const commit = bot.headOf('research/mt-20');
+    expect(approved).toMatchObject({ exitCode: 0, approvalCommitSha: commit, dispatched: [] });
+    expect(approved.approvalArtifact).toBe(`lectio-approval-pr${String(number)}-${commit}`);
+    expect(bot.dispatches).toEqual([]);
+
+    // Phase dispatch, with one workflow that cannot be dispatched: red, the others still go.
+    const registry = { ...REGISTRY, workflows: [...REGISTRY.workflows, 'missing.yml'] };
+    const dispatch = { phase: 'dispatch' as const, approvalCommitSha: commit, registry };
+    const outcome = await runMergeRuleJob(await input(bot, number, { ...dispatch, headSha: head }));
+    expect(outcome).toMatchObject({ exitCode: 1, approvalCommitSha: commit });
+    expect(outcome.summary).toContain('could not dispatch missing.yml');
+    expect(outcome.dispatched).toEqual([...REGISTRY.workflows, 'content-gates.yml']);
+    expect(bot.publishedChecks.at(-1)).toMatchObject({ headSha: head, conclusion: 'failure' });
+
+    // A head that moved off the approval commit dispatches nothing.
+    await bot.as('research-bot').pushCommit({
+      branch: 'research/mt-20',
+      message: 'more',
+      files: [{ path: 'passages/notes.txt', content: 'y' }],
+    });
+    const moved = await runMergeRuleJob(await input(bot, number, { ...dispatch, headSha: head }));
+    expect(moved).toMatchObject({ exitCode: 1, dispatched: [] });
+    expect(moved.summary).toContain(`not the approval commit ${commit}`);
+    await expect(runMergeRuleJob(await input(bot, number, { phase: 'dispatch' }))).rejects.toThrow(
+      'phase dispatch needs the approval commit sha',
+    );
   });
 
-  it('ends red when a dispatch fails or the head moved before the commit, and rethrows unknown errors', async () => {
-    const bot = newRepo();
-    const number = await openPr(bot, 'research-bot');
-    await simulateRun(bot, number, { event: 'workflow_run', results: DETERMINISTIC_PASS });
-    const registry = { ...REGISTRY, workflows: [...REGISTRY.workflows, 'missing.yml'] };
-    const outcome = await runMergeRuleJob(await input(bot, number, { registry, phase: 'approve' }));
-    expect(outcome).toMatchObject({ decision: 'auto-merge', exitCode: 1 });
-    expect(outcome.summary).toContain('could not dispatch missing.yml');
-
+  it('ends red when the head moved before the commit, and rethrows unknown errors', async () => {
     const second = newRepo();
     const other = await openPr(second, 'research-bot');
     await simulateRun(second, other, { event: 'workflow_run', results: DETERMINISTIC_PASS });

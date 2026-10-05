@@ -15,6 +15,7 @@ import {
   PASSAGE,
   REGISTRY,
   REPO_ROOT,
+  REQUIRED_CHECKS,
   fakeCheckout,
   newRepo,
   openPr,
@@ -211,11 +212,9 @@ describe('lectio-gates ci', () => {
           options({ github: bot, checkout, format: undefined, now: undefined }),
         );
       expect(await run([])).toBe(0);
-      const artifact = `lectio-approval-pr${String(number)}-${head}`;
       expect(read('output')).toBe(
-        `decision=auto-merge\nmanual-merge=false\nwrite=true\napproval-artifact=${artifact}\napproval-commit=\n`,
+        'decision=auto-merge\nmanual-merge=false\nwrite=true\napproval-artifact=\napproval-commit=\n',
       );
-      expect(JSON.parse(read(APPROVAL_RECORD))).toEqual({ pr: number, head, run: '4242', decision: 'auto-merge' });
       expect(JSON.parse(read(REPORT_FILE))).toMatchObject({
         reportVersion: 1,
         head,
@@ -226,18 +225,32 @@ describe('lectio-gates ci', () => {
       });
       expect(bot.headOf('research/mt-20')).toBe(head);
 
-      bot.addRunArtifact(4242, artifact);
       expect(await run(['--phase', 'approve'])).toBe(0);
       const approval = bot.headOf('research/mt-20');
-      expect(read('output')).toContain(`write=false\napproval-artifact=\napproval-commit=${approval}\n`);
+      const artifact = `lectio-approval-pr${String(number)}-${approval}`;
+      expect(read('output')).toContain(`write=false\napproval-artifact=${artifact}\napproval-commit=${approval}\n`);
+      expect(JSON.parse(read(APPROVAL_RECORD))).toEqual({
+        pr: number,
+        head,
+        commit: approval,
+        run: '4242',
+        decision: 'auto-merge',
+      });
       expect(read('summary')).toContain('the deterministic gates ran with the offline fake fetcher');
       expect(logs).toContain('merge-rule: out/missing/gates.json is missing (that job did not run)');
+      expect(bot.dispatches).toEqual([]);
 
-      for (const check of REGISTRY.checks) bot.setCheck(approval, check, 'success');
+      bot.addRunArtifact(4242, artifact);
+      expect(await run(['--phase', 'dispatch'])).toBe(2);
+      expect(errors.at(-2)).toBe('lectio-gates ci: --approval-commit is required');
+      expect(await run(['--phase', 'dispatch', '--approval-commit', approval])).toBe(0);
+      expect(bot.dispatches.map((dispatch) => dispatch.file)).toEqual([...REGISTRY.workflows, 'content-gates.yml']);
+
+      for (const check of REQUIRED_CHECKS) bot.setCheck(approval, check, 'success');
       expect(await runCiCli(['merge', '--pr', String(number), '--sha', approval], options({ github: bot }))).toBe(0);
       expect(bot.merges).toHaveLength(1);
       expect(await runCiCli(['merge-rule', ...args.slice(1), '--phase', 'later'], options())).toBe(2);
-      expect(errors.at(-2)).toBe('lectio-gates ci: --phase must be decide or approve (got "later")');
+      expect(errors.at(-2)).toBe('lectio-gates ci: --phase must be decide, approve or dispatch (got "later")');
     });
 
     it('publishes a green merge-rule check when nothing relevant changed', async () => {

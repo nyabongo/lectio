@@ -19,6 +19,8 @@
 # use one version) and runs `npm ci` there. The PR head is fetched only as data into pr-head/; its
 # package.json, lockfile and npm scripts are never installed or run.
 name: Content checks
+# The action tells the trusted side whether a run brings new content (a label does not).
+run-name: Content checks (${{ github.event.action || github.event_name }})
 
 on:
   pull_request:

@@ -34,11 +34,13 @@ export const CHECKS_WORKFLOW = 'content-checks.yml';
 export const ACTIONS_BOT = 'github-actions[bot]';
 
 /**
- * The artifact the trusted merge-rule job uploads, from inside its own run, just before it writes an
- * approval commit for PR `prNumber` on head `headSha`. Only that run's jobs can upload to it.
+ * The artifact the trusted merge-rule job uploads, from inside its own run, right after it wrote
+ * approval commit `commitSha` for PR `prNumber` (and before it dispatches anything). Only that run's
+ * jobs can upload to it, and a commit sha fixes the parent and the whole tree: a commit with the same
+ * parent and trailer but other content has another sha, so it is not covered.
  */
-export function approvalArtifactName(prNumber: number, headSha: string): string {
-  return `lectio-approval-pr${String(prNumber)}-${headSha}`;
+export function approvalArtifactName(prNumber: number, commitSha: string): string {
+  return `lectio-approval-pr${String(prNumber)}-${commitSha}`;
 }
 
 /**
@@ -53,20 +55,20 @@ export function runsMainCopy(run: Pick<WorkflowRun, 'event' | 'headBranch'>, def
 }
 
 /**
- * The PR a content-gates.yml run wrote an approval commit for: `prNumber` when the run executed
- * main's copy and uploaded the approval artifact for this PR and `parentSha`, else 0, which `decide`
- * blocks as a run of another PR. Run titles are never consulted.
+ * The PR a content-gates.yml run wrote approval commit `commitSha` for: `prNumber` when the run
+ * executed main's copy and uploaded the approval artifact for this PR and this exact commit, else 0,
+ * which `decide` blocks as a run of another PR. Run titles are never consulted.
  */
 export async function runPrNumber(
   run: WorkflowRun,
   github: GitHubClient,
   prNumber: number,
-  parentSha: string,
+  commitSha: string,
   defaultBranch: string,
 ): Promise<number> {
   if (!runsMainCopy(run, defaultBranch)) return 0;
   const names = await github.listRunArtifacts(run.id);
-  return names.includes(approvalArtifactName(prNumber, parentSha)) ? prNumber : 0;
+  return names.includes(approvalArtifactName(prNumber, commitSha)) ? prNumber : 0;
 }
 
 /** True when the comment's first line is exactly the approval command (for example `/approve`). */
@@ -148,7 +150,7 @@ export async function approvalCommitOf(
     const found = await github.getWorkflowRun(Number(trailer.runId));
     run = {
       workflow: found.workflowFile,
-      prNumber: await runPrNumber(found, github, prNumber, parentSha, defaultBranch),
+      prNumber: await runPrNumber(found, github, prNumber, commit.sha, defaultBranch),
       event: found.event,
       headSha: found.headSha,
     };
