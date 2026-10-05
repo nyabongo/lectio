@@ -11,7 +11,8 @@
 | `ios build signed:true`      | Imports the distribution certificate and profile, signs manually, exports an App Store ipa.   |
 | `ios beta`                   | Uploads the ipa to **TestFlight** (internal testers) with the App Store Connect API key.      |
 
-fastlane is pinned in `Gemfile` (`2.240.1`, Ruby 3.3 in CI). Run lanes from `apps/mobile`:
+fastlane (`2.240.1`) and CocoaPods (`1.17.0`, the version `ios/Podfile.lock` was written with; setup-ruby replaces the
+runner's Ruby and its CocoaPods) are pinned in `Gemfile`, Ruby 3.3 in CI. Run lanes from `apps/mobile`:
 
 ```sh
 BUNDLE_GEMFILE=fastlane/Gemfile bundle install
