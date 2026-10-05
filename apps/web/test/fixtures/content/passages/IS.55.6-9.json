@@ -7,12 +7,32 @@
     "title": "Seek the Lord while he may be found",
     "paragraphs": ["These verses close the book of consolation addressed to the exiles in Babylon. [c1]"]
   },
-  "translationNotes": [],
+  "translationNotes": [
+    {
+      "id": "v8-thoughts",
+      "verse": "55:8",
+      "anchor": "thoughts",
+      "original": {
+        "text": "מַחְשְׁבוֹתַי",
+        "lang": "hbo",
+        "translit": "maḥšəḇôṯay",
+        "gloss": "my plans"
+      },
+      "summary": "PENDING-NOTE-SUMMARY: the Hebrew word means designs or plans, not idle musings.",
+      "body": "PENDING-NOTE-BODY: the noun names what someone intends to do, so the contrast is between God's purposes and ours. [c2]"
+    }
+  ],
   "claims": [
     {
       "id": "c1",
       "text": "Isaiah 40-55 is addressed to the Judean exiles in Babylon.",
       "sourceIds": ["is-40-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The Hebrew noun machashavah denotes a plan or purpose.",
+      "sourceIds": ["bdb-machashabah"],
       "sensitive": false
     }
   ],
@@ -22,6 +42,13 @@
       "type": "scripture",
       "citation": "Isaiah 40:1",
       "ref": "Is 40:1"
+    },
+    {
+      "id": "bdb-machashabah",
+      "type": "print",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament, s.v. מַחֲשָׁבָה",
+      "excerpt": "מַחֲשָׁבָה",
+      "excerptLang": "hbo"
     }
   ],
   "provenance": {

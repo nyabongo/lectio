@@ -1,0 +1,41 @@
+{
+  "title": "Settings",
+  "description": "Text size, theme, playback speed and language for Lectio. Preferences stay on this device.",
+  "intro": "There are no accounts. Your preferences are saved in this browser and never leave this device.",
+  "saved": "Saved on this device.",
+  "notSaved": "This browser is not letting Lectio save settings, so they will reset when you leave.",
+  "textSize": {
+    "legend": "Text size",
+    "small": "Small",
+    "default": "Standard",
+    "large": "Large",
+    "larger": "Larger",
+    "preview": "Notes on history and the original languages will read at this size."
+  },
+  "theme": {
+    "legend": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "hint": "System follows your device's light or dark setting."
+  },
+  "speed": {
+    "legend": "Default playback speed",
+    "option": "{speed}×",
+    "hint": "Where the Listen queue starts. You can still change it while listening."
+  },
+  "language": {
+    "legend": "Language",
+    "en": "English",
+    "sw": "Kiswahili",
+    "comingSoon": "coming soon"
+  },
+  "offline": {
+    "legend": "Offline data",
+    "hint": "Removes days and audio saved for reading offline. Your settings are kept.",
+    "clear": "Clear offline data",
+    "cleared": "Offline data cleared.",
+    "unsupported": "This browser keeps no offline data for Lectio.",
+    "failed": "Offline data could not be cleared. Try again, or clear site data in your browser."
+  }
+}

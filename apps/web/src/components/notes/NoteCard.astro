@@ -1,0 +1,129 @@
+---
+/**
+ * One translation note card: "Verse 15 · “envious”", the original words (with `lang`, and `dir="rtl"` for
+ * Hebrew and Aramaic), transliteration and literal gloss, the one-line summary, the body with source superscripts,
+ * and the verification footer. `note` comes from `notesView()` (src/lib/reading.ts), so only approved notes reach it.
+ */
+import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import type { NoteView } from '../../lib/reading.ts';
+import MarkedText from './MarkedText.astro';
+import Verification from './Verification.astro';
+
+export interface Props {
+  note: NoteView;
+  method: 'human' | 'auto';
+  lastReviewedAt: string | null;
+  lang?: string;
+}
+
+const { note, method, lastReviewedAt, lang = DEFAULT_LOCALE } = Astro.props;
+const headingId = `${note.anchorId}-heading`;
+---
+
+<article class="note" id={note.anchorId} aria-labelledby={headingId}>
+  <h3 class="note__title" id={headingId}>
+    <span class="note__verse">{t(lang, 'reading.note.verse', { verse: note.verse })}</span>
+    <span class="note__sep" aria-hidden="true"> · </span>
+    <span class="note__anchor">“{note.anchor}”</span>
+  </h3>
+  <dl class="note__original">
+    <dt class="visually-hidden">{t(lang, 'reading.note.originalLabel')}</dt>
+    <dd class="note__text" lang={note.original.lang} dir={note.original.dir}>{note.original.text}</dd>
+    <dt class="visually-hidden">{t(lang, 'reading.note.translitLabel')}</dt>
+    <dd class="note__translit">{note.original.translit}</dd>
+    <dt class="visually-hidden">{t(lang, 'reading.note.glossLabel')}</dt>
+    <dd class="note__gloss">“{note.original.gloss}”</dd>
+  </dl>
+  <p class="note__summary">{note.summary}</p>
+  <p class="note__body"><MarkedText segments={note.body} lang={lang} /></p>
+  <Verification
+    sources={note.sources}
+    method={method}
+    lastReviewedAt={lastReviewedAt}
+    reportUrl={note.reportUrl}
+    lang={lang}
+  />
+</article>
+
+<style>
+  .note {
+    padding: var(--space-s) var(--space-s) var(--space-2xs);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-l);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--colour-ink) 6%, transparent);
+    scroll-margin-top: var(--space-m);
+  }
+
+  .note:target {
+    outline: 2px solid var(--colour-accent);
+    outline-offset: 2px;
+  }
+
+  .note__title {
+    margin: 0 0 var(--space-2xs);
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--colour-accent-ink);
+  }
+
+  .note__anchor {
+    text-transform: none;
+    letter-spacing: 0;
+    font-style: italic;
+    font-weight: var(--weight-regular);
+    color: var(--colour-ink);
+  }
+
+  .note__original {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-xs);
+    margin: 0 0 var(--space-2xs);
+  }
+
+  .note__original dd {
+    margin: 0;
+  }
+
+  .note__text {
+    flex-basis: 100%;
+    font-size: var(--step-2);
+    line-height: var(--leading-snug);
+    color: var(--colour-ink);
+  }
+
+  .note__text[dir='rtl'] {
+    text-align: start;
+  }
+
+  /* Aramaic is written in the Hebrew script. */
+  .note__text:lang(arc) {
+    font-family: var(--font-hebrew);
+  }
+
+  .note__translit {
+    font-style: italic;
+    color: var(--colour-muted);
+  }
+
+  .note__gloss {
+    color: var(--colour-muted);
+  }
+
+  .note__summary {
+    margin-bottom: var(--space-2xs);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+    line-height: var(--leading-snug);
+  }
+
+  .note__body {
+    margin-bottom: 0;
+  }
+</style>

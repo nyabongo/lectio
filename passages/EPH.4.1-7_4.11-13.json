@@ -1,0 +1,630 @@
+{
+  "key": "EPH.4.1-7_4.11-13",
+  "ref": "Eph 4:1-7, 11-13",
+  "locale": "en",
+  "summary": "Paul, a prisoner, urges a life worthy of the call: one body and one Spirit, with varied gifts given to build up Christ’s body.",
+  "context": {
+    "title": "One body, many gifts",
+    "paragraphs": [
+      "Chapter 4 opens the second, practical part of Ephesians: the “therefore” turns from what God has done to how believers should live. [c1] Paul writes as a prisoner, as he did at 3:1. [c2] The church he addressed was made up of Jews and Gentiles, so the call to keep unity answered a possible danger of division. [c3]",
+      "Verses 4-6 name seven things that are one: body, Spirit, hope, Lord, faith, baptism, and God the Father of all. [c4] Ellicott calls these verses the final summary of the letter’s teaching on the unity of the Church. [c5] Verse 7 then turns to the other side of that unity, the diversity of gifts given to each believer. [c6]",
+      "The reading leaves out verses 8-10, where Paul adapts Ps 68:19, about God ascending on high and receiving gifts, so that Christ gives them. [c7] They are people: apostles, prophets, evangelists, and pastors who are also teachers. [c8] Later Christian usage gave the name evangelist to the writers of the four Gospels, Matthew among them. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "desmios",
+      "verse": "4:1",
+      "anchor": "prisoner for the Lord",
+      "original": {
+        "text": "ὁ δέσμιος ἐν κυρίῳ",
+        "lang": "grc",
+        "translit": "ho desmios en kyriō",
+        "gloss": "the prisoner in the Lord"
+      },
+      "summary": "Greek says “the prisoner in the Lord”: the phrase ties Paul’s chains to his union with Christ.",
+      "body": "Desmios means one who is bound, a captive or prisoner. [c10] Thayer reads the phrase in the same sense as “prisoner of Christ Jesus” in 3:1: the truth Paul preached has put him in bonds. [c11] The Cambridge Bible keeps the literal “in the Lord”, since his bonds are due to his union with Christ and so lend weight to his appeal. [c12]"
+    },
+    {
+      "id": "axios",
+      "verse": "4:1",
+      "anchor": "lead a life worthy",
+      "original": {
+        "text": "ἀξίως περιπατῆσαι",
+        "lang": "grc",
+        "translit": "axiōs peripatēsai",
+        "gloss": "to walk worthily"
+      },
+      "summary": "Paul’s image is walking: conduct that matches the calling, a phrase he uses in several letters.",
+      "body": "The adverb axiōs means suitably or worthily, in a manner worthy of something. [c13] Paul pairs it with the verb walk again in Col 1:10 and 1 Thess 2:12, and walking is his usual picture for the whole conduct of life. [c14] The Cambridge Bible notes that no human walk is ideally worthy of the call, yet conduct can truly correspond to it when governed by divine motives. [c15]"
+    },
+    {
+      "id": "unity-spirit",
+      "verse": "4:3",
+      "anchor": "unity of the Spirit",
+      "original": {
+        "text": "τὴν ἑνότητα τοῦ πνεύματος",
+        "lang": "grc",
+        "translit": "tēn henotēta tou pneumatos",
+        "gloss": "the oneness of the Spirit"
+      },
+      "summary": "Commentators differ on whether this is a oneness of spirit among believers or the unity the Holy Spirit creates.",
+      "body": "Barnes reads the phrase as oneness of spirit, a unity of affection, and not a direct reference to the Holy Spirit. [c16] The Cambridge Bible and Vincent instead take it as the unity which the Holy Spirit effects. [c17] The verb is to keep, which implies, as the Pulpit Commentary says, that the unity already exists; it is to be guarded with eager diligence, the force of spoudazontes. [c18][c19]"
+    },
+    {
+      "id": "evangelists",
+      "verse": "4:11",
+      "anchor": "evangelists",
+      "original": {
+        "text": "εὐαγγελιστάς",
+        "lang": "grc",
+        "translit": "euangelistas",
+        "gloss": "bringers of good news"
+      },
+      "summary": "In the New Testament an evangelist is a preacher of the gospel, not yet the writer of a Gospel.",
+      "body": "Thayer defines the word as a bringer of good tidings, used in the New Testament for heralds of salvation who were not apostles. [c20] It occurs only three times: here, of Philip in Acts 21:8, and in 2 Tim 4:5. [c21] The Cambridge Bible compares it with “missionary”: a function of proclaiming the gospel rather than a defined order in the Church. [c22]"
+    },
+    {
+      "id": "katartismos",
+      "verse": "4:12",
+      "anchor": "equipment of the saints",
+      "original": {
+        "text": "πρὸς τὸν καταρτισμὸν τῶν ἁγίων",
+        "lang": "grc",
+        "translit": "pros ton katartismon tōn hagiōn",
+        "gloss": "for the fitting out of the saints"
+      },
+      "summary": "Katartismos means fitting out or setting right; it was used of refitting ships and setting bones, and its verb of mending nets.",
+      "body": "The noun appears only here in the New Testament, and in classical Greek it was used of refitting a ship or setting a bone. [c23] The related verb describes James and John mending their nets in Mt 4:21. [c24] Readers divide on what follows: the Cambridge Bible has the saints equipped for their own work of service, while Barnes assigns the work of ministry to the appointed ministers. [c25]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Ephesians 4:1 begins the second part of the epistle, moving from the spiritual aspects of redemption to their manifestation in conduct.",
+      "sourceIds": ["cambridge-eph-4-1-second-part", "barnes-eph-4-1-therefore"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Paul calls himself a prisoner in Eph 4:1 and in Eph 3:1.",
+      "sourceIds": ["eph-4-1", "eph-3-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The Ephesian church was composed of Jews and Gentiles, and there might be danger of division.",
+      "sourceIds": ["barnes-eph-4-3-jews-gentiles"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Eph 4:4-6 names one body, one Spirit, one hope, one Lord, one faith, one baptism and one God and Father of all.",
+      "sourceIds": ["eph-4-4", "eph-4-5", "eph-4-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Ellicott regards Eph 4:1-6 as the final summary of the epistle’s doctrine of the unity of the Church.",
+      "sourceIds": ["ellicott-eph-4-1-summary"],
+      "sensitive": true
+    },
+    {
+      "id": "c6",
+      "text": "Eph 4:7 presents the diversity of gifts as a motive to unity from the opposite side.",
+      "sourceIds": ["cambridge-eph-4-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Eph 4:8, omitted in this reading, adapts Ps 68:19, where God ascends on high and receives gifts; Paul has him give gifts.",
+      "sourceIds": ["eph-4-8", "bengel-eph-4-7-psalm", "vincent-eph-4-8-received"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Eph 4:11 lists apostles, prophets, evangelists, and pastors and teachers, the last two under one article and regarded as one ministry.",
+      "sourceIds": ["eph-4-11", "vincent-eph-4-11-pastors"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "At a later time the name evangelist was given to the writers of the four Gospels: Matthew, Mark, Luke and John.",
+      "sourceIds": ["isbe-evangelist", "webster-evangelist"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Δέσμιος means bound, a captive, a prisoner.",
+      "sourceIds": ["thayer-desmios"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Thayer takes ὁ δέσμιος ἐν κυρίῳ in Eph 4:1 in the same sense as ὁ δέσμιος τοῦ Χριστοῦ Ἰησοῦ, one whom Christ’s truth that he preached has put in bonds.",
+      "sourceIds": ["thayer-desmios-sense", "thayer-desmios-same"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "The Cambridge Bible renders literally “the prisoner in the Lord”: his bonds are due to his union with Christ and are a strong argument with his converts.",
+      "sourceIds": ["cambridge-eph-4-1-prisoner"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "Ἀξίως means suitably, worthily, in a manner worthy of.",
+      "sourceIds": ["thayer-axios"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Paul uses ἀξίως with the verb walk in Col 1:10 and 1 Thess 2:12, and walk denotes the moral conduct of life.",
+      "sourceIds": ["col-1-10", "1thes-2-12", "cambridge-eph-4-1-walk"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "No human walk is ideally worthy of the calling, but it can be so practically when governed by divine motives.",
+      "sourceIds": ["cambridge-eph-4-1-worthy"],
+      "sensitive": true
+    },
+    {
+      "id": "c16",
+      "text": "Barnes takes the unity of the Spirit as oneness of spirit, a unity of affection, not a reference to the one Holy Spirit.",
+      "sourceIds": ["barnes-eph-4-3-unity"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "The Cambridge Bible and Vincent take the unity of the Spirit as the oneness effected by the Holy Spirit.",
+      "sourceIds": ["cambridge-eph-4-3-unity", "vincent-eph-4-3-unity"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The oneness of the Spirit already exists and is to be kept (τηρεῖν), even when Christians are not careful of it.",
+      "sourceIds": ["eph-4-3", "pulpit-eph-4-3-exists"],
+      "sensitive": true
+    },
+    {
+      "id": "c19",
+      "text": "Σπουδάζοντες originally means making haste, hence giving diligence, and is stronger than “endeavouring”.",
+      "sourceIds": ["vincent-eph-4-3-haste", "cambridge-eph-4-3-diligence"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "Thayer defines εὐαγγελιστής as a bringer of good tidings, a name given in the NT to heralds of salvation who are not apostles.",
+      "sourceIds": ["thayer-euangelistes", "thayer-euangelistes-not-apostles"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Εὐαγγελιστής occurs three times in the NT: Eph 4:11, Acts 21:8 (of Philip) and 2 Tim 4:5.",
+      "sourceIds": ["acts-21-8", "2tm-4-5", "cambridge-eph-4-11-thrice"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "Like “missionary”, evangelist indicates a special personal function of proclaiming the gospel rather than a defined ecclesiastical order.",
+      "sourceIds": ["cambridge-eph-4-11-missionary"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "Καταρτισμός occurs only in Eph 4:12 in the NT and was used in classical Greek of refitting a ship or setting a bone.",
+      "sourceIds": ["vincent-eph-4-12-ship"],
+      "sensitive": false
+    },
+    {
+      "id": "c24",
+      "text": "The kindred verb καταρτίζω is used of mending nets in Mt 4:21.",
+      "sourceIds": ["mt-4-21", "cambridge-eph-4-12-nets"],
+      "sensitive": false
+    },
+    {
+      "id": "c25",
+      "text": "The Cambridge Bible reads Eph 4:12 as the equipment of the saints for their own work of service, while Barnes takes the work of the ministry as that of the officers listed.",
+      "sourceIds": ["cambridge-eph-4-12-equipment", "barnes-eph-4-12-ministry"],
+      "sensitive": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "eph-3-1",
+      "type": "scripture",
+      "citation": "Ephesians 3:1",
+      "ref": "Eph 3:1",
+      "excerpt": "ὁ δέσμιος",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-1",
+      "type": "scripture",
+      "citation": "Ephesians 4:1",
+      "ref": "Eph 4:1",
+      "excerpt": "ὁ δέσμιος ἐν κυρίῳ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-3",
+      "type": "scripture",
+      "citation": "Ephesians 4:3",
+      "ref": "Eph 4:3",
+      "excerpt": "σπουδάζοντες τηρεῖν",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-4",
+      "type": "scripture",
+      "citation": "Ephesians 4:4",
+      "ref": "Eph 4:4",
+      "excerpt": "ἓν σῶμα καὶ ἓν πνεῦμα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-5",
+      "type": "scripture",
+      "citation": "Ephesians 4:5",
+      "ref": "Eph 4:5",
+      "excerpt": "εἷς κύριος, μία πίστις, ἓν βάπτισμα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-6",
+      "type": "scripture",
+      "citation": "Ephesians 4:6",
+      "ref": "Eph 4:6",
+      "excerpt": "εἷς θεὸς καὶ πατὴρ πάντων",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-8",
+      "type": "scripture",
+      "citation": "Ephesians 4:8",
+      "ref": "Eph 4:8",
+      "excerpt": "Ἀναβὰς εἰς ὕψος",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "eph-4-11",
+      "type": "scripture",
+      "citation": "Ephesians 4:11",
+      "ref": "Eph 4:11",
+      "excerpt": "ποιμένας καὶ διδασκάλους",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "col-1-10",
+      "type": "scripture",
+      "citation": "Colossians 1:10",
+      "ref": "Col 1:10",
+      "excerpt": "περιπατῆσαι ἀξίως",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "1thes-2-12",
+      "type": "scripture",
+      "citation": "1 Thessalonians 2:12",
+      "ref": "1 Thes 2:12",
+      "excerpt": "περιπατεῖν ὑμᾶς ἀξίως",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "acts-21-8",
+      "type": "scripture",
+      "citation": "Acts 21:8",
+      "ref": "Acts 21:8",
+      "excerpt": "Φιλίππου τοῦ εὐαγγελιστοῦ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "2tm-4-5",
+      "type": "scripture",
+      "citation": "2 Timothy 4:5",
+      "ref": "2 Tm 4:5",
+      "excerpt": "εὐαγγελιστοῦ",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "mt-4-21",
+      "type": "scripture",
+      "citation": "Matthew 4:21",
+      "ref": "Mt 4:21",
+      "excerpt": "καταρτίζοντας τὰ δίκτυα",
+      "excerptLang": "grc"
+    },
+    {
+      "id": "cambridge-eph-4-1-second-part",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-1.htm",
+      "excerpt": "Here begins what may be called the Second Part of the Epistle",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-eph-4-1-therefore",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ephesians 4:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-1.htm",
+      "excerpt": "In view of the great and glorious truths which God has revealed",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-1-prisoner",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-1.htm",
+      "excerpt": "His bonds are due to his union with Christ",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-1-walk",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-1.htm",
+      "excerpt": "the moral action and conduct of life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-1-worthy",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-1.htm",
+      "excerpt": "Ideally, of course, no human walk is “worthy of” the Gospel",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "ellicott-eph-4-1-summary",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), A New Testament Commentary for English Readers, on Ephesians 4:1-6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-1.htm",
+      "excerpt": "contain the final summary of the great doctrine of the Epistle",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-eph-4-3-jews-gentiles",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "for they were composed of Jews and Gentiles",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-eph-4-3-unity",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "does not refer to the fact that there is one Holy Spirit",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-3-unity",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "The sacred Oneness effected and maintained by the One Holy Spirit",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-3-diligence",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "R. V., better, giving diligence",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-eph-4-3-unity",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "Unity of the Spirit Wrought by the Holy Spirit",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-eph-4-3-haste",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "Originally the verb means to make haste",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "pulpit-eph-4-3-exists",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ephesians 4:3 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-3.htm",
+      "excerpt": "This oneness exists, and cannot but exist",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-7",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-7.htm",
+      "excerpt": "A motive to holy union from the opposite side",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "bengel-eph-4-7-psalm",
+      "type": "web",
+      "citation": "Johann Albrecht Bengel, Gnomon of the New Testament (English translation, 1860), on Ephesians 4:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-7.htm",
+      "excerpt": "This is taken from the psalm in the following verse",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-eph-4-8-received",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Ephesians 4:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-8.htm",
+      "excerpt": "In the Hebrew and Septuagint, received or took",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-eph-4-11-pastors",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Ephesians 4:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-11.htm",
+      "excerpt": "pastors and teachers are included under one class",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-11-thrice",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-11.htm",
+      "excerpt": "The word occurs thrice in N.T.; here, Acts 21:8",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-11-missionary",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-11.htm",
+      "excerpt": "not a defined ecclesiastical order",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "vincent-eph-4-12-ship",
+      "type": "web",
+      "citation": "Marvin R. Vincent, Word Studies in the New Testament (1887), on Ephesians 4:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-12.htm",
+      "excerpt": "In classical Greek of refitting a ship or setting a bone",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-12-nets",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-12.htm",
+      "excerpt": "The kindred verb occurs e.g. Matthew 4:21 (A.V., “ mending nets”)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "cambridge-eph-4-12-equipment",
+      "type": "web",
+      "citation": "H. C. G. Moule, The Epistle to the Ephesians, Cambridge Bible for Schools and Colleges (1886), on Ephesians 4:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-12.htm",
+      "excerpt": "the equipment of the saints for [their] work of service",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "barnes-eph-4-12-ministry",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Ephesians 4:12 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ephesians/4-12.htm",
+      "excerpt": "All these are engaged in the work of the ministry",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-desmios",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δέσμιος (Bible Hub, Strong's 1198)",
+      "url": "https://biblehub.com/greek/1198.htm",
+      "excerpt": "bound, in bonds, a captive, a prisoner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-desmios-sense",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δέσμιος (Bible Hub, Strong's 1198)",
+      "url": "https://biblehub.com/greek/1198.htm",
+      "excerpt": "his truth which I have preached, has put in bonds",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-desmios-same",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. δέσμιος (Bible Hub, Strong's 1198)",
+      "url": "https://biblehub.com/greek/1198.htm",
+      "excerpt": "in the same sense ὁ δέσμιος ἐν κυρίῳ , Ephesians 4:1",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-axios",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. ἀξίως (Bible Hub, Strong's 516)",
+      "url": "https://biblehub.com/greek/516.htm",
+      "excerpt": "suitably; worthily, in a manner worthy of",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-euangelistes",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. εὐαγγελιστής (Bible Hub, Strong's 2099)",
+      "url": "https://biblehub.com/greek/2099.htm",
+      "excerpt": "a bringer of good tidings, an evangelist",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "thayer-euangelistes-not-apostles",
+      "type": "web",
+      "citation": "Joseph Henry Thayer, A Greek-English Lexicon of the New Testament (1889), s.v. εὐαγγελιστής (Bible Hub, Strong's 2099)",
+      "url": "https://biblehub.com/greek/2099.htm",
+      "excerpt": "heralds of salvation through Christ who are not apostles",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:15:00Z"
+    },
+    {
+      "id": "isbe-evangelist",
+      "type": "web",
+      "citation": "James M. Gray, “Evangelist”, International Standard Bible Encyclopedia (1915) (Bible Hub)",
+      "url": "https://biblehub.com/topical/e/evangelist.htm",
+      "excerpt": "the name of \"evangelist\" was given the writers of the four Gospels",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:25:00Z"
+    },
+    {
+      "id": "webster-evangelist",
+      "type": "web",
+      "citation": "Webster's Revised Unabridged Dictionary (1913), s.v. evangelist (Bible Hub)",
+      "url": "https://biblehub.com/topical/e/evangelist.htm",
+      "excerpt": "the four evangelists, Matthew, Mark, Luke, and John",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T10:25:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021a-eph-4-1-7-11-13",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T11:00:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}

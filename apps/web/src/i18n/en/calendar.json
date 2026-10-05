@@ -1,0 +1,57 @@
+{
+  "index": {
+    "title": "Calendar",
+    "description": "Every day of the liturgical calendar, month by month, with its celebration and colour.",
+    "lead": "Every day of the Church’s year with its celebration and colour. Choose a day to see its readings and notes.",
+    "current": "Go to {month}",
+    "years": "Archive",
+    "empty": "No calendar has been published yet.",
+    "library": "Browse the passage library"
+  },
+  "month": {
+    "description": "The liturgical calendar for {month}: the celebration and colour of each day, with links to its readings.",
+    "eyebrow": "Calendar",
+    "nav": "Other months",
+    "prev": "Previous month",
+    "next": "Next month",
+    "today": "Today",
+    "dayLabel": "{date}: {celebration}, {colour}",
+    "empty": "This month is not in the published calendar yet.",
+    "celebrations": "Celebrations this month",
+    "allMonths": "All months"
+  },
+  "colour": {
+    "green": "Green",
+    "violet": "Violet",
+    "white": "White",
+    "gold": "Gold",
+    "red": "Red",
+    "rose": "Rose",
+    "black": "Black"
+  },
+  "library": {
+    "title": "Passage library",
+    "description": "Every reading with reviewed notes on its history and original words, by book.",
+    "lead": "Every passage with reviewed notes, book by book. Notes are written once per passage and reused each time the lectionary returns to it.",
+    "passages": { "one": "{count} passage", "other": "{count} passages" },
+    "notes": { "one": "{count} note", "other": "{count} notes" },
+    "dates": { "one": "read on {count} day", "other": "read on {count} days" },
+    "testament": {
+      "OT": "Old Testament",
+      "NT": "New Testament"
+    },
+    "empty": "No passage has reviewed notes yet."
+  },
+  "passage": {
+    "description": "Notes on {ref}: {summary}",
+    "eyebrow": "Passage",
+    "notes": "Notes",
+    "context": "Context",
+    "verse": "Verse {verse}",
+    "dates": "Read on",
+    "datesLead": "Each date opens the Reading page with the full notes.",
+    "noDates": "This passage is not in a published calendar yet.",
+    "reviewed": "Last reviewed {date}",
+    "back": "All passages"
+  }
+}

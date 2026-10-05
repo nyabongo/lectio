@@ -1,6 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { headScript } from '../lib/settings.ts';
 import BaseLayout from './BaseLayout.astro';
 
 let container: AstroContainer;
@@ -48,6 +49,12 @@ describe('BaseLayout', () => {
     for (const colour of ['green', 'violet', 'white', 'gold', 'red', 'rose', 'black']) {
       expect(html).toContain(`[data-colour="${colour}"]`);
     }
+  });
+
+  it('inlines the settings head script so saved theme and text size apply before paint', async () => {
+    const html = await render({ title: 'Lectio' });
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(head).toContain(`<script>${headScript()}</script>`);
   });
 
   it('falls back to the default colour and omits the date title when there is no day', async () => {

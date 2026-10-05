@@ -1,0 +1,14 @@
+{
+  "description": "Hash-only shingle index (fixture).",
+  "file": "en-pd-8.bin",
+  "editions": [
+    {
+      "id": "eng-sample",
+      "title": "Sample Public-Domain English Bible",
+      "url": "https://example.org/eng-sample.zip",
+      "homepage": "https://example.org/eng-sample/",
+      "licence": "Public Domain"
+    }
+  ],
+  "limitation": "The fixture index only detects overlap with the sample Bible."
+}
