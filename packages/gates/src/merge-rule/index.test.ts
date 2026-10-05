@@ -334,6 +334,39 @@ describe('needs-review', () => {
     expect(run(greenResults(), { ...files, approval: human }, off).decision).toBe('human-approved');
   });
 
+  it('keeps the translation hold for case variants and any other subdirectory of passages/', () => {
+    const off = config({ flagsRequireReview: false });
+    for (const file of [
+      'passages/I18N/sw/MT.20.1-16.json',
+      'passages/I18n/sw/MT.20.1-16.json',
+      'Passages/i18n/sw/MT.20.1-16.json',
+      'PASSAGES/I18N/SW/MT.20.1-16.JSON',
+      'passages/i18n/sw/nested/MT.20.1-16.json',
+      'passages/translations/sw/MT.20.1-16.json',
+      './passages/I18N/sw/MT.20.1-16.json',
+      'passages\\I18N\\sw\\MT.20.1-16.json',
+    ]) {
+      const outcome = assess({
+        results: greenResults(),
+        config: off,
+        pr: prFacts({ files: [PASSAGE, file] }),
+        claims: [],
+      });
+      expect(
+        outcome.reasons.map((reason) => reason.rule.id),
+        file,
+      ).toContain(MERGE_RULES.translationNeedsPerson.id);
+    }
+    const nested = config({ flagsRequireReview: false }, 'content');
+    expect(run(greenResults(), { files: ['content/passages/I18N/sw/MT.20.1-16.json'] }, nested).decision).toBe(
+      'needs-review',
+    );
+    // A passage directly in passages/, in any case, is not a translation.
+    for (const file of [PASSAGE, 'passages/LK.9.1-6.json']) {
+      expect(run(greenResults(), { files: [file] }, off).decision, file).toBe('auto-merge');
+    }
+  });
+
   it('resolves passages/ under the configured content root', () => {
     const nested = config({}, './content/');
     expect(run(greenResults(), {}, nested).reasons).toEqual([`${PASSAGE} is outside content/passages/`]);
