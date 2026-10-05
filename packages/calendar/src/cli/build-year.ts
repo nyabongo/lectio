@@ -70,7 +70,7 @@ function keyOf(ref: string): string | undefined {
 /**
  * The citation the calendar shows: as printed (letters kept) when the source records it and it
  * names the same passage as the key, else the canonical ref. A printed form such as Greek Esther's
- * `Est 4:17n, p-r, aa-bb, gg-hh` does not key to the reading's key yet (L-049), so it falls back.
+ * `Est 4:17n, p-r, aa-bb, gg-hh` (OLM numbering for Est C:12, 14-16, 23-25) does not parse, so it falls back.
  */
 function displayRef(reading: ResolvedReading, date: string, warnings: string[]): string {
   const { printed } = reading;

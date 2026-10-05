@@ -2482,9 +2482,9 @@
           "readings": [
             {
               "slot": "first-reading",
-              "ref": "Est 4:17",
-              "key": "EST.4.17",
-              "linkout": "https://www.drbo.org/chapter/19004.htm"
+              "ref": "Est C:12, 14-16, 23-25",
+              "key": "EST.C.12_C.14-16_C.23-25",
+              "linkout": "https://www.drbo.org/chapter/19014.htm"
             },
             {
               "slot": "psalm",
