@@ -10,6 +10,7 @@ import {
   listFiles,
   serviceWorkerBuildOptions,
   serviceWorkerConfig,
+  serviceWorkerSite,
 } from './build.ts';
 
 let dir: string;
@@ -59,12 +60,46 @@ describe('serviceWorkerConfig', () => {
     expect(serviceWorkerConfig(dir).version).toBe(config.version);
     write('_astro/app.abc.css', 'css, changed');
     expect(serviceWorkerConfig(dir).version).not.toBe(config.version);
+    expect(config).toMatchObject({ locales: [], listen: false });
+  });
+
+  it("precaches each locale's shell pages and records the locales and Listen in the configuration", () => {
+    write('sw/index.html', 'nyumbani');
+    write('sw/settings/index.html', 'mipangilio');
+    const plain = serviceWorkerConfig(dir);
+    const config = serviceWorkerConfig(dir, { locales: ['sw'], listen: true });
+    expect(config.precache).toEqual([
+      '',
+      '_astro/app.abc.css',
+      'fonts/a.woff2',
+      'manifest.webmanifest',
+      'offline/',
+      'sw/',
+      'sw/settings/',
+    ]);
+    expect(config).toMatchObject({ locales: ['sw'], listen: true, apiLocales: [] });
+    // A locale's API mirror is found in the build output.
+    write('api/v1/sw/days/2026-09-20.json', '{}');
+    expect(serviceWorkerConfig(dir, { locales: ['sw'], listen: true }).apiLocales).toEqual(['sw']);
+    // Turning Listen on changes what the worker prefetches, so it is a new version.
+    expect(serviceWorkerConfig(dir, { locales: [], listen: true }).version).not.toBe(plain.version);
+  });
+});
+
+describe('serviceWorkerSite', () => {
+  it('takes the non-default locales and the Listen flag from the site config', () => {
+    const site = {
+      locales: ['en', 'sw'],
+      defaultLocale: 'en',
+      features: { listen: true },
+    } as unknown as Parameters<typeof serviceWorkerSite>[0];
+    expect(serviceWorkerSite(site)).toEqual({ locales: ['sw'], listen: true });
   });
 });
 
 describe('serviceWorkerBuildOptions', () => {
   it('bundles one minified browser ES module and injects the configuration', () => {
-    const config = { version: 'v1', precache: [''] };
+    const config = { version: 'v1', precache: [''], locales: ['sw'], listen: true };
     expect(serviceWorkerBuildOptions('in.ts', 'out.js', config)).toMatchObject({
       entryPoints: ['in.ts'],
       outfile: 'out.js',
@@ -81,10 +116,12 @@ describe('serviceWorkerBuildOptions', () => {
 describe('buildServiceWorker', () => {
   it('hands esbuild the entry, the output file and the configuration', async () => {
     const build = vi.fn(() => Promise.resolve());
-    const config = await buildServiceWorker(dir, build);
+    const site = { locales: ['sw'], listen: true };
+    const config = await buildServiceWorker(dir, site, build);
     expect(build).toHaveBeenCalledWith(
-      serviceWorkerBuildOptions(SERVICE_WORKER_ENTRY, join(dir, 'sw.js'), serviceWorkerConfig(dir)),
+      serviceWorkerBuildOptions(SERVICE_WORKER_ENTRY, join(dir, 'sw.js'), serviceWorkerConfig(dir, site)),
     );
+    expect(config.listen).toBe(true);
     expect(config.precache).toContain('offline/');
   });
 

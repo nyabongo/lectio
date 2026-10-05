@@ -1,16 +1,17 @@
 ---
 /**
- * The offline fallback page (L-061), `/offline/`. The service worker precaches it and serves it for a page that is
- * neither saved on the device nor reachable. Kept out of search results; its links are absolute and base-aware.
+ * The offline fallback page (L-061), `/offline/`, with a `/<locale>/offline/` mirror per site locale. The service
+ * worker precaches each and serves the one in the language of a page that is neither saved on the device nor
+ * reachable. Kept out of search results; its links are absolute and base-aware.
  */
 import Seo from '../../components/seo/Seo.astro';
-import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import { localeOf, localePath, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { OFFLINE_PAGE } from '../../lib/sw-policy.ts';
 import { withBase } from '../../lib/site.ts';
 
 const base = import.meta.env.BASE_URL;
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const title = t(lang, 'pwa.offline.title');
 const description = t(lang, 'pwa.offline.description');
 ---

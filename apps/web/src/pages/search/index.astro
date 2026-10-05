@@ -14,7 +14,7 @@
 import Seo from '../../components/seo/Seo.astro';
 import { localeOf, localePath, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { searchPageConfig } from '../../lib/search.ts';
+import { SEARCH_INPUT_ID, searchPageConfig } from '../../lib/search.ts';
 import { withBase } from '../../lib/site.ts';
 
 const lang = localeOf(Astro.url);
@@ -45,6 +45,8 @@ const config = searchPageConfig(withBase(base), {
     <h1 id="search-heading">{title}</h1>
     <p class="intro">{t(lang, 'search.intro')}</p>
 
+    {/* Pagefind's input has only a placeholder; the script points this label at it (labelSearchInput). */}
+    <label class="visually-hidden" for={SEARCH_INPUT_ID}>{t(lang, 'search.ui.searchLabel')}</label>
     <div class="search__ui" id="search-ui" data-search={JSON.stringify(config)}>
       <p class="search__status" data-search-status hidden>{t(lang, 'search.loading')}</p>
       <p class="search__status" data-search-error hidden>
@@ -62,7 +64,7 @@ const config = searchPageConfig(withBase(base), {
 </BaseLayout>
 
 <script>
-  import { pagefindUiAssets, parseSearchPageConfig, queryFromSearch } from '../../lib/search.ts';
+  import { labelSearchInput, pagefindUiAssets, parseSearchPageConfig, queryFromSearch } from '../../lib/search.ts';
 
   interface PagefindUiInstance {
     triggerSearch(term: string): void;
@@ -107,6 +109,7 @@ const config = searchPageConfig(withBase(base), {
         resetStyles: false,
         autofocus: true,
       });
+      labelSearchInput(document);
       const term = queryFromSearch(location.search);
       if (term !== null) ui.triggerSearch(term);
     } catch {

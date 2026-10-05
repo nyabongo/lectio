@@ -262,6 +262,25 @@ export function pagefindUiAssets(bundlePath: string): { script: string; style: s
   return { script: `${bundlePath}pagefind-ui.js`, style: `${bundlePath}pagefind-ui.css` };
 }
 
+/** The id the search page gives Pagefind's search input, so its visually hidden `<label for>` names it. */
+export const SEARCH_INPUT_ID = 'search-input';
+
+/** The slice of the page the input labelling needs. */
+export interface SearchInputHost {
+  querySelector(selector: string): { id: string } | null;
+}
+
+/**
+ * Points the page's visually hidden label at Pagefind's search input, which has only a placeholder and a `title`
+ * (L-064 follow-up, axe best practice): gives the input `SEARCH_INPUT_ID`. False when the UI has no input.
+ */
+export function labelSearchInput(host: SearchInputHost): boolean {
+  const input = host.querySelector('.pagefind-ui__search-input');
+  if (input === null) return false;
+  input.id = SEARCH_INPUT_ID;
+  return true;
+}
+
 /** The search term a `?q=` link carries, trimmed, or `null`. */
 export function queryFromSearch(search: string): string | null {
   const term = new URLSearchParams(search).get('q')?.trim() ?? '';

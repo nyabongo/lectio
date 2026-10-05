@@ -11,6 +11,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import type { LectioConfig } from '@lectio/config';
 import type { BuildOptions } from 'esbuild';
 
 import { SERVICE_WORKER_FILE, precachePaths } from '../lib/sw-policy.ts';
@@ -27,9 +28,33 @@ export function listFiles(dir: string): string[] {
     .sort();
 }
 
-/** The worker configuration for the build in `outDir`: the precache list and a version hashed from its files. */
-export function serviceWorkerConfig(outDir: string): ServiceWorkerConfig {
-  const precache = precachePaths(listFiles(outDir));
+/** What the worker needs to know about the site, beyond the built files. */
+export interface ServiceWorkerSite {
+  /** The non-default site locales, whose pages live under `/<locale>/`. */
+  readonly locales: readonly string[];
+  /** Whether the Listen page is built. */
+  readonly listen: boolean;
+}
+
+/** The worker's view of the site config: the non-default locales and whether Listen is on. */
+export function serviceWorkerSite(site: LectioConfig['site']): ServiceWorkerSite {
+  return {
+    locales: site.locales.filter((locale) => locale !== site.defaultLocale),
+    listen: site.features.listen,
+  };
+}
+
+/**
+ * The worker configuration for the build in `outDir`: the precache list (with the shell pages of every locale in
+ * `site`), a version hashed from its files, the locales, those with an API mirror and whether Listen is built.
+ */
+export function serviceWorkerConfig(
+  outDir: string,
+  site: ServiceWorkerSite = { locales: [], listen: false },
+): ServiceWorkerConfig {
+  const files = listFiles(outDir);
+  const precache = precachePaths(files, site.locales);
+  const apiLocales = site.locales.filter((locale) => files.some((file) => file.startsWith(`api/v1/${locale}/days/`)));
   const hash = createHash('sha256');
   for (const path of precache) {
     hash.update(path);
@@ -37,7 +62,16 @@ export function serviceWorkerConfig(outDir: string): ServiceWorkerConfig {
     hash.update(readFileSync(join(outDir, path === '' || path.endsWith('/') ? `${path}index.html` : path)));
     hash.update('\0');
   }
-  return { version: hash.digest('hex').slice(0, 12), precache };
+  // The site settings change what the worker prefetches, so they are part of the version too.
+  hash.update(JSON.stringify(site));
+  hash.update(JSON.stringify(apiLocales));
+  return {
+    version: hash.digest('hex').slice(0, 12),
+    precache,
+    locales: site.locales,
+    listen: site.listen,
+    apiLocales,
+  };
 }
 
 /** The esbuild options for the worker bundle: one self-contained, minified ES module for modern browsers. */
@@ -60,8 +94,12 @@ export function serviceWorkerBuildOptions(entry: string, outfile: string, config
 export type EsbuildBuild = (options: BuildOptions) => Promise<unknown>;
 
 /** Bundles the worker into `<outDir>/sw.js`; returns its configuration. */
-export async function buildServiceWorker(outDir: string, build?: EsbuildBuild): Promise<ServiceWorkerConfig> {
-  const config = serviceWorkerConfig(outDir);
+export async function buildServiceWorker(
+  outDir: string,
+  site?: ServiceWorkerSite,
+  build?: EsbuildBuild,
+): Promise<ServiceWorkerConfig> {
+  const config = serviceWorkerConfig(outDir, site);
   const run = build ?? (await import('esbuild')).build;
   await run(serviceWorkerBuildOptions(SERVICE_WORKER_ENTRY, join(outDir, SERVICE_WORKER_FILE), config));
   return config;

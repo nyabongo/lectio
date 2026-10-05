@@ -6,13 +6,13 @@
  * - original-language text carries `lang` and `dir` (Hebrew right-to-left);
  * - with `prefers-reduced-motion: reduce` nothing transitions or animates;
  * - at 320 CSS px wide (a 640 px window at 200% zoom), also with the largest text setting, and with text alone at
- *   200% on desktop, no page scrolls sideways;
+ *   200% on desktop and on the phone, no page scrolls sideways;
  * - the day's liturgical colour is visible as text, not only as a swatch (1.4.1, #202).
  *
  * Tabs moving by arrow keys, Home and End are covered in ../smoke.spec.ts.
  */
 import { BUILD_DATE, expect, test } from '../fixtures.ts';
-import { openPage, pageTypes } from './pages.ts';
+import { HEBREW_DATE, openPage, pageTypes } from './pages.ts';
 
 /** How many Tab presses the focus check walks per page (enough to cover header, main content and footer). */
 const MAX_TAB_STOPS = 60;
@@ -79,6 +79,10 @@ test.describe('original-language text', () => {
     { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
     { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
     { name: 'passage', path: 'passages/MT.20.1-16/' },
+    // Hebrew, so the right-to-left branch runs.
+    { name: 'reading-hebrew', path: `${HEBREW_DATE}/first-reading/`, tab: 'Original', rtl: true },
+    { name: 'insight-hebrew', path: `${HEBREW_DATE}/first-reading/notes/v9-bronze-serpent/`, rtl: true },
+    { name: 'passage-hebrew', path: 'passages/NM.21.4-9/', rtl: true },
   ];
   for (const pageType of pages) {
     const { name } = pageType;
@@ -93,6 +97,7 @@ test.describe('original-language text', () => {
       for (const { lang, dir } of original) {
         expect(dir, `dir for lang="${lang}"`).toBe(/^(he|hbo|arc)\b/.test(lang) ? 'rtl' : 'ltr');
       }
+      if ('rtl' in pageType) expect(original.some(({ dir }) => dir === 'rtl')).toBe(true);
     });
   }
 });
@@ -140,21 +145,17 @@ const reflowCases = [
   { label: '320 px (200% zoom)', width: 320, fontSize: '100%' },
   // The same with the largest text size the settings page offers.
   { label: '320 px with the largest text setting', width: 320, fontSize: '125%' },
-  // Text alone at 200% on the desktop viewport (1280 px). On the 412 px phone that would lay text out as if the
-  // page were 206 px wide, below the 320 px floor of 1.4.10, so the mobile project skips it.
-  { label: '200% text', width: undefined, fontSize: '200%', desktopOnly: true },
+  // Text alone at 200% on each project's own viewport: 1280 px on desktop, 412 px on the phone (Pixel 7). On the phone
+  // that lays text out as if the page were 206 px wide, narrower than the 320 px floor of 1.4.10, and it still must
+  // not scroll sideways.
+  { label: '200% text', width: undefined, fontSize: '200%' },
 ] as const;
 
 test.describe('reflow and text resize', () => {
-  for (const reflowCase of reflowCases) {
-    const { label, width, fontSize } = reflowCase;
+  for (const { label, width, fontSize } of reflowCases) {
     for (const pageType of pageTypes) {
       const { name, tag } = pageType;
-      test(`${name}: no sideways scroll at ${label}`, { tag: tag ?? [] }, async ({ page }, testInfo) => {
-        test.skip(
-          'desktopOnly' in reflowCase && testInfo.project.name !== 'desktop',
-          '200% text on a 412 px phone is narrower than the 320 px reflow floor',
-        );
+      test(`${name}: no sideways scroll at ${label}`, { tag: tag ?? [] }, async ({ page }) => {
         if (width !== undefined) await page.setViewportSize({ width, height: 640 });
         await openPage(page, pageType);
         await page.evaluate((size) => {

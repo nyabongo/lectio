@@ -174,6 +174,21 @@ test.describe('Settings', () => {
   });
 });
 
+test.describe('Search', () => {
+  for (const { path, label } of [
+    { path: 'search/', label: 'Search the notes' },
+    { path: 'sw/search/', label: 'Tafuta madokezo' },
+  ]) {
+    test(`/${path}: Pagefind's input is named by its visually hidden label`, async ({ page }) => {
+      await page.goto(path);
+      const input = page.locator('.pagefind-ui__search-input');
+      await expect(input).toHaveAttribute('id', 'search-input');
+      await expect(page.getByRole('textbox', { name: label, exact: true })).toBeVisible();
+      await expect(page.locator('label[for="search-input"]')).toHaveText(label);
+    });
+  }
+});
+
 test.describe('404', () => {
   test('an unknown path shows the not-found page', { tag: EXPECTS_404 }, async ({ page }) => {
     const response = await page.goto('no-such-page/');

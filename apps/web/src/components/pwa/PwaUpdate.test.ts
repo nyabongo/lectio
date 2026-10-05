@@ -2,6 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import strings from '../../i18n/en/pwa.json' with { type: 'json' };
+import swStrings from '../../i18n/sw/pwa.json' with { type: 'json' };
 import OfflinePage from '../../pages/offline/index.astro';
 import PwaUpdate from './PwaUpdate.astro';
 
@@ -43,6 +44,16 @@ describe('offline page', () => {
     expect(html).toContain(strings.offline.body);
     expect(html).toContain(`href="${base}"`);
     expect(html).toContain(strings.offline.retry);
+  });
+
+  it('renders in Kiswahili at /sw/offline/, with a link to the Kiswahili Today page', async () => {
+    const sw = await container.renderToString(OfflinePage, {
+      request: new Request(`https://example.org${base}sw/offline/`),
+    });
+    expect(sw).toMatch(/<html lang="sw"/);
+    expect(sw).toContain(swStrings.offline.heading);
+    expect(sw).toContain(swStrings.offline.body);
+    expect(sw).toContain(`href="${base}sw/"`);
   });
 
   it('is kept out of search results', () => {

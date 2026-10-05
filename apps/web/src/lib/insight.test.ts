@@ -25,7 +25,7 @@ describe('insightStaticPaths', () => {
     const paths = insightStaticPaths(repo);
     for (const note of mt.translationNotes)
       expect(paths).toContainEqual({ params: { date: '2026-09-20', slot: 'gospel', noteId: note.id } });
-    expect(paths.some(({ params }) => params.slot === 'first-reading')).toBe(false);
+    expect(paths.some(({ params }) => params.date === '2026-09-20' && params.slot === 'first-reading')).toBe(false);
     for (const note of is.translationNotes) expect(paths.some(({ params }) => params.noteId === note.id)).toBe(false);
   });
 });

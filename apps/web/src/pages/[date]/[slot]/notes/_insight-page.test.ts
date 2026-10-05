@@ -43,7 +43,13 @@ describe('Insight page', () => {
   it('is built for every approved note and no pending one', () => {
     for (const note of mt.translationNotes)
       expect(staticPaths).toContainEqual({ params: { date: '2026-09-20', slot: 'gospel', noteId: note.id } });
-    expect(staticPaths.some(({ params }) => params.slot === 'first-reading')).toBe(false);
+    // The first reading of 2026-09-20 (Isaiah 55) is pending; that of 2026-09-14 (Numbers 21) is approved.
+    expect(staticPaths.some(({ params }) => params.date === '2026-09-20' && params.slot === 'first-reading')).toBe(
+      false,
+    );
+    expect(staticPaths).toContainEqual({
+      params: { date: '2026-09-14', slot: 'first-reading', noteId: 'v9-bronze-serpent' },
+    });
   });
 
   it('renders /2026-09-20/gospel/notes/v15-evil-eye/ with the note, its sources and a link back', async () => {

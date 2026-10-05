@@ -19,6 +19,9 @@ const pageTypes = [
   { name: 'reading-context', path: `${BUILD_DATE}/gospel/` },
   { name: 'reading-original', path: `${BUILD_DATE}/gospel/`, tab: 'Original' },
   { name: 'insight', path: `${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
+  // A Hebrew (right-to-left) note.
+  { name: 'reading-hebrew', path: '2026-09-14/first-reading/', tab: 'Original' },
+  { name: 'insight-hebrew', path: '2026-09-14/first-reading/notes/v9-bronze-serpent/' },
   // The Listen player (L-085) and a day with nothing to listen to yet.
   { name: 'listen', path: `${BUILD_DATE}/listen/` },
   { name: 'listen-empty', path: '2026-09-21/listen/' },
@@ -26,6 +29,7 @@ const pageTypes = [
   { name: 'calendar-month', path: 'calendar/2026/09/' },
   { name: 'passages', path: 'passages/' },
   { name: 'passage', path: 'passages/MT.20.1-16/' },
+  { name: 'passage-hebrew', path: 'passages/NM.21.4-9/' },
   { name: 'settings', path: 'settings/' },
   { name: 'about', path: 'about/' },
   { name: 'offline', path: 'offline/' },
@@ -42,6 +46,7 @@ const pageTypes = [
   { name: 'sw-calendar-month', path: 'sw/calendar/2026/09/' },
   { name: 'sw-passage', path: 'sw/passages/MT.20.1-16/' },
   { name: 'sw-settings', path: 'sw/settings/' },
+  { name: 'sw-offline', path: 'sw/offline/' },
   { name: 'sw-about', path: 'sw/about/' },
 ];
 

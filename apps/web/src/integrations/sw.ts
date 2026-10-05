@@ -11,15 +11,15 @@ import { fileURLToPath } from 'node:url';
 
 import type { AstroIntegration } from 'astro';
 
-import { buildServiceWorker } from '../sw/build.ts';
+import { buildServiceWorker, serviceWorkerSite } from '../sw/build.ts';
 import type { LectioIntegrationOptions } from './types.ts';
 
-export function serviceWorker(_options: LectioIntegrationOptions): AstroIntegration {
+export function serviceWorker(options: LectioIntegrationOptions): AstroIntegration {
   return {
     name: 'lectio:sw',
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
-        const { precache } = await buildServiceWorker(fileURLToPath(dir));
+        const { precache } = await buildServiceWorker(fileURLToPath(dir), serviceWorkerSite(options.config.site));
         logger.info(`Service worker built with ${String(precache.length)} precached files`);
       },
     },

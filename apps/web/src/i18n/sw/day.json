@@ -23,6 +23,7 @@
   "previousDay": "Siku iliyotangulia",
   "nextDay": "Siku inayofuata",
   "colourLabel": "Rangi ya liturujia: {colour}",
+  "separator": "·",
   "cycles": "Mzunguko wa Dominika {sunday} · Mzunguko wa siku za juma {weekday}",
   "seasonWeek": "{season} · Juma la {week}",
   "season": {

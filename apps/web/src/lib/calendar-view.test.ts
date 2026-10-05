@@ -39,6 +39,8 @@ const webRoot = resolve(here, '../..');
 const fixtureRoot = resolve(webRoot, 'test/fixtures/content');
 const APPROVED = 'MT.20.1-16';
 const PENDING = 'IS.55.6-9';
+/** The approved Hebrew passage, read on 2026-09-14. */
+const HEBREW = 'NM.21.4-9';
 
 function readJson<T>(relative: string): T {
   return JSON.parse(readFileSync(resolve(fixtureRoot, relative), 'utf8')) as T;
@@ -47,12 +49,11 @@ function readJson<T>(relative: string): T {
 const fixtureCalendar = readJson<CalendarYear>('calendar/2026.json');
 const approvedPassage = readJson<Passage>(`passages/${APPROVED}.json`);
 const pendingPassage = readJson<Passage>(`passages/${PENDING}.json`);
-// The fixture's September days (it also has Holy Saturday, 2026-04-04, a day without any Mass).
-const [saturday, sunday, feast] = fixtureCalendar.days.filter((day: CalendarDay) => day.date.startsWith('2026-09')) as [
-  CalendarDay,
-  CalendarDay,
-  CalendarDay,
-];
+// Three of the fixture's September days (it also has the Exaltation of the Holy Cross, 2026-09-14, with the approved
+// Hebrew passage, and Holy Saturday, 2026-04-04, a day without any Mass).
+const fixtureDay = (date: string): CalendarDay =>
+  fixtureCalendar.days.find((day: CalendarDay) => day.date === date) as CalendarDay;
+const [saturday, sunday, feast] = [fixtureDay('2026-09-19'), fixtureDay('2026-09-20'), fixtureDay('2026-09-21')];
 
 function fixtureRepo(): ContentRepo {
   return siteContext({ cwd: webRoot, env: { LECTIO_CONFIG: 'apps/web/test/lectio.config.fixture.json' } }).repo;
@@ -256,10 +257,10 @@ describe('monthView', () => {
     });
   });
 
-  it('links only the days the calendar has (the fixture has three)', () => {
+  it('links only the days the calendar has (the fixture has four in September)', () => {
     const view = monthView(fixtureRepo(), { year: 2026, month: 9 });
     const linked = cells(view).filter((cell) => cell.path !== null);
-    expect(linked.map((cell) => cell.date)).toEqual(['2026-09-19', '2026-09-20', '2026-09-21']);
+    expect(linked.map((cell) => cell.date)).toEqual(['2026-09-14', '2026-09-19', '2026-09-20', '2026-09-21']);
     const missing = cells(view).find((cell) => cell.date === '2026-09-01');
     expect(missing).toEqual({
       date: '2026-09-01',
@@ -270,7 +271,7 @@ describe('monthView', () => {
       listed: false,
       today: false,
     });
-    expect(view.dayCount).toBe(3);
+    expect(view.dayCount).toBe(4);
   });
 
   it('links prev and next months across years and stops at the ends', () => {
@@ -344,6 +345,23 @@ describe('passageLibrary', () => {
     expect(view).toEqual({
       books: [
         {
+          code: 'NM',
+          name: 'Numbers',
+          testament: 'OT',
+          noteCount: 2,
+          passages: [
+            {
+              key: HEBREW,
+              ref: 'Numbers 21:4b–9',
+              path: 'passages/NM.21.4-9/',
+              contextTitle: 'The bronze serpent',
+              lang: 'en',
+              noteCount: 2,
+              dateCount: 1,
+            },
+          ],
+        },
+        {
           code: 'MT',
           name: 'Matthew',
           testament: 'NT',
@@ -361,8 +379,8 @@ describe('passageLibrary', () => {
           ],
         },
       ],
-      passageCount: 1,
-      noteCount: 3,
+      passageCount: 2,
+      noteCount: 5,
     });
     expect(noteCount(approvedPassage)).toBe(1 + approvedPassage.translationNotes.length);
   });
@@ -455,7 +473,13 @@ describe('passageView', () => {
   it('works on the fixture content root', () => {
     const view = passageView(fixtureRepo(), APPROVED);
     expect(view?.appearances.map((item) => [item.date, item.today])).toEqual([['2026-09-20', false]]);
-    expect(passageStaticPaths(fixtureRepo())).toEqual([{ params: { key: APPROVED } }]);
+    expect(passageStaticPaths(fixtureRepo())).toEqual([{ params: { key: APPROVED } }, { params: { key: HEBREW } }]);
+  });
+
+  it('marks Hebrew note text right to left', () => {
+    const view = passageView(fixtureRepo(), HEBREW);
+    expect(view?.notes.map((note) => [note.original.lang, note.original.dir])).toEqual([['hbo', 'rtl']]);
+    expect(view?.appearances.map((item) => item.path)).toEqual(['2026-09-14/first-reading/']);
   });
 
   it('is null for pending or missing passages', () => {

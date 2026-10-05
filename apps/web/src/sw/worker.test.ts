@@ -304,6 +304,113 @@ describe('prefetch', () => {
     }
   });
 
+  it('keeps the Listen page of each upcoming day when Listen is built, and not otherwise', async () => {
+    const network = site().route(url('2026-09-20/listen/'), 'listen 20').route(url('2026-09-21/listen/'), 'listen 21');
+    const { caches, worker } = setup(network, undefined, undefined, { ...CONFIG, listen: true });
+    expect(await worker.prefetch('2026-09-20')).toEqual(['2026-09-20', '2026-09-21']);
+    expect(caches.get(UPCOMING)?.urls()).toEqual([
+      url('api/v1/days/2026-09-20.json'),
+      url('2026-09-20/'),
+      url('2026-09-20/listen/'),
+      url('2026-09-20/first-reading/'),
+      url('2026-09-20/gospel/'),
+      url('api/v1/days/2026-09-21.json'),
+      url('2026-09-21/'),
+      url('2026-09-21/listen/'),
+      url('2026-09-21/gospel/'),
+    ]);
+
+    const off = setup(site(), undefined, undefined, { ...CONFIG, listen: false });
+    await off.worker.prefetch('2026-09-20');
+    expect(off.caches.get(UPCOMING)?.urls()).toEqual(UPCOMING_URLS);
+    expect(off.network.requests).not.toContain(url('2026-09-20/listen/'));
+  });
+
+  it("keeps the pages in the reader's language and drops the other language's after a clean run", async () => {
+    const network = site()
+      .route(url('api/v1/sw/days/2026-09-20.json'), day('first-reading', 'gospel'))
+      .route(url('api/v1/sw/days/2026-09-21.json'), day('gospel'))
+      .route(url('sw/2026-09-20/'), 'siku 20')
+      .route(url('sw/2026-09-20/first-reading/'), 'somo 20/1')
+      .route(url('sw/2026-09-20/gospel/'), 'injili 20')
+      .route(url('sw/2026-09-21/'), 'siku 21')
+      .route(url('sw/2026-09-21/gospel/'), 'injili 21');
+    const config = { ...CONFIG, locales: ['sw'], apiLocales: ['sw'] };
+    const { caches, worker } = setup(network, undefined, undefined, config);
+    await worker.prefetch('2026-09-20');
+    expect(caches.get(UPCOMING)?.urls()).toEqual(UPCOMING_URLS);
+
+    expect(await worker.prefetch('2026-09-20', 'sw')).toEqual(['2026-09-20', '2026-09-21']);
+    expect(caches.get(UPCOMING)?.urls()).toEqual([
+      url('api/v1/days/2026-09-20.json'),
+      url('api/v1/sw/days/2026-09-20.json'),
+      url('sw/2026-09-20/'),
+      url('sw/2026-09-20/first-reading/'),
+      url('sw/2026-09-20/gospel/'),
+      url('api/v1/days/2026-09-21.json'),
+      url('api/v1/sw/days/2026-09-21.json'),
+      url('sw/2026-09-21/'),
+      url('sw/2026-09-21/gospel/'),
+    ]);
+    // Past days go in every language.
+    await worker.prefetch('2026-09-21', 'sw');
+    expect(caches.get(UPCOMING)?.urls()).not.toContain(url('sw/2026-09-20/'));
+    expect(caches.get(UPCOMING)?.urls()).not.toContain(url('api/v1/sw/days/2026-09-20.json'));
+
+    // A language the site is not built in falls back to the default locale.
+    await worker.prefetch('2026-09-21', 'fr');
+    expect(caches.get(UPCOMING)?.urls()).toEqual([
+      url('api/v1/days/2026-09-21.json'),
+      url('2026-09-21/'),
+      url('2026-09-21/gospel/'),
+    ]);
+  });
+
+  it("keeps the other language's pages when a run in the new language is incomplete", async () => {
+    const network = site()
+      .route(url('sw/2026-09-20/'), 'siku 20')
+      .route(url('sw/2026-09-20/first-reading/'), 'somo 20/1')
+      .route(url('sw/2026-09-20/gospel/'), { status: 503 })
+      .route(url('sw/2026-09-21/'), 'siku 21')
+      .route(url('sw/2026-09-21/gospel/'), 'injili 21');
+    const { caches, worker } = setup(network, undefined, undefined, { ...CONFIG, locales: ['sw'], apiLocales: [] });
+    await worker.prefetch('2026-09-20');
+    expect(await worker.prefetch('2026-09-20', 'sw')).toEqual(['2026-09-20', '2026-09-21']);
+    const urls = caches.get(UPCOMING)?.urls() ?? [];
+    // The English pages stay until a clean run in Kiswahili; the Kiswahili pages fetched so far are kept too.
+    for (const page of UPCOMING_URLS) expect(urls).toContain(page);
+    expect(urls).toContain(url('sw/2026-09-21/gospel/'));
+    expect(urls).not.toContain(url('sw/2026-09-20/gospel/'));
+
+    network.route(url('sw/2026-09-20/gospel/'), 'injili 20');
+    await worker.prefetch('2026-09-20', 'sw');
+    expect(caches.get(UPCOMING)?.urls()).not.toContain(url('2026-09-20/gospel/'));
+    expect(caches.get(UPCOMING)?.urls()).toContain(url('sw/2026-09-20/gospel/'));
+  });
+
+  it('finishes a clean run in a locale whose API mirror the build does not have', async () => {
+    const network = site()
+      .route(url('fr/2026-09-20/'), 'jour 20')
+      .route(url('fr/2026-09-20/first-reading/'), 'lecture 20/1')
+      .route(url('fr/2026-09-20/gospel/'), 'évangile 20')
+      .route(url('fr/2026-09-21/'), 'jour 21')
+      .route(url('fr/2026-09-21/gospel/'), 'évangile 21');
+    const { caches, network: net, worker } = setup(network, undefined, undefined, { ...CONFIG, locales: ['fr'] });
+    await worker.prefetch('2026-09-20');
+    await worker.prefetch('2026-09-20', 'fr');
+    expect(net.requests).not.toContain(url('api/v1/fr/days/2026-09-20.json'));
+    // A clean run: the English pages are gone.
+    expect(caches.get(UPCOMING)?.urls()).toEqual([
+      url('api/v1/days/2026-09-20.json'),
+      url('fr/2026-09-20/'),
+      url('fr/2026-09-20/first-reading/'),
+      url('fr/2026-09-20/gospel/'),
+      url('api/v1/days/2026-09-21.json'),
+      url('fr/2026-09-21/'),
+      url('fr/2026-09-21/gospel/'),
+    ]);
+  });
+
   it('runs one prefetch at a time and recovers from a failed one', async () => {
     const { caches, worker } = setup();
     const open = caches.open.bind(caches);
@@ -325,6 +432,15 @@ describe('prefetch throttle and clearing', () => {
     expect(worker.wantsPrefetch('2026-09-21')).toBe(true);
     clock.now += PREFETCH_INTERVAL_MS;
     expect(worker.wantsPrefetch('2026-09-20')).toBe(true);
+  });
+
+  it("wants a prefetch when the reader's language changes to another site locale", async () => {
+    const { worker } = setup(site(), undefined, undefined, { ...CONFIG, locales: ['sw'] });
+    await worker.prefetch('2026-09-20', 'en');
+    expect(worker.wantsPrefetch('2026-09-20')).toBe(false);
+    expect(worker.wantsPrefetch('2026-09-20', 'en')).toBe(false);
+    expect(worker.wantsPrefetch('2026-09-20', 'fr')).toBe(false);
+    expect(worker.wantsPrefetch('2026-09-20', 'sw')).toBe(true);
   });
 
   it('clears only the offline data caches and forgets the last prefetch', async () => {
@@ -456,6 +572,23 @@ describe('respond', () => {
     expect((await worker.respond(fakeRequest(url('calendar/')), noWait))?.type).toBe('error');
   });
 
+  it("falls back to the offline page in the page's language, else the default one", async () => {
+    const network = site()
+      .route(url('sw/offline/'), 'ukurasa wa nje ya mtandao')
+      .route(url('sw/calendar/'), new Error('offline'));
+    const config = { ...CONFIG, locales: ['sw'], precache: [...CONFIG.precache, 'sw/offline/'] };
+    const { worker } = setup(network, undefined, undefined, config);
+    await worker.install();
+    const navigate = (path: string) => worker.respond(fakeRequest(url(path), { mode: 'navigate' }), noWait);
+    expect(await (await navigate('sw/calendar/'))?.text()).toBe('ukurasa wa nje ya mtandao');
+
+    // A shell cached before the locale had its own offline page still answers with the default one.
+    const older = setup(network, undefined, undefined, { ...CONFIG, locales: ['sw'] });
+    await older.worker.install();
+    const response = await older.worker.respond(fakeRequest(url('sw/calendar/'), { mode: 'navigate' }), noWait);
+    expect(await response?.text()).toBe('offline page');
+  });
+
   it('serves API documents stale-while-revalidate from the data caches, whatever build stored them', async () => {
     const network = site();
     const caches = new FakeCacheStorage(network);
@@ -488,11 +621,11 @@ describe('respond', () => {
 });
 
 describe('installWorker', () => {
-  function installed(network = site()) {
+  function installed(network = site(), config: ServiceWorkerConfig = CONFIG) {
     const caches = new FakeCacheStorage(network);
     const scope = new FakeScope({ scope: SCOPE });
     const clock = { now: Date.UTC(2026, 8, 20, 6) };
-    const worker = installWorker(scope, CONFIG, fakeEnv(network, caches, clock));
+    const worker = installWorker(scope, config, fakeEnv(network, caches, clock));
     return { caches, scope, worker, network, clock };
   }
 
@@ -529,11 +662,27 @@ describe('installWorker', () => {
     expect(await scope.message({ type: 'prefetch', today: '2026-09-20' })).toBe(0);
     expect(network.requests.length).toBe(before);
 
+    // The same date in another language is a new request; this build has no other locale, so it falls back.
+    expect(await scope.message({ type: 'prefetch', today: '2026-09-20', language: 'sw' })).toBe(0);
+
     expect(await scope.message({ type: 'clear-offline-data' })).toBe(1);
     expect(caches.get(UPCOMING)).toBeUndefined();
 
     expect(await scope.message({ type: 'unknown' })).toBe(0);
     expect(await scope.message(null)).toBe(0);
+  });
+
+  it('prefetches in the language a page sends, and again when it changes', async () => {
+    const network = site()
+      .route(url('api/v1/sw/days/2026-09-20.json'), day())
+      .route(url('api/v1/sw/days/2026-09-21.json'), day())
+      .route(url('sw/2026-09-20/'), 'siku 20')
+      .route(url('sw/2026-09-21/'), 'siku 21');
+    const { caches, scope } = installed(network, { ...CONFIG, locales: ['sw'] });
+    expect(await scope.message({ type: 'prefetch', today: '2026-09-20', language: 'en' })).toBe(1);
+    expect(await scope.message({ type: 'prefetch', today: '2026-09-20', language: 'sw' })).toBe(1);
+    expect(caches.get(UPCOMING)?.urls()).toContain(url('sw/2026-09-21/'));
+    expect(await scope.message({ type: 'prefetch', today: '2026-09-20', language: 'sw' })).toBe(0);
   });
 
   it('ignores messages from another origin', async () => {
