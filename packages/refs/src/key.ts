@@ -41,15 +41,17 @@ function readSegment(book: BookCode, text: string): Segment | undefined {
   const match = SEGMENT.exec(text);
   if (!match) return undefined;
   const [, a = '', b, c, d] = match;
-  // After a verse, a lone end is a verse number: `EST.1.2-C` names no chapter C.
-  if (b !== undefined && c !== undefined && d === undefined && !/^\d/.test(c)) return undefined;
   const first = readChapter(book, a);
-  const after = c === undefined ? first : readChapter(book, c);
-  if (first === undefined || after === undefined) return undefined;
+  if (first === undefined) return undefined;
   const start: Point = b === undefined ? { c: first } : { c: first, v: Number(b) };
   if (c === undefined) return { start, end: start };
-  if (d !== undefined) return { start, end: { c: after, v: Number(d) } };
-  return { start, end: b === undefined ? { c: after } : { c: start.c, v: after } };
+  // After a verse, a lone end is a verse number, read as a number (`EST.A.1-103` is verse 103 of A);
+  // it is never a chapter, so `EST.1.2-C` does not read.
+  if (b !== undefined && d === undefined)
+    return /^\d/.test(c) ? { start, end: { c: start.c, v: Number(c) } } : undefined;
+  const after = readChapter(book, c);
+  if (after === undefined) return undefined;
+  return { start, end: d === undefined ? { c: after } : { c: after, v: Number(d) } };
 }
 
 function invalid(key: string, reason: string): RefError {

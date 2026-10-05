@@ -78,6 +78,7 @@ describe('fromKey', () => {
     ['EST.103.12', 'cannot read segment "103.12"'],
     ['EST.C.12_103.1', 'cannot read segment "103.1"'],
     ['EST.1.2-C', 'cannot read segment "1.2-C"'],
+    ['EST.1-103', 'cannot read segment "1-103"'],
     ['GN.C.12', 'cannot read segment "C.12"'],
     ['GN.1-C', 'cannot read segment "1-C"'],
     ['EST.G.1', 'cannot read segment "G.1"'],
@@ -135,4 +136,27 @@ describe('KEY_PATTERN', () => {
       expect(key).not.toMatch(KEY_PATTERN);
     },
   );
+});
+
+describe('Esther verse ends that look like stand-in chapters', () => {
+  // A verse end is a number, never a chapter: 101–106 are only refused as chapters.
+  it.each([
+    ['EST.1.2-103', 'Est 1:2-103', { start: { c: 1, v: 2 }, end: { c: 1, v: 103 } }],
+    ['EST.A.1-103', 'Est A:1-103', { start: { c: 101, v: 1 }, end: { c: 101, v: 103 } }],
+    ['EST.A.1-101', 'Est A:1-101', { start: { c: 101, v: 1 }, end: { c: 101, v: 101 } }],
+  ])('%s reads as %s does', (key, written, segment) => {
+    const ref = { book: 'EST' as const, segments: [segment] };
+    expect(fromKey(key)).toEqual(ref);
+    expect(toKey(ref)).toBe(key);
+    expect(toKey(parseRef(written))).toBe(key);
+  });
+
+  it('round-trips the property-test counterexample EST.A.1-101_A.1', () => {
+    const ref = fromKey('EST.A.1-101_A.1');
+    expect(ref.segments).toEqual([
+      { start: { c: 101, v: 1 }, end: { c: 101, v: 101 } },
+      { start: { c: 101, v: 1 }, end: { c: 101, v: 1 } },
+    ]);
+    expect(toKey(ref)).toBe('EST.A.1-101_A.1');
+  });
 });
