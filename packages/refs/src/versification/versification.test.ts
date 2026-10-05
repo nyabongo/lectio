@@ -392,6 +392,34 @@ describe('known losses', () => {
     expect(mapText('Ps 115:10-19', 'vulgate', 'original')).toBe('Ps 116:10–19');
   });
 
+  it('starts 13 LXX chapters after verse 1, and maps a whole chapter onto them as a whole chapter', () => {
+    const late = BOOKS.flatMap(({ code }) =>
+      Array.from({ length: chapterCount(code, 'lxx') }, (_, i) => i + 1)
+        .filter((c) => firstVerse(code, c, 'lxx') !== 1)
+        .map((c) => `${code} ${String(c)}:${String(firstVerse(code, c, 'lxx'))}`),
+    );
+    expect(late).toEqual([
+      '1SM 13:2',
+      '1SM 18:6',
+      '1KGS 3:2',
+      '1KGS 14:21',
+      'PRV 16:2',
+      'PRV 19:3',
+      'SIR 6:2',
+      'JER 2:2',
+      'JER 7:2',
+      'JER 17:5',
+      'JER 26:2',
+      'JER 32:13',
+      'JER 34:2',
+    ]);
+    // A whole chapter is written as the whole chapter, not as 13:2-23.
+    expect(mapText('1 Sam 13', 'original', 'lxx')).toBe('1 Sm 13');
+    expect(mapText('Jer 2', 'original', 'lxx')).toBe('Jer 2');
+    // A verse range stays a verse range.
+    expect(mapText('1 Sam 13:2-23', 'original', 'lxx')).toBe('1 Sm 13:2–23');
+  });
+
   it('loses 70 Hebrew Exodus verses in the LXX, whose chapters 35-40 are shorter and reordered', () => {
     const lost = [...verses('original')].filter(
       (verse) => verse.book === 'EX' && code(() => mapVerse(verse, 'original', 'lxx')) === 'NO_COUNTERPART',

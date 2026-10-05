@@ -3,13 +3,14 @@
  * (`calendar/lectionary/crosscheck/<block>.json`) and renders the disagreements for the owner
  * (`calendar/lectionary/disputes/<block>.md`).
  *
- * Refs are compared as canonical passage keys after converting the second source's numbering
- * (convert.ts), so verse letters and psalm numbering never cause a dispute. A reading the second
- * source does not cover is listed as single-source.
+ * Refs are compared as sets of verses after converting the second source's numbering (convert.ts),
+ * so verse letters, psalm numbering and how the verses are grouped into segments (`Ps 100:1-2, 3`
+ * against `Ps 100:1-3`) never cause a dispute. A reading the second source does not cover is listed
+ * as single-source.
  */
 import { parseRef, toKey, tryParseRef } from '@lectio/refs';
 
-import { refKey } from './canonical.ts';
+import { refKey, verseSet } from './canonical.ts';
 import { checkRefString } from './check.ts';
 import type { ConversionError } from './convert.ts';
 import { toCanonical } from './convert.ts';
@@ -228,13 +229,13 @@ export function crosscheckBlock(
       continue;
     }
     const ours = refKey(row.reading.ref);
-    if (main.key !== ours) {
+    if (verseSet(String(main.key)) !== verseSet(ours)) {
       fail(`passage differs: ours ${ours}, theirs ${String(main.key)}`);
       continue;
     }
     const ourAlternatives = (row.reading.alternatives ?? []).map((alt) => refKey(alt.ref));
     const theirAlternatives = alternatives.map((alt) => String(alt.key));
-    if (!sameSet(ourAlternatives, theirAlternatives)) {
+    if (!sameSet(ourAlternatives.map(verseSet), theirAlternatives.map(verseSet))) {
       fail(`alternatives differ: ours [${ourAlternatives.join(', ')}], theirs [${theirAlternatives.join(', ')}]`);
       continue;
     }

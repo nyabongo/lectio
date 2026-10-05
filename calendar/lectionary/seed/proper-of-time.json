@@ -1,5 +1,5 @@
 {
-  "$comment": "Seed block (L-016), proper of time. Sundays 25 and 26 (Year A) are imported from LitCal (import/litcal/seed.json). OT weeks 24-25 weekdays (Year II first reading and psalm; gospel shared by both years) are filled from the OLM 1981 structure, cited by OLM lectionary number; their pages (p?) and printed forms are recorded by the verifier. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
+  "$comment": "Seed block (L-016), proper of time. Sundays 25 and 26: Year A is imported from LitCal (import/litcal/seed.json); Years B and C, which LitCal lacks at the pinned revision, are filled from the OLM 1981 structure (#134-138, L-048). OT weeks 24-25 weekdays (Years I and II first reading and psalm; gospel shared by both years) are filled from the OLM 1981 structure, cited by OLM lectionary number; their pages (p?) and printed forms are recorded by the verifier. Every entry is provisional until checked against the Kenyan Lectionary (docs/decisions/011-lectionary-source.md).",
   "kind": "proper-of-time",
   "entries": [
     {
@@ -10,8 +10,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "1 Tm 2:1-8",
+              "source": "olm-1981 p?#443",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "1 Cor 11:17-26, 33",
+              "source": "olm-1981 p?#443",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 28:2, 7, 8-9",
               "source": "olm-1981 p?#443",
               "status": "provisional"
             },
@@ -40,8 +54,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "1 Tm 3:1-13",
+              "source": "olm-1981 p?#444",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "1 Cor 12:12-14, 27-31",
+              "source": "olm-1981 p?#444",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 101:1-2, 2-3, 5, 6",
               "source": "olm-1981 p?#444",
               "status": "provisional"
             },
@@ -70,8 +98,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "1 Tm 3:14-16",
+              "source": "olm-1981 p?#445",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "1 Cor 12:31-13:13",
+              "source": "olm-1981 p?#445",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 111:1-2, 3-4, 5-6",
               "source": "olm-1981 p?#445",
               "status": "provisional"
             },
@@ -100,8 +142,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "1 Tm 4:12-16",
+              "source": "olm-1981 p?#446",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "1 Cor 15:1-11",
+              "source": "olm-1981 p?#446",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 111:7-8, 9, 10",
               "source": "olm-1981 p?#446",
               "status": "provisional"
             },
@@ -130,8 +186,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "1 Tm 6:2-12",
+              "source": "olm-1981 p?#447",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "1 Cor 15:12-20",
+              "source": "olm-1981 p?#447",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 49:6-7, 8-10, 17-18, 19-20",
               "source": "olm-1981 p?#447",
               "status": "provisional"
             },
@@ -160,8 +230,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "1 Tm 6:13-16",
+              "source": "olm-1981 p?#448",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "1 Cor 15:35-37, 42-49",
+              "source": "olm-1981 p?#448",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 100:1-2, 3, 4, 5",
               "source": "olm-1981 p?#448",
               "status": "provisional"
             },
@@ -197,11 +281,39 @@
               "status": "provisional"
             },
             {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Wis 2:12, 17-20",
+              "source": "olm-1981 p?#134",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Am 8:4-7",
+              "source": "olm-1981 p?#135",
+              "status": "provisional"
+            },
+            {
               "slot": "psalm",
               "cycle": "A",
               "ref": "Ps 145:2-3, 8-9, 17-18",
               "printed": "Psalm 145:2-3, 8-9, 17-18",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 54:3-4, 5, 6, 8",
+              "source": "olm-1981 p?#134",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 113:1-2, 4-6, 7-8",
+              "source": "olm-1981 p?#135",
               "status": "provisional"
             },
             {
@@ -213,11 +325,44 @@
               "status": "provisional"
             },
             {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Jas 3:16-4:3",
+              "source": "olm-1981 p?#134",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "1 Tm 2:1-8",
+              "source": "olm-1981 p?#135",
+              "status": "provisional"
+            },
+            {
               "slot": "gospel",
               "cycle": "A",
               "ref": "Mt 20:1-16",
               "printed": "Matthew 20:1-16a",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday25",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 9:30-37",
+              "source": "olm-1981 p?#134",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 16:1-13",
+              "alternatives": [
+                {
+                  "ref": "Lk 16:10-13"
+                }
+              ],
+              "source": "olm-1981 p?#135",
               "status": "provisional"
             }
           ]
@@ -232,8 +377,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "Ezr 1:1-6",
+              "source": "olm-1981 p?#449",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "Prv 3:27-34",
+              "source": "olm-1981 p?#449",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 126:1-2, 2-3, 4-5, 6",
               "source": "olm-1981 p?#449",
               "status": "provisional"
             },
@@ -262,8 +421,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "Ezr 6:7-8, 12, 14-20",
+              "source": "olm-1981 p?#450",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "Prv 21:1-6, 10-13",
+              "source": "olm-1981 p?#450",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 122:1-2, 3-4, 4-5",
               "source": "olm-1981 p?#450",
               "status": "provisional"
             },
@@ -292,8 +465,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "Ezr 9:5-9",
+              "source": "olm-1981 p?#451",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "Prv 30:5-9",
+              "source": "olm-1981 p?#451",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Tb 13:2, 3-4, 4, 7-8",
               "source": "olm-1981 p?#451",
               "status": "provisional"
             },
@@ -322,8 +509,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "Hg 1:1-8",
+              "source": "olm-1981 p?#452",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "Eccl 1:2-11",
+              "source": "olm-1981 p?#452",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 149:1-2, 3-4, 5-6, 9",
               "source": "olm-1981 p?#452",
               "status": "provisional"
             },
@@ -352,8 +553,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "Hg 2:1-9",
+              "source": "olm-1981 p?#453",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "Eccl 3:1-11",
+              "source": "olm-1981 p?#453",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Ps 43:1, 2, 3, 4",
               "source": "olm-1981 p?#453",
               "status": "provisional"
             },
@@ -382,8 +597,22 @@
           "readings": [
             {
               "slot": "first-reading",
+              "cycle": "I",
+              "ref": "Zec 2:5-9, 14-15",
+              "source": "olm-1981 p?#454",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
               "cycle": "II",
               "ref": "Eccl 11:9-12:8",
+              "source": "olm-1981 p?#454",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "I",
+              "ref": "Jer 31:10, 11-12, 13",
               "source": "olm-1981 p?#454",
               "status": "provisional"
             },
@@ -419,11 +648,39 @@
               "status": "provisional"
             },
             {
+              "slot": "first-reading",
+              "cycle": "B",
+              "ref": "Nm 11:25-29",
+              "source": "olm-1981 p?#137",
+              "status": "provisional"
+            },
+            {
+              "slot": "first-reading",
+              "cycle": "C",
+              "ref": "Am 6:1, 4-7",
+              "source": "olm-1981 p?#138",
+              "status": "provisional"
+            },
+            {
               "slot": "psalm",
               "cycle": "A",
               "ref": "Ps 25:4-5, 6-7, 8-9",
               "printed": "Psalm 25:4-5, 6-7, 8-9",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday26",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "B",
+              "ref": "Ps 19:8, 10, 12-13, 14",
+              "source": "olm-1981 p?#137",
+              "status": "provisional"
+            },
+            {
+              "slot": "psalm",
+              "cycle": "C",
+              "ref": "Ps 146:7, 8-9, 9-10",
+              "source": "olm-1981 p?#138",
               "status": "provisional"
             },
             {
@@ -441,11 +698,39 @@
               "status": "provisional"
             },
             {
+              "slot": "second-reading",
+              "cycle": "B",
+              "ref": "Jas 5:1-6",
+              "source": "olm-1981 p?#137",
+              "status": "provisional"
+            },
+            {
+              "slot": "second-reading",
+              "cycle": "C",
+              "ref": "1 Tm 6:11-16",
+              "source": "olm-1981 p?#138",
+              "status": "provisional"
+            },
+            {
               "slot": "gospel",
               "cycle": "A",
               "ref": "Mt 21:28-32",
               "printed": "Matthew 21:28-32",
               "source": "litcal@00f4cf1a799a95a94f9e03b3b2e3e56e481d3118 dominicale_et_festivum_A/en.json#OrdSunday26",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "B",
+              "ref": "Mk 9:38-43, 45, 47-48",
+              "source": "olm-1981 p?#137",
+              "status": "provisional"
+            },
+            {
+              "slot": "gospel",
+              "cycle": "C",
+              "ref": "Lk 16:19-31",
+              "source": "olm-1981 p?#138",
               "status": "provisional"
             }
           ]

@@ -89,7 +89,8 @@ describe('seasonal-weekdays block', () => {
           entry.masses.map((mass) => mass.id),
           entry.key,
         ).toEqual(['day']);
-        const slots = entry.masses[0]?.readings.map((reading) => reading.slot);
+        // A Sunday-cycle substitute (cycle A/B/C) is a second reading of its slot, for that year only.
+        const slots = entry.masses[0]?.readings.filter((r) => r.cycle === undefined).map((reading) => reading.slot);
         const expected =
           entry.key === 'lent-weekday-0-wed'
             ? ['first-reading', 'psalm', 'second-reading', 'gospel']
@@ -114,34 +115,69 @@ describe('seasonal-weekdays block', () => {
       'celebrations:christmas-time-january-5 day first-reading',
       'celebrations:christmas-time-january-5 day psalm',
       'celebrations:christmas-time-january-5 day gospel',
-      'proper-of-time:lent-weekday-5-mon day gospel',
       'proper-of-time:easter-weekday-4-mon day gospel',
     ]);
     const committed = await readFile(join(DATA_ROOT, 'disputes', `${BLOCK}.md`), 'utf8');
     expect(committed).toBe(renderDisputes(result));
   });
 
-  it('gives the OLM reading and its Sunday-cycle alternative where LitCal lacks or inverts it', () => {
-    const find = (id: string) => blockRows(loaded.files).find((row) => row.id === id)?.reading;
-    const summary = (id: string) => {
-      const reading = find(id);
-      return [reading?.ref, reading?.alternatives?.map((alt) => alt.ref), reading?.source];
-    };
+  it('gives the OLM reading and its Sunday-cycle substitute where LitCal lacks or inverts it', () => {
+    const rows = blockRows(loaded.files);
+    // The three cycle-dependent readings of the block, and nothing else carries a Sunday cycle.
+    expect(rows.filter((row) => row.reading.cycle !== undefined).map((row) => [row.id, row.reading.ref])).toEqual([
+      ['proper-of-time:advent-weekday-1-mon day first-reading (A)', 'Is 4:2-6'],
+      ['proper-of-time:lent-weekday-5-mon day gospel (C)', 'Jn 8:12-20'],
+      ['proper-of-time:easter-weekday-4-mon day gospel (A)', 'Jn 10:11-18'],
+    ]);
+    const find = (id: string) => rows.find((row) => row.id === id)?.reading;
+    const summary = (id: string) => [find(id)?.ref, find(id)?.alternatives, find(id)?.source];
     expect(summary('proper-of-time:advent-weekday-1-mon day first-reading')).toEqual([
       'Is 2:1-5',
-      ['Is 4:2-6'],
+      undefined,
       'olm-1981 p?#175',
     ]);
     expect(summary('proper-of-time:lent-weekday-5-mon day gospel')).toEqual([
       'Jn 8:1-11',
-      ['Jn 8:12-20'],
+      undefined,
       'olm-1981 p?#251',
     ]);
     expect(summary('proper-of-time:easter-weekday-4-mon day gospel')).toEqual([
       'Jn 10:1-10',
-      ['Jn 10:11-18'],
+      undefined,
       'olm-1981 p?#279',
     ]);
+  });
+
+  it('resolves each cycle-dependent reading to the substitute in its year and to the usual reading otherwise', () => {
+    const lectionary = new Lectionary(loaded.files);
+    const reading = (
+      date: string,
+      season: LectionaryDay['season'],
+      week: number,
+      cycle: 'A' | 'B' | 'C',
+      slot: string,
+    ) =>
+      resolveDay(
+        {
+          date: date as LectionaryDay['date'],
+          season,
+          seasonWeek: week,
+          sundayCycle: cycle,
+          weekdayCycle: 'I',
+          celebrations: [{ id: 'weekday', rank: 'weekday' }],
+        },
+        lectionary,
+      ).masses[0]?.readings.find((r) => r.slot === slot)?.ref;
+    // Monday of Advent week 1: 2025-12-01 (Year A), 2026-11-30 (Year B), 2027-11-29 (Year C).
+    expect(reading('2025-12-01', 'advent', 1, 'A', 'first-reading')).toBe('Is 4:2-6');
+    expect(reading('2026-11-30', 'advent', 1, 'B', 'first-reading')).toBe('Is 2:1-5');
+    expect(reading('2027-11-29', 'advent', 1, 'C', 'first-reading')).toBe('Is 2:1-5');
+    // Monday of Lent week 5: 2028-04-03 (Year C) against 2026-03-23 (Year A).
+    expect(reading('2028-04-03', 'lent', 5, 'C', 'gospel')).toBe('Jn 8:12-20');
+    expect(reading('2026-03-23', 'lent', 5, 'A', 'gospel')).toBe('Jn 8:1-11');
+    // Monday of Easter week 4: 2026-04-27 (Year A) against 2027-04-19 (Year B).
+    expect(reading('2026-04-27', 'easter', 4, 'A', 'gospel')).toBe('Jn 10:11-18');
+    expect(reading('2027-04-19', 'easter', 4, 'B', 'gospel')).toBe('Jn 10:1-10');
   });
 
   it('resolves real days of each season', () => {

@@ -9,6 +9,7 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 
 import { DUMMY_DIFF, DUMMY_FILES, dummyGate, passingGate } from '../core/fixtures/dummy-gate.ts';
 import { COMMENT_MARKER_LINE } from '../core/markdown.ts';
+import { skippedResult } from '../core/result.ts';
 import type * as MergeRule from '../merge-rule/index.ts';
 import { GATES, GATE_IDS } from '../registry.ts';
 import { USAGE, runGatesCli } from './run.ts';
@@ -94,6 +95,13 @@ describe('lectio-gates run', () => {
   it('loads config and providers itself when not injected', async () => {
     const code = await runGatesCli(['run', '--gates', 'always-pass'], options({ config: undefined }));
     expect(code).toBe(0);
+  });
+
+  it('logs the reason a gate gives for skipping instead of a finding count', async () => {
+    const skipping = { ...dummyGate, run: () => skippedResult('dummy', 'no passages changed') };
+    const code = await runGatesCli(['run'], options({ gates: [skipping] }));
+    expect(code).toBe(0);
+    expect(logs).toEqual(['dummy: skipped (no passages changed)', 'lectio-gates: skipped']);
   });
 
   // The gates still on their L-023 stub; each of L-024 to L-028 drops out of this list when it lands.
@@ -252,6 +260,11 @@ describe('lectio-gates usage', () => {
     expect(await runGatesCli(['-h'], options())).toBe(0);
     expect(await runGatesCli([], options())).toBe(2);
     expect(logs).toEqual([USAGE, USAGE, USAGE, USAGE]);
+  });
+
+  it('says the changed files are committed changes relative to --base', () => {
+    expect(USAGE).toContain('git diff <base>...<head>');
+    expect(USAGE).toContain('not committed is not checked');
   });
 
   it('rejects an unknown command', async () => {

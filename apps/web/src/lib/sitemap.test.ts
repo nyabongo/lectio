@@ -29,6 +29,9 @@ describe('isSitemapPage', () => {
     ['https://nyabongo.github.io/lectio/api/v1/days/2026-09-20.json', false],
     ['https://nyabongo.github.io/lectio/og/2026-09-20.png', false],
     ['https://nyabongo.github.io/lectio/feed.xml', false],
+    ['https://nyabongo.github.io/lectio/search/', false],
+    ['https://nyabongo.github.io/lectio/sw/search/', false],
+    ['https://nyabongo.github.io/', true],
   ])('%s is %s', (url, expected) => {
     expect(isSitemapPage(url)).toBe(expected);
   });

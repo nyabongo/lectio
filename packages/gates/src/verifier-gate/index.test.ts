@@ -282,7 +282,10 @@ describe('verifierGate', () => {
     const docs = testContext({ files: { 'docs/notes.md': 'x' } });
     expect(await verifierGate.run(docs.context)).toMatchObject({
       status: 'skipped',
-      meta: { reason: 'no passage files changed' },
+      meta: {
+        reason:
+          'no passage files changed relative to origin/main (git diff origin/main...HEAD; uncommitted changes are not included)',
+      },
     });
     const deleted = testContext({ changed: [{ path: FILE, status: 'deleted' }] });
     expect((await verifierGate.run(deleted.context)).status).toBe('skipped');

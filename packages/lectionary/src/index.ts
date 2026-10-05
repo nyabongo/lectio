@@ -5,7 +5,16 @@
  */
 export const packageName = '@lectio/lectionary';
 
-export { canonicalRef, formatCanonical, hasLetters, refKey, stripLetters } from './canonical.ts';
+export {
+  canonicalRef,
+  formatCanonical,
+  hasLetters,
+  parsePrinted,
+  refKey,
+  singlePsalmNumber,
+  stripLetters,
+  verseSet,
+} from './canonical.ts';
 export { checkLectionary, checkRefString, checkSundaySecondReadings } from './check.ts';
 export type { CheckOptions, CheckResult, CheckStats } from './check.ts';
 export { ConversionError, toCanonical } from './convert.ts';
@@ -19,7 +28,15 @@ export type {
   SingleSource,
 } from './crosscheck.ts';
 export { importLitcal, mergeImported, parseManifest, serialiseBlockFile } from './import/litcal.ts';
-export type { ImportedReading, LitcalImport, LitcalManifest, MergeResult, TextFetcher } from './import/litcal.ts';
+export type {
+  ImportedReading,
+  LitcalImport,
+  LitcalImportResult,
+  LitcalManifest,
+  MergeResult,
+  RemovedMass,
+  TextFetcher,
+} from './import/litcal.ts';
 export {
   PROPER_OF_TIME_KEY,
   SEASON_PREFIX,
@@ -36,12 +53,15 @@ export type { LoadResult } from './load.ts';
 export { Lectionary, resolveDay } from './resolve.ts';
 export type {
   CelebrationRank,
+  LectionaryCelebration,
   LectionaryDay,
+  ResolveOptions,
   Resolution,
   ResolvedAlternative,
   ResolvedMass,
   ResolvedReading,
 } from './resolve.ts';
+export { slotRanker, sortBySlot } from './slots.ts';
 export { SOURCE_LINE, checkSource, locatorRegExp, parseRegistry, splitSource } from './sources.ts';
 export type { ParsedSource } from './sources.ts';
 export * from './types.ts';

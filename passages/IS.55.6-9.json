@@ -1,0 +1,560 @@
+{
+  "key": "IS.55.6-9",
+  "ref": "Is 55:6-9",
+  "locale": "en",
+  "summary": "A call to seek God while he is near and to turn back to him, for his plans and paths rise above ours as heaven above earth.",
+  "context": {
+    "title": "A call to return",
+    "paragraphs": [
+      "Isaiah 55 speaks to Jews exiled in Babylon, whom the prophet urges not to settle for what cannot satisfy. [c1] It opens by inviting the thirsty to come and buy without money. [c2] Verse 3 promises an everlasting covenant, the faithful mercies once shown to David. [c3]",
+      "The reading begins as the invitation turns into a summons to seek the LORD while he can be found. [c4] Verse 7 calls the wicked to leave their way and promises mercy to those who come back. [c5] Verses 10-11 follow with rain and snow that do not go back to the sky before watering the earth, an image of God’s word. [c6]",
+      "In synagogue practice Isaiah 55:6 to 56:8 is the prophetic lesson at the afternoon service of fast-days, though Sephardic Jews read no afternoon lesson from the prophets on fast-days except the Ninth of Ab. [c7] On those days the Torah reading recounts the Lord’s thirteen qualities of mercy from Exodus 34, the passage that today’s psalm echoes. [c8]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "machshevot",
+      "verse": "55:8",
+      "anchor": "thoughts",
+      "original": {
+        "text": "מַחְשְׁבוֹתַי",
+        "lang": "hbo",
+        "translit": "maḥshevotay",
+        "gloss": "my thoughts, my plans"
+      },
+      "summary": "Hebrew maḥashavah covers plans and purposes, not only passing thoughts: here it names what God intends to do.",
+      "body": "The noun means thought, but also device, plan and purpose. [c9] Verse 7 uses it for the schemes of the wicked man, and verse 8 sets God’s own plans against human ones. [c10] Skinner’s Cambridge commentary takes God’s thoughts here as purposes of redemption, too vast for despairing minds. [c11] Jeremiah 29:11 uses the same noun for God’s plans of peace for the exiles. [c12]"
+    },
+    {
+      "id": "derakhim",
+      "verse": "55:9",
+      "anchor": "ways",
+      "original": {
+        "text": "דְרָכַי",
+        "lang": "hbo",
+        "translit": "derakhay",
+        "gloss": "my ways, my roads"
+      },
+      "summary": "Derekh is a road or journey, and by extension a way of life: God’s roads run as high above ours as the sky.",
+      "body": "Derekh is first a road or journey, then a course of life or action. [c13] Verse 7 asks the wicked man to abandon his own road, which the Pulpit Commentary glosses as his mode of life. [c14] Verse 9 measures the gap by the height of the heavens above the earth. [c15] Psalm 145:17, sung today, uses the same noun for the ways in which the LORD is righteous. [c16]"
+    },
+    {
+      "id": "yarbeh-lisloach",
+      "verse": "55:7",
+      "anchor": "abundantly pardon",
+      "original": {
+        "text": "יַרְבֶּה לִסְלוֹחַ",
+        "lang": "hbo",
+        "translit": "yarbeh lisloaḥ",
+        "gloss": "he will multiply to forgive"
+      },
+      "summary": "Literally “he will multiply to forgive”: the verb salaḥ, forgive, is used in the Bible only of God.",
+      "body": "The Hebrew reads literally “he will multiply to pardon,” as older commentators note. [c17] The verb salaḥ, to forgive or pardon, is used in the Bible only with God as its subject. [c18] The Pulpit Commentary contrasts this with people, who find it hard to pardon those who wrong them. [c19] Jewish teaching on repentance cites this verse for God’s loving-kindness towards the sinner who returns. [c20]"
+    },
+    {
+      "id": "shuv",
+      "verse": "55:7",
+      "anchor": "return",
+      "original": {
+        "text": "וְיָשֹׁב",
+        "lang": "hbo",
+        "translit": "veyashov",
+        "gloss": "and let him return"
+      },
+      "summary": "Shuv, “return”, is a main biblical verb for repentance, and the chapter plays on it again with rain and with God’s word.",
+      "body": "Shuv means to turn back or return, and with God as the goal it means to seek him penitently. [c21] Jewish tradition calls repentance teshubah, literally return, and names shub as one of its two biblical verbs. [c22] The same verb comes back in verses 10 and 11: rain and snow do not return to the sky without watering the earth, and God’s word does not return to him empty. [c23]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Isaiah 55 is addressed to exiles in Babylon, who were in danger of losing their nationality and religion through devotion to material aims.",
+      "sourceIds": ["cambridge-is-55-1-exiles", "cambridge-is-55-1-danger"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "Isaiah 55:1 invites the thirsty to come and buy without money.",
+      "sourceIds": ["is-55-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "Isaiah 55:3 promises an everlasting covenant, the faithful mercies of David.",
+      "sourceIds": ["is-55-3"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Isaiah 55:6 calls the hearers to seek the LORD while he may be found; Skinner (Cambridge Bible) reads verses 6-7 as a call to repentance because of the nearness of the kingdom of God.",
+      "sourceIds": ["is-55-6", "cambridge-is-55-6"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "Isaiah 55:7 calls the wicked to forsake his way and return to the LORD, who will have mercy on him.",
+      "sourceIds": ["is-55-7-forsake", "is-55-7-return"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Isaiah 55:10-11 compares God’s word to rain and snow that do not return without watering the earth; the word is potent to effect its purpose.",
+      "sourceIds": ["is-55-10-11", "pulpit-is-55-8-word"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "According to the Jewish Encyclopedia, Isaiah 55:6-56:8 is read as the haftarah at the afternoon service of fast-days, but the Sephardim read the afternoon haftarah only on the Ninth of Ab.",
+      "sourceIds": ["je-fast-haftarah", "je-fast-sephardim"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "The fast-day Torah lesson (Exodus 32:11-14 and 34:1-10) treats the thirteen qualities of mercy, and Psalm 145:8 is taken almost verbatim from Exodus 34:6.",
+      "sourceIds": ["je-fast-thirteen", "ex-34-6", "cambridge-ps-145-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "The Hebrew noun מַחֲשָׁבָה means thought, and also device, plan or purpose.",
+      "sourceIds": ["bdb-machashavah", "bdb-machashavah-plan"],
+      "sensitive": false
+    },
+    {
+      "id": "c10",
+      "text": "Isaiah 55:7 uses the same noun for the thoughts (plans) of the wicked man, which BDB lists under the sense device, plan, purpose; Isaiah 55:8 contrasts God’s thoughts with human thoughts.",
+      "sourceIds": ["is-55-7-thoughts", "bdb-machashavah-plan", "is-55-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "Skinner (Cambridge Bible) holds that the thoughts and ways of God in Isaiah 55:8-9 are his purposes of redemption, too vast for the narrow conceptions of despairing minds.",
+      "sourceIds": ["cambridge-is-55-8", "cambridge-is-55-8-despairing"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "Jeremiah 29:11 uses the same noun for God’s thoughts of peace towards the exiles.",
+      "sourceIds": ["jer-29-11"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "The Hebrew noun דֶּרֶךְ means way, road, journey or manner, and figuratively a course of life or action.",
+      "sourceIds": ["bdb-derekh", "bdb-derekh-figurative"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "Isaiah 55:7 asks the wicked to forsake his way, which the Pulpit Commentary explains as his mode of life.",
+      "sourceIds": ["is-55-7-forsake", "pulpit-is-55-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "Isaiah 55:9 compares the height of God’s ways above human ways to the height of the heavens above the earth.",
+      "sourceIds": ["is-55-9", "kd-is-55-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "Psalm 145:17 uses the same noun for the ways of the LORD, in all of which he is righteous.",
+      "sourceIds": ["ps-145-17"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "The Hebrew of Isaiah 55:7 rendered “abundantly pardon” is literally “multiply to pardon”.",
+      "sourceIds": ["barnes-is-55-7", "jfb-is-55-7"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "The Hebrew verb סָלַח, forgive or pardon, is always used of God.",
+      "sourceIds": ["bdb-salach", "is-55-7-pardon"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "The Pulpit Commentary contrasts God’s abundant pardon with people, who find it hard to pardon those who have offended them.",
+      "sourceIds": ["pulpit-is-55-8-pardon"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "The Jewish Encyclopedia’s article on repentance quotes Isaiah 55:7 for God’s loving-kindness extended to the returning sinner.",
+      "sourceIds": ["je-repentance-returning"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "The Hebrew verb שׁוּב means turn back or return, and with God as goal it means to turn back to him penitently.",
+      "sourceIds": ["bdb-shuv", "bdb-shuv-penitently"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "In Jewish doctrine repentance is called teshubah, literally “return”, and biblical Hebrew expresses repentance with the verbs shub and niḥam.",
+      "sourceIds": ["je-repentance-teshubah", "je-repentance-shub"],
+      "sensitive": false
+    },
+    {
+      "id": "c23",
+      "text": "The verb שׁוּב recurs in Isaiah 55:10-11: the rain and snow do not return without watering the earth, and God’s word does not return to him empty.",
+      "sourceIds": ["is-55-10-11", "bdb-shuv-rain"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "is-55-1",
+      "type": "scripture",
+      "citation": "Isaiah 55:1",
+      "ref": "Is 55:1",
+      "excerpt": "בְּלוֹא כֶסֶף",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-3",
+      "type": "scripture",
+      "citation": "Isaiah 55:3",
+      "ref": "Is 55:3",
+      "excerpt": "בְּרִית עוֹלָם חַסְדֵי דָוִד",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-6",
+      "type": "scripture",
+      "citation": "Isaiah 55:6",
+      "ref": "Is 55:6",
+      "excerpt": "דִּרְשׁוּ יְהוָה בְּהִמָּצְאוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-7-forsake",
+      "type": "scripture",
+      "citation": "Isaiah 55:7",
+      "ref": "Is 55:7",
+      "excerpt": "יַעֲזֹב רָשָׁע דַּרְכּוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-7-return",
+      "type": "scripture",
+      "citation": "Isaiah 55:7",
+      "ref": "Is 55:7",
+      "excerpt": "וְיָשֹׁב אֶל יְהוָה וִירַחֲמֵהוּ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-7-thoughts",
+      "type": "scripture",
+      "citation": "Isaiah 55:7",
+      "ref": "Is 55:7",
+      "excerpt": "וְאִישׁ אָוֶן מַחְשְׁבֹתָיו",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-7-pardon",
+      "type": "scripture",
+      "citation": "Isaiah 55:7",
+      "ref": "Is 55:7",
+      "excerpt": "יַרְבֶּה לִסְלוֹחַ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-8",
+      "type": "scripture",
+      "citation": "Isaiah 55:8",
+      "ref": "Is 55:8",
+      "excerpt": "לֹא מַחְשְׁבוֹתַי מַחְשְׁבוֹתֵיכֶם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-9",
+      "type": "scripture",
+      "citation": "Isaiah 55:9",
+      "ref": "Is 55:9",
+      "excerpt": "גָבְהוּ שָׁמַיִם מֵאָרֶץ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "is-55-10-11",
+      "type": "scripture",
+      "citation": "Isaiah 55:10-11",
+      "ref": "Is 55:10-11",
+      "excerpt": "לֹא יָשׁוּב",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "jer-29-11",
+      "type": "scripture",
+      "citation": "Jeremiah 29:11",
+      "ref": "Jer 29:11",
+      "excerpt": "מַחְשְׁבוֹת שָׁלוֹם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ps-145-17",
+      "type": "scripture",
+      "citation": "Psalm 145:17",
+      "ref": "Ps 145:17",
+      "excerpt": "צַדִּיק יְהוָה בְּכָל דְּרָכָיו",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "ex-34-6",
+      "type": "scripture",
+      "citation": "Exodus 34:6",
+      "ref": "Ex 34:6",
+      "excerpt": "אֵל רַחוּם וְחַנּוּן",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "cambridge-is-55-1-exiles",
+      "type": "web",
+      "citation": "J. Skinner, Isaiah XL–LXVI, Cambridge Bible for Schools and Colleges (1898), on Isaiah 55:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-1.htm",
+      "excerpt": "Those here addressed are exiles",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-is-55-1-danger",
+      "type": "web",
+      "citation": "J. Skinner, Isaiah XL–LXVI, Cambridge Bible for Schools and Colleges (1898), on Isaiah 55:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-1.htm",
+      "excerpt": "in danger of losing their nationality, and with it their religion",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-is-55-6",
+      "type": "web",
+      "citation": "J. Skinner, Isaiah XL–LXVI, Cambridge Bible for Schools and Colleges (1898), on Isaiah 55:6 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-6.htm",
+      "excerpt": "repentance, because of the nearness of the kingdom of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "pulpit-is-55-7",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Isaiah 55:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-7.htm",
+      "excerpt": "i.e. his mode of life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "barnes-is-55-7",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible (1834), on Isaiah 55:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-7.htm",
+      "excerpt": "Margin, as Hebrew, 'Multiply to pardon.'",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "jfb-is-55-7",
+      "type": "web",
+      "citation": "Jamieson, Fausset and Brown, Commentary Critical and Explanatory on the Whole Bible (1871), on Isaiah 55:7 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-7.htm",
+      "excerpt": "Literally, \"multiply to pardon,\" still more than \"have mercy\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-is-55-8",
+      "type": "web",
+      "citation": "J. Skinner, Isaiah XL–LXVI, Cambridge Bible for Schools and Colleges (1898), on Isaiah 55:8-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-8.htm",
+      "excerpt": "the thoughts and ways of Jehovah are His purposes of redemption",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-is-55-8-despairing",
+      "type": "web",
+      "citation": "J. Skinner, Isaiah XL–LXVI, Cambridge Bible for Schools and Colleges (1898), on Isaiah 55:8-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-8.htm",
+      "excerpt": "the narrow conceptions of despairing minds",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "pulpit-is-55-8-word",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Isaiah 55:8-13 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-8.htm",
+      "excerpt": "God's word, once pronounced, is potent to effect its purpose",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "pulpit-is-55-8-pardon",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Isaiah 55:8-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-8.htm",
+      "excerpt": "Men find it hard to pardon those who have offended them",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "kd-is-55-8",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation), on Isaiah 55:8-9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/isaiah/55-8.htm",
+      "excerpt": "heaven-wide difference between the ways and thoughts of this God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "cambridge-ps-145-8",
+      "type": "web",
+      "citation": "A. F. Kirkpatrick, The Book of Psalms, Cambridge Bible for Schools and Colleges (1902), on Psalm 145:8 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/psalms/145-8.htm",
+      "excerpt": "Taken almost verbatim from Exodus 34:6",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-machashavah",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. מַחֲשָׁבָה (Bible Hub, Strong's 4284)",
+      "url": "https://biblehub.com/hebrew/4284.htm",
+      "excerpt": "thought, device (chiefly in poetry and late)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-machashavah-plan",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. מַחֲשָׁבָה (Bible Hub, Strong's 4284)",
+      "url": "https://biblehub.com/hebrew/4284.htm",
+      "excerpt": "device, plan, purpose Isaiah 55:7",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-derekh",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. דֶּרֶךְ (Bible Hub, Strong's 1870)",
+      "url": "https://biblehub.com/hebrew/1870.htm",
+      "excerpt": "way, road, distance, journey, manner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-derekh-figurative",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. דֶּרֶךְ (Bible Hub, Strong's 1870)",
+      "url": "https://biblehub.com/hebrew/1870.htm",
+      "excerpt": "figurative of course of life, or action",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-salach",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. סָלַח (Bible Hub, Strong's 5545)",
+      "url": "https://biblehub.com/hebrew/5545.htm",
+      "excerpt": "forgive, pardon, always of God",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-shuv",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שׁוּב (Bible Hub, Strong's 7725)",
+      "url": "https://biblehub.com/hebrew/7725.htm",
+      "excerpt": "verb turn back, return",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-shuv-penitently",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שׁוּב (Bible Hub, Strong's 7725)",
+      "url": "https://biblehub.com/hebrew/7725.htm",
+      "excerpt": "turn back to God (= seek penitently)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "bdb-shuv-rain",
+      "type": "web",
+      "citation": "Francis Brown, S. R. Driver and Charles A. Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. שׁוּב (Bible Hub, Strong's 7725)",
+      "url": "https://biblehub.com/hebrew/7725.htm",
+      "excerpt": "rain and snow Isaiah 55:10",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-fast-haftarah",
+      "type": "web",
+      "citation": "“Fasting and Fast-Days”, The Jewish Encyclopedia (1901-1906), vol. 5 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/6033-fasting-and-fast-days",
+      "excerpt": "the Hafṭarah is also read from Isa. lv. 6-lvi. 8",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-fast-sephardim",
+      "type": "web",
+      "citation": "“Fasting and Fast-Days”, The Jewish Encyclopedia (1901-1906), vol. 5 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/6033-fasting-and-fast-days",
+      "excerpt": "The Sephardim do not read the Hafṭarah on the afternoon",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-fast-thirteen",
+      "type": "web",
+      "citation": "“Fasting and Fast-Days”, The Jewish Encyclopedia (1901-1906), vol. 5 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/6033-fasting-and-fast-days",
+      "excerpt": "treats of the thirteen qualities of mercy and of God's forgiveness",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-repentance-returning",
+      "type": "web",
+      "citation": "Kaufmann Kohler and Max Schlesinger, “Repentance”, The Jewish Encyclopedia (1901-1906), vol. 10 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/12680-repentance",
+      "excerpt": "turning to God, whose loving-kindness is ever extended to the returning sinner",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-repentance-teshubah",
+      "type": "web",
+      "citation": "Kaufmann Kohler and Max Schlesinger, “Repentance”, The Jewish Encyclopedia (1901-1906), vol. 10 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/12680-repentance",
+      "excerpt": "indicated in the term \"teshubah\" (lit. \"return\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    },
+    {
+      "id": "je-repentance-shub",
+      "type": "web",
+      "citation": "Kaufmann Kohler and Max Schlesinger, “Repentance”, The Jewish Encyclopedia (1901-1906), vol. 10 (JewishEncyclopedia.com)",
+      "url": "https://www.jewishencyclopedia.com/articles/12680-repentance",
+      "excerpt": "represented by two verbs—\"shub\" (to return)",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:15:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-020-is-55-6-9",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:20:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
