@@ -148,4 +148,141 @@ void main() {
       expect(segments.first.locale, 'en');
     });
   });
+
+  group('segmentsForMass from the API segments', () {
+    Map<String, Object?> massOf(Map<String, Object?> json) {
+      return (json['masses']! as List<Object?>).single! as Map<String, Object?>;
+    }
+
+    List<Map<String, Object?>> segmentsOf(Map<String, Object?> json) {
+      return [
+        for (final item in massOf(json)['segments']! as List<Object?>)
+          item! as Map<String, Object?>,
+      ];
+    }
+
+    final englishJson = fixtureObject('day-with-segments');
+    final english = parseApiDay(englishJson).masses.single;
+    final mirror = parseApiDay(fixtureJson('day-sw-with-segments'))
+        .masses
+        .single;
+
+    test('reads the API script, with the passage reference', () {
+      final segments = segmentsForMass(english);
+      final api = segmentsOf(englishJson);
+      expect(segments.map((s) => s.id), [for (final s in api) s['id']]);
+      expect(segments.map((s) => s.script), [for (final s in api) s['script']]);
+      final [context, evilEye, agathos] = segments;
+      expect(context.kind, SegmentKind.context);
+      expect(context.ref, 'Mt 20:1-16a');
+      expect(context.slot, 'gospel');
+      expect(context.passageKey, 'MT.20.1-16');
+      expect(context.locale, 'en');
+      expect(context.title, 'Labourers in the vineyard');
+      expect(
+        context.script,
+        startsWith('Context for Matthew chapter 20, verses 1 to 16. '),
+      );
+      expect(context.usesSpeech, isFalse);
+      expect(evilEye.kind, SegmentKind.translationNote);
+      expect(evilEye.title, 'envious · ophthalmos sou ponēros');
+      expect(agathos.usesSpeech, isTrue);
+      expect(agathos.fallback, isNull);
+    });
+
+    test('leaves out kinds it does not know and passages without a '
+        'reading', () {
+      final json = fixtureObject('day-with-segments');
+      final [context, evilEye, _] = segmentsOf(json);
+      context['kind'] = 'reading-intro';
+      evilEye['passageKey'] = 'JN.1.1-5';
+      final segments = segmentsForMass(parseApiDay(json).masses.single);
+      expect(segments.map((s) => s.id), ['MT.20.1-16/note/v15-agathos']);
+      expect(segments.single.ref, 'Mt 20:1-16a');
+    });
+
+    test('uses Kiswahili segments only for a Kiswahili mirror passage', () {
+      final json = fixtureObject('day-sw-with-segments');
+      final gospel =
+          (massOf(json)['readings']! as List<Object?>).last!
+              as Map<String, Object?>;
+      (gospel['passage']! as Map<String, Object?>)['locale'] = 'en';
+      final segments = segmentsForMass(
+        english,
+        localized: parseApiDay(json).masses.single,
+        language: 'sw',
+      );
+      expect(segments.map((s) => s.locale).toSet(), {'en'});
+    });
+
+    test('ignores the mirror in English', () {
+      final segments = segmentsForMass(english, localized: mirror);
+      expect(segments.map((s) => s.locale).toSet(), {'en'});
+    });
+
+    test("reads the mirror's Kiswahili script, with the English segment as "
+        'fallback', () {
+      final segments = segmentsForMass(
+        english,
+        localized: mirror,
+        language: 'sw',
+      );
+      final api = segmentsOf(fixtureObject('day-sw-with-segments'));
+      expect(segments.map((s) => s.script), [for (final s in api) s['script']]);
+      final [context, evilEye, _] = segments;
+      expect(context.locale, 'sw');
+      expect(context.title, 'Wafanyakazi katika shamba la mizabibu');
+      expect(context.script, startsWith('Muktadha wa Mathayo sura ya 20'));
+      expect(context.ref, 'Mt 20:1-16a');
+      expect(context.usesSpeech, isTrue);
+      expect(context.fallback?.locale, 'en');
+      expect(context.fallback?.script, segmentsForMass(english).first.script);
+      expect(context.fallback?.audio, isNotNull);
+      expect(evilEye.fallback?.id, evilEye.id);
+    });
+
+    test('builds the Kiswahili from the notes when the mirror has no '
+        'segments', () {
+      final json = fixtureObject('day-sw-with-segments');
+      massOf(json)['segments'] = <Object?>[];
+      final segments = segmentsForMass(
+        english,
+        localized: parseApiDay(json).masses.single,
+        language: 'sw',
+      );
+      final [context, evilEye, _] = segments;
+      expect(context.locale, 'sw');
+      expect(
+        context.script,
+        startsWith('Wafanyakazi katika shamba la mizabibu. Mathayo peke'),
+      );
+      expect(context.script, isNot(contains('[c')));
+      expect(context.fallback?.script, startsWith('Context for Matthew'));
+      expect(evilEye.script, startsWith('“wivu”: ophthalmos sou ponēros'));
+    });
+
+    test('keeps the English segments the mirror has not translated', () {
+      final json = fixtureObject('day-sw-with-segments');
+      final gospel =
+          (massOf(json)['readings']! as List<Object?>).last!
+              as Map<String, Object?>;
+      (gospel['passage']! as Map<String, Object?>)['locale'] = 'en';
+      for (final segment in segmentsOf(json)) {
+        segment['locale'] = 'en';
+      }
+      final segments = segmentsForMass(
+        english,
+        localized: parseApiDay(json).masses.single,
+        language: 'sw',
+      );
+      expect(segments.first.locale, 'en');
+      expect(segments.first.audio, isNotNull);
+      expect(segments.first.fallback, isNull);
+    });
+
+    test('in Kiswahili without the mirror, plays the English', () {
+      final segments = segmentsForMass(english, language: 'sw');
+      expect(segments.map((s) => s.locale).toSet(), {'en'});
+    });
+  });
 }

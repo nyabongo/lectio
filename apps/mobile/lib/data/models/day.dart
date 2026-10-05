@@ -166,10 +166,75 @@ class ReadingSummary {
   final String? summary;
 }
 
+/// One item of a Mass's Listen queue (`masses[].segments`, docs/api.md):
+/// a passage's context note or one of its translation notes, with what the
+/// device voice reads when there is no rendered [audio].
+class MassSegment {
+  /// Creates a segment.
+  const new({
+    required this.id,
+    required this.kind,
+    required this.slot,
+    required this.passageKey,
+    required this.locale,
+    required this.title,
+    required this.script,
+    this.audio,
+  });
+
+  /// Reads a `segments` item.
+  factory fromJson(Object? json) {
+    final object = asJsonObject(json, 'segments');
+    final audio = object.optionalObject('audio');
+    return MassSegment(
+      id: object.string('id'),
+      kind: object.string('kind'),
+      slot: object.string('slot'),
+      passageKey: object.string('passageKey'),
+      locale: object.string('locale'),
+      title: object.string('title'),
+      script: object.string('script'),
+      audio: audio == null ? null : Audio.fromJson(audio),
+    );
+  }
+
+  /// `<passage key>/context` or `<passage key>/note/<note id>`, stable
+  /// across days.
+  final String id;
+
+  /// `context` or `translation-note`.
+  final String kind;
+
+  /// The reading slot the passage sits in (the first, when read twice).
+  final String slot;
+
+  /// Canonical passage key.
+  final String passageKey;
+
+  /// Language of [script] and [audio], for example `en` or `sw`.
+  final String locale;
+
+  /// Short label: the context title, or the note's anchor and
+  /// transliteration.
+  final String title;
+
+  /// What the device voice reads: Lectio's commentary in spoken form
+  /// (references spelled out, no claim markers), never the reading text.
+  final String script;
+
+  /// The rendered narration, or `null` to read [script] on the device.
+  final Audio? audio;
+}
+
 /// One Mass of a day and its readings ([R] is the reading shape).
 class Mass<R> {
   /// Creates a Mass.
-  const new({required this.id, required this.label, required this.readings});
+  const new({
+    required this.id,
+    required this.label,
+    required this.readings,
+    this.segments = const [],
+  });
 
   /// Reads a `masses` item, each reading read by [reading].
   factory fromJson(Object? json, R Function(Object? json) reading) {
@@ -178,6 +243,9 @@ class Mass<R> {
       id: object.string('id'),
       label: object.string('label'),
       readings: object.list('readings', reading),
+      segments: object['segments'] == null
+          ? const []
+          : object.list('segments', MassSegment.fromJson),
     );
   }
 
@@ -189,6 +257,11 @@ class Mass<R> {
 
   /// Readings in liturgical order.
   final List<R> readings;
+
+  /// The Listen queue in play order (day documents only): empty when the
+  /// Mass has no approved notes, and in documents from builds before the
+  /// field existed.
+  final List<MassSegment> segments;
 }
 
 /// A liturgical day ([R] is the reading shape).

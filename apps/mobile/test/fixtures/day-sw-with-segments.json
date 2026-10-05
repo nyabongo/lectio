@@ -1,0 +1,219 @@
+{
+  "apiVersion": 1,
+  "date": "2026-09-20",
+  "season": "ordinary-time",
+  "seasonWeek": 25,
+  "sundayCycle": "A",
+  "weekdayCycle": "II",
+  "colour": "green",
+  "celebrations": [
+    {
+      "id": "ordinary-time-25-sunday",
+      "name": "Twenty-fifth Sunday in Ordinary Time",
+      "rank": "sunday",
+      "colour": "green"
+    }
+  ],
+  "lectionaryMissing": false,
+  "masses": [
+    {
+      "id": "day",
+      "label": "Mass of the day",
+      "readings": [
+        {
+          "slot": "first-reading",
+          "ref": "Is 55:6-9",
+          "key": "IS.55.6-9",
+          "linkout": "https://www.drbo.org/chapter/27055.htm",
+          "passage": null
+        },
+        {
+          "slot": "psalm",
+          "ref": "Ps 145:2-3, 8-9, 17-18",
+          "key": "PS.145.2-3_145.8-9_145.17-18",
+          "linkout": "https://www.drbo.org/chapter/21144.htm",
+          "passage": null
+        },
+        {
+          "slot": "second-reading",
+          "ref": "Phil 1:20c-24, 27a",
+          "key": "PHIL.1.20-24_1.27",
+          "linkout": "https://www.drbo.org/chapter/57001.htm",
+          "passage": null
+        },
+        {
+          "slot": "gospel",
+          "ref": "Mt 20:1-16a",
+          "key": "MT.20.1-16",
+          "linkout": "https://www.drbo.org/chapter/47020.htm",
+          "passage": {
+            "key": "MT.20.1-16",
+            "ref": "Mt 20:1-16a",
+            "locale": "sw",
+            "summary": "Mwenye shamba anawalipa walioajiriwa mwisho sawa na wa kwanza, na kuuliza kama wema wake ni sababu ya kinyongo.",
+            "context": {
+              "title": "Wafanyakazi katika shamba la mizabibu",
+              "paragraphs": [
+                "Mathayo peke yake anaandika mfano huu, katikati ya misemo miwili kuhusu wa mwisho kuwa wa kwanza. [c1] Dinari ilikuwa ujira wa kawaida wa kibarua kwa siku moja katika Palestina ya karne ya kwanza. [c2]",
+                "Swali la mwisho la mwenye shamba linatumia nahau ya Kiyahudi ya jicho ovu, picha ya kuonea wivu bahati njema ya mwingine. [c3] Mathayo tayari ameweka jicho safi dhidi ya jicho ovu katika Mahubiri ya Mlimani. [c4]"
+              ],
+              "audio": null
+            },
+            "translationNotes": [
+              {
+                "id": "v15-evil-eye",
+                "verse": "20:15",
+                "anchor": "wivu",
+                "original": {
+                  "text": "ὀφθαλμός σου πονηρός",
+                  "lang": "grc",
+                  "translit": "ophthalmos sou ponēros",
+                  "gloss": "jicho lako ovu"
+                },
+                "summary": "Kigiriki kinauliza “je, jicho lako ni ovu?”, nahau ya kuonea wivu mema ya mwingine.",
+                "body": "Jicho ovu lilikuwa picha inayojulikana ya ubahili na kinyongo (Kum 15:9; Mit 28:22). Tafsiri inabadilisha picha hiyo kuwa hisia tu na kupoteza mwangwi wa Mt 6:22-23. [c3][c4]",
+                "audio": null
+              },
+              {
+                "id": "v15-agathos",
+                "verse": "20:15",
+                "anchor": "mkarimu",
+                "original": {
+                  "text": "ἀγαθός",
+                  "lang": "grc",
+                  "translit": "agathos",
+                  "gloss": "mwema"
+                },
+                "summary": "Mwenye shamba anajiita “mwema”, si “mkarimu” tu.",
+                "body": "Agathos ndilo neno ambalo Yesu analitumia kwa Mungu peke yake katika Mt 19:17, mistari michache kabla. Mfano huu unahusu yeye mwenye shamba ni nani, si tu anacholipa. [c5]",
+                "audio": null
+              }
+            ],
+            "claims": [
+              {
+                "id": "c1",
+                "text": "Mfano wa wafanyakazi katika shamba la mizabibu unapatikana katika Mathayo peke yake.",
+                "sourceIds": [
+                  "davies-allison"
+                ],
+                "sensitive": false
+              },
+              {
+                "id": "c2",
+                "text": "Dinari ilikuwa ujira wa kawaida wa kibarua kwa siku moja.",
+                "sourceIds": [
+                  "mt-20-2",
+                  "davies-allison"
+                ],
+                "sensitive": false
+              },
+              {
+                "id": "c3",
+                "text": "“Jicho ovu” ilikuwa nahau ya Kiyahudi ya ubahili au kuonea wivu mema ya mwingine.",
+                "sourceIds": [
+                  "dt-15-9",
+                  "lsj-ophthalmos"
+                ],
+                "sensitive": false
+              },
+              {
+                "id": "c4",
+                "text": "Mt 6:22-23 inalinganisha jicho safi na jicho ovu.",
+                "sourceIds": [
+                  "mt-6-22"
+                ],
+                "sensitive": false
+              },
+              {
+                "id": "c5",
+                "text": "Katika Mt 19:17 Yesu anasema kwamba ni mmoja tu aliye mwema, akitumia agathos.",
+                "sourceIds": [
+                  "mt-19-17"
+                ],
+                "sensitive": true
+              }
+            ],
+            "sources": [
+              {
+                "id": "mt-20-2",
+                "type": "scripture",
+                "citation": "Matthew 20:2",
+                "ref": "Mt 20:2"
+              },
+              {
+                "id": "mt-6-22",
+                "type": "scripture",
+                "citation": "Matthew 6:22-23",
+                "ref": "Mt 6:22-23"
+              },
+              {
+                "id": "mt-19-17",
+                "type": "scripture",
+                "citation": "Matthew 19:17",
+                "ref": "Mt 19:17",
+                "excerpt": "εἷς ἐστιν ὁ ἀγαθός",
+                "excerptLang": "grc"
+              },
+              {
+                "id": "dt-15-9",
+                "type": "scripture",
+                "citation": "Deuteronomy 15:9",
+                "ref": "Dt 15:9"
+              },
+              {
+                "id": "lsj-ophthalmos",
+                "type": "web",
+                "citation": "Liddell, Scott, Jones, A Greek-English Lexicon, s.v. ὀφθαλμός (Perseus Digital Library)",
+                "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0057:entry=o)fqalmo/s",
+                "archivedUrl": "https://web.archive.org/web/2026/https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0057:entry=o)fqalmo/s",
+                "retrievedAt": "2026-09-01T08:30:00Z"
+              },
+              {
+                "id": "davies-allison",
+                "type": "print",
+                "citation": "W. D. Davies and Dale C. Allison, The Gospel According to Saint Matthew, vol. 3 (ICC), T&T Clark, 1997, pp. 66-79"
+              }
+            ],
+            "review": {
+              "status": "approved",
+              "method": "human",
+              "lastReviewedAt": "2026-10-05T09:00:00Z"
+            }
+          }
+        }
+      ],
+      "segments": [
+        {
+          "id": "MT.20.1-16/context",
+          "kind": "context",
+          "slot": "gospel",
+          "passageKey": "MT.20.1-16",
+          "locale": "sw",
+          "title": "Wafanyakazi katika shamba la mizabibu",
+          "script": "Muktadha wa Mathayo sura ya 20, mistari ya 1 hadi 16. Wafanyakazi katika shamba la mizabibu. Mathayo peke yake anaandika mfano huu, katikati ya misemo miwili kuhusu wa mwisho kuwa wa kwanza. Dinari ilikuwa ujira wa kawaida wa kibarua kwa siku moja katika Palestina ya karne ya kwanza. Swali la mwisho la mwenye shamba linatumia nahau ya Kiyahudi ya jicho ovu, picha ya kuonea wivu bahati njema ya mwingine. Mathayo tayari ameweka jicho safi dhidi ya jicho ovu katika Mahubiri ya Mlimani.",
+          "audio": null
+        },
+        {
+          "id": "MT.20.1-16/note/v15-evil-eye",
+          "kind": "translation-note",
+          "slot": "gospel",
+          "passageKey": "MT.20.1-16",
+          "locale": "sw",
+          "title": "wivu · ophthalmos sou ponēros",
+          "script": "Maelezo ya tafsiri kuhusu Mathayo sura ya 20, mstari wa 15, neno “wivu”. Kwa Kigiriki ni ophthalmos sou ponēros, maana yake halisi “jicho lako ovu”. Kigiriki kinauliza “je, jicho lako ni ovu?”, nahau ya kuonea wivu mema ya mwingine. Jicho ovu lilikuwa picha inayojulikana ya ubahili na kinyongo (Kum 15:9; Mit 28:22). Tafsiri inabadilisha picha hiyo kuwa hisia tu na kupoteza mwangwi wa Mathayo sura ya 6, mistari ya 22 hadi 23.",
+          "audio": null
+        },
+        {
+          "id": "MT.20.1-16/note/v15-agathos",
+          "kind": "translation-note",
+          "slot": "gospel",
+          "passageKey": "MT.20.1-16",
+          "locale": "sw",
+          "title": "mkarimu · agathos",
+          "script": "Maelezo ya tafsiri kuhusu Mathayo sura ya 20, mstari wa 15, neno “mkarimu”. Kwa Kigiriki ni agathos, maana yake halisi “mwema”. Mwenye shamba anajiita “mwema”, si “mkarimu” tu. Agathos ndilo neno ambalo Yesu analitumia kwa Mungu peke yake katika Mathayo sura ya 19, mstari wa 17, mistari michache kabla. Mfano huu unahusu yeye mwenye shamba ni nani, si tu anacholipa.",
+          "audio": null
+        }
+      ]
+    }
+  ]
+}

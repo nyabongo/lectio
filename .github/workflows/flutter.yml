@@ -215,6 +215,11 @@ jobs:
           for key in CFBundleLocalizations UIBackgroundModes FlutterDeepLinkingEnabled CFBundleURLTypes; do
             /usr/libexec/PlistBuddy -c "Print :$key" ios/Runner/Info.plist >/dev/null
           done
+          deep_linking=$(/usr/libexec/PlistBuddy -c "Print :FlutterDeepLinkingEnabled" ios/Runner/Info.plist)
+          if [ "$deep_linking" != "false" ]; then
+            echo "::error::FlutterDeepLinkingEnabled in ios/Runner/Info.plist is '$deep_linking'; it must be false."
+            exit 1
+          fi
       - run: flutter build ios --no-codesign --debug
       # The build (pod install included) must not change the committed
       # project: Podfile.lock pins the pods. When it does, the changed files

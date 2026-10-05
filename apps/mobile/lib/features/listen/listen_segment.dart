@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lectio/data/models/day.dart';
 import 'package:lectio/data/models/notes.dart';
 import 'package:lectio/features/listen/locale.dart';
@@ -14,7 +15,7 @@ enum SegmentKind {
 /// One item of the Listen queue: a note narrated by its audio file, or read
 /// aloud by the device when the file is not rendered yet.
 ///
-/// The queue follows the API's `masses[].segments` (docs/api.md): for every
+/// The queue is the API's `masses[].segments` (docs/api.md): for every
 /// reading with approved notes, in Mass order and with a passage read twice
 /// narrated once, a context segment and then one segment per translation
 /// note. Ids are the API's: `<passage key>/context` and
@@ -70,6 +71,23 @@ class ListenSegment {
 
   /// Whether the device voice reads this segment.
   bool get usesSpeech => audio == null;
+
+  /// This segment, played as [english] when the device has no voice for
+  /// [locale].
+  ListenSegment withFallback(ListenSegment english) {
+    return ListenSegment(
+      id: id,
+      kind: kind,
+      slot: slot,
+      passageKey: passageKey,
+      ref: ref,
+      locale: locale,
+      title: title,
+      script: script,
+      audio: audio,
+      fallback: english,
+    );
+  }
 }
 
 final RegExp _markers = RegExp(r'\s*(?:\[c\d+\])+');
@@ -167,14 +185,20 @@ List<ListenSegment> _passageSegments(
   ];
 }
 
-/// The Listen queue of [mass]: its readings' approved notes in order, each
-/// passage once.
+/// The Listen queue of [mass], in the UI [language].
 ///
-/// In the UI [language] `sw`, a passage whose notes [localized] (the same
-/// Mass from the `sw/` mirror) has as a reviewed translation is narrated in
-/// Kiswahili (`narratedPassage`), each segment keeping its English original
-/// as [ListenSegment.fallback] for a device without a Kiswahili voice. Other
-/// passages stay in English, with their recordings.
+/// The queue is the API's `masses[].segments`, so the device voice reads each
+/// segment's `script` ([ListenSegment.script]). A document from a build
+/// before the field existed has none: the queue is then built from the
+/// readings' notes, with the same ids and order ([_segmentsFromNotes]).
+///
+/// In the UI language `sw`, a passage whose notes have a reviewed
+/// translation in [localized] (the same Mass from the `sw/` mirror) is
+/// narrated in Kiswahili, each segment keeping the English segment of the
+/// same id as [ListenSegment.fallback] for a device without a Kiswahili
+/// voice. The Kiswahili segment is the mirror's own when it has one, else it
+/// is built from the translated notes. Other passages stay in English, with
+/// their recordings.
 List<ListenSegment> segmentsForMass(
   Mass<DayReading> mass, {
   Mass<DayReading>? localized,
@@ -185,6 +209,97 @@ List<ListenSegment> segmentsForMass(
     final passage = reading.passage;
     if (passage != null) translations[passage.key] = passage;
   }
+  if (mass.segments.isEmpty) {
+    return _segmentsFromNotes(mass, translations, language);
+  }
+  final english = _apiSegments(mass);
+  if (language != 'sw') return english;
+
+  // The Kiswahili segments by id: the mirror's, else built from the
+  // reviewed translations' notes.
+  final kiswahili = <String, ListenSegment>{};
+  final seen = <String>{};
+  for (final reading in mass.readings) {
+    final passage = reading.passage;
+    if (passage == null || !seen.add(passage.key)) continue;
+    final narrated = narratedPassage(
+      language: language,
+      english: passage,
+      localized: translations[passage.key],
+    );
+    if (identical(narrated, passage)) continue;
+    for (final segment in _passageSegments(reading.slot, narrated)) {
+      kiswahili[segment.id] = segment;
+    }
+  }
+  if (localized != null) {
+    // Only for a reviewed translation, as narratedPassage decides.
+    for (final segment in _apiSegments(localized)) {
+      if (segment.locale == 'sw' &&
+          translations[segment.passageKey]?.locale == 'sw') {
+        kiswahili[segment.id] = segment;
+      }
+    }
+  }
+  return List.unmodifiable([
+    for (final segment in english)
+      switch (kiswahili[segment.id]) {
+        final translated? => translated.withFallback(segment),
+        null => segment,
+      },
+  ]);
+}
+
+/// The API segments of [mass] that the app knows how to show, each with the
+/// display reference of its passage.
+///
+/// A segment of a kind added to the API later is left out, and so is one
+/// whose passage is not among the Mass's readings (it has no reference to
+/// show).
+List<ListenSegment> _apiSegments(Mass<DayReading> mass) {
+  final refs = <String, String>{};
+  for (final reading in mass.readings) {
+    refs.putIfAbsent(reading.key, () => reading.passage?.ref ?? reading.ref);
+  }
+  final out = <ListenSegment>[];
+  for (final segment in mass.segments) {
+    final kind = _kinds[segment.kind];
+    final ref = refs[segment.passageKey];
+    if (kind == null || ref == null) {
+      debugPrint('Listen: segment ${segment.id} left out (${segment.kind})');
+      continue;
+    }
+    out.add(
+      ListenSegment(
+        id: segment.id,
+        kind: kind,
+        slot: segment.slot,
+        passageKey: segment.passageKey,
+        ref: ref,
+        locale: segment.locale,
+        title: segment.title,
+        script: segment.script,
+        audio: segment.audio,
+      ),
+    );
+  }
+  return out;
+}
+
+const Map<String, SegmentKind> _kinds = {
+  'context': SegmentKind.context,
+  'translation-note': SegmentKind.translationNote,
+};
+
+/// The Listen queue of [mass] built from its readings' approved notes in
+/// order, each passage once, for documents without `segments`: the script
+/// is the note text without claim markers. In `sw`, passages with a
+/// reviewed translation in [translations] are narrated from it.
+List<ListenSegment> _segmentsFromNotes(
+  Mass<DayReading> mass,
+  Map<String, PassageNotes> translations,
+  String language,
+) {
   final seen = <String>{};
   final out = <ListenSegment>[];
   for (final reading in mass.readings) {
