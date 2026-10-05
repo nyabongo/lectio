@@ -54,11 +54,18 @@ export function decodeEntities(text: string): string {
 
 /** Script and style blocks, comments, then any remaining tag. */
 const HIDDEN_BLOCKS = /<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>|<!--[\s\S]*?-->/giu;
+/** Inline formatting and link tags, which can sit inside a word (`day<a>’s</a>`, `Ἑ<i>ταῖρε</i>`). */
+const INLINE_TAG = /<\/?(?:a|abbr|b|cite|em|i|small|span|strong|sub|sup|u)\b[^>]*>/giu;
 const TAG = /<\/?[A-Za-z][^>]*>/gu;
 
-/** Removes HTML markup, keeping the text; tags become spaces so words on either side stay apart. */
+/**
+ * Removes HTML markup, keeping the text. Inline tags (links, emphasis, spans) are dropped without
+ * a space, so a word or sentence they interrupt stays whole (Bible Hub links verse references
+ * mid-sentence); any other tag (paragraphs, line breaks, cells) becomes a space so words on either
+ * side stay apart.
+ */
 export function stripTags(text: string): string {
-  return text.replace(HIDDEN_BLOCKS, ' ').replace(TAG, ' ');
+  return text.replace(HIDDEN_BLOCKS, ' ').replace(INLINE_TAG, '').replace(TAG, ' ');
 }
 
 const SINGLE_QUOTES = /[‘’‚‛′`´ʼ]/gu;

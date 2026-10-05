@@ -285,6 +285,16 @@ describe('evidenceGate', () => {
         expect((await withExcerpt('The labourers went … were paid by')).items).toEqual([]);
       });
 
+      it('matches an excerpt that spans inline links, emphasis, curly quotes and Greek', async () => {
+        const html =
+          '<p>The word <a href="/greek/2083.htm">Ἑ<i>ταῖρε</i></a> is used, as in <a href="/matthew/22-12.htm">Matthew 22:12</a>, ' +
+          'of the <b>guest</b> without the &ldquo;wedding garment&rdquo; and of Judas.</p><p>Next paragraph.</p>';
+        const excerpt = 'The word Ἑταῖρε is used, as in Matthew 22:12, of the guest without the “wedding garment”';
+        expect((await withExcerpt(excerpt, html)).items).toEqual([]);
+        expect((await withExcerpt('and of Judas. Next paragraph.', html)).items).toEqual([]);
+        expect((await withExcerpt('of Judas.Next paragraph', html)).status).toBe('fail');
+      });
+
       it('fails pieces that lie far apart on the page', async () => {
         const far = `${page} ${'filler words here. '.repeat(40)} The owner spoke kindly to them.`;
         expect((await withExcerpt('The labourers went … owner spoke kindly', far)).status).toBe('fail');

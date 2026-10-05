@@ -30,6 +30,13 @@ describe('stripTags', () => {
     ).toBe(' one two five');
   });
 
+  it('drops inline tags without a space and turns block tags into spaces', () => {
+    expect(stripTags('day<a href="/x">’s</a> <EM>wage</EM><span class="v">s</span><p>next</p>line<br>end')).toBe(
+      'day’s wages next line end',
+    );
+    expect(stripTags('<blockquote>a</blockquote><article>b</article>')).toBe(' a  b ');
+  });
+
   it('keeps a lone less-than sign that is not a tag', () => {
     expect(stripTags('1 < 2')).toBe('1 < 2');
   });
