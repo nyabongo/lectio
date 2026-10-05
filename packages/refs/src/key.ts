@@ -7,10 +7,12 @@ import { checkRef } from './validate.ts';
 
 /**
  * Characters a passage key may contain: safe in file names on every OS and in URL path segments.
- * Chapters are numbers, or the letters A–F of Greek Esther's chapters (`EST.C.12`).
+ * Chapters and verses are numbers; only Esther may also name a chapter by the letters A–F of its
+ * Greek additions (`EST.C.12`, `EST.C.30-D.2`), and only where a chapter stands. {@link isKey} is
+ * the full check.
  */
 export const KEY_PATTERN =
-  /^[A-Z0-9]+\.(?:[0-9]+|[A-F])(?:[.-](?:[0-9]+|[A-F]))*(?:_(?:[0-9]+|[A-F])(?:[.-](?:[0-9]+|[A-F]))*)*$/;
+  /^(?:[A-Z0-9]+\.[0-9]+(?:[.-][0-9]+)*(?:_[0-9]+(?:[.-][0-9]+)*)*|EST\.(?:[0-9]+|[A-F])(?:-(?:[0-9]+|[A-F])|\.[0-9]+(?:-(?:(?:[0-9]+|[A-F])\.)?[0-9]+)?)?(?:_(?:[0-9]+|[A-F])(?:-(?:[0-9]+|[A-F])|\.[0-9]+(?:-(?:(?:[0-9]+|[A-F])\.)?[0-9]+)?)?)*)$/;
 
 function segmentKey(book: BookCode, { start, end }: Segment): string {
   const from = chapterLabel(book, start.c);
@@ -39,6 +41,8 @@ function readSegment(book: BookCode, text: string): Segment | undefined {
   const match = SEGMENT.exec(text);
   if (!match) return undefined;
   const [, a = '', b, c, d] = match;
+  // After a verse, a lone end is a verse number: `EST.1.2-C` names no chapter C.
+  if (b !== undefined && c !== undefined && d === undefined && !/^\d/.test(c)) return undefined;
   const first = readChapter(book, a);
   const after = c === undefined ? first : readChapter(book, c);
   if (first === undefined || after === undefined) return undefined;

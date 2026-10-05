@@ -1,4 +1,4 @@
-import { isLetteredChapter } from '../greek-esther.ts';
+import { chapterLabel, isLetteredChapter } from '../greek-esther.ts';
 import type { VerseId } from '../enumerate.ts';
 import type { Versification } from './engine.ts';
 import { VersificationError } from './errors.ts';
@@ -46,7 +46,7 @@ export function createGreekEstherLxx(versification: Versification, engText: stri
     if (!isLetteredChapter(verse.book, verse.c) || !versification.isRealVerse(verse)) {
       throw new VersificationError(
         'UNKNOWN_VERSE',
-        `${verse.book} ${String(verse.c)}:${String(verse.v)} is not a verse of Esther's lettered chapters (A–F)`,
+        `${verse.book} ${chapterLabel(verse.book, verse.c)}:${String(verse.v)} is not a verse of Esther's lettered chapters (A–F)`,
       );
     }
     table ??= readRahlfsEsther(engText);
