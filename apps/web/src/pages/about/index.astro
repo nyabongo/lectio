@@ -1,0 +1,453 @@
+---
+/**
+ * About / methodology (L-059): study aid, not Church teaching; the four trust steps and the five pull-request
+ * gates; what "Verified" means; the link-out provider; report an issue; and the attribution list.
+ *
+ * Attributions are read at build time from the repository's data files by `loadAttributions` (src/lib/attributions.ts):
+ * every `corpus/<edition>/SOURCE.json` (through `listLicences` of @lectio/corpus), the licence guard's index
+ * metadata, the font licence files, the versification sources and the imported lectionary sources. A new edition
+ * or font appears here without any change to this page.
+ */
+import Seo from '../../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LICENSE_URL, REPORT_ISSUE_URL, linkoutCredit, loadAttributions, siteAttributionPaths } from '../../lib/attributions.ts';
+import { intlLocale } from '../../lib/i18n.ts';
+import { siteContext, withBase } from '../../lib/site.ts';
+import Licence from './_Licence.astro';
+
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const title = t(lang, 'about.title');
+const description = t(lang, 'about.description');
+const { corpora, guard, fonts, versification, lectionary } = await loadAttributions(siteAttributionPaths());
+const linkout = linkoutCredit(siteContext().config.linkout);
+const [readingsBefore = '', readingsAfter = ''] = t(lang, 'about.readings.body', { provider: '\u0000' }).split('\u0000');
+
+const [ownBefore = '', ownAfter = ''] = t(lang, 'about.sources.own', { licence: '\u0000' }).split('\u0000');
+
+const languages: Record<string, string> = {
+  grc: t(lang, 'about.languages.grc'),
+  hbo: t(lang, 'about.languages.hbo'),
+  arc: t(lang, 'about.languages.arc'),
+  lat: t(lang, 'about.languages.lat'),
+};
+
+const steps = [
+  { title: t(lang, 'about.steps.research.title'), body: t(lang, 'about.steps.research.body') },
+  { title: t(lang, 'about.steps.tests.title'), body: t(lang, 'about.steps.tests.body') },
+  { title: t(lang, 'about.steps.crossExamine.title'), body: t(lang, 'about.steps.crossExamine.body') },
+  { title: t(lang, 'about.steps.human.title'), body: t(lang, 'about.steps.human.body') },
+];
+
+const guardEditions =
+  guard === null
+    ? null
+    : new Intl.ListFormat(intlLocale(lang), { type: 'conjunction' }).format(guard.editions.map((e) => e.title));
+
+const gates = [
+  { id: 'schema', title: t(lang, 'about.gates.schema.title'), body: t(lang, 'about.gates.schema.body') },
+  { id: 'evidence', title: t(lang, 'about.gates.evidence.title'), body: t(lang, 'about.gates.evidence.body') },
+  { id: 'licence', title: t(lang, 'about.gates.licence.title'), body: t(lang, 'about.gates.licence.body') },
+  { id: 'verifiers', title: t(lang, 'about.gates.verifiers.title'), body: t(lang, 'about.gates.verifiers.body') },
+  { id: 'merge', title: t(lang, 'about.gates.merge.title'), body: t(lang, 'about.gates.merge.body') },
+];
+
+const shortVersion = (version: string): string => (/^[0-9a-f]{40}$/.test(version) ? version.slice(0, 7) : version);
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path="about/" />
+  <article class="about">
+    <header class="about__intro">
+      <p class="eyebrow">{t(lang, 'about.eyebrow')}</p>
+      <h1>{t(lang, 'about.heading')}</h1>
+      <p class="lede">{t(lang, 'about.intro')}</p>
+    </header>
+
+    <aside class="notice" aria-labelledby="study-aid">
+      <h2 id="study-aid">{t(lang, 'about.studyAid.title')}</h2>
+      <p>{t(lang, 'about.studyAid.body')}</p>
+    </aside>
+
+    <section aria-labelledby="steps">
+      <h2 id="steps">{t(lang, 'about.steps.heading')}</h2>
+      <p>{t(lang, 'about.steps.intro')}</p>
+      <ol class="steps">
+        {
+          steps.map((step) => (
+            <li class="card">
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section aria-labelledby="gates">
+      <h2 id="gates">{t(lang, 'about.gates.heading')}</h2>
+      <p>{t(lang, 'about.gates.intro')}</p>
+      <ol class="gates">
+        {
+          gates.map((gate) => (
+            <li class="gate">
+              <h3>{gate.title}</h3>
+              <p>{gate.body}</p>
+              {gate.id === 'licence' && guard !== null && (
+                <>
+                  <p>{t(lang, 'about.gates.licence.index', { editions: guardEditions ?? '' })}</p>
+                  <p class="limitation">
+                    <strong>{t(lang, 'about.gates.licence.limitation')}</strong> {guard.limitation}
+                  </p>
+                </>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section aria-labelledby="verified">
+      <h2 id="verified">{t(lang, 'about.verified.heading')}</h2>
+      <p>{t(lang, 'about.verified.body')}</p>
+      <p>{t(lang, 'about.verified.limits')}</p>
+    </section>
+
+    <section aria-labelledby="readings">
+      <h2 id="readings">{t(lang, 'about.readings.heading')}</h2>
+      <p>
+        {readingsBefore}<a href={linkout.url} rel="noopener">{linkout.label}</a>{readingsAfter}
+      </p>
+    </section>
+
+    <section class="report" aria-labelledby="report">
+      <h2 id="report">{t(lang, 'about.report.heading')}</h2>
+      <p>{t(lang, 'about.report.body')}</p>
+      <p><a class="button" href={REPORT_ISSUE_URL} rel="noopener">{t(lang, 'about.report.link')}</a></p>
+    </section>
+
+    <section class="sources" aria-labelledby="sources">
+      <h2 id="sources">{t(lang, 'about.sources.heading')}</h2>
+      <p>{t(lang, 'about.sources.intro')}</p>
+      <p>
+        {ownBefore}<a href={LICENSE_URL} rel="license noopener">{t(lang, 'about.sources.ownLicence')}</a>{ownAfter}
+      </p>
+
+      <h3 id="corpora">{t(lang, 'about.corpora.heading')}</h3>
+      <p>{t(lang, 'about.corpora.intro')}</p>
+      {
+        corpora.length === 0 ? (
+          <p class="muted">{t(lang, 'about.corpora.empty')}</p>
+        ) : (
+          <ul class="credits" data-attributions="corpora">
+            {corpora.map((entry) => (
+              <li class="credit" id={`corpus-${entry.edition}`}>
+                <p class="credit__meta">
+                  <span class="tag">{languages[entry.language] ?? entry.language}</span>
+                  <code>{entry.edition}</code>
+                </p>
+                <h4>{entry.name}</h4>
+                {entry.attribution.map((paragraph) => (
+                  <p class="credit__text">
+                    {paragraph.map((run) => (run.em ? <em>{run.text}</em> : run.text))}
+                  </p>
+                ))}
+                <p class="credit__links">
+                  <Licence parts={entry.licenceParts} lang={lang} />
+                  <a href={entry.projectUrl} rel="noopener">
+                    {t(lang, 'about.corpora.project')}
+                  </a>
+                  <a href={entry.licenceFileUrl} rel="noopener">
+                    {t(lang, 'about.corpora.licenceText')}
+                  </a>
+                  <a href={entry.versionUrl} rel="noopener" class="muted">
+                    {t(lang, 'about.corpora.version', { version: shortVersion(entry.version) })}
+                  </a>
+                </p>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        versification.length > 0 && (
+          <>
+            <h3 id="versification">{t(lang, 'about.versification.heading')}</h3>
+            <p>{t(lang, 'about.versification.intro')}</p>
+            <ul class="credits" data-attributions="versification">
+              {versification.map((source) => (
+                <li class="credit">
+                  <h4>
+                    <a href={source.url} rel="noopener">
+                      {source.name}
+                    </a>
+                  </h4>
+                  {source.credit !== null && <p class="credit__text">{source.credit}</p>}
+                  <p class="credit__links">
+                    <Licence parts={source.licenceParts} lang={lang} />
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+
+      {
+        lectionary.length > 0 && (
+          <>
+            <h3 id="lectionary">{t(lang, 'about.lectionary.heading')}</h3>
+            <p>{t(lang, 'about.lectionary.intro')}</p>
+            <ul class="credits" data-attributions="lectionary">
+              {lectionary.map((source) => (
+                <li class="credit">
+                  <h4>
+                    <a href={source.url} rel="noopener">
+                      {source.name}
+                    </a>
+                  </h4>
+                  {source.credit !== null && <p class="credit__text">{source.credit}</p>}
+                  <p class="credit__links">
+                    <Licence parts={source.licenceParts} lang={lang} />
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+
+      {
+        fonts.length > 0 && (
+          <>
+            <h3 id="fonts">{t(lang, 'about.fonts.heading')}</h3>
+            <p>{t(lang, 'about.fonts.intro')}</p>
+            <ul class="credits credits--compact" data-attributions="fonts">
+              {fonts.map((font) => (
+                <li class="credit">
+                  <h4>
+                    {font.upstream === null ? (
+                      font.family
+                    ) : (
+                      <a href={font.upstream} rel="noopener">
+                        {font.family}
+                      </a>
+                    )}
+                  </h4>
+                  <p class="credit__text">
+                    {font.copyright}
+                    {font.reservedName !== null && <> {t(lang, 'about.fonts.reserved', { name: font.reservedName })}</>}
+                  </p>
+                  <p class="credit__links">
+                    <a href={withBase(base, `fonts/${font.file}`)} rel="license">
+                      {t(lang, 'about.fonts.licence')}
+                    </a>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    max-width: var(--measure);
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .about h2 {
+    font-size: var(--step-3);
+  }
+
+  .about h3 {
+    font-size: var(--step-2);
+  }
+
+  .lede {
+    font-size: var(--step-1);
+    line-height: var(--leading-snug);
+    color: var(--colour-ink);
+  }
+
+  .notice {
+    padding: var(--space-s) var(--space-m);
+    background: var(--colour-accent-wash);
+    border-left: var(--band-height) solid var(--colour-accent);
+    border-radius: var(--radius-m);
+  }
+
+  .notice h2 {
+    font-size: var(--step-2);
+    color: var(--colour-accent-ink);
+  }
+
+  .notice p:last-child {
+    margin-bottom: 0;
+  }
+
+  .steps,
+  .gates,
+  .credits {
+    list-style: none;
+    margin: var(--space-s) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .steps {
+    counter-reset: step;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .card,
+  .credit {
+    padding: var(--space-s);
+    background: var(--colour-surface);
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+  }
+
+  .card {
+    counter-increment: step;
+    border-left: var(--band-height) solid var(--colour-accent);
+  }
+
+  .card h3::before {
+    content: counter(step);
+    display: inline-grid;
+    place-items: center;
+    width: 1.6em;
+    height: 1.6em;
+    margin-inline-end: var(--space-2xs);
+    border-radius: 50%;
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    vertical-align: 0.2em;
+  }
+
+  .card h3,
+  .gate h3 {
+    font-size: var(--step-1);
+  }
+
+  .card p:last-child,
+  .gate p:last-child,
+  .credit p:last-child {
+    margin-bottom: 0;
+  }
+
+  .gates {
+    counter-reset: gate;
+    gap: 0;
+    border-top: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .gate {
+    counter-increment: gate;
+    position: relative;
+    padding: var(--space-s) 0 var(--space-s) 2.5rem;
+    border-bottom: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .gate::before {
+    content: counter(gate);
+    position: absolute;
+    left: 0;
+    top: var(--space-s);
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: var(--weight-strong);
+    line-height: 1;
+    color: var(--colour-accent-ink);
+  }
+
+  .limitation {
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .report {
+    padding: var(--space-s) var(--space-m);
+    background: var(--colour-wash);
+    border-radius: var(--radius-m);
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding-inline: var(--space-s);
+    border-radius: var(--radius-m);
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+    transition: filter var(--duration-quick) var(--ease-out);
+  }
+
+  .button:hover {
+    filter: brightness(1.08);
+  }
+
+  .sources h3 {
+    margin-top: var(--space-m);
+  }
+
+  .credit h4 {
+    font-size: var(--step-1);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .credit h4 a {
+    color: var(--colour-ink);
+  }
+
+  .credit__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-bottom: var(--space-3xs);
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .tag {
+    padding: 0 var(--space-2xs);
+    border-radius: var(--radius-s);
+    background: var(--colour-accent-wash);
+    color: var(--colour-accent-ink);
+    font-weight: var(--weight-strong);
+  }
+
+  .credit__text {
+    font-size: var(--step--1);
+    overflow-wrap: anywhere;
+  }
+
+  .credit__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3xs) var(--space-s);
+    font-size: var(--step--1);
+  }
+
+  .credits--compact {
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .muted {
+    color: var(--colour-muted);
+  }
+</style>
