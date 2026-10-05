@@ -8,7 +8,7 @@ import type { ShareCard } from './cards.ts';
 import { dayFixture, hebrewInsightFixture, insightFixture, readingFixture } from './fixtures/cards.ts';
 import { DEFAULT_FONTS_DIR, FONT_FILES, GREEK_STACK, HEBREW_STACK, SERIF_STACK, loadFonts } from './fonts.ts';
 import * as api from './index.ts';
-import { BAND_COLOURS, LIMITS, cardTemplate, originalNode } from './templates.ts';
+import { BAND_COLOURS, HebrewLayoutError, LIMITS, cardTemplate, originalNode } from './templates.ts';
 import type { CardNode } from './templates.ts';
 
 /** Every string drawn by a node, depth first. */
@@ -66,6 +66,14 @@ describe('cardTemplate', () => {
     ]);
   });
 
+  it('insight: the original-language line can be left off', () => {
+    expect(texts(cardTemplate(insightFixture, { omitOriginal: true })).slice(0, 3)).toEqual([
+      'Sunday 20 September 2026',
+      '“Is your eye evil?”',
+      'What the Greek of today’s Gospel really says — Matthew 20:15',
+    ]);
+  });
+
   it('insight: a caption override wins', () => {
     expect(texts(cardTemplate(hebrewInsightFixture))).toContain(hebrewInsightFixture.caption);
   });
@@ -116,6 +124,13 @@ describe('originalNode', () => {
 
   it('throws when a Hebrew phrase needs a transliteration it does not have', () => {
     expect(() => originalNode({ text: 'רָעָה 15:9', language: 'hbo' })).toThrow(/give a transliteration/);
+    try {
+      originalNode({ text: 'רָעָה 15:9', language: 'hbo' });
+    } catch (error) {
+      expect(error).toBeInstanceOf(HebrewLayoutError);
+      expect(error).toMatchObject({ name: 'HebrewLayoutError', text: 'רָעָה 15:9' });
+    }
+    expect.assertions(3);
   });
 });
 

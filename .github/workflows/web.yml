@@ -78,6 +78,28 @@ jobs:
         env:
           LECTIO_CONFIG: apps/web/test/lectio.config.fixture.json
 
+      # Share-card PNGs (L-088) are cached by content hash in apps/web/.cache/og; both builds below share it. The
+      # key carries TEMPLATE_VERSION (packages/sharecards/src/cache.ts) and a hash of what the cards are made from;
+      # the entries themselves are keyed by cardCacheKey(), so a restored older cache is only reused card by card.
+      - name: OG cache key
+        id: og
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          template="$(grep -oP 'export const TEMPLATE_VERSION = \K\d+' packages/sharecards/src/cache.ts || true)"
+          if [ -z "$template" ]; then
+            echo "::error file=packages/sharecards/src/cache.ts::TEMPLATE_VERSION not found"
+            exit 1
+          fi
+          echo "template=$template" >> "$GITHUB_OUTPUT"
+
+      - name: Cache OG images
+        if: steps.changes.outputs.relevant == 'true'
+        uses: actions/cache@v5
+        with:
+          path: apps/web/.cache/og
+          key: og-${{ runner.os }}-t${{ steps.og.outputs.template }}-${{ hashFiles('packages/sharecards/**', 'calendar/**', 'passages/**', 'package-lock.json') }}
+          restore-keys: og-${{ runner.os }}-t${{ steps.og.outputs.template }}-
+
       - name: Build the site from the repository content
         if: steps.changes.outputs.relevant == 'true'
         run: npm run build -w apps/web
