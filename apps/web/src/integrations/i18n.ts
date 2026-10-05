@@ -1,6 +1,6 @@
 /**
  * i18n routing integration, generated from `config.site.locales` and `config.site.defaultLocale`. A no-op stub
- * registered by L-050; L-092 (Kiswahili web UI and /sw/ routes) implements it here, for example by calling
+ * registered by L-050; L-110 (Kiswahili web UI and /sw/ routes) implements it here, for example by calling
  * `updateConfig({ i18n: { locales, defaultLocale, routing: { prefixDefaultLocale: false } } })` in
  * `astro:config:setup`. Do not edit `astro.config.mjs` to add it.
  */
@@ -13,7 +13,7 @@ export function i18nRouting(_options: LectioIntegrationOptions): AstroIntegratio
     name: 'lectio:i18n',
     hooks: {
       'astro:config:setup': () => {
-        // L-092: route every locale in config.site.locales (the default locale stays unprefixed).
+        // L-110: route every locale in config.site.locales (the default locale stays unprefixed).
       },
     },
   };

@@ -12,24 +12,23 @@ import { serviceWorker } from './sw.ts';
 
 const options = { config: DEFAULT_CONFIG, contentRoot: '/content' };
 
-const integrations: [string, (o: typeof options) => AstroIntegration, string[]][] = [
-  ['sitemap', sitemap, ['astro:build:done']],
-  ['pagefind', pagefind, ['astro:build:done']],
-  ['sw', serviceWorker, ['astro:build:done']],
-  ['og', ogImages, ['astro:build:start', 'astro:build:done']],
-  ['i18n', i18nRouting, ['astro:config:setup']],
+const factories: [string, (o: typeof options) => AstroIntegration][] = [
+  ['sitemap', sitemap],
+  ['pagefind', pagefind],
+  ['sw', serviceWorker],
+  ['og', ogImages],
+  ['i18n', i18nRouting],
 ];
 
-describe('integration stubs', () => {
-  it.each(integrations)('%s is a named no-op integration with its hooks registered', async (name, create, hooks) => {
+// Only the stable contract: each module's owner (L-058, L-060, L-061, L-088, L-110) fills in its own
+// integration without editing this file.
+describe('integration modules', () => {
+  it.each(factories)('%s returns a named Astro integration with a hooks object', (_name, create) => {
     const integration = create(options);
-    expect(integration.name).toBe(`lectio:${name}`);
-    expect(Object.keys(integration.hooks).sort()).toEqual([...hooks].sort());
-    for (const hook of hooks) {
-      const run = integration.hooks[hook as keyof AstroIntegration['hooks']] as (() => unknown) | undefined;
-      expect(typeof run).toBe('function');
-      await expect(Promise.resolve(run?.())).resolves.toBeUndefined();
-    }
+    expect(typeof integration.name).toBe('string');
+    expect(integration.name.length).toBeGreaterThan(0);
+    expect(typeof integration.hooks).toBe('object');
+    expect(integration.hooks).not.toBeNull();
   });
 });
 

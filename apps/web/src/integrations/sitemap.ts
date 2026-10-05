@@ -1,5 +1,5 @@
 /**
- * Sitemap integration. A no-op stub registered by L-050; L-055 (SEO base) implements it here, for example by
+ * Sitemap integration. A no-op stub registered by L-050; L-058 (SEO base) implements it here, for example by
  * returning `@astrojs/sitemap` configured from `options.config.site`. Do not edit `astro.config.mjs` to add it.
  */
 import type { AstroIntegration } from 'astro';
@@ -11,7 +11,7 @@ export function sitemap(_options: LectioIntegrationOptions): AstroIntegration {
     name: 'lectio:sitemap',
     hooks: {
       'astro:build:done': () => {
-        // L-055: write sitemap-index.xml for every page in the build.
+        // L-058: write sitemap-index.xml for every page in the build.
       },
     },
   };
