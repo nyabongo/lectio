@@ -60,32 +60,77 @@ describe('checkVitestCoverage', () => {
     expect(checkVitestCoverage(config({ thresholds: undefined }))).toEqual(['test.coverage.thresholds is missing']);
   });
 
-  it('fails when include stops covering packages/*/src or apps/web/src/sw', () => {
-    const narrowed = ['packages/refs/src/**/*.ts'];
-    const problems = checkVitestCoverage(
-      config({ include: narrowed, thresholds: { ...floor, [narrowed[0] as string]: floor } }),
-    );
-    expect(problems).toEqual([
-      'test.coverage.include no longer covers packages/any-package/src/index.ts',
-      'test.coverage.include no longer covers packages/any-package/src/nested/module.ts',
-      'test.coverage.include no longer covers apps/web/src/sw/index.ts',
+  const withGlobThresholds = (globs: string[]) => ({
+    ...floor,
+    ...Object.fromEntries(globs.map((glob) => [glob, floor])),
+  });
+
+  it('fails when a threshold is NaN, Infinity or not a number', () => {
+    const thresholds = { ...withGlobThresholds(include), lines: Number.NaN, branches: '96', functions: Infinity };
+    expect(checkVitestCoverage(config({ thresholds }))).toEqual([
+      'test.coverage.thresholds.lines is NaN; it must be a finite number ≥ 96',
+      'test.coverage.thresholds.branches is "96"; it must be a finite number ≥ 96',
+      'test.coverage.thresholds.functions is Infinity; it must be a finite number ≥ 96',
     ]);
   });
 
-  it('fails when exclude removes covered sources', () => {
-    const problems = checkVitestCoverage(config({ exclude: ['apps/web/src/sw/**'] }));
-    expect(problems).toEqual(['test.coverage.exclude removes apps/web/src/sw/index.ts from coverage']);
+  it('fails when the packages include is narrowed to *.ts', () => {
+    const narrowed = ['packages/*/src/**/*.ts', include[1] as string, include[2] as string];
+    expect(checkVitestCoverage(config({ include: narrowed, thresholds: withGlobThresholds(narrowed) }))).toEqual([
+      "test.coverage.include must contain 'packages/*/src/**/*.{ts,tsx,mts}' verbatim",
+    ]);
   });
 
-  it('treats a missing exclude list as excluding nothing', () => {
-    expect(checkVitestCoverage(config({ exclude: undefined }))).toEqual([]);
+  it('fails when the apps glob is dropped', () => {
+    const dropped = [include[0] as string, include[2] as string];
+    expect(checkVitestCoverage(config({ include: dropped, thresholds: withGlobThresholds(dropped) }))).toEqual([
+      "test.coverage.include must contain 'apps/*/src/lib/**/*.{ts,tsx,mts}' verbatim",
+    ]);
+  });
+
+  it('allows extra include globs (with thresholds) but not negated ones', () => {
+    const wider = [...include, 'tools/**/*.ts'];
+    expect(checkVitestCoverage(config({ include: wider, thresholds: withGlobThresholds(wider) }))).toEqual([]);
+    const negated = [...include, '!packages/refs/**'];
+    expect(checkVitestCoverage(config({ include: negated, thresholds: withGlobThresholds(negated) }))).toEqual([
+      "test.coverage.include must not contain negated glob '!packages/refs/**'",
+    ]);
+  });
+
+  it('fails when exclude gains anything beyond the four allowed globs', () => {
+    const exclude = [
+      '**/*.d.ts',
+      '**/*.test.*',
+      '**/fixtures/**',
+      '**/__generated__/**',
+      '**/cli/**',
+      'packages/refs/**',
+    ];
+    expect(checkVitestCoverage(config({ exclude }))).toEqual([
+      "test.coverage.exclude must not contain '**/cli/**'",
+      "test.coverage.exclude must not contain 'packages/refs/**'",
+    ]);
+  });
+
+  it('accepts a subset of the allowed excludes', () => {
+    expect(checkVitestCoverage(config({ exclude: ['**/*.test.*'] }))).toEqual([]);
+  });
+
+  it('fails when exclude is missing (vitest defaults would apply) or malformed', () => {
+    const expected = [
+      'test.coverage.exclude must be a list drawn from ["**/*.d.ts","**/*.test.*","**/fixtures/**","**/__generated__/**"]',
+    ];
+    expect(checkVitestCoverage(config({ exclude: undefined }))).toEqual(expected);
+    expect(checkVitestCoverage(config({ exclude: [1] }))).toEqual(expected);
   });
 
   it('fails when include is missing, empty or malformed', () => {
-    const expected = ['test.coverage.include must list the source globs to measure'];
-    expect(checkVitestCoverage(config({ include: undefined }))).toEqual(expected);
-    expect(checkVitestCoverage(config({ include: [] }))).toEqual(expected);
-    expect(checkVitestCoverage(config({ include: [1, 2] }))).toEqual(expected);
+    const missingAll = include.map((glob) => `test.coverage.include must contain '${glob}' verbatim`);
+    expect(checkVitestCoverage(config({ include: undefined }))).toEqual([
+      'test.coverage.include must be a list of globs',
+    ]);
+    expect(checkVitestCoverage(config({ include: [] }))).toEqual(missingAll);
+    expect(checkVitestCoverage(config({ include: [1, 2] }))).toEqual(['test.coverage.include must be a list of globs']);
   });
 
   it('fails without a coverage block', () => {

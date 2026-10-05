@@ -1,25 +1,27 @@
 /**
  * The 96% coverage floor, checked against the configuration itself rather than
  * a coverage run: `npm run coverage:floor` (scripts/check-coverage-floor.mjs)
- * fails if anyone lowers a vitest threshold, narrows `coverage.include` so that
- * package sources or the service worker escape measurement, or lowers the Dart
- * threshold in `apps/mobile/tool/check_coverage.dart`.
+ * fails if anyone lowers a vitest threshold (or sets it to a non-number), drops
+ * or rewrites one of the canonical `coverage.include` globs, adds anything to
+ * `coverage.exclude` beyond the four allowed globs, or lowers the Dart threshold
+ * in `apps/mobile/tool/check_coverage.dart`.
  *
  * Guarded by CODEOWNERS together with vitest.config.ts.
  */
-import picomatch from 'picomatch';
-
 export const COVERAGE_FLOOR = 96;
 
 export const COVERAGE_METRICS = ['lines', 'branches', 'functions', 'statements'] as const;
 export type CoverageMetric = (typeof COVERAGE_METRICS)[number];
 
-/** Representative files that must always be inside `coverage.include` (and not excluded). */
-export const MUST_BE_COVERED = [
-  'packages/any-package/src/index.ts',
-  'packages/any-package/src/nested/module.ts',
-  'apps/web/src/sw/index.ts',
+/** `coverage.include` must contain each of these globs verbatim (extra globs only widen coverage). */
+export const CANONICAL_INCLUDE = [
+  'packages/*/src/**/*.{ts,tsx,mts}',
+  'apps/*/src/lib/**/*.{ts,tsx,mts}',
+  'apps/web/src/sw/**',
 ] as const;
+
+/** `coverage.exclude` may contain only these globs (L-001: "exclude only …"). */
+export const ALLOWED_EXCLUDE = ['**/*.d.ts', '**/*.test.*', '**/fixtures/**', '**/__generated__/**'] as const;
 
 /** Where the Flutter app (L-100) keeps its coverage gate. */
 export const DART_COVERAGE_CHECK = 'apps/mobile/tool/check_coverage.dart';
@@ -52,8 +54,12 @@ function checkMetrics(where: string, thresholds: Record<string, unknown>): strin
   const problems: string[] = [];
   for (const metric of COVERAGE_METRICS) {
     const value = thresholds[metric];
-    if (typeof value !== 'number') {
+    if (value === undefined) {
       problems.push(`${where}.${metric} is missing; it must be a number ≥ ${COVERAGE_FLOOR}`);
+    } else if (typeof value !== 'number' || !Number.isFinite(value)) {
+      problems.push(
+        `${where}.${metric} is ${typeof value === 'number' ? String(value) : JSON.stringify(value)}; it must be a finite number ≥ ${COVERAGE_FLOOR}`,
+      );
     } else if (value < COVERAGE_FLOOR) {
       problems.push(`${where}.${metric} is ${value}; it must be ≥ ${COVERAGE_FLOOR}`);
     }
@@ -79,22 +85,27 @@ export function checkVitestCoverage(vitestConfig: unknown): string[] {
   }
 
   const include = stringList(coverage['include']);
-  const exclude = stringList(coverage['exclude']) ?? [];
-  if (!include || include.length === 0) {
-    problems.push('test.coverage.include must list the source globs to measure');
+  if (include === undefined) {
+    problems.push('test.coverage.include must be a list of globs');
   } else {
-    const matchesAny = (file: string, globs: string[]): boolean =>
-      globs.some((glob) => picomatch.isMatch(file, glob, { dot: true }));
-    for (const file of MUST_BE_COVERED) {
-      if (!matchesAny(file, include)) problems.push(`test.coverage.include no longer covers ${file}`);
-      else if (matchesAny(file, exclude)) problems.push(`test.coverage.exclude removes ${file} from coverage`);
+    for (const glob of CANONICAL_INCLUDE) {
+      if (!include.includes(glob)) problems.push(`test.coverage.include must contain '${glob}' verbatim`);
     }
-    if (isRecord(thresholds)) {
-      for (const glob of include) {
-        if (!isRecord(thresholds[glob])) {
-          problems.push(`test.coverage.thresholds has no per-glob entry for '${glob}'`);
-        }
+    for (const glob of include) {
+      if (glob.startsWith('!')) problems.push(`test.coverage.include must not contain negated glob '${glob}'`);
+      if (isRecord(thresholds) && !isRecord(thresholds[glob])) {
+        problems.push(`test.coverage.thresholds has no per-glob entry for '${glob}'`);
       }
+    }
+  }
+
+  const exclude = stringList(coverage['exclude']);
+  const allowed: readonly string[] = ALLOWED_EXCLUDE;
+  if (exclude === undefined) {
+    problems.push(`test.coverage.exclude must be a list drawn from ${JSON.stringify(ALLOWED_EXCLUDE)}`);
+  } else {
+    for (const glob of exclude) {
+      if (!allowed.includes(glob)) problems.push(`test.coverage.exclude must not contain '${glob}'`);
     }
   }
   return problems;
