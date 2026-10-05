@@ -1,0 +1,41 @@
+{
+  "title": "Mipangilio",
+  "description": "Ukubwa wa maandishi, mandhari, kasi ya kucheza sauti na lugha ya Lectio. Mapendeleo hubaki kwenye kifaa hiki.",
+  "intro": "Hakuna akaunti. Mapendeleo yako huhifadhiwa kwenye kivinjari hiki na hayatoki kwenye kifaa hiki.",
+  "saved": "Imehifadhiwa kwenye kifaa hiki.",
+  "notSaved": "Kivinjari hiki hakiruhusu Lectio kuhifadhi mipangilio, kwa hiyo itarudi ilivyokuwa utakapoondoka.",
+  "textSize": {
+    "legend": "Ukubwa wa maandishi",
+    "small": "Ndogo",
+    "default": "Kawaida",
+    "large": "Kubwa",
+    "larger": "Kubwa zaidi",
+    "preview": "Madokezo kuhusu historia na lugha asilia yatasomeka kwa ukubwa huu."
+  },
+  "theme": {
+    "legend": "Mandhari",
+    "system": "Mfumo",
+    "light": "Mwanga",
+    "dark": "Giza",
+    "hint": "Mfumo hufuata mpangilio wa mwanga au giza wa kifaa chako."
+  },
+  "speed": {
+    "legend": "Kasi ya kawaida ya kucheza",
+    "option": "{speed}×",
+    "hint": "Mahali foleni ya Sikiliza inapoanzia. Bado unaweza kuibadilisha unaposikiliza."
+  },
+  "language": {
+    "legend": "Lugha",
+    "en": "English",
+    "sw": "Kiswahili",
+    "comingSoon": "inakuja hivi karibuni"
+  },
+  "offline": {
+    "legend": "Data ya nje ya mtandao",
+    "hint": "Huondoa siku na sauti zilizohifadhiwa kwa ajili ya kusoma bila mtandao. Mipangilio yako inabaki.",
+    "clear": "Futa data ya nje ya mtandao",
+    "cleared": "Data ya nje ya mtandao imefutwa.",
+    "unsupported": "Kivinjari hiki hakihifadhi data ya nje ya mtandao ya Lectio.",
+    "failed": "Data ya nje ya mtandao haikuweza kufutwa. Jaribu tena, au futa data ya tovuti kwenye kivinjari chako."
+  }
+}

@@ -8,6 +8,7 @@ import {
   intlLocale,
   localePath,
   parseCatalogPath,
+  shortWeekday,
   translate,
 } from './i18n.ts';
 
@@ -204,5 +205,22 @@ describe('localePath', () => {
     expect(localePath('sw', '', 'en')).toBe('/sw/');
     expect(localePath('sw', '/calendar/2026-09-20/', 'en')).toBe('/sw/calendar/2026-09-20/');
     expect(localePath('en', 'calendar/', 'sw')).toBe('/en/calendar/');
+  });
+});
+
+describe('shortWeekday', () => {
+  it('abbreviates Kiswahili weekdays the customary way and leaves other locales to Intl', () => {
+    const week = ['2026-09-20', '2026-09-21', '2026-09-22', '2026-09-23', '2026-09-24', '2026-09-25', '2026-09-26'];
+    expect(week.map((date) => shortWeekday('sw', date, 'Africa/Nairobi'))).toEqual([
+      'Jpi',
+      'Jtt',
+      'Jnn',
+      'Jtn',
+      'Alh',
+      'Iju',
+      'Jmo',
+    ]);
+    expect(shortWeekday('en', '2026-09-20', 'Africa/Nairobi')).toBe('Sun');
+    expect(() => shortWeekday('sw', '2026-02-30', 'Africa/Nairobi')).toThrow(RangeError);
   });
 });

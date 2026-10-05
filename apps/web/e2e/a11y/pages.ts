@@ -35,6 +35,18 @@ export const pageTypes: readonly PageType[] = [
   { name: 'settings', path: 'settings/', ready: '[data-settings-form][data-ready]' },
   { name: 'about', path: 'about/' },
   { name: 'not-found', path: 'no-such-page/', tag: EXPECTS_404 },
+  // Kiswahili mirrors (L-110): the same page types under /sw/.
+  { name: 'sw-today', path: 'sw/' },
+  { name: 'sw-day', path: `sw/${BUILD_DATE}/` },
+  { name: 'sw-reading-original', path: `sw/${BUILD_DATE}/gospel/`, tab: 'Asilia' },
+  { name: 'sw-insight', path: `sw/${BUILD_DATE}/gospel/notes/v15-evil-eye/` },
+  { name: 'sw-calendar', path: 'sw/calendar/' },
+  { name: 'sw-calendar-month', path: 'sw/calendar/2026/09/' },
+  { name: 'sw-passages', path: 'sw/passages/' },
+  { name: 'sw-passage', path: 'sw/passages/MT.20.1-16/' },
+  { name: 'sw-search', path: 'sw/search/', ready: '.pagefind-ui__search-input' },
+  { name: 'sw-settings', path: 'sw/settings/', ready: '[data-settings-form][data-ready]' },
+  { name: 'sw-about', path: 'sw/about/' },
 ];
 
 /** Opens a page type and waits until it has finished rendering: heading, tab, browser-rendered UI and web fonts. */

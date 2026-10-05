@@ -21,6 +21,8 @@ import { addDays } from '@lectio/shared';
 import type { IsoDate } from '@lectio/shared';
 
 import { t } from '../i18n/index.ts';
+import { celebrationName } from './calendar-names.ts';
+import type { LocalisedName } from './calendar-names.ts';
 import { ACCENTS, SCHEMES, dayColour } from './theme.ts';
 import type { Scheme } from './theme.ts';
 
@@ -136,6 +138,8 @@ export interface CalendarCell {
   readonly colour: LiturgicalColour | null;
   /** The principal celebration's name, or `null`. */
   readonly celebration: string | null;
+  /** The language of `celebration` when it differs from the page locale (an untranslated English name), for `lang`. */
+  readonly celebrationLang?: string | undefined;
   /** `true` when the principal celebration's rank is in `LISTED_RANKS` (the grid shows its name on wide screens). */
   readonly listed: boolean;
   /** `true` on the build date. */
@@ -147,6 +151,8 @@ export interface MonthCelebration {
   readonly date: IsoDate;
   readonly path: string;
   readonly name: string;
+  /** The language of `name` when it differs from the page locale (an untranslated English name), for `lang`. */
+  readonly nameLang?: string | undefined;
   readonly rank: string;
   readonly colour: LiturgicalColour;
 }
@@ -172,16 +178,38 @@ export interface MonthViewOptions {
   readonly today?: IsoDate;
   /** First column: `0` Sunday … `6` Saturday (default Monday). */
   readonly weekStart?: number;
+  /** The page locale, for celebration names (`celebrationName`); the calendar's own names without it. */
+  readonly locale?: string;
 }
 
-function cellFor(date: IsoDate, day: ResolvedDay | undefined, today: IsoDate | undefined): CalendarCell {
+/** A day's principal celebration name in `locale` as view fields (`celebration`, `celebrationLang`). */
+function principalName(
+  principal: Celebration | undefined,
+  locale: string | undefined,
+): { celebration: string | null; celebrationLang?: string | undefined } {
+  if (principal === undefined) return { celebration: null };
+  const { name, lang } = celebrationName(principal, locale);
+  return lang === undefined ? { celebration: name } : { celebration: name, celebrationLang: lang };
+}
+
+/** A localised name as view fields (`name`, `nameLang`). */
+function nameFields({ name, lang }: LocalisedName): { name: string; nameLang?: string | undefined } {
+  return lang === undefined ? { name } : { name, nameLang: lang };
+}
+
+function cellFor(
+  date: IsoDate,
+  day: ResolvedDay | undefined,
+  today: IsoDate | undefined,
+  locale: string | undefined,
+): CalendarCell {
   const principal: Celebration | undefined = day?.day.celebrations[0];
   return {
     date,
     day: Number(date.slice(8, 10)),
     path: day === undefined ? null : dayPath(date),
     colour: day === undefined ? null : dayColour(day.day),
-    celebration: principal?.name ?? null,
+    ...principalName(principal, locale),
     listed: principal !== undefined && LISTED_RANKS.has(principal.rank),
     today: date === today,
   };
@@ -204,7 +232,7 @@ export function monthView(repo: ContentRepo, id: MonthId, options: MonthViewOpti
   const cells: (CalendarCell | null)[] = Array.from({ length: lead }, () => null);
   for (let day = 1; day <= length; day += 1) {
     const date = isoDate(year, month, day);
-    cells.push(cellFor(date, days.get(date), options.today));
+    cells.push(cellFor(date, days.get(date), options.today, options.locale));
   }
   while (cells.length % 7 !== 0) cells.push(null);
   const weeks: (CalendarCell | null)[][] = [];
@@ -216,7 +244,7 @@ export function monthView(repo: ContentRepo, id: MonthId, options: MonthViewOpti
       .map((celebration: Celebration) => ({
         date: day.date,
         path: dayPath(day.date),
-        name: celebration.name,
+        ...nameFields(celebrationName(celebration, options.locale)),
         rank: celebration.rank,
         colour: celebration.colour,
       })),
@@ -300,6 +328,8 @@ export interface LibraryPassage {
   readonly ref: string;
   readonly path: string;
   readonly contextTitle: string;
+  /** The language the notes are written in (the passage's `locale`). */
+  readonly lang: string;
   readonly noteCount: number;
   readonly dateCount: number;
 }
@@ -350,6 +380,7 @@ export function passageLibrary(repo: ContentRepo): LibraryView {
         ref: displayRef(passage),
         path: passagePath(passage.key),
         contextTitle: passage.context.title,
+        lang: passage.locale,
         noteCount: noteCount(passage),
         dateCount: repo.datesForPassage(passage.key).length,
       },
@@ -397,6 +428,8 @@ export interface PassageAppearance {
   readonly path: string;
   readonly dayPath: string;
   readonly celebration: string | null;
+  /** The language of `celebration` when it differs from the page locale (an untranslated English name), for `lang`. */
+  readonly celebrationLang?: string | undefined;
   readonly colour: LiturgicalColour;
   readonly today: boolean;
 }
@@ -405,6 +438,8 @@ export interface PassageAppearance {
 export interface PassageView {
   readonly key: string;
   readonly ref: string;
+  /** The language the notes are written in (the passage's `locale`). */
+  readonly lang: string;
   readonly summary: string;
   readonly contextTitle: string;
   readonly notes: readonly NoteTitle[];
@@ -425,7 +460,7 @@ function slotOf(day: ResolvedDay, key: string): string | undefined {
 }
 
 /** The view model of one passage page, or `null` when `key` has no approved notes. */
-export function passageView(repo: ContentRepo, key: string, today?: IsoDate): PassageView | null {
+export function passageView(repo: ContentRepo, key: string, today?: IsoDate, locale?: string): PassageView | null {
   const passage = repo.passage(key);
   if (!isApproved(passage)) return null;
   const appearances = repo.datesForPassage(key).flatMap((date): PassageAppearance[] => {
@@ -437,7 +472,7 @@ export function passageView(repo: ContentRepo, key: string, today?: IsoDate): Pa
         date,
         path: readingPath(date, slot),
         dayPath: dayPath(date),
-        celebration: day.day.celebrations[0]?.name ?? null,
+        ...principalName(day.day.celebrations[0], locale),
         colour: dayColour(day.day),
         today: date === today,
       },
@@ -446,6 +481,7 @@ export function passageView(repo: ContentRepo, key: string, today?: IsoDate): Pa
   return {
     key,
     ref: displayRef(passage),
+    lang: passage.locale,
     summary: passage.summary,
     contextTitle: passage.context.title,
     notes: passage.translationNotes.map(({ id, verse, anchor, original }: TranslationNote) => ({

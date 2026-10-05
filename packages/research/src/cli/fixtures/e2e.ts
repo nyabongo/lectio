@@ -115,8 +115,15 @@ export interface E2eWorld {
   readonly cleanUp: () => void;
 }
 
-/** A fresh temporary content repository (a git checkout on `main`) and the fakes around it. */
-export function e2eWorld(options: { readonly repair?: FakeLlmScriptEntry } = {}): E2eWorld {
+/** The temporary content repository (a git checkout on `main`) a world reads. */
+export interface E2eCheckout {
+  readonly root: string;
+  readonly git: (...args: string[]) => string;
+  readonly cleanUp: () => void;
+}
+
+/** A fresh temporary content repository: one calendar day, an empty `passages/` and the corpus link. */
+export function e2eCheckout(): E2eCheckout {
   const root = mkdtempSync(join(tmpdir(), 'lectio-research-e2e-'));
   const git = (...args: string[]): string => execFileSync('git', args, { cwd: root, encoding: 'utf8' });
   mkdirSync(join(root, 'calendar'));
@@ -130,7 +137,19 @@ export function e2eWorld(options: { readonly repair?: FakeLlmScriptEntry } = {})
   git('config', 'commit.gpgsign', 'false');
   git('add', 'calendar', 'passages');
   git('commit', '--quiet', '-m', 'calendar');
+  return { root, git, cleanUp: () => rmSync(root, { recursive: true, force: true }) };
+}
 
+/**
+ * A fresh world: new fakes around a content repository. Without `checkout` it makes its own and
+ * `cleanUp` removes it. With one (shared by a test file, which must not change it) the world only
+ * reads it, and `cleanUp` leaves it to its owner.
+ */
+export function e2eWorld(
+  options: { readonly repair?: FakeLlmScriptEntry; readonly checkout?: E2eCheckout } = {},
+): E2eWorld {
+  const checkout = options.checkout ?? e2eCheckout();
+  const { root, git } = checkout;
   const clock = new FakeClock({ start: '2026-10-05T07:50:00.000Z' });
   const github = new FakeGitHubClient({ clock, actor: 'nyabongo' });
   const calls: LlmRequest[] = [];
@@ -167,5 +186,6 @@ export function e2eWorld(options: { readonly repair?: FakeLlmScriptEntry } = {})
     },
     format: (json) => Promise.resolve(json),
   };
-  return { root, github, clock, calls, context, git, cleanUp: () => rmSync(root, { recursive: true, force: true }) };
+  const cleanUp = options.checkout === undefined ? checkout.cleanUp : () => undefined;
+  return { root, github, clock, calls, context, git, cleanUp };
 }

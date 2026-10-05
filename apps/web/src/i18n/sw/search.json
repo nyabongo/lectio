@@ -1,0 +1,22 @@
+{
+  "title": "Tafuta",
+  "description": "Tafuta madokezo ya Lectio kuhusu historia na maneno asilia ya masomo ya Misa ya kila siku, kwa kitabu na kipindi.",
+  "intro": "Tafuta madokezo ya kila somo lenye madokezo. Punguza matokeo kwa kitabu au kipindi.",
+  "loading": "Utafutaji unapakiwa…",
+  "unavailable": "Utafutaji haupatikani kwa sasa. Jaribu tena baadaye, au vinjari kalenda.",
+  "noscript": "Utafutaji unahitaji JavaScript. Bado unaweza kuvinjari kila siku kupitia kalenda.",
+  "calendarLink": "Fungua kalenda",
+  "ui": {
+    "placeholder": "Tafuta madokezo",
+    "clearSearch": "Futa",
+    "loadMore": "Pakia matokeo zaidi",
+    "searchLabel": "Tafuta madokezo",
+    "filtersLabel": "Vichujio",
+    "zeroResults": "Hakuna madokezo yanayolingana na [SEARCH_TERM]",
+    "manyResults": "Masomo [COUNT] yanalingana na [SEARCH_TERM]",
+    "oneResult": "Somo [COUNT] linalingana na [SEARCH_TERM]",
+    "altSearch": "Hakuna madokezo yanayolingana na [SEARCH_TERM]. Yanaonyeshwa matokeo ya [DIFFERENT_TERM] badala yake",
+    "searchSuggestion": "Hakuna madokezo yanayolingana na [SEARCH_TERM]. Jaribu mojawapo ya utafutaji huu:",
+    "searching": "Inatafuta [SEARCH_TERM]…"
+  }
+}

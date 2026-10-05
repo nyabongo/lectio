@@ -1,5 +1,7 @@
-# The coverage floor and CI are owner-reviewed. Changes to these paths need
-# @nyabongo's approval once branch protection is applied (L-032).
+# The coverage floor and CI are owner-reviewed: GitHub requests @nyabongo's review on these paths.
+# Branch protection (scripts/repo/setup.sh, L-032) does not require code-owner review, because it
+# would also gate /passages/ below and block auto-merge. The merge rule never merges a .github/**
+# PR; the owner merges those by hand.
 /vitest.config.ts                        @nyabongo
 /vitest.setup.ts                         @nyabongo
 /.github/                                @nyabongo
@@ -10,3 +12,8 @@
 /packages/shared/src/required-checks.ts  @nyabongo
 /.github/coverage-ignore-allowlist.json  @nyabongo
 /eslint.config.js                        @nyabongo
+
+# Content: informational only. Branch protection does not require code-owner review (setup.sh,
+# L-032); content approval goes through the merge rule (label or /approve by a configured reviewer,
+# config/lectio.config.json reviewer.githubHandles). Keep these handles in step with that list.
+/passages/                               @nyabongo

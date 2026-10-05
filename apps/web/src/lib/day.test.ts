@@ -165,6 +165,18 @@ describe('dayPageView with the fixture content root', () => {
     expect(view.description).toContain('Isaiah 55:6–9; Psalm 145:2–3, 8–9, 17–18;');
   });
 
+  it('builds the meta description from the date, celebration, season and readings, in the page language', () => {
+    const view = dayPageView(env, context, '2026-09-20');
+    expect(view?.description).toMatch(
+      /^Sunday 20 September 2026: Twenty-fifth Sunday in Ordinary Time\. Ordinary Time, Week 25\. Readings: Isaiah 55:6–9; /,
+    );
+    const sw = dayPageView({ ...env, lang: 'sw' }, context, '2026-09-20');
+    expect(sw?.description).toMatch(
+      /^Jumapili 20 Septemba 2026: Twenty-fifth Sunday in Ordinary Time\. Kipindi cha Kawaida, Juma la 25\. Masomo: Isaiah 55:6–9; /,
+    );
+    expect(sw?.season).toBe('Kipindi cha Kawaida · Juma la 25');
+  });
+
   it('shows a day with no notes with every reference and link-out, and no Reading page links', () => {
     const view = dayPageView(env, context, '2026-09-19');
     const readings = view?.masses[0]?.readings ?? [];
@@ -290,7 +302,9 @@ describe('dayView edge cases', () => {
     const view = dayView(env, day({ lectionaryMissing: true }, []), { config: DEFAULT_CONFIG });
     expect(view.masses).toEqual([]);
     expect(view.missing).toBe('The readings for this day are not listed yet.');
-    expect(view.description).toBe('Easter Vigil, Saturday 3 April 2027. The readings for this day are not listed yet.');
+    expect(view.description).toBe(
+      'Saturday 3 April 2027: Easter Vigil. Paschal Triduum. The readings for this day are not listed yet.',
+    );
   });
 
   it('falls back to the date as the title when a day lists no celebration', () => {
@@ -390,6 +404,40 @@ describe('the Today page', () => {
     });
   });
 
+  it("adds every other locale's Today and day pages for the saved-language switch", () => {
+    const data = todaySwitch(env, context.repo, '2026-09-20', {
+      key: 'lectio.settings',
+      locales: ['en', 'sw'],
+      defaultLocale: 'en',
+      paths: (locale, path) => `/base/${locale === 'en' ? '' : `${locale}/`}${path}`,
+    });
+    expect(data.language).toEqual({
+      key: 'lectio.settings',
+      others: {
+        sw: {
+          home: '/base/sw/',
+          pages: {
+            '2026-09-19': '/base/sw/2026-09-19/',
+            '2026-09-20': '/base/sw/2026-09-20/',
+            '2026-09-21': '/base/sw/2026-09-21/',
+          },
+        },
+      },
+    });
+  });
+
+  it("never switches language from another locale's Today page", () => {
+    const data = todaySwitch({ ...env, lang: 'sw' }, context.repo, '2026-09-20', {
+      key: 'lectio.settings',
+      locales: ['en', 'sw'],
+      defaultLocale: 'en',
+      paths: (locale, path) => `/base/${locale === 'en' ? '' : `${locale}/`}${path}`,
+    });
+    // A stored default language (settings save every field) must not send /sw/ readers back to English.
+    expect(data.language).toBeUndefined();
+    expect(Object.keys(data.pages)).toContain('2026-09-20');
+  });
+
   describe('the inline script', () => {
     const data: TodaySwitch = {
       buildDate: '2026-09-20',
@@ -404,11 +452,51 @@ describe('the Today page', () => {
           super(now.getTime());
         }
       }
-      new Function('Date', 'location', script)(FakeDate, {
-        replace: (href: string) => replaced.push(href),
-      });
+      new Function('Date', 'location', 'localStorage', script)(
+        FakeDate,
+        { replace: (href: string) => replaced.push(href) },
+        storage,
+      );
       return replaced;
     }
+
+    let storage: { getItem(key: string): string | null } | undefined;
+    const saved = (value: string | null) => {
+      storage = { getItem: (key) => (key === 'lectio.settings' ? value : null) };
+    };
+    const withLanguage: TodaySwitch = {
+      ...data,
+      language: {
+        key: 'lectio.settings',
+        others: {
+          sw: {
+            home: '/base/sw/',
+            pages: { '2026-09-20': '/base/sw/2026-09-20/', '2026-09-21': '/base/sw/2026-09-21/' },
+          },
+        },
+      },
+    };
+
+    it('sends a reader who saved another language to its day page for the device date, or its Today', () => {
+      saved(JSON.stringify({ language: 'sw' }));
+      expect(run(todaySwitchScript(withLanguage), new Date(2026, 8, 21, 7, 30))).toEqual(['/base/sw/2026-09-21/']);
+      expect(run(todaySwitchScript(withLanguage), new Date(2026, 8, 20, 7, 30))).toEqual(['/base/sw/']);
+      expect(run(todaySwitchScript(withLanguage), new Date(2026, 9, 5, 9, 0))).toEqual(['/base/sw/']);
+    });
+
+    it('keeps the date switch without a saved other language, or when storage fails', () => {
+      for (const value of [null, '{"language":"en"}', '{"language":"toString"}', '{"language":5}', '{bad']) {
+        saved(value);
+        expect(run(todaySwitchScript(withLanguage), new Date(2026, 8, 21, 7, 30))).toEqual(['/base/2026-09-21/']);
+      }
+      storage = {
+        getItem: () => {
+          throw new Error('SecurityError');
+        },
+      };
+      expect(run(todaySwitchScript(withLanguage), new Date(2026, 8, 21, 7, 30))).toEqual(['/base/2026-09-21/']);
+      storage = undefined;
+    });
 
     it('moves to the day page for the device date when it differs and the site has it', () => {
       expect(run(todaySwitchScript(data), new Date(2026, 8, 21, 7, 30))).toEqual(['/base/2026-09-21/']);

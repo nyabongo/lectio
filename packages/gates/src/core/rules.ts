@@ -69,6 +69,11 @@ export const RUNNER_RULES = {
     'Every finding must name a rule that its gate declares.',
     'Declare the rule in the gate with defineRule, or correct the rule id in the finding.',
   ),
+  reportMissing: defineRule(
+    'runner/report-missing',
+    'A gate job that ran hands its report to the merge rule; a missing report never counts as a pass.',
+    'Re-run the content gates; if the report is still missing, check that the job uploads it where the merge rule reads it.',
+  ),
   regularFiles: defineRule(
     'runner/regular-files',
     'Every file a PR adds or changes is a regular file: symbolic links and submodules are refused, and no gate reads them.',

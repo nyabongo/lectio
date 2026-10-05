@@ -12,12 +12,12 @@
  * Pagefind UI's own variables are mapped to the site tokens below.
  */
 import Seo from '../../components/seo/Seo.astro';
-import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import { localeOf, localePath, t } from '../../i18n/index.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { searchPageConfig } from '../../lib/search.ts';
 import { withBase } from '../../lib/site.ts';
 
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const base = import.meta.env.BASE_URL;
 const title = t(lang, 'search.title');
 const description = t(lang, 'search.description');
