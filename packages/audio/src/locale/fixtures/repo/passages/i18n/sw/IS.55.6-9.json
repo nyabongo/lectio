@@ -1,0 +1,33 @@
+{
+  "translationOf": "IS.55.6-9",
+  "locale": "sw",
+  "sourceSha256": "bacaf4daabe734e05c3876de0ad1840f16622816fb794893b9e0b6c33adace8d",
+  "summary": "Isaya wa Pili anawaita walio uhamishoni wamtafute Bwana, ambaye mawazo yake ni juu kuliko mawazo ya wanadamu.",
+  "context": {
+    "title": "Mtafuteni Bwana maadamu anapatikana",
+    "paragraphs": ["Mistari hii inafunga kitabu cha faraja kilichoandikiwa walio uhamishoni Babeli. [c1]"]
+  },
+  "translationNotes": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Isaya 40-55 kimeandikiwa Wayahudi walio uhamishoni Babeli."
+    }
+  ],
+  "provenance": {
+    "generator": "research-cli",
+    "runId": "translate-20261005T075000Z",
+    "models": ["claude-opus-5-5"],
+    "promptVersion": "translate-v1",
+    "createdAt": "2026-10-05T07:50:00Z",
+    "costUsd": 0.12
+  },
+  "review": {
+    "status": "approved",
+    "method": "human",
+    "reviewers": ["fr-reviewer"],
+    "approvedVia": "label",
+    "lastReviewedAt": "2026-10-06T09:00:00Z"
+  },
+  "schemaVersion": 1
+}
