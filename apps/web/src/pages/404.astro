@@ -1,0 +1,63 @@
+---
+/**
+ * The not-found page, built as `404.html` (GitHub Pages serves it for any missing path). It is kept out of search
+ * results and the sitemap; its links are absolute and base-aware, so they work from any depth.
+ */
+import Seo from '../components/seo/Seo.astro';
+import strings from '../i18n/en/seo.json' with { type: 'json' };
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/site.ts';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={strings.notFoundTitle} description={strings.notFoundDescription}>
+  <Seo slot="head" title={strings.notFoundTitle} description={strings.notFoundDescription} path="404.html" noindex />
+  <section class="not-found" aria-labelledby="not-found-heading">
+    <p class="eyebrow">{strings.notFoundEyebrow}</p>
+    <h1 id="not-found-heading">{strings.notFoundHeading}</h1>
+    <p>{strings.notFoundBody}</p>
+    <ul class="not-found__links">
+      <li><a class="button" href={withBase(base)}>{strings.notFoundHome}</a></li>
+      <li><a href={withBase(base, 'calendar/')}>{strings.notFoundCalendar}</a></li>
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: var(--measure);
+    padding-block: var(--space-l);
+  }
+
+  .not-found__links {
+    list-style: none;
+    margin: var(--space-m) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-m);
+  }
+
+  .not-found__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font-weight: var(--weight-strong);
+    color: var(--colour-link);
+  }
+
+  .not-found__links .button {
+    padding-inline: var(--space-s);
+    border-radius: var(--radius-m);
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+    text-decoration: none;
+    transition: filter var(--duration-quick) var(--ease-out);
+  }
+
+  .not-found__links .button:hover {
+    filter: brightness(1.08);
+  }
+</style>
