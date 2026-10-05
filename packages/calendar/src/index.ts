@@ -1,5 +1,21 @@
 /**
- * Placeholder created by L-001 so typecheck and coverage pass from day one.
- * L-014 replaces this file with the real package entry point.
+ * @lectio/calendar: the liturgical calendar. romcal computes the General Roman Calendar
+ * (ADR 0007); regional overrides (L-015) and readings (L-016) are layered on top, and the
+ * CLIs (L-017) write `calendar/<year>.json`.
  */
 export const packageName = '@lectio/calendar';
+
+export { MAX_YEAR, MIN_YEAR, generateDays, generateDetailedDays, romcalVersion } from './generate.ts';
+export type { GenerateOptions } from './generate.ts';
+export { ROMCAL_ID_ALIASES, toLectioId } from './ids.ts';
+export { NAME_CORRECTIONS, mapCalendar, mapDay, precedenceLevel, toCalendarDay } from './map.ts';
+export type {
+  CelebrationDetail,
+  CelebrationRank,
+  DetailedDay,
+  ProperCycle,
+  RomcalDayInput,
+  Season,
+  SundayCycle,
+  WeekdayCycle,
+} from './map.ts';
