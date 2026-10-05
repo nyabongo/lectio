@@ -83,7 +83,7 @@ describe('crosscheckBlock', () => {
     const crosscheck: CrosscheckFile = {
       block: 'test',
       entries: [
-        olm('psalm', 'Ps 145:2-3, 8-9, 17-18'),
+        olm('psalm', 'Ps 145:2-3, 8-9'),
         olm('second-reading', 'Phil 1:20-24', { alternatives: ['Phil 1:20-21'] }),
         olm('gospel', 'Mt 20:1-16'),
         olm('first-reading', 'Is 55:6-9'),
@@ -106,8 +106,8 @@ describe('crosscheckBlock', () => {
       {
         id: 'proper-of-time:ot-sunday-25 day psalm (A)',
         ours: 'Ps 145:2-3, 8-9, 17-18',
-        theirs: 'Ps 145:2-3, 8-9, 17-18',
-        reason: 'passage differs: ours PS.145.2-3_145.8-9_145.17-18, theirs PS.146.2-3_146.8-9_146.17-18',
+        theirs: 'Ps 145:2-3, 8-9',
+        reason: 'passage differs: ours PS.145.2-3_145.8-9_145.17-18, theirs PS.146.2-3_146.8-9',
       },
       {
         id: 'proper-of-time:ot-sunday-25 day second-reading (A)',
@@ -159,6 +159,34 @@ describe('crosscheckBlock', () => {
       'not independent: both cite litcal',
       'second-source ref "Nowhere 1:1" does not parse: Unknown book "Nowhere" (in "Nowhere 1:1")',
       'canonical "Mt 20:1-8a" has verse letters; keep them in "printed" only',
+    ]);
+  });
+
+  it('rejects a second entry for the same reading, so agreements never exceed readings compared', () => {
+    const crosscheck: CrosscheckFile = {
+      block: 'test',
+      entries: [
+        olm('psalm', 'Ps 144:2-3, 8-9, 17-18'),
+        olm('psalm', 'Ps 144:2-3, 8-9, 17-18'),
+        olm('psalm', 'Ps 1:1', { source: 'olm-1981 p2#133' }),
+      ],
+    };
+    const result = crosscheckBlock('test', files, crosscheck, REGISTRY);
+    expect(result.compared).toBe(1);
+    expect(result.agreements).toBe(1);
+    expect(result.disagreements).toEqual([
+      {
+        id: 'proper-of-time:ot-sunday-25 day psalm (A)',
+        ours: 'Ps 145:2-3, 8-9, 17-18',
+        theirs: 'Ps 144:2-3, 8-9, 17-18',
+        reason: 'duplicate cross-check entry for this reading; keep one',
+      },
+      {
+        id: 'proper-of-time:ot-sunday-25 day psalm (A)',
+        ours: 'Ps 145:2-3, 8-9, 17-18',
+        theirs: 'Ps 1:1',
+        reason: 'duplicate cross-check entry for this reading; keep one',
+      },
     ]);
   });
 });
