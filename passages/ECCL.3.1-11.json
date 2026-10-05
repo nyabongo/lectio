@@ -1,0 +1,593 @@
+{
+  "key": "ECCL.3.1-11",
+  "ref": "Eccl 3:1-11",
+  "locale": "en",
+  "summary": "Qoheleth’s poem of fourteen paired times, the question of what work gains, and a God who set ʿolam in human hearts.",
+  "context": {
+    "title": "A time for everything",
+    "paragraphs": [
+      "The speaker calls himself Qoheleth, a rare Hebrew title formed from a verb meaning to call, perhaps better rendered convener or debater than preacher. [c1] The book presents him as son of David and king in Jerusalem, yet never names Solomon. [c2] The Targum, as quoted by John Gill, already identifies him with Solomon. [c3]",
+      "Verses 2-8 set out fourteen pairs of contrasts, beginning with birth and death and ending with war and peace. [c4] Hebrew manuscripts and most printed texts lay these verses out in two parallel columns, one time standing under another. [c5] Verse 9 then repeats the book’s opening question from 1:3 about what gain a worker has. [c6]",
+      "Readers differ on what the poem teaches. [c7] E. H. Plumptre, in the Cambridge Bible, draws the lesson that wisdom means doing the right thing at the right time. [c8] The Pulpit Commentary objects that birth and death lie entirely beyond human choice, so the poem shows God’s providence ordering every detail of life. [c9]"
+    ]
+  },
+  "translationNotes": [
+    {
+      "id": "zeman",
+      "verse": "3:1",
+      "anchor": "appointed time",
+      "original": {
+        "text": "זְמָן",
+        "lang": "hbo",
+        "translit": "zĕmān",
+        "gloss": "set time"
+      },
+      "summary": "Verse 1 pairs two time-words: zeman, a rare late word for a fixed time, and ʿet, the everyday word.",
+      "body": "Zeman is a late Hebrew word, found elsewhere only in Nehemiah 2:6 and Esther 9:27 and 9:31. [c10] The Pulpit Commentary takes zeman as a fixed, definite portion of time and ʿet as the beginning of a period. [c11] Plumptre compares the pair to Greek chronos and kairos and suggests that the English words season and time ought perhaps to change places. [c12]"
+    },
+    {
+      "id": "yitron",
+      "verse": "3:9",
+      "anchor": "advantage",
+      "original": {
+        "text": "יִתְרוֹן",
+        "lang": "hbo",
+        "translit": "yitrôn",
+        "gloss": "advantage, profit"
+      },
+      "summary": "Yitron, “advantage” or “profit”, is Qoheleth’s word for lasting gain; the Bible uses it only in this book.",
+      "body": "Yitron means advantage or profit, and in the Bible it occurs only in Ecclesiastes. [c13] Here it repeats the question of 1:3, asked again after the long list of times. [c6] The Pulpit Commentary hears the implied answer as none, since no one controls the seasons on which work depends. [c14] Yet in 2:13 the same word grants wisdom a real advantage over folly. [c15]"
+    },
+    {
+      "id": "inyan",
+      "verse": "3:10",
+      "anchor": "task",
+      "original": {
+        "text": "הָעִנְיָן",
+        "lang": "hbo",
+        "translit": "hā-ʿinyān",
+        "gloss": "the occupation"
+      },
+      "summary": "ʿInyan, a late word found only in Ecclesiastes, names an occupation that costs effort.",
+      "body": "ʿInyan is a word common in later Hebrew, and in the Bible it is found only in Ecclesiastes. [c16] Keil and Delitzsch define it as an occupation which causes trouble and costs effort. [c17] Verse 10 repeats almost word for word the complaint of 1:13 about the task God has given to human beings, which Plumptre reads as the thinker falling back into his old groove. [c18]"
+    },
+    {
+      "id": "olam",
+      "verse": "3:11",
+      "anchor": "the timeless",
+      "original": {
+        "text": "הָעֹלָם",
+        "lang": "hbo",
+        "translit": "hā-ʿōlām",
+        "gloss": "the long duration"
+      },
+      "summary": "God set ha-ʿolam in human hearts: in biblical Hebrew “eternity”, though later Hebrew used the word for “world”.",
+      "body": "In biblical Hebrew ʿolam means long duration, reaching into the far past or future. [c19] The sense world belongs to later, post-biblical Hebrew, which explains older English renderings with world here. [c20] Barnes takes the verse to mean a God-given capability of conceiving of eternity. [c21] Ellicott reads ha-ʿolam as a deliberate contrast with ʿet, the word for time that comes just before. [c22]"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Qoheleth is a feminine noun formed from a verb meaning to call, perhaps better rendered Convener or Debater than Preacher.",
+      "sourceIds": ["eccl-1-1", "pulpit-eccl-1-1", "barnes-eccl-1-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c2",
+      "text": "The book presents the speaker as son of David and king in Jerusalem, but the name of Solomon is not mentioned.",
+      "sourceIds": ["eccl-1-1-david", "cambridge-eccl-1-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c3",
+      "text": "The Targum on Ecclesiastes, as quoted by John Gill, identifies the Preacher with Solomon.",
+      "sourceIds": ["gill-eccl-1-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c4",
+      "text": "Ecclesiastes 3:2-8 contains fourteen pairs of contrasts, from a time to be born and to die (3:2) to a time of war and of peace (3:8).",
+      "sourceIds": ["pulpit-eccl-3-1-pairs", "eccl-3-2", "eccl-3-8"],
+      "sensitive": false
+    },
+    {
+      "id": "c5",
+      "text": "In Hebrew manuscripts and most printed texts, Ecclesiastes 3:2-8 is arranged in two parallel columns.",
+      "sourceIds": ["pulpit-eccl-3-1-manuscripts", "pulpit-eccl-3-1-columns"],
+      "sensitive": false
+    },
+    {
+      "id": "c6",
+      "text": "Ecclesiastes 3:9 repeats the question of Ecclesiastes 1:3 about what gain (yitron) a worker has from his labour.",
+      "sourceIds": ["eccl-1-3", "eccl-3-9", "kd-eccl-3-9"],
+      "sensitive": false
+    },
+    {
+      "id": "c7",
+      "text": "Commentators disagree on whether Ecclesiastes 3:1-8 teaches the wisdom of acting at the right moment or the providence of God over all events.",
+      "sourceIds": ["cambridge-eccl-3-1-wisdom", "pulpit-eccl-3-1-control"],
+      "sensitive": false
+    },
+    {
+      "id": "c8",
+      "text": "Plumptre, in the Cambridge Bible, reads the opening of the section as teaching that it is wisdom to do the right thing at the right time.",
+      "sourceIds": ["cambridge-eccl-3-1-wisdom", "pulpit-eccl-3-1-plumptre"],
+      "sensitive": false
+    },
+    {
+      "id": "c9",
+      "text": "The Pulpit Commentary replies that birth and death are beyond human will and control, and that the passage shows God’s providence arranging every detail of human life.",
+      "sourceIds": ["pulpit-eccl-3-1-control", "pulpit-eccl-3-1-providence"],
+      "sensitive": true
+    },
+    {
+      "id": "c10",
+      "text": "The word זְמָן (zeman) belongs to late Hebrew and occurs elsewhere only in Nehemiah 2:6 and Esther 9:27, 31.",
+      "sourceIds": ["ellicott-eccl-3-1", "bdb-zeman", "barnes-eccl-3-1"],
+      "sensitive": false
+    },
+    {
+      "id": "c11",
+      "text": "The Pulpit Commentary takes zeman as a fixed, definite portion of time and ʿet as the beginning of a period or a general term.",
+      "sourceIds": ["pulpit-eccl-3-1-zeman", "pulpit-eccl-3-1-eth"],
+      "sensitive": false
+    },
+    {
+      "id": "c12",
+      "text": "The Cambridge Bible compares the two Hebrew nouns to Greek χρόνος and καιρός and suggests the English “season” and “time” ought perhaps to change places.",
+      "sourceIds": ["cambridge-eccl-3-1-chronos", "cambridge-eccl-3-1-places"],
+      "sensitive": false
+    },
+    {
+      "id": "c13",
+      "text": "יִתְרוֹן (yitron) means advantage or profit and occurs in the Hebrew Bible only in Ecclesiastes.",
+      "sourceIds": ["bdb-yitron", "bdb-yitron-only"],
+      "sensitive": false
+    },
+    {
+      "id": "c14",
+      "text": "The Pulpit Commentary takes the implied answer to the question of Ecclesiastes 3:9 to be “none”, because man depends on times and seasons beyond his control.",
+      "sourceIds": ["pulpit-eccl-3-9", "pulpit-eccl-3-9-control"],
+      "sensitive": false
+    },
+    {
+      "id": "c15",
+      "text": "In Ecclesiastes 2:13 yitron is used positively: wisdom has an advantage over folly.",
+      "sourceIds": ["eccl-2-13", "bdb-yitron-beyond"],
+      "sensitive": false
+    },
+    {
+      "id": "c16",
+      "text": "עִנְיָן (ʿinyan) is a word common in late Hebrew, found in the Hebrew Bible only in Ecclesiastes.",
+      "sourceIds": ["bdb-inyan", "bdb-inyan-only"],
+      "sensitive": false
+    },
+    {
+      "id": "c17",
+      "text": "Keil and Delitzsch define ʿinyan in Ecclesiastes 3:10 as an occupation which causes trouble and costs effort.",
+      "sourceIds": ["kd-eccl-3-10"],
+      "sensitive": false
+    },
+    {
+      "id": "c18",
+      "text": "Ecclesiastes 3:10 repeats the wording of Ecclesiastes 1:13 about the task God has given to the sons of men, and the Cambridge Bible describes the thinker as falling back into his old groove of thought.",
+      "sourceIds": ["eccl-1-13", "eccl-3-10", "cambridge-eccl-3-10"],
+      "sensitive": false
+    },
+    {
+      "id": "c19",
+      "text": "In biblical Hebrew עוֹלָם (ʿolam) means long duration, antiquity or futurity.",
+      "sourceIds": ["bdb-olam"],
+      "sensitive": false
+    },
+    {
+      "id": "c20",
+      "text": "The sense “world” for ʿolam is found in post-biblical (rabbinical) Hebrew but nowhere else in the Old Testament.",
+      "sourceIds": ["ellicott-eccl-3-11", "barnes-eccl-3-11-rabbinical"],
+      "sensitive": false
+    },
+    {
+      "id": "c21",
+      "text": "Barnes understands Ecclesiastes 3:11 to mean that God has placed in human nature the capability of conceiving of eternity.",
+      "sourceIds": ["barnes-eccl-3-11"],
+      "sensitive": false
+    },
+    {
+      "id": "c22",
+      "text": "Ellicott takes ha-ʿolam in Ecclesiastes 3:11 as contrasted with the word for time immediately before it.",
+      "sourceIds": ["eccl-3-11", "ellicott-eccl-3-11-contrast"],
+      "sensitive": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "eccl-1-1",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:1",
+      "ref": "Eccl 1:1",
+      "excerpt": "קֹהֶלֶת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-1-david",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:1",
+      "ref": "Eccl 1:1",
+      "excerpt": "בֶּן דָּוִד מֶלֶךְ בִּירוּשָׁלִָם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-3",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:3",
+      "ref": "Eccl 1:3",
+      "excerpt": "מַה יִּתְרוֹן",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-1-13",
+      "type": "scripture",
+      "citation": "Ecclesiastes 1:13",
+      "ref": "Eccl 1:13",
+      "excerpt": "עִנְיַן רָע נָתַן אֱלֹהִים לִבְנֵי הָאָדָם לַעֲנוֹת בּוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-2-13",
+      "type": "scripture",
+      "citation": "Ecclesiastes 2:13",
+      "ref": "Eccl 2:13",
+      "excerpt": "יִתְרוֹן לַחָכְמָה מִן הַסִּכְלוּת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-3-2",
+      "type": "scripture",
+      "citation": "Ecclesiastes 3:2",
+      "ref": "Eccl 3:2",
+      "excerpt": "עֵת לָלֶדֶת וְעֵת לָמוּת",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-3-8",
+      "type": "scripture",
+      "citation": "Ecclesiastes 3:8",
+      "ref": "Eccl 3:8",
+      "excerpt": "עֵת מִלְחָמָה וְעֵת שָׁלוֹם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-3-9",
+      "type": "scripture",
+      "citation": "Ecclesiastes 3:9",
+      "ref": "Eccl 3:9",
+      "excerpt": "מַה יִּתְרוֹן הָעוֹשֶׂה",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-3-10",
+      "type": "scripture",
+      "citation": "Ecclesiastes 3:10",
+      "ref": "Eccl 3:10",
+      "excerpt": "הָעִנְיָן אֲשֶׁר נָתַן אֱלֹהִים לִבְנֵי הָאָדָם לַעֲנוֹת בּוֹ",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "eccl-3-11",
+      "type": "scripture",
+      "citation": "Ecclesiastes 3:11",
+      "ref": "Eccl 3:11",
+      "excerpt": "יָפֶה בְעִתּוֹ גַּם אֶת הָעֹלָם",
+      "excerptLang": "hbo"
+    },
+    {
+      "id": "pulpit-eccl-1-1",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "a feminine noun formed from a verb kalal , \"to call\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "barnes-eccl-1-1",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "Preacher - literally, Convener",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "cambridge-eccl-1-1",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "It is noticeable that the name of Solomon is not mentioned",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "gill-eccl-1-1",
+      "type": "web",
+      "citation": "John Gill, Exposition of the Entire Bible (1746-1763), on Ecclesiastes 1:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
+      "excerpt": "which the preacher, who is Solomon, prophesied",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-pairs",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "In the present passage we have fourteen pairs of contrasts",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-manuscripts",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "In Hebrew manuscripts and most printed texts",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-columns",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "are arranged in two parallel columns",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-control",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "birth and death, are entirely beyond men's will and control",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-plumptre",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "nor, as Plumptre conceives",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-providence",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "The providence of God disposes and arranges every detail of man's life",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-zeman",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "denotes a fixed, definite portion of time",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-1-eth",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "signifies rather the beginning of a period",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "cambridge-eccl-3-1-wisdom",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "it is wisdom to do the right thing at the right time",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "cambridge-eccl-3-1-chronos",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "much the same relation as the Greek χρόνος and καιρός",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "cambridge-eccl-3-1-places",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "ought, perhaps, to change places",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "ellicott-eccl-3-1",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "The word is only found in later Hebrew",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "barnes-eccl-3-1",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Ecclesiastes 3:1 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-1.htm",
+      "excerpt": "The rare word translated \"season\" means emphatically \"fitting time\"",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-zeman",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. זְמָן (Bible Hub, Strong's 2165)",
+      "url": "https://biblehub.com/hebrew/2165.htm",
+      "excerpt": "appointed time, time",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "kd-eccl-3-9",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1877), on Ecclesiastes 3:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-9.htm",
+      "excerpt": "It is the complaint of Ecclesiastes 1:3 which is here repeated",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-9",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-9.htm",
+      "excerpt": "The preceding enumeration leads up to this question, to which the answer",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "pulpit-eccl-3-9-control",
+      "type": "web",
+      "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 3:9 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-9.htm",
+      "excerpt": "depends upon time and seasons which are beyond his control",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-yitron",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. יִתְרוֹן (Bible Hub, Strong's 3504)",
+      "url": "https://biblehub.com/hebrew/3504.htm",
+      "excerpt": "advantage, profit",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-yitron-only",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. יִתְרוֹן (Bible Hub, Strong's 3504)",
+      "url": "https://biblehub.com/hebrew/3504.htm",
+      "excerpt": "only Ecclesiastes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-yitron-beyond",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. יִתְרוֹן (Bible Hub, Strong's 3504)",
+      "url": "https://biblehub.com/hebrew/3504.htm",
+      "excerpt": "advantage beyond, more than",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-inyan",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. עִנְיָן (Bible Hub, Strong's 6045)",
+      "url": "https://biblehub.com/hebrew/6045.htm",
+      "excerpt": "common in Late Hebrew",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-inyan-only",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. עִנְיָן (Bible Hub, Strong's 6045)",
+      "url": "https://biblehub.com/hebrew/6045.htm",
+      "excerpt": "only Ecclesiastes",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "kd-eccl-3-10",
+      "type": "web",
+      "citation": "C. F. Keil and F. Delitzsch, Biblical Commentary on the Old Testament (English translation, 1877), on Ecclesiastes 3:10 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-10.htm",
+      "excerpt": "an occupation which causes trouble, costs effort",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "cambridge-eccl-3-10",
+      "type": "web",
+      "citation": "E. H. Plumptre, Ecclesiastes, Cambridge Bible for Schools and Colleges (1881), on Ecclesiastes 3:10 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-10.htm",
+      "excerpt": "the thinker, once back in the old groove of thought, repeats himself",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "bdb-olam",
+      "type": "web",
+      "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. עוֹלָם (Bible Hub, Strong's 5769)",
+      "url": "https://biblehub.com/hebrew/5769.htm",
+      "excerpt": "long duration, antiquity, futurity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "ellicott-eccl-3-11",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 3:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-11.htm",
+      "excerpt": "has that meaning in post-Biblical Hebrew, but never elsewhere",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "ellicott-eccl-3-11-contrast",
+      "type": "web",
+      "citation": "Charles John Ellicott (ed.), An Old Testament Commentary for English Readers (1882-1884), on Ecclesiastes 3:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-11.htm",
+      "excerpt": "we may regard it as contrasted with that for",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "barnes-eccl-3-11",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Ecclesiastes 3:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-11.htm",
+      "excerpt": "the capability of conceiving of eternity",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    },
+    {
+      "id": "barnes-eccl-3-11-rabbinical",
+      "type": "web",
+      "citation": "Albert Barnes, Notes on the Bible, on Ecclesiastes 3:11 (Bible Hub)",
+      "url": "https://biblehub.com/commentaries/ecclesiastes/3-11.htm",
+      "excerpt": "although found in rabbinical Hebrew, it never bears",
+      "excerptLang": "en",
+      "retrievedAt": "2026-10-05T09:12:00Z"
+    }
+  ],
+  "provenance": {
+    "generator": "manual-seed",
+    "runId": "seed-L-021e-eccl-3-1-11",
+    "models": [],
+    "promptVersion": "none",
+    "createdAt": "2026-10-05T09:30:00Z"
+  },
+  "review": {
+    "status": "pending",
+    "reviewers": []
+  },
+  "schemaVersion": 1
+}
