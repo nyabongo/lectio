@@ -6,7 +6,6 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lectio/data/data.dart';
@@ -46,7 +45,7 @@ enum Screen {
   /// Bookmarks and notes, with one of each saved.
   bookmarks('/settings/bookmarks');
 
-  const Screen(this.location);
+  new(this.location);
 
   /// Where the router opens it.
   final String location;
@@ -60,7 +59,7 @@ enum Device {
   /// A tablet in portrait, 800 × 1280.
   tablet(Size(800, 1280));
 
-  const Device(this.size);
+  new(this.size);
 
   /// The logical size, at a device pixel ratio of 1.
   final Size size;

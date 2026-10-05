@@ -112,7 +112,7 @@ void main() {
       const device = TextScaler.linear(2);
       const scaler = ReaderTextScaler(device, 1.25);
       expect(scaler, const ReaderTextScaler(TextScaler.linear(2), 1.25));
-      expect(scaler.hashCode, ReaderTextScaler(device, 1.25).hashCode);
+      expect(scaler.hashCode, const ReaderTextScaler(device, 1.25).hashCode);
       expect(scaler, isNot(const ReaderTextScaler(device, 0.9)));
       expect(scaler, isNot(const ReaderTextScaler(_AndroidNonLinear(), 1.25)));
       expect(scaler, isNot(device));
@@ -185,7 +185,7 @@ void main() {
 /// A device scaler shaped like Android 14's non-linear 200% font scale: body
 /// text nearly doubles, larger text grows less, and 100sp text is not scaled.
 class _AndroidNonLinear extends TextScaler {
-  const _AndroidNonLinear();
+  const new();
 
   @override
   double scale(double fontSize) {

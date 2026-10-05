@@ -87,7 +87,7 @@ void main() {
 
       expect(
         tester.getSemantics(find.text(TodayStrings.notes)),
-        containsSemantics(
+        isSemantics(
           label: notesSemantics('Mt 20:1-16a'),
           isButton: true,
           hasTapAction: true,
@@ -96,7 +96,7 @@ void main() {
       // The link-out keeps its tap action under its spoken label.
       expect(
         tester.getSemantics(find.text(TodayStrings.text).last),
-        containsSemantics(
+        isSemantics(
           label: linkoutSemantics(
             'Mt 20:1-16a',
             Uri.parse('https://www.drbo.org/chapter/47020.htm'),
@@ -107,7 +107,7 @@ void main() {
       );
       expect(
         tester.getSemantics(find.text('Twenty-fifth Sunday in Ordinary Time')),
-        containsSemantics(isHeader: true),
+        isSemantics(isHeader: true),
       );
       semantics.dispose();
     });
@@ -122,11 +122,11 @@ void main() {
 
       expect(
         tester.getSemantics(find.text('Mt 20:1-16a')),
-        containsSemantics(isHeader: true),
+        isSemantics(isHeader: true),
       );
       expect(
         tester.getSemantics(find.text('Labourers in the vineyard')),
-        containsSemantics(isHeader: true),
+        isSemantics(isHeader: true),
       );
       expect(find.bySemanticsLabel(RegExp('Source 6')), findsWidgets);
 
@@ -134,7 +134,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester.getSemantics(find.textContaining('Liddell, Scott, Jones').first),
-        containsSemantics(isLink: true, hasTapAction: true),
+        isSemantics(isLink: true, hasTapAction: true),
       );
       semantics.dispose();
     });
@@ -149,7 +149,7 @@ void main() {
 
         expect(
           tester.getSemantics(find.text(heading)),
-          containsSemantics(isHeader: true),
+          isSemantics(isHeader: true),
         );
         semantics.dispose();
       });
