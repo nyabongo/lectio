@@ -72,8 +72,9 @@ List<DateTime> upcomingReminderTimes(
 /// say why the switch turned off. [followAppResume] reschedules each time
 /// the app comes back to the foreground, which moves the 7-day window on.
 ///
-/// Work runs one task at a time, in order. A platform failure never stops
-/// the app: it is kept in [lastError] and the next task runs as usual.
+/// Work runs one task at a time, in order. A platform failure, even an
+/// unregistered plugin, never stops the app: it is kept in [lastError] and
+/// the next task runs as usual.
 class DailyReminderScheduler {
   /// Creates a scheduler; `clock` gives the device time (default: now).
   new({
@@ -101,8 +102,8 @@ class DailyReminderScheduler {
   Future<void> get idle => _queue;
 
   /// The last platform failure, or `null`.
-  Exception? get lastError => _lastError;
-  Exception? _lastError;
+  Object? get lastError => _lastError;
+  Object? _lastError;
 
   /// Prepares notifications, schedules the reminders for the current
   /// settings and starts following them. Calling it again does nothing.
@@ -201,7 +202,9 @@ class DailyReminderScheduler {
     return _queue = _queue.then((_) async {
       try {
         await task();
-      } on Exception catch (error) {
+      } on Object catch (error) {
+        // Even a plugin that is not registered (an Error) must never stop
+        // the app or the queue.
         _lastError = error;
       }
     });
