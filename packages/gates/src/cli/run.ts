@@ -35,13 +35,13 @@ import type { ProviderSet } from '@lectio/providers';
 import { validateGateResult } from '@lectio/schema/gate-result';
 
 import type { Gate } from '../core/gate.ts';
-import { createContext, nodeReadText } from '../core/gate.ts';
-import { checkedOutAt, createGit, nodeGitExec } from '../core/git.ts';
+import { createContext, noFollowReadText, nodeReadText } from '../core/gate.ts';
+import { checkedOutAt, createGit, nodeGitExec, nonRegularFiles } from '../core/git.ts';
 import type { ChangedFile, Git, GitExec } from '../core/git.ts';
 import { renderComment } from '../core/markdown.ts';
 import { formatFinding, skipReason } from '../core/result.ts';
 import type { GateResult } from '../core/result.ts';
-import { runGates } from '../core/runner.ts';
+import { REPORT_VERSION, nonRegularResult, runGates } from '../core/runner.ts';
 import type { GateReport } from '../core/runner.ts';
 import { parsePullRequestFacts } from '../core/pull-request.ts';
 import type { PullRequestFacts } from '../core/pull-request.ts';
@@ -172,8 +172,31 @@ async function runCommand(args: readonly string[], options: GatesCliOptions): Pr
     throw new UsageError(`--head ${values.head} is not the commit checked out at ${root}; check it out first`);
   }
   const providers = options.providers ?? gateProviders(config, options.env, { fetch, llm });
-  const context = createContext({ root, base: values.base, head: values.head, config, providers, git });
-  const report = await runGates(gates, context);
+  // Symbolic links and submodules are refused before any gate reads the tree, and the gates read
+  // files without following links: a link in a PR could point anywhere on the runner.
+  const unsafe = nonRegularFiles(exec, root, values.base, values.head);
+  const report: GateReport =
+    unsafe.length > 0
+      ? {
+          reportVersion: REPORT_VERSION,
+          status: 'fail',
+          base: values.base,
+          head: values.head,
+          changedFiles: unsafe,
+          results: [nonRegularResult(unsafe)],
+        }
+      : await runGates(
+          gates,
+          createContext({
+            root,
+            base: values.base,
+            head: values.head,
+            config,
+            providers,
+            git,
+            readText: noFollowReadText(root),
+          }),
+        );
   const offline = providers.fakes.has('fetcher');
   const note = fetcherNote(providers);
   const rules = ruleBookFor(registry);
