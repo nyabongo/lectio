@@ -1,0 +1,70 @@
+{
+  "id": "resp_truncated_0001",
+  "object": "response",
+  "created_at": 1759622400,
+  "status": "incomplete",
+  "background": false,
+  "error": null,
+  "incomplete_details": {
+    "reason": "max_output_tokens"
+  },
+  "instructions": "You are a careful assistant used in an automated contract test. Answer briefly.",
+  "max_output_tokens": 512,
+  "max_tool_calls": null,
+  "model": "gpt-5-2025-08-07",
+  "output": [
+    {
+      "id": "rs_0005",
+      "type": "reasoning",
+      "summary": []
+    },
+    {
+      "id": "msg_0005",
+      "type": "message",
+      "status": "incomplete",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "{\"verdict\": \"supported\", \"support\": 0.9",
+          "annotations": [],
+          "logprobs": []
+        }
+      ]
+    }
+  ],
+  "parallel_tool_calls": true,
+  "previous_response_id": null,
+  "reasoning": {
+    "effort": "medium",
+    "summary": null
+  },
+  "store": false,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "json_schema",
+      "name": "lectio_response",
+      "strict": false,
+      "schema": {}
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_p": 1.0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 210,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 512,
+    "output_tokens_details": {
+      "reasoning_tokens": 500
+    },
+    "total_tokens": 722
+  },
+  "user": null,
+  "metadata": {}
+}
