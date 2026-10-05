@@ -5,25 +5,39 @@
  * The cache name starts with `OFFLINE_DATA_CACHE_PREFIX` (`lectio-data-`), so Settings → Clear offline data (L-057)
  * and the service worker's `clear-offline-data` message (L-061) remove it with the saved days, and keep the app shell.
  *
- * Saving is best effort and never delays playback: the first play streams from the URL while a copy is fetched in
- * the background. A file the browser cannot fetch with CORS, a full quota or a browser without Cache Storage only
- * means the file is not kept. Cached copies play through object URLs; the previous one is revoked when the next
- * file plays.
+ * - Each file is downloaded once: the first play fetches it (CORS), stores it and plays the stored copy through an
+ *   object URL. Narration files are small, so the wait is short, and a metered connection pays for one download.
+ * - Where that fetch is refused (no CORS rule on the bucket, see docs/operator-handbook.md), fails or there is no
+ *   Cache Storage, the element streams the URL itself and nothing is kept.
+ * - The cache keeps at most `AUDIO_CACHE_LIMIT` files. Playing a kept file moves it to the end, and the least recently
+ *   played ones are deleted first, so the cache never grows into the storage pressure that would make the browser
+ *   evict the whole site (shell, saved days and settings with it).
+ * - Object URLs are revoked when the next file plays.
  */
 import { OFFLINE_DATA_CACHE_PREFIX } from '../settings.ts';
 
 /** The cache narration files are kept in. */
 export const AUDIO_CACHE = `${OFFLINE_DATA_CACHE_PREFIX}audio`;
 
+/**
+ * How many narration files the cache keeps: a few days of a typical queue (a day has a few dozen segments of a minute
+ * or so), a few tens of megabytes.
+ */
+export const AUDIO_CACHE_LIMIT = 120;
+
 /** The parts of a `Response` the store reads. */
 export interface ResponseLike {
   readonly ok: boolean;
   blob(): Promise<Blob>;
+  clone(): ResponseLike;
 }
 
+/** The parts of a `Cache` the store uses; `keys` lists entries in the order they were stored. */
 export interface AudioCacheLike {
   match(url: string): Promise<ResponseLike | undefined>;
   put(url: string, response: ResponseLike): Promise<void>;
+  keys(): Promise<readonly { readonly url: string }[]>;
+  delete(request: { readonly url: string }): Promise<boolean>;
 }
 
 export interface OfflineAudioEnvironment {
@@ -32,16 +46,20 @@ export interface OfflineAudioEnvironment {
   readonly fetch: (url: string) => Promise<ResponseLike>;
   readonly createObjectURL: (blob: Blob) => string;
   readonly revokeObjectURL: (url: string) => void;
+  /** Defaults to `AUDIO_CACHE_LIMIT`. */
+  readonly limit?: number;
 }
 
 export interface OfflineAudio {
-  /** The `src` for a narration file: an object URL of the cached copy, else the URL itself (and a copy is saved). */
+  /**
+   * The `src` for a narration file: an object URL of the kept copy (fetched and kept now if it was not), else the URL
+   * itself when it cannot be kept.
+   */
   source(url: string): Promise<string>;
-  /** Fetches `url` and keeps it; false when it could not be fetched or stored. */
-  save(url: string): Promise<boolean>;
 }
 
 export function createOfflineAudio(env: OfflineAudioEnvironment): OfflineAudio {
+  const limit = env.limit ?? AUDIO_CACHE_LIMIT;
   let cache: Promise<AudioCacheLike | null> | null = null;
   let objectUrl: string | null = null;
 
@@ -50,36 +68,48 @@ export function createOfflineAudio(env: OfflineAudioEnvironment): OfflineAudio {
     return cache;
   };
 
-  const save = async (url: string): Promise<boolean> => {
-    try {
-      const store = await open();
-      if (store === null) return false;
-      const response = await env.fetch(url);
-      if (!response.ok) return false;
-      await store.put(url, response);
-      return true;
-    } catch {
-      return false;
-    }
+  /** Deletes the least recently played files beyond the limit. */
+  const trim = async (store: AudioCacheLike): Promise<void> => {
+    const keys = await store.keys();
+    for (const request of keys.slice(0, Math.max(0, keys.length - limit))) await store.delete(request);
+  };
+
+  const play = (blob: Blob): string => {
+    objectUrl = env.createObjectURL(blob);
+    return objectUrl;
+  };
+
+  /** The kept copy, moved to the end of the cache; `null` when there is none. */
+  const kept = async (store: AudioCacheLike, url: string): Promise<Blob | null> => {
+    const cached = await store.match(url);
+    if (cached === undefined) return null;
+    await store.put(url, cached.clone());
+    return cached.blob();
+  };
+
+  /** Downloads `url` once and keeps it; `null` when it cannot be fetched or kept. */
+  const keep = async (store: AudioCacheLike, url: string): Promise<Blob | null> => {
+    const response = await env.fetch(url);
+    if (!response.ok) return null;
+    await store.put(url, response.clone());
+    await trim(store);
+    return response.blob();
   };
 
   return {
     async source(url) {
       if (objectUrl !== null) env.revokeObjectURL(objectUrl);
       objectUrl = null;
+      const store = await open();
+      if (store === null) return url;
       try {
-        const cached = await (await open())?.match(url);
-        if (cached !== undefined) {
-          objectUrl = env.createObjectURL(await cached.blob());
-          return objectUrl;
-        }
+        const blob = (await kept(store, url)) ?? (await keep(store, url));
+        return blob === null ? url : play(blob);
       } catch {
-        // A broken cache entry: stream from the URL instead.
+        // A broken entry, a refused fetch or a full quota: stream from the URL instead.
+        return url;
       }
-      void save(url);
-      return url;
     },
-    save,
   };
 }
 
