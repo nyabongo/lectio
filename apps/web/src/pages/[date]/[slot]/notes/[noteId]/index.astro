@@ -11,6 +11,7 @@
 import MarkedText from '../../../../../components/notes/MarkedText.astro';
 import Verification from '../../../../../components/notes/Verification.astro';
 import Seo from '../../../../../components/seo/Seo.astro';
+import ShareButton from '../../../../../components/share/ShareButton.astro';
 import { DEFAULT_LOCALE, localePath, t } from '../../../../../i18n/index.ts';
 import BaseLayout from '../../../../../layouts/BaseLayout.astro';
 import { readingPath } from '../../../../../lib/reading.ts';
@@ -57,6 +58,7 @@ const headingId = `${note.anchorId}-heading`;
         <span aria-hidden="true"> · </span>
         <span class="insight__anchor">“{note.anchor}”</span>
       </h1>
+      <ShareButton title={title} shareRef={title} insight={note.summary} path={path} lang={lang} />
     </header>
 
     <dl class="insight__original">
@@ -106,6 +108,10 @@ const headingId = `${note.anchorId}-heading`;
 
   .insight__back:hover {
     color: var(--colour-link);
+  }
+
+  .insight__title {
+    margin-bottom: var(--space-xs);
   }
 
   .insight__header .eyebrow {

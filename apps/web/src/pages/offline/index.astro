@@ -1,0 +1,83 @@
+---
+/**
+ * The offline fallback page (L-061), `/offline/`. The service worker precaches it and serves it for a page that is
+ * neither saved on the device nor reachable. Kept out of search results; its links are absolute and base-aware.
+ */
+import Seo from '../../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { OFFLINE_PAGE } from '../../lib/sw-policy.ts';
+import { withBase } from '../../lib/site.ts';
+
+const base = import.meta.env.BASE_URL;
+const lang = DEFAULT_LOCALE;
+const title = t(lang, 'pwa.offline.title');
+const description = t(lang, 'pwa.offline.description');
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <Seo slot="head" title={title} description={description} lang={lang} path={OFFLINE_PAGE} noindex />
+  <section class="offline" aria-labelledby="offline-heading">
+    <p class="eyebrow">{t(lang, 'pwa.offline.eyebrow')}</p>
+    <h1 id="offline-heading">{t(lang, 'pwa.offline.heading')}</h1>
+    <p>{t(lang, 'pwa.offline.body')}</p>
+    <ul class="offline__links">
+      <li><a class="button" href={withBase(base, localePath(lang))}>{t(lang, 'pwa.offline.home')}</a></li>
+      <li><button type="button" class="offline__retry" data-offline-retry>{t(lang, 'pwa.offline.retry')}</button></li>
+    </ul>
+  </section>
+</BaseLayout>
+
+<script>
+  document.querySelector('[data-offline-retry]')?.addEventListener('click', () => {
+    window.location.reload();
+  });
+</script>
+
+<style>
+  .offline {
+    max-width: var(--measure);
+    padding-block: var(--space-l);
+  }
+
+  .offline__links {
+    list-style: none;
+    margin: var(--space-m) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-m);
+  }
+
+  .offline__links a,
+  .offline__retry {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font: inherit;
+    font-weight: var(--weight-strong);
+    color: var(--colour-link);
+  }
+
+  .offline__links .button {
+    padding-inline: var(--space-s);
+    border-radius: var(--radius-m);
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+    text-decoration: none;
+    transition: filter var(--duration-quick) var(--ease-out);
+  }
+
+  .offline__links .button:hover {
+    filter: brightness(1.08);
+  }
+
+  .offline__retry {
+    padding-inline: var(--space-s);
+    background: transparent;
+    border: var(--rule-width) solid var(--colour-rule);
+    border-radius: var(--radius-m);
+    cursor: pointer;
+  }
+</style>

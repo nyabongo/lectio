@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lectio/data/api_cache.dart';
+import 'package:lectio/data/api_client.dart';
+import 'package:lectio/data/app_repository.dart';
+import 'package:lectio/data/repository.dart';
 import 'package:lectio/features/bookmarks/bookmarks_controller.dart';
 import 'package:lectio/features/settings/app_settings.dart';
 import 'package:lectio/features/settings/key_value_store.dart';
 import 'package:lectio/features/settings/settings_controller.dart';
 import 'package:lectio/src/app.dart';
 
+import '../../data/fake_api.dart';
+
 void main() {
+  // Today, shown when the app starts, reads an offline fake API.
+  setUp(() {
+    appRepository = LectioRepository(
+      client: ApiClient(httpClient: FakeApi().client, baseUrl: FakeApi.baseUrl),
+      cache: MemoryApiCache(),
+    );
+  });
+  tearDown(() => appRepository = null);
+
   testWidgets('the app starts on Today when the preferences fail to open', (
     tester,
   ) async {

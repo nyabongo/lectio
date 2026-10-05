@@ -20,6 +20,7 @@ export 'package:lectio/data/api_cache.dart';
 export 'package:lectio/data/api_client.dart';
 export 'package:lectio/data/api_exceptions.dart';
 export 'package:lectio/data/api_paths.dart';
+export 'package:lectio/data/app_repository.dart';
 export 'package:lectio/data/dates.dart';
 export 'package:lectio/data/file_api_cache.dart';
 export 'package:lectio/data/json.dart';
