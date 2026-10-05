@@ -1,0 +1,33 @@
+---
+/**
+ * A day page, `/YYYY-MM-DD/`, for every day in the committed calendars: the liturgical day and its readings by
+ * reference. The view model is built by `dayPageView` in src/lib/day.ts.
+ */
+import DayView from '../../components/day/DayView.astro';
+import Seo from '../../components/seo/Seo.astro';
+import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../i18n/index.ts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { dayPagePaths, dayPageView, dayPath } from '../../lib/day.ts';
+import type { DayEnv } from '../../lib/day.ts';
+import { siteContext, withBase } from '../../lib/site.ts';
+
+export function getStaticPaths() {
+  return dayPagePaths(siteContext().repo);
+}
+
+const date = String(Astro.params.date);
+const lang = DEFAULT_LOCALE;
+const base = import.meta.env.BASE_URL;
+const env: DayEnv = {
+  lang,
+  messages: { t, formatDate: (locale, day) => formatDate(locale, day) },
+  paths: (path) => withBase(base, localePath(lang, path)),
+};
+const view = dayPageView(env, siteContext(), date);
+if (view === null) throw new Error(`No calendar day for ${date}`);
+---
+
+<BaseLayout title={view.pageTitle} description={view.description} colour={view.colour} lang={lang}>
+  <Seo slot="head" title={view.pageTitle} description={view.description} lang={lang} path={dayPath(view.date)} />
+  <DayView view={view} />
+</BaseLayout>

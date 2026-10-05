@@ -1,0 +1,271 @@
+---
+/**
+ * The body of a day page (`/[date]/`) and of the Today page (`/`): the date, the celebration(s) with rank and
+ * colour, season and week, the Listen button (only when `features.listen` is on), the readings of each Mass and
+ * links to the previous and next days. Everything it shows comes from `dayView` in src/lib/day.ts.
+ */
+import { t } from '../../i18n/index.ts';
+import type { DayView } from '../../lib/day.ts';
+import ReadingCard from './ReadingCard.astro';
+
+export interface Props {
+  view: DayView;
+  /** An eyebrow above the date (`Today` on `/`). */
+  eyebrow?: string;
+}
+
+const { view, eyebrow } = Astro.props;
+const { lang } = view;
+const [principal, ...others] = view.celebrations;
+const showMassLabels = view.masses.length > 1;
+---
+
+<article class="day" aria-labelledby="day-title">
+  <header class="day__header">
+    {eyebrow !== undefined && <p class="eyebrow">{eyebrow}</p>}
+    <p class="day__date"><time datetime={view.date}>{view.dateLabel}</time></p>
+    <h1 id="day-title" class="day__title">{view.title}</h1>
+    <p class="day__meta">
+      {
+        principal !== undefined && (
+          <span class="day__rank">
+            <span
+              class="swatch"
+              role="img"
+              aria-label={t(lang, 'day.colourLabel', { colour: principal.colourLabel })}
+            />
+            {principal.rank}
+          </span>
+        )
+      }
+      <span>{view.season}</span>
+      <span>{view.cycles}</span>
+    </p>
+    {
+      others.length > 0 && (
+        <ul class="day__others">
+          {others.map((celebration) => (
+            <li>
+              {celebration.name}{' '}
+              <span class="day__other-rank">
+                · {celebration.rank} · {celebration.colourLabel}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </header>
+
+  {
+    view.listen !== null && (
+      <p class="day__listen">
+        <a class="listen-button" href={view.listen.href}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+            <path d="M8 5v14l11-7z" fill="currentColor" />
+          </svg>
+          {view.listen.label}
+        </a>
+      </p>
+    )
+  }
+
+  <section class="day__readings" aria-labelledby="readings-heading">
+    <h2 id="readings-heading" class="visually-hidden">{t(lang, 'day.readingsHeading')}</h2>
+    {view.missing !== null && <p class="day__missing">{view.missing}</p>}
+    {view.massOptions !== null && <p class="day__mass-options">{view.massOptions}</p>}
+    {
+      view.masses.map((mass) => (
+        <div class="mass">
+          {showMassLabels && <h2 class="mass__label">{mass.label}</h2>}
+          <ul class="readings">
+            {mass.readings.map((reading) => (
+              <ReadingCard reading={reading} />
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+
+  {
+    (view.previous !== null || view.next !== null) && (
+      <nav class="day-nav" aria-label={t(lang, 'day.dayNav')}>
+        {view.previous !== null && (
+          <a class="day-nav__link day-nav__link--previous" href={view.previous.href} rel="prev">
+            <span class="day-nav__label">
+              <span aria-hidden="true">← </span>
+              {view.previous.label}
+            </span>
+            <span class="day-nav__date">{view.previous.dateLabel}</span>
+          </a>
+        )}
+        {view.next !== null && (
+          <a class="day-nav__link day-nav__link--next" href={view.next.href} rel="next">
+            <span class="day-nav__label">
+              {view.next.label}
+              <span aria-hidden="true"> →</span>
+            </span>
+            <span class="day-nav__date">{view.next.dateLabel}</span>
+          </a>
+        )}
+      </nav>
+    )
+  }
+</article>
+
+<style>
+  .day {
+    max-width: 44rem;
+  }
+
+  .day__header {
+    margin-bottom: var(--space-m);
+  }
+
+  .day__header .eyebrow {
+    margin-bottom: var(--space-3xs);
+  }
+
+  .day__date {
+    margin: 0;
+    font-size: var(--step-0);
+    font-weight: var(--weight-strong);
+    color: var(--colour-muted);
+  }
+
+  .day__title {
+    font-size: var(--step-4);
+    margin-block: var(--space-3xs) var(--space-xs);
+  }
+
+  .day__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3xs) var(--space-s);
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--colour-muted);
+  }
+
+  .day__rank {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+  }
+
+  .swatch {
+    display: inline-block;
+    flex: none;
+    width: 0.75em;
+    height: 0.75em;
+    border-radius: 50%;
+    border: var(--rule-width) solid var(--colour-muted);
+    background: var(--colour-accent);
+  }
+
+  .day__others {
+    list-style: none;
+    margin: var(--space-2xs) 0 0;
+    padding: 0;
+    font-size: var(--step--1);
+  }
+
+  .day__others li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .day__other-rank {
+    color: var(--colour-muted);
+  }
+
+  .day__listen {
+    margin: 0 0 var(--space-m);
+  }
+
+  .listen-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-height: var(--tap-target);
+    padding: var(--space-2xs) var(--space-m) var(--space-2xs) var(--space-s);
+    border-radius: 999px;
+    background: var(--colour-accent);
+    color: var(--colour-on-accent);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+    transition: filter var(--duration-quick) var(--ease-out);
+  }
+
+  .listen-button:hover {
+    filter: brightness(1.08);
+  }
+
+  .day__missing,
+  .day__mass-options {
+    color: var(--colour-muted);
+  }
+
+  .mass + .mass {
+    margin-top: var(--space-l);
+  }
+
+  .mass__label {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-xs);
+  }
+
+  .readings {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .day-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xs);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-m);
+    border-top: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .day-nav__link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    min-height: var(--tap-target);
+    padding: var(--space-xs) var(--space-s);
+    border-radius: var(--radius-m);
+    color: var(--colour-ink);
+    text-decoration: none;
+  }
+
+  .day-nav__link:hover {
+    background: var(--colour-wash);
+  }
+
+  .day-nav__link--next {
+    grid-column: 2;
+    text-align: end;
+  }
+
+  .day-nav__label {
+    font-size: var(--step--1);
+    font-weight: var(--weight-strong);
+    color: var(--colour-accent-ink);
+  }
+
+  .day-nav__date {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: var(--weight-strong);
+  }
+</style>
