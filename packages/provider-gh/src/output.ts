@@ -74,10 +74,17 @@ export function arr(object: JsonObject, key: string): readonly Json[] {
   return asArray(object[key], `"${key}"`);
 }
 
-/** `login` of a user object (`author`, `user`, `actor`), or `ghost` for a deleted account. */
+/**
+ * `login` of a user object (`author`, `user`, `actor`), or `ghost` for a deleted account. Bots
+ * read the same as in REST (`github-actions[bot]`), although gh's GraphQL JSON says
+ * `app/github-actions`.
+ */
 export function login(object: JsonObject, key: string): string {
   const user = optObj(object, key);
-  return user ? str(user, 'login') : 'ghost';
+  if (!user) return 'ghost';
+  const name = str(user, 'login');
+  if (name.startsWith('app/')) return `${name.slice(4)}[bot]`;
+  return user['is_bot'] === true && !name.endsWith('[bot]') ? `${name}[bot]` : name;
 }
 
 /** Names of a `labels` array (`[{ name }]`). */
@@ -86,7 +93,7 @@ export function labelNames(value: Json | undefined): string[] {
 }
 
 const STATUS_CODES: readonly [RegExp, ProviderErrorCode][] = [
-  [/HTTP 404|Not Found|Could not resolve to|could not find|no pull requests? found|not found/i, 'not-found'],
+  [/HTTP 404|Could not resolve to|could not find|no pull requests? found/i, 'not-found'],
   [/HTTP 409/, 'conflict'],
   [/rate limit|HTTP 429/i, 'rate-limited'],
   [/HTTP 5\d\d|timeout|timed out|connect|EOF|network/i, 'unavailable'],

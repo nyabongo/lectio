@@ -100,7 +100,7 @@ describe('GhGitHubClient', () => {
       expect.arrayContaining(['--head', 'research/a', '--base', 'main', '--title', 'T', '--body-file', '-']),
     );
     expect(create?.input).toBe('Body text');
-    expect(fake.calls.some((call) => call.args.join(' ') === `label create research -R ${REPO}`)).toBe(true);
+    expect(fake.calls.some((call) => call.args.join(' ') === `label create -R ${REPO} -- research`)).toBe(true);
   });
 
   it('merges with --squash --match-head-commit and caches viewer, repo and labels', async () => {
@@ -357,9 +357,7 @@ describe('GhGitHubClient', () => {
     // A client that did not see the closed issue opens a second one.
     const blind = new GhGitHubClient({
       repo: REPO,
-      exec: overriding(fake, (args) =>
-        args[0] === 'issue' && args[1] === 'list' ? { exitCode: 0, stdout: '[]' } : undefined,
-      ),
+      exec: overriding(fake, (args) => (args[3]?.includes('/issues?') ? { exitCode: 0, stdout: '[[]]' } : undefined)),
     });
     const open = await blind.upsertIssue('runway', { title: 'New', body: 'b' });
     expect(open.issue.number).not.toBe(closed.issue.number);
@@ -519,9 +517,108 @@ describe('GhGitHubClient', () => {
     expect((await rejection(client.dispatchWorkflow('other.yml', 'main'))).code).toBe('not-found');
   });
 
+  describe('viewer', () => {
+    it('falls back to github-actions[bot] under the Actions GITHUB_TOKEN, and upserts comments and issues', async () => {
+      const { fake, client } = setup({ token: 'installation' }, { env: { GITHUB_ACTIONS: 'true' } });
+      expect(await client.viewer()).toBe('github-actions[bot]');
+      const { issue } = await client.upsertIssue('runway', { title: 't', body: 'b' });
+      expect(issue.author).toBe('github-actions[bot]');
+      expect((await client.upsertIssue('runway', { title: 't', body: 'c' })).created).toBe(false);
+      const first = await client.upsertComment(issue.number, 'gates', 'one');
+      const second = await client.upsertComment(issue.number, 'gates', 'two');
+      expect([first.created, second.created, second.comment.id === first.comment.id]).toEqual([true, false, true]);
+      expect(second.comment.author).toBe('github-actions[bot]');
+      expect(
+        fake.calls.filter((c) => c.args[0] === 'api' && ['user', 'graphql'].includes(c.args[1] ?? '')),
+      ).toHaveLength(2);
+    });
+
+    it('uses the GraphQL viewer when /user is forbidden', async () => {
+      const { client } = setup({ token: 'app-user', viewer: 'some-app' }, { env: {} });
+      expect(await client.viewer()).toBe('some-app');
+    });
+
+    it('fails outside Actions when the token cannot name its viewer', async () => {
+      const { client } = setup({ token: 'installation' }, { env: {} });
+      expect((await rejection(client.viewer())).message).toContain('HTTP 403');
+    });
+
+    it('takes the viewer from the options without asking gh', async () => {
+      const { fake, client } = setup({ token: 'installation' }, { viewer: 'github-actions[bot]' });
+      expect(await client.viewer()).toBe('github-actions[bot]');
+      expect(fake.calls).toEqual([]);
+    });
+  });
+
+  it('never adopts an issue someone else opened with the marker', async () => {
+    const { fake, client } = setup();
+    const theirs = fake.addIssue('mallory', 'Runway low', `${markerComment('runway')}`);
+    // Our own issue with an empty body (REST: `body: null`) does not match either.
+    fake.addIssue('lectio-bot', 'Empty', '');
+    const { issue, created } = await client.upsertIssue('runway', { title: 'Runway low', body: 'b' });
+    expect(created).toBe(true);
+    expect(issue.number).not.toBe(theirs);
+  });
+
+  it('keeps an existing file mode when it changes the file', async () => {
+    const { fake, client } = setup();
+    fake.setMode('run.sh', '100755');
+    await client.createBranch({ name: 'b' });
+    await client.commitFiles({ branch: 'b', message: 'add', files: [{ path: 'run.sh', content: 'echo 1\n' }] });
+    await client.commitFiles({
+      branch: 'b',
+      message: 'edit',
+      files: [
+        { path: 'run.sh', content: 'echo 2\n' },
+        { path: 'new.md', content: 'n' },
+      ],
+    });
+    const trees = fake.calls.filter((c) => c.args[3]?.endsWith('/git/trees'));
+    const entries = JSON.parse(trees.at(-1)?.input ?? '{}') as { tree: { path: string; mode: string }[] };
+    expect(entries.tree.map((e) => [e.path, e.mode])).toEqual([
+      ['run.sh', '100755'],
+      ['new.md', '100644'],
+    ]);
+  });
+
+  it('rejects creating an existing branch with conflict and leaves it where it was', async () => {
+    const { client } = setup();
+    await client.createBranch({ name: 'research/mt-5' });
+    const head = await client.commitFiles({
+      branch: 'research/mt-5',
+      message: 'm',
+      files: [{ path: 'a', content: 'a' }],
+    });
+    const error = await rejection(client.createBranch({ name: 'research/mt-5' }));
+    expect([error.code, error.retryable]).toEqual(['conflict', false]);
+    // Publishing reuses the branch: its head is untouched.
+    expect(
+      (await client.commitFiles({ branch: 'research/mt-5', message: 'n', files: [{ path: 'b', content: 'b' }] }))
+        .parents,
+    ).toEqual([head.sha]);
+  });
+
+  it('refuses refs that would leave their API path', async () => {
+    const { client } = setup();
+    for (const ref of ['a/../b', '..', 'a//b', './x']) {
+      expect((await rejection(client.createBranch({ name: 'x', from: ref }))).code).toBe('invalid-request');
+    }
+    const commit = client.commitFiles({ branch: '../hooks', message: 'm', files: [{ path: 'a', content: 'a' }] });
+    expect((await rejection(commit)).code).toBe('invalid-request');
+  });
+
+  it('pages through every PR and puts positionals after --', async () => {
+    const { fake, client } = setup();
+    await client.listPrs({ state: 'all' });
+    await client.dispatchWorkflow('ci.yml', 'main');
+    const list = fake.calls.find((c) => c.args[0] === 'pr' && c.args[1] === 'list');
+    expect(list?.args).toEqual(expect.arrayContaining(['--limit', '100000', '--state', 'all']));
+    expect(fake.calls.at(-1)?.args.slice(-2)).toEqual(['--', 'ci.yml']);
+  });
+
   describe('waitForRequiredChecks', () => {
-    async function prWithChecks(requiredChecks: string[], options: Omit<GhGitHubClientOptions, 'exec'> = {}) {
-      const ctx = setup({ requiredChecks }, options);
+    async function prWithChecks(fakeOptions: FakeGhOptions, options: Omit<GhGitHubClientOptions, 'exec'> = {}) {
+      const ctx = setup(fakeOptions, options);
       await ctx.client.createBranch({ name: 'b' });
       const commit = await ctx.client.commitFiles({ branch: 'b', message: 'm', files: [{ path: 'x', content: '1' }] });
       await ctx.client.openOrUpdatePr({ head: 'b', title: 't', body: '' });
@@ -529,19 +626,24 @@ describe('GhGitHubClient', () => {
     }
 
     it('polls until the required checks complete, leaving out excluded ones', async () => {
-      const { fake, sha } = await prWithChecks(['lint', 'test', 'merge-rule']);
+      const { fake, sha, time } = await prWithChecks({
+        requiredChecks: ['lint', 'merge-rule'],
+        protectedChecks: ['test'],
+      });
       let polls = 0;
       const client = new GhGitHubClient({
         repo: REPO,
         exec: fake.exec,
         pollIntervalMs: 5,
-        sleep: async () => {
+        now: time.now,
+        sleep: async (ms) => {
+          await time.sleep(ms);
           polls += 1;
-          fake.setCheck(sha, 'lint', 'SUCCESS');
-          if (polls === 2) fake.setCheck(sha, 'test', 'SKIPPED');
+          fake.setCheck(sha, 'lint', 'completed', 'success');
+          if (polls === 2) fake.setCheck(sha, 'test', 'completed', 'skipped');
         },
       });
-      fake.setCheck(sha, 'test', 'IN_PROGRESS');
+      fake.setCheck(sha, 'test', 'in_progress');
       const result = await client.waitForRequiredChecks({ sha, exclude: ['merge-rule'] });
       expect(polls).toBe(2);
       expect(result).toEqual({
@@ -552,27 +654,74 @@ describe('GhGitHubClient', () => {
           { name: 'test', headSha: sha, status: 'completed', conclusion: 'skipped' },
         ],
       });
+      expect(fake.calls.some((c) => c.args[3] === `repos/${REPO}/commits/${sha}/check-runs`)).toBe(true);
     });
 
-    it('reports failed checks as not ok', async () => {
-      const { fake, client, sha } = await prWithChecks(['lint', 'odd']);
-      fake.setCheck(sha, 'lint', 'FAILURE');
-      fake.setCheck(sha, 'odd', 'STALE');
+    it('reports failed check runs and legacy commit statuses as not ok', async () => {
+      const { fake, client, sha } = await prWithChecks({ requiredChecks: ['lint', 'action', 'legacy', 'legacy-ok'] });
+      fake.setCheck(sha, 'lint', 'completed', 'success');
+      fake.setCheck(sha, 'lint', 'completed', 'failure');
+      fake.setCheck(sha, 'action', 'completed', 'action_required');
+      fake.setStatus(sha, 'legacy', 'error');
+      fake.setStatus(sha, 'legacy-ok', 'success');
       const result = await client.waitForRequiredChecks({ sha });
       expect(result.ok).toBe(false);
-      expect(result.checks.map((c) => c.conclusion)).toEqual(['failure', 'failure']);
+      expect(result.checks.map((c) => c.conclusion)).toEqual(['failure', 'failure', 'failure', 'success']);
     });
 
-    it('times out with the pending check names, sleeping no later than the deadline', async () => {
-      const { client, sha, time } = await prWithChecks(['lint', 'unknown'], { pollIntervalMs: 400 });
+    it('treats required checks that have not reported yet as pending until the timeout', async () => {
+      const { fake, client, sha, time } = await prWithChecks(
+        { requiredChecks: ['lint', 'dispatched'], protectedChecks: ['legacy'] },
+        { pollIntervalMs: 400 },
+      );
+      fake.setStatus(sha, 'legacy', 'pending');
       const error = await rejection(client.waitForRequiredChecks({ sha, timeoutMs: 1000 }));
       expect(error.code).toBe('timeout');
-      expect(error.message).toContain('lint, unknown');
+      expect(error.message).toContain('lint, dispatched, legacy');
       expect(time.sleeps).toEqual([400, 400, 200]);
     });
 
+    it('reads checks for the given sha after the PR head moved', async () => {
+      const { fake, client, sha } = await prWithChecks({ requiredChecks: ['lint'] }, { pollIntervalMs: 400 });
+      fake.setCheck(sha, 'lint', 'completed', 'success');
+      const moved = fake.pushUnsigned('b', 'y', '2', 'someone');
+      fake.setCheck(moved, 'lint', 'completed', 'failure');
+      expect(await client.waitForRequiredChecks({ sha })).toEqual({
+        sha,
+        ok: true,
+        checks: [{ name: 'lint', headSha: sha, status: 'completed', conclusion: 'success' }],
+      });
+      // Success on the new head says nothing about a sha that has no checks.
+      const other = await prWithChecks({ requiredChecks: ['lint'] });
+      const head = other.fake.pushUnsigned('b', 'y', '2', 'someone');
+      other.fake.setCheck(head, 'lint', 'completed', 'success');
+      expect((await rejection(other.client.waitForRequiredChecks({ sha: other.sha, timeoutMs: 100 }))).code).toBe(
+        'timeout',
+      );
+    });
+
+    it('needs no checks when the base branch requires none', async () => {
+      const { client, sha, fake } = await prWithChecks({});
+      expect(await client.waitForRequiredChecks({ sha })).toEqual({ sha, ok: true, checks: [] });
+      // A PR into an unprotected branch: the default branch's rules do not apply.
+      const ctx = await prWithChecks({ requiredChecks: ['lint'] });
+      await ctx.client.createBranch({ name: 'release' });
+      await ctx.client.openOrUpdatePr({ head: 'b', base: 'release', title: 't', body: '' });
+      expect((await ctx.client.waitForRequiredChecks({ sha: ctx.sha })).checks).toEqual([]);
+      expect(fake.calls.some((c) => c.args[3]?.includes('/rules/branches/main'))).toBe(true);
+    });
+
+    it('takes the required check names from the registry when given', async () => {
+      const { fake, sha } = await prWithChecks({ requiredChecks: ['ignored'] });
+      const client = new GhGitHubClient({ repo: REPO, exec: fake.exec, requiredChecks: ['lint'] });
+      fake.setCheck(sha, 'lint', 'completed', 'neutral');
+      const before = fake.calls.length;
+      expect(await client.waitForRequiredChecks({ sha })).toMatchObject({ ok: true, checks: [{ name: 'lint' }] });
+      expect(fake.calls.slice(before).some((c) => c.args[3]?.includes('/rules/'))).toBe(false);
+    });
+
     it('uses the default timeout and real sleep', async () => {
-      const { fake, sha } = await prWithChecks(['lint']);
+      const { fake, sha } = await prWithChecks({ requiredChecks: ['lint'] });
       let calls = 0;
       const start = Date.now();
       const client = new GhGitHubClient({
@@ -585,12 +734,13 @@ describe('GhGitHubClient', () => {
       expect((await rejection(client.waitForRequiredChecks({ sha }))).code).toBe('timeout');
     });
 
-    it('needs an open PR at the sha and reports gh failures', async () => {
-      const { fake, client, sha } = await prWithChecks(['lint']);
-      expect((await rejection(client.waitForRequiredChecks({ sha: 'd'.repeat(40) }))).code).toBe('not-found');
+    it('reports gh failures', async () => {
+      const { fake, sha } = await prWithChecks({ requiredChecks: ['lint'] });
       const failing = new GhGitHubClient({
         repo: REPO,
-        exec: overriding(fake, (args) => (args[1] === 'checks' ? { stderr: 'HTTP 502: Bad Gateway' } : undefined)),
+        exec: overriding(fake, (args) =>
+          args[3]?.endsWith('/check-runs') ? { stderr: 'gh: Bad Gateway (HTTP 502)' } : undefined,
+        ),
       });
       expect((await rejection(failing.waitForRequiredChecks({ sha }))).code).toBe('unavailable');
     });

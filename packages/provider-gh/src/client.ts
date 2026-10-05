@@ -48,9 +48,22 @@ export interface GhGitHubClientOptions {
   readonly exec?: Exec;
   /** Local git operations. Default: the `git` on PATH. */
   readonly git?: GitRunner;
+  /**
+   * Login this client acts as. Pass `github-actions[bot]` under the Actions `GITHUB_TOKEN`,
+   * which cannot read `GET /user`. Default: asked from gh (`/user`, then GraphQL `viewer`,
+   * then `github-actions[bot]` when `GITHUB_ACTIONS=true`).
+   */
+  readonly viewer?: string;
+  /**
+   * Required check names, for example from the `.github/required-checks` registry. Default:
+   * read from the base branch's rulesets and branch protection on every `waitForRequiredChecks`.
+   */
+  readonly requiredChecks?: readonly string[];
+  /** Environment, for `GITHUB_ACTIONS`. Default `process.env`. */
+  readonly env?: Readonly<Record<string, string | undefined>>;
   /** How long `waitForRequiredChecks` waits without its own `timeoutMs`. Default 30 minutes. */
   readonly checksTimeoutMs?: number;
-  /** Delay between `gh pr checks` polls. Default 10 seconds. */
+  /** Delay between check-run polls. Default 10 seconds. */
   readonly pollIntervalMs?: number;
   /** Injectable for tests. */
   readonly sleep?: (ms: number) => Promise<void>;
@@ -82,7 +95,8 @@ export const PR_FIELDS = [
 /** Fields `gh issue view/list --json` returns for an `Issue`. */
 export const ISSUE_FIELDS = 'number,url,title,body,state,labels,author';
 
-const LIST_LIMIT = '1000';
+/** `gh ... list --limit`: gh pages through everything up to this many. */
+const LIST_LIMIT = '100000';
 const ISSUE_EVENTS: ReadonlySet<string> = new Set<IssueEventType>([
   'labeled',
   'unlabeled',
@@ -92,21 +106,6 @@ const ISSUE_EVENTS: ReadonlySet<string> = new Set<IssueEventType>([
   'reopened',
   'auto_merge_enabled',
 ]);
-
-/** `gh pr checks --json state` values → check run status and conclusion. */
-const CHECK_STATES: Readonly<Record<string, readonly [CheckRun['status'], CheckConclusion | null]>> = {
-  SUCCESS: ['completed', 'success'],
-  NEUTRAL: ['completed', 'neutral'],
-  SKIPPED: ['completed', 'skipped'],
-  CANCELLED: ['completed', 'cancelled'],
-  TIMED_OUT: ['completed', 'timed_out'],
-  FAILURE: ['completed', 'failure'],
-  ERROR: ['completed', 'failure'],
-  STARTUP_FAILURE: ['completed', 'failure'],
-  ACTION_REQUIRED: ['completed', 'failure'],
-  STALE: ['completed', 'failure'],
-  IN_PROGRESS: ['in_progress', null],
-};
 
 const RUN_CONCLUSIONS: ReadonlySet<string> = new Set<CheckConclusion>([
   'success',
@@ -119,9 +118,27 @@ const RUN_CONCLUSIONS: ReadonlySet<string> = new Set<CheckConclusion>([
 
 const PASSING: ReadonlySet<CheckConclusion | null> = new Set(['success', 'neutral', 'skipped']);
 
-/** A path segment per branch-name segment, so `a/b` stays `a/b` and `#` is escaped. */
-function refPath(branch: string): string {
-  return branch.split('/').map(encodeURIComponent).join('/');
+/** A REST conclusion as a `CheckConclusion` (`action_required`, `stale`, `startup_failure` count as failure). */
+function conclusionOf(value: string | undefined): CheckConclusion | null {
+  if (value === undefined) return null;
+  return RUN_CONCLUSIONS.has(value) ? (value as CheckConclusion) : 'failure';
+}
+
+/** A REST run or check status (`waiting`, `requested`, `pending` count as queued). */
+function statusOf(value: string): CheckRun['status'] {
+  return value === 'completed' || value === 'in_progress' ? value : 'queued';
+}
+
+/**
+ * A path segment per ref segment, so `a/b` stays `a/b` and `#` is escaped. Empty, `.` and
+ * `..` segments are refused so a ref cannot move the request to another API path.
+ */
+function refPath(ref: string): string {
+  const segments = ref.split('/');
+  if (segments.some((segment) => segment === '' || segment === '.' || segment === '..')) {
+    throw new ProviderError('invalid-request', `invalid ref: "${ref}"`);
+  }
+  return segments.map(encodeURIComponent).join('/');
 }
 
 /** The trailing number of a URL gh printed (`.../pull/12`, `.../issues/7`). */
@@ -193,8 +210,6 @@ function toPrFile(value: Json): PrFile {
 
 function toWorkflowRun(value: Json): WorkflowRun {
   const run = asObject(value, 'workflow run');
-  const status = str(run, 'status');
-  const conclusion = optStr(run, 'conclusion');
   return {
     id: num(run, 'id'),
     workflowFile: str(run, 'path').replace(/@.*$/, '').split('/').pop() as string,
@@ -202,9 +217,8 @@ function toWorkflowRun(value: Json): WorkflowRun {
     headSha: str(run, 'head_sha'),
     headBranch: str(run, 'head_branch'),
     prNumbers: arr(run, 'pull_requests').map((pr) => num(asObject(pr, 'pull request'), 'number')),
-    status: status === 'completed' || status === 'in_progress' ? status : 'queued',
-    conclusion:
-      conclusion === undefined ? null : RUN_CONCLUSIONS.has(conclusion) ? (conclusion as CheckConclusion) : 'failure',
+    status: statusOf(str(run, 'status')),
+    conclusion: conclusionOf(optStr(run, 'conclusion')),
     actor: login(run, 'actor'),
   };
 }
@@ -220,6 +234,10 @@ function commitEventId(sha: string): number {
  * Git Data API, comments, timeline events and workflow runs), so it works on the owner's
  * machine with `gh auth login` and in Actions with `GH_TOKEN`.
  *
+ * `listIssueEvents` dates a `committed` event with the commit's committer date, which whoever
+ * creates the commit chooses (the timeline has no push time); order approvals against
+ * commits by sha, not by that date alone.
+ *
  * Not registered in `createProviders`: the research CLI (L-038), the merge-rule job (L-031)
  * and the runway monitor (L-073) construct and inject it.
  */
@@ -227,6 +245,9 @@ export class GhGitHubClient implements GitHubClient {
   readonly #exec: Exec;
   readonly #git: GitRunner;
   readonly #repoOption: string | undefined;
+  readonly #viewerOption: string | undefined;
+  readonly #requiredChecksOption: readonly string[] | undefined;
+  readonly #env: Readonly<Record<string, string | undefined>>;
   readonly #checksTimeoutMs: number;
   readonly #pollIntervalMs: number;
   readonly #sleep: (ms: number) => Promise<void>;
@@ -240,6 +261,9 @@ export class GhGitHubClient implements GitHubClient {
     this.#exec = options.exec ?? createProcessExec('gh');
     this.#git = options.git ?? createGitRunner();
     this.#repoOption = options.repo;
+    this.#viewerOption = options.viewer;
+    this.#requiredChecksOption = options.requiredChecks;
+    this.#env = options.env ?? process.env;
     this.#checksTimeoutMs = options.checksTimeoutMs ?? 30 * 60_000;
     this.#pollIntervalMs = options.pollIntervalMs ?? 10_000;
     this.#sleep = options.sleep ?? ((ms) => new Promise((resolve) => setTimeout(resolve, ms)));
@@ -301,8 +325,21 @@ export class GhGitHubClient implements GitHubClient {
   // -- GitHubClient ---------------------------------------------------------
 
   viewer(): Promise<string> {
-    this.#viewer ??= this.#gh(['api', 'user']).then((out) => str(asObject(parseJson(out, 'user'), 'user'), 'login'));
+    this.#viewer ??= this.#viewerOption === undefined ? this.#askViewer() : Promise.resolve(this.#viewerOption);
     return this.#viewer;
+  }
+
+  async #askViewer(): Promise<string> {
+    const args = ['api', 'user'];
+    const user = await this.#run(args);
+    if (user.exitCode === 0) return str(asObject(parseJson(user.stdout, 'user'), 'user'), 'login');
+    // Installation tokens (the Actions GITHUB_TOKEN, app tokens) cannot read /user.
+    const graphql = await this.#run(['api', 'graphql', '-f', 'query={viewer{login}}']);
+    if (graphql.exitCode === 0) {
+      return str(obj(obj(asObject(parseJson(graphql.stdout, 'viewer'), 'graphql'), 'data'), 'viewer'), 'login');
+    }
+    if (this.#env['GITHUB_ACTIONS'] === 'true') return 'github-actions[bot]';
+    throw ghError(args, user);
   }
 
   async createBranch(input: CreateBranchInput): Promise<{ name: string; sha: string }> {
@@ -325,14 +362,17 @@ export class GhGitHubClient implements GitHubClient {
     }
     const headCommit = asObject(await this.#api('GET', `/commits/${head}`), 'commit');
     const baseTree = str(obj(obj(headCommit, 'commit'), 'tree'), 'sha');
+    const modes = await this.#blobModes(baseTree);
     const tree = asObject(
       await this.#api('POST', '/git/trees', {
         base_tree: baseTree,
-        tree: input.files.map((file) =>
-          file.content === null
-            ? { path: file.path, mode: '100644', type: 'blob', sha: null }
-            : { path: file.path, mode: '100644', type: 'blob', content: file.content },
-        ),
+        tree: input.files.map((file) => {
+          // Keep an existing file's mode (an executable stays executable).
+          const mode = modes.get(file.path) ?? '100644';
+          return file.content === null
+            ? { path: file.path, mode, type: 'blob', sha: null }
+            : { path: file.path, mode, type: 'blob', content: file.content };
+        }),
       }),
       'tree',
     );
@@ -351,6 +391,16 @@ export class GhGitHubClient implements GitHubClient {
       throw ghError(args, result, moved ? 'conflict' : undefined);
     }
     return this.getCommit(sha);
+  }
+
+  /** Path to mode of every blob in a tree (a truncated listing of a huge tree falls back to `100644`). */
+  async #blobModes(tree: string): Promise<Map<string, string>> {
+    const listing = asObject(await this.#api('GET', `/git/trees/${tree}?recursive=1`), 'tree');
+    const modes = new Map<string, string>();
+    for (const entry of arr(listing, 'tree').map((value) => asObject(value, 'tree entry'))) {
+      if (entry['type'] === 'blob') modes.set(str(entry, 'path'), str(entry, 'mode'));
+    }
+    return modes;
   }
 
   async getCommit(sha: string): Promise<GitCommit> {
@@ -430,7 +480,7 @@ export class GhGitHubClient implements GitHubClient {
     const known = await this.#labels;
     for (const label of labels) {
       if (known.has(label)) continue;
-      const args = ['label', 'create', label, '-R', repo];
+      const args = ['label', 'create', '-R', repo, '--', label];
       const result = await this.#run(args);
       // Another run may have created it since the list was read.
       if (result.exitCode !== 0 && !/already exists/i.test(result.stderr)) throw ghError(args, result);
@@ -481,9 +531,9 @@ export class GhGitHubClient implements GitHubClient {
 
   async listIssueEvents(number: number): Promise<readonly IssueEvent[]> {
     const items = (await this.#apiList(`/issues/${number}/timeline`)).map((item) => asObject(item, 'event'));
-    const events = await Promise.all(
-      items.filter((item) => ISSUE_EVENTS.has(String(item['event']))).map((item) => this.#toEvent(item)),
-    );
+    const events: IssueEvent[] = [];
+    // One at a time: each `committed` event costs a gh process.
+    for (const item of items) if (ISSUE_EVENTS.has(String(item['event']))) events.push(await this.#toEvent(item));
     // Stable: events at the same second keep the timeline's order.
     return events.sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
   }
@@ -541,35 +591,65 @@ export class GhGitHubClient implements GitHubClient {
     return { sha: merged.mergeCommitSha };
   }
 
-  async #requiredChecks(number: number, sha: string, exclude: ReadonlySet<string>): Promise<CheckRun[]> {
-    const repo = await this.repo();
-    const args = ['pr', 'checks', String(number), '-R', repo, '--required', '--json', 'name,state'];
-    const result = await this.#run(args);
-    // gh exits 8 while checks are pending and 1 when one failed, printing the JSON either way.
-    if (result.exitCode !== 0 && result.stdout.trim() === '') {
-      if (/no (required )?checks reported/i.test(result.stderr)) return [];
-      throw ghError(args, result);
+  /**
+   * Required check names for `sha`: the client's `requiredChecks`, else the union of the
+   * base branch's ruleset checks and branch-protection contexts. The base is that of the open
+   * PR at `sha`, or the default branch.
+   */
+  async #requiredCheckNames(sha: string): Promise<string[]> {
+    if (this.#requiredChecksOption !== undefined) return [...this.#requiredChecksOption];
+    const pr = (await this.#listPrs('open', [])).find((p) => p.headSha === sha);
+    const base = refPath(pr?.base ?? (await this.#defaultBranchName()));
+    const names = new Set<string>();
+    for (const rule of (await this.#apiList(`/rules/branches/${base}`)).map((value) => asObject(value, 'rule'))) {
+      if (rule['type'] !== 'required_status_checks') continue;
+      for (const check of arr(obj(rule, 'parameters'), 'required_status_checks')) {
+        names.add(str(asObject(check, 'check'), 'context'));
+      }
     }
-    return asArray(parseJson(result.stdout, 'pr checks'), 'checks')
-      .map((value) => {
-        const check = asObject(value, 'check');
-        const [status, conclusion] = CHECK_STATES[str(check, 'state')] ?? ['queued', null];
-        return { name: str(check, 'name'), headSha: sha, status, conclusion };
-      })
-      .filter((check) => !exclude.has(check.name));
+    const protection = optObj(asObject(await this.#api('GET', `/branches/${base}`), 'branch'), 'protection');
+    const contexts = protection === undefined ? undefined : optObj(protection, 'required_status_checks');
+    for (const context of contexts === undefined ? [] : arr(contexts, 'contexts')) {
+      names.add(str({ context }, 'context'));
+    }
+    return [...names];
+  }
+
+  /** The newest check run (or else commit status) per name on exactly `sha`; missing ones are queued. */
+  async #checksOn(sha: string, names: readonly string[]): Promise<CheckRun[]> {
+    const path = `/commits/${encodeURIComponent(sha)}`;
+    const pages = asArray(await this.#api('GET', `${path}/check-runs`, undefined, ['--paginate', '--slurp']), 'pages');
+    const runs = pages
+      .flatMap((page) => arr(asObject(page, 'check runs page'), 'check_runs'))
+      .map((value) => asObject(value, 'check run'))
+      .sort((a, b) => num(b, 'id') - num(a, 'id'));
+    const statuses = arr(asObject(await this.#api('GET', `${path}/status`), 'status'), 'statuses').map((value) =>
+      asObject(value, 'status'),
+    );
+    return names.map((name): CheckRun => {
+      const run = runs.find((r) => str(r, 'name') === name);
+      if (run) {
+        const status = statusOf(str(run, 'status'));
+        return { name, headSha: sha, status, conclusion: conclusionOf(optStr(run, 'conclusion')) };
+      }
+      const state = statuses.find((s) => str(s, 'context') === name)?.['state'];
+      if (state === undefined) return { name, headSha: sha, status: 'queued', conclusion: null };
+      if (state === 'pending') return { name, headSha: sha, status: 'in_progress', conclusion: null };
+      return { name, headSha: sha, status: 'completed', conclusion: state === 'success' ? 'success' : 'failure' };
+    });
   }
 
   /**
-   * Polls `gh pr checks <pr> --required` for the open PR whose head is `sha` (rather than
-   * `--watch`, which cannot leave out the job that is itself waiting, nor time out).
+   * Polls the check runs and commit statuses on exactly `sha` until every required check has
+   * completed. A required check that has not reported yet (for example a workflow that was just
+   * dispatched) counts as pending until the timeout.
    */
   async waitForRequiredChecks(input: WaitForChecksInput): Promise<RequiredChecksResult> {
     const deadline = this.#now() + (input.timeoutMs ?? this.#checksTimeoutMs);
-    const pr = (await this.#listPrs('open', [])).find((p) => p.headSha === input.sha);
-    if (!pr) throw new ProviderError('not-found', `no open pull request has head ${input.sha}`);
     const exclude = new Set(input.exclude ?? []);
+    const names = (await this.#requiredCheckNames(input.sha)).filter((name) => !exclude.has(name));
     for (;;) {
-      const checks = await this.#requiredChecks(pr.number, input.sha, exclude);
+      const checks = names.length === 0 ? [] : await this.#checksOn(input.sha, names);
       const pending = checks.filter((check) => check.status !== 'completed').map((check) => check.name);
       if (pending.length === 0) {
         return { sha: input.sha, ok: checks.every((check) => PASSING.has(check.conclusion)), checks };
@@ -584,8 +664,9 @@ export class GhGitHubClient implements GitHubClient {
 
   async dispatchWorkflow(file: string, ref: string, inputs: Readonly<Record<string, string>> = {}): Promise<void> {
     const repo = await this.repo();
-    const args = ['workflow', 'run', file, '-R', repo, '--ref', ref];
+    const args = ['workflow', 'run', '-R', repo, '--ref', ref];
     for (const [key, value] of Object.entries(inputs)) args.push('-f', `${key}=${value}`);
+    args.push('--', file);
     const result = await this.#run(args);
     if (result.exitCode !== 0) {
       throw ghError(args, result, /no ref found/i.test(result.stderr) ? 'not-found' : undefined);
@@ -601,10 +682,13 @@ export class GhGitHubClient implements GitHubClient {
     const repo = await this.repo();
     const tag = markerComment(marker);
     const body = withMarker(marker, input.body);
-    const args = ['issue', 'list', '-R', repo, '--state', 'all', '--limit', LIST_LIMIT, '--json', ISSUE_FIELDS];
-    const matches = asArray(await this.#ghJson(args), 'issues')
-      .map(toIssue)
-      .filter((issue) => issue.body.includes(tag))
+    // Only issues this viewer opened, so nobody else's issue that quotes the marker is adopted.
+    const me = await this.viewer();
+    const matches = (await this.#apiList(`/issues?state=all&creator=${encodeURIComponent(me)}&per_page=100`))
+      .map((value) => asObject(value, 'issue'))
+      .filter((issue) => issue['pull_request'] === undefined && login(issue, 'user') === me)
+      .filter((issue) => (optStr(issue, 'body') ?? '').includes(tag))
+      .map((issue) => ({ number: num(issue, 'number'), state: str(issue, 'state') === 'closed' ? 'closed' : 'open' }))
       .sort((a, b) => b.number - a.number);
     // Prefer the open one; otherwise reuse the newest closed one.
     const existing = matches.find((issue) => issue.state === 'open') ?? matches[0];

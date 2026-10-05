@@ -50,6 +50,10 @@ describe('JSON access', () => {
     }
     expect(flattenPages([[1], [2, 3]], 'x')).toEqual([1, 2, 3]);
     expect(labelNames([{ name: 'a' }, { name: 'b' }])).toEqual(['a', 'b']);
+    // gh's GraphQL JSON names bots `app/<name>`; REST says `<name>[bot]`.
+    expect(login({ a: { login: 'app/github-actions', is_bot: true } }, 'a')).toBe('github-actions[bot]');
+    expect(login({ a: { login: 'renovate', is_bot: true } }, 'a')).toBe('renovate[bot]');
+    expect(login({ a: { login: 'github-actions[bot]', is_bot: true } }, 'a')).toBe('github-actions[bot]');
   });
 });
 
@@ -65,6 +69,7 @@ describe('ghError', () => {
     ['gh: Server Error (HTTP 503)', 'unavailable'],
     ['error connecting to api.github.com', 'unavailable'],
     ['HTTP 401: Bad credentials', 'invalid-request'],
+    ['gh: Validation Failed: field not found (HTTP 422)', 'invalid-request'],
   ])('%s → %s', (stderr, code) => {
     expect(ghError(['api', 'x'], result(stderr)).code).toBe(code);
   });

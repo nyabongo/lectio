@@ -76,12 +76,20 @@ export interface FakeGhOptions {
   readonly repo?: string;
   /** Default `main`. */
   readonly defaultBranch?: string;
-  /** Login gh is authenticated as. Default `lectio-bot`. */
+  /** Login gh is authenticated as. Default `lectio-bot` (`github-actions[bot]` for an installation token). */
   readonly viewer?: string;
+  /**
+   * What gh is authenticated with. `installation` (the Actions `GITHUB_TOKEN`) cannot read
+   * `GET /user` (403) nor the GraphQL `viewer`; `app-user` cannot read `/user` but has a GraphQL
+   * `viewer`. Default `user`.
+   */
+  readonly token?: 'user' | 'installation' | 'app-user';
   /** Workflow files that accept `workflow_dispatch`. */
   readonly workflows?: readonly string[];
-  /** Check names `gh pr checks --required` reports (state from `setCheck`, else `PENDING`). */
+  /** Check names a ruleset on the default branch requires. */
   readonly requiredChecks?: readonly string[];
+  /** Check names classic branch protection on the default branch requires. */
+  readonly protectedChecks?: readonly string[];
 }
 
 export interface RecordedCommand {
@@ -108,6 +116,10 @@ class Parsed {
   constructor(args: readonly string[]) {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i] as string;
+      if (arg === '--') {
+        this.positional.push(...args.slice(i + 1));
+        break;
+      }
       if (!arg.startsWith('-')) this.positional.push(arg);
       else if (BOOLEAN_FLAGS.has(arg)) this.flags.set(arg, ['true']);
       else this.flags.set(arg, [...(this.flags.get(arg) ?? []), args[++i] as string]);
@@ -186,8 +198,12 @@ export class FakeGh {
   readonly calls: RecordedCommand[] = [];
   readonly dispatches: { file: string; ref: string; inputs: Record<string, string> }[] = [];
   readonly #workflows: ReadonlySet<string>;
+  readonly #token: 'user' | 'installation' | 'app-user';
   readonly #requiredChecks: readonly string[];
-  readonly #checks = new Map<string, string>();
+  readonly #protectedChecks: readonly string[];
+  readonly #checkRuns: Record<string, unknown>[] = [];
+  readonly #statuses: Record<string, unknown>[] = [];
+  readonly #modes = new Map<string, string>();
   readonly #commits = new Map<string, CommitRecord>();
   readonly #trees = new Map<string, Tree>();
   readonly #branches = new Map<string, string>();
@@ -203,9 +219,11 @@ export class FakeGh {
   constructor(options: FakeGhOptions = {}) {
     this.repo = options.repo ?? 'nyabongo/lectio';
     this.defaultBranch = options.defaultBranch ?? 'main';
-    this.viewer = options.viewer ?? 'lectio-bot';
+    this.#token = options.token ?? 'user';
+    this.viewer = options.viewer ?? (this.#token === 'installation' ? 'github-actions[bot]' : 'lectio-bot');
     this.#workflows = new Set(options.workflows ?? []);
     this.#requiredChecks = options.requiredChecks ?? [];
+    this.#protectedChecks = options.protectedChecks ?? [];
     const root = this.#commit([], new Map([['README.md', '# Lectio\n']]), 'Initial commit', 'lectio-owner', true);
     this.#branches.set(this.defaultBranch, root.sha);
   }
@@ -224,15 +242,30 @@ export class FakeGh {
 
   // -- test helpers ---------------------------------------------------------
 
-  /** Sets the state `gh pr checks` reports for a check on a sha (`SUCCESS`, `FAILURE`, `IN_PROGRESS`, ...). */
-  setCheck(sha: string, name: string, state: string): void {
-    this.#checks.set(`${sha}:${name}`, state);
+  /** Adds a check run on a sha (the newest run per name counts). */
+  setCheck(sha: string, name: string, status: string, conclusion: string | null = null): void {
+    this.#checkRuns.push({ id: this.#checkRuns.length + 1, name, head_sha: sha, status, conclusion });
+  }
+
+  /** Adds a legacy commit status on a sha (`pending`, `success`, `failure`, `error`). */
+  setStatus(sha: string, context: string, state: string): void {
+    this.#statuses.unshift({ context, state, sha });
+  }
+
+  /** Gives a path a git file mode (for example `100755`) in every tree listing. */
+  setMode(path: string, mode: string): void {
+    this.#modes.set(path, mode);
   }
 
   addRun(run: Omit<FakeRun, 'id'> & { readonly id?: number }): FakeRun {
     const stored = { ...run, id: run.id ?? this.#nextRunId++ };
     this.#runs.set(stored.id, stored);
     return stored;
+  }
+
+  /** An issue opened by someone else. */
+  addIssue(author: string, title: string, body: string): number {
+    return this.#newThread('issue', title, body, 'OPEN', author);
   }
 
   /** A comment by someone else (for example a reviewer's `/approve`). */
@@ -357,6 +390,11 @@ export class FakeGh {
     return number;
   }
 
+  /** How gh's GraphQL JSON shows an author: bots as `app/<name>`. */
+  #actorJson(login: string): Record<string, unknown> {
+    return login.endsWith('[bot]') ? { login: `app/${login.slice(0, -5)}`, is_bot: true } : { login, is_bot: false };
+  }
+
   #labelJson(name: string): Record<string, unknown> {
     return { id: `LA_${name}`, name, description: '', color: 'ededed' };
   }
@@ -377,7 +415,7 @@ export class FakeGh {
       state: thread.state,
       isDraft: thread.draft,
       labels: thread.labels.map((label) => this.#labelJson(label)),
-      author: { login: thread.author, is_bot: false },
+      author: this.#actorJson(thread.author),
       autoMergeRequest: thread.autoMerge ? { mergeMethod: 'SQUASH', enabledBy: { login: this.viewer } } : null,
       mergeCommit: thread.mergeCommitSha === null ? null : { oid: thread.mergeCommitSha },
       createdAt: thread.createdAt,
@@ -392,7 +430,7 @@ export class FakeGh {
       body: thread.body,
       state: thread.state,
       labels: thread.labels.map((label) => this.#labelJson(label)),
-      author: { login: thread.author, is_bot: false },
+      author: this.#actorJson(thread.author),
     };
   }
 
@@ -446,21 +484,12 @@ export class FakeGh {
         return '';
       case 'pr merge':
         return this.#prMerge(number, parsed);
-      case 'pr checks':
-        return this.#prChecks(number);
       case 'label list':
         return json([...this.#labels].map((label) => pick(this.#labelJson(label), fields)));
       case 'label create':
-        return this.#labelCreate(parsed.positional[2] as string);
+        return this.#labelCreate(parsed.positional.at(-1) as string);
       case 'workflow run':
         return this.#workflowRun(parsed);
-      case 'issue list':
-        return json(
-          [...this.#threads.values()]
-            .filter((thread) => thread.kind === 'issue')
-            .reverse()
-            .map((thread) => pick(this.#issueJson(thread), fields)),
-        );
       case 'issue view':
         return json(pick(this.#issueJson(this.#thread(number, 'issue')), fields));
       case 'issue create': {
@@ -564,24 +593,6 @@ export class FakeGh {
     return '';
   }
 
-  #prChecks(number: number): string {
-    const thread = this.#thread(number, 'pr');
-    if (this.#requiredChecks.length === 0) {
-      throw new GhFailure(`no required checks reported on the '${thread.head}' branch\n`);
-    }
-    const sha = this.#headOf(thread);
-    const checks = this.#requiredChecks.map((name) => ({
-      name,
-      state: this.#checks.get(`${sha}:${name}`) ?? 'PENDING',
-    }));
-    const stdout = JSON.stringify(checks);
-    if (checks.some((check) => ['PENDING', 'QUEUED', 'IN_PROGRESS'].includes(check.state))) {
-      // gh exits 8 while checks are pending, still printing the JSON.
-      throw new GhFailure('', stdout, 8);
-    }
-    return stdout;
-  }
-
   #labelCreate(name: string): string {
     if (this.#labels.has(name))
       throw new GhFailure(
@@ -592,7 +603,7 @@ export class FakeGh {
   }
 
   #workflowRun(parsed: Parsed): string {
-    const file = parsed.positional[2] as string;
+    const file = parsed.positional.at(-1) as string;
     const ref = parsed.get('--ref') as string;
     if (!this.#workflows.has(file)) throw new GhFailure(`could not find any workflows named ${file}\n`);
     const sha = this.#branches.get(ref);
@@ -621,7 +632,17 @@ export class FakeGh {
     const method = parsed.get('-X') ?? 'GET';
     const path = parsed.positional[1] as string;
     const body = (input === '' ? {} : JSON.parse(input)) as Record<string, unknown>;
-    if (path === 'user') return { login: this.viewer, id: 1, type: 'Bot' };
+    if (path === 'user') {
+      if (this.#token !== 'user') throw httpError(403, 'Resource not accessible by integration');
+      return { login: this.viewer, id: 1, type: 'User' };
+    }
+    if (path === 'graphql') {
+      if (parsed.get('-f') !== 'query={viewer{login}}')
+        throw new Error(`fake gh: unexpected query ${parsed.get('-f')}`);
+      if (this.#token === 'installation')
+        throw new GhFailure('GraphQL: Resource not accessible by integration (viewer)\n');
+      return { data: { viewer: { login: this.viewer } } };
+    }
     const prefix = `repos/${this.repo}`;
     if (!path.startsWith(prefix)) throw new Error(`fake gh: unexpected api path ${path}`);
     const route = `${method} ${path.slice(prefix.length)}`;
@@ -629,6 +650,58 @@ export class FakeGh {
     let match: RegExpExecArray | null;
 
     if (route === 'GET ') return { full_name: this.repo, default_branch: this.defaultBranch };
+    if ((match = /^GET \/commits\/(\w+)\/check-runs$/.exec(route))) {
+      const runs = this.#checkRuns.filter((run) => run['head_sha'] === match?.[1]);
+      // Two pages, like a paginated listing.
+      const page = (items: unknown[]) => ({ total_count: runs.length, check_runs: items });
+      return [page(runs.slice(0, 1)), page(runs.slice(1))];
+    }
+    if ((match = /^GET \/commits\/(\w+)\/status$/.exec(route))) {
+      const statuses = this.#statuses.filter((status) => status['sha'] === match?.[1]);
+      return { state: 'pending', statuses };
+    }
+    if ((match = /^GET \/rules\/branches\/(.+)$/.exec(route))) {
+      const rules: unknown[] = [{ type: 'deletion' }];
+      if (decodeURIComponent(match[1] as string) === this.defaultBranch && this.#requiredChecks.length > 0) {
+        const checks = this.#requiredChecks.map((context) => ({ context }));
+        rules.push({ type: 'required_status_checks', parameters: { required_status_checks: checks } });
+      }
+      return paged(rules);
+    }
+    if ((match = /^GET \/branches\/(.+)$/.exec(route))) {
+      const name = decodeURIComponent(match[1] as string);
+      this.#branch(name);
+      if (name !== this.defaultBranch || this.#protectedChecks.length === 0) return { name, protected: false };
+      const required = { enforcement_level: 'everyone', contexts: this.#protectedChecks };
+      return { name, protected: true, protection: { enabled: true, required_status_checks: required } };
+    }
+    if ((match = /^GET \/git\/trees\/(\w+)\?recursive=1$/.exec(route))) {
+      const sha = match[1] as string;
+      const tree = this.#trees.get(sha) ?? [...this.#commits.values()].find((c) => shaOf([...c.tree]) === sha)?.tree;
+      if (!tree) throw httpError(404, 'Not Found');
+      const entries = [...tree.keys()].map((path) => ({ path, mode: this.#modes.get(path) ?? '100644', type: 'blob' }));
+      return { sha, tree: [{ path: 'dir', mode: '040000', type: 'tree' }, ...entries], truncated: false };
+    }
+    if ((match = /^GET \/issues\?(.*)$/.exec(route))) {
+      const query = new URLSearchParams(match[1]);
+      if (query.get('state') !== 'all') throw new Error('fake gh: expected state=all');
+      const creator = query.get('creator');
+      return paged(
+        [...this.#threads.values()]
+          .filter((thread) => creator === null || thread.author === creator)
+          .reverse()
+          .map((thread) => ({
+            number: thread.number,
+            html_url: `https://github.com/${this.repo}/issues/${thread.number}`,
+            title: thread.title,
+            // REST bodies are null when empty.
+            body: thread.body === '' ? null : thread.body,
+            state: thread.state === 'OPEN' ? 'open' : 'closed',
+            user: { login: thread.author },
+            ...(thread.kind === 'pr' ? { pull_request: { url: '' } } : {}),
+          })),
+      );
+    }
     if ((match = /^GET \/commits\/(.+)$/.exec(route))) {
       return this.#commitJson(this.#getCommit(decodeURIComponent(match[1] as string)));
     }
