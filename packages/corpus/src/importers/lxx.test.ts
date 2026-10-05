@@ -3,9 +3,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 
-import { server } from '@lectio/shared/test-server';
 import { isBookCode } from '@lectio/refs';
-import { http, HttpResponse } from 'msw';
 import { c as createTar } from 'tar';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -579,7 +577,7 @@ describe('runImportLxx', () => {
     expect(await stat(join(dir, '.cache', 'corpus', 'lxx-swete-test-1.tar.gz'))).toBeTruthy();
   });
 
-  it('reports corpus errors with exit code 2 and rethrows anything else', async () => {
+  it('reports corpus and download errors with exit code 2', async () => {
     const dir = await tempDir();
     const { out, err, io } = capture();
     const offline: Downloader = {
@@ -595,14 +593,20 @@ describe('runImportLxx', () => {
         throw new TypeError('bug');
       },
     };
-    await expect(runImportLxx(join(dir, 'corpus'), io, { downloader: broken })).rejects.toThrow(TypeError);
+    // The injected downloader is wrapped by corpusDownloader, so any download failure is a corpus error.
+    expect(await runImportLxx(join(dir, 'corpus'), io, { downloader: broken })).toBe(2);
+    expect(err.at(-1)).toContain('bug');
   });
 
-  it('downloads the pinned archive with fetch by default', async () => {
+  it('reports a failing injected downloader as a corpus error naming the URL', async () => {
     const dir = await tempDir();
-    server.use(http.get(SWETE_LXX.url, () => new HttpResponse(null, { status: 503 })));
+    const failing: Downloader = {
+      fetchBytes: async () => {
+        throw new Error('HTTP 503');
+      },
+    };
     const { err, io } = capture();
-    expect(await runImportLxx(join(dir, 'corpus'), io)).toBe(2);
+    expect(await runImportLxx(join(dir, 'corpus'), io, { downloader: failing })).toBe(2);
     expect(err).toEqual([`GET ${SWETE_LXX.url}: HTTP 503`]);
   });
 });
