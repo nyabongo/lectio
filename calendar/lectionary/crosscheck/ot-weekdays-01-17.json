@@ -1,5 +1,5 @@
 {
-  "$comment": "Second source for block ot-weekdays-01-17 (L-066, 011 amendment 5). OLM 1981 for the readings imported from LitCal (Year II weeks 1-11 and their gospels), in OLM numbering (Nova Vulgata psalms; lectionary:crosscheck converts them, except Ps 115 and 147, whose Nova Vulgata verse numbers equal the Hebrew and are given by hand in `canonical`). LitCal, as printed, for 8-sat, which is filled from OLM 1981 because LitCal's first reading does not parse, and LitCal, as printed, for the 9-sat Year II psalm (Ps 78, which the block corrects to Ps 71 from OLM 1981; kept here so the LitCal error stays visible as a disagreement). Sir 47 and 48 are compared through a hand `canonical`. Chapter-crossing ranges are written as the primary splits them when they cover the same verses. LitCal has no data for the other OLM-filled readings (all of Year I; Year II and gospels of weeks 12-17) at the pinned revision in any language (en, fr, hr, it, la, nl); `consulted` records the leaves checked, so those readings are listed as single-source in disputes/ot-weekdays-01-17.md, together with the readings a person should check first. Psalm strophe divisions follow OLM; verse letters are dropped before comparing.",
+  "$comment": "Second source for block ot-weekdays-01-17 (L-066, 011 amendment 5). OLM 1981 for the readings imported from LitCal (Year II weeks 1-11 and their gospels), in OLM numbering (Nova Vulgata psalms; lectionary:crosscheck converts them). LitCal, as printed, for 8-sat, which is filled from OLM 1981 because LitCal's first reading does not parse, and LitCal, as printed, for the 9-sat Year II psalm (Ps 78, which the block corrects to Ps 71 from OLM 1981; kept here so the LitCal error stays visible as a disagreement). Sir 47 and 48 are compared through a hand `canonical`. Chapter-crossing ranges are written as the primary splits them when they cover the same verses. LitCal has no data for the other OLM-filled readings (all of Year I; Year II and gospels of weeks 12-17) at the pinned revision in any language (en, fr, hr, it, la, nl); `consulted` records the leaves checked, so those readings are listed as single-source in disputes/ot-weekdays-01-17.md, together with the readings a person should check first. Psalm strophe divisions follow OLM; verse letters are dropped before comparing.",
   "block": "ot-weekdays-01-17",
   "entries": [
     {
@@ -18,7 +18,6 @@
       "slot": "psalm",
       "cycle": "II",
       "ref": "Ps 115:12-13, 14-17, 18-19",
-      "canonical": "Ps 116:12-13, 14-17, 18-19",
       "source": "olm-1981 p?#305"
     },
     {
@@ -1164,7 +1163,6 @@
       "slot": "psalm",
       "cycle": "II",
       "ref": "Ps 147:12-13, 14-15, 19-20",
-      "canonical": "Ps 147:12-13, 14-15, 19-20",
       "source": "olm-1981 p?#349"
     },
     {
