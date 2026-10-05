@@ -11,10 +11,13 @@
  * src/lib/seo.ts.
  *
  * `image` defaults to the page's own share card when it has one (day, reading and insight pages: `ogImageForPage()`
- * in src/lib/og.ts, rendered by src/pages/og/), else to the static brand card beside this file; `alternates` is the
- * hreflang hook L-110 fills once there is more than one locale.
+ * in src/lib/og.ts, rendered by src/pages/og/), else to the static brand card beside this file. The canonical URL is
+ * `path` in the page's own locale (a page may pass its default-locale path), and `alternates` default to the same
+ * page in every site locale plus `x-default` (`localeAlternates()` in src/lib/locales.ts, L-110); noindex pages
+ * have none. Share cards are per page, not per locale, so a Kiswahili page shows the same card.
  */
-import { DEFAULT_LOCALE, formatDate, localePath, t } from '../../i18n/index.ts';
+import { DEFAULT_LOCALE, LOCALES, formatDate, localePath, t } from '../../i18n/index.ts';
+import { localeAlternates, pathInLocale, splitLocalePath } from '../../lib/locales.ts';
 import { ogImageForPage, pageOgTarget } from '../../lib/og.ts';
 import { seoTags, stripBase } from '../../lib/seo.ts';
 import type { HreflangAlternate, SeoImage } from '../../lib/seo.ts';
@@ -40,17 +43,24 @@ export interface Props {
   noindex?: boolean;
 }
 
-const { title, type, lang = DEFAULT_LOCALE, alternates, noindex } = Astro.props;
+const { title, type, lang = DEFAULT_LOCALE, noindex } = Astro.props;
 const description = Astro.props.description ?? t(lang, 'seo.defaultDescription');
 const siteName = t(lang, 'common.site.name');
 // The same rule as the base layout's <title>.
 const fullTitle = title === undefined || title === siteName ? siteName : t(lang, 'common.site.pageTitle', { title });
 const base = import.meta.env.BASE_URL;
-const path = Astro.props.path ?? stripBase(base, Astro.url.pathname);
+const neutralPath = splitLocalePath(
+  Astro.props.path ?? stripBase(base, Astro.url.pathname),
+  LOCALES,
+  DEFAULT_LOCALE,
+).path;
+const path = pathInLocale(lang, neutralPath, DEFAULT_LOCALE);
+const alternates =
+  Astro.props.alternates ?? (noindex === true ? [] : localeAlternates(neutralPath, LOCALES, DEFAULT_LOCALE));
 const site = Astro.site ?? Astro.url;
-// Only a day, reading or insight path opens the content repository.
+// Only a day, reading or insight path opens the content repository; the card is the same in every locale.
 const pageImage =
-  Astro.props.image === undefined && pageOgTarget(path) !== null
+  Astro.props.image === undefined && pageOgTarget(neutralPath) !== null
     ? ogImageForPage(
         {
           env: { lang, messages: { t, formatDate }, paths: (page: string) => withBase(base, localePath(lang, page)) },
@@ -59,7 +69,7 @@ const pageImage =
           config: siteContext().config,
           repo: siteContext().repo,
         },
-        path,
+        neutralPath,
       )
     : null;
 const brandImage: SeoImage = {

@@ -5,11 +5,11 @@
  */
 import Seo from '../../components/seo/Seo.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DEFAULT_LOCALE, localePath, t } from '../../i18n/index.ts';
+import { localeOf, localePath, t } from '../../i18n/index.ts';
 import { passageLibrary } from '../../lib/calendar-view.ts';
 import { siteContext, withBase } from '../../lib/site.ts';
 
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const title = t(lang, 'calendar.library.title');
 const description = t(lang, 'calendar.library.description');
 const base = import.meta.env.BASE_URL;

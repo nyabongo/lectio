@@ -9,10 +9,11 @@
  */
 import Seo from '../../components/seo/Seo.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DEFAULT_LOCALE, t } from '../../i18n/index.ts';
+import { LOCALES, localeOf, localePath, t } from '../../i18n/index.ts';
 import { DEFAULT_SETTINGS, LANGUAGES, PLAYBACK_SPEEDS } from '../../lib/settings.ts';
+import { withBase } from '../../lib/site.ts';
 
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const title = t(lang, 'settings.title');
 const description = t(lang, 'settings.description');
 const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 2 });
@@ -36,7 +37,13 @@ const languageNames: Record<string, string> = {
   en: t(lang, 'settings.language.en'),
   sw: t(lang, 'settings.language.sw'),
 };
-const languages = LANGUAGES.map((language) => ({ ...language, label: languageNames[language.code] }));
+// The language choice shows the page's own language; choosing another saves it and opens this page in it (L-110).
+const languages = LANGUAGES.map((language) => ({
+  code: language.code,
+  available: language.available && LOCALES.includes(language.code),
+  label: languageNames[language.code],
+  href: withBase(import.meta.env.BASE_URL, localePath(language.code, 'settings/')),
+}));
 const messages = {
   saved: t(lang, 'settings.saved'),
   notSaved: t(lang, 'settings.notSaved'),
@@ -119,8 +126,9 @@ const messages = {
                   type="radio"
                   name="language"
                   value={option.code}
-                  checked={option.code === DEFAULT_SETTINGS.language}
+                  checked={option.code === lang}
                   disabled={!option.available}
+                  data-href={option.href}
                 />
                 <span>{option.label}</span>
                 {!option.available && <span class="soon" lang={lang}>{t(lang, 'settings.language.comingSoon')}</span>}
@@ -157,7 +165,9 @@ const messages = {
     };
     // Changes build on the settings in memory, so they add up even when storage cannot save them.
     const session = createSettingsSession(browserStorage());
+    // The language field shows the page's language (checked in the HTML), not the saved one.
     for (const [name, value] of Object.entries(session.current)) {
+      if (name === 'language') continue;
       const input = form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${String(value)}"]`);
       if (input !== null) input.checked = true;
     }
@@ -168,6 +178,10 @@ const messages = {
     form.addEventListener('change', (event) => {
       const input = event.target as HTMLInputElement;
       const { settings, saved } = session.change(input.name, input.value);
+      if (input.name === 'language' && input.dataset.href !== undefined) {
+        window.location.assign(input.dataset.href);
+        return;
+      }
       applySettings(document.documentElement, settings);
       say(saved ? 'saved' : 'notSaved');
     });

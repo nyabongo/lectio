@@ -87,6 +87,36 @@ describe('page share images', () => {
   });
 });
 
+describe('locales (L-110)', () => {
+  const href = (path: string) => `https?://[^"]+${base}${path}`;
+
+  it('links every locale and x-default by default', async () => {
+    const html = await render({ title: 'Calendar', path: 'calendar/' });
+    expect(html).toMatch(new RegExp(`<link rel="alternate" hreflang="en" href="${href('calendar/')}">`));
+    expect(html).toMatch(new RegExp(`<link rel="alternate" hreflang="sw" href="${href('sw/calendar/')}">`));
+    expect(html).toMatch(new RegExp(`<link rel="alternate" hreflang="x-default" href="${href('calendar/')}">`));
+  });
+
+  it('puts the canonical URL in the page locale, whichever path the page passes', async () => {
+    for (const path of ['settings/', 'sw/settings/']) {
+      const html = await render({ title: 'Mipangilio', path, lang: 'sw' });
+      expect(html).toMatch(new RegExp(`<link rel="canonical" href="${href('sw/settings/')}">`));
+      expect(html).toMatch(new RegExp(`<meta property="og:url" content="${href('sw/settings/')}">`));
+      expect(html).toContain('<meta property="og:locale" content="sw_KE">');
+    }
+  });
+
+  it('gives noindex pages no alternates', async () => {
+    const html = await render({ title: 'Search', path: 'search/', noindex: true });
+    expect(html).not.toContain('hreflang');
+  });
+
+  it('gives a Kiswahili day page the same share card', async () => {
+    const html = await render({ title: 'Jumapili', path: 'sw/2026-09-20/', lang: 'sw' });
+    expect(html).toMatch(new RegExp(`<meta property="og:image" content="${href('og/2026-09-20\\.png')}">`));
+  });
+});
+
 describe('title', () => {
   it('matches the title the base layout renders', async () => {
     for (const title of ['Calendar', 'Lectio']) {

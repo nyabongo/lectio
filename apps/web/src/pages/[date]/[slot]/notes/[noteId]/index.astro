@@ -12,7 +12,7 @@ import MarkedText from '../../../../../components/notes/MarkedText.astro';
 import Verification from '../../../../../components/notes/Verification.astro';
 import Seo from '../../../../../components/seo/Seo.astro';
 import ShareButton from '../../../../../components/share/ShareButton.astro';
-import { DEFAULT_LOCALE, localePath, t } from '../../../../../i18n/index.ts';
+import { localeOf, localePath, t } from '../../../../../i18n/index.ts';
 import BaseLayout from '../../../../../layouts/BaseLayout.astro';
 import { readingPath } from '../../../../../lib/reading.ts';
 import { siteContext, withBase } from '../../../../../lib/site.ts';
@@ -26,7 +26,7 @@ const { date, slot, noteId } = Astro.params;
 const view = insightPage(siteContext().repo, date, slot, noteId);
 if (view === null) throw new Error(`no approved note ${noteId} for ${date}/${slot}`);
 
-const lang = DEFAULT_LOCALE;
+const lang = localeOf(Astro.url);
 const base = import.meta.env.BASE_URL;
 const { reading, note, path } = view;
 const { method, lastReviewedAt } = reading.notes;
