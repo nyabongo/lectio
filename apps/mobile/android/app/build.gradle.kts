@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -30,7 +32,7 @@ android {
         versionName = flutter.versionName
         // L-107: the App Links intent filter's host and path prefix, from
         // lectioSiteUrl (gradle.properties or -PlectioSiteUrl=...).
-        val siteUrl = java.net.URI(
+        val siteUrl = URI(
             (project.findProperty("lectioSiteUrl") as String?)
                 ?: "https://nyabongo.github.io/lectio/",
         )
