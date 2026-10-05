@@ -11,5 +11,14 @@ export type {
   PassageLookup,
   SegmentKind,
 } from './segments.ts';
-export { asSentence, speakOriginals, speakReferences, speakable, stripClaimMarkers, stripUrls, tidy } from './text.ts';
-export type { Transliteration } from './text.ts';
+export {
+  asSentence,
+  englishSpokenRef,
+  speakOriginals,
+  speakReferences,
+  speakable,
+  stripClaimMarkers,
+  stripUrls,
+  tidy,
+} from './text.ts';
+export type { SpokenRef, Transliteration } from './text.ts';

@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { asSentence, speakOriginals, speakReferences, speakable, stripClaimMarkers, stripUrls, tidy } from './text.ts';
+import type { Ref } from '@lectio/refs';
+
+import {
+  asSentence,
+  englishSpokenRef,
+  speakOriginals,
+  speakReferences,
+  speakable,
+  stripClaimMarkers,
+  stripUrls,
+  tidy,
+} from './text.ts';
 
 const EVIL_EYE = { original: 'ὀφθαλμός σου πονηρός', translit: 'ophthalmos sou ponēros' };
 
@@ -18,6 +29,15 @@ describe('stripUrls', () => {
   it('removes http(s) and www URLs but keeps trailing punctuation', () => {
     expect(stripUrls('See https://example.org/a?b=1. Or (www.example.com).')).toBe('See . Or ().');
     expect(stripUrls('HTTP://EXAMPLE.ORG/x, then')).toBe(', then');
+  });
+
+  it('removes URLs with balanced parentheses whole', () => {
+    expect(stripUrls('See https://en.wikipedia.org/wiki/Evil_eye_(folklore) for more.')).toBe('See  for more.');
+    expect(stripUrls('(see https://en.wikipedia.org/wiki/Evil_eye_(folklore))')).toBe('(see )');
+    expect(stripUrls('(https://example.org/a)')).toBe('()');
+    expect(speakable('Compare (Deut 15:9, https://en.wikipedia.org/wiki/Evil_eye_(folklore)).', [])).toBe(
+      'Compare (Deuteronomy chapter 15, verse 9).',
+    );
   });
 
   it('leaves text without URLs unchanged', () => {
@@ -65,8 +85,35 @@ describe('speakOriginals', () => {
     expect(speakOriginals('God, אֱלֹהִים, and λόγος ἐστίν.', [])).toBe('God, , and .');
   });
 
+  it('matches whole words only', () => {
+    expect(speakOriginals('Compare ἐντολή with ἐν, and ἐν.', [{ original: 'ἐν', translit: 'en' }])).toBe(
+      'Compare  with en, and en.',
+    );
+    expect(speakOriginals('אֱלֹהִים', [{ original: 'אֱלֹה', translit: 'eloh' }])).toBe('');
+  });
+
   it('treats regex characters in originals literally', () => {
     expect(speakOriginals('a (b)', [{ original: '(b)', translit: 'bee' }])).toBe('a bee');
+  });
+});
+
+describe('custom spokenRef', () => {
+  it('is used for every reference in prose, including after `of`', () => {
+    const stub = (ref: Ref): string => `<${ref.book} ${String(ref.segments[0]?.start.c)}>`;
+    expect(speakReferences('(Deut 15:9; Prov 28:22) and the Gospel of Matthew 5:3', stub)).toBe(
+      '(<DT 15>; <PRV 28>) and the Gospel of <MT 5>',
+    );
+    expect(speakable('See Mt 6:22. [c1]', [], stub)).toBe('See <MT 6>.');
+  });
+
+  it('defaults to English and receives sub-verse letters', () => {
+    const seen: Ref[] = [];
+    speakReferences('Mt 20:1-16a', (ref) => {
+      seen.push(ref);
+      return '';
+    });
+    expect(seen[0]?.segments[0]?.end).toEqual({ c: 20, v: 16, part: 'a' });
+    expect(englishSpokenRef(seen[0] as Ref)).toBe('Matthew chapter 20, verses 1 to 16');
   });
 });
 

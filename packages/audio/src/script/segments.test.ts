@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { openRepo } from '@lectio/content';
 import type { ResolvedDay } from '@lectio/content';
+import type { Ref } from '@lectio/refs';
 import type { Passage } from '@lectio/schema/passage';
 
 import { NARRATION_STRINGS, buildSegments, narrationStrings, passagesOf } from './segments.ts';
@@ -211,17 +212,34 @@ describe('buildSegments inputs and options', () => {
     expect(note?.text).toMatch(/^Translation note on Jude, verse 20,/);
   });
 
-  it('accepts custom narration strings', () => {
+  it('speaks every reference through the strings’ spokenRef (a stub Kiswahili queue)', () => {
+    // Stub Kiswahili references; it keeps sub-verse letters (`16a`), which the English default drops.
+    const books: Record<string, string> = { MT: 'Mathayo', DT: 'Kumbukumbu la Torati', PRV: 'Methali' };
+    const point = ({ v, part }: { v?: number; part?: string }): string => `${String(v)}${part ?? ''}`;
+    const spokenRef = (ref: Ref): string =>
+      ref.segments
+        .map(({ start, end }, i) => {
+          const verses =
+            start === end || point(start) === point(end)
+              ? `mstari ${point(start)}`
+              : `mistari ${point(start)} hadi ${point(end)}`;
+          return `${i === 0 ? `${String(books[ref.book])} ` : ''}sura ${String(start.c)}, ${verses}`;
+        })
+        .join('; ');
     const strings: NarrationStrings = {
       languages: { grc: 'Kigiriki', hbo: 'Kiebrania', arc: 'Kiaramu', lat: 'Kilatini' },
       contextIntro: (ref, title) => `[${ref}|${title}]`,
       noteIntro: ({ verse, language }) => `<${verse}|${language}>`,
       noteTitle: (anchor) => anchor.toUpperCase(),
+      spokenRef,
     };
     const passage = { ...mt20(), locale: 'sw' };
     const segments = buildSegments(GOSPEL_DAY, [passage], 'sw', { strings });
-    expect(segments[0]?.text.startsWith('[Matthew chapter 20, verses 1 to 16|Labourers in the vineyard] ')).toBe(true);
-    expect(segments[1]?.text.startsWith('<Matthew chapter 20, verse 15|Kigiriki> ')).toBe(true);
+    expect(segments[0]?.text.startsWith('[Mathayo sura 20, mistari 1 hadi 16a|Labourers in the vineyard] ')).toBe(true);
+    expect(segments[1]?.text.startsWith('<Mathayo sura 20, mstari 15|Kigiriki> ')).toBe(true);
+    expect(segments[1]?.text).toContain('(Kumbukumbu la Torati sura 15, mstari 9; Methali sura 28, mstari 22)');
+    expect(segments[1]?.text).toContain('the echo of Mathayo sura 6, mistari 22 hadi 23.');
+    expect(segments.map((segment) => segment.text).join(' ')).not.toMatch(/chapter \d|verses? \d/);
     expect(segments[1]?.title).toBe('ENVIOUS');
   });
 });

@@ -4,13 +4,13 @@
  * commentary; the reading text is never narrated (ADR 0003).
  */
 import type { ResolvedDay } from '@lectio/content';
-import { formatRef, fromKey, tryParseRef } from '@lectio/refs';
+import { fromKey, tryParseRef } from '@lectio/refs';
 import type { Ref } from '@lectio/refs';
 import type { ReadingSlot } from '@lectio/schema/common';
 import type { ORIGINAL_LANGUAGES, Passage, TranslationNote } from '@lectio/schema/passage';
 
-import { asSentence, speakable } from './text.ts';
-import type { Transliteration } from './text.ts';
+import { asSentence, englishSpokenRef, speakable } from './text.ts';
+import type { SpokenRef, Transliteration } from './text.ts';
 
 export const SEGMENT_KINDS = ['context', 'translation-note'] as const;
 export type SegmentKind = (typeof SEGMENT_KINDS)[number];
@@ -49,6 +49,11 @@ export interface NarrationStrings {
   }): string;
   /** The queue label for a translation note. */
   noteTitle(anchor: string, translit: string): string;
+  /**
+   * Says a scripture reference: the passage, a note's verse and references inside the prose. The
+   * `Ref` keeps sub-verse letters (`part`, as in `16a`) for languages that want to say them.
+   */
+  readonly spokenRef: SpokenRef;
 }
 
 const ENGLISH: NarrationStrings = {
@@ -58,9 +63,10 @@ const ENGLISH: NarrationStrings = {
     `Translation note on ${verse}, the ${anchor.includes(' ') ? 'words' : 'word'} “${anchor}”. ` +
     `The ${language} is ${translit}, literally “${gloss}”.`,
   noteTitle: (anchor, translit) => `${anchor} · ${translit}`,
+  spokenRef: englishSpokenRef,
 };
 
-/** Built-in narration strings by language subtag. Spoken references (L-005) are English-only so far. */
+/** Built-in narration strings by language subtag; other languages pass their own via `options.strings`. */
 export const NARRATION_STRINGS: Readonly<Record<string, NarrationStrings>> = { en: ENGLISH };
 
 /** The strings for `locale` (`en-KE` falls back to `en`); throws when there are none. */
@@ -107,11 +113,11 @@ function passageRef(passage: Passage): Ref {
   return parsed.ok ? parsed.value : fromKey(passage.key);
 }
 
-/** `20:15` in `book` → `Matthew chapter 20, verse 15`. */
-function spokenVerse(book: Ref['book'], verse: string): string {
+/** `20:15` in `book` → `Matthew chapter 20, verse 15` (in English). */
+function spokenVerse(book: Ref['book'], verse: string, strings: NarrationStrings): string {
   const [c, v] = verse.split(':').map(Number);
   const point = { c: Number(c), v: Number(v) };
-  return formatRef({ book, segments: [{ start: point, end: point }] }, { style: 'spoken' });
+  return strings.spokenRef({ book, segments: [{ start: point, end: point }] });
 }
 
 function transliterations(passage: Passage): Transliteration[] {
@@ -125,7 +131,7 @@ function contextSegment(
   strings: NarrationStrings,
   ref: Ref,
 ): NarrationSegment {
-  const say = (text: string): string => speakable(text, transliterations(passage));
+  const say = (text: string): string => speakable(text, transliterations(passage), strings.spokenRef);
   const title = say(passage.context.title);
   const paragraphs = passage.context.paragraphs.map((paragraph) => asSentence(say(paragraph)));
   return {
@@ -133,7 +139,7 @@ function contextSegment(
     kind: 'context',
     slot,
     title,
-    text: [strings.contextIntro(formatRef(ref, { style: 'spoken' }), title), ...paragraphs].join(' '),
+    text: [strings.contextIntro(strings.spokenRef(ref), title), ...paragraphs].join(' '),
     locale,
     passageKey: passage.key,
   };
@@ -147,11 +153,11 @@ function noteSegment(
   strings: NarrationStrings,
   ref: Ref,
 ): NarrationSegment {
-  const say = (text: string): string => speakable(text, transliterations(passage));
+  const say = (text: string): string => speakable(text, transliterations(passage), strings.spokenRef);
   const anchor = say(note.anchor);
   const translit = say(note.original.translit);
   const intro = strings.noteIntro({
-    verse: spokenVerse(ref.book, note.verse),
+    verse: spokenVerse(ref.book, note.verse, strings),
     anchor,
     language: strings.languages[note.original.lang],
     translit,

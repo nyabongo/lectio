@@ -48,6 +48,14 @@ describe('audioKey', () => {
     );
   });
 
+  it.each(['en', 'en-KE', 'sw', 'zh-Hant', 'es-419', 'pt-BR'])('accepts the locale %j', (locale) => {
+    expect(audioKey({ ...segment, locale }, VOICE, 1).path.startsWith(`audio/${locale}/`)).toBe(true);
+  });
+
+  it.each(['../../x', 'en/../..', '', 'EN', 'en-', 'e', 'en KE', 'en-KE/x'])('rejects the locale %j', (locale) => {
+    expect(() => audioKey({ ...segment, locale }, VOICE, 1)).toThrow(RangeError);
+  });
+
   it('rejects an empty voice or TTS version', () => {
     expect(() => audioKey(segment, ' ', 1)).toThrow(RangeError);
     expect(() => audioKey(segment, VOICE, '')).toThrow(RangeError);

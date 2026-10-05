@@ -7,12 +7,26 @@
  * bodies); reading text is never stored or narrated (ADR 0003).
  */
 import { findBook, formatRef, tryParseRef } from '@lectio/refs';
+import type { Ref } from '@lectio/refs';
+
+/** Says a parsed reference in the narration language. */
+export type SpokenRef = (ref: Ref) => string;
+
+/**
+ * English spoken references (L-005's `spoken` style): `Matthew chapter 20, verses 1 to 16`.
+ * Sub-verse letters (`16a`) are dropped: the `Ref` still carries them in `part`, so another
+ * language's {@link SpokenRef} may say them, but in English "verse 16a" is noise to a listener.
+ */
+export const englishSpokenRef: SpokenRef = (ref) => formatRef(ref, { style: 'spoken' });
 
 /** A claim marker such as `[c3]`, with the space before it. */
 const CLAIM_MARKER = /\s*\[c[1-9][0-9]*\]/g;
 
-/** An http(s) or `www.` URL, not counting trailing sentence punctuation or a closing bracket. */
-const URL_PATTERN = /\b(?:https?:\/\/|www\.)[^\s<>"]*[^\s<>".,;:!?)\]'’”]/gi;
+/**
+ * An http(s) or `www.` URL, including balanced `(...)` groups (`.../Evil_eye_(folklore)`), not
+ * counting trailing sentence punctuation or a closing bracket that belongs to the prose.
+ */
+const URL_PATTERN = /\b(?:https?:\/\/|www\.)(?:[^\s<>"()]|\([^\s<>"()]*\))*(?:[^\s<>"().,;:!?\]'’”]|\([^\s<>"()]*\))/gi;
 
 /** A run of Greek or Hebrew script (letters, combining marks, internal spaces and Hebrew punctuation). */
 const ORIGINAL_SCRIPT_RUN =
@@ -78,30 +92,32 @@ function replacementTable(entries: readonly Transliteration[]): [string, string]
 
 /**
  * Speaks Greek, Hebrew and Aramaic through the notes' transliterations: each original phrase
- * (or one of its words) becomes its transliteration. Any Greek or Hebrew script left over has no
+ * (or one of its words) becomes its transliteration. Only whole words match, so `ἐν` never hits
+ * the start of `ἐντολή`. Any Greek or Hebrew script left over has no
  * reliable pronunciation and is dropped rather than mangled by the voice.
  */
 export function speakOriginals(text: string, entries: readonly Transliteration[]): string {
   let result = text.normalize('NFC');
   for (const [original, translit] of replacementTable(entries)) {
-    result = result.replace(new RegExp(escapeRegExp(original), 'g'), translit);
+    const wholeWord = new RegExp(`(?<![\\p{L}\\p{M}])${escapeRegExp(original)}(?![\\p{L}\\p{M}])`, 'gu');
+    result = result.replace(wholeWord, translit);
   }
   return result.replace(ORIGINAL_SCRIPT_RUN, '');
 }
 
 /**
- * Rewrites scripture references in prose to their spoken form (L-005's `spoken` style):
+ * Rewrites scripture references in prose to their spoken form through `spokenRef` (English by default):
  * `(Deut 15:9; Prov 28:22)` → `(Deuteronomy chapter 15, verse 9; Proverbs chapter 28, verse 22)`.
  * Only a known book name followed by chapter and verse (or a chapter of a one-chapter book or a
  * psalm) counts; anything that does not parse is left as written.
  */
-export function speakReferences(text: string): string {
+export function speakReferences(text: string, spokenRef: SpokenRef = englishSpokenRef): string {
   return text.replace(PROSE_REF, (match: string, name: string, passage: string) => {
     const book = findBook(name);
     if (book === undefined) {
       // `Gospel of Matthew 5:3`: the book name may start after the `of`.
       const of = name.indexOf(' of ');
-      return of < 0 ? match : match.slice(0, of + 4) + speakReferences(match.slice(of + 4));
+      return of < 0 ? match : match.slice(0, of + 4) + speakReferences(match.slice(of + 4), spokenRef);
     }
     if (!passage.includes(':') && !passage.includes('.') && !book.singleChapter && book.code !== 'PS') return match;
     // A trailing `,` or `;` part that fails to parse (prose such as `Mt 6:22; 30 people`) is
@@ -109,7 +125,7 @@ export function speakReferences(text: string): string {
     let parts = passage;
     for (;;) {
       const parsed = tryParseRef(`${name} ${parts}`);
-      if (parsed.ok) return `${formatRef(parsed.value, { style: 'spoken' })}${passage.slice(parts.length)}`;
+      if (parsed.ok) return `${spokenRef(parsed.value)}${passage.slice(parts.length)}`;
       const cut = Math.max(parts.lastIndexOf(','), parts.lastIndexOf(';'));
       if (cut < 0) return match;
       parts = parts.slice(0, cut);
@@ -139,6 +155,10 @@ export function asSentence(text: string): string {
 }
 
 /** Everything needed to make one piece of Lectio prose speakable. */
-export function speakable(text: string, entries: readonly Transliteration[]): string {
-  return tidy(speakReferences(speakOriginals(stripUrls(stripClaimMarkers(text)), entries)));
+export function speakable(
+  text: string,
+  entries: readonly Transliteration[],
+  spokenRef: SpokenRef = englishSpokenRef,
+): string {
+  return tidy(speakReferences(speakOriginals(stripUrls(stripClaimMarkers(text)), entries), spokenRef));
 }
