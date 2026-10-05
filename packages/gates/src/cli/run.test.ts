@@ -101,7 +101,7 @@ describe('lectio-gates run', () => {
     expect(code).toBe(0);
     expect(logs).toEqual([
       'licence: skipped (not implemented (L-026))',
-      'verifiers: skipped (not implemented (L-027))',
+      'verifiers: skipped (no live confirmer or refuter client (API key missing); a person reviews)',
       'lectio-gates: skipped',
     ]);
   });
