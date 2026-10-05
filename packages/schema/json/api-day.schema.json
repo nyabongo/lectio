@@ -38,6 +38,16 @@
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
           "name": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+          "names": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["en", "sw"],
+            "properties": {
+              "en": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+              "sw": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" },
+              "swStatus": { "type": "string", "enum": ["provisional", "reviewed", "fallback"] }
+            }
+          },
           "rank": {
             "type": "string",
             "enum": ["solemnity", "sunday", "feast", "memorial", "optional-memorial", "commemoration", "weekday"]
