@@ -80,6 +80,9 @@ describe('content gates: a pending passage reaches main approved', () => {
     expect(comment?.author).toBe(ACTIONS_BOT);
     expect(comment?.body.startsWith('<!-- lectio-gates -->\n')).toBe(true);
     expect(comment?.body).toContain(`Checked head: \`${opened.headSha}\` ${headMarker(opened.headSha)}`);
+    // The comment shows the gate results, the base it diffed against and the changed files.
+    expect(comment?.body).toContain('| LLM verifiers (`verifiers`) | Needs review | 1 warning |');
+    expect(comment?.body).toContain(`Base \`main\` · head \`${opened.headSha}\` · 1 changed file`);
     expect(opened.mergeRule.report).toMatchObject({ head: opened.headSha, decision: { decision: 'needs-review' } });
     expect(bot.dispatches).toEqual([]);
 

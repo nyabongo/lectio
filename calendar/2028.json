@@ -13,6 +13,11 @@
         {
           "id": "mary-mother-of-god",
           "name": "The Octave Day of the Nativity of the Lord: Solemnity of Mary, the Holy Mother of God",
+          "names": {
+            "en": "The Octave Day of the Nativity of the Lord: Solemnity of Mary, the Holy Mother of God",
+            "sw": "Siku ya Nane ya Noeli: Sherehe ya Maria Mtakatifu, Mama wa Mungu",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -61,6 +66,11 @@
         {
           "id": "epiphany-of-the-lord",
           "name": "The Epiphany of the Lord",
+          "names": {
+            "en": "The Epiphany of the Lord",
+            "sw": "Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -109,12 +119,22 @@
         {
           "id": "monday-after-epiphany",
           "name": "Monday after the Epiphany of the Lord",
+          "names": {
+            "en": "Monday after the Epiphany of the Lord",
+            "sw": "Jumatatu baada ya Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "most-holy-name-of-jesus",
           "name": "The Most Holy Name of Jesus",
+          "names": {
+            "en": "The Most Holy Name of Jesus",
+            "sw": "Jina Takatifu Kabisa la Yesu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -181,6 +201,11 @@
         {
           "id": "tuesday-after-epiphany",
           "name": "Tuesday after the Epiphany of the Lord",
+          "names": {
+            "en": "Tuesday after the Epiphany of the Lord",
+            "sw": "Jumanne baada ya Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -223,6 +248,11 @@
         {
           "id": "wednesday-after-epiphany",
           "name": "Wednesday after the Epiphany of the Lord",
+          "names": {
+            "en": "Wednesday after the Epiphany of the Lord",
+            "sw": "Jumatano baada ya Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -265,6 +295,11 @@
         {
           "id": "thursday-after-epiphany",
           "name": "Thursday after the Epiphany of the Lord",
+          "names": {
+            "en": "Thursday after the Epiphany of the Lord",
+            "sw": "Alhamisi baada ya Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -307,12 +342,22 @@
         {
           "id": "friday-after-epiphany",
           "name": "Friday after the Epiphany of the Lord",
+          "names": {
+            "en": "Friday after the Epiphany of the Lord",
+            "sw": "Ijumaa baada ya Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "raymond-of-penyafort-priest",
           "name": "Saint Raymond of Penyafort, Priest",
+          "names": {
+            "en": "Saint Raymond of Penyafort, Priest",
+            "sw": "Mtakatifu Raimundo wa Penyafort, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -355,6 +400,11 @@
         {
           "id": "saturday-after-epiphany",
           "name": "Saturday after the Epiphany of the Lord",
+          "names": {
+            "en": "Saturday after the Epiphany of the Lord",
+            "sw": "Jumamosi baada ya Tokeo la Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -397,6 +447,11 @@
         {
           "id": "baptism-of-the-lord",
           "name": "The Baptism of the Lord",
+          "names": {
+            "en": "The Baptism of the Lord",
+            "sw": "Ubatizo wa Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -445,6 +500,11 @@
         {
           "id": "ordinary-time-1-monday",
           "name": "Monday of the first week of Ordinary Time",
+          "names": {
+            "en": "Monday of the first week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kwanza la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -487,6 +547,11 @@
         {
           "id": "ordinary-time-1-tuesday",
           "name": "Tuesday of the first week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the first week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Kwanza la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -529,6 +594,11 @@
         {
           "id": "ordinary-time-1-wednesday",
           "name": "Wednesday of the first week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the first week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kwanza la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -571,12 +641,22 @@
         {
           "id": "ordinary-time-1-thursday",
           "name": "Thursday of the first week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the first week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kwanza la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "hilary-of-poitiers-bishop",
           "name": "Saint Hilary, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Hilary, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Hilari, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -619,6 +699,11 @@
         {
           "id": "ordinary-time-1-friday",
           "name": "Friday of the first week of Ordinary Time",
+          "names": {
+            "en": "Friday of the first week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kwanza la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -661,6 +746,11 @@
         {
           "id": "ordinary-time-1-saturday",
           "name": "Saturday of the first week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the first week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kwanza la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -703,6 +793,11 @@
         {
           "id": "ordinary-time-2-sunday",
           "name": "Second Sunday in Ordinary Time",
+          "names": {
+            "en": "Second Sunday in Ordinary Time",
+            "sw": "Dominika ya Pili ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -751,6 +846,11 @@
         {
           "id": "anthony-of-egypt-abbot",
           "name": "Saint Anthony, Abbot",
+          "names": {
+            "en": "Saint Anthony, Abbot",
+            "sw": "Mtakatifu Antoni, Abati",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -793,6 +893,11 @@
         {
           "id": "ordinary-time-2-tuesday",
           "name": "Tuesday of the second week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the second week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Pili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -835,6 +940,11 @@
         {
           "id": "ordinary-time-2-wednesday",
           "name": "Wednesday of the second week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the second week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Pili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -877,24 +987,44 @@
         {
           "id": "ordinary-time-2-thursday",
           "name": "Thursday of the second week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the second week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Pili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "fabian-i-pope",
           "name": "Saint Fabian, Pope and Martyr",
+          "names": {
+            "en": "Saint Fabian, Pope and Martyr",
+            "sw": "Mtakatifu Fabiani, Papa na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "sebastian-of-milan-martyr",
           "name": "Saint Sebastian, Martyr",
+          "names": {
+            "en": "Saint Sebastian, Martyr",
+            "sw": "Mtakatifu Sebastiani, Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "cyprian-michael-tansi-priest",
           "name": "Blessed Cyprian Michael Tansi, Priest",
+          "names": {
+            "en": "Blessed Cyprian Michael Tansi, Priest",
+            "sw": "Mwenyeheri Sipriani Mikaeli Tansi, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -937,6 +1067,11 @@
         {
           "id": "agnes-of-rome-virgin",
           "name": "Saint Agnes, Virgin and Martyr",
+          "names": {
+            "en": "Saint Agnes, Virgin and Martyr",
+            "sw": "Mtakatifu Agnes, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -979,12 +1114,22 @@
         {
           "id": "ordinary-time-2-saturday",
           "name": "Saturday of the second week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the second week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Pili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "vincent-of-saragossa-deacon",
           "name": "Saint Vincent, Deacon and Martyr",
+          "names": {
+            "en": "Saint Vincent, Deacon and Martyr",
+            "sw": "Mtakatifu Vinsenti, Shemasi na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -1027,6 +1172,11 @@
         {
           "id": "sunday-of-the-word-of-god",
           "name": "Third Sunday in Ordinary Time, or Sunday of the Word of God",
+          "names": {
+            "en": "Third Sunday in Ordinary Time, or Sunday of the Word of God",
+            "sw": "Dominika ya Tatu ya Mwaka, au Dominika ya Neno la Mungu",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -1075,6 +1225,11 @@
         {
           "id": "francis-de-sales-bishop",
           "name": "Saint Francis de Sales, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Francis de Sales, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Fransisko wa Sales, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -1117,6 +1272,11 @@
         {
           "id": "conversion-of-saint-paul-the-apostle",
           "name": "The Conversion of Saint Paul the Apostle",
+          "names": {
+            "en": "The Conversion of Saint Paul the Apostle",
+            "sw": "Kuongoka kwa Mtakatifu Paulo, Mtume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -1159,6 +1319,11 @@
         {
           "id": "timothy-of-ephesus-and-titus-of-crete-bishops",
           "name": "Saints Timothy and Titus, Bishops",
+          "names": {
+            "en": "Saints Timothy and Titus, Bishops",
+            "sw": "Watakatifu Timotheo na Tito, Maaskofu",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -1201,12 +1366,22 @@
         {
           "id": "ordinary-time-3-thursday",
           "name": "Thursday of the third week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the third week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "angela-merici-virgin",
           "name": "Saint Angela Merici, Virgin",
+          "names": {
+            "en": "Saint Angela Merici, Virgin",
+            "sw": "Mtakatifu Angela Merici, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -1249,6 +1424,11 @@
         {
           "id": "thomas-aquinas-priest",
           "name": "Saint Thomas Aquinas, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint Thomas Aquinas, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Tomaso wa Akwino, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -1291,6 +1471,11 @@
         {
           "id": "ordinary-time-3-saturday",
           "name": "Saturday of the third week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the third week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -1333,6 +1518,11 @@
         {
           "id": "ordinary-time-4-sunday",
           "name": "Fourth Sunday in Ordinary Time",
+          "names": {
+            "en": "Fourth Sunday in Ordinary Time",
+            "sw": "Dominika ya Nne ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -1381,6 +1571,11 @@
         {
           "id": "john-bosco-priest",
           "name": "Saint John Bosco, Priest",
+          "names": {
+            "en": "Saint John Bosco, Priest",
+            "sw": "Mtakatifu Yohane Bosko, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -1423,6 +1618,11 @@
         {
           "id": "ordinary-time-4-tuesday",
           "name": "Tuesday of the fourth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the fourth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -1465,6 +1665,11 @@
         {
           "id": "presentation-of-the-lord",
           "name": "The Presentation of the Lord",
+          "names": {
+            "en": "The Presentation of the Lord",
+            "sw": "Kutolewa kwa Bwana Hekaluni",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -1513,18 +1718,33 @@
         {
           "id": "ordinary-time-4-thursday",
           "name": "Thursday of the fourth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the fourth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "blaise-of-sebaste-bishop",
           "name": "Saint Blaise, Bishop and Martyr",
+          "names": {
+            "en": "Saint Blaise, Bishop and Martyr",
+            "sw": "Mtakatifu Blasi, Askofu na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "ansgar-of-hamburg-bishop",
           "name": "Saint Ansgar, Bishop",
+          "names": {
+            "en": "Saint Ansgar, Bishop",
+            "sw": "Mtakatifu Ansgar, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -1567,6 +1787,11 @@
         {
           "id": "ordinary-time-4-friday",
           "name": "Friday of the fourth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the fourth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -1609,6 +1834,11 @@
         {
           "id": "agatha-of-sicily-virgin",
           "name": "Saint Agatha, Virgin and Martyr",
+          "names": {
+            "en": "Saint Agatha, Virgin and Martyr",
+            "sw": "Mtakatifu Agata, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -1651,6 +1881,11 @@
         {
           "id": "ordinary-time-5-sunday",
           "name": "Fifth Sunday in Ordinary Time",
+          "names": {
+            "en": "Fifth Sunday in Ordinary Time",
+            "sw": "Dominika ya Tano ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -1699,6 +1934,11 @@
         {
           "id": "ordinary-time-5-monday",
           "name": "Monday of the fifth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the fifth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -1741,18 +1981,33 @@
         {
           "id": "ordinary-time-5-tuesday",
           "name": "Tuesday of the fifth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the fifth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "jerome-emiliani",
           "name": "Saint Jerome Emiliani",
+          "names": {
+            "en": "Saint Jerome Emiliani",
+            "sw": "Mtakatifu Jeromu Emiliani",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "josephine-bakhita-virgin",
           "name": "Saint Josephine Bakhita, Virgin",
+          "names": {
+            "en": "Saint Josephine Bakhita, Virgin",
+            "sw": "Mtakatifu Josefina Bakhita, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -1795,6 +2050,11 @@
         {
           "id": "ordinary-time-5-wednesday",
           "name": "Wednesday of the fifth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the fifth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -1837,6 +2097,11 @@
         {
           "id": "scholastica-of-nursia-virgin",
           "name": "Saint Scholastica, Virgin",
+          "names": {
+            "en": "Saint Scholastica, Virgin",
+            "sw": "Mtakatifu Skolastika, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -1879,12 +2144,22 @@
         {
           "id": "ordinary-time-5-friday",
           "name": "Friday of the fifth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the fifth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "our-lady-of-lourdes",
           "name": "Our Lady of Lourdes",
+          "names": {
+            "en": "Our Lady of Lourdes",
+            "sw": "Bikira Maria wa Lurdi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -1927,6 +2202,11 @@
         {
           "id": "ordinary-time-5-saturday",
           "name": "Saturday of the fifth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the fifth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -1969,6 +2249,11 @@
         {
           "id": "ordinary-time-6-sunday",
           "name": "Sixth Sunday in Ordinary Time",
+          "names": {
+            "en": "Sixth Sunday in Ordinary Time",
+            "sw": "Dominika ya Sita ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -2017,6 +2302,11 @@
         {
           "id": "cyril-monk-and-methodius-bishop",
           "name": "Saints Cyril, Monk, and Methodius, Bishop",
+          "names": {
+            "en": "Saints Cyril, Monk, and Methodius, Bishop",
+            "sw": "Watakatifu Sirili, Mmonaki, na Methodi, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -2059,6 +2349,11 @@
         {
           "id": "ordinary-time-6-tuesday",
           "name": "Tuesday of the sixth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the sixth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2101,6 +2396,11 @@
         {
           "id": "ordinary-time-6-wednesday",
           "name": "Wednesday of the sixth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the sixth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2143,12 +2443,22 @@
         {
           "id": "ordinary-time-6-thursday",
           "name": "Thursday of the sixth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the sixth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "seven-holy-founders-of-the-servite-order",
           "name": "The Seven Holy Founders of the Servite Order",
+          "names": {
+            "en": "The Seven Holy Founders of the Servite Order",
+            "sw": "Waanzilishi Saba Watakatifu wa Shirika la Watumishi wa Maria",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -2191,6 +2501,11 @@
         {
           "id": "ordinary-time-6-friday",
           "name": "Friday of the sixth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the sixth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2233,6 +2548,11 @@
         {
           "id": "ordinary-time-6-saturday",
           "name": "Saturday of the sixth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the sixth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2275,6 +2595,11 @@
         {
           "id": "ordinary-time-7-sunday",
           "name": "Seventh Sunday in Ordinary Time",
+          "names": {
+            "en": "Seventh Sunday in Ordinary Time",
+            "sw": "Dominika ya Saba ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -2323,12 +2648,22 @@
         {
           "id": "ordinary-time-7-monday",
           "name": "Monday of the seventh week of Ordinary Time",
+          "names": {
+            "en": "Monday of the seventh week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "peter-damian-bishop",
           "name": "Saint Peter Damian, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Peter Damian, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Petro Damiani, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -2371,6 +2706,11 @@
         {
           "id": "chair-of-saint-peter-the-apostle",
           "name": "The Chair of Saint Peter the Apostle",
+          "names": {
+            "en": "The Chair of Saint Peter the Apostle",
+            "sw": "Ukulu wa Mtakatifu Petro, Mtume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -2413,6 +2753,11 @@
         {
           "id": "polycarp-of-smyrna-bishop",
           "name": "Saint Polycarp, Bishop and Martyr",
+          "names": {
+            "en": "Saint Polycarp, Bishop and Martyr",
+            "sw": "Mtakatifu Polikarpo, Askofu na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -2455,6 +2800,11 @@
         {
           "id": "ordinary-time-7-thursday",
           "name": "Thursday of the seventh week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the seventh week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2497,6 +2847,11 @@
         {
           "id": "ordinary-time-7-friday",
           "name": "Friday of the seventh week of Ordinary Time",
+          "names": {
+            "en": "Friday of the seventh week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2539,12 +2894,22 @@
         {
           "id": "ordinary-time-7-saturday",
           "name": "Saturday of the seventh week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the seventh week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "alexander-of-alexandria-bishop",
           "name": "Saint Alexander of Alexandria, Bishop",
+          "names": {
+            "en": "Saint Alexander of Alexandria, Bishop",
+            "sw": "Mtakatifu Aleksanda wa Aleksandria, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -2587,6 +2952,11 @@
         {
           "id": "ordinary-time-8-sunday",
           "name": "Eighth Sunday in Ordinary Time",
+          "names": {
+            "en": "Eighth Sunday in Ordinary Time",
+            "sw": "Dominika ya Nane ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -2635,6 +3005,11 @@
         {
           "id": "ordinary-time-8-monday",
           "name": "Monday of the eighth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the eighth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2677,6 +3052,11 @@
         {
           "id": "ordinary-time-8-tuesday",
           "name": "Tuesday of the eighth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the eighth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -2719,6 +3099,11 @@
         {
           "id": "ash-wednesday",
           "name": "Ash Wednesday",
+          "names": {
+            "en": "Ash Wednesday",
+            "sw": "Jumatano ya Majivu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -2767,6 +3152,11 @@
         {
           "id": "thursday-after-ash-wednesday",
           "name": "Thursday after Ash Wednesday",
+          "names": {
+            "en": "Thursday after Ash Wednesday",
+            "sw": "Alhamisi baada ya Jumatano ya Majivu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -2809,6 +3199,11 @@
         {
           "id": "friday-after-ash-wednesday",
           "name": "Friday after Ash Wednesday",
+          "names": {
+            "en": "Friday after Ash Wednesday",
+            "sw": "Ijumaa baada ya Jumatano ya Majivu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -2851,12 +3246,22 @@
         {
           "id": "saturday-after-ash-wednesday",
           "name": "Saturday after Ash Wednesday",
+          "names": {
+            "en": "Saturday after Ash Wednesday",
+            "sw": "Jumamosi baada ya Jumatano ya Majivu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "casimir-of-poland",
           "name": "Saint Casimir",
+          "names": {
+            "en": "Saint Casimir",
+            "sw": "Mtakatifu Kasimiri",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -2899,6 +3304,11 @@
         {
           "id": "lent-1-sunday",
           "name": "First Sunday of Lent",
+          "names": {
+            "en": "First Sunday of Lent",
+            "sw": "Dominika ya Kwanza ya Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -2947,6 +3357,11 @@
         {
           "id": "lent-1-monday",
           "name": "Monday of the first week of Lent",
+          "names": {
+            "en": "Monday of the first week of Lent",
+            "sw": "Jumatatu ya Juma la Kwanza la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -2989,12 +3404,22 @@
         {
           "id": "lent-1-tuesday",
           "name": "Tuesday of the first week of Lent",
+          "names": {
+            "en": "Tuesday of the first week of Lent",
+            "sw": "Jumanne ya Juma la Kwanza la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "perpetua-of-carthage-and-felicity-of-carthage-martyrs",
           "name": "Saints Perpetua and Felicity, Martyrs",
+          "names": {
+            "en": "Saints Perpetua and Felicity, Martyrs",
+            "sw": "Watakatifu Perpetua na Felista, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -3037,12 +3462,22 @@
         {
           "id": "lent-1-wednesday",
           "name": "Wednesday of the first week of Lent",
+          "names": {
+            "en": "Wednesday of the first week of Lent",
+            "sw": "Jumatano ya Juma la Kwanza la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "john-of-god-duarte-cidade-religious",
           "name": "Saint John of God, Religious",
+          "names": {
+            "en": "Saint John of God, Religious",
+            "sw": "Mtakatifu Yohane wa Mungu, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -3085,12 +3520,22 @@
         {
           "id": "lent-1-thursday",
           "name": "Thursday of the first week of Lent",
+          "names": {
+            "en": "Thursday of the first week of Lent",
+            "sw": "Alhamisi ya Juma la Kwanza la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "frances-of-rome-religious",
           "name": "Saint Frances of Rome, Religious",
+          "names": {
+            "en": "Saint Frances of Rome, Religious",
+            "sw": "Mtakatifu Fransiska wa Roma, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -3133,6 +3578,11 @@
         {
           "id": "lent-1-friday",
           "name": "Friday of the first week of Lent",
+          "names": {
+            "en": "Friday of the first week of Lent",
+            "sw": "Ijumaa ya Juma la Kwanza la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3175,6 +3625,11 @@
         {
           "id": "lent-1-saturday",
           "name": "Saturday of the first week of Lent",
+          "names": {
+            "en": "Saturday of the first week of Lent",
+            "sw": "Jumamosi ya Juma la Kwanza la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3217,6 +3672,11 @@
         {
           "id": "lent-2-sunday",
           "name": "Second Sunday of Lent",
+          "names": {
+            "en": "Second Sunday of Lent",
+            "sw": "Dominika ya Pili ya Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -3265,6 +3725,11 @@
         {
           "id": "lent-2-monday",
           "name": "Monday of the second week of Lent",
+          "names": {
+            "en": "Monday of the second week of Lent",
+            "sw": "Jumatatu ya Juma la Pili la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3307,6 +3772,11 @@
         {
           "id": "lent-2-tuesday",
           "name": "Tuesday of the second week of Lent",
+          "names": {
+            "en": "Tuesday of the second week of Lent",
+            "sw": "Jumanne ya Juma la Pili la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3349,6 +3819,11 @@
         {
           "id": "lent-2-wednesday",
           "name": "Wednesday of the second week of Lent",
+          "names": {
+            "en": "Wednesday of the second week of Lent",
+            "sw": "Jumatano ya Juma la Pili la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3391,6 +3866,11 @@
         {
           "id": "lent-2-thursday",
           "name": "Thursday of the second week of Lent",
+          "names": {
+            "en": "Thursday of the second week of Lent",
+            "sw": "Alhamisi ya Juma la Pili la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3433,12 +3913,22 @@
         {
           "id": "lent-2-friday",
           "name": "Friday of the second week of Lent",
+          "names": {
+            "en": "Friday of the second week of Lent",
+            "sw": "Ijumaa ya Juma la Pili la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "patrick-of-ireland-bishop",
           "name": "Saint Patrick, Bishop",
+          "names": {
+            "en": "Saint Patrick, Bishop",
+            "sw": "Mtakatifu Patriki, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -3481,12 +3971,22 @@
         {
           "id": "lent-2-saturday",
           "name": "Saturday of the second week of Lent",
+          "names": {
+            "en": "Saturday of the second week of Lent",
+            "sw": "Jumamosi ya Juma la Pili la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "cyril-of-jerusalem-bishop",
           "name": "Saint Cyril of Jerusalem, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Cyril of Jerusalem, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Sirili wa Yerusalemu, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -3529,6 +4029,11 @@
         {
           "id": "lent-3-sunday",
           "name": "Third Sunday of Lent",
+          "names": {
+            "en": "Third Sunday of Lent",
+            "sw": "Dominika ya Tatu ya Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -3577,6 +4082,11 @@
         {
           "id": "joseph-spouse-of-mary",
           "name": "Saint Joseph, Spouse of the Blessed Virgin Mary",
+          "names": {
+            "en": "Saint Joseph, Spouse of the Blessed Virgin Mary",
+            "sw": "Mtakatifu Yosefu, Mume wa Bikira Maria",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -3625,6 +4135,11 @@
         {
           "id": "lent-3-tuesday",
           "name": "Tuesday of the third week of Lent",
+          "names": {
+            "en": "Tuesday of the third week of Lent",
+            "sw": "Jumanne ya Juma la Tatu la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3667,6 +4182,11 @@
         {
           "id": "lent-3-wednesday",
           "name": "Wednesday of the third week of Lent",
+          "names": {
+            "en": "Wednesday of the third week of Lent",
+            "sw": "Jumatano ya Juma la Tatu la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3709,12 +4229,22 @@
         {
           "id": "lent-3-thursday",
           "name": "Thursday of the third week of Lent",
+          "names": {
+            "en": "Thursday of the third week of Lent",
+            "sw": "Alhamisi ya Juma la Tatu la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "turibius-of-mogrovejo-bishop",
           "name": "Saint Turibius of Mogrovejo, Bishop",
+          "names": {
+            "en": "Saint Turibius of Mogrovejo, Bishop",
+            "sw": "Mtakatifu Toribio wa Mogrovejo, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -3757,6 +4287,11 @@
         {
           "id": "lent-3-friday",
           "name": "Friday of the third week of Lent",
+          "names": {
+            "en": "Friday of the third week of Lent",
+            "sw": "Ijumaa ya Juma la Tatu la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3799,6 +4334,11 @@
         {
           "id": "annunciation-of-the-lord",
           "name": "The Annunciation of the Lord",
+          "names": {
+            "en": "The Annunciation of the Lord",
+            "sw": "Kupashwa Habari kwa Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -3847,6 +4387,11 @@
         {
           "id": "lent-4-sunday",
           "name": "Fourth Sunday of Lent",
+          "names": {
+            "en": "Fourth Sunday of Lent",
+            "sw": "Dominika ya Nne ya Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "rose"
         }
@@ -3895,6 +4440,11 @@
         {
           "id": "lent-4-monday",
           "name": "Monday of the fourth week of Lent",
+          "names": {
+            "en": "Monday of the fourth week of Lent",
+            "sw": "Jumatatu ya Juma la Nne la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3937,6 +4487,11 @@
         {
           "id": "lent-4-tuesday",
           "name": "Tuesday of the fourth week of Lent",
+          "names": {
+            "en": "Tuesday of the fourth week of Lent",
+            "sw": "Jumanne ya Juma la Nne la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -3979,6 +4534,11 @@
         {
           "id": "lent-4-wednesday",
           "name": "Wednesday of the fourth week of Lent",
+          "names": {
+            "en": "Wednesday of the fourth week of Lent",
+            "sw": "Jumatano ya Juma la Nne la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4021,6 +4581,11 @@
         {
           "id": "lent-4-thursday",
           "name": "Thursday of the fourth week of Lent",
+          "names": {
+            "en": "Thursday of the fourth week of Lent",
+            "sw": "Alhamisi ya Juma la Nne la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4063,6 +4628,11 @@
         {
           "id": "lent-4-friday",
           "name": "Friday of the fourth week of Lent",
+          "names": {
+            "en": "Friday of the fourth week of Lent",
+            "sw": "Ijumaa ya Juma la Nne la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4105,6 +4675,11 @@
         {
           "id": "lent-4-saturday",
           "name": "Saturday of the fourth week of Lent",
+          "names": {
+            "en": "Saturday of the fourth week of Lent",
+            "sw": "Jumamosi ya Juma la Nne la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4147,6 +4722,11 @@
         {
           "id": "lent-5-sunday",
           "name": "Fifth Sunday of Lent",
+          "names": {
+            "en": "Fifth Sunday of Lent",
+            "sw": "Dominika ya Tano ya Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -4195,6 +4775,11 @@
         {
           "id": "lent-5-monday",
           "name": "Monday of the fifth week of Lent",
+          "names": {
+            "en": "Monday of the fifth week of Lent",
+            "sw": "Jumatatu ya Juma la Tano la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4237,18 +4822,33 @@
         {
           "id": "lent-5-tuesday",
           "name": "Tuesday of the fifth week of Lent",
+          "names": {
+            "en": "Tuesday of the fifth week of Lent",
+            "sw": "Jumanne ya Juma la Tano la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "isidore-of-seville-bishop",
           "name": "Saint Isidore, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Isidore, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Isidori, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         },
         {
           "id": "benedict-the-moor-religious",
           "name": "Saint Benedict the Moor, Religious",
+          "names": {
+            "en": "Saint Benedict the Moor, Religious",
+            "sw": "Mtakatifu Benedikto Mmoori, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -4291,12 +4891,22 @@
         {
           "id": "lent-5-wednesday",
           "name": "Wednesday of the fifth week of Lent",
+          "names": {
+            "en": "Wednesday of the fifth week of Lent",
+            "sw": "Jumatano ya Juma la Tano la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "vincent-ferrer-priest",
           "name": "Saint Vincent Ferrer, Priest",
+          "names": {
+            "en": "Saint Vincent Ferrer, Priest",
+            "sw": "Mtakatifu Vinsenti Ferreri, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -4339,6 +4949,11 @@
         {
           "id": "lent-5-thursday",
           "name": "Thursday of the fifth week of Lent",
+          "names": {
+            "en": "Thursday of the fifth week of Lent",
+            "sw": "Alhamisi ya Juma la Tano la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4381,12 +4996,22 @@
         {
           "id": "lent-5-friday",
           "name": "Friday of the fifth week of Lent",
+          "names": {
+            "en": "Friday of the fifth week of Lent",
+            "sw": "Ijumaa ya Juma la Tano la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "john-baptist-de-la-salle-priest",
           "name": "Saint John Baptist de la Salle, Priest",
+          "names": {
+            "en": "Saint John Baptist de la Salle, Priest",
+            "sw": "Mtakatifu Yohane Batista wa La Salle, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -4429,6 +5054,11 @@
         {
           "id": "lent-5-saturday",
           "name": "Saturday of the fifth week of Lent",
+          "names": {
+            "en": "Saturday of the fifth week of Lent",
+            "sw": "Jumamosi ya Juma la Tano la Kwaresima",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4471,6 +5101,11 @@
         {
           "id": "palm-sunday-of-the-passion-of-the-lord",
           "name": "Palm Sunday of the Passion of the Lord",
+          "names": {
+            "en": "Palm Sunday of the Passion of the Lord",
+            "sw": "Dominika ya Matawi ya Mateso ya Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "red"
         }
@@ -4531,6 +5166,11 @@
         {
           "id": "holy-monday",
           "name": "Monday of Holy Week",
+          "names": {
+            "en": "Monday of Holy Week",
+            "sw": "Jumatatu Kuu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4573,6 +5213,11 @@
         {
           "id": "holy-tuesday",
           "name": "Tuesday of Holy Week",
+          "names": {
+            "en": "Tuesday of Holy Week",
+            "sw": "Jumanne Kuu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4615,12 +5260,22 @@
         {
           "id": "holy-wednesday",
           "name": "Wednesday of Holy Week",
+          "names": {
+            "en": "Wednesday of Holy Week",
+            "sw": "Jumatano Kuu",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "zeno-of-verona-bishop",
           "name": "Saint Zeno of Verona, Bishop",
+          "names": {
+            "en": "Saint Zeno of Verona, Bishop",
+            "sw": "Mtakatifu Zeno wa Verona, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -4663,6 +5318,11 @@
         {
           "id": "thursday-of-the-lords-supper",
           "name": "Thursday of the Lord’s Supper",
+          "names": {
+            "en": "Thursday of the Lord’s Supper",
+            "sw": "Alhamisi Kuu: Karamu ya Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -4711,6 +5371,11 @@
         {
           "id": "friday-of-the-passion-of-the-lord",
           "name": "Friday of the Passion of the Lord",
+          "names": {
+            "en": "Friday of the Passion of the Lord",
+            "sw": "Ijumaa Kuu ya Mateso ya Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "red"
         }
@@ -4759,6 +5424,11 @@
         {
           "id": "holy-saturday",
           "name": "Holy Saturday/Easter Vigil",
+          "names": {
+            "en": "Holy Saturday/Easter Vigil",
+            "sw": "Jumamosi Kuu / Kesha la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -4885,6 +5555,11 @@
         {
           "id": "easter-sunday",
           "name": "Easter Sunday of the Resurrection of the Lord",
+          "names": {
+            "en": "Easter Sunday of the Resurrection of the Lord",
+            "sw": "Dominika ya Pasaka ya Ufufuko wa Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5071,6 +5746,11 @@
         {
           "id": "easter-monday",
           "name": "Monday within the Octave of Easter",
+          "names": {
+            "en": "Monday within the Octave of Easter",
+            "sw": "Jumatatu katika Oktava ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5113,6 +5793,11 @@
         {
           "id": "easter-tuesday",
           "name": "Tuesday within the Octave of Easter",
+          "names": {
+            "en": "Tuesday within the Octave of Easter",
+            "sw": "Jumanne katika Oktava ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5155,6 +5840,11 @@
         {
           "id": "easter-wednesday",
           "name": "Wednesday within the Octave of Easter",
+          "names": {
+            "en": "Wednesday within the Octave of Easter",
+            "sw": "Jumatano katika Oktava ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5197,6 +5887,11 @@
         {
           "id": "easter-thursday",
           "name": "Thursday within the Octave of Easter",
+          "names": {
+            "en": "Thursday within the Octave of Easter",
+            "sw": "Alhamisi katika Oktava ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5239,6 +5934,11 @@
         {
           "id": "easter-friday",
           "name": "Friday within the Octave of Easter",
+          "names": {
+            "en": "Friday within the Octave of Easter",
+            "sw": "Ijumaa katika Oktava ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5281,6 +5981,11 @@
         {
           "id": "easter-saturday",
           "name": "Saturday within the Octave of Easter",
+          "names": {
+            "en": "Saturday within the Octave of Easter",
+            "sw": "Jumamosi katika Oktava ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -5323,6 +6028,11 @@
         {
           "id": "divine-mercy-sunday",
           "name": "Second Sunday of Easter or Sunday of Divine Mercy",
+          "names": {
+            "en": "Second Sunday of Easter or Sunday of Divine Mercy",
+            "sw": "Dominika ya Pili ya Pasaka au Dominika ya Huruma ya Mungu",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "white"
         }
@@ -5371,12 +6081,22 @@
         {
           "id": "easter-time-2-monday",
           "name": "Monday of the second week of Easter",
+          "names": {
+            "en": "Monday of the second week of Easter",
+            "sw": "Jumatatu ya Juma la Pili la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "fidelis-of-sigmaringen-priest",
           "name": "Saint Fidelis of Sigmaringen, Priest and Martyr",
+          "names": {
+            "en": "Saint Fidelis of Sigmaringen, Priest and Martyr",
+            "sw": "Mtakatifu Fideli wa Sigmaringen, Padre na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -5419,6 +6139,11 @@
         {
           "id": "mark-evangelist",
           "name": "Saint Mark, Evangelist",
+          "names": {
+            "en": "Saint Mark, Evangelist",
+            "sw": "Mtakatifu Marko, Mwinjili",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -5461,6 +6186,11 @@
         {
           "id": "easter-time-2-wednesday",
           "name": "Wednesday of the second week of Easter",
+          "names": {
+            "en": "Wednesday of the second week of Easter",
+            "sw": "Jumatano ya Juma la Pili la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -5503,6 +6233,11 @@
         {
           "id": "easter-time-2-thursday",
           "name": "Thursday of the second week of Easter",
+          "names": {
+            "en": "Thursday of the second week of Easter",
+            "sw": "Alhamisi ya Juma la Pili la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -5545,24 +6280,44 @@
         {
           "id": "easter-time-2-friday",
           "name": "Friday of the second week of Easter",
+          "names": {
+            "en": "Friday of the second week of Easter",
+            "sw": "Ijumaa ya Juma la Pili la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "peter-chanel-priest",
           "name": "Saint Peter Chanel, Priest and Martyr",
+          "names": {
+            "en": "Saint Peter Chanel, Priest and Martyr",
+            "sw": "Mtakatifu Petro Chanel, Padre na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "louis-grignion-de-montfort-priest",
           "name": "Saint Louis Grignion de Montfort, Priest",
+          "names": {
+            "en": "Saint Louis Grignion de Montfort, Priest",
+            "sw": "Mtakatifu Lui Grignion wa Montfort, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "pius-v-pope",
           "name": "Saint Pius V, Pope",
+          "names": {
+            "en": "Saint Pius V, Pope",
+            "sw": "Mtakatifu Pio V, Papa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -5605,6 +6360,11 @@
         {
           "id": "catherine-of-siena-virgin",
           "name": "Saint Catherine of Siena, Virgin and Doctor of the Church",
+          "names": {
+            "en": "Saint Catherine of Siena, Virgin and Doctor of the Church",
+            "sw": "Mtakatifu Katarina wa Siena, Bikira na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -5647,6 +6407,11 @@
         {
           "id": "easter-time-3-sunday",
           "name": "Third Sunday of Easter",
+          "names": {
+            "en": "Third Sunday of Easter",
+            "sw": "Dominika ya Tatu ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "white"
         }
@@ -5695,12 +6460,22 @@
         {
           "id": "easter-time-3-monday",
           "name": "Monday of the third week of Easter",
+          "names": {
+            "en": "Monday of the third week of Easter",
+            "sw": "Jumatatu ya Juma la Tatu la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "joseph-the-worker",
           "name": "Saint Joseph the Worker",
+          "names": {
+            "en": "Saint Joseph the Worker",
+            "sw": "Mtakatifu Yosefu Mfanyakazi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -5767,6 +6542,11 @@
         {
           "id": "athanasius-of-alexandria-bishop",
           "name": "Saint Athanasius, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Athanasius, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Atanasi, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -5809,6 +6589,11 @@
         {
           "id": "philip-and-james-apostles",
           "name": "Saints Philip and James, Apostles",
+          "names": {
+            "en": "Saints Philip and James, Apostles",
+            "sw": "Watakatifu Filipo na Yakobo, Mitume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -5851,6 +6636,11 @@
         {
           "id": "easter-time-3-thursday",
           "name": "Thursday of the third week of Easter",
+          "names": {
+            "en": "Thursday of the third week of Easter",
+            "sw": "Alhamisi ya Juma la Tatu la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -5893,6 +6683,11 @@
         {
           "id": "easter-time-3-friday",
           "name": "Friday of the third week of Easter",
+          "names": {
+            "en": "Friday of the third week of Easter",
+            "sw": "Ijumaa ya Juma la Tatu la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -5935,6 +6730,11 @@
         {
           "id": "easter-time-3-saturday",
           "name": "Saturday of the third week of Easter",
+          "names": {
+            "en": "Saturday of the third week of Easter",
+            "sw": "Jumamosi ya Juma la Tatu la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -5977,6 +6777,11 @@
         {
           "id": "easter-time-4-sunday",
           "name": "Fourth Sunday of Easter",
+          "names": {
+            "en": "Fourth Sunday of Easter",
+            "sw": "Dominika ya Nne ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "white"
         }
@@ -6025,6 +6830,11 @@
         {
           "id": "easter-time-4-monday",
           "name": "Monday of the fourth week of Easter",
+          "names": {
+            "en": "Monday of the fourth week of Easter",
+            "sw": "Jumatatu ya Juma la Nne la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6067,6 +6877,11 @@
         {
           "id": "easter-time-4-tuesday",
           "name": "Tuesday of the fourth week of Easter",
+          "names": {
+            "en": "Tuesday of the fourth week of Easter",
+            "sw": "Jumanne ya Juma la Nne la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6109,12 +6924,22 @@
         {
           "id": "easter-time-4-wednesday",
           "name": "Wednesday of the fourth week of Easter",
+          "names": {
+            "en": "Wednesday of the fourth week of Easter",
+            "sw": "Jumatano ya Juma la Nne la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "john-of-avila-priest",
           "name": "Saint John of Ávila, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint John of Ávila, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Yohane wa Ávila, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -6181,6 +7006,11 @@
         {
           "id": "easter-time-4-thursday",
           "name": "Thursday of the fourth week of Easter",
+          "names": {
+            "en": "Thursday of the fourth week of Easter",
+            "sw": "Alhamisi ya Juma la Nne la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6223,18 +7053,33 @@
         {
           "id": "easter-time-4-friday",
           "name": "Friday of the fourth week of Easter",
+          "names": {
+            "en": "Friday of the fourth week of Easter",
+            "sw": "Ijumaa ya Juma la Nne la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "nereus-of-terracina-and-achilleus-of-terracina-martyrs",
           "name": "Saints Nereus and Achilleus, Martyrs",
+          "names": {
+            "en": "Saints Nereus and Achilleus, Martyrs",
+            "sw": "Watakatifu Nereo na Akile, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "pancras-of-rome-martyr",
           "name": "Saint Pancras, Martyr",
+          "names": {
+            "en": "Saint Pancras, Martyr",
+            "sw": "Mtakatifu Pankrasi, Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -6277,12 +7122,22 @@
         {
           "id": "easter-time-4-saturday",
           "name": "Saturday of the fourth week of Easter",
+          "names": {
+            "en": "Saturday of the fourth week of Easter",
+            "sw": "Jumamosi ya Juma la Nne la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "our-lady-of-fatima",
           "name": "Our Lady of Fatima",
+          "names": {
+            "en": "Our Lady of Fatima",
+            "sw": "Bikira Maria wa Fatima",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -6325,6 +7180,11 @@
         {
           "id": "easter-time-5-sunday",
           "name": "Fifth Sunday of Easter",
+          "names": {
+            "en": "Fifth Sunday of Easter",
+            "sw": "Dominika ya Tano ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "white"
         }
@@ -6373,6 +7233,11 @@
         {
           "id": "easter-time-5-monday",
           "name": "Monday of the fifth week of Easter",
+          "names": {
+            "en": "Monday of the fifth week of Easter",
+            "sw": "Jumatatu ya Juma la Tano la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6415,6 +7280,11 @@
         {
           "id": "easter-time-5-tuesday",
           "name": "Tuesday of the fifth week of Easter",
+          "names": {
+            "en": "Tuesday of the fifth week of Easter",
+            "sw": "Jumanne ya Juma la Tano la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6457,6 +7327,11 @@
         {
           "id": "easter-time-5-wednesday",
           "name": "Wednesday of the fifth week of Easter",
+          "names": {
+            "en": "Wednesday of the fifth week of Easter",
+            "sw": "Jumatano ya Juma la Tano la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6499,12 +7374,22 @@
         {
           "id": "easter-time-5-thursday",
           "name": "Thursday of the fifth week of Easter",
+          "names": {
+            "en": "Thursday of the fifth week of Easter",
+            "sw": "Alhamisi ya Juma la Tano la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "john-i-pope",
           "name": "Saint John I, Pope and Martyr",
+          "names": {
+            "en": "Saint John I, Pope and Martyr",
+            "sw": "Mtakatifu Yohane I, Papa na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -6547,6 +7432,11 @@
         {
           "id": "easter-time-5-friday",
           "name": "Friday of the fifth week of Easter",
+          "names": {
+            "en": "Friday of the fifth week of Easter",
+            "sw": "Ijumaa ya Juma la Tano la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6589,12 +7479,22 @@
         {
           "id": "easter-time-5-saturday",
           "name": "Saturday of the fifth week of Easter",
+          "names": {
+            "en": "Saturday of the fifth week of Easter",
+            "sw": "Jumamosi ya Juma la Tano la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "bernardine-of-siena-priest",
           "name": "Saint Bernardine of Siena, Priest",
+          "names": {
+            "en": "Saint Bernardine of Siena, Priest",
+            "sw": "Mtakatifu Bernardino wa Siena, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -6637,6 +7537,11 @@
         {
           "id": "easter-time-6-sunday",
           "name": "Sixth Sunday of Easter",
+          "names": {
+            "en": "Sixth Sunday of Easter",
+            "sw": "Dominika ya Sita ya Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "white"
         }
@@ -6685,12 +7590,22 @@
         {
           "id": "easter-time-6-monday",
           "name": "Monday of the sixth week of Easter",
+          "names": {
+            "en": "Monday of the sixth week of Easter",
+            "sw": "Jumatatu ya Juma la Sita la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "rita-of-cascia-religious",
           "name": "Saint Rita of Cascia, Religious",
+          "names": {
+            "en": "Saint Rita of Cascia, Religious",
+            "sw": "Mtakatifu Rita wa Kashia, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -6733,6 +7648,11 @@
         {
           "id": "easter-time-6-tuesday",
           "name": "Tuesday of the sixth week of Easter",
+          "names": {
+            "en": "Tuesday of the sixth week of Easter",
+            "sw": "Jumanne ya Juma la Sita la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -6775,6 +7695,11 @@
         {
           "id": "our-lady-help-of-christians",
           "name": "Our Lady Help of Christians",
+          "names": {
+            "en": "Our Lady Help of Christians",
+            "sw": "Bikira Maria Msaada wa Wakristo",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -6817,24 +7742,44 @@
         {
           "id": "easter-time-6-thursday",
           "name": "Thursday of the sixth week of Easter",
+          "names": {
+            "en": "Thursday of the sixth week of Easter",
+            "sw": "Alhamisi ya Juma la Sita la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "bede-the-venerable-priest",
           "name": "Saint Bede the Venerable, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint Bede the Venerable, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Beda Mheshimiwa, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "gregory-vii-pope",
           "name": "Saint Gregory VII, Pope",
+          "names": {
+            "en": "Saint Gregory VII, Pope",
+            "sw": "Mtakatifu Gregori VII, Papa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "mary-magdalene-de-pazzi-virgin",
           "name": "Saint Mary Magdalene de’ Pazzi, Virgin",
+          "names": {
+            "en": "Saint Mary Magdalene de’ Pazzi, Virgin",
+            "sw": "Mtakatifu Maria Magdalena wa Pazzi, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -6877,6 +7822,11 @@
         {
           "id": "philip-neri-priest",
           "name": "Saint Philip Neri, Priest",
+          "names": {
+            "en": "Saint Philip Neri, Priest",
+            "sw": "Mtakatifu Filipo Neri, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -6919,12 +7869,22 @@
         {
           "id": "easter-time-6-saturday",
           "name": "Saturday of the sixth week of Easter",
+          "names": {
+            "en": "Saturday of the sixth week of Easter",
+            "sw": "Jumamosi ya Juma la Sita la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "augustine-of-canterbury-bishop",
           "name": "Saint Augustine of Canterbury, Bishop",
+          "names": {
+            "en": "Saint Augustine of Canterbury, Bishop",
+            "sw": "Mtakatifu Augustino wa Canterbury, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -6967,6 +7927,11 @@
         {
           "id": "ascension-of-the-lord",
           "name": "The Ascension of the Lord",
+          "names": {
+            "en": "The Ascension of the Lord",
+            "sw": "Kupaa kwa Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -7015,12 +7980,22 @@
         {
           "id": "easter-time-7-monday",
           "name": "Monday of the seventh week of Easter",
+          "names": {
+            "en": "Monday of the seventh week of Easter",
+            "sw": "Jumatatu ya Juma la Saba la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "paul-vi-pope",
           "name": "Saint Paul VI, Pope",
+          "names": {
+            "en": "Saint Paul VI, Pope",
+            "sw": "Mtakatifu Paulo VI, Papa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -7087,6 +8062,11 @@
         {
           "id": "easter-time-7-tuesday",
           "name": "Tuesday of the seventh week of Easter",
+          "names": {
+            "en": "Tuesday of the seventh week of Easter",
+            "sw": "Jumanne ya Juma la Saba la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -7129,6 +8109,11 @@
         {
           "id": "visitation-of-mary",
           "name": "The Visitation of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Visitation of the Blessed Virgin Mary",
+            "sw": "Bikira Maria Kumtembelea Elizabeti",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -7171,6 +8156,11 @@
         {
           "id": "justin-martyr",
           "name": "Saint Justin, Martyr",
+          "names": {
+            "en": "Saint Justin, Martyr",
+            "sw": "Mtakatifu Justino, Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -7213,12 +8203,22 @@
         {
           "id": "easter-time-7-friday",
           "name": "Friday of the seventh week of Easter",
+          "names": {
+            "en": "Friday of the seventh week of Easter",
+            "sw": "Ijumaa ya Juma la Saba la Pasaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "marcellinus-of-rome-and-peter-the-exorcist-martyrs",
           "name": "Saints Marcellinus and Peter, Martyrs",
+          "names": {
+            "en": "Saints Marcellinus and Peter, Martyrs",
+            "sw": "Watakatifu Marselino na Petro, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -7261,6 +8261,11 @@
         {
           "id": "charles-lwanga-and-companions-martyrs",
           "name": "Saints Charles Lwanga and Companions, Martyrs",
+          "names": {
+            "en": "Saints Charles Lwanga and Companions, Martyrs",
+            "sw": "Watakatifu Karoli Lwanga na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -7303,6 +8308,11 @@
         {
           "id": "pentecost-sunday",
           "name": "Pentecost Sunday",
+          "names": {
+            "en": "Pentecost Sunday",
+            "sw": "Dominika ya Pentekoste",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "red"
         }
@@ -7381,6 +8391,11 @@
         {
           "id": "mary-mother-of-the-church",
           "name": "Blessed Virgin Mary, Mother of the Church",
+          "names": {
+            "en": "Blessed Virgin Mary, Mother of the Church",
+            "sw": "Bikira Maria, Mama wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -7423,12 +8438,22 @@
         {
           "id": "ordinary-time-9-tuesday",
           "name": "Tuesday of the ninth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the ninth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "norbert-of-xanten-bishop",
           "name": "Saint Norbert, Bishop",
+          "names": {
+            "en": "Saint Norbert, Bishop",
+            "sw": "Mtakatifu Norberto, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -7471,6 +8496,11 @@
         {
           "id": "ordinary-time-9-wednesday",
           "name": "Wednesday of the ninth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the ninth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7513,6 +8543,11 @@
         {
           "id": "ordinary-time-9-thursday",
           "name": "Thursday of the ninth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the ninth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7555,12 +8590,22 @@
         {
           "id": "ordinary-time-9-friday",
           "name": "Friday of the ninth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the ninth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "ephrem-the-syrian-deacon",
           "name": "Saint Ephrem, Deacon and Doctor of the Church",
+          "names": {
+            "en": "Saint Ephrem, Deacon and Doctor of the Church",
+            "sw": "Mtakatifu Efremu, Shemasi na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -7603,6 +8648,11 @@
         {
           "id": "ordinary-time-9-saturday",
           "name": "Saturday of the ninth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the ninth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7645,6 +8695,11 @@
         {
           "id": "most-holy-trinity",
           "name": "The Most Holy Trinity",
+          "names": {
+            "en": "The Most Holy Trinity",
+            "sw": "Utatu Mtakatifu Kabisa",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -7693,12 +8748,22 @@
         {
           "id": "ordinary-time-10-monday",
           "name": "Monday of the tenth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the tenth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "onuphrius-abbot",
           "name": "Saint Onuphrius, Abbot",
+          "names": {
+            "en": "Saint Onuphrius, Abbot",
+            "sw": "Mtakatifu Onufri, Abati",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -7741,6 +8806,11 @@
         {
           "id": "anthony-of-padua-priest",
           "name": "Saint Anthony of Padua, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint Anthony of Padua, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Antoni wa Padua, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -7783,6 +8853,11 @@
         {
           "id": "ordinary-time-10-wednesday",
           "name": "Wednesday of the tenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the tenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7825,6 +8900,11 @@
         {
           "id": "ordinary-time-10-thursday",
           "name": "Thursday of the tenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the tenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7867,6 +8947,11 @@
         {
           "id": "ordinary-time-10-friday",
           "name": "Friday of the tenth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the tenth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7909,6 +8994,11 @@
         {
           "id": "ordinary-time-10-saturday",
           "name": "Saturday of the tenth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the tenth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kumi la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -7951,6 +9041,11 @@
         {
           "id": "most-holy-body-and-blood-of-christ",
           "name": "The Most Holy Body and Blood of Christ",
+          "names": {
+            "en": "The Most Holy Body and Blood of Christ",
+            "sw": "Mwili na Damu Takatifu Kabisa ya Kristo",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -7999,12 +9094,22 @@
         {
           "id": "ordinary-time-11-monday",
           "name": "Monday of the eleventh week of Ordinary Time",
+          "names": {
+            "en": "Monday of the eleventh week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "romuald-of-ravenna-abbot",
           "name": "Saint Romuald, Abbot",
+          "names": {
+            "en": "Saint Romuald, Abbot",
+            "sw": "Mtakatifu Romualdo, Abati",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -8047,6 +9152,11 @@
         {
           "id": "ordinary-time-11-tuesday",
           "name": "Tuesday of the eleventh week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the eleventh week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Kumi na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -8089,6 +9199,11 @@
         {
           "id": "aloysius-gonzaga-religious",
           "name": "Saint Aloysius Gonzaga, Religious",
+          "names": {
+            "en": "Saint Aloysius Gonzaga, Religious",
+            "sw": "Mtakatifu Aloisi Gonzaga, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -8131,18 +9246,33 @@
         {
           "id": "ordinary-time-11-thursday",
           "name": "Thursday of the eleventh week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the eleventh week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "paulinus-of-nola-bishop",
           "name": "Saint Paulinus of Nola, Bishop",
+          "names": {
+            "en": "Saint Paulinus of Nola, Bishop",
+            "sw": "Mtakatifu Paulino wa Nola, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "john-fisher-bishop-and-thomas-more-martyrs",
           "name": "Saints John Fisher, Bishop, and Thomas More, Martyrs",
+          "names": {
+            "en": "Saints John Fisher, Bishop, and Thomas More, Martyrs",
+            "sw": "Watakatifu Yohane Fisher, Askofu, na Tomaso More, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -8185,6 +9315,11 @@
         {
           "id": "most-sacred-heart-of-jesus",
           "name": "The Most Sacred Heart of Jesus",
+          "names": {
+            "en": "The Most Sacred Heart of Jesus",
+            "sw": "Moyo Mtakatifu Kabisa wa Yesu",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -8233,6 +9368,11 @@
         {
           "id": "immaculate-heart-of-mary",
           "name": "The Immaculate Heart of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Immaculate Heart of the Blessed Virgin Mary",
+            "sw": "Moyo Safi wa Bikira Maria",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -8275,6 +9415,11 @@
         {
           "id": "ordinary-time-12-sunday",
           "name": "Twelfth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twelfth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Mbili ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -8323,6 +9468,11 @@
         {
           "id": "ordinary-time-12-monday",
           "name": "Monday of the twelfth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twelfth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -8365,12 +9515,22 @@
         {
           "id": "ordinary-time-12-tuesday",
           "name": "Tuesday of the twelfth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twelfth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Kumi na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "cyril-of-alexandria-bishop",
           "name": "Saint Cyril of Alexandria, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Cyril of Alexandria, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Sirili wa Aleksandria, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -8413,6 +9573,11 @@
         {
           "id": "irenaeus-of-lyon-bishop",
           "name": "Saint Irenaeus, Bishop, Martyr and Doctor of the Church",
+          "names": {
+            "en": "Saint Irenaeus, Bishop, Martyr and Doctor of the Church",
+            "sw": "Mtakatifu Ireneo, Askofu, Shahidi na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -8455,6 +9620,11 @@
         {
           "id": "peter-and-paul-apostles",
           "name": "Saints Peter and Paul, Apostles",
+          "names": {
+            "en": "Saints Peter and Paul, Apostles",
+            "sw": "Watakatifu Petro na Paulo, Mitume",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "red"
         }
@@ -8533,12 +9703,22 @@
         {
           "id": "ordinary-time-12-friday",
           "name": "Friday of the twelfth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twelfth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "first-martyrs-of-the-holy-roman-church",
           "name": "The First Martyrs of the Holy Roman Church",
+          "names": {
+            "en": "The First Martyrs of the Holy Roman Church",
+            "sw": "Mashahidi wa Kwanza wa Kanisa Takatifu la Roma",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -8581,6 +9761,11 @@
         {
           "id": "ordinary-time-12-saturday",
           "name": "Saturday of the twelfth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the twelfth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kumi na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -8623,6 +9808,11 @@
         {
           "id": "ordinary-time-13-sunday",
           "name": "Thirteenth Sunday in Ordinary Time",
+          "names": {
+            "en": "Thirteenth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Tatu ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -8671,6 +9861,11 @@
         {
           "id": "thomas-apostle",
           "name": "Saint Thomas, Apostle",
+          "names": {
+            "en": "Saint Thomas, Apostle",
+            "sw": "Mtakatifu Tomaso, Mtume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -8713,12 +9908,22 @@
         {
           "id": "ordinary-time-13-tuesday",
           "name": "Tuesday of the thirteenth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the thirteenth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Kumi na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "elizabeth-of-portugal",
           "name": "Saint Elizabeth of Portugal",
+          "names": {
+            "en": "Saint Elizabeth of Portugal",
+            "sw": "Mtakatifu Elizabeti wa Ureno",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -8761,12 +9966,22 @@
         {
           "id": "ordinary-time-13-wednesday",
           "name": "Wednesday of the thirteenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the thirteenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "anthony-zaccaria-priest",
           "name": "Saint Anthony Zaccaria, Priest",
+          "names": {
+            "en": "Saint Anthony Zaccaria, Priest",
+            "sw": "Mtakatifu Antoni Zaccaria, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -8809,12 +10024,22 @@
         {
           "id": "ordinary-time-13-thursday",
           "name": "Thursday of the thirteenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the thirteenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "maria-goretti-virgin",
           "name": "Saint Maria Goretti, Virgin and Martyr",
+          "names": {
+            "en": "Saint Maria Goretti, Virgin and Martyr",
+            "sw": "Mtakatifu Maria Goretti, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -8857,6 +10082,11 @@
         {
           "id": "ordinary-time-13-friday",
           "name": "Friday of the thirteenth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the thirteenth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -8899,6 +10129,11 @@
         {
           "id": "ordinary-time-13-saturday",
           "name": "Saturday of the thirteenth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the thirteenth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kumi na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -8941,6 +10176,11 @@
         {
           "id": "ordinary-time-14-sunday",
           "name": "Fourteenth Sunday in Ordinary Time",
+          "names": {
+            "en": "Fourteenth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Nne ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -8989,6 +10229,11 @@
         {
           "id": "ordinary-time-14-monday",
           "name": "Monday of the fourteenth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the fourteenth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -9031,6 +10276,11 @@
         {
           "id": "benedict-of-nursia-abbot",
           "name": "Saint Benedict, Abbot",
+          "names": {
+            "en": "Saint Benedict, Abbot",
+            "sw": "Mtakatifu Benedikto, Abati",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -9073,6 +10323,11 @@
         {
           "id": "ordinary-time-14-wednesday",
           "name": "Wednesday of the fourteenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the fourteenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -9115,12 +10370,22 @@
         {
           "id": "ordinary-time-14-thursday",
           "name": "Thursday of the fourteenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the fourteenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "henry-ii-emperor",
           "name": "Saint Henry",
+          "names": {
+            "en": "Saint Henry",
+            "sw": "Mtakatifu Henri",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -9163,12 +10428,22 @@
         {
           "id": "ordinary-time-14-friday",
           "name": "Friday of the fourteenth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the fourteenth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "camillus-de-lellis-priest",
           "name": "Saint Camillus de Lellis, Priest",
+          "names": {
+            "en": "Saint Camillus de Lellis, Priest",
+            "sw": "Mtakatifu Kamili wa Lellis, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -9211,6 +10486,11 @@
         {
           "id": "bonaventure-of-bagnoregio-bishop",
           "name": "Saint Bonaventure, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Bonaventure, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Bonaventura, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -9253,6 +10533,11 @@
         {
           "id": "ordinary-time-15-sunday",
           "name": "Fifteenth Sunday in Ordinary Time",
+          "names": {
+            "en": "Fifteenth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Tano ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -9301,6 +10586,11 @@
         {
           "id": "ordinary-time-15-monday",
           "name": "Monday of the fifteenth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the fifteenth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -9343,6 +10633,11 @@
         {
           "id": "ordinary-time-15-tuesday",
           "name": "Tuesday of the fifteenth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the fifteenth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Kumi na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -9385,6 +10680,11 @@
         {
           "id": "ordinary-time-15-wednesday",
           "name": "Wednesday of the fifteenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the fifteenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -9427,12 +10727,22 @@
         {
           "id": "ordinary-time-15-thursday",
           "name": "Thursday of the fifteenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the fifteenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "apollinaris-of-ravenna-bishop",
           "name": "Saint Apollinaris, Bishop and Martyr",
+          "names": {
+            "en": "Saint Apollinaris, Bishop and Martyr",
+            "sw": "Mtakatifu Apolinari, Askofu na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -9475,12 +10785,22 @@
         {
           "id": "ordinary-time-15-friday",
           "name": "Friday of the fifteenth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the fifteenth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "lawrence-of-brindisi-priest",
           "name": "Saint Lawrence of Brindisi, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint Lawrence of Brindisi, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Laurenti wa Brindisi, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -9523,6 +10843,11 @@
         {
           "id": "mary-magdalene",
           "name": "Saint Mary Magdalene",
+          "names": {
+            "en": "Saint Mary Magdalene",
+            "sw": "Mtakatifu Maria Magdalena",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -9565,6 +10890,11 @@
         {
           "id": "ordinary-time-16-sunday",
           "name": "Sixteenth Sunday in Ordinary Time",
+          "names": {
+            "en": "Sixteenth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Sita ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -9613,12 +10943,22 @@
         {
           "id": "ordinary-time-16-monday",
           "name": "Monday of the sixteenth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the sixteenth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi na Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "sharbel-makhluf-priest",
           "name": "Saint Sharbel Makhlūf, Priest",
+          "names": {
+            "en": "Saint Sharbel Makhlūf, Priest",
+            "sw": "Mtakatifu Sharbel Makhlūf, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -9661,6 +11001,11 @@
         {
           "id": "james-apostle",
           "name": "Saint James, Apostle",
+          "names": {
+            "en": "Saint James, Apostle",
+            "sw": "Mtakatifu Yakobo, Mtume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -9703,6 +11048,11 @@
         {
           "id": "joachim-and-anne-parents-of-mary",
           "name": "Saints Joachim and Anne, Parents of the Blessed Virgin Mary",
+          "names": {
+            "en": "Saints Joachim and Anne, Parents of the Blessed Virgin Mary",
+            "sw": "Watakatifu Yoakimu na Anna, Wazazi wa Bikira Maria",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -9745,6 +11095,11 @@
         {
           "id": "ordinary-time-16-thursday",
           "name": "Thursday of the sixteenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the sixteenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -9787,12 +11142,22 @@
         {
           "id": "ordinary-time-16-friday",
           "name": "Friday of the sixteenth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the sixteenth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi na Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "victor-i-pope",
           "name": "Saint Victor I, Pope and Martyr",
+          "names": {
+            "en": "Saint Victor I, Pope and Martyr",
+            "sw": "Mtakatifu Viktor I, Papa na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -9835,6 +11200,11 @@
         {
           "id": "martha-of-bethany-mary-of-bethany-and-lazarus-of-bethany",
           "name": "Saints Martha, Mary and Lazarus",
+          "names": {
+            "en": "Saints Martha, Mary and Lazarus",
+            "sw": "Watakatifu Marta, Maria na Lazaro",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -9877,6 +11247,11 @@
         {
           "id": "ordinary-time-17-sunday",
           "name": "Seventeenth Sunday in Ordinary Time",
+          "names": {
+            "en": "Seventeenth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Saba ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -9925,6 +11300,11 @@
         {
           "id": "ignatius-of-loyola-priest",
           "name": "Saint Ignatius of Loyola, Priest",
+          "names": {
+            "en": "Saint Ignatius of Loyola, Priest",
+            "sw": "Mtakatifu Ignasi wa Loyola, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -9967,6 +11347,11 @@
         {
           "id": "alphonsus-mary-liguori-bishop",
           "name": "Saint Alphonsus Mary Liguori, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Alphonsus Mary Liguori, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Alfonso Maria wa Liguori, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -10009,18 +11394,33 @@
         {
           "id": "ordinary-time-17-wednesday",
           "name": "Wednesday of the seventeenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the seventeenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "eusebius-of-vercelli-bishop",
           "name": "Saint Eusebius of Vercelli, Bishop",
+          "names": {
+            "en": "Saint Eusebius of Vercelli, Bishop",
+            "sw": "Mtakatifu Eusebio wa Vercelli, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "peter-julian-eymard-priest",
           "name": "Saint Peter Julian Eymard, Priest",
+          "names": {
+            "en": "Saint Peter Julian Eymard, Priest",
+            "sw": "Mtakatifu Petro Juliani Eymard, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -10063,6 +11463,11 @@
         {
           "id": "ordinary-time-17-thursday",
           "name": "Thursday of the seventeenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the seventeenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -10105,6 +11510,11 @@
         {
           "id": "john-mary-vianney-priest",
           "name": "Saint John Mary Vianney, Priest",
+          "names": {
+            "en": "Saint John Mary Vianney, Priest",
+            "sw": "Mtakatifu Yohane Maria Vianney, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -10147,12 +11557,22 @@
         {
           "id": "ordinary-time-17-saturday",
           "name": "Saturday of the seventeenth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the seventeenth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kumi na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "dedication-of-the-basilica-of-saint-mary-major",
           "name": "The Dedication of the Basilica of Saint Mary Major",
+          "names": {
+            "en": "The Dedication of the Basilica of Saint Mary Major",
+            "sw": "Kutabarukiwa kwa Basilika ya Mtakatifu Maria Mkuu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -10195,6 +11615,11 @@
         {
           "id": "transfiguration-of-the-lord",
           "name": "The Transfiguration of the Lord",
+          "names": {
+            "en": "The Transfiguration of the Lord",
+            "sw": "Kugeuka Sura kwa Bwana",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -10243,18 +11668,33 @@
         {
           "id": "ordinary-time-18-monday",
           "name": "Monday of the eighteenth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the eighteenth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Kumi na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "sixtus-ii-pope-and-companions-martyrs",
           "name": "Saint Sixtus II, Pope, and Companions, Martyrs",
+          "names": {
+            "en": "Saint Sixtus II, Pope, and Companions, Martyrs",
+            "sw": "Mtakatifu Sisto II, Papa, na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "cajetan-of-thiene-priest",
           "name": "Saint Cajetan, Priest",
+          "names": {
+            "en": "Saint Cajetan, Priest",
+            "sw": "Mtakatifu Kajetani, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -10297,6 +11737,11 @@
         {
           "id": "dominic-de-guzman-priest",
           "name": "Saint Dominic, Priest",
+          "names": {
+            "en": "Saint Dominic, Priest",
+            "sw": "Mtakatifu Dominiko, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -10339,12 +11784,22 @@
         {
           "id": "ordinary-time-18-wednesday",
           "name": "Wednesday of the eighteenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the eighteenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "teresa-benedicta-of-the-cross-stein-virgin",
           "name": "Saint Teresa Benedicta of the Cross Stein, Virgin and Martyr",
+          "names": {
+            "en": "Saint Teresa Benedicta of the Cross Stein, Virgin and Martyr",
+            "sw": "Mtakatifu Teresa Benedikta wa Msalaba (Edith Stein), Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -10387,6 +11842,11 @@
         {
           "id": "lawrence-of-rome-deacon",
           "name": "Saint Lawrence, Deacon and Martyr",
+          "names": {
+            "en": "Saint Lawrence, Deacon and Martyr",
+            "sw": "Mtakatifu Laurenti, Shemasi na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -10429,6 +11889,11 @@
         {
           "id": "clare-of-assisi-virgin",
           "name": "Saint Clare, Virgin",
+          "names": {
+            "en": "Saint Clare, Virgin",
+            "sw": "Mtakatifu Klara, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -10471,18 +11936,33 @@
         {
           "id": "ordinary-time-18-saturday",
           "name": "Saturday of the eighteenth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the eighteenth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kumi na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "jane-frances-de-chantal-religious",
           "name": "Saint Jane Frances de Chantal, Religious",
+          "names": {
+            "en": "Saint Jane Frances de Chantal, Religious",
+            "sw": "Mtakatifu Yoana Fransiska wa Chantal, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "isidore-bakanja-martyr",
           "name": "Blessed Isidore Bakanja, Martyr",
+          "names": {
+            "en": "Blessed Isidore Bakanja, Martyr",
+            "sw": "Mwenyeheri Isidori Bakanja, Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -10525,6 +12005,11 @@
         {
           "id": "ordinary-time-19-sunday",
           "name": "Nineteenth Sunday in Ordinary Time",
+          "names": {
+            "en": "Nineteenth Sunday in Ordinary Time",
+            "sw": "Dominika ya Kumi na Tisa ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -10573,6 +12058,11 @@
         {
           "id": "maximilian-mary-raymund-kolbe-priest",
           "name": "Saint Maximilian Mary Kolbe, Priest and Martyr",
+          "names": {
+            "en": "Saint Maximilian Mary Kolbe, Priest and Martyr",
+            "sw": "Mtakatifu Maksimiliani Maria Kolbe, Padre na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -10615,6 +12105,11 @@
         {
           "id": "assumption-of-the-blessed-virgin-mary",
           "name": "The Assumption of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Assumption of the Blessed Virgin Mary",
+            "sw": "Kupalizwa Mbinguni kwa Bikira Maria",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -10693,12 +12188,22 @@
         {
           "id": "ordinary-time-19-wednesday",
           "name": "Wednesday of the nineteenth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the nineteenth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Kumi na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "stephen-i-of-hungary",
           "name": "Saint Stephen of Hungary",
+          "names": {
+            "en": "Saint Stephen of Hungary",
+            "sw": "Mtakatifu Stefano wa Hungaria",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -10741,6 +12246,11 @@
         {
           "id": "ordinary-time-19-thursday",
           "name": "Thursday of the nineteenth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the nineteenth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Kumi na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -10783,12 +12293,22 @@
         {
           "id": "ordinary-time-19-friday",
           "name": "Friday of the nineteenth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the nineteenth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Kumi na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "victoria-rasoamanarivo",
           "name": "Blessed Victoria Rasoamanarivo",
+          "names": {
+            "en": "Blessed Victoria Rasoamanarivo",
+            "sw": "Mwenyeheri Viktoria Rasoamanarivo",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -10831,12 +12351,22 @@
         {
           "id": "ordinary-time-19-saturday",
           "name": "Saturday of the nineteenth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the nineteenth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Kumi na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "john-eudes-priest",
           "name": "Saint John Eudes, Priest",
+          "names": {
+            "en": "Saint John Eudes, Priest",
+            "sw": "Mtakatifu Yohane Eudes, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -10879,6 +12409,11 @@
         {
           "id": "ordinary-time-20-sunday",
           "name": "Twentieth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twentieth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -10927,6 +12462,11 @@
         {
           "id": "pius-x-pope",
           "name": "Saint Pius X, Pope",
+          "names": {
+            "en": "Saint Pius X, Pope",
+            "sw": "Mtakatifu Pio X, Papa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -10969,6 +12509,11 @@
         {
           "id": "queenship-of-the-blessed-virgin-mary",
           "name": "The Queenship of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Queenship of the Blessed Virgin Mary",
+            "sw": "Bikira Maria Malkia",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -11011,12 +12556,22 @@
         {
           "id": "ordinary-time-20-wednesday",
           "name": "Wednesday of the twentieth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the twentieth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Ishirini la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "rose-of-lima-virgin",
           "name": "Saint Rose of Lima, Virgin",
+          "names": {
+            "en": "Saint Rose of Lima, Virgin",
+            "sw": "Mtakatifu Roza wa Lima, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -11059,6 +12614,11 @@
         {
           "id": "bartholomew-apostle",
           "name": "Saint Bartholomew, Apostle",
+          "names": {
+            "en": "Saint Bartholomew, Apostle",
+            "sw": "Mtakatifu Bartolomayo, Mtume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -11101,18 +12661,33 @@
         {
           "id": "ordinary-time-20-friday",
           "name": "Friday of the twentieth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twentieth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "louis-ix-of-france",
           "name": "Saint Louis",
+          "names": {
+            "en": "Saint Louis",
+            "sw": "Mtakatifu Lui",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "joseph-of-calasanz-priest",
           "name": "Saint Joseph of Calasanz, Priest",
+          "names": {
+            "en": "Saint Joseph of Calasanz, Priest",
+            "sw": "Mtakatifu Yosefu wa Kalasanzi, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -11155,6 +12730,11 @@
         {
           "id": "ordinary-time-20-saturday",
           "name": "Saturday of the twentieth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the twentieth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Ishirini la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11197,6 +12777,11 @@
         {
           "id": "ordinary-time-21-sunday",
           "name": "Twenty-first Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-first Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Moja ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -11245,6 +12830,11 @@
         {
           "id": "augustine-of-hippo-bishop",
           "name": "Saint Augustine, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Augustine, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Augustino, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -11287,6 +12877,11 @@
         {
           "id": "passion-of-saint-john-the-baptist",
           "name": "The Passion of Saint John the Baptist",
+          "names": {
+            "en": "The Passion of Saint John the Baptist",
+            "sw": "Mateso ya Mtakatifu Yohane Mbatizaji",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -11329,6 +12924,11 @@
         {
           "id": "ordinary-time-21-wednesday",
           "name": "Wednesday of the twenty-first week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the twenty-first week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Ishirini na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11371,6 +12971,11 @@
         {
           "id": "ordinary-time-21-thursday",
           "name": "Thursday of the twenty-first week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-first week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11413,6 +13018,11 @@
         {
           "id": "ordinary-time-21-friday",
           "name": "Friday of the twenty-first week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twenty-first week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11455,6 +13065,11 @@
         {
           "id": "ordinary-time-21-saturday",
           "name": "Saturday of the twenty-first week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the twenty-first week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Ishirini na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11497,6 +13112,11 @@
         {
           "id": "ordinary-time-22-sunday",
           "name": "Twenty-second Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-second Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Mbili ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -11545,6 +13165,11 @@
         {
           "id": "ordinary-time-22-monday",
           "name": "Monday of the twenty-second week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-second week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11587,12 +13212,22 @@
         {
           "id": "ordinary-time-22-tuesday",
           "name": "Tuesday of the twenty-second week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twenty-second week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Ishirini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "teresa-of-calcutta-virgin",
           "name": "Saint Teresa of Calcutta, Virgin",
+          "names": {
+            "en": "Saint Teresa of Calcutta, Virgin",
+            "sw": "Mtakatifu Teresa wa Kalkuta, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -11659,6 +13294,11 @@
         {
           "id": "ordinary-time-22-wednesday",
           "name": "Wednesday of the twenty-second week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the twenty-second week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Ishirini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11701,6 +13341,11 @@
         {
           "id": "ordinary-time-22-thursday",
           "name": "Thursday of the twenty-second week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-second week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11743,6 +13388,11 @@
         {
           "id": "nativity-of-the-blessed-virgin-mary",
           "name": "The Nativity of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Nativity of the Blessed Virgin Mary",
+            "sw": "Kuzaliwa kwa Bikira Maria",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -11785,12 +13435,22 @@
         {
           "id": "ordinary-time-22-saturday",
           "name": "Saturday of the twenty-second week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the twenty-second week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Ishirini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "peter-claver-priest",
           "name": "Saint Peter Claver, Priest",
+          "names": {
+            "en": "Saint Peter Claver, Priest",
+            "sw": "Mtakatifu Petro Klaveri, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -11833,6 +13493,11 @@
         {
           "id": "ordinary-time-23-sunday",
           "name": "Twenty-third Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-third Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Tatu ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -11881,6 +13546,11 @@
         {
           "id": "ordinary-time-23-monday",
           "name": "Monday of the twenty-third week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-third week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -11923,12 +13593,22 @@
         {
           "id": "ordinary-time-23-tuesday",
           "name": "Tuesday of the twenty-third week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twenty-third week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Ishirini na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "most-holy-name-of-mary",
           "name": "The Most Holy Name of Mary",
+          "names": {
+            "en": "The Most Holy Name of Mary",
+            "sw": "Jina Takatifu Kabisa la Maria",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -11971,6 +13651,11 @@
         {
           "id": "john-chrysostom-bishop",
           "name": "Saint John Chrysostom, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint John Chrysostom, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Yohane Krisostomo, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12013,6 +13698,11 @@
         {
           "id": "exaltation-of-the-holy-cross",
           "name": "The Exaltation of the Holy Cross",
+          "names": {
+            "en": "The Exaltation of the Holy Cross",
+            "sw": "Kutukuka kwa Msalaba Mtakatifu",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -12061,6 +13751,11 @@
         {
           "id": "our-lady-of-sorrows",
           "name": "Our Lady of Sorrows",
+          "names": {
+            "en": "Our Lady of Sorrows",
+            "sw": "Bikira Maria wa Mateso",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12103,6 +13798,11 @@
         {
           "id": "cornelius-i-pope-and-cyprian-of-carthage-bishop-martyrs",
           "name": "Saints Cornelius, Pope, and Cyprian, Bishop, Martyrs",
+          "names": {
+            "en": "Saints Cornelius, Pope, and Cyprian, Bishop, Martyrs",
+            "sw": "Watakatifu Kornelio, Papa, na Sipriani, Askofu, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -12145,6 +13845,11 @@
         {
           "id": "ordinary-time-24-sunday",
           "name": "Twenty-fourth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-fourth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Nne ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -12193,6 +13898,11 @@
         {
           "id": "ordinary-time-24-monday",
           "name": "Monday of the twenty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-fourth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -12235,12 +13945,22 @@
         {
           "id": "ordinary-time-24-tuesday",
           "name": "Tuesday of the twenty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twenty-fourth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Ishirini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "januarius-i-of-benevento-bishop",
           "name": "Saint Januarius, Bishop and Martyr",
+          "names": {
+            "en": "Saint Januarius, Bishop and Martyr",
+            "sw": "Mtakatifu Januari, Askofu na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -12283,6 +14003,11 @@
         {
           "id": "andrew-kim-tae-gon-paul-chong-ha-sang-and-companions-martyrs",
           "name": "Saints Andrew Kim Tae-gŏn, Priest, Paul Chŏng Ha-sang and Companions, Martyrs",
+          "names": {
+            "en": "Saints Andrew Kim Tae-gŏn, Priest, Paul Chŏng Ha-sang and Companions, Martyrs",
+            "sw": "Watakatifu Andrea Kim Tae-gŏn, Padre, Paulo Chŏng Ha-sang na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -12325,6 +14050,11 @@
         {
           "id": "matthew-apostle",
           "name": "Saint Matthew, Apostle and Evangelist",
+          "names": {
+            "en": "Saint Matthew, Apostle and Evangelist",
+            "sw": "Mtakatifu Mathayo, Mtume na Mwinjili",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -12367,12 +14097,22 @@
         {
           "id": "ordinary-time-24-friday",
           "name": "Friday of the twenty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twenty-fourth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "maurice-of-agaune-and-companions-martyrs",
           "name": "Saint Maurice of Agaune and Companions, Martyrs",
+          "names": {
+            "en": "Saint Maurice of Agaune and Companions, Martyrs",
+            "sw": "Mtakatifu Maurisi wa Agaune na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -12415,6 +14155,11 @@
         {
           "id": "pius-francesco-forgione-priest",
           "name": "Saint Pius of Pietrelcina, Priest",
+          "names": {
+            "en": "Saint Pius of Pietrelcina, Priest",
+            "sw": "Mtakatifu Pio wa Pietrelcina, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12457,6 +14202,11 @@
         {
           "id": "ordinary-time-25-sunday",
           "name": "Twenty-fifth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-fifth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Tano ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -12505,6 +14255,11 @@
         {
           "id": "ordinary-time-25-monday",
           "name": "Monday of the twenty-fifth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-fifth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -12547,12 +14302,22 @@
         {
           "id": "ordinary-time-25-tuesday",
           "name": "Tuesday of the twenty-fifth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twenty-fifth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Ishirini na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "cosmas-of-cilicia-and-damian-of-cilicia-martyrs",
           "name": "Saints Cosmas and Damian, Martyrs",
+          "names": {
+            "en": "Saints Cosmas and Damian, Martyrs",
+            "sw": "Watakatifu Kosma na Damiani, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -12595,6 +14360,11 @@
         {
           "id": "vincent-de-paul-priest",
           "name": "Saint Vincent de Paul, Priest",
+          "names": {
+            "en": "Saint Vincent de Paul, Priest",
+            "sw": "Mtakatifu Vinsenti wa Paulo, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12637,18 +14407,33 @@
         {
           "id": "ordinary-time-25-thursday",
           "name": "Thursday of the twenty-fifth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-fifth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Tano la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "wenceslaus-i-of-bohemia-martyr",
           "name": "Saint Wenceslaus, Martyr",
+          "names": {
+            "en": "Saint Wenceslaus, Martyr",
+            "sw": "Mtakatifu Venseslaus, Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "lawrence-ruiz-and-companions-martyrs",
           "name": "Saint Lawrence Ruiz and Companions, Martyrs",
+          "names": {
+            "en": "Saint Lawrence Ruiz and Companions, Martyrs",
+            "sw": "Mtakatifu Laurenti Ruiz na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -12691,6 +14476,11 @@
         {
           "id": "michael-gabriel-and-raphael-archangels",
           "name": "Saints Michael, Gabriel and Raphael, Archangels",
+          "names": {
+            "en": "Saints Michael, Gabriel and Raphael, Archangels",
+            "sw": "Watakatifu Mikaeli, Gabrieli na Rafaeli, Malaika Wakuu",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -12733,6 +14523,11 @@
         {
           "id": "jerome-of-stridon-priest",
           "name": "Saint Jerome, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint Jerome, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Jeromu, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12775,6 +14570,11 @@
         {
           "id": "ordinary-time-26-sunday",
           "name": "Twenty-sixth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-sixth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Sita ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -12823,6 +14623,11 @@
         {
           "id": "holy-guardian-angels",
           "name": "The Holy Guardian Angels",
+          "names": {
+            "en": "The Holy Guardian Angels",
+            "sw": "Malaika Walinzi Watakatifu",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12865,6 +14670,11 @@
         {
           "id": "ordinary-time-26-tuesday",
           "name": "Tuesday of the twenty-sixth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twenty-sixth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Ishirini na Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -12907,6 +14717,11 @@
         {
           "id": "francis-of-assisi",
           "name": "Saint Francis of Assisi",
+          "names": {
+            "en": "Saint Francis of Assisi",
+            "sw": "Mtakatifu Fransisko wa Asizi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -12949,12 +14764,22 @@
         {
           "id": "ordinary-time-26-thursday",
           "name": "Thursday of the twenty-sixth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-sixth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "faustina-kowalska-virgin",
           "name": "Saint Faustina Kowalska, Virgin",
+          "names": {
+            "en": "Saint Faustina Kowalska, Virgin",
+            "sw": "Mtakatifu Faustina Kowalska, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13021,12 +14846,22 @@
         {
           "id": "ordinary-time-26-friday",
           "name": "Friday of the twenty-sixth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twenty-sixth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini na Sita la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "bruno-of-cologne-priest",
           "name": "Saint Bruno, Priest",
+          "names": {
+            "en": "Saint Bruno, Priest",
+            "sw": "Mtakatifu Bruno, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13069,6 +14904,11 @@
         {
           "id": "our-lady-of-the-rosary",
           "name": "Our Lady of the Rosary",
+          "names": {
+            "en": "Our Lady of the Rosary",
+            "sw": "Bikira Maria wa Rozari",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -13111,6 +14951,11 @@
         {
           "id": "ordinary-time-27-sunday",
           "name": "Twenty-seventh Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-seventh Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Saba ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -13159,24 +15004,44 @@
         {
           "id": "ordinary-time-27-monday",
           "name": "Monday of the twenty-seventh week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-seventh week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "denis-of-paris-bishop-and-companions-martyrs",
           "name": "Saint Denis, Bishop, and Companions, Martyrs",
+          "names": {
+            "en": "Saint Denis, Bishop, and Companions, Martyrs",
+            "sw": "Mtakatifu Dionisi, Askofu, na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "john-leonardi-priest",
           "name": "Saint John Leonardi, Priest",
+          "names": {
+            "en": "Saint John Leonardi, Priest",
+            "sw": "Mtakatifu Yohane Leonardi, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "john-henry-newman-priest",
           "name": "Saint John Henry Newman, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint John Henry Newman, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Yohane Henri Newman, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13219,6 +15084,11 @@
         {
           "id": "daniel-comboni-bishop",
           "name": "Saint Daniel Comboni, Bishop",
+          "names": {
+            "en": "Saint Daniel Comboni, Bishop",
+            "sw": "Mtakatifu Danieli Comboni, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -13261,12 +15131,22 @@
         {
           "id": "ordinary-time-27-wednesday",
           "name": "Wednesday of the twenty-seventh week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the twenty-seventh week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Ishirini na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "john-xxiii-pope",
           "name": "Saint John XXIII, Pope",
+          "names": {
+            "en": "Saint John XXIII, Pope",
+            "sw": "Mtakatifu Yohane XXIII, Papa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13333,6 +15213,11 @@
         {
           "id": "ordinary-time-27-thursday",
           "name": "Thursday of the twenty-seventh week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-seventh week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -13375,6 +15260,11 @@
         {
           "id": "ordinary-time-27-friday",
           "name": "Friday of the twenty-seventh week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twenty-seventh week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -13417,12 +15307,22 @@
         {
           "id": "ordinary-time-27-saturday",
           "name": "Saturday of the twenty-seventh week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the twenty-seventh week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Ishirini na Saba la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "callistus-i-pope",
           "name": "Saint Callistus I, Pope and Martyr",
+          "names": {
+            "en": "Saint Callistus I, Pope and Martyr",
+            "sw": "Mtakatifu Kalisto I, Papa na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -13465,6 +15365,11 @@
         {
           "id": "ordinary-time-28-sunday",
           "name": "Twenty-eighth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-eighth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Nane ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -13513,18 +15418,33 @@
         {
           "id": "ordinary-time-28-monday",
           "name": "Monday of the twenty-eighth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-eighth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "hedwig-of-silesia-religious",
           "name": "Saint Hedwig, Religious",
+          "names": {
+            "en": "Saint Hedwig, Religious",
+            "sw": "Mtakatifu Hedvigi, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "margaret-mary-alacoque-virgin",
           "name": "Saint Margaret Mary Alacoque, Virgin",
+          "names": {
+            "en": "Saint Margaret Mary Alacoque, Virgin",
+            "sw": "Mtakatifu Margareta Maria Alacoque, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13567,6 +15487,11 @@
         {
           "id": "ignatius-of-antioch-bishop",
           "name": "Saint Ignatius of Antioch, Bishop and Martyr",
+          "names": {
+            "en": "Saint Ignatius of Antioch, Bishop and Martyr",
+            "sw": "Mtakatifu Ignasi wa Antiokia, Askofu na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -13609,6 +15534,11 @@
         {
           "id": "luke-evangelist",
           "name": "Saint Luke, Evangelist",
+          "names": {
+            "en": "Saint Luke, Evangelist",
+            "sw": "Mtakatifu Luka, Mwinjili",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -13651,18 +15581,33 @@
         {
           "id": "ordinary-time-28-thursday",
           "name": "Thursday of the twenty-eighth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-eighth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "john-de-brebeuf-isaac-jogues-priests-and-companions-martyrs",
           "name": "Saints John de Brébeuf and Isaac Jogues, Priests, and Companions, Martyrs",
+          "names": {
+            "en": "Saints John de Brébeuf and Isaac Jogues, Priests, and Companions, Martyrs",
+            "sw": "Watakatifu Yohane wa Brébeuf na Isaka Jogues, Mapadre, na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "paul-of-the-cross-priest",
           "name": "Saint Paul of the Cross, Priest",
+          "names": {
+            "en": "Saint Paul of the Cross, Priest",
+            "sw": "Mtakatifu Paulo wa Msalaba, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13705,12 +15650,22 @@
         {
           "id": "ordinary-time-28-friday",
           "name": "Friday of the twenty-eighth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twenty-eighth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "daudi-okelo-and-jildo-irwa-martyrs",
           "name": "Blesseds Daudi Okelo and Jildo Irwa, Martyrs",
+          "names": {
+            "en": "Blesseds Daudi Okelo and Jildo Irwa, Martyrs",
+            "sw": "Wenyeheri Daudi Okelo na Jildo Irwa, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -13753,6 +15708,11 @@
         {
           "id": "ordinary-time-28-saturday",
           "name": "Saturday of the twenty-eighth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the twenty-eighth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Ishirini na Nane la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -13795,6 +15755,11 @@
         {
           "id": "ordinary-time-29-sunday",
           "name": "Twenty-ninth Sunday in Ordinary Time",
+          "names": {
+            "en": "Twenty-ninth Sunday in Ordinary Time",
+            "sw": "Dominika ya Ishirini na Tisa ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -13843,12 +15808,22 @@
         {
           "id": "ordinary-time-29-monday",
           "name": "Monday of the twenty-ninth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the twenty-ninth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Ishirini na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "john-of-capistrano-priest",
           "name": "Saint John of Capistrano, Priest",
+          "names": {
+            "en": "Saint John of Capistrano, Priest",
+            "sw": "Mtakatifu Yohane wa Kapistrano, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13891,12 +15866,22 @@
         {
           "id": "ordinary-time-29-tuesday",
           "name": "Tuesday of the twenty-ninth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the twenty-ninth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Ishirini na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "anthony-mary-claret-bishop",
           "name": "Saint Anthony Mary Claret, Bishop",
+          "names": {
+            "en": "Saint Anthony Mary Claret, Bishop",
+            "sw": "Mtakatifu Antoni Maria Claret, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -13939,6 +15924,11 @@
         {
           "id": "ordinary-time-29-wednesday",
           "name": "Wednesday of the twenty-ninth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the twenty-ninth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Ishirini na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -13981,6 +15971,11 @@
         {
           "id": "ordinary-time-29-thursday",
           "name": "Thursday of the twenty-ninth week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the twenty-ninth week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Ishirini na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14023,6 +16018,11 @@
         {
           "id": "ordinary-time-29-friday",
           "name": "Friday of the twenty-ninth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the twenty-ninth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Ishirini na Tisa la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14065,6 +16065,11 @@
         {
           "id": "simon-and-jude-apostles",
           "name": "Saints Simon and Jude, Apostles",
+          "names": {
+            "en": "Saints Simon and Jude, Apostles",
+            "sw": "Watakatifu Simoni na Yuda, Mitume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -14107,6 +16112,11 @@
         {
           "id": "ordinary-time-30-sunday",
           "name": "Thirtieth Sunday in Ordinary Time",
+          "names": {
+            "en": "Thirtieth Sunday in Ordinary Time",
+            "sw": "Dominika ya Thelathini ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -14155,6 +16165,11 @@
         {
           "id": "ordinary-time-30-monday",
           "name": "Monday of the thirtieth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the thirtieth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Thelathini la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14197,6 +16212,11 @@
         {
           "id": "ordinary-time-30-tuesday",
           "name": "Tuesday of the thirtieth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the thirtieth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Thelathini la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14239,6 +16259,11 @@
         {
           "id": "all-saints",
           "name": "All Saints",
+          "names": {
+            "en": "All Saints",
+            "sw": "Watakatifu Wote",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -14287,6 +16312,11 @@
         {
           "id": "commemoration-of-all-the-faithful-departed",
           "name": "The Commemoration of All the Faithful Departed (All Souls’ Day)",
+          "names": {
+            "en": "The Commemoration of All the Faithful Departed (All Souls’ Day)",
+            "sw": "Kumbukumbu ya Marehemu Wote (Siku ya Wafu Wote)",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "violet"
         }
@@ -14335,12 +16365,22 @@
         {
           "id": "ordinary-time-30-friday",
           "name": "Friday of the thirtieth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the thirtieth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Thelathini la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "martin-de-porres-religious",
           "name": "Saint Martin de Porres, Religious",
+          "names": {
+            "en": "Saint Martin de Porres, Religious",
+            "sw": "Mtakatifu Martino wa Porres, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -14383,6 +16423,11 @@
         {
           "id": "charles-borromeo-bishop",
           "name": "Saint Charles Borromeo, Bishop",
+          "names": {
+            "en": "Saint Charles Borromeo, Bishop",
+            "sw": "Mtakatifu Karoli Borromeo, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -14425,6 +16470,11 @@
         {
           "id": "ordinary-time-31-sunday",
           "name": "Thirty-first Sunday in Ordinary Time",
+          "names": {
+            "en": "Thirty-first Sunday in Ordinary Time",
+            "sw": "Dominika ya Thelathini na Moja ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -14473,6 +16523,11 @@
         {
           "id": "all-saints-of-africa",
           "name": "All Saints of Africa",
+          "names": {
+            "en": "All Saints of Africa",
+            "sw": "Watakatifu Wote wa Afrika",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -14515,6 +16570,11 @@
         {
           "id": "ordinary-time-31-tuesday",
           "name": "Tuesday of the thirty-first week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the thirty-first week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Thelathini na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14557,6 +16617,11 @@
         {
           "id": "ordinary-time-31-wednesday",
           "name": "Wednesday of the thirty-first week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the thirty-first week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Thelathini na Moja la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14599,6 +16664,11 @@
         {
           "id": "dedication-of-the-lateran-basilica",
           "name": "The Dedication of the Lateran Basilica",
+          "names": {
+            "en": "The Dedication of the Lateran Basilica",
+            "sw": "Kutabarukiwa kwa Basilika ya Laterani",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -14647,6 +16717,11 @@
         {
           "id": "leo-i-the-great-pope",
           "name": "Saint Leo the Great, Pope and Doctor of the Church",
+          "names": {
+            "en": "Saint Leo the Great, Pope and Doctor of the Church",
+            "sw": "Mtakatifu Leo Mkuu, Papa na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -14689,6 +16764,11 @@
         {
           "id": "martin-of-tours-bishop",
           "name": "Saint Martin of Tours, Bishop",
+          "names": {
+            "en": "Saint Martin of Tours, Bishop",
+            "sw": "Mtakatifu Martino wa Tours, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -14731,6 +16811,11 @@
         {
           "id": "ordinary-time-32-sunday",
           "name": "Thirty-second Sunday in Ordinary Time",
+          "names": {
+            "en": "Thirty-second Sunday in Ordinary Time",
+            "sw": "Dominika ya Thelathini na Mbili ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -14779,6 +16864,11 @@
         {
           "id": "ordinary-time-32-monday",
           "name": "Monday of the thirty-second week of Ordinary Time",
+          "names": {
+            "en": "Monday of the thirty-second week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Thelathini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14821,6 +16911,11 @@
         {
           "id": "ordinary-time-32-tuesday",
           "name": "Tuesday of the thirty-second week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the thirty-second week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Thelathini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -14863,12 +16958,22 @@
         {
           "id": "ordinary-time-32-wednesday",
           "name": "Wednesday of the thirty-second week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the thirty-second week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Thelathini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "albert-the-great-bishop",
           "name": "Saint Albert the Great, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Albert the Great, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Alberto Mkuu, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -14911,18 +17016,33 @@
         {
           "id": "ordinary-time-32-thursday",
           "name": "Thursday of the thirty-second week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the thirty-second week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Thelathini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "margaret-of-scotland",
           "name": "Saint Margaret of Scotland",
+          "names": {
+            "en": "Saint Margaret of Scotland",
+            "sw": "Mtakatifu Margareta wa Uskoti",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         },
         {
           "id": "gertrude-the-great-virgin",
           "name": "Saint Gertrude, Virgin",
+          "names": {
+            "en": "Saint Gertrude, Virgin",
+            "sw": "Mtakatifu Gertruda, Bikira",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -14965,6 +17085,11 @@
         {
           "id": "elizabeth-of-hungary-religious",
           "name": "Saint Elizabeth of Hungary, Religious",
+          "names": {
+            "en": "Saint Elizabeth of Hungary, Religious",
+            "sw": "Mtakatifu Elizabeti wa Hungaria, Mtawa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -15007,12 +17132,22 @@
         {
           "id": "ordinary-time-32-saturday",
           "name": "Saturday of the thirty-second week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the thirty-second week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Thelathini na Mbili la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "dedication-of-the-basilicas-of-saints-peter-and-paul-apostles",
           "name": "The Dedication of the Basilicas of Saints Peter and Paul, Apostles",
+          "names": {
+            "en": "The Dedication of the Basilicas of Saints Peter and Paul, Apostles",
+            "sw": "Kutabarukiwa kwa Basilika za Watakatifu Petro na Paulo, Mitume",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -15079,6 +17214,11 @@
         {
           "id": "ordinary-time-33-sunday",
           "name": "Thirty-third Sunday in Ordinary Time",
+          "names": {
+            "en": "Thirty-third Sunday in Ordinary Time",
+            "sw": "Dominika ya Thelathini na Tatu ya Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "green"
         }
@@ -15127,6 +17267,11 @@
         {
           "id": "ordinary-time-33-monday",
           "name": "Monday of the thirty-third week of Ordinary Time",
+          "names": {
+            "en": "Monday of the thirty-third week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Thelathini na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -15169,6 +17314,11 @@
         {
           "id": "presentation-of-the-blessed-virgin-mary",
           "name": "The Presentation of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Presentation of the Blessed Virgin Mary",
+            "sw": "Kutolewa kwa Bikira Maria Hekaluni",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -15211,6 +17361,11 @@
         {
           "id": "cecilia-of-rome-virgin",
           "name": "Saint Cecilia, Virgin and Martyr",
+          "names": {
+            "en": "Saint Cecilia, Virgin and Martyr",
+            "sw": "Mtakatifu Sesilia, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -15253,18 +17408,33 @@
         {
           "id": "ordinary-time-33-thursday",
           "name": "Thursday of the thirty-third week of Ordinary Time",
+          "names": {
+            "en": "Thursday of the thirty-third week of Ordinary Time",
+            "sw": "Alhamisi ya Juma la Thelathini na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "clement-i-pope",
           "name": "Saint Clement I, Pope and Martyr",
+          "names": {
+            "en": "Saint Clement I, Pope and Martyr",
+            "sw": "Mtakatifu Klementi I, Papa na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         },
         {
           "id": "columban-of-luxeuil-abbot",
           "name": "Saint Columban, Abbot",
+          "names": {
+            "en": "Saint Columban, Abbot",
+            "sw": "Mtakatifu Kolumbani, Abati",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -15307,6 +17477,11 @@
         {
           "id": "andrew-dung-lac-priest-and-companions-martyrs",
           "name": "Saint Andrew Dũng-Lạc, Priest, and Companions, Martyrs",
+          "names": {
+            "en": "Saint Andrew Dũng-Lạc, Priest, and Companions, Martyrs",
+            "sw": "Mtakatifu Andrea Dũng-Lạc, Padre, na Wenzake, Mashahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -15349,12 +17524,22 @@
         {
           "id": "ordinary-time-33-saturday",
           "name": "Saturday of the thirty-third week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the thirty-third week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Thelathini na Tatu la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "catherine-of-alexandria-virgin",
           "name": "Saint Catherine of Alexandria, Virgin and Martyr",
+          "names": {
+            "en": "Saint Catherine of Alexandria, Virgin and Martyr",
+            "sw": "Mtakatifu Katarina wa Aleksandria, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -15397,6 +17582,11 @@
         {
           "id": "our-lord-jesus-christ-king-of-the-universe",
           "name": "Our Lord Jesus Christ, King of the Universe",
+          "names": {
+            "en": "Our Lord Jesus Christ, King of the Universe",
+            "sw": "Bwana Wetu Yesu Kristo, Mfalme wa Ulimwengu",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -15445,6 +17635,11 @@
         {
           "id": "ordinary-time-34-monday",
           "name": "Monday of the thirty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Monday of the thirty-fourth week of Ordinary Time",
+            "sw": "Jumatatu ya Juma la Thelathini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -15487,6 +17682,11 @@
         {
           "id": "ordinary-time-34-tuesday",
           "name": "Tuesday of the thirty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Tuesday of the thirty-fourth week of Ordinary Time",
+            "sw": "Jumanne ya Juma la Thelathini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -15529,6 +17729,11 @@
         {
           "id": "ordinary-time-34-wednesday",
           "name": "Wednesday of the thirty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Wednesday of the thirty-fourth week of Ordinary Time",
+            "sw": "Jumatano ya Juma la Thelathini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -15571,6 +17776,11 @@
         {
           "id": "andrew-apostle",
           "name": "Saint Andrew, Apostle",
+          "names": {
+            "en": "Saint Andrew, Apostle",
+            "sw": "Mtakatifu Andrea, Mtume",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -15613,12 +17823,22 @@
         {
           "id": "ordinary-time-34-friday",
           "name": "Friday of the thirty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Friday of the thirty-fourth week of Ordinary Time",
+            "sw": "Ijumaa ya Juma la Thelathini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         },
         {
           "id": "marie-clementine-anuarite-nengapeta-virgin-and-martyr",
           "name": "Blessed Marie-Clémentine Anuarite Nengapeta, Virgin and Martyr",
+          "names": {
+            "en": "Blessed Marie-Clémentine Anuarite Nengapeta, Virgin and Martyr",
+            "sw": "Mwenyeheri Maria Klementina Anuarite Nengapeta, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "red"
         }
@@ -15661,6 +17881,11 @@
         {
           "id": "ordinary-time-34-saturday",
           "name": "Saturday of the thirty-fourth week of Ordinary Time",
+          "names": {
+            "en": "Saturday of the thirty-fourth week of Ordinary Time",
+            "sw": "Jumamosi ya Juma la Thelathini na Nne la Mwaka",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "green"
         }
@@ -15703,6 +17928,11 @@
         {
           "id": "advent-1-sunday",
           "name": "First Sunday of Advent",
+          "names": {
+            "en": "First Sunday of Advent",
+            "sw": "Dominika ya Kwanza ya Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -15751,12 +17981,22 @@
         {
           "id": "advent-1-monday",
           "name": "Monday of the first week of Advent",
+          "names": {
+            "en": "Monday of the first week of Advent",
+            "sw": "Jumatatu ya Juma la Kwanza la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "john-damascene-priest",
           "name": "Saint John Damascene, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint John Damascene, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Yohane wa Damasko, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -15799,6 +18039,11 @@
         {
           "id": "advent-1-tuesday",
           "name": "Tuesday of the first week of Advent",
+          "names": {
+            "en": "Tuesday of the first week of Advent",
+            "sw": "Jumanne ya Juma la Kwanza la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -15841,12 +18086,22 @@
         {
           "id": "advent-1-wednesday",
           "name": "Wednesday of the first week of Advent",
+          "names": {
+            "en": "Wednesday of the first week of Advent",
+            "sw": "Jumatano ya Juma la Kwanza la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "nicholas-of-myra-bishop",
           "name": "Saint Nicholas, Bishop",
+          "names": {
+            "en": "Saint Nicholas, Bishop",
+            "sw": "Mtakatifu Nikolaus, Askofu",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -15889,6 +18144,11 @@
         {
           "id": "ambrose-of-milan-bishop",
           "name": "Saint Ambrose, Bishop and Doctor of the Church",
+          "names": {
+            "en": "Saint Ambrose, Bishop and Doctor of the Church",
+            "sw": "Mtakatifu Ambrosi, Askofu na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -15931,6 +18191,11 @@
         {
           "id": "immaculate-conception-of-the-blessed-virgin-mary",
           "name": "The Immaculate Conception of the Blessed Virgin Mary",
+          "names": {
+            "en": "The Immaculate Conception of the Blessed Virgin Mary",
+            "sw": "Bikira Maria Mkingiwa Dhambi ya Asili",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -15979,12 +18244,22 @@
         {
           "id": "advent-1-saturday",
           "name": "Saturday of the first week of Advent",
+          "names": {
+            "en": "Saturday of the first week of Advent",
+            "sw": "Jumamosi ya Juma la Kwanza la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "juan-diego-cuauhtlatoatzin",
           "name": "Saint Juan Diego Cuauhtlatoatzin",
+          "names": {
+            "en": "Saint Juan Diego Cuauhtlatoatzin",
+            "sw": "Mtakatifu Juan Diego Cuauhtlatoatzin",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -16027,6 +18302,11 @@
         {
           "id": "advent-2-sunday",
           "name": "Second Sunday of Advent",
+          "names": {
+            "en": "Second Sunday of Advent",
+            "sw": "Dominika ya Pili ya Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -16075,12 +18355,22 @@
         {
           "id": "advent-2-monday",
           "name": "Monday of the second week of Advent",
+          "names": {
+            "en": "Monday of the second week of Advent",
+            "sw": "Jumatatu ya Juma la Pili la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "damasus-i-pope",
           "name": "Saint Damasus I, Pope",
+          "names": {
+            "en": "Saint Damasus I, Pope",
+            "sw": "Mtakatifu Damaso I, Papa",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -16123,12 +18413,22 @@
         {
           "id": "advent-2-tuesday",
           "name": "Tuesday of the second week of Advent",
+          "names": {
+            "en": "Tuesday of the second week of Advent",
+            "sw": "Jumanne ya Juma la Pili la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "our-lady-of-guadalupe",
           "name": "Our Lady of Guadalupe",
+          "names": {
+            "en": "Our Lady of Guadalupe",
+            "sw": "Bikira Maria wa Guadalupe",
+            "swStatus": "provisional"
+          },
           "rank": "optional-memorial",
           "colour": "white"
         }
@@ -16171,6 +18471,11 @@
         {
           "id": "lucy-of-syracuse-virgin",
           "name": "Saint Lucy, Virgin and Martyr",
+          "names": {
+            "en": "Saint Lucy, Virgin and Martyr",
+            "sw": "Mtakatifu Lusia, Bikira na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "red"
         }
@@ -16213,6 +18518,11 @@
         {
           "id": "john-of-the-cross-priest",
           "name": "Saint John of the Cross, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint John of the Cross, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Yohane wa Msalaba, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "memorial",
           "colour": "white"
         }
@@ -16255,6 +18565,11 @@
         {
           "id": "advent-2-friday",
           "name": "Friday of the second week of Advent",
+          "names": {
+            "en": "Friday of the second week of Advent",
+            "sw": "Ijumaa ya Juma la Pili la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -16297,6 +18612,11 @@
         {
           "id": "advent-2-saturday",
           "name": "Saturday of the second week of Advent",
+          "names": {
+            "en": "Saturday of the second week of Advent",
+            "sw": "Jumamosi ya Juma la Pili la Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -16339,6 +18659,11 @@
         {
           "id": "advent-3-sunday",
           "name": "Third Sunday of Advent",
+          "names": {
+            "en": "Third Sunday of Advent",
+            "sw": "Dominika ya Tatu ya Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "rose"
         }
@@ -16387,6 +18712,11 @@
         {
           "id": "advent-december-18",
           "name": "December 18",
+          "names": {
+            "en": "December 18",
+            "sw": "Tarehe 18 Desemba",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -16429,6 +18759,11 @@
         {
           "id": "advent-december-19",
           "name": "December 19",
+          "names": {
+            "en": "December 19",
+            "sw": "Tarehe 19 Desemba",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -16471,6 +18806,11 @@
         {
           "id": "advent-december-20",
           "name": "December 20",
+          "names": {
+            "en": "December 20",
+            "sw": "Tarehe 20 Desemba",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -16513,12 +18853,22 @@
         {
           "id": "advent-december-21",
           "name": "December 21",
+          "names": {
+            "en": "December 21",
+            "sw": "Tarehe 21 Desemba",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "peter-canisius-priest",
           "name": "Saint Peter Canisius, Priest and Doctor of the Church",
+          "names": {
+            "en": "Saint Peter Canisius, Priest and Doctor of the Church",
+            "sw": "Mtakatifu Petro Kanisio, Padre na Mwalimu wa Kanisa",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -16561,6 +18911,11 @@
         {
           "id": "advent-december-22",
           "name": "December 22",
+          "names": {
+            "en": "December 22",
+            "sw": "Tarehe 22 Desemba",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         }
@@ -16603,12 +18958,22 @@
         {
           "id": "advent-december-23",
           "name": "December 23",
+          "names": {
+            "en": "December 23",
+            "sw": "Tarehe 23 Desemba",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "violet"
         },
         {
           "id": "john-of-kanty-priest",
           "name": "Saint John of Kanty, Priest",
+          "names": {
+            "en": "Saint John of Kanty, Priest",
+            "sw": "Mtakatifu Yohane wa Kanty, Padre",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "violet"
         }
@@ -16651,6 +19016,11 @@
         {
           "id": "advent-4-sunday",
           "name": "Fourth Sunday of Advent",
+          "names": {
+            "en": "Fourth Sunday of Advent",
+            "sw": "Dominika ya Nne ya Majilio",
+            "swStatus": "provisional"
+          },
           "rank": "sunday",
           "colour": "violet"
         }
@@ -16699,6 +19069,11 @@
         {
           "id": "nativity-of-the-lord",
           "name": "The Nativity of the Lord (Christmas)",
+          "names": {
+            "en": "The Nativity of the Lord (Christmas)",
+            "sw": "Kuzaliwa kwa Bwana (Noeli)",
+            "swStatus": "provisional"
+          },
           "rank": "solemnity",
           "colour": "white"
         }
@@ -16837,6 +19212,11 @@
         {
           "id": "stephen-the-first-martyr",
           "name": "Saint Stephen, the First Martyr",
+          "names": {
+            "en": "Saint Stephen, the First Martyr",
+            "sw": "Mtakatifu Stefano, Shahidi wa Kwanza",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -16879,6 +19259,11 @@
         {
           "id": "john-apostle",
           "name": "Saint John, Apostle and Evangelist",
+          "names": {
+            "en": "Saint John, Apostle and Evangelist",
+            "sw": "Mtakatifu Yohane, Mtume na Mwinjili",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }
@@ -16921,6 +19306,11 @@
         {
           "id": "holy-innocents-martyrs",
           "name": "The Holy Innocents, Martyrs",
+          "names": {
+            "en": "The Holy Innocents, Martyrs",
+            "sw": "Watoto Mashahidi Watakatifu",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "red"
         }
@@ -16963,12 +19353,22 @@
         {
           "id": "christmas-octave-day-5",
           "name": "Fifth Day within the Octave of the Nativity of the Lord",
+          "names": {
+            "en": "Fifth Day within the Octave of the Nativity of the Lord",
+            "sw": "Siku ya Tano katika Oktava ya Noeli",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         },
         {
           "id": "thomas-becket-bishop",
           "name": "Saint Thomas Becket, Bishop and Martyr",
+          "names": {
+            "en": "Saint Thomas Becket, Bishop and Martyr",
+            "sw": "Mtakatifu Tomaso Becket, Askofu na Shahidi",
+            "swStatus": "provisional"
+          },
           "rank": "commemoration",
           "colour": "white"
         }
@@ -17011,6 +19411,11 @@
         {
           "id": "christmas-octave-day-6",
           "name": "Sixth Day within the Octave of the Nativity of the Lord",
+          "names": {
+            "en": "Sixth Day within the Octave of the Nativity of the Lord",
+            "sw": "Siku ya Sita katika Oktava ya Noeli",
+            "swStatus": "provisional"
+          },
           "rank": "weekday",
           "colour": "white"
         }
@@ -17053,6 +19458,11 @@
         {
           "id": "holy-family-of-jesus-mary-and-joseph",
           "name": "The Holy Family of Jesus, Mary and Joseph",
+          "names": {
+            "en": "The Holy Family of Jesus, Mary and Joseph",
+            "sw": "Familia Takatifu ya Yesu, Maria na Yosefu",
+            "swStatus": "provisional"
+          },
           "rank": "feast",
           "colour": "white"
         }

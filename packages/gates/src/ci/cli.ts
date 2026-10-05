@@ -29,6 +29,7 @@ import { validateGateResult } from '@lectio/schema/gate-result';
 
 import type { GatesCliOptions } from '../cli/run.ts';
 import type { GateResult } from '../core/result.ts';
+import { missingReportResult } from '../core/runner.ts';
 import { changedPaths } from '../merge-rule/index.ts';
 import type { FormatJson } from '../review/approve.ts';
 import { toolPrettierJson } from './approval-commit.ts';
@@ -45,6 +46,7 @@ export const CI_USAGE = [
   'usage: lectio-gates ci resolve',
   '       lectio-gates ci changes --root <dir> --base <ref> [--head <ref>]',
   '       lectio-gates ci merge-rule --pr <n> --head-sha <sha> --base <ref> --root <dir> [--results <file>]…',
+  '                                  [--job-result <file>=<result>]…',
   '                                  [--phase decide|approve|dispatch] [--approval-commit <sha>]',
   '       lectio-gates ci skip --head-sha <sha> --reason <text>',
   '       lectio-gates ci merge --pr <n> --sha <sha>',
@@ -209,7 +211,27 @@ interface ReadReports {
   readonly offline: boolean;
 }
 
-function readReports(files: readonly string[], options: CiCliOptions, ctx: Io): ReadReports {
+/**
+ * `--job-result <file>=<result>`: the result of the job that writes `<file>` (`success`, `failure`,
+ * `skipped`, …, as `needs.<job>.result` gives it), so a missing report can be told apart: a job that
+ * did not run, or a job that ran but whose artifact is not where this step reads it.
+ */
+function jobResults(values: readonly string[]): ReadonlyMap<string, string> {
+  return new Map(
+    values.map((value) => {
+      const at = value.lastIndexOf('=');
+      if (at <= 0) throw new CiUsageError(`--job-result must be <file>=<result> (got "${value}")`);
+      return [value.slice(0, at), value.slice(at + 1)] as const;
+    }),
+  );
+}
+
+function readReports(
+  files: readonly string[],
+  ran: ReadonlyMap<string, string>,
+  options: CiCliOptions,
+  ctx: Io,
+): ReadReports {
   const read = options.readFile ?? ((file: string) => readFileSync(file, 'utf8'));
   const exists = options.readFile === undefined ? existsSync : () => true;
   const results: GateResult[] = [];
@@ -217,7 +239,16 @@ function readReports(files: readonly string[], options: CiCliOptions, ctx: Io): 
   for (const file of files) {
     const path = ctx.path(file);
     if (!exists(path)) {
-      options.log(`merge-rule: ${file} is missing (that job did not run)`);
+      const result = ran.get(file) ?? '';
+      if (result === '' || result === 'skipped') {
+        options.log(`merge-rule: ${file} is missing: that job did not run`);
+        continue;
+      }
+      // Fail closed: a job that ran but whose report is missing blocks the PR, approval or not.
+      options.error(
+        `::error::merge-rule: ${file} is missing although its job ended ${result}: its artifact was not found at ${file}; blocking`,
+      );
+      results.push(missingReportResult(file, result));
       continue;
     }
     const report = JSON.parse(read(path)) as { results?: unknown; fetcher?: unknown } | null;
@@ -238,6 +269,7 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
     base: { type: 'string' },
     root: { type: 'string' },
     results: { type: 'string', multiple: true },
+    'job-result': { type: 'string', multiple: true },
     phase: { type: 'string', default: 'decide' },
     'approval-commit': { type: 'string' },
   });
@@ -251,7 +283,8 @@ async function mergeRuleCommand(args: readonly string[], options: CiCliOptions, 
   const root = ctx.path(required(values, 'root'));
   const runId = options.env['GITHUB_RUN_ID'] ?? '';
   if (!/^[1-9][0-9]*$/.test(runId)) throw new CiUsageError('merge-rule needs GITHUB_RUN_ID');
-  const { results, offline } = readReports(values.results ?? [], options, ctx);
+  const ran = jobResults(values['job-result'] ?? []);
+  const { results, offline } = readReports(values.results ?? [], ran, options, ctx);
   const outcome = await runMergeRuleJob({
     phase,
     defaultBranch: ctx.defaultBranch(),

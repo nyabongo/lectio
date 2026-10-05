@@ -103,6 +103,8 @@ describe('content-gates.yml (trusted side)', () => {
     expect(secrets).toEqual(['ANTHROPIC_API_KEY', 'OPENAI_API_KEY']);
     for (const [id, text] of Object.entries(GATES)) expect(text.includes('secrets.'), id).toBe(id === 'verifiers');
     for (const id of ['gates-trusted', 'verifiers']) expect(job(GATES, id)).not.toContain('GH_TOKEN');
+    for (const [id, text] of Object.entries(GATES)) expect(/^\s+environment:/m.test(text), id).toBe(id === 'verifiers');
+    expect(job(GATES, 'verifiers')).toMatch(/^ {4}environment: llm-verifiers$/m);
     for (const line of gates.split('\n').filter((text) => text.includes('GH_TOKEN')))
       expect(line.trim()).toBe('GH_TOKEN: ${{ github.token }}');
   });
@@ -122,6 +124,40 @@ describe('content-gates.yml (trusted side)', () => {
     expect(mergeRule).toContain('--approval-commit "$APPROVAL_COMMIT"');
     expect(mergeRule).toContain('ci skip --head-sha');
     expect(mergeRule).toContain('name: gates-report');
+  });
+
+  it('reads each gate report exactly where its job uploads it', () => {
+    const decide = job(GATES, 'decide');
+    // Every download names its artifact and unpacks it into out/<name>/: never the whole-run layout.
+    const downloads = [...decide.matchAll(/uses: actions\/download-artifact@\S+\n((?: {8}.*\n)+)/g)].map(
+      (match) => match[1] as string,
+    );
+    expect(downloads).toHaveLength(2);
+    for (const [id, name] of [
+      ['gates-trusted', 'deterministic'],
+      ['verifiers', 'verifiers'],
+    ] as const) {
+      const producer = job(GATES, id);
+      expect(producer).toContain(`--json out/${name}/gates.json`);
+      expect(producer).toMatch(new RegExp(`name: ${name}\\n {10}path: out/${name}/\\n`));
+      const download = downloads.find((text) => text.includes(`name: ${name}\n`));
+      expect(download, name).toContain(`path: out/${name}\n`);
+      expect(download, name).toContain(`needs.${id}.result != 'skipped'`);
+      expect(decide).toContain(`--results out/${name}/gates.json --job-result "out/${name}/gates.json=$`);
+    }
+    // With the verifiers skipped only one artifact exists; a nameless download would unpack it
+    // straight into its path. Each download names its artifact, so the layout never depends on count.
+    for (const text of downloads) expect(text).toMatch(/name: \S+/);
+    // A missing artifact must not kill decide before the merge rule reports it (it then blocks).
+    for (const text of downloads) expect(text).toContain('continue-on-error: true');
+    expect(decide).not.toMatch(/download-artifact@\S+\n(?: {8}.*\n)*? {10}path: out\n/);
+  });
+
+  it('diffs against the base commit it fetched, never an empty base', () => {
+    const decide = job(GATES, 'decide');
+    expect(decide).toContain('echo "base-sha=$(git rev-parse "refs/remotes/origin/${BASE_REF}")" >> "$GITHUB_OUTPUT"');
+    expect(decide.match(/BASE_SHA: \$\{\{ steps\.fetch\.outputs\.base-sha \}\}/g)).toHaveLength(3);
+    expect(decide.match(/--base "\$BASE_SHA"/g)).toHaveLength(3);
   });
 
   it('merges only after approved-commit, never for a manual-merge or fork PR', () => {
