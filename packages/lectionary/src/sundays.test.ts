@@ -33,7 +33,10 @@ const range = (prefix: string, from: number, to: number, skip: number[] = []): s
     .filter((n) => !skip.includes(n))
     .map((n) => `${prefix}-sunday-${n}`);
 
-/** Sundays 25 and 26 are in the seed block (Year A only), and a key may be defined only once. */
+/**
+ * Sundays 25 and 26 are in the seed block (Year A only), and a key may be defined only once. Their Years B and C are
+ * a known gap, tracked in #142, which adds them to the seed block.
+ */
 const IN_SEED = [25, 26];
 const PROPER_OF_TIME = [
   ...range('advent', 1, 4),
@@ -128,7 +131,8 @@ describe('sundays block', () => {
     }
   });
 
-  it('leaves Sundays 25 and 26 to the seed block, which has Year A only (known gap for Years B and C)', () => {
+  // Known gap, tracked in #142: when #142 adds Years B and C to the seed block, expect SUNDAY_SLOTS for B and C here.
+  it('leaves Sundays 25 and 26 to the seed block, which has Year A only (Years B and C: #142)', () => {
     const pot = entries(all.files, 'proper-of-time');
     for (const week of IN_SEED) {
       const entry = pot.get(`ot-sunday-${week}`) as Entry;
@@ -166,9 +170,19 @@ describe('sundays block', () => {
   it('compares every LitCal reading with OLM 1981; the OLM-filled readings are single-source with the LitCal leaf consulted', () => {
     const rows = blockRows(loaded.files);
     const litcal = rows.filter((row) => row.reading.source.startsWith('litcal@'));
-    expect(result.compared).toBe(litcal.length);
+    // Known-wrong LitCal refs: the data holds the OLM citation, and LitCal's form is a recorded disagreement.
+    const corrected = [
+      'celebrations:easter-sunday easter-vigil reading-6',
+      'celebrations:second-sunday-after-christmas day first-reading',
+      'celebrations:our-lord-jesus-christ-king-of-the-universe day psalm (C)',
+    ];
+    for (const id of corrected) {
+      expect(rows.find((row) => row.id === id)?.reading.source).toMatch(/^olm-1981 /);
+      expect(result.disagreements.map((d) => d.id)).toContain(id);
+    }
+    expect(result.compared).toBe(litcal.length + corrected.length);
     expect(result.agreements + result.disagreements.length).toBe(result.compared);
-    expect(result.singleSource).toHaveLength(rows.length - litcal.length);
+    expect(result.singleSource).toHaveLength(rows.length - result.compared);
     expect(result.singleSource.every((single) => single.source.startsWith('olm-1981 '))).toBe(true);
     expect(result.singleSource.every((single) => single.consulted.length > 0)).toBe(true);
     // Every disagreement is a real difference of passage or alternatives, never a broken cross-check entry.
