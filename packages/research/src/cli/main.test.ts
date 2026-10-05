@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,11 +11,12 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { PASSAGES, REPO } from '../translate/fixtures/repo.ts';
 import { fakeTranslateLlm } from '../translate/fixtures/fake-translation.ts';
+import { BACKFILL_USAGE } from '../backfill/index.ts';
 import { USAGE } from './args.ts';
 import { e2eWorld } from './fixtures/e2e.ts';
 import type { E2eWorld } from './fixtures/e2e.ts';
 import { DryRunError, dryRunGitHub, main, processContext } from './main.ts';
-import type { CliContext } from './main.ts';
+import type { CliContext, CliIo } from './main.ts';
 import type { Toolkit } from './providers.ts';
 
 const REPO_ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -40,7 +41,7 @@ describe('main', () => {
     world = e2eWorld();
     const help = capture();
     expect(await main(['--help'], world.context, help.io)).toBe(0);
-    expect(help.out).toEqual([USAGE]);
+    expect(help.out).toEqual([`${USAGE}\n       ${BACKFILL_USAGE}`]);
     const bad = capture();
     expect(await main(['--bogus'], world.context, bad.io)).toBe(2);
     expect(bad.err[0]).toContain("Unknown option '--bogus'");
@@ -92,7 +93,7 @@ describe('main', () => {
 
     const abandoned = capture();
     const unplaced = JSON.stringify({
-      head: null,
+      head: world.github.headOf('research/MT.20.1-16'),
       results: [
         {
           gate: 'verifiers',
@@ -114,6 +115,70 @@ describe('main', () => {
     const noRepairs = { ...context, config, readFile: () => unplaced };
     expect(await main(['fixup', '--pr', '1', '--report', 'g.json', '--budget', '5'], noRepairs, abandoned.io)).toBe(1);
     expect(abandoned.out.join('\n')).toContain('Result: the repairs did not pass the gates; nothing pushed');
+  });
+
+  it('reserves backfill for L-072: not implemented yet, exit 2', async () => {
+    world = e2eWorld();
+    const out = capture();
+    expect(await main(['backfill', '--anything'], world.context, out.io)).toBe(2);
+    expect(out.err).toEqual(['research backfill: not implemented yet (L-072)']);
+    expect(out.out).toEqual([]);
+  });
+
+  it('runs subcommands from a registry it is given', async () => {
+    world = e2eWorld();
+    const seen: unknown[] = [];
+    const subcommands = [
+      {
+        name: 'echo',
+        usage: 'research echo <words>',
+        run: (argv: readonly string[], context: CliContext, io: CliIo) => {
+          seen.push(argv, context.repoRoot);
+          io.out(argv.join(' '));
+          return Promise.resolve(0);
+        },
+      },
+    ];
+    const out = capture();
+    const context = { ...world.context, subcommands };
+    expect(await main(['echo', 'a', '--b'], context, out.io)).toBe(0);
+    expect(out.out).toEqual(['a --b']);
+    expect(seen).toEqual([['a', '--b'], world.root]);
+    const help = capture();
+    await main(['help'], context, help.io);
+    expect(help.out[0]?.endsWith('       research echo <words>')).toBe(true);
+    // backfill is not in this registry, so it is a stray word of `run`.
+    expect(await main(['backfill'], context, capture().io)).toBe(2);
+  });
+
+  it('runs on its production defaults: composed fakes, the repository on disk, the system clock and Prettier', async () => {
+    world = e2eWorld();
+    const bare: CliContext = { repoRoot: world.root, config: world.context.config, env: {} };
+    const planned = capture();
+    expect(await main(['plan', '--provider', 'fake', '--from', '2026-10-05'], bare, planned.io)).toBe(0);
+    expect(planned.out.join('\n')).toContain('2026-10-11  MT.20.1-16  (Mt 20:1-16a)');
+
+    const ran = capture();
+    // The fake generator's output never passes gate 1, so the passage needs attention; nothing is published.
+    expect(await main(['--provider', 'fake', '--from', '2026-10-05', '--budget', '3'], bare, ran.io)).toBe(1);
+    expect(ran.out.join('\n')).toContain('(dry run: nothing was published)');
+
+    // The composed fake GitHub has no PR #1: the provider error is reported, not thrown.
+    const fixed = capture();
+    expect(await main(['fixup', '--pr', '1', '--provider', 'fake'], bare, fixed.io)).toBe(1);
+    expect(fixed.err[0]).toContain('#1');
+  });
+
+  it('reads a --report file from disk by default', async () => {
+    world = e2eWorld();
+    const { context } = world;
+    expect(await main(['--from', '2026-10-05', '--budget', '5'], context, capture().io)).toBe(0);
+    const path = join(world.root, 'gates.json');
+    const head = world.github.headOf('research/MT.20.1-16');
+    writeFileSync(path, JSON.stringify({ head, results: [] }));
+    const fixed = capture();
+    expect(await main(['fixup', '--pr', '1', '--report', path, '--budget', '5'], context, fixed.io)).toBe(0);
+    expect(fixed.out.join('\n')).toContain(`from the ${path}:`);
   });
 
   it('rethrows what it does not expect', async () => {

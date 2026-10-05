@@ -54,7 +54,7 @@ export * from './publish/index.ts';
 export * from './translate/index.ts';
 
 // The CLI entry point (L-038).
-export { COMMON_USAGE, FIXUP_USAGE, USAGE, parseCommand } from './cli/args.ts';
+export { COMMON_USAGE, FIXUP_USAGE, USAGE, parseCommand, parseCommonArgs } from './cli/args.ts';
 export type { Command, CommonArgs, ProviderMode } from './cli/args.ts';
 export { BudgetRefusedError, planCeilingUsd, runCeilingUsd } from './cli/budget.ts';
 export { FixupRefusedError, formatFixupReport, runFixup } from './cli/fixup.ts';
@@ -63,12 +63,18 @@ export {
   FIXUP_RULES,
   GATES_BOT,
   GateOutputError,
+  HEAD_LINE,
+  HEAD_MARKER,
+  checkHead,
   fixupFindings,
   latestGatesComment,
   parseGatesComment,
   parseGatesReport,
 } from './cli/gates-comment.ts';
-export type { GateFindings } from './cli/gates-comment.ts';
+export type { GateFindings, HeadCheck } from './cli/gates-comment.ts';
+export { REGISTERED_SUBCOMMANDS } from './cli/registry.ts';
+export type { RegisteredSubcommand } from './cli/registry.ts';
+export { BACKFILL_USAGE, backfillSubcommand } from './backfill/index.ts';
 export { gitPrFiles } from './cli/git.ts';
 export { DryRunError, dryRunGitHub, main, processContext } from './cli/main.ts';
 export type { CliContext, CliIo } from './cli/main.ts';

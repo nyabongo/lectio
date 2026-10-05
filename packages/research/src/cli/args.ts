@@ -3,8 +3,9 @@
  *
  *     research [run] [--from YYYY-MM-DD] [--days n] [--only <key>] [--max n] [common flags]
  *     research plan  [--from YYYY-MM-DD] [--days n] [--only <key>] [--max n] [common flags]
- *     research fixup --pr <n> [--force] [--report <gates.json>] [common flags]
+ *     research fixup --pr <n> [--force] [--allow-stale] [--report <gates.json>] [common flags]
  *     research translate --locale <tag> [translate flags] [common flags]
+ *     research <registered subcommand> …   (see ./registry.ts; `backfill` is reserved for L-072)
  *
  * Common flags: `--provider live|fake` (default `live`), `--dry-run`, `--budget <usd>`.
  * `--provider fake` always forces `--dry-run`: fake output never reaches GitHub.
@@ -42,15 +43,19 @@ export type Command =
       readonly pr: number;
       /** Fix up a PR that a person already approved (the new commit resets the approval). */
       readonly force: boolean;
+      /** Accept gate output whose head is stale or unknown. */
+      readonly allowStale: boolean;
       /** A `gates.json` workflow artifact the owner downloaded, read instead of the PR comment. */
       readonly report?: string;
       readonly common: CommonArgs;
     }
-  | { readonly kind: 'translate'; readonly argv: readonly string[]; readonly common: CommonArgs };
+  | { readonly kind: 'translate'; readonly argv: readonly string[]; readonly common: CommonArgs }
+  /** A subcommand from the registry (./registry.ts); it parses its own words. */
+  | { readonly kind: 'registered'; readonly name: string; readonly argv: readonly string[] };
 
 export const COMMON_USAGE = 'common flags: [--provider live|fake] [--dry-run] [--budget <usd>]';
 
-export const FIXUP_USAGE = 'usage: research fixup --pr <n> [--force] [--report <gates.json>]';
+export const FIXUP_USAGE = 'usage: research fixup --pr <n> [--force] [--allow-stale] [--report <gates.json>]';
 
 export const USAGE = [
   `${PLAN_USAGE.replace('usage: research', 'usage: research [run]')}`,
@@ -76,10 +81,10 @@ function positiveInt(flag: string, value: string | undefined): number {
 }
 
 /** Splits off the subcommand: the first word when it names one, else `run`. */
-function subcommand(argv: readonly string[]): [Subcommand | 'help', string[]] {
+function subcommand(argv: readonly string[], registered: readonly string[]): [string, string[]] {
   const [first, ...rest] = argv;
   if (first === 'help' || first === '--help' || first === '-h') return ['help', rest];
-  if (first !== undefined && (SUBCOMMANDS as readonly string[]).includes(first)) return [first as Subcommand, rest];
+  if (first !== undefined && [...SUBCOMMANDS, ...registered].includes(first)) return [first, rest];
   return ['run', [...argv]];
 }
 
@@ -125,7 +130,7 @@ function common(values: Parsed['values']): CommonArgs {
   };
 }
 
-/** Pulls the common flags out of a translate command line and leaves the rest for `parseTranslateArgs`. */
+/** Pulls the common flags out of a command line and leaves the rest for the subcommand's own parser. */
 function splitCommon(argv: readonly string[]): [string[], string[]] {
   const mine: string[] = [];
   const rest: string[] = [];
@@ -141,18 +146,37 @@ function splitCommon(argv: readonly string[]): [string[], string[]] {
   return [mine, rest];
 }
 
-/** Parses a research command line; throws `UsageError` with what to fix. */
-export function parseCommand(argv: readonly string[], options: ParsePlanArgsOptions): Command {
-  const [kind, rest] = subcommand(argv);
+/**
+ * The common flags of a command line, and the words left for the subcommand's own parser. For
+ * registered subcommands and `translate`. Throws `UsageError` (with `usage`) on a bad common flag.
+ */
+export function parseCommonArgs(argv: readonly string[], usage: string): [CommonArgs, string[]] {
+  const [mine, others] = splitCommon(argv);
+  return [common(parse(mine, {}, `${usage}\n${COMMON_USAGE}`).values), others];
+}
+
+/** Parses a research command line; throws `UsageError` with what to fix. `registered` names the registry's subcommands. */
+export function parseCommand(
+  argv: readonly string[],
+  options: ParsePlanArgsOptions,
+  registered: readonly string[] = [],
+): Command {
+  const [kind, rest] = subcommand(argv, registered);
   if (kind === 'help') return { kind };
+  if (registered.includes(kind)) return { kind: 'registered', name: kind, argv: rest };
   if (kind === 'translate') {
-    const [mine, others] = splitCommon(rest);
-    return { kind, argv: others, common: common(parse(mine, {}, `${TRANSLATE_USAGE}\n${COMMON_USAGE}`).values) };
+    const [parsed, others] = parseCommonArgs(rest, TRANSLATE_USAGE);
+    return { kind, argv: others, common: parsed };
   }
   if (kind === 'fixup') {
     const { values } = parse(
       rest,
-      { pr: { type: 'string' }, force: { type: 'boolean' }, report: { type: 'string' } },
+      {
+        pr: { type: 'string' },
+        force: { type: 'boolean' },
+        'allow-stale': { type: 'boolean' },
+        report: { type: 'string' },
+      },
       `${FIXUP_USAGE}\n${COMMON_USAGE}`,
     );
     const report = values['report'] as string | undefined;
@@ -160,6 +184,7 @@ export function parseCommand(argv: readonly string[], options: ParsePlanArgsOpti
       kind,
       pr: positiveInt('pr', values['pr'] as string | undefined),
       force: values['force'] === true,
+      allowStale: values['allow-stale'] === true,
       ...(report === undefined ? {} : { report }),
       common: common(values),
     };
@@ -173,5 +198,5 @@ export function parseCommand(argv: readonly string[], options: ParsePlanArgsOpti
     const value = values[flag] as string | undefined;
     return value === undefined ? [] : [`--${flag}`, value];
   });
-  return { kind, window: parsePlanArgs(window, options), common: common(values) };
+  return { kind: kind as 'plan' | 'run', window: parsePlanArgs(window, options), common: common(values) };
 }

@@ -2,7 +2,7 @@ import { DEFAULT_CONFIG } from '@lectio/config';
 import { describe, expect, it } from 'vitest';
 
 import { UsageError } from '../plan/args.ts';
-import { COMMON_USAGE, FIXUP_USAGE, USAGE, parseCommand } from './args.ts';
+import { COMMON_USAGE, FIXUP_USAGE, USAGE, parseCommand, parseCommonArgs } from './args.ts';
 
 const options = { config: DEFAULT_CONFIG, now: new Date('2026-10-05T07:50:00Z') };
 const parse = (...argv: string[]): ReturnType<typeof parseCommand> => parseCommand(argv, options);
@@ -38,11 +38,20 @@ describe('parseCommand', () => {
   });
 
   it('reads fixup', () => {
-    expect(parse('fixup', '--pr', '42')).toEqual({ kind: 'fixup', pr: 42, force: false, common: live });
-    expect(parse('fixup', '--pr', '7', '--force', '--report', 'out/gates.json', '--budget', '3')).toEqual({
+    expect(parse('fixup', '--pr', '42')).toEqual({
+      kind: 'fixup',
+      pr: 42,
+      force: false,
+      allowStale: false,
+      common: live,
+    });
+    expect(
+      parse('fixup', '--pr', '7', '--force', '--allow-stale', '--report', 'out/gates.json', '--budget', '3'),
+    ).toEqual({
       kind: 'fixup',
       pr: 7,
       force: true,
+      allowStale: true,
       report: 'out/gates.json',
       common: { ...live, budgetUsd: 3 },
     });
@@ -79,6 +88,24 @@ describe('parseCommand', () => {
     expect(() => parse('--bogus')).toThrow(COMMON_USAGE);
     expect(() => parse('fixup', '--pr', '1', 'extra')).toThrow(FIXUP_USAGE);
     expect(() => parse('--days', 'x')).toThrow('--days must be a positive integer');
+  });
+
+  it('routes registered subcommands with their words untouched', () => {
+    expect(parseCommand(['backfill', '--total', '5', 'x'], options, ['backfill'])).toEqual({
+      kind: 'registered',
+      name: 'backfill',
+      argv: ['--total', '5', 'x'],
+    });
+    // Not registered: the word is a stray positional of `run`.
+    expect(() => parse('backfill')).toThrow(UsageError);
+  });
+
+  it('parses the common flags for registered subcommands and leaves the rest', () => {
+    expect(parseCommonArgs(['--total', '5', '--provider', 'fake', '--budget', '2'], 'usage: x')).toEqual([
+      { provider: 'fake', dryRun: true, dryRunForced: true, budgetUsd: 2 },
+      ['--total', '5'],
+    ]);
+    expect(() => parseCommonArgs(['--provider', 'nope'], 'usage: x')).toThrow('--provider must be live or fake');
   });
 
   it('lists every subcommand in the usage', () => {

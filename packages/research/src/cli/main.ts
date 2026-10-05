@@ -14,7 +14,7 @@ import { openRepo } from '@lectio/content';
 import type { ContentRepo } from '@lectio/content';
 import { openCorpus } from '@lectio/corpus';
 import type { Corpus } from '@lectio/corpus';
-import { systemClock } from '@lectio/providers';
+import { ProviderError, systemClock } from '@lectio/providers';
 import type { Clock, GitHubClient } from '@lectio/providers';
 
 import { createRunId } from '../agent/research.ts';
@@ -30,6 +30,8 @@ import { GateOutputError } from './gates-comment.ts';
 import { gitPrFiles } from './git.ts';
 import { ProviderSetupError, composeProviders } from './providers.ts';
 import type { ComposeOptions, Toolkit } from './providers.ts';
+import { REGISTERED_SUBCOMMANDS } from './registry.ts';
+import type { RegisteredSubcommand } from './registry.ts';
 import { closedKeys, planWindow, runResearch } from './run.ts';
 import { formatRunReport } from './summary.ts';
 
@@ -52,6 +54,8 @@ export interface CliContext {
   /** How fix-up reads a PR's files. Default git in `repoRoot`. */
   readonly files?: PrFiles;
   readonly readFile?: (path: string) => string;
+  /** Subcommands from outside `src/cli`. Default {@link REGISTERED_SUBCOMMANDS}. */
+  readonly subcommands?: readonly RegisteredSubcommand[];
   /** Formats JSON like the repository's Prettier check (injected in tests). */
   readonly format?: (json: string, path: string) => Promise<string>;
 }
@@ -96,7 +100,7 @@ export function dryRunGitHub(github: GitHubClient): GitHubClient {
   });
 }
 
-type Runnable = Exclude<Command, { readonly kind: 'help' }>;
+type Runnable = Exclude<Command, { readonly kind: 'help' | 'registered' }>;
 
 async function toolkitFor(command: Runnable, context: CliContext, ceilingUsd: number): Promise<Toolkit> {
   return (context.compose ?? composeProviders)({
@@ -144,6 +148,7 @@ async function execute(command: Runnable, context: CliContext, io: CliIo): Promi
   if (command.kind === 'run') {
     const report = await runResearch(command.window, {
       ...kit,
+      github: dryRun ? dryRunGitHub(kit.github) : kit.github,
       ...format,
       config,
       repoRoot: context.repoRoot,
@@ -156,7 +161,12 @@ async function execute(command: Runnable, context: CliContext, io: CliIo): Promi
   }
   if (command.kind === 'fixup') {
     const report = await runFixup(
-      { pr: command.pr, force: command.force, ...(command.report === undefined ? {} : { report: command.report }) },
+      {
+        pr: command.pr,
+        force: command.force,
+        allowStale: command.allowStale,
+        ...(command.report === undefined ? {} : { report: command.report }),
+      },
       {
         ...kit,
         ...format,
@@ -198,10 +208,19 @@ async function execute(command: Runnable, context: CliContext, io: CliIo): Promi
 /** Runs `npm run research` with `argv`; returns the exit code. */
 export async function main(argv: readonly string[], context: CliContext, io: CliIo): Promise<number> {
   try {
-    const command = parseCommand(argv, { config: context.config, now: (context.clock ?? systemClock).now() });
+    const registry = context.subcommands ?? REGISTERED_SUBCOMMANDS;
+    const command = parseCommand(
+      argv,
+      { config: context.config, now: (context.clock ?? systemClock).now() },
+      registry.map((entry) => entry.name),
+    );
     if (command.kind === 'help') {
-      io.out(USAGE);
+      io.out([USAGE, ...registry.map((entry) => `       ${entry.usage}`)].join('\n'));
       return 0;
+    }
+    if (command.kind === 'registered') {
+      const entry = registry.find((candidate) => candidate.name === command.name) as RegisteredSubcommand;
+      return await entry.run(command.argv, context, io);
     }
     return await execute(command, context, io);
   } catch (error) {
@@ -213,7 +232,8 @@ export async function main(argv: readonly string[], context: CliContext, io: Cli
       error instanceof BudgetRefusedError ||
       error instanceof ProviderSetupError ||
       error instanceof FixupRefusedError ||
-      error instanceof GateOutputError
+      error instanceof GateOutputError ||
+      error instanceof ProviderError
     ) {
       io.err(error.message);
       return 1;
