@@ -1,0 +1,41 @@
+name: lectio
+description: Lectio for Android and iOS, reading the same JSON the site publishes.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.0
+  # Pinned Flutter stable. flutter.yml reads this line (flutter-version-file).
+  flutter: 3.47.6
+
+# Every dependency the Flutter roadmap needs (L-101 to L-114) is installed
+# here once, so feature issues never edit this file or pubspec.lock. Models are
+# hand-written: no freezed or json_serializable (generated files carry
+# `coverage:ignore-file`, which coverage:floor rejects under apps/*/lib).
+dependencies:
+  app_links: ^7.2.1 # L-107 deep links
+  audio_service: ^0.18.19 # L-104 background audio
+  flutter:
+    sdk: flutter
+  flutter_local_notifications: ^22.3.1 # L-106 daily notification
+  flutter_localizations: # L-114 Kiswahili
+    sdk: flutter
+  flutter_tts: ^4.2.5 # L-104 TTS fallback
+  go_router: ^18.0.2
+  http: ^1.6.0 # L-101 API client (behind an injected client)
+  # Pinned by flutter_localizations to the SDK's version.
+  intl: any # L-114 dates and messages
+  just_audio: ^0.10.6 # L-104 audio playback
+  path_provider: ^2.1.6 # L-101 offline cache
+  share_plus: ^13.3.1 # L-107 share
+  shared_preferences: ^2.5.5 # L-105 settings, bookmarks and notes
+  timezone: ^0.11.1 # L-106 scheduling in local time
+  url_launcher: ^6.3.3 # L-102/L-103 link-outs to licensed text
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true
