@@ -227,7 +227,8 @@ jobs:
             echo "$changed"
             git diff -- ios
             mkdir -p "$RUNNER_TEMP/ios-project-changes"
-            git status --porcelain --untracked-files=all -- ios | sed 's/^...//' | while read -r file; do
+            # ls-files prints paths relative to apps/mobile (status does not).
+            git ls-files --modified --others --exclude-standard -- ios | while read -r file; do
               if [ -f "$file" ]; then
                 mkdir -p "$RUNNER_TEMP/ios-project-changes/$(dirname "$file")"
                 cp "$file" "$RUNNER_TEMP/ios-project-changes/$file"
