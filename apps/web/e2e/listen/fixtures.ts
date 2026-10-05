@@ -81,6 +81,7 @@ export async function stubSpeech(page: Page, ms = 150): Promise<void> {
       lang: string;
       rate: number;
       voice: { name: string } | null;
+      onstart: ((event: unknown) => void) | null;
       onend: ((event: unknown) => void) | null;
       onerror: ((event: { error: string }) => void) | null;
       onboundary: ((event: { charIndex: number }) => void) | null;
@@ -102,6 +103,10 @@ export async function stubSpeech(page: Page, ms = 150): Promise<void> {
           voice: utterance.voice?.name ?? null,
         });
         current = utterance;
+        // Starts at once, as a working engine does (the player's watchdog waits for this).
+        setTimeout(() => {
+          if (current === utterance) utterance.onstart?.({});
+        }, 0);
         timer = setTimeout(() => {
           if (current !== utterance) return;
           current = null;
@@ -124,6 +129,7 @@ export async function stubSpeech(page: Page, ms = 150): Promise<void> {
       lang = '';
       rate = 1;
       voice = null;
+      onstart = null;
       onend = null;
       onerror = null;
       onboundary = null;
@@ -136,6 +142,14 @@ export async function stubSpeech(page: Page, ms = 150): Promise<void> {
     Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: Utterance, configurable: true });
     Object.defineProperty(window, '__spoken', { value: spoken, configurable: true });
   }, ms);
+}
+
+/** Removes speech synthesis before any page script runs, as some WebViews and hardened browsers ship without it. */
+export async function removeSpeech(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    for (const name of ['speechSynthesis', 'SpeechSynthesisUtterance'])
+      Object.defineProperty(window, name, { value: undefined, configurable: true });
+  });
 }
 
 /** Everything the stubbed voice was asked to say so far. */

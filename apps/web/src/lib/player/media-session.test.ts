@@ -179,9 +179,9 @@ describe('shortcutFor', () => {
   const on = (tagName: string, extra: Record<string, unknown> = {}) => ({ tagName, ...extra });
 
   it('maps the documented keys', () => {
-    expect(Object.entries(SHORTCUTS).map(([key]) => shortcutFor({ key, shiftKey: /^[A-Z<>]$/.test(key) }))).toEqual(
-      Object.values(SHORTCUTS),
-    );
+    expect(
+      Object.entries(SHORTCUTS).map(([key]) => shortcutFor({ key, shiftKey: /^[A-Z<>]$/.test(key), inPlayer: true })),
+    ).toEqual(Object.values(SHORTCUTS));
     expect(shortcutFor({ key: 'K' })).toBe('toggle');
     expect(shortcutFor({ key: 'n' })).toBeNull();
     expect(shortcutFor({ key: 'J', shiftKey: true })).toBeNull();
@@ -197,8 +197,11 @@ describe('shortcutFor', () => {
     expect(shortcutFor({ key: ' ', target: on('BUTTON') })).toBeNull();
     expect(shortcutFor({ key: 'Enter', target: on('a') })).toBeNull();
     expect(shortcutFor({ key: 'k', target: on('BUTTON') })).toBe('toggle');
-    expect(shortcutFor({ key: ' ', target: on('BODY') })).toBe('toggle');
-    expect(shortcutFor({ key: ' ', target: null })).toBe('toggle');
+    expect(shortcutFor({ key: ' ', target: on('SECTION'), inPlayer: true })).toBe('toggle');
+    expect(shortcutFor({ key: ' ', target: null, inPlayer: true })).toBe('toggle');
+    // Outside the player Space scrolls the page as usual; K still plays and pauses.
+    expect(shortcutFor({ key: ' ', target: on('BODY') })).toBeNull();
+    expect(shortcutFor({ key: 'k', target: on('BODY') })).toBe('toggle');
   });
 
   it('leaves arrow keys to widgets that use them', () => {

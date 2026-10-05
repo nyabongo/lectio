@@ -93,9 +93,15 @@ export function createListenController(
 
   const save = (state: PlayerState): void => {
     lastSave = now();
-    if (state.track === null) return;
     if (state.status === 'finished') clearResume(env.storage, date);
-    else saveResume(env.storage, date, { id: state.track.id, position: state.position });
+    // Nothing loaded yet (or nothing can play): the saved point, if any, still stands.
+    else if (state.track !== null && state.source !== null)
+      saveResume(env.storage, date, {
+        id: state.track.id,
+        position: state.position,
+        source: state.source,
+        duration: state.duration,
+      });
   };
 
   const onChange = (state: PlayerState, reason: ChangeReason): void => {
@@ -147,7 +153,7 @@ export function createListenController(
     setSpeed,
     key(press) {
       const action = shortcutFor(press);
-      if (action === null || tracks.length === 0) return false;
+      if (action === null || player.state.status === 'unavailable') return false;
       switch (action) {
         case 'toggle':
           player.toggle();

@@ -35,10 +35,15 @@ const shortcuts = [
 ---
 
 <div class="listen-player" data-listen>
-  <section class="player" aria-labelledby="now-playing-heading">
+  <!-- Focusable (not in the Tab order) so a click on the panel puts focus in the player, where Space plays. -->
+  <section class="player" aria-labelledby="now-playing-heading" tabindex="-1" data-player-panel>
     <h2 id="now-playing-heading" class="eyebrow player__eyebrow">{t(lang, 'listen.nowPlaying')}</h2>
     <p class="player__title" data-now-title lang={first?.lang}>{first?.title}</p>
     <p class="player__reading" data-now-reading>{first?.reading}</p>
+    <p class="player__notice" data-unavailable hidden>
+      {t(lang, 'listen.status.unavailable')}
+      <a href={view.dayHref}>{view.backToDay}</a>
+    </p>
 
     <div class="player__progress">
       <input
@@ -198,10 +203,18 @@ const shortcuts = [
     /** True while the reader drags the slider, so time updates do not fight the thumb. */
     let seeking = false;
 
-    const setEnabled = (button: HTMLButtonElement, enabled: boolean): void => {
-      if (enabled) button.removeAttribute('aria-disabled');
-      else button.setAttribute('aria-disabled', 'true');
+    const notice = find<HTMLElement>('[data-unavailable]');
+    const panel = find<HTMLElement>('[data-player-panel]');
+    const setEnabled = (control: HTMLElement, enabled: boolean): void => {
+      if (enabled) control.removeAttribute('aria-disabled');
+      else control.setAttribute('aria-disabled', 'true');
     };
+    /** Controls marked `aria-disabled` stay focusable but do nothing. */
+    const active = (control: HTMLElement): boolean => control.getAttribute('aria-disabled') !== 'true';
+    const on = (control: HTMLElement, type: string, action: () => void): void =>
+      control.addEventListener(type, () => {
+        if (active(control)) action();
+      });
 
     const ui: ListenUi = {
       track(index) {
@@ -230,6 +243,11 @@ const shortcuts = [
         source.textContent = view.source;
         setEnabled(previous, view.canPrevious);
         setEnabled(next, view.canNext);
+        // Nothing can play on this device: say so where it shows, point to the notes, and make every control inert.
+        notice.hidden = !view.unavailable;
+        for (const control of [toggle, back, forward, ...items]) setEnabled(control, !view.unavailable);
+        setEnabled(seek, !view.unavailable);
+        seek.disabled = view.unavailable;
       },
       speed(value) {
         speed.value = String(value);
@@ -238,6 +256,9 @@ const shortcuts = [
         live.textContent = message;
       },
     };
+
+    // Enabled before the controller's first render, which then marks what cannot be used.
+    for (const control of [toggle, previous, next, back, forward, seek, speed, ...items]) control.disabled = false;
 
     const offline = browserOfflineAudio(window);
     const scope = window as unknown as {
@@ -259,29 +280,26 @@ const shortcuts = [
     });
     const { player } = controller;
 
-    toggle.addEventListener('click', () => player.toggle());
-    previous.addEventListener('click', () => {
-      if (previous.getAttribute('aria-disabled') !== 'true') player.previous();
-    });
-    next.addEventListener('click', () => {
-      if (next.getAttribute('aria-disabled') !== 'true') player.next();
-    });
-    back.addEventListener('click', () => player.seekBy(-SKIP_SECONDS));
-    forward.addEventListener('click', () => player.seekBy(SKIP_SECONDS));
+    on(toggle, 'click', () => player.toggle());
+    on(previous, 'click', () => player.previous());
+    on(next, 'click', () => player.next());
+    on(back, 'click', () => player.seekBy(-SKIP_SECONDS));
+    on(forward, 'click', () => player.seekBy(SKIP_SECONDS));
     seek.addEventListener('input', () => {
       seeking = true;
     });
-    seek.addEventListener('change', () => {
+    on(seek, 'change', () => {
       seeking = false;
       player.seek(Number(seek.value));
     });
     speed.addEventListener('change', () => controller.setSpeed(Number(speed.value)));
-    items.forEach((item, index) => item.addEventListener('click', () => controller.select(index)));
+    items.forEach((item, index) => on(item, 'click', () => controller.select(index)));
     document.addEventListener('keydown', (event) => {
       if (event.defaultPrevented || event.repeat) return;
       const { key, ctrlKey, altKey, metaKey, shiftKey } = event;
       const target = event.target instanceof HTMLElement ? event.target : null;
-      if (controller.key({ key, ctrlKey, altKey, metaKey, shiftKey, target })) event.preventDefault();
+      const inPlayer = target !== null && panel.contains(target);
+      if (controller.key({ key, ctrlKey, altKey, metaKey, shiftKey, target, inPlayer })) event.preventDefault();
     });
     // Save where listening stopped when the page is hidden or left.
     document.addEventListener('visibilitychange', () => {
@@ -289,7 +307,6 @@ const shortcuts = [
     });
     window.addEventListener('pagehide', () => controller.save());
 
-    for (const control of [toggle, previous, next, back, forward, seek, speed, ...items]) control.disabled = false;
     root.dataset.ready = '';
     void controller.audioReady.then(() => {
       root.dataset.audioReady = '';
@@ -310,8 +327,31 @@ const shortcuts = [
     border: var(--rule-width) solid var(--colour-rule);
   }
 
+  .player:focus {
+    outline: none;
+  }
+
   .player__eyebrow {
     margin: 0 0 var(--space-3xs);
+  }
+
+  .player__notice {
+    margin: 0 0 var(--space-s);
+    padding: var(--space-xs) var(--space-s);
+    border-inline-start: var(--focus-width) solid var(--colour-accent);
+    background: var(--colour-bg);
+    border-radius: var(--radius-s);
+  }
+
+  .player__notice[hidden] {
+    display: none;
+  }
+
+  .player__toggle[aria-disabled='true'],
+  .player__seek:disabled,
+  .queue__track[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: default;
   }
 
   .player__title {

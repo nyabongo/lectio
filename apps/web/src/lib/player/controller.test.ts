@@ -103,18 +103,18 @@ describe('createListenController', () => {
     controller.player.play();
     expect(ui.announce).toHaveBeenLastCalledWith('Now playing: Title a');
     expect(ui.render).toHaveBeenLastCalledWith(expect.objectContaining({ toggle: 'Pause', source: 'Device voice' }));
-    expect(loadResume(storage, DATE)).toEqual({ id: 'a', position: 0 });
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'a', position: 0, source: 'speech' });
 
     speech.events?.time(2, 20);
-    expect(loadResume(storage, DATE)).toEqual({ id: 'a', position: 0 });
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'a', position: 0, source: 'speech' });
     tick(RESUME_SAVE_INTERVAL);
     speech.events?.time(6, 20);
-    expect(loadResume(storage, DATE)).toEqual({ id: 'a', position: 6 });
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'a', position: 6, source: 'speech' });
 
     speech.events?.ended();
     expect(ui.track).toHaveBeenLastCalledWith(1);
     expect(ui.announce).toHaveBeenLastCalledWith('Now playing: Title b');
-    expect(loadResume(storage, DATE)).toEqual({ id: 'b', position: 0 });
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'b', position: 0, source: 'speech' });
     controller.player.pause();
     expect(ui.announce).toHaveBeenLastCalledWith('Paused: Title b');
     controller.player.select(2);
@@ -139,7 +139,8 @@ describe('createListenController', () => {
   it('answers the keyboard shortcuts and leaves other keys alone', () => {
     const { speech, make } = setup();
     const controller = make();
-    expect(controller.key({ key: ' ' })).toBe(true);
+    expect(controller.key({ key: ' ' })).toBe(false);
+    expect(controller.key({ key: ' ', inPlayer: true })).toBe(true);
     expect(controller.player.state.status).toBe('playing');
     speech.events?.time(30, 60);
     controller.key({ key: 'j' });
@@ -204,11 +205,29 @@ describe('createListenController', () => {
     controller.select(2);
     expect(session.metadata).toMatchObject({ title: 'Title c' });
     controller.save();
-    expect(loadResume(storage, DATE)).toEqual({ id: 'c', position: 0 });
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'c', position: 0, source: 'speech' });
     controller.destroy();
     expect(session.playbackState).toBe('none');
     expect(handlers.get('play')).toBeNull();
     await flush();
     expect(storage.getItem(RESUME_KEY)).toContain('"c"');
+  });
+
+  it('shows a queue nothing can play as unavailable, ignores the shortcuts, and recovers when files arrive', async () => {
+    const document = {
+      masses: [{ segments: [{ id: 'b', locale: 'en', audio: { url: 'https://audio.test/b.mp3' } }] }],
+    };
+    const { ui, storage, make } = setup({ speech: null, fetchDay: () => Promise.resolve(document) });
+    saveResume(storage, DATE, { id: 'b', position: 9, source: 'speech', duration: 30 });
+    const controller = make();
+    expect(ui.render).toHaveBeenLastCalledWith(expect.objectContaining({ unavailable: true, canNext: false }));
+    expect(controller.key({ key: 'k' })).toBe(false);
+    controller.select(1);
+    controller.save();
+    // Nothing was loaded, so the saved point still stands.
+    expect(loadResume(storage, DATE)).toMatchObject({ id: 'b', position: 9 });
+    await controller.audioReady;
+    expect(ui.render).toHaveBeenLastCalledWith(expect.objectContaining({ unavailable: false }));
+    expect(controller.player.state.status).toBe('idle');
   });
 });

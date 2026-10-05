@@ -9,7 +9,8 @@
  *
  * `shortcutFor` maps a key press to a player action without hijacking anything: keys typed into a field, a select or
  * an editable element, presses with Ctrl, Alt or Meta, and Space or Enter on a button or link (their own activation)
- * are left alone.
+ * are left alone. Space plays and pauses only while focus is inside the player, so elsewhere it still scrolls the page;
+ * K works from anywhere.
  */
 import type { Player, PlayerState } from './queue.ts';
 
@@ -189,6 +190,8 @@ export interface KeyPress {
   readonly altKey?: boolean;
   readonly metaKey?: boolean;
   readonly shiftKey?: boolean;
+  /** Whether the press happened inside the player (focus within it); Space acts only then. */
+  readonly inPlayer?: boolean;
   readonly target?: {
     readonly tagName?: string;
     readonly isContentEditable?: boolean;
@@ -221,6 +224,7 @@ export function shortcutFor(press: KeyPress): ShortcutAction | null {
   const tag = target?.tagName?.toUpperCase() ?? '';
   if (TYPING.has(tag) || target?.isContentEditable === true) return null;
   if ((press.key === ' ' || press.key === 'Enter') && ACTIVATES.has(tag)) return null;
+  if (press.key === ' ' && press.inPlayer !== true) return null;
   const role = target?.getAttribute?.('role') ?? '';
   if (press.key.startsWith('Arrow') && OWN_ARROWS.has(role)) return null;
   const key = press.key.length === 1 && press.shiftKey !== true ? press.key.toLowerCase() : press.key;

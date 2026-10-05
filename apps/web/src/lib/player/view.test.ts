@@ -58,6 +58,7 @@ describe('playerView', () => {
       source: '',
       canPrevious: true,
       canNext: true,
+      unavailable: false,
     });
   });
 
@@ -86,6 +87,7 @@ describe('playerView', () => {
     expect(playerView(state({ status: 'unavailable' }), 3, messages)).toMatchObject({
       canPrevious: false,
       canNext: false,
+      unavailable: true,
     });
     expect(playerView(state({ track: null }), 0, messages)).toMatchObject({ canPrevious: false, canNext: false });
   });

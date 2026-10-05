@@ -107,8 +107,19 @@ export interface PlayerOptions {
   /** Starting speed (from Settings). */
   readonly speed?: number;
   /** Where to start (a saved resume point). */
-  readonly start?: { readonly index: number; readonly position: number };
+  readonly start?: StartPoint;
   readonly onChange?: (state: PlayerState, reason: ChangeReason) => void;
+}
+
+/**
+ * A saved resume point. `position` is in the seconds of the `source` that was playing, whose length was `duration`:
+ * when the track is loaded with the other source (a file found since, or gone), the same fraction of it is used.
+ */
+export interface StartPoint {
+  readonly index: number;
+  readonly position: number;
+  readonly source?: Source | undefined;
+  readonly duration?: number | null | undefined;
 }
 
 export interface Player {
@@ -172,6 +183,8 @@ export function createPlayer(options: PlayerOptions): Player {
   let generation = 0;
   /** Tracks no adapter could play, so a queue of them ends instead of looping. */
   const failed = new Set<number>();
+  /** The resume point, until its track is first loaded (or the reader moves elsewhere). */
+  let resumeFrom: StartPoint | null = options.start ?? null;
 
   const state = (): PlayerState => ({
     index,
@@ -228,6 +241,8 @@ export function createPlayer(options: PlayerOptions): Player {
     adapter = chosen;
     if (preferred === null) fallback = false;
     duration = chosen?.kind === 'audio' ? (track.audio?.durationSeconds ?? null) : null;
+    if (chosen !== null && resumeFrom !== null) position = carried(resumeFrom, chosen.kind, track);
+    resumeFrom = null;
     emit('track');
     if (chosen === null) {
       skip(autoplay);
@@ -289,8 +304,17 @@ export function createPlayer(options: PlayerOptions): Player {
     emit('time');
   }
 
+  /** A resume point's position in the seconds of `kind` playing `track`: the same fraction of the segment. */
+  function carried(from: StartPoint, kind: Source, track: Track): number {
+    if (from.source === undefined || from.source === kind) return position;
+    const length = kind === 'speech' ? speechDuration(track.script) : (track.audio?.durationSeconds ?? null);
+    const total = from.duration ?? 0;
+    return length === null || total <= 0 ? 0 : Math.min(1, position / total) * length;
+  }
+
   function goTo(target: number, autoplay: boolean): void {
-    if (tracks.length === 0) return;
+    if (tracks.length === 0 || status === 'unavailable') return;
+    resumeFrom = null;
     index = clamp(target, 0, last);
     position = 0;
     load(autoplay);
@@ -343,7 +367,8 @@ export function createPlayer(options: PlayerOptions): Player {
       goTo(target, true);
     },
     seek(at) {
-      if (tracks.length === 0) return;
+      if (tracks.length === 0 || status === 'unavailable') return;
+      resumeFrom = null;
       position = clamp(at, 0, duration ?? Number.POSITIVE_INFINITY);
       adapter?.seek(position);
       emit('time');

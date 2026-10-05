@@ -54,6 +54,11 @@ export interface PlayerView {
   readonly source: string;
   readonly canPrevious: boolean;
   readonly canNext: boolean;
+  /**
+   * Nothing in the queue can be played on this device (no speech synthesis and no audio files): the page shows a
+   * visible notice pointing to the notes to read, and every control is inert.
+   */
+  readonly unavailable: boolean;
 }
 
 export function playerView(state: PlayerState, count: number, messages: PlayerMessages): PlayerView {
@@ -78,6 +83,7 @@ export function playerView(state: PlayerState, count: number, messages: PlayerMe
     source,
     canPrevious: count > 0 && state.status !== 'unavailable',
     canNext: state.index < count - 1 && state.status !== 'unavailable',
+    unavailable: state.status === 'unavailable',
   };
 }
 

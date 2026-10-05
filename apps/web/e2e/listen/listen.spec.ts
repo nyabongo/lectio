@@ -6,10 +6,11 @@
  * (`stubSpeech`), so nothing depends on a real voice. The service worker is blocked so `page.route` sees every
  * request. The last test follows the segment audio the fixture build publishes (the L-082 audio manifest) to the player.
  */
+import { AxeBuilder } from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 
 import { BUILD_DATE, EXPECTS_404, expect, test } from '../fixtures.ts';
-import { routeDay, serveAudio, spoken, stubSpeech, wav } from './fixtures.ts';
+import { removeSpeech, routeDay, serveAudio, spoken, stubSpeech, wav } from './fixtures.ts';
 
 const LISTEN = `${BUILD_DATE}/listen/`;
 const CONTEXT = 'MT.20.1-16/context';
@@ -115,6 +116,51 @@ test('changes and keeps the speed, answers the keyboard and resumes where it sto
   await expect(page.locator('[data-listen][data-ready]')).toBeAttached();
   await expect(current(page)).toHaveAttribute('data-track', '2');
   await expect(page.getByLabel('Speed')).toHaveValue('1.75');
+
+  // Space plays only with focus in the player; elsewhere it is left to scroll the page.
+  await page.locator('h1').click();
+  await page.keyboard.press('Space');
+  await expect(page.locator('[data-toggle]')).toHaveAccessibleName('Play');
+  await page.locator('[data-now-title]').click();
+  await page.keyboard.press('Space');
+  await expect(page.locator('[data-toggle]')).toHaveAccessibleName('Pause');
+});
+
+test('says so, points to the notes and keeps every control inert when nothing can play', async ({ page }) => {
+  await removeSpeech(page);
+  await routeDay(page, `api/v1/days/${BUILD_DATE}.json`, 'en', {});
+  await openListen(page);
+  const notice = page.locator('[data-unavailable]');
+  await expect(notice).toBeVisible();
+  await expect(notice).toContainText('This browser cannot play the notes aloud.');
+  await expect(notice.getByRole('link', { name: /^All readings for / })).toHaveAttribute(
+    'href',
+    `/lectio/${BUILD_DATE}/`,
+  );
+  for (const selector of [
+    '[data-toggle]',
+    '[data-back]',
+    '[data-forward]',
+    '[data-previous]',
+    '[data-next]',
+    '[data-track="1"]',
+  ])
+    await expect(page.locator(selector)).toHaveAttribute('aria-disabled', 'true');
+  await expect(page.locator('[data-seek]')).toBeDisabled();
+
+  // Playwright will not click an aria-disabled control on its own: force the clicks a reader could still make.
+  await page.locator('[data-toggle]').click({ force: true });
+  await page.locator('[data-track="1"]').click({ force: true });
+  await page.keyboard.press('k');
+  await expect(page.locator('[data-toggle]')).toHaveAccessibleName('Play');
+  await expect(current(page)).toHaveAttribute('data-track', '0');
+
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual(
+    [],
+  );
 });
 
 test('reads Kiswahili notes with a Kiswahili voice on the /sw/ page', async ({ page }) => {

@@ -336,4 +336,53 @@ describe('createPlayer', () => {
     expect(audio.calls.at(-1)).toBe('stop');
     expect(player.state).toMatchObject({ index: 0, source: null });
   });
+
+  it('carries a resume point over to the other source as the same fraction of the segment', () => {
+    const script = 'x'.repeat(SPEECH_CHARS_PER_SECOND * 40);
+    const withFile = (seconds: number | null) => ({
+      ...track('a', null, script),
+      audio: { url: 'https://audio.test/a.mp3', durationSeconds: seconds },
+    });
+    const start = (source: 'audio' | 'speech', position: number, length: number | null) => ({
+      index: 0,
+      position,
+      source,
+      duration: length,
+    });
+    // Saved while device speech read it (10 of 40 s); the file (120 s) plays now.
+    const toAudio = setup({ tracks: [withFile(120)], start: start('speech', 10, 40) });
+    toAudio.player.play();
+    expect(toAudio.audio.calls[0]).toBe('load a @30 x1');
+    // Saved while the file played (60 of 120 s); device speech reads it now.
+    const toSpeech = setup({ tracks: [track('a', null, script)], start: start('audio', 60, 120) });
+    toSpeech.player.play();
+    expect(toSpeech.speech.calls[0]).toBe('load a @20 x1');
+    // The same source, or a point saved before sources were recorded: as it is.
+    const same = setup({ tracks: [withFile(120)], start: start('audio', 60, 120) });
+    same.player.play();
+    expect(same.audio.calls[0]).toBe('load a @60 x1');
+    const legacy = setup({ tracks: [withFile(120)], start: { index: 0, position: 7 } });
+    legacy.player.play();
+    expect(legacy.audio.calls[0]).toBe('load a @7 x1');
+    // A length unknown on either side: from the start.
+    const unknown = setup({ tracks: [withFile(null)], start: start('speech', 10, 40) });
+    unknown.player.play();
+    expect(unknown.audio.calls[0]).toBe('load a @0 x1');
+    const noLength = setup({ tracks: [withFile(120)], start: start('speech', 10, null) });
+    noLength.player.play();
+    expect(noLength.audio.calls[0]).toBe('load a @0 x1');
+    // Only the first load of the saved track uses it.
+    const moved = setup({ tracks: [withFile(120), withFile(120)], start: start('speech', 10, 40) });
+    moved.player.seek(5);
+    moved.player.play();
+    expect(moved.audio.calls[0]).toBe('load a @5 x1');
+  });
+
+  it('ignores moves while nothing in the queue can be played', () => {
+    const player = createPlayer({ tracks: [track('a'), track('b')], audio: null, speech: null });
+    player.select(1);
+    player.next();
+    player.seek(4);
+    expect(player.state).toMatchObject({ index: 0, position: 0, status: 'unavailable' });
+  });
 });
