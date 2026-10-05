@@ -70,9 +70,13 @@ double speechRate(double speed, {TargetPlatform? platform}) {
 ///   device cannot speak and the utterance fails (the queue skips it);
 ///   after one has, the stall is temporary and the engine reports
 ///   [stalled] (the queue pauses and keeps the place), as the web does
-///   (L-085). A start that arrives after the watchdog stopped its utterance
-///   is late: that utterance is not speaking, and it still owes the end its
-///   stop brings, so the next utterance owes nothing for it.
+///   (L-085).
+/// - A start that arrives after an utterance was stopped (by the watchdog,
+///   or by [stop] or a new [speak]) before it started, and before the next
+///   one is queued, is that utterance's late start: it is not speaking, and
+///   it still owes the end its stop brings, so it neither stalls nor leaves
+///   the next utterance a debt.
+/// - Events that arrive after [dispose] are dropped.
 class FlutterTtsSpeechEngine implements SpeechEngine {
   /// Creates the engine; [create] builds the plugin (default:
   /// `FlutterTts()`), [platform] tells which platform runs (default:
@@ -108,9 +112,9 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   /// Whether the device has started an utterance since the engine was made.
   bool _heard = false;
 
-  /// The watchdog stopped the last utterance and none was queued since: a
-  /// start now is that utterance's, late.
-  bool _barked = false;
+  /// The last utterance was stopped before it started and none was queued
+  /// since: a start now is that utterance's, late.
+  bool _lateStartOwed = false;
 
   Timer? _watchdog;
 
@@ -129,10 +133,10 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     return _tts ??= _create()
       ..setStartHandler(() {
         _heard = true;
-        if (_barked) {
+        if (_lateStartOwed) {
           // The stopped utterance's late start: it is not speaking, and its
           // end is still owed.
-          _barked = false;
+          _lateStartOwed = false;
           return;
         }
         _calm();
@@ -157,6 +161,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
   /// (neither [completed] nor [error]) ends a speaking one as a stall, and
   /// leaves one not started to the watchdog.
   void _ended({bool completed = false, Object? error}) {
+    if (_completed.isClosed) return;
     if (_owed > 0) {
       _owed--;
       return;
@@ -178,10 +183,14 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     }
   }
 
-  /// Leaves the current utterance, if any, one terminal event to come.
+  /// Leaves the current utterance, if any, one terminal event to come, and
+  /// one not started yet a late start too.
   void _retire() {
     _calm();
-    if (_live || _queued) _owed++;
+    if (_live || _queued) {
+      _owed++;
+      _lateStartOwed = _queued;
+    }
     _live = false;
     _queued = false;
   }
@@ -197,7 +206,6 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     _watchdog = null;
     if (!_queued) return;
     _retire();
-    _barked = true;
     unawaited(tts.stop());
     if (_failed.isClosed) return;
     if (_heard) {
@@ -256,7 +264,7 @@ class FlutterTtsSpeechEngine implements SpeechEngine {
     // From here an error before the start event is this utterance's,
     // unless a stopped one still owes its end.
     _queued = true;
-    _barked = false;
+    _lateStartOwed = false;
     // An overlapping speak may have set a watchdog since this one retired
     // the last utterance.
     _calm();

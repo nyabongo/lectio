@@ -411,31 +411,32 @@ void main() {
       expect(failures, isEmpty);
     });
 
-    test('overlapping speaks leave one watchdog, the last one', () async {
-      await engine.dispose();
-      engine = build(startTimeout: const Duration(milliseconds: 100));
+    testWidgets('overlapping speaks leave one watchdog, the last one', (
+      tester,
+    ) async {
+      engine = build(startTimeout: const Duration(seconds: 5));
       tts.held['sw-TZ'] = Completer<void>();
-      final clock = Stopwatch()..start();
-      final elapsed = <Duration>[];
-      engine.failed.listen((_) => elapsed.add(clock.elapsed));
 
       // The first speak sets its watchdog while the second still waits for
       // its voice; the second's watchdog then replaces the first's.
-      final first = engine.speak('One.', locale: 'en', speed: 1);
-      final second = engine.speak('Moja.', locale: 'sw', speed: 1);
-      await first;
-      await Future<void>.delayed(const Duration(milliseconds: 60));
+      unawaited(engine.speak('One.', locale: 'en', speed: 1));
+      unawaited(engine.speak('Moja.', locale: 'sw', speed: 1));
+      await tester.pump();
+      expect(tts.calls, containsAll(['speak One.', 'language sw-TZ']));
+      expect(tts.calls, isNot(contains('speak Moja.')));
+      await tester.pump(const Duration(seconds: 3));
       tts.held['sw-TZ']!.complete();
-      await second;
+      await tester.pump();
       expect(tts.calls.last, 'speak Moja.');
 
-      await Future<void>.delayed(const Duration(milliseconds: 250));
+      // Past the first watchdog's time: the second utterance still waits.
+      await tester.pump(const Duration(seconds: 4));
+      expect(failures, isEmpty);
+
+      // Only the second watchdog barks, a full timeout after its speak.
+      await tester.pump(const Duration(seconds: 2));
       expect(failures, ['The device voice did not start']);
-      // Only the second watchdog barked, a full timeout after its speak.
-      expect(
-        elapsed.single,
-        greaterThanOrEqualTo(const Duration(milliseconds: 160)),
-      );
+      await engine.dispose();
     });
 
     test('a late start after the watchdog stopped the utterance leaves no '
@@ -489,6 +490,51 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       expect(completed, 1);
       expect(stalls, 0);
+    });
+
+    test('a start after a stop before the start is late: no stall, no '
+        'debt', () async {
+      await engine.speak('One.', locale: 'en', speed: 1);
+      await engine.stop();
+      tts
+        ..onStart!()
+        ..onCancel!();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onError!('synthesis');
+      await Future<void>.delayed(Duration.zero);
+      expect(stalls, 0);
+      expect(failures, ['synthesis']);
+    });
+
+    test('events after dispose are dropped', () async {
+      // A start that comes after dispose, for an utterance not queued then,
+      // and its cancel.
+      await engine.speak('One.', locale: 'en', speed: 1);
+      tts.onError!('synthesis');
+      await engine.dispose();
+      expect(
+        () => tts
+          ..onStart!()
+          ..onCancel!()
+          ..onStart!()
+          ..onComplete!()
+          ..onError!('late'),
+        returnsNormally,
+      );
+
+      // An utterance queued at dispose starts late and is cancelled.
+      tts = FakeTts();
+      engine = build();
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      await engine.dispose();
+      expect(
+        () => tts
+          ..onStart!()
+          ..onCancel!(),
+        returnsNormally,
+      );
+      expect(stalls, 0);
+      expect(failures, ['synthesis']);
     });
   });
 
