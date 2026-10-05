@@ -1,0 +1,10 @@
+{
+  "name": "Septuagint, deuterocanonical books (Swete, via LXX-Swete-1930)",
+  "language": "grc",
+  "upstreamUrl": "https://github.com/eliranwong/LXX-Swete-1930/archive/1d3efc3c63bd384a4f3f07ed37eef54b0d45ac33.tar.gz",
+  "version": "1d3efc3c63bd384a4f3f07ed37eef54b0d45ac33",
+  "sha256": "41574db5b44390680bbc433b95acec74f381731fcb5ca51f9abc49d89f3e55d5",
+  "licence": "GPL-3.0-only",
+  "attribution": "Greek text of H. B. Swete's The Old Testament in Greek according to the Septuagint (Cambridge, 1907-1912; public domain), digitised by Pasquale Amicarelli and published by Eliran Wong in LXX-Swete-1930 (https://github.com/eliranwong/LXX-Swete-1930) under the GNU General Public License v3. Modified for Lectio: deuterocanonical books and Greek Esther and Daniel only, split into words, text-critical signs and bracketed verse numbers removed, Greek Esther additions stored as chapters A-F, the Letter of Jeremiah as Baruch 6, Susanna and Bel as Daniel 13 and 14, Sirach 30-36 in the Latin chapter order, Daniel 3:98-6:28 renumbered and the verses re-divided where they shift against the lxx scheme.",
+  "versification": "lxx"
+}
