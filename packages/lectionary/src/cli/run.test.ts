@@ -203,22 +203,17 @@ describe('runCrosscheck', () => {
 });
 
 /** Serves the pinned LitCal Sunday file from the committed seed data's printed strings. */
-function litcalFetcher(calls: string[]): TextFetcher {
+function litcalFetcher(calls: string[], secondOf26 = 'Philippians 2:1-11|Philippians 2:1-5'): TextFetcher {
   const sunday = (first: string, psalm: string, second: string, gospel: string) => ({
     first_reading: first,
     responsorial_psalm: psalm,
-    second_reading: second,
+    ...(second === '' ? {} : { second_reading: second }),
     gospel_acclamation: '',
     gospel,
   });
   const json = {
     OrdSunday25: sunday('Isaiah 55:6-9', 'Psalm 145:2-3, 8-9, 17-18', 'Philippians 1:20c-24, 27a', 'Matthew 20:1-16a'),
-    OrdSunday26: sunday(
-      'Ezekiel 18:25-28',
-      'Psalm 25:4-5, 6-7, 8-9',
-      'Philippians 2:1-11|Philippians 2:1-5',
-      'Matthew 21:28-32',
-    ),
+    OrdSunday26: sunday('Ezekiel 18:25-28', 'Psalm 25:4-5, 6-7, 8-9', secondOf26, 'Matthew 21:28-32'),
   };
   return {
     fetchText(url) {
@@ -260,6 +255,18 @@ describe('runImportLitcal', () => {
       'import-litcal seed: 0 added, 7 replaced → seed/proper-of-time.json',
       '  kept (verified, disputed or from another source): ot-sunday-25 day first-reading (A)',
     ]);
+  });
+
+  it('removes and reports a LitCal reading the leaf no longer has', async () => {
+    const root = await copyOfData();
+    const { out, io } = capture();
+    expect(await runImportLitcal(['seed'], root, io, litcalFetcher([], ''))).toBe(0);
+    expect(out).toEqual([
+      'import-litcal seed: 0 added, 7 replaced → seed/proper-of-time.json',
+      '  removed (no longer in the LitCal leaf): ot-sunday-26 day second-reading (A)',
+    ]);
+    const written = await readFile(join(root, 'seed', 'proper-of-time.json'), 'utf8');
+    expect(written).not.toContain('Philippians 2:1-11');
   });
 
   it('reports usage, manifest, registry, import and target problems without writing', async () => {

@@ -216,6 +216,9 @@ export async function runImportLitcal(
   if (merged.kept.length > 0) {
     io.out(`  kept (verified, disputed or from another source): ${merged.kept.join('; ')}`);
   }
+  if (merged.removed.length > 0) {
+    io.out(`  removed (no longer in the LitCal leaf): ${merged.removed.join('; ')}`);
+  }
   return 0;
 }
 
