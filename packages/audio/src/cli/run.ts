@@ -371,7 +371,7 @@ export function summaryMarkdown(summary: RenderSummary): string {
   if (auto !== undefined && !auto.live) {
     lines.push(
       `Rendered with the fake voice into \`${summary.storage}\`: **no audio is published** and every \`audio\` ` +
-        'field stays `null`. The files are uploaded as a workflow artifact only.',
+        'field stays `null`. Any files rendered go to a workflow artifact only.',
       '',
       `Live audio needs: ${auto.missing.join('; ')}.`,
     );
