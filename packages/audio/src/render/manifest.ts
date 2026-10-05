@@ -3,7 +3,7 @@
  * storage key, with its public URL, size, duration, voice and creation time. The web build reads
  * it to attach audio to segments (L-082); the render pipeline reads it to skip what exists.
  */
-import type { ObjectStorage } from '@lectio/providers';
+import type { ObjectStorage, TtsFormat } from '@lectio/providers';
 
 /** Storage key of the manifest. */
 export const MANIFEST_KEY = 'audio/manifest.json';
@@ -17,10 +17,17 @@ export interface ManifestEntry {
   /** Playing time; `null` when the file was found in storage without an entry and its length is unreadable. */
   readonly durationMs: number | null;
   readonly voice: string;
+  /** Engine version folded into the key (see `TTS_VERSIONS`). */
+  readonly ttsVersion: string;
+  /** Audio format of the file; also its key's extension. */
+  readonly format: TtsFormat;
   /** ISO instant the entry was created. */
   readonly createdAt: string;
   readonly contentType: string;
-  /** Characters billed to render the file (0 for a file adopted from storage). Feeds the monthly budget. */
+  /**
+   * Characters billed to render the file. Feeds the monthly budget; a file adopted from storage
+   * counts its text's characters, since an interrupted earlier run most likely paid for it.
+   */
   readonly characters: number;
 }
 
@@ -50,6 +57,8 @@ function checkEntry(key: string, value: unknown): ManifestEntry {
   if (!isCount(value['bytes'])) fail('bytes');
   if (value['durationMs'] !== null && !isCount(value['durationMs'])) fail('durationMs');
   if (!isText(value['voice'])) fail('voice');
+  if (!isText(value['ttsVersion'])) fail('ttsVersion');
+  if (value['format'] !== 'wav' && value['format'] !== 'mp3') fail('format');
   if (!isText(value['createdAt']) || Number.isNaN(Date.parse(value['createdAt']))) fail('createdAt');
   if (!isText(value['contentType'])) fail('contentType');
   if (!isCount(value['characters'])) fail('characters');

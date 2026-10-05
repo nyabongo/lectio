@@ -10,7 +10,9 @@ export {
   writeManifest,
 } from './manifest.ts';
 export type { AudioManifest, ManifestEntry } from './manifest.ts';
-export { findOrphans, objectKeyFor, pickFormat, planRender } from './plan.ts';
+export { findOrphans, objectKeyFor, pickFormat, planRender, voiceFor } from './plan.ts';
 export type { Orphan, PlanRenderOptions, RenderPlan, RenderPlanItem, SkippedSegment } from './plan.ts';
 export { AUDIO_CACHE_CONTROL, CharacterBudgetError, render, wavDurationMs } from './render.ts';
 export type { RenderFailure, RenderOptions, RenderResult } from './render.ts';
+export { TTS_VERSIONS, manifestKeyFor, resolveAudio } from './resolve.ts';
+export type { ResolvedAudio } from './resolve.ts';

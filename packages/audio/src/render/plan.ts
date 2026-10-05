@@ -37,8 +37,10 @@ export interface RenderPlan {
   readonly wanted: readonly string[];
   /** Files missing from the manifest, in segment order. */
   readonly items: readonly RenderPlanItem[];
-  /** How many wanted keys the manifest already has. */
+  /** How many wanted keys the manifest already has (and storage, when listed). */
   readonly upToDate: number;
+  /** Keys with a manifest entry but no stored object; planned again (only when `storedKeys` is given). */
+  readonly stale: readonly string[];
   readonly skipped: readonly SkippedSegment[];
   /** Characters the items will bill in total. */
   readonly characters: number;
@@ -50,6 +52,11 @@ export interface PlanRenderOptions {
   /** Engine version folded into every key; changing it re-renders everything. */
   readonly ttsVersion: string;
   readonly format: TtsFormat;
+  /**
+   * The keys in storage (from `storage.list('audio/')`). When given, a manifest entry whose object
+   * is missing is treated as missing and rendered again; without it the manifest is trusted.
+   */
+  readonly storedKeys?: Iterable<string>;
 }
 
 /** The storage key of a segment's file: the L-080 audio key path with the format's extension. */
@@ -65,7 +72,8 @@ export function pickFormat(formats: readonly TtsFormat[]): TtsFormat {
   return first;
 }
 
-function voiceFor(voices: Readonly<Record<string, string>>, locale: string): string | undefined {
+/** The voice for `locale` (`config.tts.voices`), falling back from `en-KE` to `en`. */
+export function voiceFor(voices: Readonly<Record<string, string>>, locale: string): string | undefined {
   return voices[locale] ?? voices[String(locale.split('-')[0])];
 }
 
@@ -81,6 +89,8 @@ export function planRender(
   const byKey = new Map<string, { item: RenderPlanItem; segmentIds: string[] }>();
   const wanted = new Set<string>();
   const skipped: SkippedSegment[] = [];
+  const stored = options.storedKeys === undefined ? undefined : new Set(options.storedKeys);
+  const stale = new Set<string>();
   for (const segment of segments) {
     const voice = voiceFor(options.voices, segment.locale);
     if (voice === undefined) {
@@ -90,7 +100,10 @@ export function planRender(
     const { hash, path } = audioKey(segment, voice, options.ttsVersion);
     const key = objectKeyFor(path, options.format);
     wanted.add(key);
-    if (manifest.entries[key] !== undefined) continue;
+    if (manifest.entries[key] !== undefined) {
+      if (stored === undefined || stored.has(key)) continue;
+      stale.add(key);
+    }
     const existing = byKey.get(key);
     if (existing) {
       existing.segmentIds.push(segment.id);
@@ -110,6 +123,7 @@ export function planRender(
     wanted: [...wanted].sort(),
     items,
     upToDate: wanted.size - items.length,
+    stale: [...stale].sort(),
     skipped,
     characters: items.reduce((sum, item) => sum + item.characters, 0),
   };

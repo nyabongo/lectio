@@ -20,6 +20,8 @@ const ENTRY: ManifestEntry = {
   bytes: 1,
   durationMs: 1,
   voice: 'v',
+  ttsVersion: 'fake-1',
+  format: 'wav',
   createdAt: '2026-10-05T00:00:00.000Z',
   contentType: 'audio/wav',
   characters: 1,
@@ -60,6 +62,17 @@ describe('planRender', () => {
     expect(plan.items[0]?.segmentIds).toEqual(['b', 'b-again']);
     expect(plan.upToDate).toBe(1);
     expect(plan.wanted).toHaveLength(2);
+    expect(plan.stale).toEqual([]);
+  });
+
+  it('plans a manifest entry again when its object is missing from storage', () => {
+    const manifest: AudioManifest = { version: 1, entries: { [keyOf(a)]: ENTRY, [keyOf(b)]: ENTRY } };
+    const plan = planRender([a, b], manifest, { ...OPTIONS, storedKeys: [keyOf(a)] });
+    expect(plan.items.map((item) => item.key)).toEqual([keyOf(b)]);
+    expect(plan.stale).toEqual([keyOf(b)]);
+    expect(plan.upToDate).toBe(1);
+    const trusting = planRender([a, b], manifest, OPTIONS);
+    expect(trusting.items).toEqual([]);
   });
 
   it('falls back to the language voice and skips locales without one', () => {
