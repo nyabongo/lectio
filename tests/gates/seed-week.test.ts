@@ -9,7 +9,7 @@
  * are print sources, which are flagged for a reviewer by design. Gate 4 is skipped (no keys), so the
  * merge rule asks for review: the seed week never auto-merges.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -18,10 +18,13 @@ import { GATES, decide, formatFinding, ruleBookFor, runGates, skipReason } from 
 import type { GateContext, GateReport, GateResult } from '@lectio/gates';
 import { SOURCE_FIXTURES_ENV } from '@lectio/providers';
 import type { FakeSourcePage } from '@lectio/providers';
+import { loadIndex, longestRun, tokenise } from '@lectio/textguard';
 
 import { labelFor } from '../../packages/gates/src/ci/merge-rule-job.ts';
 import { changedClaims, factsFromChanges } from '../../packages/gates/src/merge-rule/index.ts';
+import { guardIndexPath } from '../../packages/gates/src/licence-gate/index.ts';
 import { REPO_ROOT, contentContext, contentFiles } from './helpers/gate-test.ts';
+import { verseTextLines } from './helpers/seed-pages.ts';
 
 const SEED_PAGES = join(REPO_ROOT, 'tests', 'gates', 'fixtures', 'seed-pages');
 
@@ -53,6 +56,47 @@ function citedUrls(): string[] {
   }
   return [...urls].sort();
 }
+
+/** Every recorded page, by file name. */
+function recordedPages(): Map<string, string> {
+  const names = readdirSync(SEED_PAGES).filter((name) => name.endsWith('.txt'));
+  return new Map(names.sort().map((name) => [name, readFileSync(join(SEED_PAGES, name), 'utf8')]));
+}
+
+/**
+ * A recorded line counts as Bible text when at least this many of its words in a row match a
+ * public-domain English Bible (licenceGuard.maxBibleRunWords) and that run is at least half the line.
+ * Commentary quotes a verse inside its own prose; a line that is mostly verse is reading text.
+ */
+const BIBLE_RUN_WORDS = 12;
+const BIBLE_LINE_SHARE = 0.5;
+
+describe('the recorded pages hold no Bible reading text (ADR 0003)', () => {
+  it('no verse reference line followed by its verse, and no numbered verse line', () => {
+    const found: string[] = [];
+    for (const [name, text] of recordedPages()) {
+      const lines = text.split('\n');
+      for (const index of [...verseTextLines(lines)].sort((a, b) => a - b))
+        found.push(`${name}:${String(index + 1)}: ${lines[index] ?? ''}`);
+    }
+    expect(found).toEqual([]);
+  });
+
+  it('no line that is mostly public-domain Bible wording (the licence gate’s shingle index)', () => {
+    const config = contentContext([]).config.licenceGuard;
+    const index = loadIndex(new Uint8Array(readFileSync(join(REPO_ROOT, guardIndexPath(config.shingleSize)))));
+    expect(config.maxBibleRunWords).toBe(BIBLE_RUN_WORDS);
+    const found: string[] = [];
+    for (const [name, text] of recordedPages()) {
+      for (const line of text.split('\n')) {
+        const run = longestRun(line, index);
+        if (run.words >= BIBLE_RUN_WORDS && run.words >= BIBLE_LINE_SHARE * tokenise(line).length)
+          found.push(`${name}: ${line.slice(run.start, run.end)}`);
+      }
+    }
+    expect(found).toEqual([]);
+  });
+});
 
 describe('the seed week through every gate (recorded pages, no API keys)', () => {
   let context: GateContext;

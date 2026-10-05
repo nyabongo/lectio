@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { clausesHolding, fixtureName, reducePage } from './seed-pages.ts';
+import { fixtureName, reducePage, verseTextLines } from './seed-pages.ts';
 
 // An invented page in the shape of a Bible Hub commentary page: a header (where the verse would
 // be), a public-domain section, a section that is not, and a footer.
@@ -29,21 +29,14 @@ describe('reducePage', () => {
     });
   });
 
-  it('keeps only the clauses of an excerpt found outside a public-domain section', () => {
-    const reduced = reducePage(URL, PAGE, ['holds the cited words', 'something worth citing', 'holds the cited']);
+  it('keeps only the excerpt itself when it is found outside a public-domain section', () => {
+    const reduced = reducePage(URL, PAGE, ['holds the cited words', 'something worth citing', 'A third sentence']);
     expect(reduced.text).toBe(
-      'Pulpit Commentary\nVerse 1. The first paragraph of the old commentary says something worth citing here.\nA second paragraph of the same section.\n\nIts second sentence holds the cited words in it.\n',
+      'Pulpit Commentary\nVerse 1. The first paragraph of the old commentary says something worth citing here.\nA second paragraph of the same section.\n\nholds the cited words\nA third sentence\n',
     );
     expect(reduced.sections).toEqual(['Pulpit Commentary']);
-  });
-
-  it('joins clauses from the same lines, and keeps lines an excerpt spans', () => {
-    const reduced = reducePage(URL, PAGE, ['A modern essay', 'A third sentence follows', 'cited words in it. A third']);
-    expect(reduced.text).toBe(
-      'A modern essay.\nA third sentence follows.\nIts second sentence holds the cited words in it. A third sentence follows.\n',
-    );
     expect(reducePage(URL, PAGE, ['the verse text. Pulpit Commentary Verse 1.']).text).toBe(
-      'Header line standing in for the verse text. Pulpit Commentary Verse 1.\n',
+      'the verse text. Pulpit Commentary Verse 1.\n',
     );
   });
 
@@ -70,10 +63,50 @@ describe('reducePage', () => {
   });
 });
 
-describe('clausesHolding', () => {
-  it('returns the whole text when no shorter run holds the excerpt', () => {
-    expect(clausesHolding('one two, three four', 'two, three')).toBe('one two, three four');
-    expect(clausesHolding('alpha beta gamma', 'beta')).toBe('alpha beta gamma');
+// A chapter page: each verse printed after a bare reference line, and a strophe of numbered verses.
+const CHAPTER = [
+  'Pulpit Commentary',
+  'An introduction of the commentator, in his own words.',
+  'Example 1:1',
+  'And the verse text of the first verse stands here.',
+  '1. The comment on the first verse.',
+  'Example 1:2',
+  '',
+  '1 Numbered verse text of the strophe;',
+  '',
+  'Its second stich, short;',
+  '2 And the next numbered verse.',
+  'The comment after the strophe goes on for longer than any stich would, so it is kept.',
+  '1 Kings 4:5',
+  'Links',
+].join('\n');
+
+describe('verse text inside a kept section', () => {
+  it('finds reference lines with their verse, and numbered verses with their stichs', () => {
+    expect([...verseTextLines(CHAPTER.split('\n'))].sort((a, b) => a - b)).toEqual([2, 3, 5, 7, 9, 10, 12]);
+  });
+
+  it('is dropped, and an excerpt quoting it is kept on its own', () => {
+    const reduced = reducePage(URL, CHAPTER, ['own words', 'second stich, short', 'The comment on the first']);
+    expect(reduced.text).toBe(
+      [
+        'Pulpit Commentary',
+        'An introduction of the commentator, in his own words.',
+        '',
+        '1. The comment on the first verse.',
+        '',
+        'second stich, short',
+        '',
+        'The comment after the strophe goes on for longer than any stich would, so it is kept.',
+        '',
+      ].join('\n'),
+    );
+    expect(reduced.unplaced).toEqual([]);
+  });
+
+  it('reports an excerpt that runs from kept text into dropped verse text', () => {
+    const excerpt = 'own words. Example 1:1 And the verse text';
+    expect(reducePage(URL, CHAPTER, [excerpt]).unplaced).toEqual([excerpt]);
   });
 });
 
