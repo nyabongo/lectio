@@ -119,12 +119,19 @@
               }
             }
           },
-          "lectionaryMissing": { "type": "boolean" }
+          "lectionaryMissing": { "type": "boolean" },
+          "noMass": { "type": "boolean" }
         },
         "allOf": [
           {
-            "if": { "properties": { "lectionaryMissing": { "const": false } } },
+            "if": { "properties": { "lectionaryMissing": { "const": false }, "noMass": { "const": false } } },
             "then": { "properties": { "masses": { "type": "array", "minItems": 1 } } }
+          },
+          {
+            "if": { "required": ["noMass"], "properties": { "noMass": { "const": true } } },
+            "then": {
+              "properties": { "masses": { "type": "array", "maxItems": 0 }, "lectionaryMissing": { "const": false } }
+            }
           }
         ]
       }

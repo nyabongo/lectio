@@ -173,6 +173,7 @@ const dayHeaderProperties = {
   colour: liturgicalColourSchema,
   celebrations: calendarDayProps.celebrations,
   lectionaryMissing: calendarDayProps.lectionaryMissing,
+  noMass: calendarDayProps.noMass,
 } as const;
 
 const dayHeaderRequired = [
