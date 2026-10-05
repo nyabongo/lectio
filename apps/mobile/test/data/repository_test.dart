@@ -21,7 +21,7 @@ class BrokenCache implements ApiCache {
   final MemoryApiCache _memory = MemoryApiCache();
 
   @override
-  Future<CachedResponse?> read(String path) async {
+  Future<CachedResponse?> read(String path) {
     if (failReads) throw const FileSystemLikeException();
     return _memory.read(path);
   }

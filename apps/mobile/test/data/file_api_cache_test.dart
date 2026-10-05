@@ -57,8 +57,8 @@ void main() {
   test('inSupportDirectory uses the app support directory', () async {
     const channel = MethodChannel('plugins.flutter.io/path_provider');
     final messenger =
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-    messenger.setMockMethodCallHandler(channel, (call) async => temp.path);
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          ..setMockMethodCallHandler(channel, (call) async => temp.path);
     addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
     final support = await FileApiCache.inSupportDirectory();

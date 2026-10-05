@@ -85,16 +85,14 @@ typedef _Cached<T> = ({CachedResponse entry, T value});
 /// cached, the stream fails with the error ([ApiException] or
 /// [FormatException]). Streams are single-subscription and close when done.
 class LectioRepository {
-  /// Creates a repository reading through [client] and keeping documents in
-  /// [cache]. [clock] gives the device time (default: now).
+  /// Creates a repository reading through `client` and keeping documents in
+  /// `cache`. `clock` gives the device time (default: now).
   new({
-    required ApiClient client,
-    required ApiCache cache,
+    required this._client,
+    required this._cache,
     DateTime Function()? clock,
     this.freshFor = const Duration(minutes: 15),
-  }) : _client = client,
-       _cache = cache,
-       _clock = clock ?? DateTime.now;
+  }) : _clock = clock ?? DateTime.now;
 
   final ApiClient _client;
   final ApiCache _cache;

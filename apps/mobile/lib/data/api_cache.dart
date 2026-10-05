@@ -48,7 +48,7 @@ class CachedResponse {
     );
   }
 
-  /// The entry as JSON, for [fromJson].
+  /// The entry as JSON, for [CachedResponse.fromJson].
   JsonObject toJson() => {
     'body': body,
     'fetchedAt': fetchedAt.toUtc().toIso8601String(),
