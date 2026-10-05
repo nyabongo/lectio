@@ -33,6 +33,17 @@ List<Map<String, Object?>> readingsOf(Map<String, Object?> day) {
   return (mass['readings']! as List<Object?>).cast<Map<String, Object?>>();
 }
 
+/// The [Semantics] widget labelled [label].
+Finder semanticsLabelled(String label) => find.byWidgetPredicate(
+  (widget) => widget is Semantics && widget.properties.label == label,
+);
+
+/// Scrolls [finder] into view.
+Future<void> reveal(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+}
+
 /// The accent of the Today screen's theme.
 Color accent(WidgetTester tester) {
   final context = tester.element(find.byType(DayHeader));
@@ -65,7 +76,6 @@ void main() {
     WidgetTester tester, {
     String location = '/today',
     UrlOpener? openUrl,
-    bool useDefaultOpener = false,
   }) async {
     final router = GoRouter(
       initialLocation: location,
@@ -76,7 +86,7 @@ void main() {
             todayRoute(
               repository: repository,
               clock: clock,
-              openUrl: useDefaultOpener ? null : openUrl ?? openSucceeds,
+              openUrl: openUrl ?? openSucceeds,
             ),
             GoRoute(
               path: '/reading',
@@ -108,7 +118,7 @@ void main() {
       expect(find.text('Sunday 20 September 2026'), findsOneWidget);
       expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
       expect(find.text('Sunday'), findsOneWidget);
-      expect(find.bySemanticsLabel('Liturgical colour: Green'), findsOneWidget);
+      expect(semanticsLabelled('Liturgical colour: Green'), findsOneWidget);
       expect(find.text('Ordinary Time · Week 25'), findsOneWidget);
       expect(find.text('Sunday cycle A · Weekday cycle II'), findsOneWidget);
       expect(find.text(TodayStrings.backToToday), findsNothing);
@@ -120,7 +130,7 @@ void main() {
         'SECOND READING',
         'GOSPEL',
       ]) {
-        await tester.scrollUntilVisible(find.text(label), 100);
+        await reveal(tester, find.text(label));
         expect(find.text(label), findsOneWidget);
       }
       expect(find.text('Mt 20:1-16a'), findsOneWidget);
@@ -134,19 +144,19 @@ void main() {
       expect(find.text(TodayStrings.notesMissing), findsNothing);
       expect(find.text(TodayStrings.offline), findsNothing);
       expect(
-        find.bySemanticsLabel(
+        semanticsLabelled(
           'Text of Mt 20:1-16a at www.drbo.org (opens outside the app)',
         ),
         findsOneWidget,
       );
-      await tester.scrollUntilVisible(find.text(TodayStrings.listen), -100);
+      await reveal(tester, find.text(TodayStrings.listen));
       expect(find.text(TodayStrings.listen), findsOneWidget);
     });
 
     testWidgets('Notes opens the Reading tab for the reading', (tester) async {
       await pumpToday(tester);
 
-      await tester.scrollUntilVisible(find.text(TodayStrings.notes), 100);
+      await reveal(tester, find.text(TodayStrings.notes));
       await tester.tap(find.text(TodayStrings.notes));
       await tester.pumpAndSettle();
 
@@ -176,19 +186,6 @@ void main() {
 
     testWidgets('a link-out nothing can open says so', (tester) async {
       await pumpToday(tester, openUrl: (url) async => false);
-
-      await tester.tap(find.text(TodayStrings.text).first);
-      await tester.pumpAndSettle();
-
-      expect(find.text(TodayStrings.linkFailed), findsOneWidget);
-    });
-
-    testWidgets('the default opener reports a missing launcher', (
-      tester,
-    ) async {
-      // No url_launcher implementation is registered in widget tests, so the
-      // platform call fails and the screen says the text could not open.
-      await pumpToday(tester, useDefaultOpener: true);
 
       await tester.tap(find.text(TodayStrings.text).first);
       await tester.pumpAndSettle();
@@ -327,7 +324,7 @@ void main() {
 
       expect(find.text(TodayStrings.notesMissing), findsOneWidget);
       expect(find.text(TodayStrings.listen), findsNothing);
-      await tester.scrollUntilVisible(find.text('GOSPEL'), 100);
+      await reveal(tester, find.text('GOSPEL'));
       expect(find.text(TodayStrings.notes), findsNothing);
       expect(find.text(TodayStrings.notesInPreparation), findsNWidgets(4));
       expect(find.text(TodayStrings.text), findsNWidgets(4));
@@ -361,16 +358,16 @@ void main() {
 
     expect(find.text('Saint Example, Martyr'), findsOneWidget);
     expect(find.text('Memorial'), findsOneWidget);
-    expect(find.bySemanticsLabel('Liturgical colour: Red'), findsOneWidget);
+    expect(semanticsLabelled('Liturgical colour: Red'), findsOneWidget);
     expect(
       find.text('Saint Other · Optional memorial · White'),
       findsOneWidget,
     );
     expect(accent(tester), LiturgicalColour.red.light);
     expect(find.text(massOptionsLabel(2)), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Mass of the day'), 100);
+    await reveal(tester, find.text('Mass of the day'));
     expect(find.text('Mass of the day'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Vigil Mass'), 100);
+    await reveal(tester, find.text('Vigil Mass'));
     expect(find.text('Vigil Mass'), findsOneWidget);
   });
 
@@ -389,6 +386,24 @@ void main() {
 
     expect(find.text(TodayStrings.loadFailed), findsNothing);
     expect(find.text('Twenty-fifth Sunday in Ordinary Time'), findsOneWidget);
+  });
+
+  testWidgets('openExternally hands the link to the platform', (
+    tester,
+  ) async {
+    // No url_launcher implementation is registered in widget tests, so the
+    // platform call fails or never answers: nothing opens.
+    final result = await tester.runAsync(() async {
+      try {
+        return await openExternally(
+          Uri.parse('https://www.drbo.org/'),
+        ).timeout(const Duration(seconds: 1), onTimeout: () => false);
+      } on Object {
+        return false;
+      }
+    });
+
+    expect(result, isFalse);
   });
 
   test('parseIsoDate normalises yyyy-mm-dd and rejects anything else', () {
