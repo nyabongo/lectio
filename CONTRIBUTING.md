@@ -55,6 +55,8 @@ CI runs the same steps as separate required checks (`.github/workflows/ci.yml`).
   their `src/*.ts` directly (no build step).
 - Content PRs **never commit English Bible text**: commentary, references and link-outs only (see
   [ADR 0003](docs/adr/0003-never-store-reading-text.md)).
+- Content PRs pass five gates before they merge: [docs/gates.md](docs/gates.md) lists every rule, and the
+  [reviewer guide](docs/reviewer-guide.md) covers flagged PRs, labels and approval.
 
 ## Workflows and required checks
 
