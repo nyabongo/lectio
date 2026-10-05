@@ -96,6 +96,19 @@ class _ListenScreenState extends State<ListenScreen> {
   Object? _error;
   double? _appliedSpeed;
   Future<bool>? _voiceCheck;
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onResume: _recheckVoices);
+  }
+
+  /// The reader may have installed a voice while away: ask again.
+  void _recheckVoices() {
+    widget.queue.forgetVoices();
+    setState(() => _voiceCheck = null);
+  }
 
   String _initialDate() {
     return parseIsoDate(widget.date) ??
@@ -132,6 +145,7 @@ class _ListenScreenState extends State<ListenScreen> {
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     _cancel();
     super.dispose();
   }

@@ -1,71 +1,36 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:lectio/features/listen/flutter_tts_speech_engine.dart';
 
-class _FakeTts extends Fake implements FlutterTts {
-  final List<String> calls = [];
-  VoidCallback? onComplete;
-  ErrorHandler? onError;
-  Set<String> missingLanguages = {};
-  Set<String> voices = {'en-GB', 'sw-TZ'};
-
-  @override
-  Future<dynamic> isLanguageAvailable(String language) async {
-    return voices.contains(language);
-  }
-
-  @override
-  void setCompletionHandler(VoidCallback callback) => onComplete = callback;
-
-  @override
-  void setErrorHandler(ErrorHandler handler) => onError = handler;
-
-  @override
-  Future<dynamic> setSharedInstance(bool sharedSession) async {
-    calls.add('shared $sharedSession');
-  }
-
-  @override
-  Future<dynamic> setIosAudioCategory(
-    IosTextToSpeechAudioCategory category,
-    List<IosTextToSpeechAudioCategoryOptions> options, [
-    IosTextToSpeechAudioMode mode = IosTextToSpeechAudioMode.defaultMode,
-  ]) async {
-    calls.add('category ${category.name}');
-  }
-
-  @override
-  Future<dynamic> setLanguage(String language) async {
-    calls.add('language $language');
-    if (missingLanguages.contains(language)) {
-      throw PlatformException(code: 'language');
-    }
-  }
-
-  @override
-  Future<dynamic> setSpeechRate(double rate) async => calls.add('rate $rate');
-
-  @override
-  Future<dynamic> speak(String text, {bool focus = false}) async {
-    calls.add('speak $text');
-  }
-
-  @override
-  Future<dynamic> stop() async => calls.add('stop');
-}
+import 'fake_tts.dart';
 
 void main() {
-  test('speechRate scales the normal rate and caps it', () {
-    expect(speechRate(1), 0.5);
-    expect(speechRate(0.75), 0.375);
-    expect(speechRate(1.5), 0.75);
-    expect(speechRate(2), 1);
+  group('speechRate', () {
+    test('scales the normal rate on Android and caps it', () {
+      const android = TargetPlatform.android;
+      expect(speechRate(1, platform: android), 0.5);
+      expect(speechRate(0.75, platform: android), 0.375);
+      expect(speechRate(1.5, platform: android), 0.75);
+      expect(speechRate(2, platform: android), 1);
+    });
+
+    test('rises gently above normal on iOS', () {
+      const ios = TargetPlatform.iOS;
+      expect(speechRate(0.75, platform: ios), 0.375);
+      expect(speechRate(1, platform: ios), 0.5);
+      expect(speechRate(1.5, platform: ios), closeTo(0.6, 1e-9));
+      expect(speechRate(2, platform: ios), closeTo(0.7, 1e-9));
+      expect(speechRate(4, platform: ios), 1);
+    });
+
+    test('defaults to the running platform', () {
+      expect(speechRate(2), 1);
+    });
   });
 
-  test('sets up once, on the first utterance, and speaks', () async {
+  test('creates the plugin once, on first use, and speaks', () async {
     var created = 0;
-    final tts = _FakeTts();
+    final tts = FakeTts();
     final engine = FlutterTtsSpeechEngine(
       create: () {
         created++;
@@ -82,7 +47,7 @@ void main() {
     await engine.stop();
 
     expect(created, 1);
-    expect(tts.calls, [
+    expect(tts.calls.where((call) => !call.startsWith('available')), [
       'language en-GB',
       'rate 0.5',
       'speak One.',
@@ -93,20 +58,37 @@ void main() {
       'speak Moja.',
       'stop',
     ]);
+    expect(tts.sessionCalls, isEmpty);
   });
 
-  test('shares the playback session on iOS', () async {
-    final tts = _FakeTts();
-    final engine = FlutterTtsSpeechEngine(
-      create: () => tts,
-      platform: () => TargetPlatform.iOS,
-    );
-    await engine.speak('One.', locale: 'en', speed: 1);
-    expect(tts.calls.take(2), ['shared true', 'category playback']);
+  group('on iOS', () {
+    late FakeTts tts;
+    late FlutterTtsSpeechEngine engine;
+
+    setUp(() {
+      tts = FakeTts();
+      engine = FlutterTtsSpeechEngine(
+        create: () => tts,
+        platform: () => TargetPlatform.iOS,
+      );
+    });
+
+    test('canSpeak leaves the audio session alone', () async {
+      expect(await engine.canSpeak('sw'), isTrue);
+      expect(tts.sessionCalls, isEmpty);
+    });
+
+    test('the first utterance takes the playback session, once', () async {
+      await engine.speak('One.', locale: 'en', speed: 1);
+      await engine.speak('Two.', locale: 'en', speed: 2);
+      expect(tts.calls.take(2), ['shared true', 'category playback']);
+      expect(tts.sessionCalls, hasLength(2));
+      expect(tts.calls, contains('rate 0.7'));
+    });
   });
 
   test('keeps the device voice when setting one fails', () async {
-    final tts = _FakeTts()..missingLanguages.add('sw-TZ');
+    final tts = FakeTts()..missingLanguages.add('sw-TZ');
     final engine = FlutterTtsSpeechEngine(create: () => tts);
     await engine.speak('Moja.', locale: 'sw', speed: 1);
     await engine.speak('Mbili.', locale: 'sw', speed: 1);
@@ -118,7 +100,7 @@ void main() {
   });
 
   test('canSpeak looks for a voice of the language', () async {
-    final tts = _FakeTts();
+    final tts = FakeTts();
     final engine = FlutterTtsSpeechEngine(create: () => tts);
     expect(await engine.canSpeak('sw'), isTrue);
     expect(await engine.canSpeak('en'), isTrue);
@@ -127,24 +109,66 @@ void main() {
     expect(await engine.canSpeak('en'), isTrue);
   });
 
-  test('reports completions and errors', () async {
-    final tts = _FakeTts();
+  test('an utterance the device does not queue fails', () async {
+    final tts = FakeTts()..speakResult = 0;
     final engine = FlutterTtsSpeechEngine(create: () => tts);
-    var completed = 0;
-    final failures = <Object>[];
-    engine.completed.listen((_) => completed++);
-    engine.failed.listen(failures.add);
-    await engine.speak('One.', locale: 'en', speed: 1);
+    await expectLater(
+      engine.speak('One.', locale: 'en', speed: 1),
+      throwsException,
+    );
+  });
 
-    tts.onComplete!();
-    tts.onError!('synthesis');
-    tts.onError!(null);
-    await Future<void>.delayed(Duration.zero);
+  group('events', () {
+    late FakeTts tts;
+    late FlutterTtsSpeechEngine engine;
+    late int completed;
+    late List<Object> failures;
 
-    expect(completed, 1);
-    expect(failures, ['synthesis', 'error']);
-    await engine.dispose();
-    expect(tts.calls.last, 'stop');
+    setUp(() async {
+      tts = FakeTts();
+      engine = FlutterTtsSpeechEngine(create: () => tts);
+      completed = 0;
+      failures = [];
+      engine.completed.listen((_) => completed++);
+      engine.failed.listen(failures.add);
+      await engine.speak('One.', locale: 'en', speed: 1);
+    });
+
+    test('reports the completion and errors of a started utterance', () async {
+      tts
+        ..onStart!()
+        ..onComplete!()
+        ..onStart!()
+        ..onError!('synthesis')
+        ..onStart!()
+        ..onError!(null);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(completed, 1);
+      expect(failures, ['synthesis', 'error']);
+      await engine.dispose();
+      expect(tts.calls.last, 'stop');
+    });
+
+    test('drops late events of a stopped utterance', () async {
+      tts.onStart!();
+      await engine.stop();
+      tts
+        ..onComplete!()
+        ..onError!('interrupted');
+      await engine.speak('Two.', locale: 'en', speed: 1);
+      tts.onError!('interrupted');
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, 0);
+      expect(failures, isEmpty);
+
+      tts
+        ..onStart!()
+        ..onComplete!()
+        ..onComplete!();
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, 1);
+    });
   });
 
   test('builds the real plugin by default', () {

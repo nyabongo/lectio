@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lectio/data/data.dart';
+import 'package:lectio/features/listen/flutter_tts_speech_engine.dart';
 import 'package:lectio/features/listen/listen_queue.dart';
 import 'package:lectio/features/listen/listen_screen.dart';
 import 'package:lectio/features/listen/listen_segment.dart';
@@ -16,6 +17,7 @@ import 'package:lectio/l10n/lectio_localizations.dart';
 import '../../data/fake_api.dart';
 import '../../data/fixtures.dart';
 import 'fake_players.dart';
+import 'fake_tts.dart';
 
 const String seedDate = '2026-09-20';
 
@@ -431,6 +433,42 @@ void main() {
         'load https://audio.example/audio/v1/0123abcd.mp3',
       );
       expect(speech.calls, isEmpty);
+    });
+
+    testWidgets('asks again about voices when the app resumes', (tester) async {
+      speech.voices = {'en'};
+      await pumpListen(tester);
+      final strings = ListenStrings.forLanguage('sw');
+      expect(find.text(strings.noVoice), findsOneWidget);
+
+      speech.voices = {'en', 'sw'};
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(speech.asked, ['sw', 'sw']);
+      expect(find.text(strings.noVoice), findsNothing);
+    });
+
+    testWidgets('opening Listen on iOS leaves the audio session alone', (
+      tester,
+    ) async {
+      final tts = FakeTts()..voices = {'en-GB'};
+      queue = ListenQueue(
+        player: player,
+        speech: FlutterTtsSpeechEngine(
+          create: () => tts,
+          platform: () => TargetPlatform.iOS,
+        ),
+      );
+      await pumpListen(tester);
+      // The voices were checked: the notice shows.
+      expect(
+        find.text(ListenStrings.forLanguage('sw').noVoice),
+        findsOneWidget,
+      );
+      expect(tts.calls, contains('available sw-KE'));
+      expect(tts.sessionCalls, isEmpty);
+      expect(queue.status, ListenStatus.idle);
     });
 
     testWidgets('notes the mirror leaves in English play in English', (

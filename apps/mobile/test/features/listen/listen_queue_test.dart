@@ -473,6 +473,16 @@ void main() {
       expect(speech.asked, ['sw']);
     });
 
+    test('forgetVoices asks again', () async {
+      speech.voices = {'en'};
+      expect(await queue.canSpeak('sw'), isFalse);
+      speech.voices = {'en', 'sw'};
+      expect(await queue.canSpeak('sw'), isFalse);
+      queue.forgetVoices();
+      expect(await queue.canSpeak('sw'), isTrue);
+      expect(speech.asked, ['sw', 'sw']);
+    });
+
     test('a device that cannot say counts as able', () async {
       speech.voiceCheckThrows = true;
       await queue.load('a', [swahili()]);

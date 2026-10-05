@@ -60,6 +60,7 @@ class ListenQueue extends ChangeNotifier {
   double _speed;
   bool _speaking = false;
   bool _fallingBack = false;
+  int _speechGeneration = -1;
   final Map<String, Future<bool>> _voices = {};
   bool _fileLoaded = false;
   Duration? _duration;
@@ -100,7 +101,8 @@ class ListenQueue extends ChangeNotifier {
   bool get fallingBack => _fallingBack;
 
   /// Whether the device can read [locale] (`en`, `sw`) aloud. Asked once
-  /// per locale; a device that cannot say counts as able.
+  /// per locale until [forgetVoices]; a device that cannot say counts as
+  /// able. Asking never touches the audio session.
   Future<bool> canSpeak(String locale) {
     return _voices[locale] ??= _speech.canSpeak(locale).catchError((
       Object error,
@@ -109,6 +111,11 @@ class ListenQueue extends ChangeNotifier {
       return true;
     });
   }
+
+  /// Forgets which voices the device has, so the next [canSpeak] asks
+  /// again: the reader may have installed one (Listen calls it when the app
+  /// resumes).
+  void forgetVoices() => _voices.clear();
 
   /// Length of the current segment's file, when known.
   Duration? get duration => _speaking ? null : _duration;
@@ -336,6 +343,7 @@ class ListenQueue extends ChangeNotifier {
     }
     _status = ListenStatus.playing;
     notifyListeners();
+    _speechGeneration = generation;
     try {
       await _speech.speak(
         segment.script,
@@ -391,7 +399,14 @@ class ListenQueue extends ChangeNotifier {
   }
 
   /// The device voice finished (or could not read) the current segment.
+  ///
+  /// Only for the utterance of the current start: an event of an utterance
+  /// a newer start replaced is ignored.
   void _speechEnded() {
-    if (_speaking && _status == ListenStatus.playing) unawaited(_advance());
+    if (_speaking &&
+        _status == ListenStatus.playing &&
+        _speechGeneration == _generation) {
+      unawaited(_advance());
+    }
   }
 }
