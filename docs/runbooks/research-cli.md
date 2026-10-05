@@ -132,17 +132,43 @@ npm run research -- backfill --execute --budget 20    # research one batch (need
   estimate: a batch plans and meters with `perPassageUsd`, so put a measured average there in a config PR.
 - **`--execute`** researches one batch through the same pipeline as `run`, on a window from today to the end of the
   last year. The planner skips existing passages, open research PRs and keys whose research PR a person closed. The
-  batch is capped by reviewer capacity, weekly intake, `--max` and a ceiling of the lower of `--budget` and
-  `research.budget.backfillTotalUsd`. `--dry-run` and `--provider fake` research but publish nothing, as with `run`.
+  batch is capped by reviewer capacity, weekly intake, `--max` and a ceiling of the lower of `--budget` and what is
+  left of `research.budget.backfillTotalUsd`. `--dry-run` and `--provider fake` research but publish nothing, as with
+  `run`.
 - **Ceilings.** With `research.budget.backfillTotalUsd` at `0` (the default), `--execute` refuses and nothing is
   generated, even with `--budget` or `--provider fake`. A live batch also needs `--budget <usd>`, at most
   `research.budget.perRunUsd`.
-- **`backfillTotalUsd` caps each batch, not the back-fill as a whole.** Back-fill does not record what earlier
-  batches spent, so running `--execute` N times can spend up to N × the batch ceiling. Track the total yourself
-  (each run prints what it spent) and lower or zero `backfillTotalUsd` when the back-fill budget is used up. A
-  persisted cumulative ledger is a follow-up.
+- **`backfillTotalUsd` is cumulative.** Every live batch (including a live `--dry-run`, which still calls the model)
+  is recorded in the spend ledger, so repeated batches never spend more than `backfillTotalUsd` in total. The
+  estimate prints what has been spent so far and what is left; when less than a cent is left, `--execute` refuses
+  with `the back-fill ceiling is used up`. To back-fill more, the owner raises `backfillTotalUsd` in a config PR.
+  `--provider fake` reads the ledger (the same caps apply) but records nothing, since it spends nothing real.
 - The batch ends with `Back-fill: N passage(s) ready in this batch; M left, estimated $X.` Only passages that got a
-  PR (or, in a dry run, would have) count as ready.
+  PR (or, in a dry run, would have) count as ready. Then `Back-fill spend: $X in this batch; $Y of $Z spent in
+total, $W left`.
+
+### The spend ledger
+
+The ledger is `research/backfill-ledger.jsonl` at the repository root: append-only JSON Lines, one line when a batch
+starts and one when it ends.
+
+```json
+{"run":"backfill-2026-10-05T08:00:00.000Z-1a2b3c4d","at":"2026-10-05T08:00:00.000Z","reservedUsd":20}
+{"run":"backfill-2026-10-05T08:00:00.000Z-1a2b3c4d","at":"2026-10-05T08:21:13.000Z","spentUsd":13.42}
+```
+
+- **Reserve, then settle.** Before it builds a provider, a batch reserves its whole ceiling; when it ends (also on an
+  error) it records what its meter spent, which frees the rest. A run with a reservation and no settlement (still
+  running, or killed) counts at its full reservation, so the ledger can over-count but never under-count. To release
+  a killed run's reservation, append its `spentUsd` line by hand from the run's output (or `0` if it spent nothing).
+- **Concurrent batches.** Reserving reads the total and appends under an exclusive lock file,
+  `research/backfill-ledger.jsonl.lock`, so two batches started together on one clone cannot reserve the same
+  dollars. A lock older than a minute is treated as left by a killed process and removed; if a batch reports
+  `another back-fill holds …`, wait, or delete the lock file when no back-fill is running.
+- **Commit it.** The ledger lives in your clone. After back-fill batches, commit `research/backfill-ledger.jsonl` to
+  `main` (a small PR) so a fresh clone or another machine counts the same spend. Never delete or rewrite lines: a
+  missing line lets later batches spend that money again. A line the CLI cannot read stops back-fill until it is
+  fixed. Batches run on two machines at once are not coordinated: run back-fill from one clone at a time.
 
 ## Troubleshooting
 
@@ -160,6 +186,9 @@ npm run research -- backfill --execute --budget 20    # research one batch (need
 | `is already approved`                                            | Leave it, or pass `--force` if the fix is worth a new review                  |
 | `wait for the gates to re-run, or pass --allow-stale`            | Wait for the content gates on the current head, then run fix-up again         |
 | `research.budget.backfillTotalUsd is $0.00`                      | Back-fill only estimates; the owner sets a ceiling in a config PR first       |
+| `the back-fill ceiling is used up`                               | The ledger holds the whole ceiling; the owner raises it in a config PR        |
+| `another back-fill holds …backfill-ledger.jsonl.lock`            | Wait for the other batch, or delete the lock if no back-fill is running       |
+| `backfill-ledger.jsonl line N is not a ledger entry`             | Fix that line (see [The spend ledger](#the-spend-ledger)); never delete it    |
 | `--to-year … has no calendar`                                    | Pick years that have a `calendar/<year>.json`                                 |
 | `--provider fake: dry run` and every passage `abandoned`         | Expected: fake output carries fake provenance, which gate 1 rejects           |
 

@@ -1,6 +1,9 @@
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
 import type { ContentRepo } from '@lectio/content';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { e2eWorld } from '../cli/fixtures/e2e.ts';
@@ -10,7 +13,15 @@ import type { CliContext } from '../cli/main.ts';
 import type { ComposeOptions, Toolkit } from '../cli/providers.ts';
 import type { RunReport, SummaryRow } from '../cli/run.ts';
 import { REGISTERED_SUBCOMMANDS } from '../cli/registry.ts';
-import { BACKFILL_USAGE, backfillSubcommand, formatBatchSummary } from './index.ts';
+import { ProviderSetupError } from '../cli/providers.ts';
+import {
+  BACKFILL_USAGE,
+  LEDGER_PATH,
+  backfillSubcommand,
+  formatBatchSummary,
+  ledgerTotals,
+  readLedger,
+} from './index.ts';
 import { estimateBackfill } from './estimate.ts';
 import { REPO } from './fixtures/calendars.ts';
 
@@ -110,14 +121,23 @@ describe('research backfill', () => {
     expect(composed).toMatchObject([{ mode: 'live', ceilingUsd: 3, llm: true }]);
     const text = ran.out.join('\n');
     expect(text).toContain(
-      'Back-fill ceiling: $3.00 (research.budget.backfillTotalUsd): covers every remaining passage.',
+      'Back-fill ceiling: $3.00 (research.budget.backfillTotalUsd): $0.00 spent so far, $3.00 left; ' +
+        'covers every remaining passage.',
     );
     expect(text).toContain(
-      'Batch ceiling: $3.00, for this batch only (the run budget, at most research.budget.backfillTotalUsd). ' +
-        'Earlier batches are not counted: back-fill does not record its spend.',
+      'Batch ceiling: $3.00 (the run budget, at most what is left of research.budget.backfillTotalUsd). ' +
+        `Reserved in ${LEDGER_PATH} until the batch ends.`,
     );
     expect(text).toContain('Research plan 2026-10-05 to 2028-12-31 (819 days)');
-    expect(ran.out.at(-1)).toBe('Back-fill: 1 passage(s) ready in this batch; 0 left, estimated $0.00.');
+    expect(ran.out.at(-2)).toBe('Back-fill: 1 passage(s) ready in this batch; 0 left, estimated $0.00.');
+    const entries = readLedger(join(context.repoRoot, LEDGER_PATH));
+    expect(entries).toMatchObject([{ reservedUsd: 3 }, { spentUsd: expect.any(Number) as number }]);
+    const { spentUsd } = ledgerTotals(entries);
+    expect(spentUsd).toBeGreaterThan(0);
+    expect(ran.out.at(-1)).toBe(
+      `Back-fill spend: $${spentUsd.toFixed(2)} in this batch; $${spentUsd.toFixed(2)} of $3.00 spent in total, ` +
+        `$${(3 - spentUsd).toFixed(2)} left (${LEDGER_PATH}; commit it so other clones count it).`,
+    );
     expect(await world.github.listPrs({ state: 'all' })).toHaveLength(1);
   });
 
@@ -127,9 +147,11 @@ describe('research backfill', () => {
     expect(await main(['backfill', '--execute', '--budget', '5', '--dry-run'], context, ran.io)).toBe(0);
     expect(composed).toMatchObject([{ ceilingUsd: 5 }]);
     expect(ran.out).toContain('Dry run: nothing is published.');
-    expect(ran.out.at(-1)).toBe(
+    expect(ran.out.at(-2)).toBe(
       'Back-fill: 1 passage(s) ready in this batch; 0 would be left (dry run: nothing was published), estimated $0.00.',
     );
+    // A live dry run still calls the model, so it is recorded.
+    expect(readLedger(join(context.repoRoot, LEDGER_PATH))).toHaveLength(2);
     expect(await world.github.listPrs({ state: 'all' })).toHaveLength(0);
 
     const fake = capture();
@@ -137,6 +159,11 @@ describe('research backfill', () => {
     expect(composed.at(-1)).toMatchObject({ mode: 'fake', ceilingUsd: 25 });
     expect(fake.out).toContain('--provider fake: dry run, nothing is published.');
     expect(fake.out.join('\n')).toContain('$2.00 per passage, measured average');
+    expect(fake.out.join('\n')).toContain(
+      `--provider fake spends nothing real: this batch is not recorded in ${LEDGER_PATH}.`,
+    );
+    expect(fake.out.at(-1)).toMatch(/^Back-fill: /u);
+    expect(readLedger(join(context.repoRoot, LEDGER_PATH))).toHaveLength(2);
   });
 
   it('exits 1 when a passage of the batch needs attention', async () => {
@@ -145,7 +172,7 @@ describe('research backfill', () => {
     const ran = capture();
     expect(await main(['backfill', '--execute', '--budget', '5'], context, ran.io)).toBe(1);
     expect(ran.out.join('\n')).toContain('1 passage(s) need attention');
-    expect(ran.out.at(-1)).toBe('Back-fill: 0 passage(s) ready in this batch; 1 left, estimated $0.05.');
+    expect(ran.out.at(-2)).toBe('Back-fill: 0 passage(s) ready in this batch; 1 left, estimated $0.05.');
   });
 
   it('says when nothing is left to back-fill', async () => {
@@ -185,10 +212,107 @@ describe('research backfill', () => {
     expect(text).toContain('To research (0, estimated $0.00)');
     expect(text).not.toContain('passage file exists');
     expect(text).toContain(`Skipped MT.20.1-16: a person closed PR #${String(pr.number)}`);
-    expect(ran.out.at(-1)).toBe(
+    expect(ran.out.at(-2)).toBe(
       'Back-fill: 0 passage(s) ready in this batch; 1 skipped (a person closed their PR); 0 left, estimated $0.00.',
     );
     expect(world.calls).toHaveLength(0);
+  });
+
+  it('never spends more than backfillTotalUsd over repeated batches, then refuses', async () => {
+    const { context, composed } = setUp({ backfillTotalUsd: 4 });
+    const ledger = join(context.repoRoot, LEDGER_PATH);
+    const compose = context.compose as (options: ComposeOptions) => Promise<Toolkit>;
+    // Every batch spends all it may: the worst case for the cumulative ceiling.
+    const greedy: CliContext = {
+      ...context,
+      compose: async (options) => {
+        const kit = await compose(options);
+        Object.defineProperty(kit.meter, 'spentUsd', { value: () => options.ceilingUsd });
+        return kit;
+      },
+    };
+    const codes: number[] = [];
+    let refusal: string[] = [];
+    for (let batch = 0; batch < 10 && codes.at(-1) !== 1; batch++) {
+      const ran = capture();
+      // A dry run publishes nothing, so every batch researches the same key again.
+      codes.push(await main(['backfill', '--execute', '--budget', '1.5', '--dry-run'], greedy, ran.io));
+      refusal = ran.err;
+    }
+    expect(codes).toEqual([0, 0, 0, 1]);
+    expect(refusal).toEqual([
+      'research backfill: the back-fill ceiling is used up ($4.00 of $4.00 research.budget.backfillTotalUsd in ' +
+        `${ledger}); nothing was generated. The owner raises the ceiling in config/lectio.config.json to back-fill more.`,
+    ]);
+    expect(composed.map((options) => options.ceilingUsd)).toEqual([1.5, 1.5, 1]);
+    expect(ledgerTotals(readLedger(ledger))).toEqual({ spentUsd: 4, openRuns: 0 });
+
+    const estimate = capture();
+    expect(await main(['backfill'], context, estimate.io)).toBe(0);
+    expect(estimate.out.join('\n')).toContain('$4.00 spent so far, $0.00 left; used up, nothing more is generated.');
+  });
+
+  it('records what a batch really spent, which leaves the rest for later batches', async () => {
+    const { context } = setUp({ backfillTotalUsd: 4 });
+    const ran = capture();
+    expect(await main(['backfill', '--execute', '--budget', '2', '--dry-run'], context, ran.io)).toBe(0);
+    const { spentUsd } = ledgerTotals(readLedger(join(context.repoRoot, LEDGER_PATH)));
+    expect(spentUsd).toBeGreaterThan(0);
+    expect(spentUsd).toBeLessThan(2);
+  });
+
+  it('caps the batch at what is left of the ceiling and shows it in the estimate', async () => {
+    const { context, composed } = setUp({ backfillTotalUsd: 10 });
+    const ledger = join(context.repoRoot, LEDGER_PATH);
+    mkdirSync(join(context.repoRoot, 'research'), { recursive: true });
+    writeFileSync(
+      ledger,
+      '{"run":"a","at":"2026-10-01T00:00:00Z","reservedUsd":9}\n' +
+        '{"run":"a","at":"2026-10-01T01:00:00Z","spentUsd":8.5}\n',
+    );
+    const ran = capture();
+    await main(['backfill', '--execute', '--budget', '5', '--dry-run'], context, ran.io);
+    expect(ran.out.join('\n')).toContain(
+      'Back-fill ceiling: $10.00 (research.budget.backfillTotalUsd): $8.50 spent so far, $1.50 left; ' +
+        'covers every remaining passage.',
+    );
+    expect(composed).toMatchObject([{ ceilingUsd: 1.5 }]);
+    expect(readLedger(ledger)[2]).toMatchObject({ reservedUsd: 1.5 });
+  });
+
+  it('refuses a fake batch once the ceiling is used up, without recording it', async () => {
+    const { context, composed } = setUp({ backfillTotalUsd: 2 });
+    const ledger = join(context.repoRoot, LEDGER_PATH);
+    mkdirSync(join(context.repoRoot, 'research'), { recursive: true });
+    writeFileSync(ledger, '{"run":"a","at":"2026-10-01T00:00:00Z","reservedUsd":2}\n');
+    const ran = capture();
+    expect(await main(['backfill', '--execute', '--provider', 'fake'], context, ran.io)).toBe(1);
+    expect(ran.out.join('\n')).toContain('$2.00 spent so far, $0.00 left; used up, nothing more is generated.');
+    expect(ran.err).toEqual([
+      'research backfill: the back-fill ceiling is used up ($2.00 of $2.00 research.budget.backfillTotalUsd in ' +
+        `${LEDGER_PATH}); nothing was generated.`,
+    ]);
+    expect(composed).toEqual([]);
+    expect(readLedger(ledger)).toHaveLength(1);
+  });
+
+  it('settles $0 when the providers cannot be built, and refuses a broken ledger', async () => {
+    const { context } = setUp({ backfillTotalUsd: 10 });
+    const ledger = join(context.repoRoot, LEDGER_PATH);
+    const failing: CliContext = {
+      ...context,
+      compose: () => Promise.reject(new ProviderSetupError('ANTHROPIC_API_KEY is not set')),
+    };
+    const ran = capture();
+    expect(await main(['backfill', '--execute', '--budget', '5'], failing, ran.io)).toBe(1);
+    expect(ran.err).toEqual(['ANTHROPIC_API_KEY is not set']);
+    expect(ran.out.at(-1)).toContain('Back-fill spend: $0.00 in this batch; $0.00 of $10.00 spent in total');
+    expect(ledgerTotals(readLedger(ledger))).toEqual({ spentUsd: 0, openRuns: 0 });
+
+    writeFileSync(ledger, 'not json\n');
+    const broken = capture();
+    expect(await main(['backfill'], context, broken.io)).toBe(1);
+    expect(broken.err[0]).toContain('line 1 is not a ledger entry');
   });
 
   it('opens the repository, corpus, clock and providers itself when the context has none', async () => {

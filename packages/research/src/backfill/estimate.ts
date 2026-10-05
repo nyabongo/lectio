@@ -46,7 +46,11 @@ export interface BackfillEstimate {
   readonly estimatedUsd: number;
   /** `research.budget.backfillTotalUsd`; 0 means back-fill only ever prints this estimate. */
   readonly ceilingUsd: number;
-  /** Passages the ceiling pays for at the average; `null` when the average is 0 (no limit). */
+  /** What earlier batches spent or hold reserved, from the back-fill ledger (./ledger.ts). */
+  readonly spentUsd: number;
+  /** `ceilingUsd − spentUsd`, never below 0: what later batches may still spend. */
+  readonly leftUsd: number;
+  /** Passages what is left of the ceiling pays for at the average; `null` when the average is 0 (no limit). */
   readonly ceilingCovers: number | null;
   /**
    * The most passages one batch can take: the tightest of `reviewer.maxOpenReviewPrs`,
@@ -67,6 +71,8 @@ export interface EstimateInput {
   readonly config: Pick<LectioConfig, 'reviewer' | 'research'>;
   /** A measured per-passage average; default `research.budget.perPassageUsd`. */
   readonly perPassageUsd?: number;
+  /** What the back-fill ledger says earlier batches spent; default 0. */
+  readonly spentUsd?: number;
 }
 
 const roundCents = (usd: number): number => Math.round(usd * 100) / 100;
@@ -122,6 +128,8 @@ export function estimateBackfill(input: EstimateInput): BackfillEstimate {
   const perPassageUsd = input.perPassageUsd ?? config.research.budget.perPassageUsd;
   const { backfillTotalUsd, perRunUsd } = config.research.budget;
   const { maxOpenReviewPrs, weeklyCapacity } = config.reviewer;
+  const spentUsd = input.spentUsd ?? 0;
+  const leftUsd = roundCents(Math.max(0, backfillTotalUsd - spentUsd));
   const runCovers = fits(perRunUsd, perPassageUsd);
   const batchSize = Math.min(maxOpenReviewPrs, weeklyCapacity, runCovers ?? Number.POSITIVE_INFINITY);
   const per = (size: number): number | null => (size === 0 ? null : Math.ceil(remaining.length / size));
@@ -140,7 +148,9 @@ export function estimateBackfill(input: EstimateInput): BackfillEstimate {
     perPassageSource: input.perPassageUsd === undefined ? 'config' : 'measured',
     estimatedUsd: roundCents(remaining.length * perPassageUsd),
     ceilingUsd: backfillTotalUsd,
-    ceilingCovers: fits(backfillTotalUsd, perPassageUsd),
+    spentUsd,
+    leftUsd,
+    ceilingCovers: fits(leftUsd, perPassageUsd),
     batchSize,
     batches: per(batchSize),
     weeks: per(weeklyCapacity),
