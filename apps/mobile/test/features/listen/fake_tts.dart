@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -24,6 +26,9 @@ class FakeTts extends Fake implements FlutterTts {
 
   /// What [speak] answers: `1` when queued, `0` when not.
   Object? speakResult = 1;
+
+  /// Languages whose [setLanguage] waits for their completer.
+  final Map<String, Completer<void>> held = {};
 
   @override
   Future<dynamic> isLanguageAvailable(String language) async {
@@ -63,6 +68,7 @@ class FakeTts extends Fake implements FlutterTts {
   @override
   Future<dynamic> setLanguage(String language) async {
     calls.add('language $language');
+    await held[language]?.future;
     if (missingLanguages.contains(language)) {
       throw PlatformException(code: 'language');
     }
