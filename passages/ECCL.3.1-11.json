@@ -110,7 +110,7 @@
     },
     {
       "id": "c8",
-      "text": "Plumptre, in the Cambridge Bible, reads the opening of the section as teaching that it is wisdom to do the right thing at the right time.",
+      "text": "Plumptre, in the Cambridge Bible, takes the opening thought of the section to be that wisdom lies in acting rightly at the proper moment.",
       "sourceIds": ["cambridge-eccl-3-1-wisdom", "pulpit-eccl-3-1-plumptre"],
       "sensitive": false
     },
@@ -285,7 +285,7 @@
       "type": "web",
       "citation": "The Pulpit Commentary (1880-1897), on Ecclesiastes 1:1 (Bible Hub)",
       "url": "https://biblehub.com/commentaries/ecclesiastes/1-1.htm",
-      "excerpt": "a feminine noun formed from a verb kalal , \"to call\"",
+      "excerpt": "a feminine noun formed from a verb kalal, \"to call\"",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:12:00Z"
     },
@@ -483,7 +483,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. יִתְרוֹן (Bible Hub, Strong's 3504)",
       "url": "https://biblehub.com/hebrew/3504.htm",
-      "excerpt": "advantage, profit",
+      "excerpt": "noun [masculine] advantage, profit",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:12:00Z"
     },
@@ -492,7 +492,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. יִתְרוֹן (Bible Hub, Strong's 3504)",
       "url": "https://biblehub.com/hebrew/3504.htm",
-      "excerpt": "only Ecclesiastes",
+      "excerpt": "advantage, profit, only Ecclesiastes",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:12:00Z"
     },
@@ -519,7 +519,7 @@
       "type": "web",
       "citation": "Brown, Driver and Briggs, A Hebrew and English Lexicon of the Old Testament (1906), s.v. עִנְיָן (Bible Hub, Strong's 6045)",
       "url": "https://biblehub.com/hebrew/6045.htm",
-      "excerpt": "only Ecclesiastes",
+      "excerpt": "occupation, task, only Ecclesiastes",
       "excerptLang": "en",
       "retrievedAt": "2026-10-05T09:12:00Z"
     },

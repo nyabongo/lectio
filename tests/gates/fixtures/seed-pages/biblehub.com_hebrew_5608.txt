@@ -1,0 +1,39 @@
+Brown-Driver-Briggs
+סָפַר107 verb count,
+
+Pi`el recount, relate (probably ancient denominative from סֵפֶר; Late Hebrew = Biblical Hebrew; Ethiopic measure Di404); —
+
+Qal27 Perfect3masculine singular ׳ס 2 Samuel 24:10, 2masculine singular סָפַרְתָּה Psalm 56:9, וְסָפַרְתָּ֫ Leviticus 25:8, etc.; Imperfect יִסְמֹּר Psalm 87:6 + Job 38:37 where read probably יִסְמֹּר (Bu) for ᵑ0 יְסַמֵּר, יִסְמּוֺר Job 31:4, וַיִּסְמֹּר2Chron 2:1; 2 Chronicles 2:16, suffix וַיִּסְמְּרֵם Ezra 1:8; 2masculine singular תִּסְמֹּר Job 39:2, תִּסְמּוֺר Job 14:16, תִּסְמָּרֿ Deuteronomy 16:9, etc.; Imperative masculine singular סְפֹר Genesis 15:5; masculine plural סִפְרוּ 1 Chronicles 21:2; Psalm 48:13; Infinitive construct לִסְמֹּר Genesis 15:5 2t.; Participle סֹפֵר Isaiah 33:18 (twice in verse) (see also סֹפֵר n. below); —
+
+1 count things, to learn their number, with accusative, Genesis 15:5 (twice in verse) (J) 2 Samuel 24:10 10t. (+ accusative of congnate meaning with verb 2Chron 2:16); accusative omitted Genesis 41:49 (E); + ל (dativus commodi [dative of benefit] or ethicus [of interest]), Leviticus 15:13,28; Leviticus 23:15; Leviticus 25:8 (all PH), Deuteronomy 16:9; Ezekiel 44:26; Ezra 1:8; Psalm 87:6; Isaiah 33:8 (absolute), Isaiah 33:18 (but text suspicious, conjectures in Du CheHpt).
+
+2 number = take account of, carefully observe and consider, reckon: צְעָדַי תִּסְמּוֺר Job 14:16 of my steps thou takest account, so Job 31:4; see also Job 38:37 (compare above); נֹדִי סָפַרַתַּה Psalm 56:9 my wandering hast thou reckoned, taken into account (Che reads סִמַּרְתִּי after ᵐ5).
+
+Niph`al Imperfect3masculine singular יִסָּפֵר Hosea 2:1 4t.; 3 masculine plural יִסָּֽפְרוּ 1 Kings 8:5; 2Chronicles 5:6, וַיִּסָּֽפְרוּ 1 Chronicles 23:3; — be counted, numbered usually with negative, to indicate multitude, מֵרֹב ׳לֹא יִסּ Genesis 16:10 (J) it is not to be counted, for multitude, so Genesis 32:13 (J), 1 Kings 3:8 ("" יִמָּנֶה לֹא), 1 Kings 8:5 (+ id.), 2 Chronicles 5:6 (+ id.); compare Hosea 2:1 (+ יִמַּד לֹאֿ), Jeremiah 33:22 ("" לֹא יִמַּד); positively, only וַיִּסָּֽפְרוּ הַלְּוִיִּם 1 Chronicles 23:3.
+
+Pi`el67 Perfect1singular סִמַּ֫רְתִּי Psalm 119:26, סִמַּ֑רְתִּי Psalm 119:13; 3plural סִמְּרוּ Judges 6:13 3t.; Imperfect3masculine singular יְסַמֵּר Job 38:37 +, 1 singular אֲסַמֵּר Psalm 22:18 +; cohortative אֲסַמֵּ֑רָה Job 15:7; 1plural וַנְּסַמֶּרֿ Exodus 10:2, etc.; Imperative סַמֵּר Isaiah 43:26, etc.; Infinitive construct (לְ) סַמֵּר Psalm 50:16 5t.; Participle מְסַמֵּר Judges 7:13; 2 Kings 8:5; plural מְסַמְּרִים Psalm 19:2; Psalm 78:4; — recount, rehearse, declare:
+
+1 recount something (accusative) to (לְ person) Judges 6:13; Judges 7:13; Genesis 24:66 (J), 1 Samuel 11:5 18t. (of rehearsing glorious deeds of ׳י Psalm 44:2; Psalm 73:28; Psalm 78:3; Psalm 78:4; Psalm 79:13); with accusative + בְּ local Ezekiel 12:16, elsewhere of rehearsing name or praise of ׳י Exodus 9:16 (J) Psalm 9:15; Psalm 96:3 = 1 Chronicles 16:24; Psalm 102:22; Jeremiah 51:10; with accusative alone Psalm 9:2; Psalm 19:2; Psalm 119:13 (+ בְּ instrumental), Psalm 145:6 8t. Psalms + Isaiah 43:21, all of rehearsing praise of ׳י; compare עָֽצְמוּ מִסַּמֵּר Psalm 40:6 they are too great to rehearse with accusative also Jeremiah 23:28,32; Job 15:17; Job 28:27; Psalm 119:26; accusative omitted Isaiah 43:26, with לְ person Genesis 40:8 (E) + 6 t., with אֶלֿ person Genesis 37:10 (E), with בְּאָזְנֵי Exodus 10:2; with כְּמוֺ (q. v.) Psalm 73:15; with אֶלֿ concerning Psalm 2:7, compare Psalm 69:27 ( ᵐ5 ᵑ6 Ew Ol Gr Bi Che Bae add; in that case read יֹסִ֑פוּ); with עַלֿ concerning + לְ person Joel 1:3.
+
+2 apparently, in weakened sense, talk Psalm 59:13; Psalm 64:6 (with ל concerning), Psalm 73:15 (with כְּמוֺ).
+
+3 count exactly, accurately אֲסַמֵּר כָּלעַֿצְמוֺתָ֑י Psalm 22:18 I can count exactly all my bones (in wasted body). — Psalm 40:6 see below
+
+1, Job 38:37 read יִסְמֹּר.
+
+Pu`al be recounted, related, rehearsed: Perfect3masculine singular סֻמַּר לְ Isaiah 52:15; Imperfect3masculine singular יְסֻמַּר לְ Job 37:20 (clause as subject), + לְ concerning Psalm 22:31; with בְּ local Psalm 88:12; absolute יְסֻמָּ֑ר Habakkuk 1:5.
+
+סֹפֵר, סוֺפֵר noun masculinePsalm 45:2 enumerator, muster-officer, secretary, scribe (properly participle of סָפַר; Aramaic סַפְרָא, id. compare doctus, literatus; O Aramaic ספרא id., Lzb330 Cook85; Phoenician ספר Lzb330); — absolute סֹפֵר Judges 5:14 +, סוֺפֵר 2 Samuel 8:17 +; construct סֹפֵר 2 Kings 12:11 2t., + Jeremiah 52:25 (Gie GFM read ׳הַסּ as "" 2 Kings 25:19); plural סֹפְרִים 1 Kings 4:3; Jeremiah 8:8, ׳סוֺ 1 Chronicles 2:55; 1Chron 34:13; construct סֹפְרֵי Esther 3:12; Esther 8:9; —
+
+1. a. enumerator, muster-officer in description of leaders of Israel ׳משְׁכִים בְּשֵׁבֶט ס Judges 5:14.
+
+b. king's official = secretary 2 Samuel 8:17 = 2 Samuel 20:25 = 1 Chronicles 18:16; 2 Kings 18:18,37 = Isaiah 36:3,22; Solomon had two 1 Kings 4:3 (in all these distinguished from מַזְכִּיר); also 2 Kings 19:2 = Isaiah 37:2; Jeremiah 36:10,12, compare ׳לִשְׁכַּת הַסּ Jeremiah 36:12; Jeremiah 36:20; Jeremiah 36:21, ׳בֵּית הַסּ Jeremiah 37:15,20; acting as treasurer and paymaster 2 Kings 12:11 2Chronicles 24:11, — compare Zadok Nehemiah 13:13; — 2 Kings 22:3,8,9,10,12 2Chron 34:15; 34:18; 34:20; 1 Chronicles 24:6 (Levite); שַׂר הַצָּבָא ׳הַסּ 2 Kings 25:19 = Jeremiah 52:25 (si vera lectio in Kings) implies military authority (but ׳שַׂר הַצּ perhaps gloss GFMJudges 5:14); Ew Sta and others read (as Jeremiah) scribe of General.
+
+c. in Persia, secretaries who wrote out (king's) decrees, according to Esther 3:12; Esther 8:9.
+
+d.2Chronicles 26:11 uses ׳ס for muster-officer; 1 Chronicles 2:55 mentions families of סוֺפְרִים; 2 Chronicles 34:13 knows ׳ס as Levites; ׳ס 1 Chronicles 27:32 = man of learning.
+
+2 professional class of learned men, 'scribes' able to read and write Jeremiah 36:26,32; with writing implements, ׳מָהִיר עֵט ס Psalm 45:2, ׳קֶסֶת הַסּ Ezekiel 9:2,3, ׳תַּעַר הַסּ Jeremiah 36:23; especially learned in the law, and assuming to issue its precepts, עֵט שֶׁקֶר סֹפְרִים Jeremiah 8:8.
+
+3 specifically of Ezra, at once priest (כֹּהֵן) and learned in the law (סֹפֵר), Ezra 7:11, ׳בְרֵי מִצְוֺת י Di ׳ס Ezra 7:11 [compare Aramaic Ezra 7:12; Ezra 7:21], מָהִיר בְּתוֺרֵת משֶׁה ׳ס Ezra 7:6; Nehemiah 8:1,4,9,13; Nehemiah 12:26,36.
+

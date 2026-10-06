@@ -1,0 +1,43 @@
+{
+  "year": 2026,
+  "region": "kenya",
+  "generatedBy": "fixture",
+  "days": [
+    {
+      "date": "2025-09-20",
+      "season": "ordinary-time",
+      "seasonWeek": 25,
+      "sundayCycle": "A",
+      "weekdayCycle": "II",
+      "celebrations": [
+        {
+          "id": "ot-25",
+          "name": "25th Sunday in Ordinary Time",
+          "rank": "sunday",
+          "colour": "green"
+        }
+      ],
+      "masses": [
+        {
+          "id": "day",
+          "label": "Mass of the day",
+          "readings": [
+            {
+              "slot": "first-reading",
+              "ref": "Is 55:6-9",
+              "key": "IS.55.6-9",
+              "linkout": "https://www.drbo.org/chapter/49055.htm"
+            },
+            {
+              "slot": "gospel",
+              "ref": "Mt 20:1-16a",
+              "key": "MT.20.1-16",
+              "linkout": "https://www.drbo.org/chapter/47020.htm"
+            }
+          ]
+        }
+      ],
+      "lectionaryMissing": false
+    }
+  ]
+}

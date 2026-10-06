@@ -1,0 +1,13 @@
+Thayer's Greek Lexicon
+STRONGS NT 1163: δεῖ
+δεῖ; subjunctive present δέῃ; imperfect ἔδει; an impersonal verb (cf. Buttmann, § 132, 12; cf. § 131, 3; from Homer down); (δέω, namely, τίνος, to have need of, be in want of; cf. German esbedarf), it is necessary, there is need of, it behooves, is right and proper; followed either by the infinitive alone (cf. our one ought), or by the accusative with an infinitive (cf. Buttmann, 147 (129)), it denotes any sort of necessity; as a. necessity lying in the nature of the case: John 3:30; 2 Timothy 2:6.
+
+b. necessity brought on by circumstances or by the conduct of others toward us: Matthew 26:35 (κἄν δέῃ με ἀποθανεῖν), cf. Mark 14:31; John 4:4; Acts 27:21; 2 Corinthians 11:30; (2 Corinthians 12:1 L T Tr WH text); or imposed by a condition of mind: Luke 2:49; Luke 19:5.
+
+c. necessity in reference to what is required to attain some end: Luke 12:12; John 3:7; Acts 9:6; Acts 16:30; 1 Corinthians 11:19; Hebrews 9:26 (on this cf. Winers Grammar, 283 (266); (also Buttmann, 216 (187); 225 (195))); Hebrews 11:6.
+
+d. a necessity of law and command, of duty, equity: Matthew 18:33; Matthew 23:23; Luke 11:42; Luke 13:14; Luke 15:32; Luke 18:1; Luke 22:7; John 4:20; Acts 5:29; Acts 15:5; Romans 1:27 (ἀντιμισθίαν, ἥν ἔδει, namely, ἀπολαμβάνεσθαι, the recompense due by the law of God); Romans 8:26; Romans 12:3; 1 Corinthians 8:2, etc. or of office: Luke 4:43; Luke 13:33; John 9:4; John 10:16; Ephesians 6:20; Colossians 4:4; 2 Timothy 2:24.
+
+e. necessity established by the counsel and decree of God, especially by that purpose of his which relates to the salvation of men by the intervention of Christ and which is disclosed in the O. T. prophecies: Matthew 17:10; Matthew 24:6; Mark 9:11; Acts 4:12; 1 Corinthians 15:53; in this use, especially of what Christ was destined finally to undergo, his sufferings, death, resurrection, ascension: Luke 24:46 (R G L brackets); Matthew 26:54; John 3:14; Acts 3:21, etc. (of the necessity of fate in Herodotus 5, 33; with the addition κατά τό θεοπρόπιον, 8, 53; Thucydides 5, 26.) [SYNONYMS: δεῖ, χρή: δεῖ seems to be more suggestive of moral obligation, denoting especially that constraint which arises from divine appointment; whereas χρή signifies rather the necessity resulting from time and circumstance. Schmidt, chapter 150.]
+
+STRONGS NT 1163: δέονδέον, δεοντος, τό (participle of δεῖ, which see), from (Sophocles and) Herodotus down, that of which there is need, which is requisite, due, proper: δέον ἐστι there is need, 1 Peter 1:6 (T Tr text WH omit; Tr marginal reading brackets ἐστι); followed by the accusative with an infinitive Acts 19:36; τά μή δέοντα that are not proper, 1 Timothy 5:13.
