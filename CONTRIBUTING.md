@@ -101,8 +101,12 @@ The app's UI strings are generated from the site's catalogs (`apps/web/src/i18n/
 (`apps/mobile/lib/l10n/catalog/`). After changing either, run `npm run l10n:sync` (no Dart needed) and commit the
 rewritten `apps/mobile/lib/l10n/app_*.arb` and `catalog.g.dart`; `npm run verify` fails until you do
 (`apps/web/src/lib/mobile-l10n.test.ts`), and so does the `flutter` job's Dart check. `npm run l10n:sync -- --check`
-only reports. The Node script is a byte-for-byte port of `apps/mobile/tool/sync_l10n.dart`: change the two together,
-and regenerate `apps/mobile/test/fixtures/l10n/expected/` with the Dart tool when the output format changes.
+only reports. The Node script is a byte-for-byte port of `apps/mobile/tool/sync_l10n.dart`: change the two together.
+When the output format changes, regenerate the edge-case fixture's expected files with the Dart tool, which the Node
+port's tests compare it with: in `apps/mobile`, `dart run tool/sync_l10n.dart --fixture` rewrites
+`test/fixtures/l10n/expected/` from the catalogs under `test/fixtures/l10n/src/` (`--fixture --check` only reports).
+Without a local Dart SDK, edit the expected files by hand on a draft PR: the `flutter` job's Dart test
+(`test/tool/sync_l10n_test.dart`) fails until they match what the tool writes.
 
 ## Commits by AI agents
 
