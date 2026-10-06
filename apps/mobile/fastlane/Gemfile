@@ -1,0 +1,13 @@
+# Fastlane for the store uploads (L-109). Run from apps/mobile with
+# BUNDLE_GEMFILE=fastlane/Gemfile; mobile-release.yml sets it.
+# fastlane is pinned exactly; Gemfile.lock pins everything else (the workflow
+# installs in frozen mode once the lock is committed).
+source "https://rubygems.org"
+
+ruby ">= 3.1"
+
+gem "fastlane", "2.240.1"
+# The version ios/Podfile.lock was written with. setup-ruby replaces the
+# runner's Ruby, and with it the preinstalled CocoaPods, so `flutter build ipa`
+# (run inside `bundle exec fastlane`) uses this one.
+gem "cocoapods", "1.17.0"
