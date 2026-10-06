@@ -17,6 +17,7 @@
  * Reading text is never involved: translations hold commentary only.
  */
 import { join } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 
 import { TRANSLATIONS_DIR, checkTranslatedPassage, nodeFs, parseJson } from '@lectio/content';
 import type { ContentFs, ContentRepo, ResolvedDay } from '@lectio/content';
@@ -56,7 +57,9 @@ export function translationStatus(
  */
 export function overlayTranslation(english: Passage, translation: TranslatedPassage): Passage {
   const overlaid = overlay(english, translation);
-  overlays.set(overlaid, { english, translation });
+  const source = { english, translation };
+  overlays.set(overlaid, source);
+  latestOverlays.set(overlayKey(overlaid), { passage: overlaid, source });
   return overlaid;
 }
 
@@ -66,14 +69,31 @@ export interface TranslationOverlay {
   readonly translation: TranslatedPassage;
 }
 
+/** The source of each passage `overlayTranslation` returned, by identity (the fast path). */
 const overlays = new WeakMap<Passage, TranslationOverlay>();
 
 /**
- * The English passage and translation behind `passage` when `overlayTranslation` made it, else `undefined`. The
- * narration (`./audio.ts`) needs both to speak a translation exactly as the render pipeline and the web player do.
+ * The latest overlay of each passage key in each locale, so that a copy of an overlaid passage (a spread, a
+ * `structuredClone`) still finds its source: by key, then checked field by field against the copy. One entry per
+ * key and locale, replaced by the next overlay.
+ */
+const latestOverlays = new Map<string, { readonly passage: Passage; readonly source: TranslationOverlay }>();
+
+const overlayKey = (passage: Pick<Passage, 'locale' | 'key'>): string => `${passage.locale}/${passage.key}`;
+
+/**
+ * The English passage and translation behind `passage` when `overlayTranslation` made it (or it is an unchanged
+ * copy of one it made), else `undefined`. The narration (`./audio.ts`) needs both to speak a translation exactly as
+ * the render pipeline and the web player do. A copy is matched by its key and locale and must equal the overlay in
+ * every field, so a passage that merely shares the key (the English one, or one that was edited) is not taken for it.
  */
 export function overlaySource(passage: Passage): TranslationOverlay | undefined {
-  return overlays.get(passage);
+  const found = overlays.get(passage);
+  if (found !== undefined) return found;
+  const latest = latestOverlays.get(overlayKey(passage));
+  if (latest === undefined || !isDeepStrictEqual(latest.passage, passage)) return undefined;
+  overlays.set(passage, latest.source);
+  return latest.source;
 }
 
 function overlay(english: Passage, translation: TranslatedPassage): Passage {

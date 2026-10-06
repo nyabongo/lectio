@@ -248,6 +248,19 @@ describe('massSegments and passageAudio for translated notes', () => {
     expect([...passageAudio(audio, shown).values()].every((found) => found !== null)).toBe(true);
   });
 
+  it('narrates a copy of a translated passage as the passage itself (#265)', () => {
+    const shown = swMass().readings.find((reading) => reading.passage?.key === APPROVED)?.passage as Passage;
+    const audio = fixtureAudio();
+    const ids = [...passageAudio(audio, shown).keys()];
+    expect(ids.length).toBeGreaterThan(0);
+    expect([...passageAudio(audio, { ...shown }).keys()]).toEqual(ids);
+    expect([...passageAudio(audio, structuredClone(shown)).keys()]).toEqual(ids);
+    const copied = {
+      readings: swMass().readings.map((reading) => ({ ...reading, passage: structuredClone(reading.passage) })),
+    };
+    expect(massSegments(null, copied)).toEqual(massSegments(null, swMass()));
+  });
+
   it('has nothing for a translation into a language without narration', () => {
     const overlaid = overlayTranslation(approvedPassage(), { ...translation(), locale: 'xx' });
     expect(passageAudio(fixtureAudio(), overlaid).size).toBe(0);

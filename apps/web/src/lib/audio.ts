@@ -82,9 +82,9 @@ export function apiAudio(audio: SiteAudio | null, segment: Pick<NarrationSegment
 /**
  * The narration segments of one passage, in order (context, then each translation note), or none when it is not
  * approved or its locale has no narration. A translated passage (the `sw/` mirror's Kiswahili notes, made by
- * `overlayTranslation` in notes-locale.ts) is narrated from its English passage and translation with
- * `translationSegments`, as the render pipeline and the web player narrate it, so its script and audio file are
- * theirs. The slot only labels the queue.
+ * `overlayTranslation` in notes-locale.ts, or a copy of one; see `overlaySource`) is narrated from its English
+ * passage and translation with `translationSegments`, as the render pipeline and the web player narrate it, so its
+ * script and audio file are theirs. The slot only labels the queue.
  */
 function passageSegments(passage: Passage, slot: ReadingSlot): NarrationSegment[] {
   const source = overlaySource(passage);
