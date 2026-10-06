@@ -92,7 +92,7 @@ class LectioSigningTest < Minitest::Test
       end
       assert_equal :built, result
       refute File.exist?(seen)
-      assert_equal previous, ENV.fetch("GRADLE_USER_HOME", nil)
+      assert previous == ENV.fetch("GRADLE_USER_HOME", nil), "GRADLE_USER_HOME is restored"
     end
   end
 
