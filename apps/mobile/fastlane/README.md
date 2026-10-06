@@ -60,11 +60,15 @@ again with the keychain).
 
 The Android key is the **upload key** (Play App Signing holds the app-signing key). It reaches Gradle as the
 `android.injected.signing.*` properties, so `android/app/build.gradle.kts` keeps its debug fallback for local
-`flutter run --release`. The `android build` lane sets them as `ORG_GRADLE_PROJECT_android.injected.signing.*`
-environment variables of the `flutter build` command only, from `ANDROID_UPLOAD_KEYSTORE_FILE` (the decoded
-keystore's path, set by the workflow) and the three `ANDROID_UPLOAD_KEY*` secrets of the same names. Nothing is
-written to a `gradle.properties` file, so a password passes exactly as it is, leading space or backslash included.
-The Gradle daemon is off for that build, and the bundle's signer must match the upload key's SHA-256 fingerprint. The team id and profile name come
+`flutter run --release`. The `android build` lane takes them from `ANDROID_UPLOAD_KEYSTORE_FILE` (the decoded
+keystore's path, set by the workflow) and the three `ANDROID_UPLOAD_KEY*` secrets of the same names, and writes them,
+escaped for `java.util.Properties` (so a leading space or a backslash survives), to the `gradle.properties` of a
+`GRADLE_USER_HOME` of its own: a new directory (mode 700, file mode 600) set only for `flutter build` and deleted
+after it. Not `-P` or `GRADLE_OPTS` (the passwords would be on the command line), and not
+`ORG_GRADLE_PROJECT_android.injected.signing.*` variables (`gradlew` runs under `/bin/sh`, which drops names with
+dots). The Gradle daemon is off and stopped after the build, and the bundle's signer must match the upload key's
+SHA-256 fingerprint. The helpers are in `lib/lectio_signing.rb`; `ruby test/lectio_signing_test.rb` (run by
+`ci.yml`) tests them, including a round trip through Java. The team id and profile name come
 from the provisioning profile itself.
 
 Repository variable `PLAY_RELEASE_STATUS` (optional): the Play release status, `draft` by default. Play only accepts

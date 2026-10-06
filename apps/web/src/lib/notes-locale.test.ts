@@ -138,6 +138,9 @@ describe('overlaySource', () => {
     expect(overlaySource(spread)?.translation).toBe(translation);
     expect(overlaySource(cloned)?.english).toBe(source);
     expect(overlaySource(cloned)).toBe(overlaySource(cloned));
+    // A copy that is edited after a lookup is checked again, not remembered.
+    cloned.summary = 'Muhtasari mwingine.';
+    expect(overlaySource(cloned)).toBeUndefined();
   });
 
   it('has none for the English passage, an edited copy, or a passage it never laid over', () => {

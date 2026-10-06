@@ -239,10 +239,11 @@ jobs:
       - *pub-get
       - *check-metadata
       # The lane hands the upload key to AGP as its android.injected.signing.* Gradle properties (the ones
-      # Android Studio's signed-bundle wizard uses) through ORG_GRADLE_PROJECT_* environment variables of the
-      # flutter build only (#261): values pass exactly (a leading space too) and no properties file is written.
-      # build.gradle.kts keeps its debug fallback. The keystore is created mode 600 (umask 077) and, with the
-      # Gradle daemon, is gone when this step ends, before any upload.
+      # Android Studio's signed-bundle wizard uses), escaped for java.util.Properties in the gradle.properties
+      # of a GRADLE_USER_HOME of its own (mode 700, file mode 600) that it deletes after the build (#261; the
+      # Fastfile says why not -P, GRADLE_OPTS or ORG_GRADLE_PROJECT_* variables). build.gradle.kts keeps its
+      # debug fallback. The keystore is created mode 600 (umask 077) and, with the Gradle daemons, is gone
+      # when this step ends, before any upload.
       - name: Build (signed with the upload key)
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}

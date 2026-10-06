@@ -34,6 +34,15 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
+      # The mobile release lanes' signing helpers (apps/mobile/fastlane/lib), with a round trip through
+      # java.util.Properties on the runner's Java; Ruby only for minitest, no gems installed.
+      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        with:
+          ruby-version: '3.3'
+      - name: Fastlane signing helpers (minitest)
+        env:
+          LECTIO_REQUIRE_JAVA: '1'
+        run: ruby apps/mobile/fastlane/test/lectio_signing_test.rb
 
   typecheck:
     runs-on: ubuntu-latest

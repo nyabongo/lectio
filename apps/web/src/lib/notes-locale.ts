@@ -91,8 +91,9 @@ export function overlaySource(passage: Passage): TranslationOverlay | undefined 
   const found = overlays.get(passage);
   if (found !== undefined) return found;
   const latest = latestOverlays.get(overlayKey(passage));
+  // Compared on every call (not cached by identity), so a copy edited later is not taken for the overlay. A JSON
+  // round trip drops `undefined` fields, so such a copy may not match and gets no source: the safe direction.
   if (latest === undefined || !isDeepStrictEqual(latest.passage, passage)) return undefined;
-  overlays.set(passage, latest.source);
   return latest.source;
 }
 
