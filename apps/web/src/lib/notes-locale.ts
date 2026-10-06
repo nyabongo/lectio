@@ -55,6 +55,28 @@ export function translationStatus(
  * and a note without a translated anchor keeps the English one.
  */
 export function overlayTranslation(english: Passage, translation: TranslatedPassage): Passage {
+  const overlaid = overlay(english, translation);
+  overlays.set(overlaid, { english, translation });
+  return overlaid;
+}
+
+/** What a passage made by `overlayTranslation` was laid over: the English passage and its translation. */
+export interface TranslationOverlay {
+  readonly english: Passage;
+  readonly translation: TranslatedPassage;
+}
+
+const overlays = new WeakMap<Passage, TranslationOverlay>();
+
+/**
+ * The English passage and translation behind `passage` when `overlayTranslation` made it, else `undefined`. The
+ * narration (`./audio.ts`) needs both to speak a translation exactly as the render pipeline and the web player do.
+ */
+export function overlaySource(passage: Passage): TranslationOverlay | undefined {
+  return overlays.get(passage);
+}
+
+function overlay(english: Passage, translation: TranslatedPassage): Passage {
   // Typed through the schema types by name: `astro check` sees the inferred schema types as `any`.
   const notes = new Map<string, TranslatedNote>(
     translation.translationNotes.map((note: TranslatedNote): [string, TranslatedNote] => [note.id, note]),

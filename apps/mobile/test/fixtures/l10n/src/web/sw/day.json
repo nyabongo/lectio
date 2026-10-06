@@ -1,0 +1,13 @@
+{
+  "2": "Ufunguo kama nambari",
+  "title": "Leo",
+  "b": "Ufunguo wa pili",
+  "masses": { "one": "Misa {count}", "other": "Misa {count}" },
+  "notes": { "one": "maelezo {count} ({kind})", "other": "maelezo {count} ({kind})" },
+  "slot": {
+    "nested": { "deep": "Nukuu \"hii\" \\ /" },
+    "psalm": "Zaburi {n}",
+    "other": "Viungo vingine"
+  },
+  "unicode": "Kiswahili 😀"
+}

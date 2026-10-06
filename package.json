@@ -44,6 +44,7 @@
     "review:approve": "npm run -w @lectio/gates review:approve --",
     "audio:render": "npm run -w @lectio/audio audio:render --",
     "schema:emit": "npm run -w @lectio/schema schema:emit --",
+    "l10n:sync": "tsx scripts/l10n-sync.mjs",
     "runway": "npm run -w @lectio/runway runway --"
   },
   "devDependencies": {
