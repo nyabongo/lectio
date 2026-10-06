@@ -14,6 +14,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   localeRepo,
+  overlaySource,
   overlayTranslation,
   passageInLocale,
   refLabelIn,
@@ -122,6 +123,32 @@ describe('overlayTranslation', () => {
     expect(shown.translationNotes[0]?.anchor).toBe('envious');
     expect(shown.translationNotes[1]).toEqual(english().translationNotes[1]);
     expect(shown.claims[0]?.text).toBe(english().claims[0]?.text);
+  });
+});
+
+describe('overlaySource', () => {
+  it('finds the English passage and translation behind an overlay, and behind an unchanged copy of it', () => {
+    const source = english();
+    const translation = kiswahili();
+    const shown = overlayTranslation(source, translation);
+    expect(overlaySource(shown)).toEqual({ english: source, translation });
+    // #265: the sw mirror must not fall back to empty segments when a page copies the overlaid passage.
+    const spread = { ...shown };
+    const cloned = structuredClone(shown);
+    expect(overlaySource(spread)?.translation).toBe(translation);
+    expect(overlaySource(cloned)?.english).toBe(source);
+    expect(overlaySource(cloned)).toBe(overlaySource(cloned));
+    // A copy that is edited after a lookup is checked again, not remembered.
+    cloned.summary = 'Muhtasari mwingine.';
+    expect(overlaySource(cloned)).toBeUndefined();
+  });
+
+  it('has none for the English passage, an edited copy, or a passage it never laid over', () => {
+    const source = english();
+    const shown = overlayTranslation(source, kiswahili());
+    expect(overlaySource(source)).toBeUndefined();
+    expect(overlaySource({ ...shown, summary: 'Muhtasari mwingine.' })).toBeUndefined();
+    expect(overlaySource({ ...shown, key: 'MT.1.1-17' })).toBeUndefined();
   });
 });
 

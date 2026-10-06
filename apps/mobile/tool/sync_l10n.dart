@@ -20,6 +20,8 @@
 ///
 /// From `apps/mobile`: `dart run tool/sync_l10n.dart` rewrites the files;
 /// `--check` (run by flutter.yml) only fails when they are out of date.
+/// `--fixture` does the same for the edge-case fixture instead
+/// ([fixtureDir]): it rewrites `expected/` from the catalogs under `src/`.
 ///
 /// Without a Dart SDK, `npm run l10n:sync` at the repository root does the
 /// same: `apps/web/src/lib/mobile-l10n.ts` is a byte-for-byte port, and its
@@ -46,6 +48,12 @@ const String dartCatalogPath = '$outputDir/catalog.g.dart';
 
 /// The ARB file of [locale], relative to `apps/mobile`.
 String arbPath(String locale) => '$outputDir/app_$locale.arb';
+
+/// The edge-case fixture, relative to `apps/mobile`: catalogs under
+/// `src/web` and `src/app` (the site's and the app's), and the files this
+/// tool makes from them under `expected/`, which the Node port's tests
+/// (`apps/web/src/lib/mobile-l10n.test.ts`) compare with its own output.
+const String fixtureDir = 'test/fixtures/l10n';
 
 /// Plural categories, in CLDR order.
 const List<String> pluralCategories = [
@@ -290,17 +298,41 @@ Map<String, String> generatedFiles(Map<String, Map<String, Object>> catalogs) {
   };
 }
 
+/// How to regenerate the files, for the `--check` error.
+const String _syncCommand =
+    '`npm run l10n:sync` (or `dart run tool/sync_l10n.dart` in apps/mobile)';
+
+/// How to regenerate the edge-case fixture's files, for the `--check` error.
+const String _fixtureCommand =
+    '`dart run tool/sync_l10n.dart --fixture` in apps/mobile';
+
+/// The edge-case fixture's generated files under [root] (`apps/mobile`), by
+/// path relative to [root]: `expected/` next to its `src/` catalogs.
+Map<String, String> fixtureFiles(String root) {
+  final catalogs = readCatalogs(
+    '$root/$fixtureDir/src',
+    dirs: const ['web', 'app'],
+  );
+  final files = generatedFiles(catalogs);
+  return {
+    for (final MapEntry(key: path, value: content) in files.entries)
+      '$fixtureDir/expected/${path.split('/').last}': content,
+  };
+}
+
 /// Writes the generated files under [root] (`apps/mobile`), or with [check]
-/// only reports the ones that are out of date. Returns the exit code.
+/// only reports the ones that are out of date. With [fixture], the files are
+/// the edge-case fixture's ([fixtureFiles]). Returns the exit code.
 int run(
   String root, {
   required StringSink out,
   required StringSink err,
   bool check = false,
+  bool fixture = false,
 }) {
   final Map<String, String> files;
   try {
-    files = generatedFiles(readCatalogs(root));
+    files = fixture ? fixtureFiles(root) : generatedFiles(readCatalogs(root));
   } on CatalogException catch (error) {
     err.writeln('sync_l10n: $error');
     return 1;
@@ -317,10 +349,10 @@ int run(
     }
   }
   if (check && stale.isNotEmpty) {
+    final command = fixture ? _fixtureCommand : _syncCommand;
     err.writeln(
-      'sync_l10n: out of date: ${stale.join(', ')}. Run `npm run l10n:sync` '
-      '(or `dart run tool/sync_l10n.dart` in apps/mobile) and commit the '
-      'result.',
+      'sync_l10n: out of date: ${stale.join(', ')}. Run $command and commit '
+      'the result.',
     );
     return 1;
   }
@@ -329,12 +361,14 @@ int run(
   return 0;
 }
 
-/// Entry point, from `apps/mobile`: `dart run tool/sync_l10n.dart [--check]`.
+/// Entry point, from `apps/mobile`:
+/// `dart run tool/sync_l10n.dart [--check] [--fixture]`.
 void main(List<String> args) {
   exitCode = run(
     Directory.current.path,
     out: stdout,
     err: stderr,
     check: args.contains('--check'),
+    fixture: args.contains('--fixture'),
   );
 }

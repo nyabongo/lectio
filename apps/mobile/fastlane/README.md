@@ -5,7 +5,7 @@
 | Lane                         | What it does                                                                                  |
 | ---------------------------- | --------------------------------------------------------------------------------------------- |
 | `check_metadata`             | The store metadata drafts exist, fit the store limits, and iOS privacy is "no data collected". |
-| `android build`              | `flutter build appbundle --release`; signed when the workflow wrote the upload key.           |
+| `android build`              | `flutter build appbundle --release`; signed when the workflow passes the upload key.          |
 | `android internal`           | Uploads the bundle to the Play **internal testing** track (`PLAY_SERVICE_ACCOUNT_JSON`).      |
 | `ios build`                  | `flutter build ipa --release --no-codesign` (dry run).                                        |
 | `ios build signed:true`      | Imports the distribution certificate and profile, signs manually, exports an App Store ipa.   |
@@ -39,15 +39,17 @@ it does not fail.
 ## Secrets (owner)
 
 Repository secrets (Settings → Secrets and variables → Actions). Each step gets only the secrets it uses. The
-decoded keystore, `.p12`, profile and export options live in `$RUNNER_TEMP` only while their build step runs (the
-Fastfile's `ensure` and the step's `trap` delete them; an always-run step deletes them again with the keychain).
+decoded keystore, `.p12`, profile and export options are created with mode 600 (the step's `umask 077`, the
+Fastfile's `write_private_file`), so no other user can read them at any point, and live in `$RUNNER_TEMP` only while
+their build step runs (the Fastfile's `ensure` and the step's `trap` delete them; an always-run step deletes them
+again with the keychain).
 
 | Secret                                    | What                                                                       |
 | ----------------------------------------- | -------------------------------------------------------------------------- |
 | `ANDROID_UPLOAD_KEYSTORE_BASE64`          | The upload keystore (`.jks`), `base64 -w0 upload-keystore.jks`.            |
-| `ANDROID_UPLOAD_KEYSTORE_PASSWORD`        | Its store password (ASCII, one line).                                      |
+| `ANDROID_UPLOAD_KEYSTORE_PASSWORD`        | Its store password.                                                        |
 | `ANDROID_UPLOAD_KEY_ALIAS`                | The key alias.                                                             |
-| `ANDROID_UPLOAD_KEY_PASSWORD`             | The key password (ASCII, one line).                                        |
+| `ANDROID_UPLOAD_KEY_PASSWORD`             | The key password.                                                          |
 | `PLAY_SERVICE_ACCOUNT_JSON`               | A Google Cloud service account JSON key with release access in Play.       |
 | `IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64` | The Apple Distribution certificate and private key as `.p12`, base64.      |
 | `IOS_DISTRIBUTION_CERTIFICATE_PASSWORD`   | The `.p12` export password (not empty).                                    |
@@ -58,8 +60,15 @@ Fastfile's `ensure` and the step's `trap` delete them; an always-run step delete
 
 The Android key is the **upload key** (Play App Signing holds the app-signing key). It reaches Gradle as the
 `android.injected.signing.*` properties, so `android/app/build.gradle.kts` keeps its debug fallback for local
-`flutter run --release`. The Gradle daemon is off for that build, the properties are removed right after it, and
-the bundle's signer must match the upload key's SHA-256 fingerprint. The team id and profile name come
+`flutter run --release`. The `android build` lane takes them from `ANDROID_UPLOAD_KEYSTORE_FILE` (the decoded
+keystore's path, set by the workflow) and the three `ANDROID_UPLOAD_KEY*` secrets of the same names, and writes them,
+escaped for `java.util.Properties` (so a leading space or a backslash survives), to the `gradle.properties` of a
+`GRADLE_USER_HOME` of its own: a new directory (mode 700, file mode 600) set only for `flutter build` and deleted
+after it. Not `-P` or `GRADLE_OPTS` (the passwords would be on the command line), and not
+`ORG_GRADLE_PROJECT_android.injected.signing.*` variables (`gradlew` runs under `/bin/sh`, which drops names with
+dots). The Gradle daemon is off and stopped after the build, and the bundle's signer must match the upload key's
+SHA-256 fingerprint. The helpers are in `lib/lectio_signing.rb`; `ruby test/lectio_signing_test.rb` (run by
+`ci.yml`) tests them, including a round trip through Java. The team id and profile name come
 from the provisioning profile itself.
 
 Repository variable `PLAY_RELEASE_STATUS` (optional): the Play release status, `draft` by default. Play only accepts

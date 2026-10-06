@@ -238,49 +238,34 @@ jobs:
       - *install-fastlane
       - *pub-get
       - *check-metadata
-      # AGP reads the android.injected.signing.* Gradle properties (the ones Android Studio's signed-bundle
-      # wizard uses) and signs the release bundle with them, so build.gradle.kts keeps its debug fallback.
-      # The key, the properties and the Gradle daemon are gone when this step ends, before any upload.
+      # The lane hands the upload key to AGP as its android.injected.signing.* Gradle properties (the ones
+      # Android Studio's signed-bundle wizard uses), escaped for java.util.Properties in the gradle.properties
+      # of a GRADLE_USER_HOME of its own (mode 700, file mode 600) that it deletes after the build (#261; the
+      # Fastfile says why not -P, GRADLE_OPTS or ORG_GRADLE_PROJECT_* variables). build.gradle.kts keeps its
+      # debug fallback. The keystore is created mode 600 (umask 077) and, with the Gradle daemons, is gone
+      # when this step ends, before any upload.
       - name: Build (signed with the upload key)
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+          ANDROID_UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          ANDROID_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          ANDROID_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
           # No long-lived daemon keeps the passwords in memory after the build.
           GRADLE_OPTS: -Dorg.gradle.daemon=false
         run: |
           keystore="$RUNNER_TEMP/upload-keystore.jks"
-          properties="$HOME/.gradle/gradle.properties"
           cleanup() {
             rm -f "$keystore"
-            if [ -f "$properties" ]; then sed -i '/^android\.injected\.signing\./d' "$properties"; fi
             if [ -x android/gradlew ]; then android/gradlew --stop >/dev/null 2>&1 || true; fi
           }
           trap cleanup EXIT
-          # .properties values are one line each and a backslash escapes: refuse line breaks, double backslashes.
-          for value in "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD"; do
-            if [[ "$value" == *$'\n'* || "$value" == *$'\r'* ]]; then
-              echo "::error::The upload key's alias and passwords must be single-line."
-              exit 1
-            fi
-          done
-          escape() { printf '%s' "${1//\\/\\\\}"; }
-          base64 --decode <<<"$KEYSTORE_BASE64" > "$keystore"
-          chmod 600 "$keystore"
-          mkdir -p "$HOME/.gradle"
-          touch "$properties"
-          chmod 600 "$properties"
-          {
-            printf 'android.injected.signing.store.file=%s\n' "$(escape "$keystore")"
-            printf 'android.injected.signing.store.password=%s\n' "$(escape "$KEYSTORE_PASSWORD")"
-            printf 'android.injected.signing.key.alias=%s\n' "$(escape "$KEY_ALIAS")"
-            printf 'android.injected.signing.key.password=%s\n' "$(escape "$KEY_PASSWORD")"
-          } >> "$properties"
-          bundle exec fastlane android build
+          rm -f "$keystore"
+          # umask 077 in the subshell: the keystore is created mode 600, never readable by others.
+          (umask 077 && printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore")
+          ANDROID_UPLOAD_KEYSTORE_FILE="$keystore" bundle exec fastlane android build
           # The bundle's signer must be the upload key's certificate (an unsigned or debug-signed bundle fails).
-          expected="$(keytool -list -v -keystore "$keystore" -alias "$KEY_ALIAS" -storepass:env KEYSTORE_PASSWORD \
-            | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1)"
+          expected="$(keytool -list -v -keystore "$keystore" -alias "$ANDROID_UPLOAD_KEY_ALIAS" \
+            -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1)"
           actual="$(keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab \
             | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1)"
           if [ -z "$expected" ] || [ "$expected" != "$actual" ]; then
@@ -314,14 +299,10 @@ jobs:
             else echo "- Signed app bundle built (artifact lectio-release-aab); not uploaded."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
-      # Belt and braces: the signed build step already removed these when it exited.
+      # Belt and braces: the signed build step already removed it when it exited.
       - name: Remove the upload key
         if: always()
-        run: |
-          rm -f "$RUNNER_TEMP/upload-keystore.jks"
-          if [ -f "$HOME/.gradle/gradle.properties" ]; then
-            sed -i '/^android\.injected\.signing\./d' "$HOME/.gradle/gradle.properties"
-          fi
+        run: rm -f "$RUNNER_TEMP/upload-keystore.jks"
 
   ios:
     needs: plan
@@ -370,7 +351,8 @@ jobs:
       - *setup-ruby
       - *install-fastlane
       - *pub-get
-      # The lane deletes the decoded certificate, profile and export options when it ends (ensure).
+      # The lane writes the decoded certificate, profile and export options as new mode-600 files and
+      # deletes them when it ends (ensure).
       - name: Build (signed)
         env:
           IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 }}

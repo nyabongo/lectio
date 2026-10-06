@@ -355,6 +355,29 @@ void main() {
       expect(out.toString(), contains('up to date'));
     });
 
+    test('--fixture rewrites the edge-case fixture, not the app files', () {
+      final root = catalogTree({
+        for (final MapEntry(:key, :value) in validTree().entries)
+          '$fixtureDir/src/$key': value,
+      });
+      final dir = root.path;
+      final out = StringBuffer();
+      final err = StringBuffer();
+      expect(run(dir, out: out, err: err, check: true, fixture: true), 1);
+      expect(err.toString(), contains('tool/sync_l10n.dart --fixture'));
+
+      expect(run(dir, out: out, err: err, fixture: true), 0);
+      expect(out.toString(), contains('wrote 3 file(s)'));
+      for (final name in ['app_en.arb', 'app_sw.arb', 'catalog.g.dart']) {
+        expect(File('$dir/$fixtureDir/expected/$name').existsSync(), isTrue);
+      }
+      expect(File('$dir/$dartCatalogPath').existsSync(), isFalse);
+
+      out.clear();
+      expect(run(dir, out: out, err: err, check: true, fixture: true), 0);
+      expect(out.toString(), contains('up to date'));
+    });
+
     test('fails on a broken catalog', () {
       final root = catalogTree({});
       final err = StringBuffer();
@@ -374,18 +397,20 @@ void main() {
   test('the edge-case fixture gives the expected files', () {
     // apps/web/src/lib/mobile-l10n.test.ts (the Node port, `npm run
     // l10n:sync`) checks the same fixture against the same files, so the two
-    // tools write byte-identical output. Regenerate expected/ with this tool.
-    const fixture = 'test/fixtures/l10n';
-    final files = generatedFiles(
-      readCatalogs('$fixture/src', dirs: const ['web', 'app']),
-    );
+    // tools write byte-identical output. Regenerate expected/ with this tool:
+    // `dart run tool/sync_l10n.dart --fixture` in apps/mobile.
+    final files = fixtureFiles('.');
+    expect(files.keys, [
+      '$fixtureDir/expected/app_en.arb',
+      '$fixtureDir/expected/app_sw.arb',
+      '$fixtureDir/expected/catalog.g.dart',
+    ]);
     for (final MapEntry(key: path, value: content) in files.entries) {
-      final name = path.split('/').last;
-      expect(
-        File('$fixture/expected/$name').readAsStringSync(),
-        content,
-        reason: name,
-      );
+      expect(File(path).readAsStringSync(), content, reason: path);
     }
+    final out = StringBuffer();
+    final err = StringBuffer();
+    expect(run('.', out: out, err: err, check: true, fixture: true), 0);
+    expect(out.toString(), contains('up to date'));
   });
 }

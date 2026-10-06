@@ -4,13 +4,17 @@
 #
 # Credentials only ever come from the environment of the step that needs them
 # and go to fastlane options marked sensitive (never printed) or to files under
-# RUNNER_TEMP; nothing here echoes them.
+# RUNNER_TEMP created with mode 600; nothing here echoes them.
 
 require "base64"
 require "fileutils"
 require "json"
 require "plist"
 require "tmpdir"
+
+# write_private_file, java_properties_escape and with_gradle_user_home, tested
+# by test/lectio_signing_test.rb (ci.yml).
+require File.join(__dir__, "lib", "lectio_signing")
 
 skip_docs
 
@@ -57,10 +61,53 @@ SIGNING_FILES = %w[distribution.p12 lectio.mobileprovision ExportOptions.plist].
 # Decodes a base64 environment variable into SIGNING_DIR/file_name (mode 600)
 # and returns its path. The value is never printed.
 def decode_env_to_file(variable, file_name)
-  path = File.join(SIGNING_DIR, file_name)
-  File.binwrite(path, Base64.decode64(ENV.fetch(variable)))
-  File.chmod(0o600, path)
-  path
+  LectioSigning.write_private_file(File.join(SIGNING_DIR, file_name), Base64.decode64(ENV.fetch(variable)))
+end
+
+# The upload key reaches the Android Gradle plugin as its
+# android.injected.signing.* properties (the ones Android Studio's
+# signed-bundle wizard passes), from these environment variables of the
+# workflow step; ANDROID_UPLOAD_KEYSTORE_FILE is the decoded keystore.
+#
+# Why a properties file: Gradle has three other ways in, and none works here.
+# -P and GRADLE_OPTS=-Dorg.gradle.project.* put the passwords on the java
+# command line, where ps shows them (and gradlew word-splits GRADLE_OPTS).
+# ORG_GRADLE_PROJECT_android.injected.signing.* environment variables never
+# arrive: android/gradlew runs under /bin/sh (dash on ubuntu-latest), which
+# drops variables whose names are not shell identifiers before it execs java.
+# So the build gets its own GRADLE_USER_HOME (mode 700, deleted afterwards)
+# with a gradle.properties (mode 600) holding the values escaped for
+# java.util.Properties, so a leading space or a backslash survives (#261).
+ANDROID_SIGNING_PROPERTIES = {
+  "ANDROID_UPLOAD_KEYSTORE_FILE" => "android.injected.signing.store.file",
+  "ANDROID_UPLOAD_KEYSTORE_PASSWORD" => "android.injected.signing.store.password",
+  "ANDROID_UPLOAD_KEY_ALIAS" => "android.injected.signing.key.alias",
+  "ANDROID_UPLOAD_KEY_PASSWORD" => "android.injected.signing.key.password"
+}.freeze
+
+# The Gradle properties for signing with the upload key, or none (a
+# debug-signed bundle) when ANDROID_UPLOAD_KEYSTORE_FILE is unset.
+def android_signing_properties
+  return {} if ENV["ANDROID_UPLOAD_KEYSTORE_FILE"].to_s.empty?
+
+  ANDROID_SIGNING_PROPERTIES.to_h do |variable, property|
+    value = ENV.fetch(variable, "")
+    UI.user_error!("#{variable} is not set") if value.empty?
+    [property, value]
+  end
+end
+
+# Stops the Gradle daemons of the current GRADLE_USER_HOME (the daemon is off,
+# but Gradle may still start a single-use one), so none keeps the passwords in
+# memory. Skipped when that home has no Gradle distribution yet (nothing ran,
+# and --stop would download one).
+def stop_gradle_daemons
+  android = File.join(APP_ROOT, "android")
+  gradlew = File.join(android, "gradlew")
+  home = ENV.fetch("GRADLE_USER_HOME", "")
+  return unless File.executable?(gradlew) && Dir.exist?(File.join(home, "wrapper", "dists"))
+
+  Dir.chdir(android) { system(gradlew, "--stop", out: File::NULL, err: File::NULL) }
 end
 
 desc "Check the store metadata drafts: present, within store limits, and the iOS privacy answer is 'no data collected'"
@@ -80,10 +127,22 @@ lane :check_metadata do
 end
 
 platform :android do
-  desc "Build the release app bundle. Signing comes from the android.injected.signing.* Gradle properties " \
-       "the workflow writes when the upload key exists; without them the bundle is debug-signed (dry run)."
+  desc "Build the release app bundle, signed with the upload key when ANDROID_UPLOAD_KEYSTORE_FILE and the other " \
+       "ANDROID_UPLOAD_* variables are set (see ANDROID_SIGNING_PROPERTIES); without them it is debug-signed (dry run)."
   lane :build do |options|
-    flutter("build", "appbundle", "--release", *version_args(options))
+    build = ["build", "appbundle", "--release", *version_args(options)]
+    properties = android_signing_properties
+    if properties.empty?
+      flutter(*build)
+    else
+      # A fresh Gradle home also means a cold cache: the signed build downloads
+      # Gradle and the dependencies again, which costs minutes, not secrecy.
+      LectioSigning.with_gradle_user_home(properties, parent: SIGNING_DIR) do
+        flutter(*build)
+      ensure
+        stop_gradle_daemons
+      end
+    end
     UI.user_error!("No app bundle at #{AAB}") unless File.exist?(AAB)
     UI.success("Built #{AAB}")
   end
@@ -143,7 +202,7 @@ platform :ios do
         profile_name: profile_name
       )
       export_options = File.join(SIGNING_DIR, "ExportOptions.plist")
-      File.write(export_options, {
+      LectioSigning.write_private_file(export_options, {
         "method" => "app-store-connect",
         "teamID" => team_id,
         "signingStyle" => "manual",
