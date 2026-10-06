@@ -370,4 +370,22 @@ void main() {
       expect(File(path).readAsStringSync(), content, reason: path);
     }
   });
+
+  test('the edge-case fixture gives the expected files', () {
+    // apps/web/src/lib/mobile-l10n.test.ts (the Node port, `npm run
+    // l10n:sync`) checks the same fixture against the same files, so the two
+    // tools write byte-identical output. Regenerate expected/ with this tool.
+    const fixture = 'test/fixtures/l10n';
+    final files = generatedFiles(
+      readCatalogs('$fixture/src', dirs: const ['web', 'app']),
+    );
+    for (final MapEntry(key: path, value: content) in files.entries) {
+      final name = path.split('/').last;
+      expect(
+        File('$fixture/expected/$name').readAsStringSync(),
+        content,
+        reason: name,
+      );
+    }
+  });
 }

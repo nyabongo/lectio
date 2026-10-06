@@ -115,12 +115,15 @@ jobs:
           fi
       # L-114: lib/l10n/app_*.arb and catalog.g.dart are generated from the
       # site's catalogs (apps/web/src/i18n) and lib/l10n/catalog; a catalog
-      # change must come with the regenerated files.
+      # change must come with the regenerated files. #255: `npm run l10n:sync`
+      # (apps/web/src/lib/mobile-l10n.ts) writes the same files without Dart,
+      # and npm run verify checks them too; this step keeps the Dart tool as
+      # the reference the Node port is compared with.
       - name: l10n files in sync with the catalogs
         if: steps.changes.outputs.relevant == 'true'
         run: |
           if ! dart run tool/sync_l10n.dart --check; then
-            echo "::error::Run 'dart run tool/sync_l10n.dart' in apps/mobile and commit the result:"
+            echo "::error::Run 'npm run l10n:sync' at the repository root (or 'dart run tool/sync_l10n.dart' in apps/mobile) and commit the result:"
             dart run tool/sync_l10n.dart
             git diff
             exit 1

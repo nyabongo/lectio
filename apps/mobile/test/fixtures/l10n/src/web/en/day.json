@@ -1,0 +1,14 @@
+{
+  "title": "Today",
+  "b": "Second key, written first",
+  "2": "An integer-like key keeps its place",
+  "b": "A repeated key keeps its first place and takes the last value",
+  "masses": { "other": "{count} Masses", "zero": "No Masses", "one": "{count} Mass", "many": "{count} Masses (many)" },
+  "notes": { "few": "{count} notes ({kind})", "other": "{count} notes ({kind})" },
+  "slot": {
+    "psalm": "Psalm {n}",
+    "other": "Other links",
+    "nested": { "deep": "Quote \"this\", a back\\slash, a tab\t, a slash / and a control \u0001 character" }
+  },
+  "unicode": "Kiswahili, Ελληνικά, עברית, emoji 😀, line separator and a lone \ud800 surrogate"
+}

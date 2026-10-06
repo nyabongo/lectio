@@ -12,7 +12,7 @@
 import { readFileSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 
-import { buildSegments, parseManifest, resolveAudio } from '@lectio/audio';
+import { buildSegments, localeNarration, parseManifest, resolveAudio, translationSegments } from '@lectio/audio';
 import type { AudioManifest, NarrationSegment } from '@lectio/audio';
 import { findRepoRoot } from '@lectio/config';
 import type { LectioConfig } from '@lectio/config';
@@ -21,6 +21,8 @@ import type { ApiAudio, ApiSegment } from '@lectio/schema/api';
 import type { Reading } from '@lectio/schema/calendar';
 import type { ReadingSlot } from '@lectio/schema/common';
 import type { Passage } from '@lectio/schema/passage';
+
+import { overlaySource } from './notes-locale.ts';
 
 /** Environment variable naming the audio manifest file (relative paths start at the repository root). */
 export const AUDIO_MANIFEST_ENV = 'LECTIO_AUDIO_MANIFEST';
@@ -79,12 +81,18 @@ export function apiAudio(audio: SiteAudio | null, segment: Pick<NarrationSegment
 
 /**
  * The narration segments of one passage, in order (context, then each translation note), or none when it is not
- * approved or its locale has no narration strings. The slot only labels the queue.
+ * approved or its locale has no narration. A translated passage (the `sw/` mirror's Kiswahili notes, made by
+ * `overlayTranslation` in notes-locale.ts) is narrated from its English passage and translation with
+ * `translationSegments`, as the render pipeline and the web player narrate it, so its script and audio file are
+ * theirs. The slot only labels the queue.
  */
 function passageSegments(passage: Passage, slot: ReadingSlot): NarrationSegment[] {
+  const source = overlaySource(passage);
   const day = { masses: [{ id: 'mass', readings: [{ slot, key: passage.key }] }] };
   try {
-    return buildSegments(day, [passage], passage.locale);
+    if (source === undefined) return buildSegments(day, [passage], passage.locale);
+    const { english, translation } = source;
+    return translationSegments(english, translation, slot, passage.locale, localeNarration(passage.locale));
   } catch {
     return [];
   }

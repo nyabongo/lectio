@@ -1,0 +1,16 @@
+{
+  "@@locale": "sw",
+  "Zeta_empty": "",
+  "Zeta_retry": "Jaribu {what} tena baada ya sekunde {seconds}",
+  "app_close": "Funga",
+  "app_count": "Inaonyesha {count} kati ya {total}",
+  "day_2": "Ufunguo kama nambari",
+  "day_title": "Leo",
+  "day_b": "Ufunguo wa pili",
+  "day_masses": "{count, plural, one{Misa {count}} other{Misa {count}}}",
+  "day_notes": "{count, plural, one{maelezo {count} ({kind})} other{maelezo {count} ({kind})}}",
+  "day_slot_nested_deep": "Nukuu \"hii\" \\ /",
+  "day_slot_psalm": "Zaburi {n}",
+  "day_slot_other": "Viungo vingine",
+  "day_unicode": "Kiswahili 😀"
+}

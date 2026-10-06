@@ -2,15 +2,17 @@ import { readFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { MANIFEST_VERSION, buildSegments, manifestKeyFor } from '@lectio/audio';
+import { MANIFEST_VERSION, buildLocaleSegments, buildSegments, manifestKeyFor } from '@lectio/audio';
 import type { AudioManifest, ManifestEntry } from '@lectio/audio';
 import { DEFAULT_CONFIG } from '@lectio/config';
 import type { ResolvedMass } from '@lectio/content';
 import type { Passage, TranslationNote } from '@lectio/schema/passage';
+import type { TranslatedPassage } from '@lectio/schema/translated-passage';
 import { describe, expect, it } from 'vitest';
 
 import { AUDIO_MANIFEST_ENV, apiAudio, audioManifestPath, loadSiteAudio, massSegments, passageAudio } from './audio.ts';
 import type { SiteAudio } from './audio.ts';
+import { localeRepo, overlayTranslation, translationSource } from './notes-locale.ts';
 import { siteContext } from './site.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -199,6 +201,56 @@ describe('massSegments', () => {
     expect(segments).toHaveLength(3);
     expect(segments.every((segment) => segment.audio === null && segment.slot === 'gospel')).toBe(true);
     expect(massSegments(null, { readings: [] })).toEqual([]);
+  });
+});
+
+describe('massSegments and passageAudio for translated notes', () => {
+  const repo = fixtureRepo();
+  const translation = (): TranslatedPassage => translationSource(repo.root)('sw', APPROVED) as TranslatedPassage;
+  const swMass = (): Pick<ResolvedMass, 'readings'> => {
+    const day = localeRepo(repo, 'sw').resolveDay('2026-09-20');
+    if (day === null) throw new Error('fixture day missing');
+    return day.masses[0] as ResolvedMass;
+  };
+  // What the render pipeline narrates and the web player queues: `buildLocaleSegments` of the translation.
+  const expected = () =>
+    buildLocaleSegments(
+      { masses: [{ id: 'm', readings: [{ slot: 'gospel', key: APPROVED }] }] },
+      [approvedPassage()],
+      [translation()],
+      'sw',
+    );
+
+  it('narrates a translation in its language, exactly as the render pipeline does, with its audio file', () => {
+    const swVoice = VOICES['sw'] as string;
+    const entries: Record<string, ManifestEntry> = {};
+    for (const { text } of expected()) {
+      const key = manifestKeyFor({ text, locale: 'sw' }, swVoice, 'fake-1', 'wav');
+      entries[key] = { ...entry(`https://cdn.example/${key}`), voice: swVoice };
+    }
+    const audio: SiteAudio = { manifest: { version: MANIFEST_VERSION, entries }, voices: VOICES };
+    const segments = massSegments(audio, swMass());
+    expect(
+      segments.map(({ id, kind, slot, passageKey, locale, title, script }) => ({
+        id,
+        kind,
+        slot,
+        passageKey,
+        locale,
+        title,
+        text: script,
+      })),
+    ).toEqual(expected());
+    expect(segments.every((segment) => segment.locale === 'sw' && segment.audio?.url.includes('/audio/sw/'))).toBe(
+      true,
+    );
+    const shown = swMass().readings.find((reading) => reading.passage?.key === APPROVED)?.passage as Passage;
+    expect([...passageAudio(audio, shown).values()].every((found) => found !== null)).toBe(true);
+  });
+
+  it('has nothing for a translation into a language without narration', () => {
+    const overlaid = overlayTranslation(approvedPassage(), { ...translation(), locale: 'xx' });
+    expect(passageAudio(fixtureAudio(), overlaid).size).toBe(0);
   });
 });
 

@@ -97,6 +97,13 @@ The short version: rebase, take main's lockfile, `npm install`, commit. Never ha
 Flutter is not installed locally. Flutter work iterates through CI on a **draft PR** (`flutter.yml`, L-100) and is
 marked ready for review once green.
 
+The app's UI strings are generated from the site's catalogs (`apps/web/src/i18n/<locale>/*.json`) and the app's own
+(`apps/mobile/lib/l10n/catalog/`). After changing either, run `npm run l10n:sync` (no Dart needed) and commit the
+rewritten `apps/mobile/lib/l10n/app_*.arb` and `catalog.g.dart`; `npm run verify` fails until you do
+(`apps/web/src/lib/mobile-l10n.test.ts`), and so does the `flutter` job's Dart check. `npm run l10n:sync -- --check`
+only reports. The Node script is a byte-for-byte port of `apps/mobile/tool/sync_l10n.dart`: change the two together,
+and regenerate `apps/mobile/test/fixtures/l10n/expected/` with the Dart tool when the output format changes.
+
 ## Commits by AI agents
 
 AI agents commit in logical steps and end every commit message with a blank line and a co-author trailer naming the
