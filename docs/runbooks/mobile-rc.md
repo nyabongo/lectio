@@ -35,12 +35,12 @@ replace the tables above.
 The Mobile release workflow (`.github/workflows/mobile-release.yml`) builds both apps the way a release would, with no
 secret referenced by any job. Its dry run is a `workflow_dispatch`: Actions → Mobile release → Run workflow, on `main`.
 
-|          |                                                                                                               |
-| -------- | ------------------------------------------------------------------------------------------------------------- |
-| Dry run  | https://github.com/nyabongo/lectio/actions/runs/37352978073                                                   |
-| Commit   | `343c343` on the L-109 branch (PR #258), through a temporary `push` trigger since reverted                    |
-| Jobs     | `plan`, `android`, `ios` green; `secrets`, `android-release`, `ios-release` skipped (no secrets on a dry run) |
-| Artifact | `lectio-aab-debug-signed` (Android app bundle, debug-signed, 59 MB)                                           |
+|          |                                                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Dry run  | https://github.com/nyabongo/lectio/actions/runs/37352978073                                                                    |
+| Commit   | `343c343` on the L-109 branch (PR #258), through a temporary `push` trigger since reverted                                     |
+| Jobs     | `plan`, `android`, `ios` and `merge-rule` green; `secrets`, `android-release`, `ios-release` skipped (no secrets on a dry run) |
+| Artifact | `lectio-aab-debug-signed` (Android app bundle, debug-signed, 59 MB)                                                            |
 
 The workflow file in that run is the one merged to `main` in `f14c8bf`, apart from the temporary trigger line. The
 app code differs: `main` also has PR #256 (Listen segments). No dispatch of the dry run on `main` has been recorded yet,
@@ -101,6 +101,6 @@ Not tested:
 | Criterion                                                                       | State                                                                                                             |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `flutter.yml` green on `main`, with a debug APK and an iOS no-codesign artifact | Met: run 37357017081, `flutter` and `ios` green, `lectio-debug-apk` and `lectio-ios-debug` attached               |
-| L-109 dry run green                                                             | Met on the L-109 branch (run 37352978073, same workflow file); a dispatch on `main` is still to do                |
+| L-109 dry run green                                                             | Partly met: green on the L-109 branch (run 37352978073); the owner must dispatch it on `main`                     |
 | `setup.sh` re-run after L-100 merged; `flutter` appears as a required check     | **Not met**: an owner step (see above)                                                                            |
 | Dart line coverage ≥ 96%, TypeScript unit coverage ≥ 96%, CI green              | Met: Dart 99.91% (run 37357017081); TypeScript 99.99 / 99.99 / 100 / 100 (statements, branches, functions, lines) |
